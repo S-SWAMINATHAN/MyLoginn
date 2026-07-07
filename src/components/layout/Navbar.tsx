@@ -23,6 +23,7 @@ import { AnimatedGraduation } from "@/components/ui/icons/AnimatedGraduation";
 import { AnimatedMegaphone } from "@/components/ui/icons/AnimatedMegaphone";
 import { AnimatedCode } from "@/components/ui/icons/AnimatedCode";
 import { AnimatedMail } from "@/components/ui/icons/AnimatedMail";
+import { AnimatedUser } from "@/components/ui/icons/AnimatedUser";
 import { AiAssistantButton } from "./AiAssistantButton";
 import { ProfileMenu, type ProfileUser } from "./ProfileMenu";
 import { Button } from "@/components/ui/Button";
