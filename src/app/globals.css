@@ -9,6 +9,7 @@
   --surface-2: #f5f6fb;
   --border-soft: rgba(15, 17, 32, 0.08);
   --glass-bg: rgba(255, 255, 255, 0.6);
+  --glass-nav-bg: rgba(255, 255, 255, 0.94);
   --glass-border: rgba(15, 17, 32, 0.08);
   --muted: #5b5f75;
 
@@ -44,6 +45,7 @@
   --surface-2: #151827;
   --border-soft: rgba(255, 255, 255, 0.08);
   --glass-bg: rgba(16, 18, 31, 0.55);
+  --glass-nav-bg: rgba(16, 18, 31, 0.94);
   --glass-border: rgba(255, 255, 255, 0.08);
   --muted: #9296b3;
 
@@ -61,6 +63,7 @@
     --surface-2: #151827;
     --border-soft: rgba(255, 255, 255, 0.08);
     --glass-bg: rgba(16, 18, 31, 0.55);
+    --glass-nav-bg: rgba(16, 18, 31, 0.94);
     --glass-border: rgba(255, 255, 255, 0.08);
     --muted: #9296b3;
 
@@ -117,6 +120,7 @@ body {
    theme toggles, so the whole page reads as one seamless cross-fade. */
 .glass,
 .glass-panel,
+.glass-nav,
 [class*="bg-surface"],
 [class*="border-border-soft"] {
   transition: background-color 0.6s ease, border-color 0.6s ease, box-shadow 0.6s ease;
@@ -156,6 +160,14 @@ body {
   -webkit-backdrop-filter: blur(24px) saturate(160%);
   border: 1px solid var(--glass-border);
   box-shadow: var(--shadow-soft);
+}
+
+/* Near-opaque glass for fixed navigation chrome (header, bottom tab bar)
+   so page content never reads through it. */
+.glass-nav {
+  background: var(--glass-nav-bg);
+  backdrop-filter: blur(18px) saturate(160%);
+  -webkit-backdrop-filter: blur(18px) saturate(160%);
 }
 
 .brand-gradient-text {

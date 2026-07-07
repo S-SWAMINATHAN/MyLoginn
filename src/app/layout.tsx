@@ -4,6 +4,8 @@ import { MotionConfig } from "framer-motion";
 import "./globals.css";
 import { ThemeProvider } from "@/components/layout/ThemeProvider";
 import { Navbar } from "@/components/layout/Navbar";
+import { MobileBottomNav } from "@/components/layout/MobileBottomNav";
+import { AiAgentWidget } from "@/components/layout/AiAgentWidget";
 import { Footer } from "@/components/layout/Footer";
 import { PageTransition } from "@/components/layout/PageTransition";
 import { getCurrentUser } from "@/lib/auth";
@@ -49,6 +51,8 @@ export default async function RootLayout({
               <PageTransition>{children}</PageTransition>
             </main>
             <Footer />
+            <MobileBottomNav loggedIn={Boolean(user)} />
+            <AiAgentWidget />
           </ThemeProvider>
         </MotionConfig>
       </body>
