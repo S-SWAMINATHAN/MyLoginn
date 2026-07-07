@@ -109,7 +109,7 @@ export function Navbar({ user }: { user: NavUser }) {
     <header
       className={cn(
         "sticky top-0 z-50 transition-all duration-300",
-        scrolled || mobileOpen ? "glass shadow-[var(--shadow-soft)]" : "bg-transparent"
+        scrolled || mobileOpen ? "glass-nav border-b border-border-soft shadow-[var(--shadow-soft)]" : "bg-transparent"
       )}
     >
       <nav className="mx-auto flex h-16 max-w-7xl items-center justify-between px-5 sm:px-8">
