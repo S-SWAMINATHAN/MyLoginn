@@ -8,6 +8,7 @@ import { MobileBottomNav } from "@/components/layout/MobileBottomNav";
 import { AiAgentWidget } from "@/components/layout/AiAgentWidget";
 import { Footer } from "@/components/layout/Footer";
 import { PageTransition } from "@/components/layout/PageTransition";
+import { HideOnAdmin } from "@/components/layout/HideOnAdmin";
 import { getCurrentUser } from "@/lib/auth";
 
 const geistSans = Geist({
@@ -46,13 +47,17 @@ export default async function RootLayout({
       <body className="min-h-full flex flex-col">
         <MotionConfig reducedMotion="user">
           <ThemeProvider>
-            <Navbar user={navUser} />
+            <HideOnAdmin>
+              <Navbar user={navUser} />
+            </HideOnAdmin>
             <main className="flex-1">
               <PageTransition>{children}</PageTransition>
             </main>
-            <Footer />
-            <MobileBottomNav loggedIn={Boolean(user)} />
-            <AiAgentWidget />
+            <HideOnAdmin>
+              <Footer />
+              <MobileBottomNav loggedIn={Boolean(user)} />
+              <AiAgentWidget />
+            </HideOnAdmin>
           </ThemeProvider>
         </MotionConfig>
       </body>

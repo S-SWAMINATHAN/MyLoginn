@@ -21,3 +21,9 @@ description: How to build, launch, and drive this Next.js app to verify UI chang
 ## Other gotchas
 - lucide-react is v1.x: old alias names were removed (`Home` → `House`, `Code2` → `CodeXml`). Check `node_modules/lucide-react/dist/lucide-react.d.ts` when adding icons.
 - This Next.js version differs from public docs — see `node_modules/next/dist/docs/` (e.g. `next/image` uses `preload`, not `priority`).
+
+## Admin panel (/admin)
+- Log in as `admin@myloginn.ai` / `Admin@123` (from prisma/seed.ts) — login redirects ADMIN users to /admin.
+- The admin shell suppresses the site navbar/footer; its mobile hamburger is `button[aria-label="Open menu"]`, the drawer is `aside.z-50`.
+- `PageTransition` is skipped on /admin: its animated `filter`/`transform` would otherwise become the containing block for the admin shell's fixed overlays (drawer, modals, toasts) and pin them to the page instead of the viewport. Don't re-wrap admin routes in animated containers.
+- Every admin add/edit/delete goes through a ConfirmDialog — automation must click "Yes, …" in the popup after submitting a form.

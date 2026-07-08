@@ -89,7 +89,7 @@ How to behave:
 }
 
 export async function POST(req: Request) {
-  const apiKey = process.env.OPENROUTER_API_KEY || process.env.OPENAI_API_KEY;
+  const apiKey = process.env.OPENROUTER_API_KEY;
   if (!apiKey) {
     return NextResponse.json(
       { error: `The AI assistant isn't configured yet. Please reach us at ${CONTACT_EMAIL}.` },
@@ -126,7 +126,7 @@ export async function POST(req: Request) {
   let stream: Stream<ChatCompletionChunk>;
   try {
     stream = await client.chat.completions.create({
-      model: process.env.OPENROUTER_MODEL || process.env.OPENAI_MODEL || "openai/gpt-4o-mini",
+      model: process.env.OPENROUTER_MODEL || "openai/gpt-4o-mini",
       max_tokens: 1024,
       stream: true,
       messages: [{ role: "system" as const, content: system }, ...history],

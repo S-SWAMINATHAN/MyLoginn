@@ -7,6 +7,13 @@ import type { ReactNode } from "react";
 export function PageTransition({ children }: { children: ReactNode }) {
   const pathname = usePathname();
 
+  // The admin shell positions fixed overlays (drawer, modals, toasts); the
+  // animated wrapper's transform/filter would turn into their containing
+  // block and pin them to the page instead of the viewport — skip it there.
+  if (pathname === "/admin" || pathname.startsWith("/admin/")) {
+    return <>{children}</>;
+  }
+
   return (
     <AnimatePresence mode="wait">
       <motion.div

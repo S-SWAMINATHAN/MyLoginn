@@ -23,6 +23,25 @@ async function uniqueSlug(base: string, exists: (slug: string) => Promise<boolea
 
 const iso = (d: Date | null | undefined) => (d ? d.toISOString() : null);
 
+/** Tutor.boards is stored as a JSON string array — expose it as "A, B". */
+function boardsToText(raw: string) {
+  try {
+    const arr = JSON.parse(raw);
+    return Array.isArray(arr) ? arr.join(", ") : raw;
+  } catch {
+    return raw;
+  }
+}
+
+function textToBoards(text: string) {
+  return JSON.stringify(
+    text
+      .split(",")
+      .map((s) => s.trim())
+      .filter(Boolean)
+  );
+}
+
 /* ── Input schemas ──────────────────────────────────────────────────── */
 
 const userCreate = z.object({
@@ -233,6 +252,24 @@ export const adminEntities: Record<string, EntityDef> = {
     },
   },
 
+  categories: {
+    // Fully dynamic: a category exists exactly as long as a course uses it.
+    list: async () => {
+      const grouped = await prisma.course.groupBy({
+        by: ["category"],
+        _count: { _all: true },
+        orderBy: { _count: { category: "desc" } },
+      });
+      return grouped.map((g) => ({ id: g.category, name: g.category, courses: g._count._all }));
+    },
+    // Renaming a category moves every course that uses it.
+    update: async (id, body) => {
+      const { name } = z.object({ name: z.string().trim().min(2).max(40) }).parse(body);
+      await prisma.course.updateMany({ where: { category: id }, data: { category: name } });
+      return { id: name };
+    },
+  },
+
   mentors: {
     list: async () => {
       const tutors = await prisma.tutor.findMany({
@@ -246,18 +283,22 @@ export const adminEntities: Record<string, EntityDef> = {
         qualification: t.qualification,
         experienceYears: t.experienceYears,
         rating: t.rating,
-        boards: t.boards,
+        boards: boardsToText(t.boards),
         bookings: t._count.bookings,
         bio: t.bio,
       }));
     },
     create: async (body) => {
       const data = mentorCreate.parse(body);
-      return prisma.tutor.create({ data, select: { id: true } });
+      return prisma.tutor.create({ data: { ...data, boards: textToBoards(data.boards) }, select: { id: true } });
     },
     update: async (id, body) => {
       const data = mentorUpdate.parse(body);
-      return prisma.tutor.update({ where: { id }, data, select: { id: true } });
+      return prisma.tutor.update({
+        where: { id },
+        data: { ...data, ...(data.boards !== undefined && { boards: textToBoards(data.boards) }) },
+        select: { id: true },
+      });
     },
     remove: async (id) => {
       await prisma.$transaction([
