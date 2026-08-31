@@ -1,0 +1,295 @@
+# ============================================================
+# AI Jathagam Generator — .gitignore
+# Stack: FastAPI (Python) + Next.js (TypeScript/pnpm) + Swiss Ephemeris
+# See AGENTS.md §2 & §3.7, jathagam-architecture.md §2.1 for ephe/LICENSING context
+# ============================================================
+
+# ────────────────────────────────────────────────────────────
+# 0. Project docs — keep tracked
+# ────────────────────────────────────────────────────────────
+# NOTE: ephe/*.se1 + sefstars.txt ARE intentionally tracked (see §2).
+# Do NOT add ephe/ to gitignore — sub-arcsecond precision requires the
+# full JPL DE431/441-derived .se1 files; Moshier mode does not change
+# the AGPL vs commercial licensing and trades away accuracy for no gain.
+# If you must fetch them locally instead of cloning, uncomment the fetch
+# block in jathagam-architecture.md §2.1 then re-track ephe/.
+
+# ────────────────────────────────────────────────────────────
+# 1. Python — Backend (FastAPI / PyJHora / pyswisseph)
+# ────────────────────────────────────────────────────────────
+# Byte-compiled / optimized / DLLs
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+*.pyd
+
+# Distribution / packaging
+.Python
+build/
+develop-eggs/
+dist/
+downloads/
+eggs/
+.eggs/
+lib/
+lib64/
+parts/
+sdist/
+var/
+wheels/
+share/python-wheels/
+*.egg-info/
+.installed.cfg
+*.egg
+MANIFEST
+
+# Virtual environments
+.env
+.venv
+env/
+venv/
+ENV/
+env.bak/
+venv.bak/
+.python-version
+
+# PyInstaller
+*.manifest
+*.spec
+
+# Installer logs
+pip-log.txt
+pip-delete-this-directory.txt
+
+# Unit test / coverage
+.tox/
+.nox/
+.coverage
+.coverage.*
+.cache/
+nosetests.xml
+coverage.xml
+*.cover
+*.py,cover
+.hypothesis/
+.pytest_cache/
+pytestdebug.log
+
+# Type checkers
+.mypy_cache/
+.dmypy.json
+dmypy.json
+.pyre/
+.pytype/
+.ruff_cache/
+
+# Jupyter Notebook
+.ipynb_checkpoints
+
+# pyenv
+.python-version
+
+# ────────────────────────────────────────────────────────────
+# 2. Database & persistence artefacts
+# ────────────────────────────────────────────────────────────
+# Local dev SQLite (backend/jathagam.db via app/db/session.py)
+# Production uses Postgres via DATABASE_URL — never commit a DB file.
+*.db
+*.sqlite
+*.sqlite3
+*.db-journal
+*.db-wal
+*.db-shm
+backend/jathagam.db
+backend/*.db
+instance/
+
+# ────────────────────────────────────────────────────────────
+# 3. Environment variables & secrets — NEVER commit
+#    (see AGENTS.md §3.3 Security)
+# ────────────────────────────────────────────────────────────
+# Keep .env.example tracked as a template; ignore real env files.
+.env
+.env.*
+!.env.example
+*.env
+*.pem
+*.key
+*.cert
+
+# Backend secrets
+backend/.env
+backend/.env.*
+
+# Frontend secrets
+frontend/.env
+frontend/.env.*
+frontend/.env.local
+frontend/.env.development.local
+frontend/.env.test.local
+frontend/.env.production.local
+
+# Secret managers / cloud
+.service_account.json
+*credentials*.json
+.secrets/
+
+# Swiss Ephemeris commercial license key (if purchased, AGPL vs ~USD500/CHF1550)
+# Store via SE_EPHE_PATH + env/secret manager, never in repo
+*license*.key
+swe_license*
+
+# ────────────────────────────────────────────────────────────
+# 4. Node.js / Frontend — Next.js 14 + pnpm + TypeScript
+# ────────────────────────────────────────────────────────────
+# Dependencies — pnpm uses pnpm-lock.yaml (keep it tracked)
+node_modules/
+.pnp
+.pnp.js
+frontend/node_modules/
+.pnp/
+.yarn/*
+!.yarn/patches
+!.yarn/plugins
+!.yarn/releases
+!.yarn/sdks
+!.yarn/versions
+
+# Next.js build outputs
+.next/
+out/
+build/
+frontend/.next/
+frontend/out/
+frontend/build/
+frontend/dist/
+
+# Vercel / deployment
+.vercel
+.now
+frontend/.vercel
+
+# TypeScript
+*.tsbuildinfo
+next-env.d.ts
+frontend/next-env.d.ts
+
+# Turborepo
+.turbo/
+
+# Package manager logs
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+lerna-debug.log*
+
+# Keep pnpm-lock.yaml tracked — ignore only pnpm debug/store logs
+.pnpm-store/
+.pnpm-debug.log
+
+# ────────────────────────────────────────────────────────────
+# 5. Logs & OS artefacts
+# ────────────────────────────────────────────────────────────
+logs/
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# OS
+.DS_Store
+.DS_Store?
+._*
+.Spotlight-V100
+.Trashes
+ehthumbs.db
+Thumbs.db
+Desktop.ini
+
+# ────────────────────────────────────────────────────────────
+# 6. Editors & IDEs
+# ────────────────────────────────────────────────────────────
+# VS Code — keep .vscode/settings.json.example if you add one, ignore local state
+.vscode/
+!.vscode/extensions.json
+!.vscode/settings.json.example
+*.code-workspace
+.history/
+
+# JetBrains
+.idea/
+*.iml
+*.ipr
+*.iws
+
+# Vim / Emacs
+*.swp
+*.swo
+*~
+\#*\#
+/.emacs.desktop
+/.emacs.desktop.lock
+*.elc
+auto-save-list
+tramp
+.\#*
+
+# ────────────────────────────────────────────────────────────
+# 7. Testing & coverage (frontend)
+# ────────────────────────────────────────────────────────────
+coverage/
+.nyc_output/
+frontend/coverage/
+junit.xml
+test-results/
+playwright-report/
+test-results.xml
+
+# ────────────────────────────────────────────────────────────
+# 8. Assets, exports & user-generated artefacts
+# ────────────────────────────────────────────────────────────
+# PDF / share-card exports are generated at runtime (html2canvas+jspdf / Playwright)
+# and on the fly per chart — do not commit rendered outputs
+*.pdf
+!docs/*.pdf
+exports/
+generated/
+frontend/public/generated/
+
+# Uploads / media (if added)
+uploads/
+frontend/public/uploads/
+
+# ────────────────────────────────────────────────────────────
+# 9. Tooling / local agent state
+# ────────────────────────────────────────────────────────────
+# Claude Code local settings (keep skills tracked, ignore local state)
+.claude/settings.local.json
+.claude/settings.json
+
+# Opencode local config (if used)
+.opencode/
+
+# Cursor / Copilot
+.cursor/
+.muse/
+
+# ────────────────────────────────────────────────────────────
+# 10. Docker & infra (if added later per AGENTS.md §3)
+# ────────────────────────────────────────────────────────────
+.dockerignore
+docker-compose.override.yml
+
+# ────────────────────────────────────────────────────────────
+# 11. Misc — keep these tracked, listed here as reminders
+# ────────────────────────────────────────────────────────────
+# DO track:
+#   pnpm-lock.yaml            — reproducible installs
+#   ephe/sepl_18.se1 etc.     — precision ephemeris data (few MB, required for correct charts)
+#   .claude/skills/**/SKILL.md — domain skill (jathagam-vedic-astrology)
+#   .agents/skills/**/SKILL.md
+#   README.md, AGENTS.md, jathagam-architecture.md, Sharmela_Jathagam.md
+# DO NOT track:
+#   jathagam.db, .env, node_modules, .next, .pytest_cache, dist, logs

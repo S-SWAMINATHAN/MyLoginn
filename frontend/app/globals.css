@@ -1,0 +1,84 @@
+@import url('https://fonts.googleapis.com/css2?family=Caveat:wght@400..700&family=Cinzel:wght@400..900&family=Kalam:wght@300;400;700&family=Kavivanar&family=Noto+Sans+Tamil:wght@300;400;500;600;700;800&family=Outfit:wght@300;400;500;600;700;800&display=swap');
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  --font-tamil: 'Noto Sans Tamil', sans-serif;
+  --font-script: 'Kavivanar', cursive;
+  --font-cinzel: 'Cinzel', serif;
+  --font-caveat: 'Caveat', cursive;
+}
+
+body {
+  font-family: 'Outfit', 'Noto Sans Tamil', sans-serif;
+  background-color: #0d0a0b;
+  color: #f5eedb;
+  background-image: 
+    radial-gradient(circle at 15% 15%, rgba(107, 20, 38, 0.15) 0%, transparent 40%),
+    radial-gradient(circle at 85% 85%, rgba(212, 175, 55, 0.1) 0%, transparent 40%),
+    radial-gradient(circle at 50% 50%, rgba(26, 18, 12, 0.6) 0%, transparent 70%);
+  background-attachment: fixed;
+}
+
+/* Palm Leaf / Parchment manuscript style */
+.palm-leaf-texture {
+  background-color: #f6ebd6;
+  background-image: 
+    linear-gradient(rgba(138, 86, 44, 0.06) 1px, transparent 1px),
+    radial-gradient(ellipse at center, #fffcf5 0%, #ecdcc2 100%);
+  background-size: 100% 24px, 100% 100%;
+  color: #2b170c;
+  box-shadow: 0 10px 35px -5px rgba(0, 0, 0, 0.35), inset 0 0 40px rgba(117, 72, 34, 0.15);
+}
+
+.palm-leaf-dark {
+  background-color: #1a1412;
+  background-image: 
+    radial-gradient(ellipse at top, rgba(107, 20, 38, 0.25) 0%, transparent 70%),
+    radial-gradient(ellipse at bottom, rgba(212, 175, 55, 0.12) 0%, transparent 70%);
+  border: 1px solid rgba(212, 175, 55, 0.25);
+  box-shadow: 0 15px 40px -10px rgba(0, 0, 0, 0.6), inset 0 1px 0 rgba(255, 255, 255, 0.05);
+}
+
+.gold-gradient-text {
+  background: linear-gradient(135deg, #ffd700 0%, #d4af37 40%, #ffdf73 70%, #aa820a 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+
+.temple-border {
+  border: 2px solid #d4af37;
+  border-image: linear-gradient(to bottom right, #d4af37, #6b1426, #d4af37) 1;
+}
+
+/* Custom scrollbar */
+::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+::-webkit-scrollbar-track {
+  background: #140f10;
+}
+::-webkit-scrollbar-thumb {
+  background: #3e261d;
+  border-radius: 4px;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: #d4af37;
+}
+
+@media print {
+  body {
+    background: #ffffff !important;
+    color: #000000 !important;
+  }
+  .no-print {
+    display: none !important;
+  }
+  .palm-leaf-texture {
+    box-shadow: none !important;
+    background: #ffffff !important;
+  }
+}
