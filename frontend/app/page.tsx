@@ -13,6 +13,7 @@ import { AshtakavargaTable } from "@/components/AshtakavargaTable";
 import { BabyNameSuggestions } from "@/components/BabyNameSuggestions";
 import { NarrationPanel } from "@/components/NarrationPanel";
 import { ShareCard } from "@/components/ShareCard";
+import { PanchangamDetailsCard } from "@/components/PanchangamDetailsCard";
 import { GenerateChartRequest, ChartResponse } from "@/lib/types";
 import { generateChartApi } from "@/lib/api";
 import { Sparkles, Printer, Share2, Heart, Download, Compass, ShieldCheck } from "lucide-react";
@@ -121,73 +122,13 @@ export default function HomePage() {
                   </a>
                 </div>
               </div>
-
-              {/* 2. Basic Birth Details Grid (8 Key Panchangam Elements) */}
-              <div className="grid grid-cols-2 sm:grid-cols-4 lg:grid-cols-8 gap-3 mt-6">
-                {[
-                  {
-                    labelTa: "லக்னம்",
-                    labelEn: "Lagna",
-                    val: lang === "ta" ? chartResult.basic_details.lagnam_ta : chartResult.basic_details.lagnam,
-                    sub: `${Math.floor(chartResult.basic_details.lagnam_degree)}°`
-                  },
-                  {
-                    labelTa: "ராசி",
-                    labelEn: "Rasi (Moon)",
-                    val: lang === "ta" ? chartResult.basic_details.rasi_ta : chartResult.basic_details.rasi,
-                    sub: ""
-                  },
-                  {
-                    labelTa: "நட்சத்திரம்",
-                    labelEn: "Nakshatra",
-                    val: lang === "ta" ? chartResult.basic_details.nakshatram_ta : chartResult.basic_details.nakshatram,
-                    sub: `${lang === "ta" ? "பாதம்" : "Pada"} ${chartResult.basic_details.pada}`
-                  },
-                  {
-                    labelTa: "திதி",
-                    labelEn: "Tithi",
-                    val: lang === "ta" ? chartResult.basic_details.thithi_ta : chartResult.basic_details.thithi,
-                    sub: chartResult.basic_details.paksha.split(" ")[0]
-                  },
-                  {
-                    labelTa: "வாரம்",
-                    labelEn: "Vaaram (Day)",
-                    val: lang === "ta" ? chartResult.basic_details.vaaram_ta : chartResult.basic_details.vaaram,
-                    sub: ""
-                  },
-                  {
-                    labelTa: "நித்திய யோகம்",
-                    labelEn: "Yoga",
-                    val: lang === "ta" ? chartResult.basic_details.yogam_ta : chartResult.basic_details.yogam,
-                    sub: ""
-                  },
-                  {
-                    labelTa: "கரணம்",
-                    labelEn: "Karana",
-                    val: lang === "ta" ? chartResult.basic_details.karanam_ta : chartResult.basic_details.karanam,
-                    sub: ""
-                  },
-                  {
-                    labelTa: "அயனாம்சம்",
-                    labelEn: "Ayanamsa",
-                    val: `${chartResult.basic_details.ayanamsa_value}°`,
-                    sub: "Lahiri"
-                  }
-                ].map((item, idx) => (
-                  <div key={idx} className="bg-[#140b0e] border border-[#d4af37]/20 rounded-2xl p-3 text-center flex flex-col justify-between">
-                    <span className="text-[10px] text-[#d4af37] font-semibold font-tamil uppercase">
-                      {lang === "ta" ? item.labelTa : item.labelEn}
-                    </span>
-                    <span className="text-sm font-bold text-white font-tamil my-1 truncate">
-                      {item.val}
-                    </span>
-                    <span className="text-[10px] text-[#e0b87f]/60 font-mono">
-                      {item.sub}
-                    </span>
-                  </div>
-                ))}
-              </div>
             </div>
+
+            {/* 2. Section 2: Complete Panchangam & Subha Yoga Elements */}
+            <PanchangamDetailsCard
+              details={chartResult.basic_details}
+              lang={lang}
+            />
 
             {/* 3. Core Charts Side-by-Side: Rasi (D1) and Navamsa (D9) */}
             <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
@@ -207,7 +148,12 @@ export default function HomePage() {
             <PlanetaryTable planets={chartResult.planets} lang={lang} />
 
             {/* 5. Vimshottari Dasha-Bhukti Timeline */}
-            <DashaTimeline dashas={chartResult.vimshottari_dasha} lang={lang} />
+            <DashaTimeline
+              dashas={chartResult.vimshottari_dasha}
+              lang={lang}
+              dashaBalanceTa={chartResult.basic_details.dasha_balance_ta}
+              dashaBalanceEn={chartResult.basic_details.dasha_balance_en}
+            />
 
             {/* 6. 12 Bhava Predictions (Shown in Full mode or on drilldown) */}
             {chartResult.output_mode === "full" && (

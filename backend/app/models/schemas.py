@@ -3,28 +3,93 @@ from pydantic import BaseModel, Field
 from datetime import datetime
 
 class BasicBirthDetails(BaseModel):
+    # Lagnam Particulars
     lagnam: str
     lagnam_ta: str
     lagnam_degree: float
+    lagnam_dms: Optional[str] = None
+    lagnam_total_degree: Optional[float] = None
+    lagnam_lord: Optional[str] = None
+    lagnam_lord_ta: Optional[str] = None
+    lagnam_nakshatram: Optional[str] = None
+    lagnam_nakshatram_ta: Optional[str] = None
+    lagnam_pada: Optional[int] = None
+    lagnam_nakshatra_lord: Optional[str] = None
+    lagnam_nakshatra_lord_ta: Optional[str] = None
+    lagnam_navamsa: Optional[str] = None
+    lagnam_navamsa_ta: Optional[str] = None
+    lagnam_navamsa_lord: Optional[str] = None
+    lagnam_navamsa_lord_ta: Optional[str] = None
+
+    # Rasi & Star Particulars
     rasi: str
     rasi_ta: str
+    rasi_lord: Optional[str] = None
+    rasi_lord_ta: Optional[str] = None
     nakshatram: str
     nakshatram_ta: str
     pada: int
+    nakshatra_lord: Optional[str] = None
+    nakshatra_lord_ta: Optional[str] = None
+    nakshatra_deity: Optional[str] = None
+    nakshatra_elapsed_pct: Optional[float] = None
+
+    # Panchangam 5 Limbs
     thithi: str
     thithi_ta: str
     paksha: str
+    paksha_en: Optional[str] = None
+    paksha_ta: Optional[str] = None
+    thithi_elapsed_pct: Optional[float] = None
     vaaram: str
     vaaram_ta: str
+    vaaram_lord: Optional[str] = None
+    vaaram_lord_ta: Optional[str] = None
     yogam: str
     yogam_ta: str
     karanam: str
     karanam_ta: str
+
+    # Tamil Panchangam Subha Yoga
+    subha_yogam: Optional[str] = None
+    subha_yogam_ta: Optional[str] = None
+    subha_yogam_desc: Optional[str] = None
+    subha_yogam_desc_ta: Optional[str] = None
+    subha_yogam_status: Optional[str] = None
+
+    # Nakshatra Attributes
+    ganam: Optional[str] = None
+    ganam_ta: Optional[str] = None
+    yoni: Optional[str] = None
+    yoni_ta: Optional[str] = None
+    rajju: Optional[str] = None
+    rajju_ta: Optional[str] = None
+    bootham: Optional[str] = None
+    bootham_ta: Optional[str] = None
+    nadi: Optional[str] = None
+    nadi_ta: Optional[str] = None
+    vriksham_ta: Optional[str] = None
+    pakshi_ta: Optional[str] = None
+    mirugam_ta: Optional[str] = None
+
+    # Ephemeris & Timings
     ayanamsa_name: str = "Lahiri (Chitrapaksha)"
     ayanamsa_value: float
+    ayanamsa_dms: Optional[str] = None
     panchangam_system: str = "thirukkanitham"
     sun_rise: Optional[str] = None
     sun_set: Optional[str] = None
+    dinamani: Optional[str] = None
+    dinamani_en: Optional[str] = None
+    ratrimana: Optional[str] = None
+    ratrimana_en: Optional[str] = None
+    udhayadhi_nazhigai: Optional[str] = None
+    udhayadhi_nazhigai_en: Optional[str] = None
+    rahu_kalam: Optional[str] = None
+    yamagandam: Optional[str] = None
+    kuligai: Optional[str] = None
+    dasha_balance_ta: Optional[str] = None
+    dasha_balance_en: Optional[str] = None
 
 class PlanetPosition(BaseModel):
     name: str
@@ -35,15 +100,27 @@ class PlanetPosition(BaseModel):
     rasi: str
     rasi_ta: str
     degree: float  # 0 to 30 within the sign
+    degree_dms: Optional[str] = None
     total_degree: float  # 0 to 360 absolute longitude
+    total_degree_dms: Optional[str] = None
     house: int  # 1 to 12 from Lagna
+    lord: Optional[str] = None
+    lord_ta: Optional[str] = None
     nakshatra: str
     nakshatra_ta: str
     nakshatra_number: int
+    nakshatra_lord: Optional[str] = None
+    nakshatra_lord_ta: Optional[str] = None
     pada: int
+    navamsa_sign: Optional[int] = None
+    navamsa_rasi: Optional[str] = None
+    navamsa_rasi_ta: Optional[str] = None
+    navamsa_lord: Optional[str] = None
+    navamsa_lord_ta: Optional[str] = None
     is_retrograde: bool = False
     speed: float = 0.0
-    status: str = "Direct"  # Direct, Retrograde, Exalted, Debilitated, Own House
+    status: str = "Direct"
+    status_ta: Optional[str] = "சமம்"
 
 class BhuktiPeriod(BaseModel):
     planet: str
@@ -51,6 +128,7 @@ class BhuktiPeriod(BaseModel):
     start_date: str
     end_date: str
     duration_years: float
+    is_current: Optional[bool] = False
 
 class VimshottariDashaPeriod(BaseModel):
     planet: str
