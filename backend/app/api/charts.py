@@ -7,7 +7,7 @@ from backend.app.models.schemas import GenerateChartRequest, ChartResponse, Baby
 from backend.app.services.geocode import resolve_place
 from backend.app.services.ephemeris import get_julian_day, compute_planetary_positions
 from backend.app.services.chart_builder import build_rasi_and_navamsa_kattams, calculate_bhava_predictions
-from backend.app.services.dasha_builder import calculate_vimshottari_dasha
+from backend.app.services.dasha_builder import calculate_vimshottari_dasha, calculate_dasha_balance
 from backend.app.services.yoga_dosha import detect_yogas, detect_doshas
 from backend.app.services.ashtakavarga import calculate_ashtakavarga
 from backend.app.services.baby_names import get_baby_name_suggestions
@@ -23,7 +23,13 @@ def run_chart_calculation(req: GenerateChartRequest, profile_id: int = None) -> 
     jd = get_julian_day(req.date_of_birth, req.time_of_birth, tz)
 
     # 3. Compute Planetary Positions & Panchangam Elements (using Lahiri)
-    eph = compute_planetary_positions(jd, lat, lon, req.panchangam_system)
+    eph = compute_planetary_positions(
+        jd, lat, lon,
+        panchangam_system=req.panchangam_system,
+        date_str=req.date_of_birth,
+        time_str=req.time_of_birth,
+        timezone_str=tz
+    )
     basic_details = eph["basic_details"]
     planets = eph["planets"]
     positions_by_name = eph["positions_by_name"]
@@ -35,8 +41,11 @@ def run_chart_calculation(req: GenerateChartRequest, profile_id: int = None) -> 
     # 5. Calculate 12 Bhava Analysis
     bhavas = calculate_bhava_predictions(lagna_info["rasi_number"], planets)
 
-    # 6. Calculate Vimshottari Dasha-Bhukti Timeline
+    # 6. Calculate Vimshottari Dasha-Bhukti Timeline & Balance at Birth
     moon_deg = positions_by_name["Moon"]["total_degree"]
+    dasha_bal = calculate_dasha_balance(moon_deg)
+    basic_details["dasha_balance_ta"] = dasha_bal["formatted_ta"]
+    basic_details["dasha_balance_en"] = dasha_bal["formatted_en"]
     dashas = calculate_vimshottari_dasha(moon_deg, req.date_of_birth, req.time_of_birth)
 
     # 7. Identify Yogas & Doshas

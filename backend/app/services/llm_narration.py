@@ -39,10 +39,14 @@ def generate_chart_narration(chart_data: Dict[str, Any], language: str = "ta") -
     rasi_en = basic.get("rasi", "")
     nak_en = basic.get("nakshatram", "")
 
+    subha_yoga_ta = basic.get("subha_yogam_ta", "சுப யோகம்")
+    subha_yoga_en = basic.get("subha_yogam", "Subha Yoga")
+    lagna_lord_ta = basic.get("lagnam_lord_ta", "")
+
     if language == "ta":
         summary = (
-            f"{name} அவர்களின் ஜாதகம்: {lagna_ta} லக்னம், {rasi_ta} ராசி, {nak_ta} நட்சத்திரம் {pada}-ஆம் பாதத்தில் பிறந்துள்ளார். "
-            f"பஞ்சாங்க சுப யோகமாக {basic.get('thithi_ta', '')} திதி மற்றும் {basic.get('yogam_ta', '')} யோகத்தில் உதித்துள்ளார். "
+            f"{name} அவர்களின் ஜாதகம்: {lagna_ta} லக்னம் (அதிபதி: {lagna_lord_ta}), {rasi_ta} ராசி, {nak_ta} நட்சத்திரம் {pada}-ஆம் பாதத்தில் பிறந்துள்ளார். "
+            f"பஞ்சாங்க உறுப்புகளாக {basic.get('thithi_ta', '')} திதி, {basic.get('vaaram_ta', '')} மற்றும் {subha_yoga_ta} அமைப்பில் உதித்துள்ளார். "
             f"ஜாதகத்தில் அமைந்த கிரக நிலைகள் சிறப்பான ஆற்றலையும் தலைமைப் பண்பையும் அளிக்கின்றன."
         )
 

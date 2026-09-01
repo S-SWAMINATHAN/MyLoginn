@@ -118,6 +118,18 @@ Keep environment parity high (same Docker image promoted through stages) so "wor
 
 This project maintains a changelog following the [Keep a Changelog](https://keepachangelog.com/) convention and [Semantic Versioning](https://semver.org/). Every merged change that affects behavior, calculation logic, or the API contract gets an entry — not just releases.
 
+### [1.1.0] — 2026-09-01
+#### Added
+- Enhanced Lagnam (Ascendant) calculations: DMS string formatting, Lagnathipathi (லக்னாதிபதி), Lagna Star (லக்ன நட்சத்திரம்), Star Lord (நட்சத்திராதிபதி), Pada, and Navamsa Lagna
+- Full canonical Tamil Panchangam Subha Yoga (சித்த யோகம், அமிர்த யோகம், மரண யோகம்) lookup matrix derived from Vaaram (Day) + Janma Nakshatra
+- Complete 27 Nakshatra astrological attributes: Ganam, Yoni (gender + animal), Rajju (5 types), Bootham (Pancha Bhoota), Nadi (3 types), Vriksham (Tree), Pakshi (Bird), and Mirugam (Animal)
+- High-precision Swiss Ephemeris JPL DE431/441 sunrise (`swe.CALC_RISE`), sunset (`swe.CALC_SET`), Dinamani (day duration), Ratrimana (night duration), Udhayadhi Nazhigai & Vinazhigai at birth, Rahu Kalam, Yamagandam, and Kuligai Kalam
+- Multi-Year automated test suite (`backend/tests/test_accuracy_multiyear.py`) validating charts across 1950, 1985, 1996, 2004, 2015, 2024, and 2026 epochs
+- Dedicated `PanchangamDetailsCard` component for rich Section 2 presentation on frontend
+
+#### Fixed
+- Fixed critical Tithi string slicing bug in `backend/app/services/ephemeris.py` that produced corrupted outputs like `"aksh பஞ்சமி"`, restoring clean `"வளர்பிறை பஞ்சமி"` / `"தேய்பிறை பஞ்சமி"`
+
 ### [1.0.0] — 2026-08-31
 #### Added
 - Full Swiss Ephemeris data files (`sepl_18.se1`, `semo_18.se1`, `seas_18.se1`, `sefstars.txt`) in `ephe/`

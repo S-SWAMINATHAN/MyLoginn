@@ -34,34 +34,69 @@ SIGN_LABELS = {
 }
 
 NAKSHATRA_LABELS = [
-    {"index": 1, "sa": "Ashwini", "ta": "அசுவினி", "lord": "Ketu", "deity": "Ashwini Kumaras", "ganam": "Deva", "yoni": "Horse"},
-    {"index": 2, "sa": "Bharani", "ta": "பரணி", "lord": "Venus", "deity": "Yama", "ganam": "Manushya", "yoni": "Elephant"},
-    {"index": 3, "sa": "Krittika", "ta": "கார்த்திகை", "lord": "Sun", "deity": "Agni", "ganam": "Rakshasa", "yoni": "Sheep"},
-    {"index": 4, "sa": "Rohini", "ta": "ரோகிணி", "lord": "Moon", "deity": "Brahma", "ganam": "Manushya", "yoni": "Serpent"},
-    {"index": 5, "sa": "Mrigashirsha", "ta": "மிருகசீரிஷம்", "lord": "Mars", "deity": "Soma", "ganam": "Deva", "yoni": "Serpent"},
-    {"index": 6, "sa": "Ardra", "ta": "திருவாதிரை", "lord": "Rahu", "deity": "Rudra", "ganam": "Manushya", "yoni": "Dog"},
-    {"index": 7, "sa": "Punarvasu", "ta": "புனர்பூசம்", "lord": "Jupiter", "deity": "Aditi", "ganam": "Deva", "yoni": "Cat"},
-    {"index": 8, "sa": "Pushya", "ta": "பூசம்", "lord": "Saturn", "deity": "Brihaspati", "ganam": "Deva", "yoni": "Goat"},
-    {"index": 9, "sa": "Ashlesha", "ta": "ஆயில்யம்", "lord": "Mercury", "deity": "Sarpa", "ganam": "Rakshasa", "yoni": "Cat"},
-    {"index": 10, "sa": "Magha", "ta": "மகம்", "lord": "Ketu", "deity": "Pitris", "ganam": "Rakshasa", "yoni": "Rat"},
-    {"index": 11, "sa": "Purva Phalguni", "ta": "பூரம்", "lord": "Venus", "deity": "Bhaga", "ganam": "Manushya", "yoni": "Rat"},
-    {"index": 12, "sa": "Uttara Phalguni", "ta": "உத்திரம்", "lord": "Sun", "deity": "Aryaman", "ganam": "Manushya", "yoni": "Cow"},
-    {"index": 13, "sa": "Hasta", "ta": "அஸ்தம்", "lord": "Moon", "deity": "Savitar", "ganam": "Deva", "yoni": "Buffalo"},
-    {"index": 14, "sa": "Chitra", "ta": "சித்திரை", "lord": "Mars", "deity": "Tvashtar", "ganam": "Rakshasa", "yoni": "Tiger"},
-    {"index": 15, "sa": "Swati", "ta": "சுவாதி", "lord": "Rahu", "deity": "Vayu", "ganam": "Deva", "yoni": "Buffalo"},
-    {"index": 16, "sa": "Vishakha", "ta": "விசாகம்", "lord": "Jupiter", "deity": "Indragni", "ganam": "Rakshasa", "yoni": "Tiger"},
-    {"index": 17, "sa": "Anuradha", "ta": "அனுஷம்", "lord": "Saturn", "deity": "Mitra", "ganam": "Deva", "yoni": "Deer"},
-    {"index": 18, "sa": "Jyeshtha", "ta": "கேட்டை", "lord": "Mercury", "deity": "Indra", "ganam": "Rakshasa", "yoni": "Deer"},
-    {"index": 19, "sa": "Moola", "ta": "மூலம்", "lord": "Ketu", "deity": "Nirriti", "ganam": "Rakshasa", "yoni": "Dog"},
-    {"index": 20, "sa": "Purva Ashadha", "ta": "பூராடம்", "lord": "Venus", "deity": "Apas", "ganam": "Manushya", "yoni": "Monkey"},
-    {"index": 21, "sa": "Uttara Ashadha", "ta": "உத்திராடம்", "lord": "Sun", "deity": "Vishwadevas", "ganam": "Manushya", "yoni": "Mongoose"},
-    {"index": 22, "sa": "Shravana", "ta": "திருவோணம்", "lord": "Moon", "deity": "Vishnu", "ganam": "Deva", "yoni": "Monkey"},
-    {"index": 23, "sa": "Dhanishta", "ta": "அவிட்டம்", "lord": "Mars", "deity": "Vasus", "ganam": "Rakshasa", "yoni": "Lion"},
-    {"index": 24, "sa": "Shatabhisha", "ta": "சதயம்", "lord": "Rahu", "deity": "Varuna", "ganam": "Rakshasa", "yoni": "Horse"},
-    {"index": 25, "sa": "Purva Bhadrapada", "ta": "பூரட்டாதி", "lord": "Jupiter", "deity": "Aja Ekapada", "ganam": "Manushya", "yoni": "Lion"},
-    {"index": 26, "sa": "Uttara Bhadrapada", "ta": "உத்திரட்டாதி", "lord": "Saturn", "deity": "Ahirbudhnya", "ganam": "Manushya", "yoni": "Cow"},
-    {"index": 27, "sa": "Revati", "ta": "ரேவதி", "lord": "Mercury", "deity": "Pushan", "ganam": "Deva", "yoni": "Elephant"},
+    {"index": 1, "sa": "Ashwini", "ta": "அசுவினி", "lord": "Ketu", "lord_ta": "கேது", "deity": "Ashwini Kumaras", "ganam": "Deva", "ganam_ta": "தேவ கணம்", "yoni": "Horse", "yoni_ta": "ஆண் குதிரை", "rajju": "Pada", "rajju_ta": "பாத ரஜ்ஜு", "bootham": "Earth", "bootham_ta": "நிலம்", "nadi": "Vata (Adhi)", "nadi_ta": "ஆதி நாடி (வாதம்)", "vriksham_ta": "எட்டி மரம்", "pakshi_ta": "புள்ளு (இராசாளி)", "mirugam_ta": "குதிரை"},
+    {"index": 2, "sa": "Bharani", "ta": "பரணி", "lord": "Venus", "lord_ta": "சுக்கிரன்", "deity": "Yama", "ganam": "Manushya", "ganam_ta": "மனித கணம்", "yoni": "Elephant", "yoni_ta": "ஆண் யானை", "rajju": "Thigh (Uru)", "rajju_ta": "தொடை (ஊரு) ரஜ்ஜு", "bootham": "Earth", "bootham_ta": "நிலம்", "nadi": "Pitta (Madhya)", "nadi_ta": "மத்ய நாடி (பித்தம்)", "vriksham_ta": "நெல்லி மரம்", "pakshi_ta": "காகம்", "mirugam_ta": "யானை"},
+    {"index": 3, "sa": "Krittika", "ta": "கார்த்திகை", "lord": "Sun", "lord_ta": "சூரியன்", "deity": "Agni", "ganam": "Rakshasa", "ganam_ta": "ராக்ஷஸ கணம்", "yoni": "Sheep", "yoni_ta": "பெண் ஆடு", "rajju": "Stomach (Udara)", "rajju_ta": "உதர ரஜ்ஜு", "bootham": "Earth", "bootham_ta": "நிலம்", "nadi": "Kapha (Antya)", "nadi_ta": "அந்த்ய நாடி (கபம்)", "vriksham_ta": "அத்தி மரம்", "pakshi_ta": "மயில்", "mirugam_ta": "ஆடு"},
+    {"index": 4, "sa": "Rohini", "ta": "ரோகிணி", "lord": "Moon", "lord_ta": "சந்திரன்", "deity": "Brahma", "ganam": "Manushya", "ganam_ta": "மனித கணம்", "yoni": "Serpent", "yoni_ta": "ஆண் பாம்பு", "rajju": "Neck (Kanda)", "rajju_ta": "கண்ட ரஜ்ஜு", "bootham": "Earth", "bootham_ta": "நிலம்", "nadi": "Kapha (Antya)", "nadi_ta": "அந்த்ய நாடி (கபம்)", "vriksham_ta": "நாவல் மரம்", "pakshi_ta": "ஆந்தை", "mirugam_ta": "பாம்பு"},
+    {"index": 5, "sa": "Mrigashirsha", "ta": "மிருகசீரிஷம்", "lord": "Mars", "lord_ta": "செவ்வாய்", "deity": "Soma", "ganam": "Deva", "ganam_ta": "தேவ கணம்", "yoni": "Serpent", "yoni_ta": "பெண் பாம்பு", "rajju": "Head (Sirasu)", "rajju_ta": "சிரசு ரஜ்ஜு", "bootham": "Earth", "bootham_ta": "நிலம்", "nadi": "Pitta (Madhya)", "nadi_ta": "மத்ய நாடி (பித்தம்)", "vriksham_ta": "கருங்காலி மரம்", "pakshi_ta": "கோழி", "mirugam_ta": "மான்"},
+    {"index": 6, "sa": "Ardra", "ta": "திருவாதிரை", "lord": "Rahu", "lord_ta": "ராகு", "deity": "Rudra", "ganam": "Manushya", "ganam_ta": "மனித கணம்", "yoni": "Dog", "yoni_ta": "பெண் நாய்", "rajju": "Neck (Kanda)", "rajju_ta": "கண்ட ரஜ்ஜு", "bootham": "Water", "bootham_ta": "நீர்", "nadi": "Vata (Adhi)", "nadi_ta": "ஆதி நாடி (வாதம்)", "vriksham_ta": "செங்கருங்காலி மரம்", "pakshi_ta": "அன்றில்", "mirugam_ta": "நாய்"},
+    {"index": 7, "sa": "Punarvasu", "ta": "புனர்பூசம்", "lord": "Jupiter", "lord_ta": "குரு", "deity": "Aditi", "ganam": "Deva", "ganam_ta": "தேவ கணம்", "yoni": "Cat", "yoni_ta": "பெண் பூனை", "rajju": "Stomach (Udara)", "rajju_ta": "உதர ரஜ்ஜு", "bootham": "Water", "bootham_ta": "நீர்", "nadi": "Vata (Adhi)", "nadi_ta": "ஆதி நாடி (வாதம்)", "vriksham_ta": "மூங்கில் மரம்", "pakshi_ta": "அன்னப் பறவை", "mirugam_ta": "பூனை"},
+    {"index": 8, "sa": "Pushya", "ta": "பூசம்", "lord": "Saturn", "lord_ta": "சனி", "deity": "Brihaspati", "ganam": "Deva", "ganam_ta": "தேவ கணம்", "yoni": "Goat", "yoni_ta": "ஆண் ஆடு", "rajju": "Thigh (Uru)", "rajju_ta": "தொடை (ஊரு) ரஜ்ஜு", "bootham": "Water", "bootham_ta": "நீர்", "nadi": "Pitta (Madhya)", "nadi_ta": "மத்ய நாடி (பித்தம்)", "vriksham_ta": "அரசு மரம்", "pakshi_ta": "குயில்", "mirugam_ta": "ஆடு"},
+    {"index": 9, "sa": "Ashlesha", "ta": "ஆயில்யம்", "lord": "Mercury", "lord_ta": "புதன்", "deity": "Sarpa", "ganam": "Rakshasa", "ganam_ta": "ராக்ஷஸ கணம்", "yoni": "Cat", "yoni_ta": "ஆண் பூனை", "rajju": "Pada", "rajju_ta": "பாத ரஜ்ஜு", "bootham": "Water", "bootham_ta": "நீர்", "nadi": "Kapha (Antya)", "nadi_ta": "அந்த்ய நாடி (கபம்)", "vriksham_ta": "புன்னை மரம்", "pakshi_ta": "செம்போத்து", "mirugam_ta": "பூனை"},
+    {"index": 10, "sa": "Magha", "ta": "மகம்", "lord": "Ketu", "lord_ta": "கேது", "deity": "Pitris", "ganam": "Rakshasa", "ganam_ta": "ராக்ஷஸ கணம்", "yoni": "Rat", "yoni_ta": "ஆண் எலி", "rajju": "Pada", "rajju_ta": "பாத ரஜ்ஜு", "bootham": "Water", "bootham_ta": "நீர்", "nadi": "Kapha (Antya)", "nadi_ta": "அந்த்ய நாடி (கபம்)", "vriksham_ta": "ஆலமரம்", "pakshi_ta": "ஆண் மயில்", "mirugam_ta": "எலி"},
+    {"index": 11, "sa": "Purva Phalguni", "ta": "பூரம்", "lord": "Venus", "lord_ta": "சுக்கிரன்", "deity": "Bhaga", "ganam": "Manushya", "ganam_ta": "மனித கணம்", "yoni": "Rat", "yoni_ta": "பெண் எலி", "rajju": "Thigh (Uru)", "rajju_ta": "தொடை (ஊரு) ரஜ்ஜு", "bootham": "Water", "bootham_ta": "நீர்", "nadi": "Pitta (Madhya)", "nadi_ta": "மத்ய நாடி (பித்தம்)", "vriksham_ta": "பலா மரம்", "pakshi_ta": "பெண் மயில்", "mirugam_ta": "எலி"},
+    {"index": 12, "sa": "Uttara Phalguni", "ta": "உத்திரம்", "lord": "Sun", "lord_ta": "சூரியன்", "deity": "Aryaman", "ganam": "Manushya", "ganam_ta": "மனித கணம்", "yoni": "Cow", "yoni_ta": "ஆண் மாடு", "rajju": "Stomach (Udara)", "rajju_ta": "உதர ரஜ்ஜு", "bootham": "Fire", "bootham_ta": "நெருப்பு", "nadi": "Vata (Adhi)", "nadi_ta": "ஆதி நாடி (வாதம்)", "vriksham_ta": "அலரி / இலந்தை", "pakshi_ta": "கழுகு / கூகை", "mirugam_ta": "பசு / மாடு"},
+    {"index": 13, "sa": "Hasta", "ta": "அஸ்தம்", "lord": "Moon", "lord_ta": "சந்திரன்", "deity": "Savitar", "ganam": "Deva", "ganam_ta": "தேவ கணம்", "yoni": "Buffalo", "yoni_ta": "பெண் எருமை", "rajju": "Neck (Kanda)", "rajju_ta": "கண்ட ரஜ்ஜு", "bootham": "Fire", "bootham_ta": "நெருப்பு", "nadi": "Vata (Adhi)", "nadi_ta": "ஆதி நாடி (வாதம்)", "vriksham_ta": "அத்தி மரம்", "pakshi_ta": "பருந்து", "mirugam_ta": "எருமை"},
+    {"index": 14, "sa": "Chitra", "ta": "சித்திரை", "lord": "Mars", "lord_ta": "செவ்வாய்", "deity": "Tvashtar", "ganam": "Rakshasa", "ganam_ta": "ராக்ஷஸ கணம்", "yoni": "Tiger", "yoni_ta": "பெண் புலி", "rajju": "Head (Sirasu)", "rajju_ta": "சிரசு ரஜ்ஜு", "bootham": "Fire", "bootham_ta": "நெருப்பு", "nadi": "Pitta (Madhya)", "nadi_ta": "மத்ய நாடி (பித்தம்)", "vriksham_ta": "வில்வ மரம்", "pakshi_ta": "மரங்கொத்தி", "mirugam_ta": "புலி"},
+    {"index": 15, "sa": "Swati", "ta": "சுவாதி", "lord": "Rahu", "lord_ta": "ராகு", "deity": "Vayu", "ganam": "Deva", "ganam_ta": "தேவ கணம்", "yoni": "Buffalo", "yoni_ta": "ஆண் எருமை", "rajju": "Neck (Kanda)", "rajju_ta": "கண்ட ரஜ்ஜு", "bootham": "Fire", "bootham_ta": "நெருப்பு", "nadi": "Kapha (Antya)", "nadi_ta": "அந்த்ய நாடி (கபம்)", "vriksham_ta": "மருத மரம்", "pakshi_ta": "வானம்பாடி", "mirugam_ta": "எருமை"},
+    {"index": 16, "sa": "Vishakha", "ta": "விசாகம்", "lord": "Jupiter", "lord_ta": "குரு", "deity": "Indragni", "ganam": "Rakshasa", "ganam_ta": "ராக்ஷஸ கணம்", "yoni": "Tiger", "yoni_ta": "ஆண் புலி", "rajju": "Stomach (Udara)", "rajju_ta": "உதர ரஜ்ஜு", "bootham": "Fire", "bootham_ta": "நெருப்பு", "nadi": "Kapha (Antya)", "nadi_ta": "அந்த்ய நாடி (கபம்)", "vriksham_ta": "விளா மரம்", "pakshi_ta": "செங்காகம்", "mirugam_ta": "புலி"},
+    {"index": 17, "sa": "Anuradha", "ta": "அனுஷம்", "lord": "Saturn", "lord_ta": "சனி", "deity": "Mitra", "ganam": "Deva", "ganam_ta": "தேவ கணம்", "yoni": "Deer", "yoni_ta": "பெண் மான்", "rajju": "Thigh (Uru)", "rajju_ta": "தொடை (ஊரு) ரஜ்ஜு", "bootham": "Fire", "bootham_ta": "நெருப்பு", "nadi": "Pitta (Madhya)", "nadi_ta": "மத்ய நாடி (பித்தம்)", "vriksham_ta": "மகிழ மரம்", "pakshi_ta": "புள்ளு", "mirugam_ta": "மான்"},
+    {"index": 18, "sa": "Jyeshtha", "ta": "கேட்டை", "lord": "Mercury", "lord_ta": "புதன்", "deity": "Indra", "ganam": "Rakshasa", "ganam_ta": "ராக்ஷஸ கணம்", "yoni": "Deer", "yoni_ta": "ஆண் மான்", "rajju": "Pada", "rajju_ta": "பாத ரஜ்ஜு", "bootham": "Air", "bootham_ta": "காற்று", "nadi": "Vata (Adhi)", "nadi_ta": "ஆதி நாடி (வாதம்)", "vriksham_ta": "பிராய் மரம்", "pakshi_ta": "சக்ரவாகம்", "mirugam_ta": "மான்"},
+    {"index": 19, "sa": "Moola", "ta": "மூலம்", "lord": "Ketu", "lord_ta": "கேது", "deity": "Nirriti", "ganam": "Rakshasa", "ganam_ta": "ராக்ஷஸ கணம்", "yoni": "Dog", "yoni_ta": "பெண் நாய்", "rajju": "Pada", "rajju_ta": "பாத ரஜ்ஜு", "bootham": "Air", "bootham_ta": "காற்று", "nadi": "Vata (Adhi)", "nadi_ta": "ஆதி நாடி (வாதம்)", "vriksham_ta": "மரா மரம்", "pakshi_ta": "செம்பருந்து", "mirugam_ta": "நாய்"},
+    {"index": 20, "sa": "Purva Ashadha", "ta": "பூராடம்", "lord": "Venus", "lord_ta": "சுக்கிரன்", "deity": "Apas", "ganam": "Manushya", "ganam_ta": "மனித கணம்", "yoni": "Monkey", "yoni_ta": "ஆண் குரங்கு", "rajju": "Thigh (Uru)", "rajju_ta": "தொடை (ஊரு) ரஜ்ஜு", "bootham": "Air", "bootham_ta": "காற்று", "nadi": "Pitta (Madhya)", "nadi_ta": "மத்ய நாடி (பித்தம்)", "vriksham_ta": "வஞ்சி மரம்", "pakshi_ta": "காட்டுக்கோழி", "mirugam_ta": "குரங்கு"},
+    {"index": 21, "sa": "Uttara Ashadha", "ta": "உத்திராடம்", "lord": "Sun", "lord_ta": "சூரியன்", "deity": "Vishwadevas", "ganam": "Manushya", "ganam_ta": "மனித கணம்", "yoni": "Mongoose", "yoni_ta": "ஆண் கீரி", "rajju": "Stomach (Udara)", "rajju_ta": "உதர ரஜ்ஜு", "bootham": "Air", "bootham_ta": "காற்று", "nadi": "Kapha (Antya)", "nadi_ta": "அந்த்ய நாடி (கபம்)", "vriksham_ta": "பலா மரம்", "pakshi_ta": "வல்லூறு", "mirugam_ta": "கீரி"},
+    {"index": 22, "sa": "Shravana", "ta": "திருவோணம்", "lord": "Moon", "lord_ta": "சந்திரன்", "deity": "Vishnu", "ganam": "Deva", "ganam_ta": "தேவ கணம்", "yoni": "Monkey", "yoni_ta": "பெண் குரங்கு", "rajju": "Neck (Kanda)", "rajju_ta": "கண்ட ரஜ்ஜு", "bootham": "Air", "bootham_ta": "காற்று", "nadi": "Kapha (Antya)", "nadi_ta": "அந்த்ய நாடி (கபம்)", "vriksham_ta": "எருக்கு மரம்", "pakshi_ta": "நாரை", "mirugam_ta": "குரங்கு"},
+    {"index": 23, "sa": "Dhanishta", "ta": "அவிட்டம்", "lord": "Mars", "lord_ta": "செவ்வாய்", "deity": "Vasus", "ganam": "Rakshasa", "ganam_ta": "ராக்ஷஸ கணம்", "yoni": "Lion", "yoni_ta": "பெண் சிங்கம்", "rajju": "Head (Sirasu)", "rajju_ta": "சிரசு ரஜ்ஜு", "bootham": "Air", "bootham_ta": "காற்று", "nadi": "Pitta (Madhya)", "nadi_ta": "மத்ய நாடி (பித்தம்)", "vriksham_ta": "வன்னி மரம்", "pakshi_ta": "பொன்வண்டு", "mirugam_ta": "சிங்கம்"},
+    {"index": 24, "sa": "Shatabhisha", "ta": "சதயம்", "lord": "Rahu", "lord_ta": "ராகு", "deity": "Varuna", "ganam": "Rakshasa", "ganam_ta": "ராக்ஷஸ கணம்", "yoni": "Horse", "yoni_ta": "பெண் குதிரை", "rajju": "Neck (Kanda)", "rajju_ta": "கண்ட ரஜ்ஜு", "bootham": "Ether", "bootham_ta": "ஆகாயம்", "nadi": "Vata (Adhi)", "nadi_ta": "ஆதி நாடி (வாதம்)", "vriksham_ta": "கடம்ப மரம்", "pakshi_ta": "காகம்", "mirugam_ta": "குதிரை"},
+    {"index": 25, "sa": "Purva Bhadrapada", "ta": "பூரட்டாதி", "lord": "Jupiter", "lord_ta": "குரு", "deity": "Aja Ekapada", "ganam": "Manushya", "ganam_ta": "மனித கணம்", "yoni": "Lion", "yoni_ta": "ஆண் சிங்கம்", "rajju": "Stomach (Udara)", "rajju_ta": "உதர ரஜ்ஜு", "bootham": "Ether", "bootham_ta": "ஆகாயம்", "nadi": "Vata (Adhi)", "nadi_ta": "ஆதி நாடி (வாதம்)", "vriksham_ta": "தேமா மரம்", "pakshi_ta": "உள்ளான்", "mirugam_ta": "சிங்கம்"},
+    {"index": 26, "sa": "Uttara Bhadrapada", "ta": "உத்திரட்டாதி", "lord": "Saturn", "lord_ta": "சனி", "deity": "Ahirbudhnya", "ganam": "Manushya", "ganam_ta": "மனித கணம்", "yoni": "Cow", "yoni_ta": "பெண் பசு", "rajju": "Thigh (Uru)", "rajju_ta": "தொடை (ஊரு) ரஜ்ஜு", "bootham": "Ether", "bootham_ta": "ஆகாயம்", "nadi": "Pitta (Madhya)", "nadi_ta": "மத்ய நாடி (பித்தம்)", "vriksham_ta": "வேம்பு மரம்", "pakshi_ta": "கொக்கு", "mirugam_ta": "பசு"},
+    {"index": 27, "sa": "Revati", "ta": "ரேவதி", "lord": "Mercury", "lord_ta": "புதன்", "deity": "Pushan", "ganam": "Deva", "ganam_ta": "தேவ கணம்", "yoni": "Elephant", "yoni_ta": "பெண் யானை", "rajju": "Pada", "rajju_ta": "பாத ரஜ்ஜு", "bootham": "Ether", "bootham_ta": "ஆகாயம்", "nadi": "Kapha (Antya)", "nadi_ta": "அந்த்ய நாடி (கபம்)", "vriksham_ta": "இலுப்பை மரம்", "pakshi_ta": "வெண்புறா", "mirugam_ta": "யானை"},
 ]
+
+# Canonical Tamil Vaaram x Janma Nakshatra Dina Subha Yoga Lookup
+# 0: Sunday (ஞாயிறு), 1: Monday (திங்கள்), 2: Tuesday (செவ்வாய்), 3: Wednesday (புதன்),
+# 4: Thursday (வியாழன்), 5: Friday (வெள்ளி), 6: Saturday (சனி)
+# Index is Nakshatra Number (1 to 27)
+TAMIL_DINA_YOGAS = {
+    0: {  # Sunday (ஞாயிறு)
+        13: ("Amrita Yoga", "அமிர்த யோகம்"), 17: ("Amrita Yoga", "அமிர்த யோகம்"), 19: ("Amrita Yoga", "அமிர்த யோகம்"), 21: ("Amrita Yoga", "அமிர்த யோகம்"), 27: ("Amrita Yoga", "அமிர்த யோகம்"),
+        4: ("Marana Yoga", "மரண யோகம்"), 10: ("Marana Yoga", "மரண யோகம்"), 18: ("Marana Yoga", "மரண யோகம்"), 25: ("Marana Yoga", "மரண யோகம்")
+    },
+    1: {  # Monday (திங்கள்)
+        4: ("Amrita Yoga", "அமிர்த யோகம்"), 5: ("Amrita Yoga", "அமிர்த யோகம்"), 15: ("Amrita Yoga", "அமிர்த யோகம்"), 22: ("Amrita Yoga", "அமிர்த யோகம்"),
+        2: ("Marana Yoga", "மரண யோகம்"), 14: ("Marana Yoga", "மரண யோகம்"), 16: ("Marana Yoga", "மரண யோகம்")
+    },
+    2: {  # Tuesday (செவ்வாய்)
+        1: ("Amrita Yoga", "அமிர்த யோகம்"), 8: ("Amrita Yoga", "அமிர்த யோகம்"), 13: ("Amrita Yoga", "அமிர்த யோகம்"), 26: ("Amrita Yoga", "அமிர்த யோகம்"),
+        16: ("Marana Yoga", "மரண யோகம்"), 22: ("Marana Yoga", "மரண யோகம்"), 24: ("Marana Yoga", "மரண யோகம்"), 27: ("Marana Yoga", "மரண யோகம்")
+    },
+    3: {  # Wednesday (புதன்)
+        17: ("Amrita Yoga", "அமிர்த யோகம்"), 27: ("Amrita Yoga", "அமிர்த யோகம்"),
+        1: ("Marana Yoga", "மரண யோகம்"), 5: ("Marana Yoga", "மரண யோகம்"), 7: ("Marana Yoga", "மரண யோகம்"), 12: ("Marana Yoga", "மரண யோகம்"), 23: ("Marana Yoga", "மரண யோகம்")
+    },
+    4: {  # Thursday (வியாழன்)
+        7: ("Amrita Yoga", "அமிர்த யோகம்"), 8: ("Amrita Yoga", "அமிர்த யோகம்"), 15: ("Amrita Yoga", "அமிர்த யோகம்"), 20: ("Amrita Yoga", "அமிர்த யோகம்"),
+        3: ("Marana Yoga", "மரண யோகம்"), 11: ("Marana Yoga", "மரண யோகம்"), 22: ("Marana Yoga", "மரண யோகம்"), 25: ("Marana Yoga", "மரண யோகம்")
+    },
+    5: {  # Friday (வெள்ளி)
+        1: ("Amrita Yoga", "அமிர்த யோகம்"), 8: ("Amrita Yoga", "அமிர்த யோகம்"), 13: ("Amrita Yoga", "அமிர்த யோகம்"), 22: ("Amrita Yoga", "அமிர்த யோகம்"),
+        3: ("Marana Yoga", "மரண யோகம்"), 4: ("Marana Yoga", "மரண யோகம்"), 9: ("Marana Yoga", "மரண யோகம்"), 17: ("Marana Yoga", "மரண யோகம்")
+    },
+    6: {  # Saturday (சனி)
+        2: ("Amrita Yoga", "அமிர்த யோகம்"), 3: ("Amrita Yoga", "அமிர்த யோகம்"), 4: ("Amrita Yoga", "அமிர்த யோகம்"), 15: ("Amrita Yoga", "அமிர்த யோகம்"),
+        1: ("Marana Yoga", "மரண யோகம்"), 5: ("Marana Yoga", "மரண யோகம்"), 7: ("Marana Yoga", "மரண யோகம்"), 13: ("Marana Yoga", "மரண யோகம்"), 14: ("Marana Yoga", "மரண யோகம்"), 19: ("Marana Yoga", "மரண யோகம்"), 26: ("Marana Yoga", "மரண யோகம்")
+    }
+}
 
 BHAVA_LABELS = {
     1: {"name": "Lagna / Tanu Bhava", "name_ta": "1-ஆம் பாவம் (லக்னம் / தனு பாவம் - உடல், குணம், தோற்றம்)", "significations": ["character", "physique", "health", "longevity", "vitality", "general well-being"], "significations_ta": ["உடல் தோற்றம்", "குணம்", "ஆரோக்கியம்", "ஆயுள் பலம்", "மன உறுதி"]},
