@@ -7,6 +7,7 @@ from backend.app.api.charts import router as charts_router
 from backend.app.api.profiles import router as profiles_router
 from backend.app.api.porutham import router as porutham_router
 from backend.app.api.narration import router as narration_router
+from backend.app.api.geocode import router as geocode_router  # NEW
 
 # Create Database Tables
 Base.metadata.create_all(bind=engine)
@@ -31,6 +32,7 @@ app.include_router(charts_router, prefix=settings.API_V1_STR)
 app.include_router(profiles_router, prefix=settings.API_V1_STR)
 app.include_router(porutham_router, prefix=settings.API_V1_STR)
 app.include_router(narration_router, prefix=settings.API_V1_STR)
+app.include_router(geocode_router, prefix=settings.API_V1_STR)  # NEW
 
 @app.get("/api/health")
 def health_check():
