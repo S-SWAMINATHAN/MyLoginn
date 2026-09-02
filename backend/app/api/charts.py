@@ -34,11 +34,22 @@ def run_chart_calculation(req: GenerateChartRequest, profile_id: int = None) -> 
     planets = eph["planets"]
     positions_by_name = eph["positions_by_name"]
     lagna_info = eph["lagna_info"]
+    mandi_info = eph.get("mandi_info")  # NEW
 
     # 4. Build Rasi (D1) & Navamsa (D9) Kattams
+    # UNCHANGED: still uses `planets` (Sun..Ketu only, no Lagna/Mandi) — this
+    # function already adds Lagna to the kattam separately via lagna_info,
+    # and Mandi does not belong in the kattam grid the same way a graha does
+    # per this project's current data model.
     rasi_kattam, navamsa_kattam = build_rasi_and_navamsa_kattams(planets, lagna_info)
 
     # 5. Calculate 12 Bhava Analysis
+    # UNCHANGED: still uses `planets` only. Lagna/Mandi are intentionally
+    # excluded here — Lagna defines house 1 by definition (not an occupant),
+    # and Mandi/Upagrahas casting classical drishti (aspects) the same way
+    # grahas do is not part of this project's currently-implemented rule set.
+    # Including them here would silently change bhava occupant/aspect counts
+    # without a cited classical rule for doing so (AGENTS.md §1.1/§1.4).
     bhavas = calculate_bhava_predictions(lagna_info["rasi_number"], planets)
 
     # 6. Calculate Vimshottari Dasha-Bhukti Timeline & Balance at Birth
@@ -63,6 +74,14 @@ def run_chart_calculation(req: GenerateChartRequest, profile_id: int = None) -> 
         basic_details["nakshatram_ta"]
     )
 
+    # --- NEW: Build the Planetary Positions TABLE display list ---
+    # Lagna (reference point) + the 9 classical Navagrahas (Sun..Ketu, in
+    # `planets`, unchanged) + Mandi (Upagraha) = 11 rows for display only.
+    # `planets` itself (used above for rasi_kattam/navamsa_kattam/bhavas)
+    # remains exactly as before — this is a separate list built solely for
+    # the API response's `planets` field / the frontend's PlanetaryTable.
+    display_planets = [lagna_info] + planets + ([mandi_info] if mandi_info else [])
+
     # Build response payload
     payload = {
         "profile_id": profile_id,
@@ -78,7 +97,7 @@ def run_chart_calculation(req: GenerateChartRequest, profile_id: int = None) -> 
         "chart_style": req.chart_style,
         "output_mode": req.output_mode,
         "basic_details": basic_details,
-        "planets": planets,
+        "planets": display_planets,  # CHANGED: was `planets`, now includes Lagna + Mandi
         "rasi_kattam": rasi_kattam,
         "navamsa_kattam": navamsa_kattam,
         "bhava_predictions": bhavas,
