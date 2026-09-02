@@ -282,3 +282,12 @@ export interface NarrationRequest {
   chart_data?: Record<string, any>;
   language?: string; // "ta" or "en"
 }
+
+// NEW: shape returned by GET /api/geocode/suggest, used by the place-of-birth
+// autocomplete in BirthDetailsForm.tsx. Does not affect any existing type.
+export interface PlaceSuggestion {
+  display_name: string;
+  lat: number;
+  lon: number;
+  timezone: string;
+}

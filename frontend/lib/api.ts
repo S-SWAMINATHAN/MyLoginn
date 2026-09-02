@@ -7,6 +7,7 @@ import {
   NarrationResult,
   ProfileCreate,
   ProfileResponse,
+  PlaceSuggestion, // NEW
 } from "./types";
 
 // Base URL of the FastAPI backend.
@@ -132,4 +133,22 @@ export async function getProfileChartApi(
 ): Promise<ChartResponse> {
   const res = await fetch(`${API_V1}/profiles/${profileId}/chart`);
   return handleResponse<ChartResponse>(res);
+}
+
+/**
+ * NEW: Get place-of-birth autocomplete suggestions.
+ * GET /api/geocode/suggest?q=...
+ * Returns [] for queries under 2 characters without hitting the network.
+ */
+export async function suggestPlacesApi(
+  query: string
+): Promise<PlaceSuggestion[]> {
+  const trimmed = query.trim();
+  if (trimmed.length < 2) return [];
+
+  const res = await fetch(
+    `${API_V1}/geocode/suggest?q=${encodeURIComponent(trimmed)}`
+  );
+  const data = await handleResponse<{ results: PlaceSuggestion[] }>(res);
+  return data.results;
 }
