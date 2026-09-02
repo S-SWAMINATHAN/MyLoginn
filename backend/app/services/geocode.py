@@ -3,7 +3,7 @@ Geocoding and accurate Timezone resolution service.
 Handles Tamil Nadu towns, Indian cities, and international locations.
 """
 
-from typing import Tuple, Dict, Any, Optional
+from typing import Tuple, Dict, Any, Optional, List
 import pytz
 try:
     from timezonefinder import TimezoneFinder
@@ -95,10 +95,14 @@ KNOWN_LOCATIONS: Dict[str, Dict[str, Any]] = {
     "sydney": {"lat": -33.8688, "lon": 151.2093, "tz": "Australia/Sydney", "country": "Australia"},
 }
 
+
 def resolve_place(place_name: str, lat: Optional[float] = None, lon: Optional[float] = None, tz: Optional[str] = None) -> Tuple[float, float, str]:
     """
     Resolves place query to (latitude, longitude, timezone_str).
     If lat and lon are provided, resolves timezone if needed.
+
+    UNCHANGED from the original file — chart generation still goes through
+    exactly this function, exactly as before.
     """
     if lat is not None and lon is not None:
         if tz:
@@ -117,3 +121,41 @@ def resolve_place(place_name: str, lat: Optional[float] = None, lon: Optional[fl
 
     # Fallback to Coimbatore / Tamil Nadu default if unknown
     return 11.0168, 76.9558, "Asia/Kolkata"
+
+
+# --- NEW: added for the place-autocomplete feature. Does not touch or call
+# resolve_place() above — this is purely a read-only lookup over the same
+# KNOWN_LOCATIONS table for populating the frontend's suggestion dropdown.
+def search_places(query: str, limit: int = 8) -> List[Dict[str, Any]]:
+    """
+    Returns up to `limit` matches from KNOWN_LOCATIONS whose key contains
+    the query substring, formatted for frontend autocomplete:
+        [{"display_name": "Chennai, Tamil Nadu, India", "lat": ..., "lon": ..., "timezone": ...}, ...]
+
+    No external API calls, no new dependency — same static data source
+    resolve_place() already uses for its fallback lookup.
+    """
+    cleaned = (query or "").lower().strip()
+    if len(cleaned) < 2:
+        return []
+
+    matches: List[Dict[str, Any]] = []
+    for key, data in KNOWN_LOCATIONS.items():
+        if cleaned in key:
+            label_parts = [key.title()]
+            if data.get("state"):
+                label_parts.append(data["state"])
+            if data.get("country"):
+                label_parts.append(data["country"])
+            matches.append(
+                {
+                    "display_name": ", ".join(label_parts),
+                    "lat": data["lat"],
+                    "lon": data["lon"],
+                    "timezone": data["tz"],
+                }
+            )
+        if len(matches) >= limit:
+            break
+
+    return matches

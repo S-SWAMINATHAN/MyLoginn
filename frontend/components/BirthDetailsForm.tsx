@@ -1,8 +1,10 @@
 "use client";
 
-import React, { useState } from "react";
-import { GenerateChartRequest } from "@/lib/types";
-import { Calendar, Clock, MapPin, User, Sparkles, ChevronDown, ChevronUp, Layers, CheckCircle2 } from "lucide-react";
+import React, { useRef, useState } from "react";
+import { GenerateChartRequest, PlaceSuggestion } from "@/lib/types";
+import { suggestPlacesApi } from "@/lib/api";
+import { Calendar, MapPin, User, Sparkles, ChevronDown, ChevronUp } from "lucide-react";
+import { TimeInput12h } from "./TimeInput12h";
 
 interface BirthDetailsFormProps {
   onSubmit: (data: GenerateChartRequest) => void;
@@ -10,24 +12,12 @@ interface BirthDetailsFormProps {
   lang: "ta" | "en";
 }
 
-const COMMON_CITIES = [
-  "Coimbatore, Tamil Nadu",
-  "Chennai, Tamil Nadu",
-  "Madurai, Tamil Nadu",
-  "Tiruchirappalli, Tamil Nadu",
-  "Salem, Tamil Nadu",
-  "Tirunelveli, Tamil Nadu",
-  "Erode, Tamil Nadu",
-  "Vellore, Tamil Nadu",
-  "Thanjavur, Tamil Nadu",
-  "Kumbakonam, Tamil Nadu",
-  "Bengaluru, Karnataka",
-  "Mumbai, Maharashtra",
-  "Singapore",
-  "Kuala Lumpur, Malaysia",
-  "Colombo, Sri Lanka",
-  "London, UK"
-];
+// NOTE: the old hardcoded COMMON_CITIES list + client-side substring filter
+// has been removed. Suggestions now come live from GET /api/geocode/suggest,
+// which reads the much larger KNOWN_LOCATIONS table already in
+// backend/app/services/geocode.py (~70 entries vs. the old 16).
+
+const PLACE_DEBOUNCE_MS = 300;
 
 export const BirthDetailsForm: React.FC<BirthDetailsFormProps> = ({
   onSubmit,
@@ -40,6 +30,9 @@ export const BirthDetailsForm: React.FC<BirthDetailsFormProps> = ({
     date_of_birth: "1996-08-15",
     time_of_birth: "07:00:00",
     place: "Coimbatore, Tamil Nadu, India",
+    latitude: null,
+    longitude: null,
+    timezone: null,
     panchangam_system: "thirukkanitham",
     chart_style: "tamil",
     output_mode: "full",
@@ -51,18 +44,47 @@ export const BirthDetailsForm: React.FC<BirthDetailsFormProps> = ({
   });
 
   const [showAdvanced, setShowAdvanced] = useState(false);
-  const [placeSuggestions, setPlaceSuggestions] = useState<string[]>([]);
+  const [placeSuggestions, setPlaceSuggestions] = useState<PlaceSuggestion[]>([]);
+  const [placeLoading, setPlaceLoading] = useState(false);
+  const debounceRef = useRef<ReturnType<typeof setTimeout> | null>(null);
 
   const handlePlaceChange = (val: string) => {
-    setFormData({ ...formData, place: val });
-    if (val.length > 1) {
-      const filtered = COMMON_CITIES.filter((c) =>
-        c.toLowerCase().includes(val.toLowerCase())
-      );
-      setPlaceSuggestions(filtered);
-    } else {
+    // Typing manually invalidates any previously-selected exact coordinates,
+    // so chart generation falls back to text-based resolution (unchanged
+    // backend behavior) unless the user picks a fresh suggestion below.
+    setFormData((prev) => ({ ...prev, place: val, latitude: null, longitude: null, timezone: null }));
+
+    if (debounceRef.current) clearTimeout(debounceRef.current);
+
+    if (val.trim().length < 2) {
       setPlaceSuggestions([]);
+      setPlaceLoading(false);
+      return;
     }
+
+    debounceRef.current = setTimeout(async () => {
+      setPlaceLoading(true);
+      try {
+        const results = await suggestPlacesApi(val);
+        setPlaceSuggestions(results);
+      } catch {
+        // Fail soft: autocomplete is a UX aid, not required to submit the form.
+        setPlaceSuggestions([]);
+      } finally {
+        setPlaceLoading(false);
+      }
+    }, PLACE_DEBOUNCE_MS);
+  };
+
+  const handleSelectPlace = (s: PlaceSuggestion) => {
+    setFormData((prev) => ({
+      ...prev,
+      place: s.display_name,
+      latitude: s.lat,
+      longitude: s.lon,
+      timezone: s.timezone,
+    }));
+    setPlaceSuggestions([]);
   };
 
   const handleSubmit = (e: React.FormEvent) => {
@@ -157,25 +179,20 @@ export const BirthDetailsForm: React.FC<BirthDetailsFormProps> = ({
           </div>
         </div>
 
-        {/* Time of Birth */}
+        {/* Time of Birth — now a 12-hour AM/PM picker; formData.time_of_birth
+            stays "HH:MM:SS" 24-hour under the hood, so the API payload is
+            unchanged. */}
         <div>
           <label className="block text-xs font-semibold text-[#e0b87f] mb-1.5 font-tamil">
-            {lang === "ta" ? "பிறந்த நேரம் (Time of Birth - HH:MM:SS)" : "Exact Time of Birth"} *
+            {lang === "ta" ? "பிறந்த நேரம் (Time of Birth)" : "Exact Time of Birth"} *
           </label>
-          <div className="relative">
-            <Clock className="absolute left-3.5 top-3.5 w-4 h-4 text-[#d4af37]/70" />
-            <input
-              type="text"
-              required
-              value={formData.time_of_birth}
-              onChange={(e) => setFormData({ ...formData, time_of_birth: e.target.value })}
-              className="w-full pl-10 pr-4 py-2.5 bg-[#140b0e] border border-[#d4af37]/30 rounded-xl text-white placeholder-white/30 focus:border-[#ffd700] focus:ring-1 focus:ring-[#ffd700] transition-all text-sm"
-              placeholder="07:00:00"
-            />
-          </div>
+          <TimeInput12h
+            value={formData.time_of_birth}
+            onChange={(time24h) => setFormData({ ...formData, time_of_birth: time24h })}
+          />
         </div>
 
-        {/* Place of Birth */}
+        {/* Place of Birth — now backed by live GET /api/geocode/suggest */}
         <div className="relative md:col-span-2">
           <label className="block text-xs font-semibold text-[#e0b87f] mb-1.5 font-tamil">
             {lang === "ta" ? "பிறந்த இடம் (Place of Birth)" : "Place of Birth (City / Town)"} *
@@ -187,9 +204,13 @@ export const BirthDetailsForm: React.FC<BirthDetailsFormProps> = ({
               required
               value={formData.place}
               onChange={(e) => handlePlaceChange(e.target.value)}
+              autoComplete="off"
               className="w-full pl-10 pr-4 py-2.5 bg-[#140b0e] border border-[#d4af37]/30 rounded-xl text-white placeholder-white/30 focus:border-[#ffd700] focus:ring-1 focus:ring-[#ffd700] transition-all text-sm"
               placeholder="e.g. Coimbatore, Tamil Nadu"
             />
+            {placeLoading && (
+              <span className="absolute right-3.5 top-3.5 text-[10px] text-[#d4af37]/70">…</span>
+            )}
           </div>
 
           {/* Autocomplete Dropdown */}
@@ -197,14 +218,11 @@ export const BirthDetailsForm: React.FC<BirthDetailsFormProps> = ({
             <div className="absolute z-20 top-full left-0 right-0 mt-1 bg-[#1a1114] border border-[#d4af37]/40 rounded-xl shadow-xl overflow-hidden max-h-48 overflow-y-auto">
               {placeSuggestions.map((item, idx) => (
                 <div
-                  key={idx}
-                  onClick={() => {
-                    setFormData({ ...formData, place: item });
-                    setPlaceSuggestions([]);
-                  }}
+                  key={`${item.lat}-${item.lon}-${idx}`}
+                  onClick={() => handleSelectPlace(item)}
                   className="px-4 py-2.5 text-xs text-white/90 hover:bg-[#6b1426]/50 cursor-pointer border-b border-white/5 last:border-0"
                 >
-                  {item}
+                  {item.display_name}
                 </div>
               ))}
             </div>
