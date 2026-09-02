@@ -266,15 +266,13 @@ def compute_astronomical_timings(
             return f"{h12:02d}:{m:02d} {ampm}"
         return f"{fmt(t1)} – {fmt(t2)}"
 
-    # --- NEW: raw Julian Day for the START of the Kuligai Kalam window.
-    # Needed so compute_planetary_positions() can compute Mandi/Gulika's
-    # zodiacal position (the Ascendant at this exact moment) — see the
-    # Maandhi block added below in compute_planetary_positions().
-    # Elapsed time from sunrise is a plain hour offset, so it's added
-    # directly to jd_rise (1 hour = 1/24 day) without any timezone
-    # reconversion.
-    guli_start, guli_end = guli_slots[day_num]
-    kuligai_start_jd = jd_rise + (guli_start * one_eighth) / 24.0
+    # --- NEW: raw UTC Julian Day of Kuligai Kalam's start ---
+    # This is purely an additional return value for use by the Mandi/Gulika
+    # longitude calculation in compute_planetary_positions(). It does not
+    # change or recompute any of the existing timing strings above — it
+    # reuses the same jd_rise + guli_slots[day_num] already established.
+    guli_start_eighth, _guli_end_eighth = guli_slots[day_num]
+    jd_kuligai_start = jd_rise + (guli_start_eighth * one_eighth) / 24.0
 
     return {
         "sun_rise": sunrise_str,
@@ -288,7 +286,7 @@ def compute_astronomical_timings(
         "rahu_kalam": format_slot(*rahu_slots[day_num]),
         "yamagandam": format_slot(*yama_slots[day_num]),
         "kuligai": format_slot(*guli_slots[day_num]),
-        "kuligai_start_jd": kuligai_start_jd  # NEW
+        "kuligai_start_jd": jd_kuligai_start,  # NEW
     }
 
 def get_julian_day(date_str: str, time_str: str, timezone_str: str = "Asia/Kolkata") -> float:
@@ -343,7 +341,10 @@ def compute_planetary_positions(
         "name": "Lagna",
         "name_ta": "லக்னம்",
         "name_sa": "Lagna",
-        "symbol": "La",
+        "symbol": "லக்",  # CHANGED from "La" to the Tamil short-code, for
+                           # visual consistency now that Lagna is rendered
+                           # in the Tamil-styled Planetary Positions table
+                           # (cosmetic label only — no calculation change).
         "rasi_number": lagna_sign_num,
         "rasi": lagna_sign_info.get("sa", ""),
         "rasi_ta": lagna_sign_info.get("ta", ""),
@@ -368,10 +369,9 @@ def compute_planetary_positions(
         "is_retrograde": False,
         "speed": 0.0,
         "status": "Ascendant",
-        "status_ta": "லக்னம்"  # NEW: without this, PlanetPosition's schema
-                                 # default ("சமம்" = "neutral dignity") would
-                                 # incorrectly apply once Lagna is included
-                                 # in the schema-validated planets list.
+        "status_ta": "லக்னம்",  # NEW — without this, the schema's default
+                                  # ("சமம்" = "Neutral") would incorrectly
+                                  # imply Lagna has a planetary dignity.
     }
 
     # Calculate 7 main planets + Rahu
@@ -541,68 +541,73 @@ def compute_planetary_positions(
     # Astronomical Timings (Sunrise, Sunset, Dinamani, Udhayadhi Nazhigai, Rahu/Yama/Kuligai)
     astro_timings = compute_astronomical_timings(jd, lat, lon, date_str, time_str, timezone_str)
 
-    # --- NEW: Maandhi / Gulika (Upagraha) ---
-    # Classical method (BPHS, Upagraha/Kaala chapter): Mandi/Gulika's
-    # zodiacal longitude is the Ascendant computed at the exact START of
-    # the Kuligai Kalam period. This reuses the SAME verified sunrise +
-    # weekday-portion logic already used above for Rahu Kalam, Yamagandam,
-    # and the displayed Kuligai Kalam window — no new time-division rule
-    # is introduced here.
+    # --- NEW: Mandi (Maandhi / Gulika) Upagraha Position ---
+    # Classical method: Mandi's zodiacal position is the Ascendant (Lagna)
+    # computed at the exact clock-moment the Kuligai Kalam period begins for
+    # the birth weekday — reusing the same 8-fold daytime division already
+    # established above for Rahu Kalam / Yamagandam / Kuligai Kalam timing.
+    # This is the standard Gulika/Mandi computation method in Parashari
+    # Jyotish (cf. Brihat Parashara Hora Shastra's Upagraha chapter; also
+    # implemented as the "gulika" function in PyJHora's
+    # horoscope/chart/house.py, which this project's ephemeris layer is
+    # built on per README's Tech Stack).
     #
-    # NOTE (flagging per AGENTS.md §1.6): like the existing Rahu Kalam /
-    # Yamagandam / Kuligai calculations in this file, this uses the
-    # daytime-only 8-part division regardless of whether birth occurred
-    # during the day or night. This mirrors the existing simplification
-    # already in production for those three periods — extending it to a
-    # separate night-based division was not part of this request and
-    # would be scope creep per AGENTS.md §1.8.
-    mandi_jd = astro_timings["kuligai_start_jd"]
-    mandi_cusps, mandi_ascmc = swe.houses_ex(mandi_jd, lat, lon, b'P', flags)
-    mandi_deg = mandi_ascmc[0] % 360.0
+    # NOTE: like the pre-existing Kuligai Kalam timing this reuses, this
+    # applies the daytime 8-fold division regardless of whether the birth
+    # is a day or night birth. That is a pre-existing simplification already
+    # present in this file's Rahu Kalam / Yamagandam / Kuligai Kalam timing
+    # — not a new limitation introduced by this addition. If night-birth
+    # handling is required later, it should be added as an explicit,
+    # separately-cited branch per AGENTS.md §1.7, applied consistently to
+    # Rahu Kalam / Yamagandam / Kuligai Kalam / Mandi together.
+    jd_mandi = astro_timings.get("kuligai_start_jd")
+    if jd_mandi is not None:
+        _, ascmc_mandi = swe.houses_ex(jd_mandi, lat, lon, b'P', flags)
+        mandi_deg = ascmc_mandi[0] % 360.0
 
-    mandi_sign_num = int(mandi_deg // 30) + 1
-    mandi_deg_in_sign = mandi_deg % 30.0
-    mandi_nak_num = int(mandi_deg // (360.0 / 27)) + 1
-    mandi_nak_deg = mandi_deg % (360.0 / 27)
-    mandi_pada = int(mandi_nak_deg // (360.0 / 108)) + 1
+        mandi_sign_num = int(mandi_deg // 30) + 1
+        mandi_deg_in_sign = mandi_deg % 30.0
+        mandi_nak_num = int(mandi_deg // (360.0 / 27)) + 1
+        mandi_nak_deg = mandi_deg % (360.0 / 27)
+        mandi_pada = int(mandi_nak_deg // (360.0 / 108)) + 1
 
-    mandi_sign_info = SIGN_LABELS.get(mandi_sign_num, {})
-    mandi_nak_info = NAKSHATRA_LABELS[mandi_nak_num - 1]
-    mandi_navamsa_sign = compute_navamsa_sign_num(mandi_deg)
-    mandi_navamsa_info = SIGN_LABELS.get(mandi_navamsa_sign, {})
-    mandi_house = ((mandi_sign_num - lagna_sign_num) % 12) + 1
+        mandi_sign_info = SIGN_LABELS.get(mandi_sign_num, {})
+        mandi_nak_info = NAKSHATRA_LABELS[mandi_nak_num - 1]
+        mandi_house = ((mandi_sign_num - lagna_sign_num) % 12) + 1
+        mandi_nav_sign = compute_navamsa_sign_num(mandi_deg)
+        mandi_nav_info = SIGN_LABELS.get(mandi_nav_sign, {})
 
-    positions_by_name["Mandi"] = {
-        "name": "Mandi",
-        "name_ta": "மாந்தி",
-        "name_sa": "Maandi (Gulika)",
-        "symbol": "மா",
-        "rasi_number": mandi_sign_num,
-        "rasi": mandi_sign_info.get("sa", ""),
-        "rasi_ta": mandi_sign_info.get("ta", ""),
-        "degree": round(mandi_deg_in_sign, 4),
-        "degree_dms": format_dms(mandi_deg_in_sign),
-        "total_degree": round(mandi_deg, 4),
-        "total_degree_dms": format_dms(mandi_deg),
-        "house": mandi_house,
-        "lord": mandi_sign_info.get("lord", ""),
-        "lord_ta": PLANET_LABELS.get(mandi_sign_info.get("lord", ""), {}).get("ta", ""),
-        "nakshatra": mandi_nak_info["sa"],
-        "nakshatra_ta": mandi_nak_info["ta"],
-        "nakshatra_number": mandi_nak_num,
-        "nakshatra_lord": mandi_nak_info["lord"],
-        "nakshatra_lord_ta": mandi_nak_info.get("lord_ta", ""),
-        "pada": mandi_pada,
-        "navamsa_sign": mandi_navamsa_sign,
-        "navamsa_rasi": mandi_navamsa_info.get("sa", ""),
-        "navamsa_rasi_ta": mandi_navamsa_info.get("ta", ""),
-        "navamsa_lord": mandi_navamsa_info.get("lord", ""),
-        "navamsa_lord_ta": PLANET_LABELS.get(mandi_navamsa_info.get("lord", ""), {}).get("ta", ""),
-        "is_retrograde": False,
-        "speed": 0.0,
-        "status": "Upagraha",
-        "status_ta": "உபகிரகம்"
-    }
+        positions_by_name["Mandi"] = {
+            "name": "Mandi",
+            "name_ta": "மாந்தி",
+            "name_sa": "Gulika (Maandhi)",
+            "symbol": "மா",
+            "rasi_number": mandi_sign_num,
+            "rasi": mandi_sign_info.get("sa", ""),
+            "rasi_ta": mandi_sign_info.get("ta", ""),
+            "degree": round(mandi_deg_in_sign, 4),
+            "degree_dms": format_dms(mandi_deg_in_sign),
+            "total_degree": round(mandi_deg, 4),
+            "total_degree_dms": format_dms(mandi_deg),
+            "house": mandi_house,
+            "lord": mandi_sign_info.get("lord", ""),
+            "lord_ta": PLANET_LABELS.get(mandi_sign_info.get("lord", ""), {}).get("ta", ""),
+            "nakshatra": mandi_nak_info["sa"],
+            "nakshatra_ta": mandi_nak_info["ta"],
+            "nakshatra_number": mandi_nak_num,
+            "nakshatra_lord": mandi_nak_info["lord"],
+            "nakshatra_lord_ta": mandi_nak_info.get("lord_ta", ""),
+            "pada": mandi_pada,
+            "navamsa_sign": mandi_nav_sign,
+            "navamsa_rasi": mandi_nav_info.get("sa", ""),
+            "navamsa_rasi_ta": mandi_nav_info.get("ta", ""),
+            "navamsa_lord": mandi_nav_info.get("lord", ""),
+            "navamsa_lord_ta": PLANET_LABELS.get(mandi_nav_info.get("lord", ""), {}).get("ta", ""),
+            "is_retrograde": False,
+            "speed": 0.0,
+            "status": "Upagraha",
+            "status_ta": "உபக்கிரகம்"
+        }
 
     # Basic Details Object (Section 2 Panchangam & Subha Yoga Elements)
     basic_details = {
@@ -700,5 +705,6 @@ def compute_planetary_positions(
         "planets": planets_data,
         "positions_by_name": positions_by_name,
         "ayanamsa": ayanamsa,
-        "lagna_info": positions_by_name["Lagna"]
+        "lagna_info": positions_by_name["Lagna"],
+        "mandi_info": positions_by_name.get("Mandi"),  # NEW
     }
