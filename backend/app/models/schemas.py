@@ -326,3 +326,20 @@ class NarrationRequest(BaseModel):
     chart_id: Optional[int] = None
     chart_data: Optional[Dict[str, Any]] = None
     language: str = "ta"  # "ta" or "en"
+
+# --- NEW: standalone Baby Name request (independent of full chart generation) ---
+# Mirrors the same birth-detail fields as GenerateChartRequest (name/gender
+# optional, dob/tob/place required, latitude/longitude/timezone optional —
+# populated automatically when the frontend's place-autocomplete suggestion
+# is picked, same as the main chart form). No new fields invented beyond
+# what's needed to resolve the Moon's Nakshatra/Pada via the existing
+# ephemeris pipeline.
+class BabyNameRequest(BaseModel):
+    name: Optional[str] = None
+    gender: Optional[str] = None  # "male"/"boy" or "female"/"girl" — filters suggestions
+    date_of_birth: str = Field(..., description="YYYY-MM-DD")
+    time_of_birth: str = Field(..., description="HH:MM:SS")
+    place: str = Field(..., description="City, State, Country")
+    latitude: Optional[float] = None
+    longitude: Optional[float] = None
+    timezone: Optional[str] = None

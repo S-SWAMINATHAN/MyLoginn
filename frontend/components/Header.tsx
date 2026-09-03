@@ -2,7 +2,7 @@
 
 import React from "react";
 import Link from "next/link";
-import { Sparkles, Heart, FileText, Compass, Moon, Sun } from "lucide-react";
+import { Sparkles, Heart, FileText, Compass, Moon, Sun, Baby } from "lucide-react";
 
 interface HeaderProps {
   lang: "ta" | "en";
@@ -51,6 +51,15 @@ export const Header: React.FC<HeaderProps> = ({ lang, setLang }) => {
           >
             <Heart className="w-4 h-4 text-[#e65c00]" />
             <span>{lang === "ta" ? "திருமணப் பொருத்தம்" : "Marriage Match"}</span>
+          </Link>
+
+          {/* NEW: Baby Name nav link */}
+          <Link
+            href="/baby-names"
+            className="flex items-center gap-1.5 text-xs sm:text-sm text-[#e0b87f] hover:text-white px-3 py-2 rounded-lg hover:bg-white/5 transition-colors"
+          >
+            <Baby className="w-4 h-4 text-[#4dd0e1]" />
+            <span>{lang === "ta" ? "குழந்தை பெயர்" : "Baby Name"}</span>
           </Link>
 
           {/* Language Toggle */}
