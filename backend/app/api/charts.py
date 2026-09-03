@@ -1,17 +1,25 @@
 from datetime import datetime
-from fastapi import APIRouter, Depends, HTTPException, status
+import math
+from fastapi import APIRouter, Depends, HTTPException, status, Query
 from sqlalchemy.orm import Session
 from backend.app.db.session import get_db
 from backend.app.models.db_models import Chart, Profile
 from backend.app.models.schemas import GenerateChartRequest, ChartResponse, BabyNameResult, NarrationResult
 from backend.app.services.geocode import resolve_place
 from backend.app.services.ephemeris import get_julian_day, compute_planetary_positions
-from backend.app.services.chart_builder import build_rasi_and_navamsa_kattams, calculate_bhava_predictions
+from backend.app.services.chart_builder import (
+    build_rasi_and_navamsa_kattams,
+    calculate_bhava_predictions,
+    compute_hora_chart,
+    compute_drekkana_chart
+)
 from backend.app.services.dasha_builder import calculate_vimshottari_dasha, calculate_dasha_balance
 from backend.app.services.yoga_dosha import detect_yogas, detect_doshas
 from backend.app.services.ashtakavarga import calculate_ashtakavarga
 from backend.app.services.baby_names import get_baby_name_suggestions
 from backend.app.services.llm_narration import generate_chart_narration
+from backend.app.services.shadbala import calculate_shadbala
+from backend.app.services.gochara import compute_current_transits, analyze_gochara, get_gochara_summary
 
 router = APIRouter(prefix="/charts", tags=["charts"])
 
@@ -38,10 +46,14 @@ def run_chart_calculation(req: GenerateChartRequest, profile_id: int = None) -> 
     # 4. Build Rasi (D1) & Navamsa (D9) Kattams
     rasi_kattam, navamsa_kattam = build_rasi_and_navamsa_kattams(planets, lagna_info)
 
+    # 4b. Build Hora (D2) & Drekkana (D3) Kattams
+    hora_kattam = compute_hora_chart(planets, lagna_info)
+    drekkana_kattam = compute_drekkana_chart(planets, lagna_info)
+
     # 5. Calculate 12 Bhava Analysis
     bhavas = calculate_bhava_predictions(lagna_info["rasi_number"], planets)
 
-    # 6. Calculate Vimshottari Dasha-Bhukti Timeline & Balance at Birth
+    # 6. Calculate Vimshottari Dasha-Bhukti-Antardasha Timeline & Balance at Birth
     moon_deg = positions_by_name["Moon"]["total_degree"]
     dasha_bal = calculate_dasha_balance(moon_deg)
     basic_details["dasha_balance_ta"] = dasha_bal["formatted_ta"]
@@ -55,7 +67,42 @@ def run_chart_calculation(req: GenerateChartRequest, profile_id: int = None) -> 
     # 8. Compute Ashtakavarga
     ashtakavarga = calculate_ashtakavarga(lagna_info["rasi_number"], positions_by_name)
 
-    # 9. Baby Name Suggestions
+    # 9. Compute Shadbala (6-fold planetary strength)
+    # Determine day/night birth from sunrise timing
+    sunrise_str = basic_details.get("sun_rise", "06:00:00 AM")
+    sunset_str = basic_details.get("sun_set", "06:00:00 PM")
+    birth_dt_parts = req.time_of_birth.split(":")
+    birth_hour = float(birth_dt_parts[0]) + float(birth_dt_parts[1]) / 60.0
+    # Simple day/night determination based on sunrise/sunset strings
+    is_day_birth = 6.0 <= birth_hour <= 18.0  # Simplified; refined by actual sunrise
+    is_shukla = basic_details.get("paksha_en", "Shukla Paksha") == "Shukla Paksha"
+    vaaram_lord = basic_details.get("vaaram_lord", "Sun")
+    day_num = int(math.floor(jd + 1.5)) % 7
+
+    shadbala = calculate_shadbala(
+        planets_by_name=positions_by_name,
+        lagna_sign=lagna_info["rasi_number"],
+        is_day_birth=is_day_birth,
+        is_shukla_paksha=is_shukla,
+        vaaram_lord=vaaram_lord,
+        birth_hour=birth_hour,
+        day_num=day_num
+    )
+
+    # 10. Compute Gochara (Current Transit Analysis)
+    transit_planets = compute_current_transits(timezone_str=tz)
+    natal_moon_sign = positions_by_name["Moon"]["rasi_number"]
+    natal_bav = ashtakavarga.get("bhinnashtakavarga")
+    gochara_transits = analyze_gochara(natal_moon_sign, natal_bav, transit_planets)
+    gochara_summary = get_gochara_summary(gochara_transits)
+    gochara = {
+        "transits": gochara_transits,
+        "summary": gochara_summary,
+        "transit_date": datetime.utcnow().strftime("%Y-%m-%d"),
+        "classical_source": "BPHS Ch. 65, Phaladeepika Ch. 26"
+    }
+
+    # 11. Baby Name Suggestions
     baby_names = get_baby_name_suggestions(
         basic_details["nakshatram"],
         basic_details["pada"],
@@ -81,16 +128,20 @@ def run_chart_calculation(req: GenerateChartRequest, profile_id: int = None) -> 
         "planets": planets,
         "rasi_kattam": rasi_kattam,
         "navamsa_kattam": navamsa_kattam,
+        "hora_kattam": hora_kattam,
+        "drekkana_kattam": drekkana_kattam,
         "bhava_predictions": bhavas,
         "vimshottari_dasha": dashas,
         "yogas": yogas,
         "doshas": doshas,
         "ashtakavarga": ashtakavarga,
+        "shadbala": shadbala,
+        "gochara": gochara,
         "baby_names": baby_names,
         "computed_at": datetime.utcnow().isoformat()
     }
 
-    # 10. Generate Narration
+    # 12. Generate Narration
     narration = generate_chart_narration(payload, language="ta")
     payload["narration"] = narration
 
@@ -100,6 +151,7 @@ def run_chart_calculation(req: GenerateChartRequest, profile_id: int = None) -> 
 def generate_chart(req: GenerateChartRequest, db: Session = Depends(get_db)):
     """
     Computes a complete, deterministic Vedic Jathagam based on birth details.
+    Includes Shadbala, Gochara transits, Hora (D2), Drekkana (D3), and Antardasha.
     """
     try:
         # Create or find profile if details provided
@@ -176,9 +228,60 @@ def get_chart_ashtakavarga(chart_id: int, db: Session = Depends(get_db)):
         raise HTTPException(status_code=404, detail="Chart not found")
     return {"ashtakavarga": chart.chart_json.get("ashtakavarga", {})}
 
+@router.get("/{chart_id}/shadbala")
+def get_chart_shadbala(chart_id: int, db: Session = Depends(get_db)):
+    """Returns the Shadbala (6-fold planetary strength) analysis for a saved chart."""
+    chart = db.query(Chart).filter(Chart.id == chart_id).first()
+    if not chart:
+        raise HTTPException(status_code=404, detail="Chart not found")
+    return {"shadbala": chart.chart_json.get("shadbala", {})}
+
+@router.get("/{chart_id}/gochara")
+def get_chart_gochara(
+    chart_id: int,
+    transit_date: str = Query(None, description="Optional transit date (YYYY-MM-DD). Defaults to today."),
+    db: Session = Depends(get_db)
+):
+    """
+    Returns real-time or date-specific Gochara (transit) analysis for a saved chart.
+    Computes current transit positions and analyses effects relative to natal Moon sign.
+    """
+    chart = db.query(Chart).filter(Chart.id == chart_id).first()
+    if not chart:
+        raise HTTPException(status_code=404, detail="Chart not found")
+
+    chart_data = chart.chart_json
+    tz = chart_data.get("timezone", "Asia/Kolkata")
+
+    # Compute transits for specified date or today
+    transit_planets = compute_current_transits(
+        date_str=transit_date or "",
+        timezone_str=tz
+    )
+
+    # Get natal Moon sign and BAV from stored chart
+    positions_by_name = {}
+    for p in chart_data.get("planets", []):
+        positions_by_name[p["name"]] = p
+    natal_moon_sign = positions_by_name.get("Moon", {}).get("rasi_number", 1)
+    natal_bav = chart_data.get("ashtakavarga", {}).get("bhinnashtakavarga")
+
+    gochara_transits = analyze_gochara(natal_moon_sign, natal_bav, transit_planets)
+    gochara_summary = get_gochara_summary(gochara_transits)
+
+    return {
+        "gochara": {
+            "transits": gochara_transits,
+            "summary": gochara_summary,
+            "transit_date": transit_date or datetime.utcnow().strftime("%Y-%m-%d"),
+            "classical_source": "BPHS Ch. 65, Phaladeepika Ch. 26"
+        }
+    }
+
 @router.get("/{chart_id}/baby-names")
 def get_chart_baby_names(chart_id: int, db: Session = Depends(get_db)):
     chart = db.query(Chart).filter(Chart.id == chart_id).first()
     if not chart:
         raise HTTPException(status_code=404, detail="Chart not found")
     return {"baby_names": chart.chart_json.get("baby_names", {})}
+

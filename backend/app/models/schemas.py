@@ -122,6 +122,14 @@ class PlanetPosition(BaseModel):
     status: str = "Direct"
     status_ta: Optional[str] = "சமம்"
 
+class AntardashaPeriod(BaseModel):
+    planet: str
+    planet_ta: str
+    start_date: str
+    end_date: str
+    duration_years: float
+    is_current: Optional[bool] = False
+
 class BhuktiPeriod(BaseModel):
     planet: str
     planet_ta: str
@@ -129,6 +137,7 @@ class BhuktiPeriod(BaseModel):
     end_date: str
     duration_years: float
     is_current: Optional[bool] = False
+    antardashas: List[AntardashaPeriod] = []
 
 class VimshottariDashaPeriod(BaseModel):
     planet: str
@@ -180,6 +189,70 @@ class AshtakavargaResult(BaseModel):
     sarvashtakavarga: List[int]  # 12 scores for signs 1-12
     sarvashtakavarga_by_house: List[int]  # 12 scores from Lagna house 1 to 12
     total_points: int = 337
+
+class SthanaBalaSub(BaseModel):
+    uchcha_bala: float = 0.0
+    saptavargaja_bala: float = 0.0
+    ojhayugma_bala: float = 0.0
+    kendradi_bala: float = 0.0
+    drekkana_bala: float = 0.0
+    total: float = 0.0
+
+class KaalaBalaSub(BaseModel):
+    nathonnatha_bala: float = 0.0
+    paksha_bala: float = 0.0
+    vara_bala: float = 0.0
+    hora_bala: float = 0.0
+    ayana_bala: float = 0.0
+    total: float = 0.0
+
+class PlanetShadbala(BaseModel):
+    planet: str
+    planet_ta: str
+    sthana_bala: SthanaBalaSub
+    dig_bala: float = 0.0
+    kaala_bala: KaalaBalaSub
+    cheshta_bala: float = 0.0
+    naisargika_bala: float = 0.0
+    drig_bala: float = 0.0
+    total_virupas: float = 0.0
+    total_rupas: float = 0.0
+    minimum_required_rupas: float = 5.0
+    strength: str = "Average"
+    strength_ta: str = "சராசரி"
+
+class ShadbalaResult(BaseModel):
+    planets: Dict[str, PlanetShadbala]
+    classical_source: str = "Brihat Parashara Hora Shastra Ch. 27–29"
+
+class GocharaTransitResult(BaseModel):
+    planet: str
+    planet_ta: str
+    transit_sign: int
+    transit_rasi: str
+    transit_rasi_ta: str
+    house_from_moon: int
+    degree: float
+    degree_dms: Optional[str] = None
+    is_retrograde: bool = False
+    classical_effect: str
+    classical_effect_ta: str
+    is_classically_benefic: bool = False
+    vedha_active: bool = False
+    vedha_by: Optional[str] = None
+    vedha_by_ta: Optional[str] = None
+    bav_score: Optional[int] = None
+    bav_quality: Optional[str] = None
+    bav_quality_ta: Optional[str] = None
+    net_effect: str
+    net_effect_ta: str
+    net_benefic: bool = False
+
+class GocharaResult(BaseModel):
+    transits: List[GocharaTransitResult] = []
+    summary: Dict[str, Any] = {}
+    transit_date: Optional[str] = None
+    classical_source: str = "BPHS Ch. 65, Phaladeepika Ch. 26"
 
 class KutaDetail(BaseModel):
     name: str
@@ -267,11 +340,15 @@ class ChartResponse(BaseModel):
     planets: List[PlanetPosition]
     rasi_kattam: Dict[int, List[Dict[str, Any]]]  # sign_number (1-12) -> list of planets
     navamsa_kattam: Dict[int, List[Dict[str, Any]]]  # sign_number (1-12) -> list of planets
+    hora_kattam: Optional[Dict[int, List[Dict[str, Any]]]] = None  # D2 chart
+    drekkana_kattam: Optional[Dict[int, List[Dict[str, Any]]]] = None  # D3 chart
     bhava_predictions: List[HouseDetail]
     vimshottari_dasha: List[VimshottariDashaPeriod]
     yogas: List[YogaResult]
     doshas: List[DoshaResult]
     ashtakavarga: AshtakavargaResult
+    shadbala: Optional[ShadbalaResult] = None
+    gochara: Optional[GocharaResult] = None
     baby_names: Optional[BabyNameResult] = None
     narration: Optional[NarrationResult] = None
     computed_at: str

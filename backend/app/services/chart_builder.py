@@ -182,3 +182,117 @@ def calculate_bhava_predictions(lagna_sign_num: int, planets: List[Dict[str, Any
         })
 
     return bhava_list
+
+
+def compute_hora_chart(
+    planets: List[Dict[str, Any]],
+    lagna_info: Dict[str, Any]
+) -> Dict[int, List[Dict[str, Any]]]:
+    """
+    Computes the Hora Chart (D2) — Divisional Chart for Wealth Analysis.
+
+    Classical Rule (BPHS Ch. 6, Shloka 7-8):
+    - For planets in ODD signs (1, 3, 5, 7, 9, 11):
+      - First half (0°–15°) → Leo (5) — Sun's Hora (Solar wealth)
+      - Second half (15°–30°) → Cancer (4) — Moon's Hora (Lunar wealth)
+    - For planets in EVEN signs (2, 4, 6, 8, 10, 12):
+      - First half (0°–15°) → Cancer (4) — Moon's Hora
+      - Second half (15°–30°) → Leo (5) — Sun's Hora
+
+    Returns a 12-house grid (same format as Rasi/Navamsa kattam).
+    Only signs 4 (Cancer) and 5 (Leo) will have occupants in a pure D2 chart.
+    """
+    hora_kattam: Dict[int, List[Dict[str, Any]]] = {i: [] for i in range(1, 13)}
+
+    def get_hora_sign(rasi_num: int, degree_in_sign: float) -> int:
+        is_odd = rasi_num % 2 == 1
+        is_first_half = degree_in_sign < 15.0
+        if is_odd:
+            return 5 if is_first_half else 4  # Leo or Cancer
+        else:
+            return 4 if is_first_half else 5  # Cancer or Leo
+
+    # Add Lagna
+    lagna_hora = get_hora_sign(lagna_info["rasi_number"], lagna_info["degree"])
+    hora_kattam[lagna_hora].append({
+        "name": "Lagna",
+        "name_ta": "லக்னம்",
+        "symbol": "லக்",
+        "degree": lagna_info["degree"],
+        "is_lagna": True,
+        "is_retrograde": False,
+        "hora_type": "Sun" if lagna_hora == 5 else "Moon",
+        "hora_type_ta": "சூரிய ஹோரா" if lagna_hora == 5 else "சந்திர ஹோரா"
+    })
+
+    # Add Planets
+    for p in planets:
+        p_hora = get_hora_sign(p["rasi_number"], p["degree"])
+        hora_kattam[p_hora].append({
+            "name": p["name"],
+            "name_ta": p["name_ta"],
+            "symbol": p["symbol"],
+            "degree": p["degree"],
+            "is_lagna": False,
+            "is_retrograde": p.get("is_retrograde", False),
+            "hora_type": "Sun" if p_hora == 5 else "Moon",
+            "hora_type_ta": "சூரிய ஹோரா" if p_hora == 5 else "சந்திர ஹோரா"
+        })
+
+    return hora_kattam
+
+
+def compute_drekkana_chart(
+    planets: List[Dict[str, Any]],
+    lagna_info: Dict[str, Any]
+) -> Dict[int, List[Dict[str, Any]]]:
+    """
+    Computes the Drekkana Chart (D3) — Divisional Chart for Siblings & Courage.
+
+    Classical Rule (BPHS Ch. 6, Shloka 9-10):
+    - 0°–10° (1st Decanate) → Same sign
+    - 10°–20° (2nd Decanate) → 5th sign from the Rasi sign
+    - 20°–30° (3rd Decanate) → 9th sign from the Rasi sign
+
+    Returns a 12-house grid (same format as Rasi/Navamsa kattam).
+    """
+    drekkana_kattam: Dict[int, List[Dict[str, Any]]] = {i: [] for i in range(1, 13)}
+
+    def get_drekkana_sign(rasi_num: int, degree_in_sign: float) -> int:
+        if degree_in_sign < 10.0:
+            return rasi_num  # Same sign
+        elif degree_in_sign < 20.0:
+            return ((rasi_num - 1 + 4) % 12) + 1  # 5th from it
+        else:
+            return ((rasi_num - 1 + 8) % 12) + 1  # 9th from it
+
+    # Add Lagna
+    lagna_drek = get_drekkana_sign(lagna_info["rasi_number"], lagna_info["degree"])
+    lagna_sign_info = SIGN_LABELS.get(lagna_drek, {})
+    drekkana_kattam[lagna_drek].append({
+        "name": "Lagna",
+        "name_ta": "லக்னம்",
+        "symbol": "லக்",
+        "degree": lagna_info["degree"],
+        "drekkana_sign": lagna_drek,
+        "drekkana_rasi_ta": lagna_sign_info.get("ta", ""),
+        "is_lagna": True,
+        "is_retrograde": False
+    })
+
+    # Add Planets
+    for p in planets:
+        p_drek = get_drekkana_sign(p["rasi_number"], p["degree"])
+        drek_sign_info = SIGN_LABELS.get(p_drek, {})
+        drekkana_kattam[p_drek].append({
+            "name": p["name"],
+            "name_ta": p["name_ta"],
+            "symbol": p["symbol"],
+            "degree": p["degree"],
+            "drekkana_sign": p_drek,
+            "drekkana_rasi_ta": drek_sign_info.get("ta", ""),
+            "is_lagna": False,
+            "is_retrograde": p.get("is_retrograde", False)
+        })
+
+    return drekkana_kattam

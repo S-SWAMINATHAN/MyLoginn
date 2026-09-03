@@ -118,13 +118,40 @@ def calculate_vimshottari_dasha(
             bhukti_end_dt = bhukti_start_dt + timedelta(days=actual_bhukti_years * 365.2425)
             is_current_bhukti = is_current_dasha and (bhukti_start_dt <= now_dt <= bhukti_end_dt)
 
+            # Compute Antardashas (Pratyantardashas / sub-sub-periods) within this Bhukti
+            # Formula: (Bhukti_years × Antara_planet_total_years) / 120
+            # Source: BPHS Vimshottari Dasha system — recursive proportional subdivision.
+            antardashas = []
+            antara_start_dt = bhukti_start_dt
+            for a_i in range(9):
+                a_idx = (b_idx + a_i) % 9
+                a_name, a_total_dur = DASHA_LORDS[a_idx]
+                a_p_label = PLANET_LABELS.get(a_name, {})
+
+                # Antardasha duration = (bhukti_actual_years * antara_planet_total / 120)
+                antara_years = (actual_bhukti_years * a_total_dur) / 120.0
+
+                antara_end_dt = antara_start_dt + timedelta(days=antara_years * 365.2425)
+                is_current_antara = is_current_bhukti and (antara_start_dt <= now_dt <= antara_end_dt)
+
+                antardashas.append({
+                    "planet": a_name,
+                    "planet_ta": a_p_label.get("ta", a_name),
+                    "start_date": antara_start_dt.strftime("%Y-%m-%d"),
+                    "end_date": antara_end_dt.strftime("%Y-%m-%d"),
+                    "duration_years": round(antara_years, 4),
+                    "is_current": is_current_antara
+                })
+                antara_start_dt = antara_end_dt
+
             bhuktis.append({
                 "planet": b_name,
                 "planet_ta": b_p_label.get("ta", b_name),
                 "start_date": bhukti_start_dt.strftime("%Y-%m-%d"),
                 "end_date": bhukti_end_dt.strftime("%Y-%m-%d"),
                 "duration_years": round(actual_bhukti_years, 2),
-                "is_current": is_current_bhukti
+                "is_current": is_current_bhukti,
+                "antardashas": antardashas
             })
             bhukti_start_dt = bhukti_end_dt
 
