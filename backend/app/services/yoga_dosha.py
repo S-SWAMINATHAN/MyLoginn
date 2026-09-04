@@ -211,7 +211,7 @@ def detect_yogas(lagna_sign: int, planets_by_name: Dict[str, Dict[str, Any]]) ->
                 "category": "Chandra Yoga",
                 "present": True,
                 "description": f"Planet(s) {', '.join(planets_in_2_from_moon)} in the 2nd from Moon. Confers self-made wealth, sharp intellect, and high social standing through personal effort.",
-                "description_ta": f"சந்திரனுக்கு 2-ஆம் இடத்தில் {', '.join([PLANET_LABELS.get(p, {{}}).get('ta', p) for p in planets_in_2_from_moon])} அமர்ந்துள்ளதால் சுனபா யோகம் அமைகிறது. சொந்த முயற்சியால் செல்வம், புத்திக் கூர்மை மற்றும் சமூக அந்தஸ்து கிடைக்கும்.",
+                "description_ta": f"சந்திரனுக்கு 2-ஆம் இடத்தில் {', '.join([PLANET_LABELS.get(p, {}).get('ta', p) for p in planets_in_2_from_moon])} அமர்ந்துள்ளதால் சுனபா யோகம் அமைகிறது. சொந்த முயற்சியால் செல்வம், புத்திக் கூர்மை மற்றும் சமூக அந்தஸ்து கிடைக்கும்.",
                 "classical_source": "Phaladeepika 6.2",
                 "planets_involved": planets_in_2_from_moon
             })
@@ -229,7 +229,7 @@ def detect_yogas(lagna_sign: int, planets_by_name: Dict[str, Dict[str, Any]]) ->
                 "category": "Chandra Yoga",
                 "present": True,
                 "description": f"Planet(s) {', '.join(planets_in_12_from_moon)} in the 12th from Moon. Bestows strong physique, magnetic personality, and fame through noble deeds.",
-                "description_ta": f"சந்திரனுக்கு 12-ஆம் இடத்தில் {', '.join([PLANET_LABELS.get(p, {{}}).get('ta', p) for p in planets_in_12_from_moon])} அமர்ந்துள்ளதால் அனபா யோகம் உண்டாகிறது. உடல் வலிமை, கவர்ச்சிகரமான ஆளுமை மற்றும் நற்செயல் புகழ் தரும்.",
+                "description_ta": f"சந்திரனுக்கு 12-ஆம் இடத்தில் {', '.join([PLANET_LABELS.get(p, {}).get('ta', p) for p in planets_in_12_from_moon])} அமர்ந்துள்ளதால் அனபா யோகம் உண்டாகிறது. உடல் வலிமை, கவர்ச்சிகரமான ஆளுமை மற்றும் நற்செயல் புகழ் தரும்.",
                 "classical_source": "Phaladeepika 6.3",
                 "planets_involved": planets_in_12_from_moon
             })
@@ -341,7 +341,7 @@ def detect_yogas(lagna_sign: int, planets_by_name: Dict[str, Dict[str, Any]]) ->
                 "category": "Raja Yoga",
                 "present": True,
                 "description": f"Benefics ({', '.join(benefics_in_adhi)}) in 6th/7th/8th from Moon. Confers commanding position, political power, and wealth.",
-                "description_ta": f"சந்திரனுக்கு 6, 7, 8-ஆம் இடங்களில் சுப கிரகங்கள் ({', '.join([PLANET_LABELS.get(p, {{}}).get('ta', p) for p in benefics_in_adhi])}) அமைவது. அதிகாரப் பதவி, அரசியல் செல்வாக்கு மற்றும் செல்வத்தை அருளும்.",
+                "description_ta": f"சந்திரனுக்கு 6, 7, 8-ஆம் இடங்களில் சுப கிரகங்கள் ({', '.join([PLANET_LABELS.get(p, {}).get('ta', p) for p in benefics_in_adhi])}) அமைவது. அதிகாரப் பதவி, அரசியல் செல்வாக்கு மற்றும் செல்வத்தை அருளும்.",
                 "classical_source": "Phaladeepika 6.14",
                 "planets_involved": benefics_in_adhi
             })
@@ -360,7 +360,7 @@ def detect_yogas(lagna_sign: int, planets_by_name: Dict[str, Dict[str, Any]]) ->
                 "category": "Surya Yoga",
                 "present": True,
                 "description": f"{', '.join(v_names)} in the 2nd from Sun. Grants balanced temperament, truthful speech, and a life of steady accomplishment.",
-                "description_ta": f"சூரியனுக்கு 2-ஆம் இடத்தில் {', '.join([PLANET_LABELS.get(p, {{}}).get('ta', p) for p in v_names])} அமைவது. சீரான குணம், உண்மையான பேச்சு மற்றும் நிலையான வெற்றியை தரும்.",
+                "description_ta": f"சூரியனுக்கு 2-ஆம் இடத்தில் {', '.join([PLANET_LABELS.get(p, {}).get('ta', p) for p in v_names])} அமைவது. சீரான குணம், உண்மையான பேச்சு மற்றும் நிலையான வெற்றியை தரும்.",
                 "classical_source": "Brihat Parashara Hora Shastra Ch. 36",
                 "planets_involved": v_names
             })
@@ -379,7 +379,7 @@ def detect_yogas(lagna_sign: int, planets_by_name: Dict[str, Dict[str, Any]]) ->
                 "category": "Surya Yoga",
                 "present": True,
                 "description": f"{', '.join(vo_names)} in the 12th from Sun. Endows sharp memory, skill in multiple fields, and a charitable disposition.",
-                "description_ta": f"சூரியனுக்கு 12-ஆம் இடத்தில் {', '.join([PLANET_LABELS.get(p, {{}}).get('ta', p) for p in vo_names])} அமைவது. கூர்மையான நினைவாற்றல், பல துறை திறன் மற்றும் கொடை குணத்தை அருளும்.",
+                "description_ta": f"சூரியனுக்கு 12-ஆம் இடத்தில் {', '.join([PLANET_LABELS.get(p, {}).get('ta', p) for p in vo_names])} அமைவது. கூர்மையான நினைவாற்றல், பல துறை திறன் மற்றும் கொடை குணத்தை அருளும்.",
                 "classical_source": "Brihat Parashara Hora Shastra Ch. 36",
                 "planets_involved": vo_names
             })
