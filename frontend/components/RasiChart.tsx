@@ -13,6 +13,21 @@ interface RasiChartProps {
   lang: "ta" | "en";
 }
 
+// NEW: Exalted (Utcham) → green, Debilitated (Neecham) → red, per the
+// user's "Design Note" requirement. Reads the `status` field the backend
+// already attaches to each kattam entry in chart_builder.py — no new data
+// needed, purely a rendering-layer classification.
+function dignityChipClasses(status?: string): string {
+  if (!status) return "";
+  if (status.includes("Exalted")) {
+    return "!bg-emerald-900/40 !border-emerald-400/70 !text-emerald-300";
+  }
+  if (status.includes("Debilitated")) {
+    return "!bg-rose-900/40 !border-rose-400/70 !text-rose-300";
+  }
+  return "";
+}
+
 export const RasiChart: React.FC<RasiChartProps> = ({
   kattamData,
   chartStyle,
@@ -113,11 +128,12 @@ export const RasiChart: React.FC<RasiChartProps> = ({
                       <div
                         key={idx}
                         onClick={() => setSelectedPlanet(p)}
-                        className={`text-xs px-1 py-0.5 rounded cursor-pointer flex items-center justify-between transition-colors ${
+                        className={`text-xs px-1 py-0.5 rounded cursor-pointer flex items-center justify-between transition-colors border border-transparent ${
                           p.is_lagna
-                            ? "bg-[#ffd700]/20 text-[#ffd700] font-bold border border-[#ffd700]/40"
+                            ? "bg-[#ffd700]/20 text-[#ffd700] font-bold border-[#ffd700]/40"
                             : "text-[#f5eedb] hover:bg-white/10"
-                        }`}
+                        } ${dignityChipClasses(p.status)}`}
+                        title={p.status || undefined}
                       >
                         <span className="font-tamil font-semibold">
                           {lang === "ta" ? p.symbol : p.name}
@@ -147,6 +163,20 @@ export const RasiChart: React.FC<RasiChartProps> = ({
               </span>
             </div>
           </div>
+        </div>
+      )}
+
+      {/* Legend for dignity colours — only shown in digital view */}
+      {viewMode === "digital" && chartStyle !== "north_indian" && (
+        <div className="flex items-center gap-4 mt-2 text-[10px] text-white/50">
+          <span className="flex items-center gap-1">
+            <span className="w-2.5 h-2.5 rounded-full bg-emerald-400 inline-block" />
+            {lang === "ta" ? "உச்சம்" : "Exalted"}
+          </span>
+          <span className="flex items-center gap-1">
+            <span className="w-2.5 h-2.5 rounded-full bg-rose-400 inline-block" />
+            {lang === "ta" ? "நீசம்" : "Debilitated"}
+          </span>
         </div>
       )}
 

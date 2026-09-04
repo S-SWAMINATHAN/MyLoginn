@@ -23,6 +23,9 @@ export interface BasicBirthDetails {
   panchangam_system: string;
   sun_rise?: string | null;
   sun_set?: string | null;
+  nakshatra_deity?: string;
+  dasha_balance_ta?: string;
+  dasha_balance_en?: string;
 }
 
 export interface PlanetPosition {
@@ -63,6 +66,7 @@ export interface BhuktiPeriod {
   start_date: string;
   end_date: string;
   duration_years: number;
+  is_current?: boolean;
 }
 
 export interface VimshottariDashaPeriod {
@@ -185,6 +189,68 @@ export interface NarrationResult {
   health_and_longevity: string;
 }
 
+// --- NEW: Single-Page Report supporting types ---
+// Mirror backend/app/models/schemas.py's TransitDoshaResult / LifeCategoryScore /
+// RemedyGuide / CurrentPeriodSummary / SinglePageSummary. See
+// backend/app/services/single_page_report.py for what's genuinely new vs.
+// reused from existing calculations.
+
+export interface TransitDoshaResult {
+  name: string;
+  name_ta: string;
+  present: boolean;
+  phase?: string | null;
+  phase_ta?: string | null;
+  description: string;
+  description_ta: string;
+  classical_source: string;
+}
+
+export interface LifeCategoryScore {
+  category: string;
+  category_ta: string;
+  icon: string;
+  score_percentage: number;
+  rating: string;
+  rating_ta: string;
+  houses_considered: number[];
+  summary: string;
+  summary_ta: string;
+}
+
+export interface RemedyGuide {
+  presiding_deity: string;
+  presiding_deity_ta: string;
+  favorable_day: string;
+  favorable_day_ta: string;
+  lucky_color: string;
+  lucky_color_ta: string;
+  lucky_number: number;
+  simple_rituals: string[];
+  simple_rituals_ta: string[];
+  classical_source: string;
+}
+
+export interface CurrentPeriodSummary {
+  mahadasha_lord: string;
+  mahadasha_lord_ta: string;
+  bhukti_lord: string;
+  bhukti_lord_ta: string;
+  mahadasha_start: string;
+  mahadasha_end: string;
+  bhukti_start: string;
+  bhukti_end: string;
+  micro_prediction: string;
+  micro_prediction_ta: string;
+}
+
+export interface SinglePageSummary {
+  current_period?: CurrentPeriodSummary | null;
+  saturn_transit?: TransitDoshaResult | null;
+  life_scorecard: LifeCategoryScore[];
+  remedies?: RemedyGuide | null;
+}
+
 export interface GenerateChartRequest {
   name?: string;
   gender?: string;
@@ -226,8 +292,9 @@ export interface ChartResponse {
   yogas: YogaResult[];
   doshas: DoshaResult[];
   ashtakavarga: AshtakavargaResult;
-  baby_names?: BabyNameResult | null;
-  narration?: NarrationResult | null;
+  baby_names?: BabyNameResult;
+  narration?: NarrationResult;
+  single_page_summary?: SinglePageSummary; // NEW
   computed_at: string;
 }
 

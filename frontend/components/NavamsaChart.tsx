@@ -13,6 +13,19 @@ interface NavamsaChartProps {
   lang: "ta" | "en";
 }
 
+// NEW: same dignity-colour classification as RasiChart.tsx — see that
+// file's comment for what this reads and why.
+function dignityChipClasses(status?: string): string {
+  if (!status) return "";
+  if (status.includes("Exalted")) {
+    return "!bg-emerald-900/40 !border-emerald-400/70 !text-emerald-300";
+  }
+  if (status.includes("Debilitated")) {
+    return "!bg-rose-900/40 !border-rose-400/70 !text-rose-300";
+  }
+  return "";
+}
+
 export const NavamsaChart: React.FC<NavamsaChartProps> = ({
   kattamData,
   chartStyle,
@@ -105,11 +118,12 @@ export const NavamsaChart: React.FC<NavamsaChartProps> = ({
                     {planets.map((p, idx) => (
                       <div
                         key={idx}
-                        className={`text-xs px-1 py-0.5 rounded flex items-center justify-between ${
+                        className={`text-xs px-1 py-0.5 rounded flex items-center justify-between border border-transparent ${
                           p.is_lagna
-                            ? "bg-[#ffd700]/20 text-[#ffd700] font-bold border border-[#ffd700]/40"
+                            ? "bg-[#ffd700]/20 text-[#ffd700] font-bold border-[#ffd700]/40"
                             : "text-[#f5eedb]"
-                        }`}
+                        } ${dignityChipClasses(p.status)}`}
+                        title={p.status || undefined}
                       >
                         <span className="font-tamil font-semibold">
                           {lang === "ta" ? p.symbol : p.name}
@@ -134,6 +148,19 @@ export const NavamsaChart: React.FC<NavamsaChartProps> = ({
               </span>
             </div>
           </div>
+        </div>
+      )}
+
+      {viewMode === "digital" && chartStyle !== "north_indian" && (
+        <div className="flex items-center gap-4 mt-2 text-[10px] text-white/50">
+          <span className="flex items-center gap-1">
+            <span className="w-2.5 h-2.5 rounded-full bg-emerald-400 inline-block" />
+            {lang === "ta" ? "உச்சம்" : "Exalted"}
+          </span>
+          <span className="flex items-center gap-1">
+            <span className="w-2.5 h-2.5 rounded-full bg-rose-400 inline-block" />
+            {lang === "ta" ? "நீசம்" : "Debilitated"}
+          </span>
         </div>
       )}
     </div>

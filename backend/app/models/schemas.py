@@ -232,6 +232,64 @@ class NarrationResult(BaseModel):
     marriage_and_family: str
     health_and_longevity: str
 
+# --- NEW: Single-Page Report supporting models ---
+# These back the single-page ("Single Page Jathagam") report's genuinely
+# new pieces. See backend/app/services/single_page_report.py for the
+# citations behind each of these — nothing here duplicates an existing
+# calculation; each pulls from existing computed values (dasha, doshas,
+# ashtakavarga, nakshatra deity) plus the new Saturn-transit check.
+
+class TransitDoshaResult(BaseModel):
+    name: str
+    name_ta: str
+    present: bool
+    phase: Optional[str] = None
+    phase_ta: Optional[str] = None
+    description: str
+    description_ta: str
+    classical_source: str
+
+class LifeCategoryScore(BaseModel):
+    category: str
+    category_ta: str
+    icon: str
+    score_percentage: float
+    rating: str
+    rating_ta: str
+    houses_considered: List[int]
+    summary: str
+    summary_ta: str
+
+class RemedyGuide(BaseModel):
+    presiding_deity: str
+    presiding_deity_ta: str
+    favorable_day: str
+    favorable_day_ta: str
+    lucky_color: str
+    lucky_color_ta: str
+    lucky_number: int
+    simple_rituals: List[str]
+    simple_rituals_ta: List[str]
+    classical_source: str
+
+class CurrentPeriodSummary(BaseModel):
+    mahadasha_lord: str
+    mahadasha_lord_ta: str
+    bhukti_lord: str
+    bhukti_lord_ta: str
+    mahadasha_start: str
+    mahadasha_end: str
+    bhukti_start: str
+    bhukti_end: str
+    micro_prediction: str
+    micro_prediction_ta: str
+
+class SinglePageSummary(BaseModel):
+    current_period: Optional[CurrentPeriodSummary] = None
+    saturn_transit: Optional[TransitDoshaResult] = None
+    life_scorecard: List[LifeCategoryScore] = []
+    remedies: Optional[RemedyGuide] = None
+
 class GenerateChartRequest(BaseModel):
     name: Optional[str] = "Jathagar"
     gender: Optional[str] = "male"
@@ -274,6 +332,7 @@ class ChartResponse(BaseModel):
     ashtakavarga: AshtakavargaResult
     baby_names: Optional[BabyNameResult] = None
     narration: Optional[NarrationResult] = None
+    single_page_summary: Optional[SinglePageSummary] = None  # NEW
     computed_at: str
 
 class ProfileCreate(BaseModel):
