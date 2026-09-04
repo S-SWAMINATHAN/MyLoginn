@@ -7,7 +7,9 @@ import {
   NarrationResult,
   ProfileCreate,
   ProfileResponse,
-  PlaceSuggestion, // NEW
+  PlaceSuggestion,
+  BabyNameRequest, // NEW
+  BabyNameResult, // NEW
 } from "./types";
 
 // Base URL of the FastAPI backend.
@@ -136,7 +138,7 @@ export async function getProfileChartApi(
 }
 
 /**
- * NEW: Get place-of-birth autocomplete suggestions.
+ * Get place-of-birth autocomplete suggestions.
  * GET /api/geocode/suggest?q=...
  * Returns [] for queries under 2 characters without hitting the network.
  */
@@ -151,4 +153,20 @@ export async function suggestPlacesApi(
   );
   const data = await handleResponse<{ results: PlaceSuggestion[] }>(res);
   return data.results;
+}
+
+/**
+ * NEW: Generate Nakshatra-Pada based baby name suggestions from birth
+ * details directly (no full chart generation required).
+ * POST /api/baby-names/generate
+ */
+export async function generateBabyNamesApi(
+  data: BabyNameRequest
+): Promise<BabyNameResult> {
+  const res = await fetch(`${API_V1}/baby-names/generate`, {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify(data),
+  });
+  return handleResponse<BabyNameResult>(res);
 }

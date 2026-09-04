@@ -283,11 +283,25 @@ export interface NarrationRequest {
   language?: string; // "ta" or "en"
 }
 
-// NEW: shape returned by GET /api/geocode/suggest, used by the place-of-birth
-// autocomplete in BirthDetailsForm.tsx. Does not affect any existing type.
+// Shape returned by GET /api/geocode/suggest, used by the place-of-birth
+// autocomplete in BirthDetailsForm.tsx.
 export interface PlaceSuggestion {
   display_name: string;
   lat: number;
   lon: number;
   timezone: string;
+}
+
+// NEW: request shape for the standalone Baby Name page (POST /api/baby-names/generate).
+// Mirrors the birth-detail fields of GenerateChartRequest so the same
+// PlaceAutocomplete / TimeInput12h components can be reused as-is.
+export interface BabyNameRequest {
+  name?: string;
+  gender?: string;
+  date_of_birth: string; // YYYY-MM-DD
+  time_of_birth: string; // HH:MM:SS
+  place: string;
+  latitude?: number | null;
+  longitude?: number | null;
+  timezone?: string | null;
 }
