@@ -50,26 +50,14 @@ export const SinglePageReport: React.FC<SinglePageReportProps> = ({ chart, lang 
   const bd = chart.basic_details;
   const sps = chart.single_page_summary;
 
-  const doshaCards = [
-    ...chart.doshas.map((d) => ({
-      name: lang === "ta" ? d.name_ta : d.name,
-      present: d.present,
-      severity: d.severity,
-      description: lang === "ta" ? d.description_ta : d.description,
-    })),
-    ...(sps?.saturn_transit
-      ? [
-          {
-            name: lang === "ta" ? sps.saturn_transit.name_ta : sps.saturn_transit.name,
-            present: sps.saturn_transit.present,
-            severity: sps.saturn_transit.phase
-              ? (lang === "ta" ? sps.saturn_transit.phase_ta || "" : sps.saturn_transit.phase)
-              : "—",
-            description: lang === "ta" ? sps.saturn_transit.description_ta : sps.saturn_transit.description,
-          },
-        ]
-      : []),
-  ];
+  const doshaCards = chart.doshas.map((d) => ({
+    name: lang === "ta" ? d.name_ta : d.name,
+    present: d.present,
+    severity: d.severity,
+    description: lang === "ta" ? d.description_ta : d.description,
+  }));
+
+  const st = sps?.saturn_transit;
 
   return (
     <div className="space-y-8 print:space-y-4">
@@ -190,6 +178,67 @@ export const SinglePageReport: React.FC<SinglePageReportProps> = ({ chart, lang 
               <p className="text-[11px] text-white/60 leading-snug font-tamil">{d.description}</p>
             </div>
           ))}
+
+          {/* Saturn transit (Ezharai Sani / Ashtama Sani) — rendered separately
+              since it carries precise date-range fields the other doshas don't. */}
+          {st && (
+            <div
+              className={`rounded-xl p-3 border flex flex-col gap-1.5 sm:col-span-2 ${
+                st.present
+                  ? "bg-rose-950/40 border-rose-500/40"
+                  : st.is_upcoming
+                  ? "bg-amber-950/30 border-amber-500/30"
+                  : "bg-emerald-950/30 border-emerald-500/30"
+              }`}
+            >
+              <div className="flex items-center justify-between flex-wrap gap-1">
+                <span className="font-bold text-sm text-white font-tamil">
+                  {lang === "ta" ? st.name_ta : st.name}
+                </span>
+                {st.present ? (
+                  <span className="flex items-center gap-1 text-[10px] font-bold text-rose-300">
+                    <ShieldAlert className="w-3.5 h-3.5" />
+                    {lang === "ta" ? "தற்போது இயங்குகிறது" : "Currently Active"}
+                  </span>
+                ) : st.is_upcoming ? (
+                  <span className="flex items-center gap-1 text-[10px] font-bold text-amber-300">
+                    <CalendarClock className="w-3.5 h-3.5" />
+                    {lang === "ta" ? "வரவிருக்கிறது" : "Upcoming"}
+                  </span>
+                ) : (
+                  <span className="flex items-center gap-1 text-[10px] font-bold text-emerald-300">
+                    <ShieldCheck className="w-3.5 h-3.5" />
+                    {lang === "ta" ? "இல்லை" : "Not Active"}
+                  </span>
+                )}
+              </div>
+
+              <p className="text-[11px] text-white/60 leading-snug font-tamil">
+                {lang === "ta" ? st.description_ta : st.description}
+              </p>
+
+              {st.period_start_date && st.period_end_date && (
+                <div className="flex flex-wrap gap-x-4 gap-y-1 mt-1 text-[10px] font-mono text-[#e0b87f]">
+                  <span>
+                    {lang === "ta" ? "தொடக்கம்" : "Start"}: {st.period_start_date}
+                  </span>
+                  {st.leg_peak_start_date && (
+                    <span>
+                      {lang === "ta" ? "2-ஆம் கட்டம்" : "Peak leg"}: {st.leg_peak_start_date}
+                    </span>
+                  )}
+                  {st.leg_setting_start_date && (
+                    <span>
+                      {lang === "ta" ? "3-ஆம் கட்டம்" : "Setting leg"}: {st.leg_setting_start_date}
+                    </span>
+                  )}
+                  <span>
+                    {lang === "ta" ? "முடிவு" : "End"}: {st.period_end_date}
+                  </span>
+                </div>
+              )}
+            </div>
+          )}
         </div>
       </div>
 

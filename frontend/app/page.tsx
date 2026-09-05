@@ -241,9 +241,8 @@ export default function HomePage() {
       {/* Footer */}
       <footer className="border-t border-[#a3917a]/30 py-8 bg-[#ece1c5] text-center text-xs text-[#6f6049] no-print">
         <div className="max-w-7xl mx-auto px-4 space-y-2 font-tamil">
-          <p className="sri font-script text-xl text-[#b03726] mb-0.5">ஸ்ரீ</p>
-          <p className="text-[#2b2117] font-medium">
-            AI Jathagam Generator — பாரம்பரியக் கையெழுத்து வடிவம் & துல்லிய சுவிஸ் எபிமெரிஸ் கணிதம்
+          <p>
+            MYLoginn Astrology — துல்லியமான கணித விதிகளுடன் அமைக்கப்பட்ட வேத ஜோதிட தளம்
           </p>
           <p className="text-[10px] text-[#8e2b1c] font-mono">
             drawn stroke by stroke • Swiss Ephemeris • Lahiri Ayanamsha • BPHS & Phaladeepika Classical Rules
