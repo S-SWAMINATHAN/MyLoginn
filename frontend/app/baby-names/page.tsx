@@ -6,7 +6,7 @@ import { BabyNameForm } from "@/components/BabyNameForm";
 import { BabyNameSuggestions } from "@/components/BabyNameSuggestions";
 import { generateBabyNamesApi } from "@/lib/api";
 import { BabyNameRequest, BabyNameResult } from "@/lib/types";
-import { Baby, Sparkles } from "lucide-react";
+import { Baby } from "lucide-react";
 
 export default function BabyNamesPage() {
   const [lang, setLang] = useState<"ta" | "en">("ta");
@@ -34,26 +34,21 @@ export default function BabyNamesPage() {
   };
 
   return (
-    <div className="min-h-screen flex flex-col bg-[#0d0a0b] text-[#f5eedb]">
+    <div className="min-h-screen flex flex-col bg-[var(--paper)] text-[var(--ink)]">
       <Header lang={lang} setLang={setLang} />
 
       <main className="flex-1 max-w-7xl w-full mx-auto px-4 sm:px-6 lg:px-8 py-8 space-y-10">
-        {/* Hero Section */}
-        <section className="text-center space-y-3">
-          <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-[#6b1426]/50 border border-[#ffd700]/40 text-xs font-semibold text-[#ffd700]">
-            <Baby className="w-4 h-4 text-[#ffd700]" />
-            <span>
-              {lang === "ta"
-                ? "நட்சத்திர-பாத அடிப்படையிலான பாரம்பரிய வேத பெயர் வழிகாட்டி"
-                : "Classical Vedic Nakshatra-Pada Naming System"}
-            </span>
-          </div>
-
-          <h2 className="text-3xl sm:text-5xl font-extrabold font-cinzel tracking-tight gold-gradient-text">
+        {/* Hero Masthead — matches Porutham/Home's sri/over pattern */}
+        <section className="text-center space-y-2">
+          <p className="sri text-2xl">ஸ்ரீ</p>
+          <p className="over">AI Jathagam · Nakshatra-Pada Naming</p>
+          <h1 className="text-3xl sm:text-5xl font-normal text-[var(--ink)]">
             {lang === "ta" ? "குழந்தை பெயர் பரிந்துரை" : "Baby Name Suggestions"}
-          </h2>
-
-          <p className="max-w-2xl mx-auto text-sm sm:text-base text-[#e0b87f] font-tamil">
+          </h1>
+          <p className="font-caveat text-lg text-[var(--ink-soft)]">
+            — classical Nakshatra-Pada naming, no numerology —
+          </p>
+          <p className="max-w-2xl mx-auto text-sm text-[var(--ink-soft)] font-tamil pt-2">
             {lang === "ta"
               ? "பிறந்த நேரம் மற்றும் இடத்தின் அடிப்படையில் சந்திரனின் துல்லியமான நட்சத்திரம் மற்றும் பாதத்தை கணக்கிட்டு, அதற்கேற்ற தொடக்க எழுத்துக்களில் பாரம்பரிய தமிழ் பெயர்களை பரிந்துரைக்கிறோம்."
               : "We compute the Moon's exact Nakshatra and Pada from birth time and place, then suggest authentic Tamil names starting with the classically correct syllable — no numerology, no random guesses."}
@@ -64,7 +59,7 @@ export default function BabyNamesPage() {
         <section>
           <BabyNameForm onSubmit={handleGenerate} isLoading={isLoading} lang={lang} />
           {errorMessage && (
-            <div className="mt-4 p-4 rounded-2xl bg-rose-950/80 border border-rose-500 text-rose-200 text-xs font-semibold text-center">
+            <div className="mt-4 p-4 rounded-2xl bg-[rgba(176,55,38,0.08)] border border-[var(--red)] text-[var(--red-deep)] text-xs font-semibold text-center">
               {errorMessage}
             </div>
           )}
@@ -78,10 +73,9 @@ export default function BabyNamesPage() {
         )}
       </main>
 
-      <footer className="border-t border-[#d4af37]/20 py-8 bg-[#0a0708] text-center text-xs text-[#d4af37]/60">
-        <div className="max-w-7xl mx-auto px-4 font-tamil">
-          MyLoginn Astrology — நட்சத்திர அடிப்படையிலான குழந்தை பெயர் வழிகாட்டி
-        </div>
+      <footer className="border-t border-[rgba(43,33,23,0.15)] py-8 text-center text-xs text-[var(--ink-soft)] font-tamil">
+        <p>MyLoginn Astrology — நட்சத்திர அடிப்படையிலான குழந்தை பெயர் வழிகாட்டி</p>
+        <p className="font-caveat text-sm mt-1 text-[var(--red)]">drawn stroke by stroke · for reference only</p>
       </footer>
     </div>
   );

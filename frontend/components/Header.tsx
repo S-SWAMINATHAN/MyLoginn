@@ -2,7 +2,7 @@
 
 import React from "react";
 import Link from "next/link";
-import { Sparkles, Heart, FileText, Compass, Moon, Sun, Baby } from "lucide-react";
+import { Heart, Compass, Baby } from "lucide-react";
 
 interface HeaderProps {
   lang: "ta" | "en";
@@ -53,12 +53,21 @@ export const Header: React.FC<HeaderProps> = ({ lang, setLang }) => {
             <span>{lang === "ta" ? "திருமணப் பொருத்தம்" : "Marriage Match"}</span>
           </Link>
 
+          {/*
+            NOTE: the standalone "MATCH Finder" nav link/route was removed
+            here. That feature now lives ONLY inside the Porutham page as a
+            tab (see app/porutham/page.tsx) — it's the same
+            StarMatchFinder component, just embedded inline instead of
+            linked out to its own page, so it no longer needs its own
+            top-level nav entry or route.
+          */}
+
           <Link
-            href="/match-finder"
-            className="flex items-center gap-1.5 text-xs sm:text-sm text-[#8e2b1c] hover:text-white px-3 py-2 rounded-lg bg-[#b03726]/10 border border-[#b03726]/30 hover:bg-[#b03726] transition-colors font-tamil"
+            href="/baby-names"
+            className="flex items-center gap-1.5 text-xs sm:text-sm text-[#2b2117] hover:text-[#b03726] px-3 py-2 rounded-lg hover:bg-[#e8d7bb]/60 transition-colors font-tamil"
           >
-            <Sparkles className="w-4 h-4 text-[#b03726] group-hover:text-white" />
-            <span>{lang === "ta" ? "MATCH Finder" : "MATCH Finder"}</span>
+            <Baby className="w-4 h-4 text-[#b03726]" />
+            <span>{lang === "ta" ? "குழந்தை பெயர்" : "Baby Name"}</span>
           </Link>
 
           {/* Language Toggle */}

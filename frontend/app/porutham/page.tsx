@@ -4,14 +4,17 @@ import React, { useState } from "react";
 import { Header } from "@/components/Header";
 import { PoruthamForm } from "@/components/PoruthamForm";
 import { PoruthamResult } from "@/components/PoruthamResult";
+import { StarMatchFinder } from "@/components/StarMatchFinder";
 import { matchPoruthamApi } from "@/lib/api";
 import { PoruthamMatchResult } from "@/lib/types";
 import { Heart, Sparkles } from "lucide-react";
-import Link from "next/link";
 import confetti from "canvas-confetti";
+
+type PoruthamTab = "pair" | "finder";
 
 export default function PoruthamPage() {
   const [lang, setLang] = useState<"ta" | "en">("ta");
+  const [activeTab, setActiveTab] = useState<PoruthamTab>("pair");
   const [isLoading, setIsLoading] = useState(false);
   const [matchResult, setMatchResult] = useState<PoruthamMatchResult | null>(null);
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
@@ -67,46 +70,61 @@ export default function PoruthamPage() {
           </p>
         </section>
 
-        {/* Input Form */}
-        <section>
-          <PoruthamForm onSubmit={handleMatch} isLoading={isLoading} lang={lang} />
-          {errorMessage && (
-            <div className="mt-4 p-4 rounded-2xl bg-[rgba(176,55,38,0.08)] border border-[var(--red)] text-[var(--red-deep)] text-xs font-semibold text-center">
-              {errorMessage}
-            </div>
-          )}
-        </section>
-
-        {/* Link to new MATCH Finder */}
-        <section className="hand-card p-5 shadow-sm flex flex-col sm:flex-row items-center justify-between gap-4">
-          <div className="flex items-center gap-3">
-            <div className="w-10 h-10 rounded-xl bg-[rgba(176,55,38,0.1)] border border-[var(--red)] flex items-center justify-center text-[var(--red)]">
-              <Sparkles className="w-5 h-5 text-[var(--red)]" />
-            </div>
-            <div>
-              <div className="text-sm font-bold text-[var(--ink)] font-tamil">
-                {lang === "ta" ? "புதிய அம்சம்: MATCH Finder" : "New Feature: MATCH Finder"}
-              </div>
-              <div className="text-xs text-[var(--ink-soft)] font-tamil">
-                {lang === "ta"
-                  ? "ஒரு ஆண் நட்சத்திரத்திற்கு — எந்த பெண் ராசி/நட்சத்திரம் எவ்வளவு LIKE-RATE? 108 பொருத்தங்களும் உடனே!"
-                  : "For a Boy Nakshatra — see LIKE-RATE for every Girl Rasi/Nakshatra across 108 pada combos instantly!"}
-              </div>
-            </div>
+        {/* Tab Switcher — Pair Match vs. MATCH Finder.
+            MATCH Finder used to be a separate page linked from here; it now
+            lives ONLY inside this Porutham page as a tab, rendering the
+            same StarMatchFinder component inline (no navigation away). */}
+        <section className="flex justify-center">
+          <div className="hand-card inline-flex items-center bg-[var(--paper)] border border-[rgba(43,33,23,0.25)] rounded-2xl p-1.5 gap-1 shadow-sm">
+            <button
+              type="button"
+              onClick={() => setActiveTab("pair")}
+              className={`flex items-center gap-2 px-4 sm:px-6 py-2.5 rounded-xl text-xs sm:text-sm font-bold font-tamil transition-all ${
+                activeTab === "pair"
+                  ? "bg-[var(--red)] text-white shadow-sm"
+                  : "text-[var(--ink-soft)] hover:text-[var(--ink)]"
+              }`}
+            >
+              <Heart className="w-4 h-4" />
+              <span>{lang === "ta" ? "ஜோடி பொருத்தம் (Pair Match)" : "Pair Match"}</span>
+            </button>
+            <button
+              type="button"
+              onClick={() => setActiveTab("finder")}
+              className={`flex items-center gap-2 px-4 sm:px-6 py-2.5 rounded-xl text-xs sm:text-sm font-bold font-tamil transition-all ${
+                activeTab === "finder"
+                  ? "bg-[var(--red)] text-white shadow-sm"
+                  : "text-[var(--ink-soft)] hover:text-[var(--ink)]"
+              }`}
+            >
+              <Sparkles className="w-4 h-4" />
+              <span>{lang === "ta" ? "MATCH Finder (108 பொருத்தம்)" : "MATCH Finder (108 combos)"}</span>
+            </button>
           </div>
-          <Link
-            href="/match-finder"
-            className="btn-hand px-5 py-2 text-xs font-bold text-[var(--red-deep)] flex items-center gap-2"
-          >
-            <Sparkles className="w-4 h-4" />
-            {lang === "ta" ? "MATCH Finder திறக்க" : "Open MATCH Finder"}
-          </Link>
         </section>
 
-        {/* Results View */}
-        {matchResult && (
-          <section id="porutham-results-view">
-            <PoruthamResult result={matchResult} lang={lang} />
+        {activeTab === "pair" ? (
+          <>
+            {/* Input Form */}
+            <section>
+              <PoruthamForm onSubmit={handleMatch} isLoading={isLoading} lang={lang} />
+              {errorMessage && (
+                <div className="mt-4 p-4 rounded-2xl bg-[rgba(176,55,38,0.08)] border border-[var(--red)] text-[var(--red-deep)] text-xs font-semibold text-center">
+                  {errorMessage}
+                </div>
+              )}
+            </section>
+
+            {/* Results View */}
+            {matchResult && (
+              <section id="porutham-results-view">
+                <PoruthamResult result={matchResult} lang={lang} />
+              </section>
+            )}
+          </>
+        ) : (
+          <section>
+            <StarMatchFinder lang={lang} />
           </section>
         )}
       </main>

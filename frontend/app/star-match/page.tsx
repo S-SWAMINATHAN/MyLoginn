@@ -16,7 +16,7 @@ export default function MatchFinderPage() {
       <main className="flex-1 max-w-7xl w-full mx-auto px-4 sm:px-6 lg:px-8 py-8 space-y-8">
         <section className="text-center space-y-2">
           <p className="sri text-2xl">ஸ்ரீ</p>
-          <p className="over">AI Jathagam · Star Match Explorer</p>
+          <p className="over">MyLoginn Astrology· Star Match Explorer</p>
           <h1 className="text-3xl sm:text-5xl font-normal text-[var(--ink)]">
             {lang === "ta" ? "ராசி & நட்சத்திர பொருத்த தேடல்" : "Rasi & Nakshatra Match Finder"}
           </h1>
