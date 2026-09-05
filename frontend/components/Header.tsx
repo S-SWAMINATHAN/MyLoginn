@@ -22,8 +22,8 @@ export const Header: React.FC<HeaderProps> = ({ lang, setLang }) => {
           </div>
           <div>
             <div className="flex items-center gap-2">
-              <h1 className="text-xl sm:text-2xl font-bold tracking-tight font-cinzel text-[#2b2117] group-hover:text-[#b03726] transition-colors">
-                AI JATHAGAM
+              <h1 className="text-xl sm:text-2xl font-bold tracking-tight font-cinzel text-white group-hover:text-[#ffd700] transition-colors">
+                MYLoginn Astrology
               </h1>
               <span className="text-xs bg-[#b03726] text-white px-2 py-0.5 rounded-full font-tamil font-medium">
                 ஜாதகம்
