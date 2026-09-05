@@ -2,7 +2,7 @@
 
 import React from "react";
 import Link from "next/link";
-import { Sparkles, Heart, FileText, Compass, Moon, Sun } from "lucide-react";
+import { Sparkles, Heart, FileText, Compass, Moon, Sun, Baby } from "lucide-react";
 
 interface HeaderProps {
   lang: "ta" | "en";

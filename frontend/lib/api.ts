@@ -9,7 +9,9 @@ import {
   NarrationResult,
   ProfileCreate,
   ProfileResponse,
-  PlaceSuggestion, // NEW
+  PlaceSuggestion,
+  BabyNameRequest, // NEW
+  BabyNameResult, // NEW
 } from "./types";
 
 // Base URL of the FastAPI backend.
@@ -179,7 +181,7 @@ export async function getProfileChartApi(
 }
 
 /**
- * NEW: Get place-of-birth autocomplete suggestions.
+ * Get place-of-birth autocomplete suggestions.
  * GET /api/geocode/suggest?q=...
  * Returns [] for queries under 2 characters without hitting the network.
  */
@@ -231,7 +233,42 @@ export async function suggestPlacesApi(
     // ignore
   }
 
+  // 3. Fallback to OpenStreetMap Nominatim for Tamil or regional queries
+  try {
+    const nomRes = await fetch(
+      `https://nominatim.openstreetmap.org/search?q=${encodeURIComponent(trimmed)}&format=json&limit=8&addressdetails=1`
+    );
+    if (nomRes.ok) {
+      const nomData = await nomRes.json();
+      if (nomData && nomData.length > 0) {
+        return nomData.map((item: any) => ({
+          display_name: item.display_name,
+          display_name_ta: trimmed,
+          lat: parseFloat(item.lat),
+          lon: parseFloat(item.lon),
+          timezone: "Asia/Kolkata",
+        }));
+      }
+    }
+  } catch {
+    // ignore
+  }
+
   return [];
+}
+
+/**
+ * Direct geocoding resolver for any place name.
+ * Resolves any custom typed place using dynamic geocoding API.
+ */
+export async function directGeocodeApi(
+  placeName: string
+): Promise<PlaceSuggestion | null> {
+  const suggestions = await suggestPlacesApi(placeName);
+  if (suggestions && suggestions.length > 0) {
+    return suggestions[0];
+  }
+  return null;
 }
 
 /**
@@ -241,4 +278,19 @@ export async function suggestPlacesApi(
 export async function getGroupedLocationsApi(): Promise<import("./types").GroupedLocations> {
   const res = await fetch(`${API_V1}/geocode/grouped`);
   return handleResponse<import("./types").GroupedLocations>(res);
+}
+
+/**
+ * Generate Nakshatra-Pada based baby name suggestions from birth details directly.
+ * POST /api/baby-names/generate
+ */
+export async function generateBabyNamesApi(
+  data: BabyNameRequest
+): Promise<BabyNameResult> {
+  const res = await fetch(`${API_V1}/baby-names/generate`, {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify(data),
+  });
+  return handleResponse<BabyNameResult>(res);
 }

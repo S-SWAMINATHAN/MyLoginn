@@ -160,7 +160,56 @@ def fetch_dynamic_geocoding(query: str, limit: int = 15) -> List[Dict[str, Any]]
         except Exception:
             pass
 
-    # 2. If no results or Tamil query, try OpenStreetMap Nominatim
+    # 2. If no results or regional query, try Photon (Komoot OpenStreetMap engine)
+    if not results:
+        try:
+            encoded_query = urllib.parse.quote(cleaned)
+            url = f"https://photon.komoot.io/api/?q={encoded_query}&limit={limit}"
+            req = urllib.request.Request(url, headers={"User-Agent": "AIJathagam/1.0"})
+            with urllib.request.urlopen(req, timeout=3.5) as resp:
+                data = json.loads(resp.read().decode("utf-8"))
+                for feat in data.get("features", []):
+                    geom = feat.get("geometry", {})
+                    props = feat.get("properties", {})
+                    coords = geom.get("coordinates", [])
+                    if len(coords) >= 2:
+                        lon = float(coords[0])
+                        lat = float(coords[1])
+                        loc_id = f"{round(lat, 3)}_{round(lon, 3)}"
+                        if loc_id in seen:
+                            continue
+                        seen.add(loc_id)
+
+                        parts = [props.get("name", "")]
+                        if props.get("district") and props.get("district") != props.get("name"):
+                            parts.append(props["district"])
+                        if props.get("state") and props.get("state") != props.get("name"):
+                            parts.append(props["state"])
+                        if props.get("country"):
+                            parts.append(props["country"])
+
+                        tz = "Asia/Kolkata"
+                        if tf:
+                            try:
+                                detected = tf.timezone_at(lat=lat, lng=lon)
+                                if detected:
+                                    tz = detected
+                            except Exception:
+                                pass
+
+                        results.append({
+                            "display_name": ", ".join([p for p in parts if p]),
+                            "display_name_ta": props.get("name", cleaned),
+                            "lat": lat,
+                            "lon": lon,
+                            "timezone": tz,
+                            "country": props.get("country", "India"),
+                            "state": props.get("state", ""),
+                        })
+        except Exception:
+            pass
+
+    # 3. If still no results or Tamil query, try OpenStreetMap Nominatim
     if not results:
         try:
             encoded_query = urllib.parse.quote(cleaned)
