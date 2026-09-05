@@ -3,28 +3,30 @@
 import React, { useState } from "react";
 import { KattamPlanet } from "@/lib/types";
 import { HandwrittenChartCanvas } from "./HandwrittenChartCanvas";
-import { Eye, Palette, Sparkles } from "lucide-react";
+import { NorthIndianDiamondChart } from "./NorthIndianDiamondChart";
+import { SOUTH_INDIAN_BOX_ORDER, CHART_STYLE_THEMES, ChartStyle } from "@/lib/chartLayouts";
+import { Eye, Palette } from "lucide-react";
 
 interface RasiChartProps {
   kattamData: Record<number, KattamPlanet[]>;
-  chartStyle: "tamil" | "kerala" | "north_indian";
+  chartStyle: ChartStyle;
   lang: "ta" | "en";
 }
 
-const BOX_CELLS = [
-  { signNum: 12, row: 1, col: 1, name: "Meena", nameTa: "மீனம்", lord: "Guru" },
-  { signNum: 1,  row: 1, col: 2, name: "Mesha", nameTa: "மேஷம்", lord: "Sevvai" },
-  { signNum: 2,  row: 1, col: 3, name: "Vrishabha", nameTa: "ரிஷபம்", lord: "Sukra" },
-  { signNum: 3,  row: 1, col: 4, name: "Mithuna", nameTa: "மிதுனம்", lord: "Budha" },
-  { signNum: 4,  row: 2, col: 4, name: "Karkataka", nameTa: "கடகம்", lord: "Chandra" },
-  { signNum: 5,  row: 3, col: 4, name: "Simha", nameTa: "சிம்மம்", lord: "Surya" },
-  { signNum: 6,  row: 4, col: 4, name: "Kanya", nameTa: "கன்னி", lord: "Budha" },
-  { signNum: 7,  row: 4, col: 3, name: "Tula", nameTa: "துலாம்", lord: "Sukra" },
-  { signNum: 8,  row: 4, col: 2, name: "Vrischika", nameTa: "விருச்சிகம்", lord: "Sevvai" },
-  { signNum: 9,  row: 4, col: 1, name: "Dhanus", nameTa: "தனுசு", lord: "Guru" },
-  { signNum: 10, row: 3, col: 1, name: "Makara", nameTa: "மகரம்", lord: "Sani" },
-  { signNum: 11, row: 2, col: 1, name: "Kumbha", nameTa: "கும்பம்", lord: "Sani" },
-];
+// NEW: Exalted (Utcham) → green, Debilitated (Neecham) → red, per the
+// user's "Design Note" requirement. Reads the `status` field the backend
+// already attaches to each kattam entry in chart_builder.py — no new data
+// needed, purely a rendering-layer classification.
+function dignityChipClasses(status?: string): string {
+  if (!status) return "";
+  if (status.includes("Exalted")) {
+    return "!bg-emerald-900/40 !border-emerald-400/70 !text-emerald-300";
+  }
+  if (status.includes("Debilitated")) {
+    return "!bg-rose-900/40 !border-rose-400/70 !text-rose-300";
+  }
+  return "";
+}
 
 export const RasiChart: React.FC<RasiChartProps> = ({
   kattamData,
@@ -33,6 +35,7 @@ export const RasiChart: React.FC<RasiChartProps> = ({
 }) => {
   const [viewMode, setViewMode] = useState<"handwritten" | "digital">("handwritten");
   const [selectedPlanet, setSelectedPlanet] = useState<KattamPlanet | null>(null);
+  const theme = CHART_STYLE_THEMES[chartStyle] || CHART_STYLE_THEMES.tamil;
 
   return (
     <div className="flex flex-col items-center w-full">
@@ -77,15 +80,29 @@ export const RasiChart: React.FC<RasiChartProps> = ({
           title="Rasi Chart (D1)"
           titleTa="ராசி கட்டம்"
           kattamData={kattamData}
+          chartStyle={chartStyle}
           lang={lang}
           width={450}
           height={450}
         />
+      ) : chartStyle === "north_indian" ? (
+        <NorthIndianDiamondChart
+          kattamData={kattamData}
+          lang={lang}
+          title="Rasi Chart (D1)"
+          titleTa="ராசி கட்டம்"
+        />
       ) : (
         /* Digital South Indian / Kerala Grid */
-        <div className="relative w-full max-w-[450px] aspect-square rounded-2xl bg-gradient-to-br from-[#1b1215] to-[#120a0d] border-2 border-[#d4af37]/40 p-2 shadow-2xl">
+        <div
+          className="relative w-full max-w-[450px] aspect-square rounded-2xl p-2 shadow-2xl border-2"
+          style={{
+            background: "linear-gradient(135deg, #1b1215, #120a0d)",
+            borderColor: `${theme.inkSoft}66`,
+          }}
+        >
           <div className="grid grid-cols-4 grid-rows-4 w-full h-full gap-1.5">
-            {BOX_CELLS.map((cell) => {
+            {SOUTH_INDIAN_BOX_ORDER.map((cell) => {
               const planets = kattamData[cell.signNum] || [];
               const hasLagna = planets.some((p) => p.is_lagna);
 
@@ -93,14 +110,12 @@ export const RasiChart: React.FC<RasiChartProps> = ({
                 <div
                   key={cell.signNum}
                   style={{
-                    gridRow: cell.row,
-                    gridColumn: cell.col,
+                    gridRow: cell.row + 1,
+                    gridColumn: cell.col + 1,
+                    background: hasLagna ? theme.lagnaBg : theme.cellBg,
+                    borderColor: hasLagna ? theme.lagnaBorder : theme.cellBorder,
                   }}
-                  className={`relative p-1.5 rounded-xl border flex flex-col justify-between transition-all hover:scale-[1.02] ${
-                    hasLagna
-                      ? "bg-[#6b1426]/30 border-[#ffd700]/60 shadow-lg shadow-[#ffd700]/5"
-                      : "bg-[#25181c]/70 border-[#d4af37]/20 hover:border-[#d4af37]/60"
-                  }`}
+                  className="relative p-1.5 rounded-xl border flex flex-col justify-between transition-all hover:scale-[1.02]"
                 >
                   {/* Sign watermark */}
                   <span className="text-[10px] text-[#d4af37]/50 font-tamil font-medium text-right self-end">
@@ -113,11 +128,12 @@ export const RasiChart: React.FC<RasiChartProps> = ({
                       <div
                         key={idx}
                         onClick={() => setSelectedPlanet(p)}
-                        className={`text-xs px-1 py-0.5 rounded cursor-pointer flex items-center justify-between transition-colors ${
+                        className={`text-xs px-1 py-0.5 rounded cursor-pointer flex items-center justify-between transition-colors border border-transparent ${
                           p.is_lagna
-                            ? "bg-[#ffd700]/20 text-[#ffd700] font-bold border border-[#ffd700]/40"
+                            ? "bg-[#ffd700]/20 text-[#ffd700] font-bold border-[#ffd700]/40"
                             : "text-[#f5eedb] hover:bg-white/10"
-                        }`}
+                        } ${dignityChipClasses(p.status)}`}
+                        title={p.status || undefined}
                       >
                         <span className="font-tamil font-semibold">
                           {lang === "ta" ? p.symbol : p.name}
@@ -134,16 +150,33 @@ export const RasiChart: React.FC<RasiChartProps> = ({
             })}
 
             {/* Central Box */}
-            <div className="col-start-2 col-span-2 row-start-2 row-span-2 bg-[#140b0e]/90 rounded-2xl border border-[#d4af37]/30 flex flex-col items-center justify-center p-3 text-center shadow-inner">
-              <span className="text-3xl text-[#ffd700] mb-1 font-bold">ௐ</span>
+            <div
+              className="col-start-2 col-span-2 row-start-2 row-span-2 rounded-2xl border flex flex-col items-center justify-center p-3 text-center shadow-inner"
+              style={{ background: "#140b0e90", borderColor: `${theme.inkSoft}55` }}
+            >
+              <span className="text-3xl mb-1 font-bold" style={{ color: theme.inkSoft }}>ௐ</span>
               <span className="text-sm font-bold text-white font-cinzel tracking-wider">
                 {lang === "ta" ? "ராசி கட்டம்" : "RASI KATTAM"}
               </span>
-              <span className="text-[10px] text-[#d4af37]/70 font-tamil mt-0.5">
+              <span className="text-[10px] font-tamil mt-0.5" style={{ color: `${theme.inkSoft}b0` }}>
                 D1 Chart
               </span>
             </div>
           </div>
+        </div>
+      )}
+
+      {/* Legend for dignity colours — only shown in digital view */}
+      {viewMode === "digital" && chartStyle !== "north_indian" && (
+        <div className="flex items-center gap-4 mt-2 text-[10px] text-white/50">
+          <span className="flex items-center gap-1">
+            <span className="w-2.5 h-2.5 rounded-full bg-emerald-400 inline-block" />
+            {lang === "ta" ? "உச்சம்" : "Exalted"}
+          </span>
+          <span className="flex items-center gap-1">
+            <span className="w-2.5 h-2.5 rounded-full bg-rose-400 inline-block" />
+            {lang === "ta" ? "நீசம்" : "Debilitated"}
+          </span>
         </div>
       )}
 
