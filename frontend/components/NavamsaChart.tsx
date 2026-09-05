@@ -3,28 +3,28 @@
 import React, { useState } from "react";
 import { KattamPlanet } from "@/lib/types";
 import { HandwrittenChartCanvas } from "./HandwrittenChartCanvas";
+import { NorthIndianDiamondChart } from "./NorthIndianDiamondChart";
+import { SOUTH_INDIAN_BOX_ORDER, CHART_STYLE_THEMES, ChartStyle } from "@/lib/chartLayouts";
 import { Eye, Palette } from "lucide-react";
 
 interface NavamsaChartProps {
   kattamData: Record<number, KattamPlanet[]>;
-  chartStyle: "tamil" | "kerala" | "north_indian";
+  chartStyle: ChartStyle;
   lang: "ta" | "en";
 }
 
-const BOX_CELLS = [
-  { signNum: 12, row: 1, col: 1, name: "Meena", nameTa: "மீனம்" },
-  { signNum: 1,  row: 1, col: 2, name: "Mesha", nameTa: "மேஷம்" },
-  { signNum: 2,  row: 1, col: 3, name: "Vrishabha", nameTa: "ரிஷபம்" },
-  { signNum: 3,  row: 1, col: 4, name: "Mithuna", nameTa: "மிதுனம்" },
-  { signNum: 4,  row: 2, col: 4, name: "Karkataka", nameTa: "கடகம்" },
-  { signNum: 5,  row: 3, col: 4, name: "Simha", nameTa: "சிம்மம்" },
-  { signNum: 6,  row: 4, col: 4, name: "Kanya", nameTa: "கன்னி" },
-  { signNum: 7,  row: 4, col: 3, name: "Tula", nameTa: "துலாம்" },
-  { signNum: 8,  row: 4, col: 2, name: "Vrischika", nameTa: "விருச்சிகம்" },
-  { signNum: 9,  row: 4, col: 1, name: "Dhanus", nameTa: "தனுசு" },
-  { signNum: 10, row: 3, col: 1, name: "Makara", nameTa: "மகரம்" },
-  { signNum: 11, row: 2, col: 1, name: "Kumbha", nameTa: "கும்பம்" },
-];
+// NEW: same dignity-colour classification as RasiChart.tsx — see that
+// file's comment for what this reads and why.
+function dignityChipClasses(status?: string): string {
+  if (!status) return "";
+  if (status.includes("Exalted")) {
+    return "!bg-emerald-900/40 !border-emerald-400/70 !text-emerald-300";
+  }
+  if (status.includes("Debilitated")) {
+    return "!bg-rose-900/40 !border-rose-400/70 !text-rose-300";
+  }
+  return "";
+}
 
 export const NavamsaChart: React.FC<NavamsaChartProps> = ({
   kattamData,
@@ -32,6 +32,7 @@ export const NavamsaChart: React.FC<NavamsaChartProps> = ({
   lang,
 }) => {
   const [viewMode, setViewMode] = useState<"handwritten" | "digital">("handwritten");
+  const theme = CHART_STYLE_THEMES[chartStyle] || CHART_STYLE_THEMES.tamil;
 
   return (
     <div className="flex flex-col items-center w-full">
@@ -73,14 +74,23 @@ export const NavamsaChart: React.FC<NavamsaChartProps> = ({
           title="Navamsa Chart (D9)"
           titleTa="நவாம்ச கட்டம்"
           kattamData={kattamData}
+          chartStyle={chartStyle}
           lang={lang}
           width={450}
           height={450}
         />
+      ) : chartStyle === "north_indian" ? (
+        <NorthIndianDiamondChart
+          kattamData={kattamData}
+          lang={lang}
+          title="Navamsa Chart (D9)"
+          titleTa="நவாம்ச கட்டம்"
+        />
       ) : (
+        /* Digital South Indian / Kerala Grid */
         <div className="relative w-full max-w-[450px] aspect-square rounded-2xl bg-[#fdfaf2] border-2 border-[#a3917a]/60 p-2 shadow-lg">
           <div className="grid grid-cols-4 grid-rows-4 w-full h-full gap-1.5">
-            {BOX_CELLS.map((cell) => {
+            {SOUTH_INDIAN_BOX_ORDER.map((cell) => {
               const planets = kattamData[cell.signNum] || [];
               const hasLagna = planets.some((p) => p.is_lagna);
 
@@ -88,8 +98,10 @@ export const NavamsaChart: React.FC<NavamsaChartProps> = ({
                 <div
                   key={cell.signNum}
                   style={{
-                    gridRow: cell.row,
-                    gridColumn: cell.col,
+                    gridRow: cell.row + 1,
+                    gridColumn: cell.col + 1,
+                    background: hasLagna ? theme.lagnaBg : theme.cellBg,
+                    borderColor: hasLagna ? theme.lagnaBorder : theme.cellBorder,
                   }}
                   className={`relative p-1.5 rounded-xl border flex flex-col justify-between transition-all hover:scale-[1.02] ${
                     hasLagna
@@ -105,11 +117,12 @@ export const NavamsaChart: React.FC<NavamsaChartProps> = ({
                     {planets.map((p, idx) => (
                       <div
                         key={idx}
-                        className={`text-xs px-1 py-0.5 rounded flex items-center justify-between ${
+                        className={`text-xs px-1 py-0.5 rounded flex items-center justify-between border border-transparent ${
                           p.is_lagna
                             ? "bg-[#b03726]/15 text-[#8e2b1c] font-bold border border-[#b03726]/40"
                             : "text-[#2b2117]"
-                        }`}
+                        } ${dignityChipClasses(p.status)}`}
+                        title={p.status || undefined}
                       >
                         <span className="font-tamil font-semibold">
                           {lang === "ta" ? p.symbol : p.name}
@@ -131,6 +144,19 @@ export const NavamsaChart: React.FC<NavamsaChartProps> = ({
               </span>
             </div>
           </div>
+        </div>
+      )}
+
+      {viewMode === "digital" && chartStyle !== "north_indian" && (
+        <div className="flex items-center gap-4 mt-2 text-[10px] text-white/50">
+          <span className="flex items-center gap-1">
+            <span className="w-2.5 h-2.5 rounded-full bg-emerald-400 inline-block" />
+            {lang === "ta" ? "உச்சம்" : "Exalted"}
+          </span>
+          <span className="flex items-center gap-1">
+            <span className="w-2.5 h-2.5 rounded-full bg-rose-400 inline-block" />
+            {lang === "ta" ? "நீசம்" : "Debilitated"}
+          </span>
         </div>
       )}
     </div>

@@ -255,6 +255,68 @@ export interface NarrationResult {
   health_and_longevity: string;
 }
 
+// --- NEW: Single-Page Report supporting types ---
+// Mirror backend/app/models/schemas.py's TransitDoshaResult / LifeCategoryScore /
+// RemedyGuide / CurrentPeriodSummary / SinglePageSummary. See
+// backend/app/services/single_page_report.py for what's genuinely new vs.
+// reused from existing calculations.
+
+export interface TransitDoshaResult {
+  name: string;
+  name_ta: string;
+  present: boolean;
+  phase?: string | null;
+  phase_ta?: string | null;
+  description: string;
+  description_ta: string;
+  classical_source: string;
+}
+
+export interface LifeCategoryScore {
+  category: string;
+  category_ta: string;
+  icon: string;
+  score_percentage: number;
+  rating: string;
+  rating_ta: string;
+  houses_considered: number[];
+  summary: string;
+  summary_ta: string;
+}
+
+export interface RemedyGuide {
+  presiding_deity: string;
+  presiding_deity_ta: string;
+  favorable_day: string;
+  favorable_day_ta: string;
+  lucky_color: string;
+  lucky_color_ta: string;
+  lucky_number: number;
+  simple_rituals: string[];
+  simple_rituals_ta: string[];
+  classical_source: string;
+}
+
+export interface CurrentPeriodSummary {
+  mahadasha_lord: string;
+  mahadasha_lord_ta: string;
+  bhukti_lord: string;
+  bhukti_lord_ta: string;
+  mahadasha_start: string;
+  mahadasha_end: string;
+  bhukti_start: string;
+  bhukti_end: string;
+  micro_prediction: string;
+  micro_prediction_ta: string;
+}
+
+export interface SinglePageSummary {
+  current_period?: CurrentPeriodSummary | null;
+  saturn_transit?: TransitDoshaResult | null;
+  life_scorecard: LifeCategoryScore[];
+  remedies?: RemedyGuide | null;
+}
+
 export interface GenerateChartRequest {
   name?: string;
   gender?: string;
@@ -374,6 +436,7 @@ export interface ChartResponse {
   sampoorana?: any | null;
   bhava_sphutam?: any[] | null;
   varga_chakras?: Record<string, Record<number, string[]>> | null;
+  single_page_summary?: any | null;
   computed_at: string;
   [key: string]: any;
 }
@@ -478,6 +541,8 @@ export interface NarrationRequest {
   language?: string; // "ta" or "en"
 }
 
+// Shape returned by GET /api/geocode/suggest, used by the place-of-birth
+// autocomplete in BirthDetailsForm.tsx.
 export interface PlaceSuggestion {
   display_name: string;
   display_name_ta?: string;
@@ -503,4 +568,16 @@ export interface GroupedLocations {
   tamil_nadu: LocationItem[];
   india: LocationItem[];
   global: LocationItem[];
+}
+
+// Request shape for the standalone Baby Name page (POST /api/baby-names/generate).
+export interface BabyNameRequest {
+  name?: string;
+  gender?: string;
+  date_of_birth: string; // YYYY-MM-DD
+  time_of_birth: string; // HH:MM:SS
+  place: string;
+  latitude?: number | null;
+  longitude?: number | null;
+  timezone?: string | null;
 }

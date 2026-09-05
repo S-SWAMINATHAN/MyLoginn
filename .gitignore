@@ -293,3 +293,5 @@ docker-compose.override.yml
 #   README.md, AGENTS.md, jathagam-architecture.md, Sharmela_Jathagam.md
 # DO NOT track:
 #   jathagam.db, .env, node_modules, .next, .pytest_cache, dist, logs
+
+.venv311/

@@ -2,7 +2,7 @@
 
 import React, { useState, useEffect, useRef } from "react";
 import { MapPin, Search, ChevronDown, Check, Plus, Globe, Navigation, Loader2 } from "lucide-react";
-import { getGroupedLocationsApi, suggestPlacesApi } from "@/lib/api";
+import { getGroupedLocationsApi, suggestPlacesApi, directGeocodeApi } from "@/lib/api";
 import { GroupedLocations, LocationItem, PlaceSuggestion } from "@/lib/types";
 
 interface LocationPickerProps {
@@ -28,12 +28,14 @@ export const LocationPicker: React.FC<LocationPickerProps> = ({
   const [groupedData, setGroupedData] = useState<GroupedLocations | null>(null);
   const [liveSuggestions, setLiveSuggestions] = useState<PlaceSuggestion[]>([]);
   const [isSearching, setIsSearching] = useState(false);
+  const [isResolving, setIsResolving] = useState(false);
   const [customMode, setCustomMode] = useState(false);
   const [customPlace, setCustomPlace] = useState("");
   const [customLat, setCustomLat] = useState("");
   const [customLon, setCustomLon] = useState("");
 
   const containerRef = useRef<HTMLDivElement>(null);
+  const searchInputRef = useRef<HTMLInputElement>(null);
 
   // Load grouped locations once on mount for quick selection
   useEffect(() => {
@@ -53,6 +55,15 @@ export const LocationPicker: React.FC<LocationPickerProps> = ({
     return () => document.removeEventListener("mousedown", handleClickOutside);
   }, []);
 
+  // Focus search input when opening
+  useEffect(() => {
+    if (isOpen) {
+      setTimeout(() => {
+        searchInputRef.current?.focus();
+      }, 50);
+    }
+  }, [isOpen]);
+
   // Fetch live suggestions when typing search query using the free dynamic geocoding API
   useEffect(() => {
     if (!search || search.trim().length < 2) {
@@ -68,7 +79,7 @@ export const LocationPicker: React.FC<LocationPickerProps> = ({
         })
         .catch(() => setLiveSuggestions([]))
         .finally(() => setIsSearching(false));
-    }, 280);
+    }, 250);
     return () => clearTimeout(timer);
   }, [search]);
 
@@ -77,6 +88,30 @@ export const LocationPicker: React.FC<LocationPickerProps> = ({
     setIsOpen(false);
     setSearch("");
     setCustomMode(false);
+  };
+
+  // Dynamically resolve any typed query using the Geocoding API (Zero hardcoding)
+  const handleResolveAndApply = async (placeQuery: string) => {
+    const query = (placeQuery || "").trim();
+    if (!query) return;
+
+    setIsResolving(true);
+    try {
+      const match = await directGeocodeApi(query);
+      if (match) {
+        onChange(match.display_name, match.lat, match.lon, match.timezone || "Asia/Kolkata");
+      } else {
+        // If not matched immediately, pass the query so backend can also resolve
+        onChange(query, undefined, undefined, "Asia/Kolkata");
+      }
+    } catch {
+      onChange(query, undefined, undefined, "Asia/Kolkata");
+    } finally {
+      setIsResolving(false);
+      setIsOpen(false);
+      setSearch("");
+      setCustomMode(false);
+    }
   };
 
   const handleApplyCustom = () => {
@@ -88,7 +123,7 @@ export const LocationPicker: React.FC<LocationPickerProps> = ({
     setCustomMode(false);
   };
 
-  // Compile list based on active tab and search
+  // Compile quick-select items based on active tab and search
   const allLocations: LocationItem[] = groupedData
     ? [
         ...(activeTab === "all" || activeTab === "tamil_nadu" ? groupedData.tamil_nadu || [] : []),
@@ -115,7 +150,7 @@ export const LocationPicker: React.FC<LocationPickerProps> = ({
         </label>
       )}
 
-      {/* Trigger Button - Parchment Handwritten Style */}
+      {/* Trigger Button - Parchment Style */}
       <button
         type="button"
         onClick={() => setIsOpen(!isOpen)}
@@ -135,29 +170,55 @@ export const LocationPicker: React.FC<LocationPickerProps> = ({
       {/* Dropdown Modal */}
       {isOpen && (
         <div className="absolute z-50 top-full left-0 right-0 mt-2 bg-[#fdfaf2] border-2 border-[#8e2b1c]/50 rounded-2xl shadow-2xl overflow-hidden backdrop-blur-md animate-fade-in max-w-lg w-full text-[#2b2117]">
-          {/* Header Search */}
+          {/* Header Search with Live API indicator */}
           <div className="p-3 border-b border-[#a3917a]/30 bg-[#f7efdc] space-y-2">
             <div className="relative">
-              {isSearching ? (
+              {isSearching || isResolving ? (
                 <Loader2 className="absolute left-3 top-2.5 w-4 h-4 text-[#b03726] animate-spin" />
               ) : (
                 <Search className="absolute left-3 top-2.5 w-4 h-4 text-[#8e2b1c]" />
               )}
               <input
+                ref={searchInputRef}
                 type="text"
                 value={search}
                 onChange={(e) => setSearch(e.target.value)}
+                onKeyDown={(e) => {
+                  if (e.key === "Enter") {
+                    e.preventDefault();
+                    if (liveSuggestions.length > 0) {
+                      handleSelectLocation(liveSuggestions[0]);
+                    } else if (filteredItems.length > 0) {
+                      handleSelectLocation(filteredItems[0]);
+                    } else if (search.trim()) {
+                      handleResolveAndApply(search);
+                    }
+                  }
+                }}
                 placeholder={
                   lang === "ta"
-                    ? "மாவட்டம், நகரம், கிராமம் அல்லது வெளிநாடு தேடுக..."
-                    : "Search any village, town, city, or global place..."
+                    ? "எந்த ஊரையும் தேடுக... (எ.கா. தென்காசி, Srivilliputhur, லண்டன்)"
+                    : "Search any village, town, city worldwide (e.g. Tenkasi, London)..."
                 }
-                autoFocus
-                className="w-full pl-9 pr-3 py-2 bg-[#fffcf5] border border-[#a3917a]/70 rounded-xl text-[#2b2117] text-xs placeholder-[#6f6049]/60 outline-none focus:border-[#b03726] focus:ring-1 focus:ring-[#b03726]/40"
+                className="w-full pl-9 pr-20 py-2 bg-[#fffcf5] border border-[#a3917a]/70 rounded-xl text-[#2b2117] text-xs placeholder-[#6f6049]/60 outline-none focus:border-[#b03726] focus:ring-1 focus:ring-[#b03726]/40"
               />
+              {search.trim().length >= 2 && (
+                <button
+                  type="button"
+                  onClick={() => handleResolveAndApply(search)}
+                  disabled={isResolving}
+                  className="absolute right-1.5 top-1.5 px-2.5 py-1 bg-[#b03726] hover:bg-[#8e2b1c] text-white text-[10px] font-bold rounded-lg transition-colors flex items-center gap-1"
+                >
+                  {isResolving ? (
+                    <Loader2 className="w-3 h-3 animate-spin" />
+                  ) : (
+                    <span>{lang === "ta" ? "தேடு" : "Search"}</span>
+                  )}
+                </button>
+              )}
             </div>
 
-            {/* Category Tabs */}
+            {/* Category Tabs for fast 1-click popular locations */}
             <div className="flex gap-1 overflow-x-auto text-[11px] font-tamil scrollbar-none">
               <button
                 type="button"
@@ -168,7 +229,7 @@ export const LocationPicker: React.FC<LocationPickerProps> = ({
                     : "bg-[#eee2c7] text-[#2b2117]/80 hover:bg-[#e6d6b6]"
                 }`}
               >
-                {lang === "ta" ? "தமிழ்நாடு (38 மாவட்டங்கள்)" : "Tamil Nadu (38 Districts)"}
+                {lang === "ta" ? "தமிழ்நாடு" : "Tamil Nadu"}
               </button>
               <button
                 type="button"
@@ -179,7 +240,7 @@ export const LocationPicker: React.FC<LocationPickerProps> = ({
                     : "bg-[#eee2c7] text-[#2b2117]/80 hover:bg-[#e6d6b6]"
                 }`}
               >
-                {lang === "ta" ? "இந்திய நகரங்கள்" : "Other Indian Cities"}
+                {lang === "ta" ? "இந்திய நகரங்கள்" : "Indian Cities"}
               </button>
               <button
                 type="button"
@@ -190,7 +251,7 @@ export const LocationPicker: React.FC<LocationPickerProps> = ({
                     : "bg-[#eee2c7] text-[#2b2117]/80 hover:bg-[#e6d6b6]"
                 }`}
               >
-                {lang === "ta" ? "சர்வதேசம் (Diaspora)" : "Global Tamil Hubs"}
+                {lang === "ta" ? "சர்வதேசம்" : "Global"}
               </button>
               <button
                 type="button"
@@ -206,31 +267,52 @@ export const LocationPicker: React.FC<LocationPickerProps> = ({
             </div>
           </div>
 
-          {/* Quick Custom Add Banner if searching for an unlisted town */}
-          {search && search.trim().length > 1 && (
-            <div className="bg-[#f2e5cb] px-4 py-2 border-b border-[#a3917a]/30 flex items-center justify-between">
-              <div className="text-xs text-[#2b2117] font-tamil truncate">
-                {lang === "ta" ? "தேடும் ஊர்: " : "Searching: "}{" "}
-                <span className="font-bold text-[#8e2b1c]">"{search}"</span>
+          {/* Dynamic Geocoding Resolution Bar */}
+          {search && search.trim().length >= 2 && (
+            <div className="bg-[#f2e5cb] px-3.5 py-2 border-b border-[#a3917a]/30 flex items-center justify-between">
+              <div className="text-xs text-[#2b2117] font-tamil truncate flex items-center gap-1.5">
+                <Globe className="w-3.5 h-3.5 text-[#b03726] shrink-0" />
+                <span>
+                  {lang === "ta" ? "தேடும் ஊர்: " : "Searching: "}
+                  <strong className="text-[#8e2b1c] font-bold">"{search}"</strong>
+                </span>
               </div>
               <button
                 type="button"
-                onClick={() => handleSelectLocation({ display_name: `${search.trim()}, Tamil Nadu`, lat: 11.0168, lon: 76.9558 })}
-                className="px-2.5 py-1 bg-[#b03726] text-white rounded-lg text-[11px] font-bold flex items-center gap-1 hover:bg-[#8e2b1c] transition-colors"
+                onClick={() => handleResolveAndApply(search)}
+                disabled={isResolving}
+                className="px-2.5 py-1 bg-[#b03726] hover:bg-[#8e2b1c] text-white rounded-lg text-[11px] font-bold flex items-center gap-1 transition-colors shrink-0 shadow-xs"
               >
-                <Plus className="w-3 h-3" />
-                {lang === "ta" ? "நேரடியாக சேர்க்க" : "Use this place"}
+                {isResolving ? (
+                  <>
+                    <Loader2 className="w-3 h-3 animate-spin" />
+                    <span>{lang === "ta" ? "கணிக்கிறது..." : "Resolving..."}</span>
+                  </>
+                ) : (
+                  <>
+                    <Navigation className="w-3 h-3" />
+                    <span>{lang === "ta" ? "இவ்வூரைத் தேர்ந்தெடு" : "Select this place"}</span>
+                  </>
+                )}
               </button>
             </div>
           )}
 
-          {/* Location List */}
-          <div className="max-h-60 overflow-y-auto divide-y divide-[#a3917a]/20 scrollbar-thin">
-            {/* Live dynamic suggestions from free API */}
+          {/* Location Results List */}
+          <div className="max-h-64 overflow-y-auto divide-y divide-[#a3917a]/20 scrollbar-thin">
+            {/* 1. Live Dynamic Suggestions from Free Geocoding API (Open-Meteo & Nominatim) */}
             {liveSuggestions.length > 0 && (
               <div className="bg-[#fbf4e2]">
-                <div className="px-3 py-1 text-[10px] text-[#8e2b1c] uppercase font-bold tracking-wider bg-[#f3e7ce]">
-                  {lang === "ta" ? "நேரடி தேடல் முடிவுகள் (Open Geocoding API)" : "Live Dynamic Results (Open Geocoding)"}
+                <div className="px-3 py-1.5 text-[10px] text-[#8e2b1c] uppercase font-bold tracking-wider bg-[#f3e7ce] flex items-center justify-between">
+                  <span className="flex items-center gap-1">
+                    <Globe className="w-3 h-3 text-[#b03726]" />
+                    {lang === "ta"
+                      ? "நேரடி தேடல் முடிவுகள் (Open Geocoding API)"
+                      : "Live Dynamic Results (Open Geocoding API)"}
+                  </span>
+                  <span className="font-mono font-normal text-[9px] text-[#6f6049]">
+                    {liveSuggestions.length} இடங்கள்
+                  </span>
                 </div>
                 {liveSuggestions.map((item, idx) => (
                   <div
@@ -238,29 +320,35 @@ export const LocationPicker: React.FC<LocationPickerProps> = ({
                     onClick={() => handleSelectLocation(item)}
                     className="px-4 py-2.5 text-xs text-[#2b2117] hover:bg-[#ecdcc2] cursor-pointer flex items-center justify-between transition-colors"
                   >
-                    <div className="flex items-center gap-2">
+                    <div className="flex items-center gap-2.5">
                       <Navigation className="w-3.5 h-3.5 text-[#b03726] shrink-0" />
                       <div>
-                        <div className="font-tamil font-bold">{item.display_name}</div>
-                        <div className="text-[10px] text-[#6f6049]">{item.timezone}</div>
+                        <div className="font-tamil font-bold text-sm text-[#1e0f08]">
+                          {item.display_name}
+                        </div>
+                        <div className="text-[10.5px] text-[#6f6049] flex items-center gap-2 mt-0.5">
+                          <span>{item.timezone}</span>
+                          <span>•</span>
+                          <span className="font-mono">{item.lat.toFixed(4)}°, {item.lon.toFixed(4)}°</span>
+                        </div>
                       </div>
                     </div>
-                    <span className="text-[10px] text-[#6f6049] font-mono shrink-0 ml-2">
-                      {item.lat.toFixed(2)}°, {item.lon.toFixed(2)}°
+                    <span className="px-2 py-0.5 bg-[#b03726]/10 text-[#8e2b1c] text-[10px] font-bold rounded shrink-0 ml-2">
+                      தேர்ந்தெடு
                     </span>
                   </div>
                 ))}
               </div>
             )}
 
-            {/* Standard pre-indexed locations */}
+            {/* 2. Quick Popular Matching Locations */}
             {filteredItems.map((loc) => {
               const isSelected = value.toLowerCase().includes(loc.name.toLowerCase());
               return (
                 <div
                   key={loc.key}
                   onClick={() => handleSelectLocation(loc)}
-                  className={`px-4 py-2.5 text-xs cursor-pointer flex items-center justify-between hover:bg-[#ecdcc2] transition-colors ${
+                  className={`px-4 py-2 text-xs cursor-pointer flex items-center justify-between hover:bg-[#ecdcc2] transition-colors ${
                     isSelected ? "bg-[#e8d7bb] text-[#8e2b1c] font-bold" : "text-[#2b2117]"
                   }`}
                 >
@@ -288,25 +376,38 @@ export const LocationPicker: React.FC<LocationPickerProps> = ({
               );
             })}
 
-            {filteredItems.length === 0 && liveSuggestions.length === 0 && !isSearching && (
-              <div className="p-6 text-center text-xs text-[#6f6049] font-tamil space-y-2">
-                <div>{lang === "ta" ? "பட்டியலில் இந்த ஊர் இல்லை." : "Location not found in instant list."}</div>
+            {/* No match state */}
+            {filteredItems.length === 0 && liveSuggestions.length === 0 && !isSearching && search.trim().length >= 2 && (
+              <div className="p-6 text-center text-xs text-[#6f6049] font-tamil space-y-2.5">
+                <Globe className="w-8 h-8 text-[#b03726]/60 mx-auto" />
+                <div>
+                  {lang === "ta"
+                    ? `"${search}" என்ற ஊரின் அட்ச தீர்க்க ரேகைகளை Geocoding API மூலம் கண்டறியலாம்.`
+                    : `Resolve coordinates for "${search}" via Open Geocoding API.`}
+                </div>
                 <button
                   type="button"
-                  onClick={() => {
-                    setCustomPlace(search);
-                    setCustomMode(true);
-                  }}
-                  className="px-3 py-1.5 bg-[#b03726] text-white rounded-xl text-xs font-bold inline-flex items-center gap-1.5 hover:bg-[#8e2b1c]"
+                  onClick={() => handleResolveAndApply(search)}
+                  disabled={isResolving}
+                  className="px-4 py-2 bg-[#b03726] hover:bg-[#8e2b1c] text-white rounded-xl text-xs font-bold inline-flex items-center gap-1.5 transition-colors shadow-sm"
                 >
-                  <Plus className="w-3.5 h-3.5" />
-                  {lang === "ta" ? `"${search}" என புதிய ஊராக உள்ளிடுக` : `Enter "${search}" manually`}
+                  {isResolving ? (
+                    <>
+                      <Loader2 className="w-3.5 h-3.5 animate-spin" />
+                      <span>{lang === "ta" ? "கணிக்கப்படுகிறது..." : "Resolving coordinates..."}</span>
+                    </>
+                  ) : (
+                    <>
+                      <Navigation className="w-3.5 h-3.5" />
+                      <span>{lang === "ta" ? `"${search}"-ஐ நேரடியாகப் பயன்படுத்து` : `Use "${search}" with live GPS`}</span>
+                    </>
+                  )}
                 </button>
               </div>
             )}
           </div>
 
-          {/* Footer: Manual Custom Place Option */}
+          {/* Footer: Manual Custom Coordinate Option */}
           <div className="p-3 bg-[#f7efdc] border-t border-[#a3917a]/30 flex flex-col gap-2">
             {!customMode ? (
               <button
@@ -316,19 +417,19 @@ export const LocationPicker: React.FC<LocationPickerProps> = ({
               >
                 <Plus className="w-3 h-3" />
                 {lang === "ta"
-                  ? "வேறு ஊர் அல்லது துல்லிய அட்சரேகை (Lat/Lon) நேரடியாக உள்ளிட"
-                  : "Enter custom town or exact coordinates"}
+                  ? "துல்லிய அட்சரேகை (Custom Lat/Lon) நேரடியாக உள்ளிட"
+                  : "Enter custom town with exact coordinates"}
               </button>
             ) : (
               <div className="space-y-2 pt-1">
                 <div className="text-[11px] font-bold text-[#8e2b1c] font-tamil">
-                  {lang === "ta" ? "சுய ஊர் விவரம் (Custom Location)" : "Custom Location Details"}
+                  {lang === "ta" ? "சுய ஊர் விவரம் (Custom Coordinates)" : "Custom Location Coordinates"}
                 </div>
                 <input
                   type="text"
                   value={customPlace}
                   onChange={(e) => setCustomPlace(e.target.value)}
-                  placeholder={lang === "ta" ? "ஊரின் பெயர் (e.g. Tenkasi / கிராமம்)" : "Place name (e.g. Srivilliputhur)"}
+                  placeholder={lang === "ta" ? "ஊரின் பெயர் (e.g. Srivilliputhur / Tenkasi)" : "Place name (e.g. Srivilliputhur)"}
                   className="w-full px-3 py-1.5 bg-[#fffcf5] border border-[#a3917a]/70 rounded-lg text-xs text-[#2b2117] outline-none focus:border-[#b03726]"
                 />
                 <div className="grid grid-cols-2 gap-2">
@@ -337,7 +438,7 @@ export const LocationPicker: React.FC<LocationPickerProps> = ({
                     step="any"
                     value={customLat}
                     onChange={(e) => setCustomLat(e.target.value)}
-                    placeholder="Latitude (e.g. 9.17)"
+                    placeholder="Latitude (e.g. 9.51)"
                     className="w-full px-2.5 py-1 bg-[#fffcf5] border border-[#a3917a]/70 rounded-lg text-[11px] text-[#2b2117] outline-none"
                   />
                   <input
@@ -345,7 +446,7 @@ export const LocationPicker: React.FC<LocationPickerProps> = ({
                     step="any"
                     value={customLon}
                     onChange={(e) => setCustomLon(e.target.value)}
-                    placeholder="Longitude (e.g. 77.86)"
+                    placeholder="Longitude (e.g. 77.63)"
                     className="w-full px-2.5 py-1 bg-[#fffcf5] border border-[#a3917a]/70 rounded-lg text-[11px] text-[#2b2117] outline-none"
                   />
                 </div>
