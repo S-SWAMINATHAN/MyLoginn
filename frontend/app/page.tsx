@@ -14,9 +14,13 @@ import { BabyNameSuggestions } from "@/components/BabyNameSuggestions";
 import { NarrationPanel } from "@/components/NarrationPanel";
 import { ShareCard } from "@/components/ShareCard";
 import { PanchangamDetailsCard } from "@/components/PanchangamDetailsCard";
+import { AyurdayaCard } from "@/components/AyurdayaCard";
+import { RasiNakshatraDetailsCard } from "@/components/RasiNakshatraDetailsCard";
+import { HandwrittenManuscript } from "@/components/HandwrittenManuscript";
+import { HandwrittenPdfButton } from "@/components/HandwrittenPdfButton";
 import { GenerateChartRequest, ChartResponse } from "@/lib/types";
 import { generateChartApi } from "@/lib/api";
-import { Sparkles, Printer, Share2, Heart, Download, Compass, ShieldCheck } from "lucide-react";
+import { Sparkles, Printer, Share2, Heart, Download, Compass, ShieldCheck, PenLine } from "lucide-react";
 
 export default function HomePage() {
   const [lang, setLang] = useState<"ta" | "en">("ta");
@@ -49,29 +53,21 @@ export default function HomePage() {
   };
 
   return (
-    <div className="min-h-screen flex flex-col bg-[#0d0a0b] text-[#f5eedb]">
+    <div className="min-h-screen flex flex-col bg-[var(--paper)] text-[var(--ink)]">
       <Header lang={lang} setLang={setLang} />
 
-      <main className="flex-1 max-w-7xl w-full mx-auto px-4 sm:px-6 lg:px-8 py-8 space-y-12">
-        {/* Hero Section */}
-        <section className="text-center space-y-4 no-print">
-          <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-[#6b1426]/50 border border-[#ffd700]/40 text-xs font-semibold text-[#ffd700] shadow-lg shadow-[#ffd700]/5">
-            <Sparkles className="w-4 h-4 text-[#ffd700] animate-spin" style={{ animationDuration: "6s" }} />
-            <span>
-              {lang === "ta"
-                ? "சுவிஸ் எபிமெரிஸ் துல்லியக் கணிதம் (Swiss Ephemeris Lahiri)"
-                : "Deterministic Sub-Arcsecond Ephemeris Engine"}
-            </span>
-          </div>
-
-          <h2 className="text-3xl sm:text-5xl font-extrabold font-cinzel tracking-tight gold-gradient-text">
-            {lang === "ta" ? "முழுமையான தமிழ் வேத ஜாதகம்" : "Complete Vedic Jathagam Generator"}
-          </h2>
-
-          <p className="max-w-2xl mx-auto text-sm sm:text-base text-[#e0b87f] font-tamil">
+      <main className="flex-1 max-w-7xl w-full mx-auto px-4 sm:px-6 lg:px-8 py-6 space-y-10">
+        {/* Masthead / Hero Section (design-1.html style) */}
+        <section className="text-center pt-4 pb-2 no-print space-y-2">
+          <p className="sri font-script text-2xl text-[#b03726]">ஸ்ரீ</p>
+          <p className="over-title text-xs tracking-widest text-[#b03726]">AI JATHAGAM · HANDWRITTEN EDITION</p>
+          <h1 className="text-3xl sm:text-5xl font-normal font-script text-[#2b2117] tracking-tight">
+            {lang === "ta" ? "AI ஜாதகம்" : "AI Jathagam"}
+          </h1>
+          <p className="text-sm sm:text-base text-[#6f6049] font-script">
             {lang === "ta"
-              ? "ராசி, நவாம்சம், 12 பாவங்கள், விம்சோத்தரி திசா புக்தி, அஷ்டகவர்க்கம் மற்றும் பாரம்பரிய ஓலைச்சுவடி வடிவம்"
-              : "Generate authentic Rasi, Navamsa, 12 Bhavas, Vimshottari Dasha, Yogas, Ashtakavarga & Manuscript Style Charts"}
+              ? "— பாரம்பரிய முறைப்படி எழுதப்படும் உயர் துல்லிய கணிதக் கையெழுத்து ஜாதகம் —"
+              : "— a birth chart, penned the old way —"}
           </p>
         </section>
 
@@ -79,7 +75,7 @@ export default function HomePage() {
         <section className="no-print">
           <BirthDetailsForm onSubmit={handleGenerate} isLoading={isLoading} lang={lang} />
           {errorMessage && (
-            <div className="mt-4 p-4 rounded-2xl bg-rose-950/80 border border-rose-500 text-rose-200 text-xs font-semibold text-center">
+            <div className="mt-4 p-4 rounded-2xl bg-rose-100 border border-rose-400 text-rose-800 text-xs font-semibold text-center font-tamil">
               {errorMessage}
             </div>
           )}
@@ -88,36 +84,56 @@ export default function HomePage() {
         {/* Computed Jathagam Output Display */}
         {chartResult && (
           <section id="chart-results-section" className="space-y-10 pt-4 animate-fade-in">
-            {/* 1. Header Banner */}
-            <div className="palm-leaf-dark rounded-3xl p-6 sm:p-8 border-2 border-[#d4af37]/40 shadow-2xl relative overflow-hidden">
-              <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 border-b border-[#d4af37]/20 pb-6">
+            {/* Facts Summary Box (design-1.html style) */}
+            <div className="facts text-center">
+              <p>
+                <span className="fl">{lang === "ta" ? "பிறப்பு" : "Birth"}</span>{" "}
+                {chartResult.date_of_birth} · {chartResult.time_of_birth} · {chartResult.place}
+              </p>
+              <p>
+                <span className="fl">{lang === "ta" ? "ராசி" : "Rasi"}</span> {chartResult.basic_details.moon_sign_ta} ({chartResult.basic_details.moon_sign_en}) ·{" "}
+                <span className="fl">{lang === "ta" ? "நட்சத்திரம்" : "Star"}</span> {chartResult.basic_details.nakshatra_ta} — {chartResult.basic_details.pada}ம் பாதம் ·{" "}
+                <span className="fl">{lang === "ta" ? "லக்னம்" : "Lagna"}</span> {chartResult.basic_details.ascendant_sign_ta} ({chartResult.basic_details.ascendant_sign_en})
+              </p>
+              {chartResult.basic_details.dasha_balance_ta && (
+                <p>
+                  <span className="fl">{lang === "ta" ? "இருப்பு தசை" : "Dasha Balance"}</span> {chartResult.basic_details.dasha_balance_ta}
+                </p>
+              )}
+            </div>
+
+            {/* Header Banner */}
+            <div className="hand-card p-6 sm:p-8 relative overflow-hidden">
+              <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 border-b border-[#a3917a]/30 pb-6">
                 <div>
                   <div className="flex items-center gap-2">
-                    <span className="text-2xl text-[#ffd700] font-bold">ௐ</span>
-                    <h2 className="text-2xl sm:text-3xl font-bold font-tamil text-white">
+                    <span className="text-2xl text-[#b03726] font-bold font-script">ஸ்ரீ</span>
+                    <h2 className="text-2xl sm:text-3xl font-bold font-script text-[#2b2117]">
                       {chartResult.name} {lang === "ta" ? "அவர்களின் ஜாதகம்" : "Horoscope"}
                     </h2>
                   </div>
-                  <p className="text-xs text-[#e0b87f] font-tamil mt-1">
+                  <p className="text-xs text-[#6f6049] font-tamil mt-1">
                     {chartResult.date_of_birth} | {chartResult.time_of_birth} | {chartResult.place} ({chartResult.timezone})
                   </p>
                 </div>
 
                 {/* Print and Export Buttons */}
-                <div className="flex items-center gap-2 no-print">
+                <div className="flex items-center gap-2 no-print flex-wrap">
                   <button
                     onClick={handlePrint}
-                    className="px-4 py-2 bg-[#6b1426] border border-[#ffd700]/60 rounded-xl text-xs font-bold text-[#ffd700] flex items-center gap-1.5 hover:scale-105 transition-all shadow-md"
+                    className="btn-hand text-xs font-semibold py-2 px-3.5"
                   >
-                    <Printer className="w-4 h-4" />
-                    <span>{lang === "ta" ? "அச்சிடுக (Print PDF)" : "Print / PDF"}</span>
+                    <Printer className="w-4 h-4 text-[#b03726]" />
+                    <span>{lang === "ta" ? "அச்சிடுக (Print)" : "Print"}</span>
                   </button>
+
+                  <HandwrittenPdfButton chart={chartResult} lang={lang} />
 
                   <a
                     href="/porutham"
-                    className="px-4 py-2 bg-[#25181c] border border-[#d4af37]/40 rounded-xl text-xs font-bold text-white flex items-center gap-1.5 hover:bg-white/10 transition-all"
+                    className="btn-hand text-xs font-semibold py-2 px-3.5"
                   >
-                    <Heart className="w-4 h-4 text-[#e65c00]" />
+                    <Heart className="w-4 h-4 text-[#b03726]" />
                     <span>{lang === "ta" ? "பொருத்தம்" : "Match"}</span>
                   </a>
                 </div>
@@ -144,6 +160,15 @@ export default function HomePage() {
               />
             </div>
 
+            {/* 3. Detailed Rasi, Nakshatra & Pada Predictions */}
+            {(chartResult.rasi_nakshatra_predictions || chartResult.detailed_predictions) && (
+              <RasiNakshatraDetailsCard
+                predictions={(chartResult.rasi_nakshatra_predictions || chartResult.detailed_predictions)!}
+                namaAksharas={chartResult.baby_names?.starting_syllables}
+                lang={lang}
+              />
+            )}
+
             {/* 4. Planetary Table */}
             <PlanetaryTable planets={chartResult.planets} lang={lang} />
 
@@ -151,11 +176,16 @@ export default function HomePage() {
             <DashaTimeline
               dashas={chartResult.vimshottari_dasha}
               lang={lang}
-              dashaBalanceTa={chartResult.basic_details.dasha_balance_ta}
-              dashaBalanceEn={chartResult.basic_details.dasha_balance_en}
+              dashaBalanceTa={chartResult.basic_details.dasha_balance_ta || undefined}
+              dashaBalanceEn={chartResult.basic_details.dasha_balance_en || undefined}
             />
 
-            {/* 6. 12 Bhava Predictions (Shown in Full mode or on drilldown) */}
+            {/* 6. Ayurdaya (Longevity Analysis) */}
+            {chartResult.ayurdaya && (
+              <AyurdayaCard ayurdaya={chartResult.ayurdaya} lang={lang} />
+            )}
+
+            {/* 7. 12 Bhava Predictions (Shown in Full mode or on drilldown) */}
             {chartResult.output_mode === "full" && (
               <BhavaPredictions bhavas={chartResult.bhava_predictions} lang={lang} />
             )}
@@ -174,24 +204,49 @@ export default function HomePage() {
             )}
 
             {/* 10. AI Narration Panel */}
-            <NarrationPanel narration={chartResult.narration} lang={lang} />
+            <NarrationPanel narration={chartResult.narration || undefined} lang={lang} />
 
             {/* 11. Share Card Preview */}
             <div className="no-print">
               <ShareCard chart={chartResult} lang={lang} />
+            </div>
+
+            {/* 12. Handwritten Manuscript Preview (for PDF) */}
+            <div className="no-print">
+              <div className="flex items-center justify-between mb-3">
+                <h3 className="text-base font-bold font-script text-[#2b2117] flex items-center gap-2">
+                  <PenLine className="w-4 h-4 text-[#b03726]" />
+                  {lang === "ta" ? "கையெழுத்து ஓலைச்சுவடி முன்னோட்டம் (Handwritten Manuscript Preview)" : "Handwritten Manuscript Preview (Tamil Kaiyezhuthu)"}
+                </h3>
+                <span className="text-[11px] text-[#6f6049] font-mono">Kavivanar • Turmeric Paper • Traditional Kattams</span>
+              </div>
+              <div className="border-2 border-[#a3917a]/40 rounded-2xl overflow-hidden bg-[#fdf6e3] max-h-[560px] overflow-y-auto shadow-xl">
+                <div className="scale-[0.62] origin-top-left w-[794px]" style={{ transformOrigin: "top left" }}>
+                  <HandwrittenManuscript chart={chartResult} lang={lang} />
+                </div>
+              </div>
+              <p className="text-xs text-[#6f6049] text-center mt-2 font-tamil">
+                {lang === "ta" ? "மேலே உள்ள ‘கையெழுத்து PDF’ பொத்தானை அழுத்தி உண்மையான கையெழுத்து மஞ்சள் பனை ஓலை PDF-ஐ பதிவிறக்கவும்." : "Click ‘Handwritten PDF’ above to download true Tamil handwritten palm-leaf PDF."}
+              </p>
+            </div>
+
+            {/* Hidden full-size manuscript for PDF generation (off-screen) */}
+            <div id="handwritten-manuscript" className="fixed left-[-10000px] top-0 pointer-events-none" aria-hidden>
+              <HandwrittenManuscript chart={chartResult} lang={lang} />
             </div>
           </section>
         )}
       </main>
 
       {/* Footer */}
-      <footer className="border-t border-[#d4af37]/20 py-8 bg-[#0a0708] text-center text-xs text-[#d4af37]/60 no-print">
+      <footer className="border-t border-[#a3917a]/30 py-8 bg-[#ece1c5] text-center text-xs text-[#6f6049] no-print">
         <div className="max-w-7xl mx-auto px-4 space-y-2 font-tamil">
-          <p>
-            AI Jathagam Generator — துல்லியமான கணித விதிகளுடன் அமைக்கப்பட்ட வேத ஜோதிட தளம்
+          <p className="sri font-script text-xl text-[#b03726] mb-0.5">ஸ்ரீ</p>
+          <p className="text-[#2b2117] font-medium">
+            AI Jathagam Generator — பாரம்பரியக் கையெழுத்து வடிவம் & துல்லிய சுவிஸ் எபிமெரிஸ் கணிதம்
           </p>
-          <p className="text-[10px] text-white/40 font-mono">
-            Powered by Swiss Ephemeris • Lahiri Ayanamsha • BPHS & Phaladeepika Classical Rules
+          <p className="text-[10px] text-[#8e2b1c] font-mono">
+            drawn stroke by stroke • Swiss Ephemeris • Lahiri Ayanamsha • BPHS & Phaladeepika Classical Rules
           </p>
         </div>
       </footer>

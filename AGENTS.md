@@ -118,6 +118,33 @@ Keep environment parity high (same Docker image promoted through stages) so "wor
 
 This project maintains a changelog following the [Keep a Changelog](https://keepachangelog.com/) convention and [Semantic Versioning](https://semver.org/). Every merged change that affects behavior, calculation logic, or the API contract gets an entry — not just releases.
 
+### [1.4.0] — 2026-09-05
+#### Added
+- **சம்பூர்ண ஜாதகம் (12-Page Traditional Sampoorana Jathagam Engine & Manuscript)**: Built complete Shastric computation backend (`backend/app/services/sampoorana.py`) computing traditional 60-year Tamil calendar (`பிரபவ`..`அட்சய`), historical eras (சாலிவாகன, கலியுகாதி, கொல்லம், பசலி, ஹிஜ்ரி), Panchanga micro-metrics (நாழிகை, விநாழிகை, தற்பரை, நேத்திரம், ஜீவன், விவாகச்சக்கரம், வாரசூலை & பரிகாரம், யோகினி வாசம்).
+- **பஞ்ச பட்சி & எண் கணிதம் (Pancha Pakshi Sastra & Numerology)**: Full Agathiyar Pancha Pakshi Sastra (birth bird, activities, friends, enemies, Padupakshi alert days) and Chaldean Numerology (birth radical number, destiny number, lucky numbers/dates/colors/stones/deity).
+- **விம்சோத்தரி தசா கணிதம் & வெண்பா (Dasha Balance Mathematical Metrics & Classical Verses)**: Classical Paramanazhigai (60 நாழிகை), Sentra Nazhigai, Nindra Nazhigai, and 120-year Vimshottari Mahadasha timeline with reigning dasha lord's classical Tamil verse, deity, temple, grain, cloth, flower, and remedy rituals.
+- **பாவக ஸ்புடம் & வர்க்க சக்கரங்கள் (Bhava Sphutam & Varga Chakras)**: Complete Sripati 12-Bhava start, madhya, and end longitudes, planetary occupants, and Shodashavarga placements (D1, D2 Hora, D3 Drekkana, D4 Chaturthamsa, D7, D9, D10 Dasamsa, D12, D16, D30, D60).
+- **12-பக்க பாரம்பரிய மஞ்சள் பத்திரம் (12-Page Discrete PDF Export)**: Expanded `HandwrittenManuscript.tsx` with all 12 pages rendered discrete and un-sliced in `HandwrittenPdfButton.tsx` with Rough.js hand-drawn kattams, Kavivanar handwritten calligraphy, and traditional Mangala Slokas.
+
+#### Fixed
+- **பக்கம் 6 பலன்கள் சரிசெய்தல் (Page 6 Prediction Render Bug Fix)**: Fixed attribute mismatch (`chart.detailed_predictions` → `chart.rasi_nakshatra_predictions`) and introduced guaranteed client-side fallbacks so Rasi-Nakshatra readings, 108 Pada syllables, and Ayurdaya are never blank.
+- **திருமணப் பொருத்தம் சர்வர் பிழை சரிசெய்தல் (/porutham Route 500 Fix)**: Cleared stale Next.js build chunks and restored clean HTTP 200 service for `/porutham` and `/match-finder`.
+
+### [1.3.0] — 2026-09-04
+#### Added
+- **முழுமையான இலவச இருப்பிட API (Dynamic Free Geocoding Engine)**: Integrated Open-Meteo Geocoding API (`https://geocoding-api.open-meteo.com/v1/search`) and OpenStreetMap Nominatim for Unicode Tamil script (`backend/app/services/geocode.py`). Users can resolve any village, town, taluk, district, or global diaspora hub dynamically without any API key. Backed by in-memory LRU caching and instant client-side fallback (`frontend/lib/api.ts`).
+- **design-1.html பாரம்பரிய கையெழுத்து பாணி வடிவமைப்பு (Warm Handwritten Parchment Aesthetic)**: Re-styled the entire frontend to strictly match `design-1.html` CSS tokens (`--paper: #f0e5cc`, `--ink: #2b2117`, `--ink-soft: #6f6049`, `--red: #b03726`, `--red-deep: #8e2b1c`), SVG fractal noise grain and subtle aging edge vignettes, traditional masthead with **ஸ்ரீ** header and hand-drawn facts box, hand-drawn wobbly cards (`.hand-card`), hand-ruled tables (`.table-hand`), and Kavivanar & Caveat typography.
+- **அனைத்துக் கூறுகளும் புதுப்பிக்கப்பட்டன (Full Component Restyling)**: All horoscope and matching cards (`BirthDetailsForm`, `PanchangamDetailsCard`, `PlanetaryTable`, `RasiChart`, `NavamsaChart`, `BhavaPredictions`, `AshtakavargaTable`, `AyurdayaCard`, `DashaTimeline`, `YogaDoshaList`, `BabyNameSuggestions`, `NarrationPanel`, `ShareCard`, `PoruthamForm`, `PoruthamResult`, `StarMatchFinder`) styled to the warm parchment aesthetic while retaining 100% of mathematical computation and features.
+
+### [1.2.0] — 2026-09-04
+#### Added
+- **ஆயுள் கணிதம் (Ayurdaya / Longevity Determination)**: Classical Parashara/Jaimini Three Pairs mobility method (`backend/app/services/ayurdaya.py`), 8th house lord/sign/occupants analysis, Ayushkaraka Saturn dignity and retrograde status, Maraka (2 & 7) and Badhaka analysis, 8th house Ashtakavarga bindus, and classical remedies (`Maha Mrityunjaya`, `Thirukkadaiyur`, `Ayush Homam`).
+- **விரிவான பலன்கள் (Detailed Rasi, Nakshatra & Lagna Predictions)**: Deep astrological readings (`backend/app/services/rasi_nakshatra.py`) citing Phaladeepika, Brihat Jataka, and Jathaka Alankaram for 12 signs, 27 nakshatras, and specific pada effects.
+- **குழந்தை பெயர் சூட்டுதல் (Authentic 108 Pada Nama Aksharas)**: Replaced corrupt syllable strings with authentic Tamil & English phonetic initial syllables for all 108 Nakshatra-Padas (`backend/app/services/baby_names.py`).
+- **திருமணப் பொருத்த விரிவு (Enhanced 10-Porutham & Match Finder)**: Enriched star match finder with expandable row details showing all 10 Tamil Poruthams and 8 Ashta Koota points, plus quick filter chips (Uthama, Rajju Safe, 8+ Matched, 5-Star).
+- **இருப்பிடத் தேர்வு (Searchable Location Picker)**: Complete database of all 38 Tamil Nadu districts, major temple towns, Indian cities, and global diaspora hubs (`frontend/components/LocationPicker.tsx`) with instant search, category tabs, and custom coordinate support.
+- **பாரம்பரிய மஞ்சள் பத்திரம் (8-Page Traditional Handwritten Manuscript & PDF)**: Authentic Tamil yellow turmeric parchment layout (`frontend/components/HandwrittenManuscript.tsx`) with **"ஸ்ரீ ராமஜெயம்"** banner, Kavivanar handwriting font, rough.js drawn kattams, and discrete page-by-page rendering in `HandwrittenPdfButton.tsx` completely eliminating text-slicing across PDF page breaks.
+
 ### [1.1.0] — 2026-09-01
 #### Added
 - Enhanced Lagnam (Ascendant) calculations: DMS string formatting, Lagnathipathi (லக்னாதிபதி), Lagna Star (லக்ன நட்சத்திரம்), Star Lord (நட்சத்திராதிபதி), Pada, and Navamsa Lagna

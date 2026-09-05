@@ -37,29 +37,29 @@ export const NavamsaChart: React.FC<NavamsaChartProps> = ({
     <div className="flex flex-col items-center w-full">
       {/* View Mode Toggle */}
       <div className="flex items-center justify-between w-full mb-3 px-2">
-        <span className="text-sm font-bold text-[#ffd700] font-cinzel">
-          {lang === "ta" ? "நவாம்சம் கட்டம் (D9)" : "Navamsa Chart (D9)"}
+        <span className="text-base font-bold text-[#2b2117] font-script">
+          {lang === "ta" ? "நவாம்ச கட்டம் (Navamsa D9)" : "Navamsa Chart (D9)"}
         </span>
 
-        <div className="flex items-center bg-[#1e1518] p-1 rounded-lg border border-[#d4af37]/30 text-xs">
+        <div className="flex items-center bg-[#eae0c6] p-1 rounded-lg border border-[#a3917a]/50 text-xs">
           <button
             onClick={() => setViewMode("handwritten")}
-            className={`px-2.5 py-1 rounded flex items-center gap-1.5 transition-all ${
+            className={`px-2.5 py-1 rounded-md flex items-center gap-1.5 transition-all font-tamil ${
               viewMode === "handwritten"
-                ? "bg-[#6b1426] text-[#ffd700] font-semibold"
-                : "text-[#d4af37]/70 hover:text-white"
+                ? "bg-[#b03726] text-white font-semibold shadow-xs"
+                : "text-[#6f6049] hover:text-[#2b2117]"
             }`}
           >
             <Palette className="w-3.5 h-3.5" />
-            <span>{lang === "ta" ? "ஓலைச்சுவடி" : "Manuscript"}</span>
+            <span>{lang === "ta" ? "கையெழுத்து பாணி" : "Manuscript"}</span>
           </button>
 
           <button
             onClick={() => setViewMode("digital")}
-            className={`px-2.5 py-1 rounded flex items-center gap-1.5 transition-all ${
+            className={`px-2.5 py-1 rounded-md flex items-center gap-1.5 transition-all font-tamil ${
               viewMode === "digital"
-                ? "bg-[#6b1426] text-[#ffd700] font-semibold"
-                : "text-[#d4af37]/70 hover:text-white"
+                ? "bg-[#b03726] text-white font-semibold shadow-xs"
+                : "text-[#6f6049] hover:text-[#2b2117]"
             }`}
           >
             <Eye className="w-3.5 h-3.5" />
@@ -78,7 +78,7 @@ export const NavamsaChart: React.FC<NavamsaChartProps> = ({
           height={450}
         />
       ) : (
-        <div className="relative w-full max-w-[450px] aspect-square rounded-2xl bg-gradient-to-br from-[#1b1215] to-[#120a0d] border-2 border-[#d4af37]/40 p-2 shadow-2xl">
+        <div className="relative w-full max-w-[450px] aspect-square rounded-2xl bg-[#fdfaf2] border-2 border-[#a3917a]/60 p-2 shadow-lg">
           <div className="grid grid-cols-4 grid-rows-4 w-full h-full gap-1.5">
             {BOX_CELLS.map((cell) => {
               const planets = kattamData[cell.signNum] || [];
@@ -93,11 +93,11 @@ export const NavamsaChart: React.FC<NavamsaChartProps> = ({
                   }}
                   className={`relative p-1.5 rounded-xl border flex flex-col justify-between transition-all hover:scale-[1.02] ${
                     hasLagna
-                      ? "bg-[#6b1426]/30 border-[#ffd700]/60 shadow-lg shadow-[#ffd700]/5"
-                      : "bg-[#25181c]/70 border-[#d4af37]/20 hover:border-[#d4af37]/60"
+                      ? "bg-[#f5e8d5] border-[#b03726] shadow-xs"
+                      : "bg-[#fffdf8] border-[#a3917a]/30 hover:border-[#a3917a]/70"
                   }`}
                 >
-                  <span className="text-[10px] text-[#d4af37]/50 font-tamil font-medium text-right self-end">
+                  <span className="text-[10px] text-[#6f6049] font-tamil font-medium text-right self-end">
                     {lang === "ta" ? cell.nameTa : cell.name}
                   </span>
 
@@ -107,8 +107,8 @@ export const NavamsaChart: React.FC<NavamsaChartProps> = ({
                         key={idx}
                         className={`text-xs px-1 py-0.5 rounded flex items-center justify-between ${
                           p.is_lagna
-                            ? "bg-[#ffd700]/20 text-[#ffd700] font-bold border border-[#ffd700]/40"
-                            : "text-[#f5eedb]"
+                            ? "bg-[#b03726]/15 text-[#8e2b1c] font-bold border border-[#b03726]/40"
+                            : "text-[#2b2117]"
                         }`}
                       >
                         <span className="font-tamil font-semibold">
@@ -121,12 +121,12 @@ export const NavamsaChart: React.FC<NavamsaChartProps> = ({
               );
             })}
 
-            <div className="col-start-2 col-span-2 row-start-2 row-span-2 bg-[#140b0e]/90 rounded-2xl border border-[#d4af37]/30 flex flex-col items-center justify-center p-3 text-center shadow-inner">
-              <span className="text-3xl text-[#ffd700] mb-1 font-bold">ௐ</span>
-              <span className="text-sm font-bold text-white font-cinzel tracking-wider">
+            <div className="col-start-2 col-span-2 row-start-2 row-span-2 bg-[#f7efdc] rounded-2xl border border-[#a3917a]/40 flex flex-col items-center justify-center p-3 text-center shadow-inner">
+              <span className="text-3xl text-[#b03726] mb-1 font-bold font-script">ஸ்ரீ</span>
+              <span className="text-sm font-bold text-[#2b2117] font-script tracking-wider">
                 {lang === "ta" ? "நவாம்சம்" : "NAVAMSA"}
               </span>
-              <span className="text-[10px] text-[#d4af37]/70 font-tamil mt-0.5">
+              <span className="text-[10px] text-[#6f6049] font-tamil mt-0.5">
                 D9 Chart
               </span>
             </div>

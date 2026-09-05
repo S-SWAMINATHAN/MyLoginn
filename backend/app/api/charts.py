@@ -20,6 +20,10 @@ from backend.app.services.baby_names import get_baby_name_suggestions
 from backend.app.services.llm_narration import generate_chart_narration
 from backend.app.services.shadbala import calculate_shadbala
 from backend.app.services.gochara import compute_current_transits, analyze_gochara, get_gochara_summary
+from backend.app.services.ayurdaya import calculate_ayurdaya
+from backend.app.services.rasi_nakshatra import get_detailed_predictions
+from backend.app.services.tamil_labels import NAKSHATRA_LABELS
+from backend.app.services.sampoorana import calculate_sampoorana_details
 
 router = APIRouter(prefix="/charts", tags=["charts"])
 
@@ -121,13 +125,45 @@ def run_chart_calculation(req: GenerateChartRequest, profile_id: int = None) -> 
         basic_details["nakshatram_ta"]
     )
 
+    # 11b. Ayurdaya (Longevity Determination)
+    ayurdaya = calculate_ayurdaya(
+        lagna_sign=lagna_info["rasi_number"],
+        planets_by_name=positions_by_name,
+        sarvashtakavarga=ashtakavarga.get("sarvashtakavarga")
+    )
+
+    # 11c. Detailed Rasi, Nakshatra & Lagna Predictions
+    moon_nak_idx = basic_details.get("nakshatra_number") or next(
+        (n["index"] for n in NAKSHATRA_LABELS if n["sa"].lower() == basic_details["nakshatram"].lower() or n["ta"] == basic_details["nakshatram_ta"]),
+        1
+    )
+    rasi_nakshatra_preds = get_detailed_predictions(
+        lagna_sign=lagna_info["rasi_number"],
+        rasi_sign=basic_details.get("rasi_number") or positions_by_name["Moon"]["rasi_number"],
+        nakshatra_num=moon_nak_idx,
+        pada=basic_details["pada"]
+    )
+
     # --- NEW: Build the Planetary Positions TABLE display list ---
     # Lagna (reference point) + the 9 classical Navagrahas (Sun..Ketu, in
     # `planets`, unchanged) + Mandi (Upagraha) = 11 rows for display only.
-    # `planets` itself (used above for rasi_kattam/navamsa_kattam/bhavas)
-    # remains exactly as before — this is a separate list built solely for
-    # the API response's `planets` field / the frontend's PlanetaryTable.
     display_planets = [lagna_info] + planets + ([mandi_info] if mandi_info else [])
+
+    # 11d. Sampoorana Jathagam Shastric Eras, Tatparai, Bhava Sphutam & Varga Chakras
+    sampoorana = calculate_sampoorana_details(
+        jd=jd,
+        lat=lat,
+        lon=lon,
+        date_str=req.date_of_birth,
+        time_str=req.time_of_birth,
+        basic_details=basic_details,
+        planets=display_planets,
+        positions_by_name=positions_by_name
+    )
+    # Merge Shastric details into basic_details for seamless direct access
+    for k, v in sampoorana.items():
+        if k not in ["bhava_sphutam", "varga_chakras"]:
+            basic_details[k] = v
 
     # Build response payload
     payload = {
@@ -156,7 +192,12 @@ def run_chart_calculation(req: GenerateChartRequest, profile_id: int = None) -> 
         "ashtakavarga": ashtakavarga,
         "shadbala": shadbala,
         "gochara": gochara,
+        "ayurdaya": ayurdaya,
+        "rasi_nakshatra_predictions": rasi_nakshatra_preds,
         "baby_names": baby_names,
+        "sampoorana": sampoorana,
+        "bhava_sphutam": sampoorana.get("bhava_sphutam"),
+        "varga_chakras": sampoorana.get("varga_chakras"),
         "computed_at": datetime.utcnow().isoformat()
     }
 

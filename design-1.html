@@ -1,0 +1,907 @@
+<!DOCTYPE html>
+<html lang="ta">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="theme-color" content="#f0e5cc">
+<title>AI ஜாதகம் · K. அருணகிரி — Handwritten Horoscope</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Caveat:wght@400;600;700&family=Kavivanar&display=swap" rel="stylesheet">
+<style>
+:root{
+  --paper:#f0e5cc; --ink:#2b2117; --ink-soft:#6f6049; --ink-faint:#a3917a;
+  --red:#b03726; --red-deep:#8e2b1c;
+}
+*{margin:0;padding:0;box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{
+  background:var(--paper); color:var(--ink);
+  font-family:'Kavivanar',cursive; font-size:17px; line-height:1.85;
+  overflow-x:hidden; -webkit-font-smoothing:antialiased;
+}
+::selection{background:rgba(176,55,38,.25)}
+
+/* ---- paper: grain + gentle aging at the edges ---- */
+.grain{position:fixed;inset:-40px;pointer-events:none;z-index:999;opacity:.42;mix-blend-mode:multiply;
+  background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='260' height='260'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.8' numOctaves='2' stitchTiles='stitch'/%3E%3CfeColorMatrix values='0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0.55 0'/%3E%3C/filter%3E%3Crect width='260' height='260' filter='url(%23n)'/%3E%3C/svg%3E");}
+.age{position:fixed;inset:0;pointer-events:none;z-index:998;
+  background:radial-gradient(ellipse 130% 100% at 50% 38%, rgba(0,0,0,0) 62%, rgba(94,72,40,.15) 100%);}
+
+.wrap{max-width:1080px;margin:0 auto;padding:0 26px;position:relative}
+.sr-only{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap}
+
+/* ---- masthead ---- */
+.masthead{padding:56px 26px 6px;text-align:center}
+.masthead .wrap{position:relative}
+.orn{width:56px;height:56px;display:block;margin:0 auto 0}
+.sri{color:var(--red);font-size:21px;line-height:1.3}
+.over{font-family:'Caveat',cursive;letter-spacing:.42em;text-transform:uppercase;font-size:14px;color:var(--red);margin:0 0 4px;padding-left:.42em}
+h1{font-weight:400;font-size:clamp(42px,7vw,62px);line-height:1.15}
+.sub-en{font-family:'Caveat',cursive;font-size:20px;color:var(--ink-soft)}
+.mast-rule{display:block;width:100%;max-width:740px;height:30px;margin:16px auto 2px}
+.person{margin:16px 0 2px}
+.person .nm{font-size:clamp(28px,4.6vw,38px);line-height:1.35}
+.person .nm-en{font-family:'Caveat',cursive;letter-spacing:.5em;font-size:14px;color:var(--red);padding-left:.5em;margin-top:2px}
+.ch{display:inline-block;white-space:pre}
+.facts{max-width:660px;margin:20px auto 6px;padding:8px 26px 12px;
+  border:1.6px solid rgba(43,33,23,.55);
+  border-radius:255px 15px 225px 15px/15px 225px 15px 255px;
+  transform:rotate(-.4deg);background:rgba(120,96,58,.05);font-size:16px}
+.facts .fl{color:var(--red)}
+.fine{font-size:13.5px;color:var(--ink-faint)}
+.seal{position:absolute;right:22px;top:158px;width:132px;transform:rotate(-9deg);opacity:.85;mix-blend-mode:multiply}
+@media(max-width:1020px){.seal{display:none}}
+.seal-t{font-family:'Caveat',cursive;font-size:11px;letter-spacing:2.3px;fill:var(--red)}
+.seal-c{font-size:17px;fill:var(--red)}
+.seal-d{font-family:'Caveat',cursive;font-size:11px;letter-spacing:1.5px;fill:var(--red)}
+
+/* ---- sections ---- */
+main{padding:6px 0 20px}
+.sec{margin-top:76px}
+.sec-head{text-align:center;margin-bottom:34px}
+.sec-over{font-family:'Caveat',cursive;letter-spacing:.4em;text-transform:uppercase;font-size:13.5px;color:var(--red);padding-left:.4em}
+.sec-head h2{font-weight:400;font-size:clamp(26px,4vw,34px);line-height:1.3}
+.rule-slot{display:block;width:min(420px,86%);height:22px;margin:8px auto 0;position:relative}
+.rule-slot svg{position:absolute;left:0;top:0}
+
+/* ---- charts ---- */
+.charts-wrap{display:flex;gap:48px;align-items:flex-start;flex-wrap:wrap;justify-content:center}
+.chart-main{flex:1 1 430px;max-width:540px}
+#rasiChart svg{width:100%;height:auto;display:block}
+.chart-side{flex:0 1 272px;display:flex;flex-direction:column;gap:28px;padding-top:4px}
+#navChart svg{width:100%;max-width:250px;height:auto;display:block;margin:0 auto}
+figure{margin:0}
+figcaption{text-align:center;margin-top:10px}
+.fig-ta{font-size:19px}
+.fig-en{display:block;font-family:'Caveat',cursive;font-size:13px;letter-spacing:.3em;color:var(--red);text-transform:uppercase;margin-top:-4px}
+.hint{text-align:center;font-size:14.5px;color:var(--ink-faint);margin-top:12px;line-height:1.6}
+
+svg text{font-family:'Kavivanar',cursive}
+.c-name{font-size:14px;fill:var(--ink-faint)}
+.c-house{font-family:'Caveat',cursive;font-size:15px;fill:rgba(176,55,38,.65)}
+.c-pl{font-size:23px;fill:var(--ink)}
+.c-lag{font-size:17px;fill:var(--red)}
+.c-center{font-size:30px;fill:rgba(43,33,23,.33)}
+.c-center-en{font-family:'Caveat',cursive;font-size:14px;letter-spacing:.3em;fill:rgba(176,55,38,.6)}
+.hit{cursor:pointer}
+.chart text{pointer-events:none}
+
+/* ---- margin notes ---- */
+.notes{position:relative;padding-left:24px;max-width:300px}
+.notes h3{font-weight:400;font-size:19px;color:var(--red)}
+.notes p{font-size:15.5px;margin:8px 0;line-height:1.7}
+.notes .red{color:var(--red-deep)}
+.notes-rule{position:absolute;left:4px;top:2px}
+
+/* ---- button ---- */
+.btn-row{text-align:center;margin-top:30px}
+.btn{font-family:'Kavivanar',cursive;font-size:16.5px;color:var(--ink);background:transparent;
+  border:1.7px solid rgba(43,33,23,.6);
+  border-radius:255px 15px 225px 15px/15px 225px 15px 255px;
+  padding:7px 20px;cursor:pointer;display:inline-flex;align-items:center;gap:10px;
+  transition:transform .18s ease,background .18s}
+.btn:hover{transform:rotate(-1.2deg);background:rgba(176,55,38,.08)}
+.btn:active{transform:translateY(1px)}
+.btn:focus-visible{outline:2px dashed rgba(176,55,38,.7);outline-offset:3px}
+.btn svg{width:19px;height:21px}
+
+/* ---- tables (hand-ruled) ---- */
+.table-scroll{overflow-x:auto}
+.ruled{position:relative}
+.rules{position:absolute;left:0;top:0;pointer-events:none;overflow:visible}
+table{width:100%;border-collapse:collapse}
+th{font-weight:400;font-size:15px;color:var(--ink-soft);text-align:left;padding:12px 14px 14px;vertical-align:bottom}
+th i{display:block;font-style:normal;font-family:'Caveat',cursive;font-size:12.5px;letter-spacing:.22em;text-transform:uppercase;color:var(--red);line-height:1.2}
+td{padding:11px 14px;font-size:16.5px;vertical-align:top}
+.p-table{min-width:640px}
+.p-table tbody tr{cursor:pointer;transition:background .15s}
+.p-table tbody tr:hover{background:rgba(43,33,23,.05)}
+.pname{font-size:17.5px}
+.num{font-family:'Caveat',cursive;font-size:18.5px}
+.status{white-space:nowrap}
+.circ{position:relative;display:inline-block;padding:1px 5px;white-space:nowrap}
+.circ-svg{position:absolute;left:50%;top:50%;transform:translate(-50%,-50%);pointer-events:none;overflow:visible}
+.circ-svg.under{transform:translate(-50%,0);top:auto;bottom:-8px}
+.a-table{min-width:620px}
+.a-table th,.a-table td{text-align:center;padding:10px 8px}
+.a-table th:first-child,.a-table td:first-child{text-align:left;padding-left:14px}
+.a-table td{font-family:'Caveat',cursive;font-size:19px}
+.a-table td:first-child{font-family:'Kavivanar',cursive;font-size:15.5px;color:var(--ink-soft)}
+td.hi{color:var(--red-deep)}
+td.lo{color:var(--ink-faint)}
+tfoot td{padding-top:14px;color:var(--red-deep)}
+
+/* ---- ashtakavarga layout ---- */
+.ashta-flex{display:flex;gap:34px;align-items:flex-start;justify-content:center;flex-wrap:wrap}
+.ashta-flex .table-scroll{flex:1 1 560px;max-width:780px}
+.margin-note{flex:0 1 250px;max-width:272px;transform:rotate(-1.4deg);color:var(--red-deep);font-size:15.5px;position:relative;padding-top:24px}
+.mn-arrow{position:absolute;left:-78px;top:4px}
+@media(max-width:1020px){.mn-arrow{display:none}.margin-note{transform:none;padding-top:0;flex-basis:100%;max-width:520px}}
+
+/* ---- bhava predictions (manuscript flow) ---- */
+.bhava-flow{position:relative;columns:2;column-gap:64px;margin-top:6px}
+.divider-svg{position:absolute;left:50%;top:6px;transform:translateX(-50%);pointer-events:none}
+.bhava{break-inside:avoid;margin-bottom:38px;padding:6px 12px 8px 6px;border-radius:12px;transition:background .2s}
+.bhava:hover{background:rgba(43,33,23,.05)}
+.bh-head{display:flex;align-items:flex-start;gap:14px;margin-bottom:2px}
+.bh-num{flex:0 0 46px;display:inline-block;line-height:0;margin-top:4px}
+.bh-head h3{font-weight:400;font-size:20px;line-height:1.45}
+.bh-tag{display:block;font-size:14px;color:var(--red);line-height:1.5}
+.bh-ta{font-size:16px;line-height:1.8}
+.bh-en{font-family:'Caveat',cursive;font-size:16.5px;color:var(--ink-soft);line-height:1.45;margin-top:4px}
+@keyframes flashwash{0%{background:rgba(176,55,38,.18)}100%{background:transparent}}
+.bhava.flash{animation:flashwash 2s ease-out}
+@media(max-width:880px){.bhava-flow{columns:1}.divider-svg{display:none}}
+.num-t{font-family:'Caveat',cursive;font-size:24px;font-weight:600;fill:var(--ink)}
+
+/* ---- tooltip ---- */
+.tip{position:fixed;z-index:100;pointer-events:none;background:#f5ecd6;
+  border:1.6px solid rgba(43,33,23,.65);
+  border-radius:255px 15px 225px 15px/15px 225px 15px 255px;
+  padding:8px 16px 10px;max-width:250px;opacity:0;transform:translateY(6px) rotate(-.5deg);
+  transition:opacity .16s,transform .16s;box-shadow:3px 5px 0 rgba(43,33,23,.12)}
+.tip.on{opacity:1;transform:rotate(-.5deg)}
+.tip strong{display:block;font-size:17px;font-weight:400;line-height:1.4}
+.tip strong i{font-family:'Caveat',cursive;font-style:normal;color:var(--red);font-size:14px;letter-spacing:.12em;margin-left:4px}
+.tip span{display:block;font-size:14px;color:var(--ink-soft);line-height:1.55}
+
+/* ---- footer ---- */
+footer{margin-top:92px;padding:0 26px 56px;text-align:center}
+.f-rule{display:block;width:min(380px,70%);height:22px;margin:0 auto 28px}
+footer .orn{width:44px;height:44px;margin-bottom:12px}
+footer p{font-size:16px}
+footer .en{font-family:'Caveat',cursive;color:var(--ink-soft);margin-top:2px}
+
+@media print{.grain,.age,.btn,.hint{display:none}body{background:#fff}}
+noscript p{padding:20px;text-align:center;color:var(--red)}
+</style>
+</head>
+<body>
+<div class="grain" aria-hidden="true"></div>
+<div class="age" aria-hidden="true"></div>
+<noscript><p>இந்தப் பக்கத்தைக் காண JavaScript தேவை.</p></noscript>
+
+<header class="masthead">
+ <div class="wrap">
+  <svg class="orn" id="sunTop" aria-hidden="true"></svg>
+  <p class="sri">ஸ்ரீ</p>
+  <p class="over">AI Jathagam · Handwritten Edition</p>
+  <h1>AI ஜாதகம்</h1>
+  <p class="sub-en">— a birth chart, penned the old way —</p>
+  <svg class="mast-rule" id="mastRule" aria-hidden="true"></svg>
+  <div class="person">
+    <p class="nm" id="personName">க. அருணகிரி</p>
+    <p class="nm-en">K · ARUNAGIRI</p>
+  </div>
+  <div class="facts" id="facts">
+    <p><span class="fl">பிறப்பு</span> 15.08.1990 · புதன்கிழமை · காலை 08:35 · மதுரை</p>
+    <p><span class="fl">ராசி</span> மீனம் · <span class="fl">நட்சத்திரம்</span> ரேவதி — 4ம் பதம் · <span class="fl">லக்னம்</span> சிம்மம்</p>
+    <p><span class="fl">இப்போதைய தசை</span> சுக்கிரம் — சனி புக்தி <span class="fine">(2024 – 2027)</span></p>
+  </div>
+  <svg class="seal" id="seal" aria-hidden="true"></svg>
+ </div>
+</header>
+
+<main class="wrap">
+
+ <!-- ============ I · CHARTS ============ -->
+ <section class="sec" id="charts">
+  <div class="sec-head">
+   <p class="sec-over">I · Birth Charts</p>
+   <h2>ராசி &amp; நவாம்ச சக்கரம்</h2>
+   <span class="rule-slot" data-rs="1"></span>
+  </div>
+  <div class="charts-wrap">
+   <figure class="chart-main">
+     <div id="rasiChart"></div>
+     <figcaption><span class="fig-ta">ராசிச் சக்கரம்</span><span class="fig-en">Rasi · D-1</span></figcaption>
+     <p class="hint">கட்டங்களின் மேல் கர்சரை வைத்துப் பாருங்கள் — கிளிக் செய்தால் அந்தப் பாவப் பலனுக்குச் செல்லலாம்.</p>
+   </figure>
+   <div class="chart-side">
+    <figure>
+     <div id="navChart"></div>
+     <figcaption><span class="fig-ta">நவாம்சம்</span><span class="fig-en">Navamsa · D-9</span></figcaption>
+    </figure>
+    <aside class="notes">
+     <h3>குறிப்புகள்</h3>
+     <p class="red"><b>சச மகாபுருஷ யோகம்</b> — சனி சொந்த ராசியான கும்பத்தில், கேந்திரத்தில் அமர்ந்திருக்கிறார்.</p>
+     <p>உச்சத்தில்: <b>செவ்வாய், புதன், ராகு, கேது</b>. சொந்த ராசியில்: சூரியன், குரு, சுக்கிரன், சனி.</p>
+     <p>ஒன்பது கிரகங்களும் ஒன்பது வேறு ராசிகளில் — ஒரு அரிய, சமநிலையான அமைப்பு.</p>
+     <p class="red">பரிகாரம்: ஞாயிற்றுக்கிழமை காலை சூரிய வழிபாடு; வெந்நீரில் சிறிது செம்பு கலந்து அருந்துதல் நல்லது.</p>
+     <p class="fine">அயனாம்சம்: லாஹிரி 23°42′ · வார அதிபதி: புதன்</p>
+    </aside>
+   </div>
+  </div>
+  <div class="btn-row">
+   <button class="btn" id="redraw" type="button">
+     <svg id="penIco" aria-hidden="true"></svg>
+     மீண்டும் வரையவும் <span class="fine">· redraw</span>
+   </button>
+  </div>
+ </section>
+
+ <!-- ============ II · PLANETARY POSITIONS ============ -->
+ <section class="sec" id="planets">
+  <div class="sec-head">
+   <p class="sec-over">II · Planetary Positions</p>
+   <h2>கிரகங்களின் நிலைகள்</h2>
+   <span class="rule-slot" data-rs="2"></span>
+  </div>
+  <div class="table-scroll ruled">
+   <table class="p-table" id="planetTable">
+    <caption class="sr-only">கிரகங்களின் நிலைகள்</caption>
+    <thead><tr>
+      <th>கிரகம்<i>Planet</i></th><th>ராசி<i>Sign</i></th><th>நட்சத்திரம்<i>Star</i></th>
+      <th>பதம்<i>Pada</i></th><th>பாகை<i>Degree</i></th><th>நிலை<i>Status</i></th>
+    </tr></thead>
+    <tbody>
+      <tr data-k="La"><td class="pname">லக்னம்</td><td>சிம்மம்</td><td>—</td><td>—</td><td class="num">14°06′</td><td>—</td></tr>
+      <tr data-k="Su"><td class="pname">சூரியன்</td><td>சிம்மம்</td><td>பூரம்</td><td class="num">1</td><td class="num">15°24′</td><td class="status" data-s="own">சொந்தம்</td></tr>
+      <tr data-k="Mo"><td class="pname">சந்திரன்</td><td>மீனம்</td><td>ரேவதி</td><td class="num">4</td><td class="num">28°12′</td><td class="status" data-s="fr">நட்பு</td></tr>
+      <tr data-k="Ma"><td class="pname">செவ்வாய்</td><td>மகரம்</td><td>உத்திராடம்</td><td class="num">3</td><td class="num">03°45′</td><td class="status" data-s="ex">உச்சம்</td></tr>
+      <tr data-k="Me"><td class="pname">புதன்</td><td>கன்னி</td><td>அஸ்தம்</td><td class="num">3</td><td class="num">18°02′</td><td class="status" data-s="ex">உச்சம்</td></tr>
+      <tr data-k="Ju"><td class="pname">குரு</td><td>தனுசு</td><td>பூராடம்</td><td class="num">3</td><td class="num">21°36′</td><td class="status" data-s="own">சொந்தம்</td></tr>
+      <tr data-k="Ve"><td class="pname">சுக்கிரன்</td><td>துலாம்</td><td>சுவாதி</td><td class="num">1</td><td class="num">08°55′</td><td class="status" data-s="own">சொந்தம்</td></tr>
+      <tr data-k="Sa"><td class="pname">சனி</td><td>கும்பம்</td><td>சதயம்</td><td class="num">2</td><td class="num">11°18′</td><td class="status" data-s="own">சொந்தம்</td></tr>
+      <tr data-k="Ra"><td class="pname">ராகு</td><td>ரிஷபம்</td><td>ரோகிணி</td><td class="num">4</td><td class="num">22°40′</td><td class="status" data-s="ex">உச்சம்</td></tr>
+      <tr data-k="Ke"><td class="pname">கேது</td><td>விருச்சிகம்</td><td>கேட்டை</td><td class="num">2</td><td class="num">22°40′</td><td class="status" data-s="ex">உச்சம்</td></tr>
+    </tbody>
+   </table>
+  </div>
+  <p class="hint">வரியின் மேல் கர்சரை வைத்தால், அந்தக் கிரகம் சக்கரத்தில் சிவப்பு வளையத்தால் குறிக்கப்படும்.</p>
+ </section>
+
+ <!-- ============ III · TWELVE HOUSES ============ -->
+ <section class="sec" id="bhavas">
+  <div class="sec-head">
+   <p class="sec-over">III · Twelve Houses</p>
+   <h2>பன்னிரண்டு பாவ பலன்கள்</h2>
+   <span class="rule-slot" data-rs="3"></span>
+  </div>
+  <div class="bhava-flow" id="bhavaFlow">
+
+   <article class="bhava" id="bhava-1" data-sign="5">
+    <div class="bh-head"><span class="bh-num" data-n="1">1</span>
+     <h3>முதலாம் பாவம் <span class="bh-tag">தன் வாழ்வு · சிம்மம் · சூரியன் லக்னத்தில்</span></h3></div>
+    <p class="bh-ta">சிம்ம லக்னத்தில் சூரியன் அமர்ந்திருப்பது தன்னம்பிக்கையையும் தலைமைத்துவத்தையும் தழைக்கச் செய்கிறது. முகத்தில் ஒரு பிரகாசம், பேச்சில் ஒரு ஆணித்தரம் — இவை இயல்பாகவே வரும். உடல்நலம் பொதுவாக வலுவாக இருக்கும்; வெயிலிலும் சினத்திலும் கொஞ்சம் கவனம்.</p>
+    <p class="bh-en">Sun in the Leo ascendant — born confidence and presence. Health stays robust; mind the heat and the temper.</p>
+   </article>
+
+   <article class="bhava" id="bhava-2" data-sign="6">
+    <div class="bh-head"><span class="bh-num" data-n="2">2</span>
+     <h3>இரண்டாம் பாவம் <span class="bh-tag">சொத்து · குடும்பம் · கன்னியில் உச்ச புதன்</span></h3></div>
+    <p class="bh-ta">புதன் கன்னியில் உச்ச நிலையில் இருப்பதால் பேச்சுத் திறனும் கணக்குத் திறனும் கூர்மையாகும். கல்வி, எழுத்து, வர்த்தகம் வழியாகச் சொத்து சேரும். குடும்பத்தில் இனிய பேச்சு நிலவும்.</p>
+    <p class="bh-en">Exalted Mercury in the 2nd — a gift for words, numbers and trade. Wealth gathers through learning, writing and clever negotiation.</p>
+   </article>
+
+   <article class="bhava" id="bhava-3" data-sign="7">
+    <div class="bh-head"><span class="bh-num" data-n="3">3</span>
+     <h3>மூன்றாம் பாவம் <span class="bh-tag">சகோதரர் · துணிவு · துலாத்தில் சுக்கிரன்</span></h3></div>
+    <p class="bh-ta">தம்பி, தங்கையரின் ஆதரவு கிடைக்கும்; கலைத் திறல் நிறைந்த துணிவு உண்டு. சிறு பயணங்களும் தகவல் தொடர்பும் வெற்றி தரும். கையெழுத்து, இசை, படைப்பு — எதுவானும் பயிற்சி செய்தால் சிறக்கும்.</p>
+    <p class="bh-en">Venus in the 3rd — artistic courage, helpful siblings. Short journeys and media favour you.</p>
+   </article>
+
+   <article class="bhava" id="bhava-4" data-sign="8">
+    <div class="bh-head"><span class="bh-num" data-n="4">4</span>
+     <h3>நான்காம் பாவம் <span class="bh-tag">இல்லம் · தாய் · விருச்சிகத்தில் கேது</span></h3></div>
+    <p class="bh-ta">கேது நான்கில் இருப்பதால் இல்ல வசதி சம்பந்தமாக ஒரு வைராக்கியம் உண்டு. சொந்த வீடு தாமதமாகக் கிடைக்கும் — ஆனால் கிடைத்தால் ஆழ்ந்த அமைதி தரும். தாயார் ஆன்மிக சிந்தனை கொண்டவராக இருப்பார்.</p>
+    <p class="bh-en">Ketu in the 4th — detachment from domestic comfort; a home comes late but settles deep. The mother leans spiritual.</p>
+   </article>
+
+   <article class="bhava" id="bhava-5" data-sign="9">
+    <div class="bh-head"><span class="bh-num" data-n="5">5</span>
+     <h3>ஐந்தாம் பாவம் <span class="bh-tag">கல்வி · புத்திரர் · தனுசில் குரு</span></h3></div>
+    <p class="bh-ta">குரு சொந்த ராசியான தனுசில் ஐந்தாம் பாவத்தில் — பூர்வ புண்ணியம் வலுவாக உள்ளது. கல்வியில் சிறந்து விளங்குவீர்கள்; குழந்தைகள் புத்திசாலிகளாகவும் நல்ல குணமுள்ளவர்களாகவும் இருப்பர். ஆசிரியர், ஆலோசகர் தொழில்கள் பொருந்தும்.</p>
+    <p class="bh-en">Jupiter in own sign in the 5th — strong past merit. Fine education, intelligent children; teaching and advisory callings suit you.</p>
+   </article>
+
+   <article class="bhava" id="bhava-6" data-sign="10">
+    <div class="bh-head"><span class="bh-num" data-n="6">6</span>
+     <h3>ஆறாம் பாவம் <span class="bh-tag">பகை · நோய் · மகரத்தில் உச்ச செவ்வாய்</span></h3></div>
+    <p class="bh-ta">மகரத்தில் உச்ச செவ்வாய் — போட்டிகளில் வெல்பவர். எதிரிகள் தாமாகவே வீழுவார்கள்; வந்த நோயும் விரைவில் குணமாகும். உடற்பயிற்சியை வழக்கமாக்கினால் ஆறாம் பாவமே வலுவூட்டும்.</p>
+    <p class="bh-en">Exalted Mars in the 6th — a competitor's dream. Rivals fall on their own; illness resolves fast. Keep the body moving.</p>
+   </article>
+
+   <article class="bhava" id="bhava-7" data-sign="11">
+    <div class="bh-head"><span class="bh-num" data-n="7">7</span>
+     <h3>ஏழாம் பாவம் <span class="bh-tag">திருமணம் · கும்பத்தில் சனி · சச யோகம்</span></h3></div>
+    <p class="bh-ta">சனி ஏழில் சொந்த ராசியில் அமர்ந்து சச மகாபுருஷ யோகத்தைத் தருகிறார். திருமணம் சற்றுத் தாமதமாகும்; ஆனால் கூட்டாளி கடமையுணர்வுள்ள, நிலையானவராக இருப்பார். பொறுமையும் ஒழுங்கும் உறவில் இனிமையைப் பெருக்கும்.</p>
+    <p class="bh-en">Saturn in own sign in the 7th — Sasa Mahapurusha Yoga. Marriage comes a little late, but the partner is steady and dutiful.</p>
+   </article>
+
+   <article class="bhava" id="bhava-8" data-sign="0">
+    <div class="bh-head"><span class="bh-num" data-n="8">8</span>
+     <h3>எட்டாம் பாவம் <span class="bh-tag">ஆயுள் · மறைஞானம் · மீனத்தில் சந்திரன்</span></h3></div>
+    <p class="bh-ta">மீனத்தில் சந்திரன் — உள்ளுணர்வு மிகக் கூர்மையானது; மறை விஞ்ஞானங்களில் ஆழ்ந்த ஆர்வம் உண்டு. ஆயுள் நல்ல அளவில் அமையும். எதிர்பாராத ஆதாயங்கள், மறைந்த உதவிகள் வாய்க்கும்.</p>
+    <p class="bh-en">Moon in Pisces in the 8th — sharp intuition and a pull toward the mystical. Good longevity; unexpected gains favour you.</p>
+   </article>
+
+   <article class="bhava" id="bhava-9" data-sign="1">
+    <div class="bh-head"><span class="bh-num" data-n="9">9</span>
+     <h3>ஒன்பதாம் பாவம் <span class="bh-tag">பாக்கியம் · தந்தை · மேஷம் (காலி)</span></h3></div>
+    <p class="bh-ta">ஒன்பது காலியாக இருந்தாலும் அதிபதி செவ்வாய் ஆறில் உச்சம் பெற்றிருப்பதால் பாக்கியம் சொந்த முயற்சியால் உருவாகும். தந்தை சுதந்திர சிந்தனையுள்ளவர். தர்ம யாத்திரைகள் புண்ணியத்தைக் கூட்டும்.</p>
+    <p class="bh-en">An empty 9th, but its lord Mars is exalted — fortune is self-made. The father is fiercely independent; pilgrimages pay off.</p>
+   </article>
+
+   <article class="bhava" id="bhava-10" data-sign="2">
+    <div class="bh-head"><span class="bh-num" data-n="10">10</span>
+     <h3>பத்தாம் பாவம் <span class="bh-tag">தொழில் · ரிஷபத்தில் ராகு</span></h3></div>
+    <p class="bh-ta">ராகு பத்தில் — நவீன துறைகளிலும் தொழில்நுட்பத்திலும் அயல்நாட்டுத் தொடர்பிலும் பெரும் உயர்வு. கற்பனையையும் விஞ்சி வேகமாக வளரும் தொழில் வாழ்வு; நிலைத்தன்மைக்குச் சனியின் ஒழுங்கு தேவை.</p>
+    <p class="bh-en">Rahu in the 10th — a steep, dazzling career curve in modern or foreign-linked fields. Saturn's discipline converts ambition into permanence.</p>
+   </article>
+
+   <article class="bhava" id="bhava-11" data-sign="3">
+    <div class="bh-head"><span class="bh-num" data-n="11">11</span>
+     <h3>பதினொன்றாம் பாவம் <span class="bh-tag">லாபம் · மிதுனம் (காலி)</span></h3></div>
+    <p class="bh-ta">லாபத்திற்கு நண்பர்களே முக்கியக் காரணமாக இருப்பார்கள். தகவல், தொடர்பு, பங்குச் சந்தை வழியாக வருமானம் பெருகும். பெரியவர்களின் ஆசி கிட்டும்.</p>
+    <p class="bh-en">Gains arrive through friends, information and networks; elders' blessings open doors.</p>
+   </article>
+
+   <article class="bhava" id="bhava-12" data-sign="4">
+    <div class="bh-head"><span class="bh-num" data-n="12">12</span>
+     <h3>பன்னிரண்டாம் பாவம் <span class="bh-tag">செலவு · வெளிநாடு · கடகம் (காலி)</span></h3></div>
+    <p class="bh-ta">வெளிநாட்டுத் தொடர்பு உண்டு; தூக்கத்தில் கொஞ்சம் கவனம் வேண்டும். தெய்வ வழிபாட்டிற்கான செலவுகள் பன்மடங்கு பலன் தரும். தியானமே மனதிற்கு மருந்து.</p>
+    <p class="bh-en">Ties across the sea; guard your sleep. Spending on worship returns multiplied; meditation is your medicine.</p>
+   </article>
+
+  </div>
+ </section>
+
+ <!-- ============ IV · ASHTAKAVARGA ============ -->
+ <section class="sec" id="ashta">
+  <div class="sec-head">
+   <p class="sec-over">IV · Ashtakavarga</p>
+   <h2>அஷ்டகவர்க்க புள்ளிகள்</h2>
+   <span class="rule-slot" data-rs="4"></span>
+  </div>
+  <div class="ashta-flex">
+   <div class="table-scroll ruled">
+    <table class="a-table" id="ashtaTable">
+     <caption class="sr-only">அஷ்டகவர்க்க புள்ளி அட்டவணை</caption>
+     <thead><tr>
+       <th>ராசி<i>Sign</i></th><th>சூரியன்<i>Su</i></th><th>சந்திரன்<i>Mo</i></th><th>செவ்வாய்<i>Ma</i></th>
+       <th>புதன்<i>Me</i></th><th>குரு<i>Ju</i></th><th>சுக்கிரன்<i>Ve</i></th><th>சனி<i>Sa</i></th><th>மொத்தம்<i>Total</i></th>
+     </tr></thead>
+     <tbody>
+      <tr><td>மேஷம்</td><td data-v="3">3</td><td data-v="5">5</td><td data-v="4">4</td><td data-v="5">5</td><td data-v="4">4</td><td data-v="4">4</td><td data-v="3">3</td><td class="tot num">28</td></tr>
+      <tr><td>ரிஷபம்</td><td data-v="5">5</td><td data-v="4">4</td><td data-v="2">2</td><td data-v="6">6</td><td data-v="6">6</td><td data-v="4">4</td><td data-v="4">4</td><td class="tot num">31</td></tr>
+      <tr><td>மிதுனம்</td><td data-v="4">4</td><td data-v="6">6</td><td data-v="3">3</td><td data-v="5">5</td><td data-v="4">4</td><td data-v="5">5</td><td data-v="2">2</td><td class="tot num">29</td></tr>
+      <tr><td>கடகம்</td><td data-v="3">3</td><td data-v="3">3</td><td data-v="4">4</td><td data-v="4">4</td><td data-v="4">4</td><td data-v="4">4</td><td data-v="5">5</td><td class="tot num">27</td></tr>
+      <tr><td>சிம்மம்</td><td data-v="5">5</td><td data-v="4">4</td><td data-v="2">2</td><td data-v="5">5</td><td data-v="5">5</td><td data-v="5">5</td><td data-v="1">1</td><td class="tot num">27</td></tr>
+      <tr><td>கன்னி</td><td data-v="4">4</td><td data-v="4">4</td><td data-v="4">4</td><td data-v="5">5</td><td data-v="5">5</td><td data-v="5">5</td><td data-v="3">3</td><td class="tot num">30</td></tr>
+      <tr><td>துலாம்</td><td data-v="4">4</td><td data-v="5">5</td><td data-v="3">3</td><td data-v="5">5</td><td data-v="5">5</td><td data-v="5">5</td><td data-v="4">4</td><td class="tot num">31</td></tr>
+      <tr><td>விருச்சிகம்</td><td data-v="4">4</td><td data-v="4">4</td><td data-v="3">3</td><td data-v="4">4</td><td data-v="4">4</td><td data-v="4">4</td><td data-v="3">3</td><td class="tot num">26</td></tr>
+      <tr><td>தனுசு</td><td data-v="5">5</td><td data-v="5">5</td><td data-v="2">2</td><td data-v="5">5</td><td data-v="6">6</td><td data-v="5">5</td><td data-v="2">2</td><td class="tot num">30</td></tr>
+      <tr><td>மகரம்</td><td data-v="4">4</td><td data-v="3">3</td><td data-v="5">5</td><td data-v="3">3</td><td data-v="5">5</td><td data-v="3">3</td><td data-v="5">5</td><td class="tot num">28</td></tr>
+      <tr><td>கும்பம்</td><td data-v="4">4</td><td data-v="2">2</td><td data-v="4">4</td><td data-v="4">4</td><td data-v="5">5</td><td data-v="4">4</td><td data-v="5">5</td><td class="tot num">28</td></tr>
+      <tr><td>மீனம்</td><td data-v="3">3</td><td data-v="4">4</td><td data-v="3">3</td><td data-v="3">3</td><td data-v="3">3</td><td data-v="4">4</td><td data-v="2">2</td><td class="tot num">22</td></tr>
+     </tbody>
+     <tfoot><tr>
+       <td>மொத்தம்</td><td class="num">48</td><td class="num">49</td><td class="num">39</td><td class="num">54</td>
+       <td class="num">56</td><td class="num">52</td><td class="num">39</td><td class="num">337</td>
+     </tr></tfoot>
+    </table>
+   </div>
+   <aside class="margin-note">
+    <svg class="mn-arrow" id="mnArrow" viewBox="0 0 90 46" width="90" height="46" aria-hidden="true"></svg>
+    <p>28-க்கு மேல் புள்ளி உள்ள ராசிகள் — <b>ரிஷபம், மிதுனம், கன்னி, துலாம், தனுசு</b> — வலுவானவை; சனி சஞ்சாரம் இங்கே சுபம் தரும்.</p>
+    <p>உங்கள் ராசியான மீனத்தில் 22 மட்டுமே — மன அமைதிக்குத் தியானம் அவசியம்.</p>
+   </aside>
+  </div>
+ </section>
+</main>
+
+<footer>
+ <svg class="f-rule" id="footRule" aria-hidden="true"></svg>
+ <svg class="orn" id="sunFoot" aria-hidden="true"></svg>
+ <p>இந்தக் கையெழுத்து ஜாதகம் ஒரு மாதிரிப் பதிப்பு — தகவல்கள் உதாரணத்திற்கு மட்டுமே.</p>
+ <p class="en">drawn stroke by stroke · AI JATHAGAM · for reference only</p>
+</footer>
+
+<script>
+/* ================= tiny hand-drawn ink engine ================= */
+const $=s=>document.querySelector(s), $$=s=>[...document.querySelectorAll(s)];
+const SVGNS='http://www.w3.org/2000/svg', INK='#2b2117', RED='#b03726';
+let SEED=19900815;
+const RM=matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+function mulberry(a){return function(){a|=0;a=a+0x6D2B79F5|0;let t=Math.imul(a^a>>>15,1|a);t=t+Math.imul(t^t>>>7,61|t)^t;return((t^t>>>14)>>>0)/4294967296}}
+function el(n,at,parent){const e=document.createElementNS(SVGNS,n);if(at)for(const k in at)e.setAttribute(k,at[k]);if(parent)parent.appendChild(e);return e}
+const f=v=>+v.toFixed(1);
+
+/* jittered line -> points */
+function jLine(x1,y1,x2,y2,r,amp){
+  const dx=x2-x1,dy=y2-y1,len=Math.hypot(dx,dy)||1;
+  const n=Math.max(2,Math.round(len/30));
+  const nx=-dy/len,ny=dx/len,ux=dx/len,uy=dy/len,pts=[];
+  for(let i=0;i<=n;i++){
+    const t=i/n,a=(i===0||i===n)?amp*.3:amp;
+    const off=(r()*2-1)*a,tg=(r()*2-1)*a*.5;
+    pts.push([x1+dx*t+nx*off+ux*tg,y1+dy*t+ny*off+uy*tg]);
+  }
+  return pts;
+}
+/* points -> smooth pen path */
+function roughD(pts,close){
+  let d=`M ${f(pts[0][0])} ${f(pts[0][1])}`;
+  if(pts.length===2){d+=` L ${f(pts[1][0])} ${f(pts[1][1])}`;if(close)d+=' Z';return d;}
+  d+=` L ${f((pts[0][0]+pts[1][0])/2)} ${f((pts[0][1]+pts[1][1])/2)}`;
+  for(let i=1;i<pts.length-1;i++){
+    const [ax,ay]=pts[i],[bx,by]=pts[i+1];
+    d+=` Q ${f(ax)} ${f(ay)} ${f((ax+bx)/2)} ${f((ay+by)/2)}`;
+  }
+  const L=pts[pts.length-1];
+  d+=` L ${f(L[0])} ${f(L[1])}`;if(close)d+=' Z';
+  return d;
+}
+/* pen-circling ellipse (slight overlap like a real circle drawn by hand) */
+function jEll(cx,cy,rx,ry,r){
+  const st=-Math.PI/2+(r()-.5)*.9,turn=Math.PI*2+.55,n=18,pts=[];
+  for(let i=0;i<=n;i++){
+    const th=st+turn*i/n,j=1+(r()*2-1)*.09;
+    pts.push([cx+Math.cos(th)*rx*j,cy+Math.sin(th)*ry*j]);
+  }
+  return pts;
+}
+/* jittered rectangle perimeter */
+function jRect(x,y,w,h,r,amp){
+  const sides=[[x,y,x+w,y],[x+w,y,x+w,y+h],[x+w,y+h,x,y+h],[x,y+h,x,y]],pts=[];
+  sides.forEach(s=>{const p=jLine(...s,r,amp);if(pts.length)p.shift();pts.push(...p)});
+  return pts;
+}
+function stroke(parent,d,o={}){
+  const p=el('path',{d,fill:'none',stroke:o.color||INK,'stroke-width':o.width||2,
+    'stroke-linecap':'round','stroke-linejoin':'round'},parent);
+  if(o.opacity!=null)p.setAttribute('opacity',o.opacity);
+  if(o.delay!=null)drawIn(p,o.delay,o.dur||380);
+  return p;
+}
+function drawIn(p,delay=0,dur=380){
+  if(RM){delay=0;dur=1;}
+  const L=p.getTotalLength();
+  p.style.strokeDasharray=`${L} ${L}`;p.style.strokeDashoffset=L;
+  requestAnimationFrame(()=>requestAnimationFrame(()=>{
+    p.style.transition=`stroke-dashoffset ${dur}ms ease ${delay}ms`;
+    p.style.strokeDashoffset='0';
+  }));
+  setTimeout(()=>{p.style.transition='none';p.style.strokeDasharray='none';p.style.strokeDashoffset='0';},delay+dur+140);
+}
+function prep(p){const L=p.getTotalLength();p.style.strokeDasharray=`${L} ${L}`;p.style.strokeDashoffset=L;}
+function play(p,delay=0,dur=400){
+  if(RM){p.style.strokeDasharray='none';p.style.strokeDashoffset='0';return;}
+  p.style.transition=`stroke-dashoffset ${dur}ms ease ${delay}ms`;
+  p.style.strokeDashoffset='0';
+  setTimeout(()=>{p.style.transition='none';p.style.strokeDasharray='none';},delay+dur+120);
+}
+function fadeUp(node,delay=0,dur=420){
+  if(RM)return;
+  node.animate([{opacity:0,transform:'translateY(6px)'},{opacity:1,transform:'translateY(0)'}],
+    {duration:dur,delay,easing:'ease-out',fill:'backwards'});
+}
+
+/* ================= chart data ================= */
+const SIGNS=[
+ {ta:'மீனம்',en:'Pisces',lord:'குரு'},{ta:'மேஷம்',en:'Aries',lord:'செவ்வாய்'},
+ {ta:'ரிஷபம்',en:'Taurus',lord:'சுக்கிரன்'},{ta:'மிதுனம்',en:'Gemini',lord:'புதன்'},
+ {ta:'கடகம்',en:'Cancer',lord:'சந்திரன்'},{ta:'சிம்மம்',en:'Leo',lord:'சூரியன்'},
+ {ta:'கன்னி',en:'Virgo',lord:'புதன்'},{ta:'துலாம்',en:'Libra',lord:'சுக்கிரன்'},
+ {ta:'விருச்சிகம்',en:'Scorpio',lord:'செவ்வாய்'},{ta:'தனுசு',en:'Sagittarius',lord:'குரு'},
+ {ta:'மகரம்',en:'Capricorn',lord:'செவ்வாய்'},{ta:'கும்பம்',en:'Aquarius',lord:'சனி'}
+];
+/* cell grid positions, clockwise from top-left (South Indian fixed chart) */
+const CELLGRID=[[0,0],[0,1],[0,2],[0,3],[1,3],[2,3],[3,3],[3,2],[3,1],[3,0],[2,0],[1,0]];
+const FULL={Su:'சூரியன்',Mo:'சந்திரன்',Ma:'செவ்வாய்',Me:'புதன்',Ju:'குரு',Ve:'சுக்கிரன்',Sa:'சனி',Ra:'ராகு',Ke:'கேது'};
+const RASI={lagna:5,planets:[ /* Leo lagna; one planet per sign */
+ {k:'Su',a:'சூ',c:5},{k:'Mo',a:'ச',c:0},{k:'Ma',a:'செ',c:10},{k:'Me',a:'பு',c:6},
+ {k:'Ju',a:'கு',c:9},{k:'Ve',a:'சு',c:7},{k:'Sa',a:'சனி',c:11},{k:'Ra',a:'ரா',c:2},{k:'Ke',a:'கே',c:8}]};
+const NAV={lagna:10,planets:[ /* D-9 */
+ {k:'Su',a:'சூ',c:7},{k:'Mo',a:'ச',c:4},{k:'Ma',a:'செ',c:1},{k:'Me',a:'பு',c:8},
+ {k:'Ju',a:'கு',c:5},{k:'Ve',a:'சு',c:0},{k:'Sa',a:'சனி',c:3},{k:'Ra',a:'ரா',c:6},{k:'Ke',a:'கே',c:0}]};
+
+/* ================= chart renderer ================= */
+const charts={};
+function buildChart(mount,data,seed,opts){
+  mount.innerHTML='';
+  const S=480,C=120;
+  const svg=el('svg',{viewBox:`0 0 ${S} ${S}`,class:'chart',role:'img','aria-label':opts.aria||''},null);
+  mount.appendChild(svg);
+  const gG=el('g',{},svg),gT=el('g',{},svg),gHi=el('g',{'pointer-events':'none'},svg),gHit=el('g',{},svg);
+  const r=mulberry(seed),base=opts.baseDelay||0;
+  let t=base;
+
+  /* grid: outer square + the two inner cross lines (centre 2x2 stays open) */
+  const lines=[[0,0,S,0],[S,0,S,S],[S,S,0,S],[0,S,0,0],[C,0,C,S],[3*C,0,3*C,S],[0,C,S,C],[0,3*C,S,3*C]];
+  lines.forEach(L=>{
+    const [x1,y1,x2,y2]=L;
+    stroke(gG,roughD(jLine(x1,y1,x2,y2,r,2.3)),{width:2.3,opacity:.92,delay:t,dur:330});
+    stroke(gG,roughD(jLine(x1+(r()-.5)*4,y1+(r()-.5)*4,x2+(r()-.5)*4,y2+(r()-.5)*4,r,3)),{width:1,opacity:.3,delay:t,dur:330});
+    t+=105;
+  });
+
+  if(opts.center){
+    const c1=el('text',{x:S/2,y:S/2-6,'text-anchor':'middle',class:'c-center'},gT);c1.textContent=opts.center;
+    const c2=el('text',{x:S/2,y:S/2+26,'text-anchor':'middle',class:'c-center-en'},gT);c2.textContent=opts.centerEn;
+    fadeUp(c1,t+120);fadeUp(c2,t+200);
+  }
+
+  const houseOf=i=>((i-data.lagna+12)%12)+1;
+  SIGNS.forEach((sg,i)=>{
+    const [rr,cc]=CELLGRID[i],x0=cc*C,y0=rr*C;
+    let nx=x0+9,ny=y0+20;
+    if(i===data.lagna&&cc!==3&&rr!==3){nx=x0+8;ny=y0+C-10;} /* keep clear of lagna stroke */
+    const nm=el('text',{x:nx,y:ny,class:'c-name',transform:`rotate(${(r()*4-2).toFixed(1)} ${f(nx)} ${f(ny)})`},gT);
+    nm.textContent=sg.ta;fadeUp(nm,t+140+i*40);
+    if(opts.houses){
+      const ht=el('text',{x:x0+C-9,y:y0+C-11,'text-anchor':'end',class:'c-house'},gT);
+      ht.textContent=houseOf(i);fadeUp(ht,t+180+i*40);
+    }
+  });
+
+  /* planets */
+  const marks={};
+  data.planets.forEach((p,i)=>{
+    const [rr,cc]=CELLGRID[p.c],x0=cc*C,y0=rr*C;
+    const same=data.planets.filter(q=>q.c===p.c),idx=same.indexOf(p),k=same.length;
+    let ox=0,oy=0;
+    if(k===2){ox=idx?-18:18;oy=idx?-7:9;}
+    if(k===3){ox=[-20,20,0][idx];oy=[10,10,-12][idx];}
+    const cx=x0+C/2+ox+(r()*6-3),cy=y0+C/2+10+oy+(r()*5-2.5);
+    const g=el('g',{transform:`translate(${f(cx)} ${f(cy)}) rotate(${(r()*10-5).toFixed(1)})`,'data-k':p.k},gT);
+    const tx=el('text',{'text-anchor':'middle',class:'c-pl'},g);tx.textContent=p.a;
+    fadeUp(tx,base+430+i*95,360);
+    (marks[p.k]=marks[p.k]||[]).push(g);
+  });
+
+  /* lagna mark: double red diagonal on the outer corner + "ல" */
+  {
+    const [rr,cc]=CELLGRID[data.lagna],x0=cc*C,y0=rr*C;
+    let x1,y1,x2,y2,tx,ty,ins;
+    if(cc===3){x1=x0+C;y1=y0;x2=x0+C-30;y2=y0+30;tx=x0+C-48;ty=y0+24;ins=[-6,6];}
+    else if(rr===3){x1=x0;y1=y0+C;x2=x0+30;y2=y0+C-30;tx=x0+40;ty=y0+C-14;ins=[6,-6];}
+    else{x1=x0;y1=y0;x2=x0+30;y2=y0+30;tx=x0+46;ty=y0+22;ins=[6,6];}
+    stroke(gT,roughD(jLine(x1,y1,x2,y2,r,1.5)),{color:RED,width:2.1,opacity:.95,delay:base+400,dur:260});
+    const ux=(x2-x1)/30,uy=(y2-y1)/30,sx=x1+ins[0],sy=y1+ins[1];
+    stroke(gT,roughD(jLine(sx,sy,sx+ux*24,sy+uy*24,r,1.6)),{color:RED,width:1.1,opacity:.5,delay:base+480,dur:240});
+    const lt=el('text',{x:tx,y:ty,'text-anchor':'middle',class:'c-lag'},gT);lt.textContent='ல';
+    fadeUp(lt,base+520);
+  }
+
+  /* interactions */
+  function clearHi(){gHi.innerHTML='';}
+  function hiCell(i){
+    clearHi();
+    const [rr,cc]=CELLGRID[i];
+    stroke(gHi,roughD(jRect(cc*C+5,rr*C+5,C-10,C-10,r,2.2)),{color:RED,width:2,opacity:.9,delay:0,dur:300});
+    stroke(gHi,roughD(jRect(cc*C+5,rr*C+5,C-10,C-10,r,3)),{color:RED,width:1,opacity:.35,delay:40,dur:300});
+  }
+  function hiPlanet(k){
+    (marks[k]||[]).forEach(g=>{
+      const bb=g.getBBox(),cx=bb.x+bb.width/2,cy=bb.y+bb.height/2;
+      stroke(gHi,roughD(jEll(cx,cy,bb.width/2+11,bb.height/2+7,r)),{color:RED,width:1.9,opacity:.95,delay:0,dur:340});
+      stroke(gHi,roughD(jEll(cx,cy,bb.width/2+11,bb.height/2+7,r)),{color:RED,width:1,opacity:.35,delay:50,dur:340});
+    });
+  }
+  SIGNS.forEach((sg,i)=>{
+    const [rr,cc]=CELLGRID[i];
+    const rect=el('rect',{x:cc*C,y:rr*C,width:C,height:C,fill:'transparent',class:'hit'},gHit);
+    rect.addEventListener('pointerenter',e=>{if(e.pointerType!=='mouse')return;hiCell(i);showTip(e.clientX,e.clientY,i,data);});
+    rect.addEventListener('pointermove',e=>{if(e.pointerType!=='mouse')return;moveTip(e.clientX,e.clientY);});
+    rect.addEventListener('pointerleave',()=>{clearHi();hideTip();});
+    rect.addEventListener('click',()=>{
+      if(opts.mode==='full'){goBhava(((i-RASI.lagna+12)%12)+1);}
+      else{const b=rect.getBoundingClientRect();showTip(b.left+b.width/2,b.top+b.height/2,i,data);setTimeout(hideTip,1900);}
+    });
+  });
+  return {svg,hiCell,clearHi,hiPlanet};
+}
+
+/* ================= tooltip ================= */
+const tip=document.createElement('div');tip.className='tip';document.body.appendChild(tip);
+function showTip(x,y,i,data){
+  const sg=SIGNS[i],house=((i-RASI.lagna+12)%12)+1;
+  const pls=data.planets.filter(p=>p.c===i).map(p=>FULL[p.k]).join(', ');
+  const inRasi=data===RASI;
+  tip.innerHTML=`<strong>${sg.ta} <i>${sg.en}</i></strong>
+    <span>அதிபதி: ${sg.lord}${inRasi?` · ${house}ம் பாவம்`:''}${data.lagna===i?' · லக்னம்':''}</span>
+    <span>${pls?'இருப்பவை: '+pls:'கிரகம் இல்லை'}</span>`;
+  tip.classList.add('on');moveTip(x,y);
+}
+function moveTip(x,y){
+  let px=x+18,py=y+18;const w=tip.offsetWidth,h=tip.offsetHeight;
+  if(px+w>innerWidth-10)px=x-w-16;
+  if(py+h>innerHeight-10)py=y-h-16;
+  tip.style.left=px+'px';tip.style.top=py+'px';
+}
+function hideTip(){tip.classList.remove('on');}
+addEventListener('scroll',hideTip,{passive:true});
+
+function goBhava(n){
+  const a=document.getElementById('bhava-'+n);if(!a)return;
+  a.scrollIntoView({behavior:RM?'auto':'smooth',block:'center'});
+  setTimeout(()=>{a.classList.remove('flash');void a.offsetWidth;a.classList.add('flash');},450);
+}
+
+/* ================= ornaments ================= */
+function buildSun(svg,seed,color,base){
+  svg.setAttribute('viewBox','0 0 64 64');
+  const r=mulberry(seed);
+  stroke(svg,roughD(jEll(32,32,11,11,r)),{color,width:2,opacity:.95,delay:base,dur:420});
+  stroke(svg,roughD(jEll(32,32,11,11,r)),{color,width:1,opacity:.35,delay:base+60,dur:420});
+  for(let i=0;i<12;i++){
+    const a=i/12*Math.PI*2+(r()-.5)*.12;
+    stroke(svg,roughD(jLine(32+Math.cos(a)*16,32+Math.sin(a)*16,32+Math.cos(a)*24,32+Math.sin(a)*24,r,.8)),
+      {color,width:1.6,opacity:.85,delay:base+120+i*36,dur:140});
+  }
+}
+function buildMastRule(imm){
+  const s=$('#mastRule');s.innerHTML='';
+  const W=s.clientWidth||600;
+  s.setAttribute('viewBox',`0 0 ${W} 30`);s.setAttribute('width',W);
+  const r=mulberry(SEED+5);
+  stroke(s,roughD(jLine(0,9,W,9,r,2)),{width:2,opacity:.85,delay:imm?null:520,dur:620});
+  stroke(s,roughD(jLine(0,20,W,20,r,1.5)),{width:1,opacity:.4,delay:imm?null:660,dur:620});
+  const cx=W/2;
+  const dia=[[cx,15],[cx+5,20.5],[cx,26],[cx-5,20.5],[cx,15]].map(p=>[p[0]+(r()*2-1),p[1]+(r()*2-1)]);
+  stroke(s,roughD(dia,true),{color:RED,width:1.4,opacity:.8,delay:imm?null:840,dur:240});
+}
+function buildFootRule(imm){
+  const s=$('#footRule');s.innerHTML='';
+  const W=s.clientWidth||360;
+  s.setAttribute('viewBox',`0 0 ${W} 22`);s.setAttribute('width',W);
+  const r=mulberry(SEED+6);
+  stroke(s,roughD(jLine(0,8,W,8,r,1.7)),{width:1.6,opacity:.7,delay:imm?null:0,dur:600});
+  const cx=W/2;
+  const dia=[[cx,4],[cx+4.5,8],[cx,12],[cx-4.5,8],[cx,4]].map(p=>[p[0]+(r()*2-1)*.8,p[1]+(r()*2-1)*.8]);
+  stroke(s,roughD(dia,true),{color:RED,width:1.3,opacity:.8,delay:imm?null:300,dur:220});
+}
+function buildSeal(svg,seed,base){
+  svg.setAttribute('viewBox','0 0 130 130');
+  const r=mulberry(seed);
+  const defs=el('defs',{},svg);
+  el('path',{id:'sealArc',d:'M65,65 m-46,0 a46,46 0 1,1 92,0 a46,46 0 1,1 -92,0'},defs);
+  [56,49].forEach((rr,i)=>{
+    stroke(svg,roughD(jEll(65,65,rr,rr,r)),{color:RED,width:2,opacity:.85,delay:base+i*160,dur:520});
+    stroke(svg,roughD(jEll(65,65,rr,rr,r)),{color:RED,width:1,opacity:.3,delay:base+60+i*160,dur:520});
+  });
+  const t=el('text',{class:'seal-t'},svg);
+  const tp=el('textPath',{},t);
+  tp.setAttribute('href','#sealArc');
+  tp.setAttributeNS('http://www.w3.org/1999/xlink','xlink:href','#sealArc');
+  tp.textContent='AI JATHAGAM · ஸ்ரீ · AI JATHAGAM · ஸ்ரீ ·';
+  fadeUp(t,base+400);
+  const c=el('text',{x:65,y:64,'text-anchor':'middle',class:'seal-c'},svg);c.textContent='ஜாதகம்';
+  const d=el('text',{x:65,y:84,'text-anchor':'middle',class:'seal-d'},svg);d.textContent='15 · 08 · 1990';
+  fadeUp(c,base+480);fadeUp(d,base+560);
+}
+function buildPen(svg){
+  svg.setAttribute('viewBox','0 0 22 24');
+  const r=mulberry(SEED+13);
+  const pts=[[14,3],[19,8],[8,19],[3,21],[5,15]].map(p=>[p[0]+(r()-.5),p[1]+(r()-.5)]);
+  stroke(svg,roughD(pts,true),{width:1.5,opacity:.85});
+  stroke(svg,roughD(jLine(13.5,6.5,16.5,9.5,r,.4)),{width:1,opacity:.5});
+}
+function buildArrow(){
+  const svg=$('#mnArrow'),r=mulberry(SEED+55),pts=[];
+  for(let i=0;i<=7;i++){const t=i/7;pts.push([86-78*t,6+30*t*t+(r()*2-1)*2]);}
+  stroke(svg,roughD(pts),{color:RED,width:1.6,opacity:.55});
+  stroke(svg,roughD(jLine(6,36,15,29,r,.8)),{color:RED,width:1.5,opacity:.55});
+  stroke(svg,roughD(jLine(6,36,17,42,r,.8)),{color:RED,width:1.5,opacity:.55});
+}
+
+/* name written letter by letter */
+function writeName(){
+  const n=$('#personName'),txt=n.textContent.trim();
+  n.setAttribute('aria-label',txt);
+  let gs;try{gs=[...new Intl.Segmenter('ta',{granularity:'grapheme'}).segment(txt)].map(s=>s.segment);}catch(e){gs=[txt];}
+  n.textContent='';
+  gs.forEach((g,i)=>{
+    const s=document.createElement('span');s.className='ch';s.textContent=g;n.appendChild(s);
+    if(!RM)s.animate([{opacity:0},{opacity:1}],{duration:80,delay:760+i*95,fill:'backwards'});
+  });
+}
+
+/* ================= hand-ruled tables ================= */
+function ruleTable(table,animate){
+  const host=table.parentElement;
+  host.querySelectorAll('svg.rules').forEach(s=>s.remove());
+  const W=table.offsetWidth,H=table.offsetHeight;
+  const svg=el('svg',{class:'rules',width:W,height:H,viewBox:`0 0 ${W} ${H}`},null);
+  host.insertBefore(svg,table);
+  const r=mulberry(SEED+(table.id==='planetTable'?31:67));
+  const tR=table.getBoundingClientRect();
+  const rows=[...table.querySelectorAll('tr')];
+  rows.forEach((tr,i)=>{
+    const y=Math.round(tr.getBoundingClientRect().bottom-tR.top);
+    const dl=(animate&&!RM)?150+i*90:null;
+    stroke(svg,roughD(jLine(0,y,W,y,r,1.4)),{width:1.2,opacity:.42,delay:dl,dur:280});
+    if(i===0)stroke(svg,roughD(jLine(4,y+4,W*.46,y+4,r,1.7)),{color:RED,width:1.5,opacity:.7,delay:(animate&&!RM)?220:null,dur:280});
+    if(i===rows.length-1)stroke(svg,roughD(jLine(0,y-.5,W,y-.5,r,1.3)),{width:1.7,opacity:.6,delay:dl,dur:280});
+  });
+  const x=Math.round(rows[0].querySelector('th,td').getBoundingClientRect().right-tR.left)+6;
+  stroke(svg,roughD(jLine(x,2,x,H-2,r,1.5)),{width:1.1,opacity:.35,delay:(animate&&!RM)?120:null,dur:420});
+}
+function wrapSpan(td){
+  const sp=document.createElement('span');sp.className='circ';
+  while(td.firstChild)sp.appendChild(td.firstChild);
+  td.appendChild(sp);return sp;
+}
+function circleEl(sp,r,delay){
+  const w=sp.offsetWidth,h=sp.offsetHeight,W2=w+22,H2=h+12;
+  const svg=el('svg',{class:'circ-svg',width:W2,height:H2,viewBox:`0 0 ${W2} ${H2}`},sp);
+  const cx=W2/2,cy=H2/2;
+  stroke(svg,roughD(jEll(cx,cy,w/2+8,h/2+2.5,r)),{color:RED,width:1.7,opacity:.9,delay,dur:360});
+  stroke(svg,roughD(jEll(cx,cy,w/2+8,h/2+2.5,r)),{color:RED,width:1,opacity:.32,delay:delay==null?null:delay+80,dur:360});
+}
+function underlineEl(sp,r,delay){
+  const w=sp.offsetWidth;
+  const svg=el('svg',{class:'circ-svg under',width:w+10,height:10,viewBox:`0 0 ${w+10} 10`},sp);
+  stroke(svg,roughD(jLine(4,5,w+4,5,r,1.2)),{color:RED,width:1.4,opacity:.7,delay,dur:260});
+}
+function decoratePlanet(){
+  const r=mulberry(SEED+77);let i=0;
+  $$('#planetTable .status').forEach(td=>{
+    const sp=wrapSpan(td);
+    if(td.dataset.s==='ex')circleEl(sp,r,420+i*110);
+    else if(td.dataset.s==='own')underlineEl(sp,r,420+i*110);
+    i++;
+  });
+}
+function decorateAshta(){
+  const r=mulberry(SEED+91);let i=0;
+  $$('#ashtaTable td[data-v]').forEach(td=>{
+    const v=+td.dataset.v;
+    if(v>=5){td.classList.add('hi');circleEl(wrapSpan(td),r,500+i*70);}
+    else if(v<=2)td.classList.add('lo');
+    i++;
+  });
+}
+
+/* ================= misc ink rules ================= */
+function buildSecRule(slot){
+  slot.innerHTML='';
+  const W=slot.clientWidth;if(!W)return[];
+  const svg=el('svg',{width:W,height:22,viewBox:`0 0 ${W} 22`},slot);
+  const r=mulberry(SEED+((+slot.dataset.rs)||1)*101);
+  const p1=stroke(svg,roughD(jLine(0,8,W,8,r,1.7)),{width:1.7,opacity:.7});
+  const p2=stroke(svg,roughD(jLine(W*.03,14,W*.44,14,r,1.5)),{color:RED,width:1.4,opacity:.65});
+  const cx=W/2;
+  const dia=[[cx,2],[cx+6,8],[cx,14],[cx-6,8],[cx,2]].map(p=>[p[0]+(r()*2-1)*1.1,p[1]+(r()*2-1)*1.1]);
+  const p3=stroke(svg,roughD(dia,true),{color:RED,width:1.5,opacity:.85});
+  return [p1,p2,p3];
+}
+function buildNotesRule(anim){
+  const host=$('.notes');if(!host)return;
+  host.querySelectorAll('svg.notes-rule').forEach(s=>s.remove());
+  const H=host.offsetHeight;
+  const svg=el('svg',{class:'notes-rule',width:10,height:H,viewBox:`0 0 10 ${H}`},null);
+  host.insertBefore(svg,host.firstChild);
+  const r=mulberry(SEED+9);
+  stroke(svg,roughD(jLine(4,4,4,H-4,r,1.6)),{color:RED,width:1.6,opacity:.8,delay:anim&&!RM?1500:null,dur:700});
+}
+function buildDivider(){
+  const host=$('#bhavaFlow');if(!host)return;
+  host.querySelectorAll('svg.divider-svg').forEach(s=>s.remove());
+  if(innerWidth<880||!host.offsetHeight)return;
+  const H=host.offsetHeight;
+  const svg=el('svg',{class:'divider-svg',width:8,height:H,viewBox:`0 0 8 ${H}`},null);
+  host.appendChild(svg);
+  const r=mulberry(SEED+17);
+  stroke(svg,roughD(jLine(4,4,4,H-4,r,1.8)),{width:1.2,opacity:.3,delay:RM?null:800,dur:900});
+}
+function bhNum(a){
+  const sp=a.querySelector('.bh-num'),n=sp.dataset.n;
+  sp.textContent='';
+  const svg=el('svg',{viewBox:'0 0 46 46',width:46,height:46},sp);
+  const r=mulberry(5000+(+n)*131);
+  stroke(svg,roughD(jEll(23,23,17.5,17.5,r)),{color:RED,width:2,opacity:.92,delay:0,dur:420});
+  stroke(svg,roughD(jEll(23,23,17.5,17.5,r)),{color:RED,width:1,opacity:.3,delay:70,dur:420});
+  const t=el('text',{x:23,y:31,'text-anchor':'middle',class:'num-t'},svg);
+  t.textContent=n;fadeUp(t,120);
+}
+
+/* ================= boot ================= */
+let secRules=[],booted=false;
+function onSee(target,cb,threshold=.18){
+  const io=new IntersectionObserver(es=>{es.forEach(en=>{if(en.isIntersecting){io.disconnect();cb();}})},{threshold});
+  io.observe(target);
+}
+function bindInteractions(){
+  $$('.bhava').forEach(a=>{
+    const s=+a.dataset.sign;
+    a.addEventListener('mouseenter',()=>charts.rasi&&charts.rasi.hiCell(s));
+    a.addEventListener('mouseleave',()=>charts.rasi&&charts.rasi.clearHi());
+  });
+  const rowHi=k=>{
+    if(!charts.rasi)return;
+    if(k==='La'){charts.rasi.hiCell(RASI.lagna);charts.nav.hiCell(NAV.lagna);}
+    else{charts.rasi.hiPlanet(k);charts.nav.hiPlanet(k);}
+  };
+  const rowLo=()=>{charts.rasi&&charts.rasi.clearHi();charts.nav&&charts.nav.clearHi();};
+  $$('#planetTable tbody tr').forEach(tr=>{
+    const k=tr.dataset.k;
+    tr.addEventListener('mouseenter',()=>rowHi(k));
+    tr.addEventListener('mouseleave',rowLo);
+    tr.addEventListener('click',()=>{
+      $('#charts').scrollIntoView({behavior:RM?'auto':'smooth',block:'start'});
+      setTimeout(()=>rowHi(k),600);setTimeout(rowLo,2600);
+    });
+  });
+}
+function boot(){
+  if(booted)return;booted=true;
+  buildSun($('#sunTop'),SEED+2,RED,120);
+  buildMastRule(false);
+  writeName();
+  buildSeal($('#seal'),SEED+8,820);
+  fadeUp($('#facts'),1150,500);
+  charts.rasi=buildChart($('#rasiChart'),RASI,SEED+11,
+    {center:'ராசி',centerEn:'RASI · D-1',houses:true,mode:'full',baseDelay:1000,aria:'ராசிச் சக்கரம்'});
+  charts.nav=buildChart($('#navChart'),NAV,SEED+23,
+    {center:'நவாம்சம்',centerEn:'NAVAMSA · D-9',houses:false,mode:'tip',baseDelay:1550,aria:'நவாம்ச சக்கரம்'});
+  fadeUp($('.hint'),2600);
+  buildNotesRule(true);buildDivider();buildArrow();buildPen($('#penIco'));
+  secRules=$$('.rule-slot').map(slot=>{const ps=buildSecRule(slot);ps.forEach(prep);return ps;});
+  $$('.sec').forEach((sec,i)=>onSee(sec,()=>{
+    sec.dataset.seen=1;(secRules[i]||[]).forEach((p,j)=>play(p,j*170,j?340:480));
+  },.12));
+  $$('.bhava').forEach(a=>onSee(a,()=>bhNum(a),.25));
+  onSee($('#planetTable'),()=>{$('#planetTable').dataset.seen=1;decoratePlanet();ruleTable($('#planetTable'),true);},.08);
+  onSee($('#ashtaTable'),()=>{$('#ashtaTable').dataset.seen=1;decorateAshta();ruleTable($('#ashtaTable'),true);},.08);
+  buildSun($('#sunFoot'),SEED+4,RED,100);
+  buildFootRule(false);
+  bindInteractions();
+}
+if(document.fonts&&document.fonts.ready)document.fonts.ready.then(()=>setTimeout(boot,60));
+addEventListener('load',()=>setTimeout(boot,400));
+setTimeout(boot,1800);
+
+/* redraw with a fresh hand */
+ $('#redraw').addEventListener('click',()=>{
+  SEED=(SEED*1664525+1013904223+((Math.random()*1e6)|0))>>>0;
+  charts.rasi=buildChart($('#rasiChart'),RASI,SEED+11,
+    {center:'ராசி',centerEn:'RASI · D-1',houses:true,mode:'full',baseDelay:0,aria:'ராசிச் சக்கரம்'});
+  charts.nav=buildChart($('#navChart'),NAV,SEED+23,
+    {center:'நவாம்சம்',centerEn:'NAVAMSA · D-9',houses:false,mode:'tip',baseDelay:250,aria:'நவாம்ச சக்கரம்'});
+  $('#redraw').animate([{transform:'rotate(0)'},{transform:'rotate(-2deg)'},{transform:'rotate(0)'}],{duration:280});
+});
+
+/* keep the ink aligned on resize */
+let rt;
+addEventListener('resize',()=>{
+  clearTimeout(rt);
+  rt=setTimeout(()=>{
+    buildMastRule(true);buildFootRule(true);
+    secRules=$$('.rule-slot').map(slot=>{
+      const ps=buildSecRule(slot);
+      if(slot.closest('.sec').dataset.seen)ps.forEach((p,j)=>play(p,j*40,260));
+      else ps.forEach(prep);
+      return ps;
+    });
+    buildNotesRule(false);buildDivider();
+    $$('.ruled table').forEach(t=>{if(t.dataset.seen)ruleTable(t,false);});
+  },220);
+});
+</script>
+</body>
+</html>
