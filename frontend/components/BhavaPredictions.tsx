@@ -2,7 +2,7 @@
 
 import React, { useState } from "react";
 import { HouseDetail } from "@/lib/types";
-import { Shield, Sparkles, Star, ChevronDown, ChevronUp } from "lucide-react";
+import { Shield, Sparkles, ChevronDown, ChevronUp } from "lucide-react";
 
 interface BhavaPredictionsProps {
   bhavas: HouseDetail[];
@@ -10,101 +10,108 @@ interface BhavaPredictionsProps {
 }
 
 export const BhavaPredictions: React.FC<BhavaPredictionsProps> = ({ bhavas, lang }) => {
-  const [expandedHouse, setExpandedHouse] = useState<number | null>(1);
+  const [expandedHouse, setExpandedHouse] = useState<number | null>(null);
+
+  const toggleHouse = (houseNum: number) => {
+    setExpandedHouse(expandedHouse === houseNum ? null : houseNum);
+  };
 
   return (
-    <div className="palm-leaf-dark rounded-3xl p-6 sm:p-8 shadow-2xl border border-[#d4af37]/30">
-      <div className="flex items-center justify-between mb-6 pb-4 border-b border-[#d4af37]/20">
-        <div>
-          <h3 className="text-xl sm:text-2xl font-bold font-cinzel text-[#ffd700] flex items-center gap-2">
-            <Shield className="w-6 h-6 text-[#ffd700]" />
-            {lang === "ta" ? "12 பாவ பலன்கள் (12 Bhava Predictions)" : "12 Bhava Significations & Predictions"}
-          </h3>
-          <p className="text-xs text-[#e0b87f] font-tamil mt-1">
-            {lang === "ta"
-              ? "ஒவ்வொரு பாவத்தின் அதிபதி, அமர்ந்த கிரகங்கள், சுப பார்வைகள் மற்றும் வாழ்க்கை வழிகாட்டல்"
-              : "House-wise significations covering character, wealth, family, health, career and longevity"}
-          </p>
-        </div>
+    <div className="hand-card p-6 sm:p-8 shadow-sm">
+      {/* Section Head */}
+      <div className="text-center mb-8 pb-4 border-b border-[rgba(43,33,23,0.2)]">
+        <p className="font-caveat tracking-[0.4em] uppercase text-xs text-[var(--red)] mb-1">
+          III · Twelve Houses
+        </p>
+        <h3 className="text-2xl sm:text-3xl font-normal text-[var(--ink)] flex items-center justify-center gap-2">
+          {lang === "ta" ? "பன்னிரண்டு பாவ பலன்கள்" : "Twelve Bhava Significations & Predictions"}
+        </h3>
+        <p className="text-xs text-[var(--ink-soft)] font-tamil mt-1">
+          {lang === "ta"
+            ? "ஒவ்வொரு பாவத்தின் அதிபதி, அமர்ந்த கிரகங்கள், சுப காரகத்துவங்கள் மற்றும் வாழ்வியல் பலன்கள்"
+            : "House-wise significations covering character, wealth, family, health, career and longevity"}
+        </p>
       </div>
 
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+      {/* Manuscript Bhava Flow */}
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
         {bhavas.map((bhava) => {
           const isExpanded = expandedHouse === bhava.house_number;
-          const occCount = bhava.occupants.length;
+          const occCount = bhava.occupants ? bhava.occupants.length : 0;
 
           return (
-            <div
+            <article
               key={bhava.house_number}
-              className={`rounded-2xl border transition-all duration-300 ${
+              id={`bhava-${bhava.house_number}`}
+              className={`p-4 sm:p-5 rounded-2xl border transition-all duration-200 cursor-pointer ${
                 isExpanded
-                  ? "bg-[#25181b] border-[#ffd700]/60 shadow-xl shadow-[#ffd700]/5"
-                  : "bg-[#160f12]/80 border-[#d4af37]/20 hover:border-[#d4af37]/50"
+                  ? "bg-[rgba(176,55,38,0.06)] border-[var(--red)] shadow-sm"
+                  : "bg-[rgba(120,96,58,0.04)] border-[rgba(43,33,23,0.2)] hover:bg-[rgba(120,96,58,0.08)]"
               }`}
+              onClick={() => toggleHouse(bhava.house_number)}
             >
-              {/* Card Header */}
-              <div
-                onClick={() => setExpandedHouse(isExpanded ? null : bhava.house_number)}
-                className="p-4 cursor-pointer flex items-center justify-between"
-              >
-                <div className="flex items-center gap-3">
-                  <span className="w-9 h-9 rounded-xl bg-gradient-to-br from-[#6b1426] to-[#aa820a] flex items-center justify-center font-bold text-[#ffd700] text-sm border border-[#ffd700]/30 shadow">
-                    {bhava.house_number}
-                  </span>
-                  <div>
-                    <h4 className="text-sm font-bold text-white font-tamil">
-                      {lang === "ta" ? `${bhava.house_number}-ஆம் பாவம் (${bhava.rasi_ta})` : `House ${bhava.house_number} (${bhava.rasi})`}
-                    </h4>
-                    <div className="flex items-center gap-2 text-[11px] text-[#e0b87f]">
-                      <span>{lang === "ta" ? `அதிபதி: ${bhava.lord_ta}` : `Lord: ${bhava.lord}`}</span>
-                      <span>•</span>
-                      <span>
-                        {occCount > 0
-                          ? lang === "ta"
-                            ? `${occCount} கிரகம்`
-                            : `${occCount} Planet(s)`
-                          : lang === "ta"
-                          ? "சுப பார்வை"
-                          : "Unoccupied"}
+              <div className="flex items-start gap-3">
+                <span className="w-8 h-8 rounded-full border border-[var(--red)] text-[var(--red-deep)] flex items-center justify-center font-caveat text-xl font-bold shrink-0 mt-0.5 bg-[var(--paper)]">
+                  {bhava.house_number}
+                </span>
+
+                <div className="flex-1">
+                  <div className="flex items-center justify-between gap-2">
+                    <h4 className="text-lg font-normal text-[var(--ink)]">
+                      {lang === "ta" ? `${bhava.house_number}-ஆம் பாவம்` : `House ${bhava.house_number}`}
+                      <span className="block text-xs text-[var(--red)] font-tamil mt-0.5">
+                        {lang === "ta" ? bhava.rasi_ta : bhava.rasi} · {lang === "ta" ? `அதிபதி: ${bhava.lord_ta}` : `Lord: ${bhava.lord}`}
+                        {occCount > 0 && (
+                          <span className="text-[var(--ink-soft)] ml-1.5">
+                            · {bhava.occupants.join(", ")}
+                          </span>
+                        )}
                       </span>
+                    </h4>
+                    <div className="text-[var(--ink-soft)] shrink-0">
+                      {isExpanded ? <ChevronUp className="w-4 h-4 text-[var(--red)]" /> : <ChevronDown className="w-4 h-4" />}
                     </div>
                   </div>
-                </div>
 
-                <div className="text-[#ffd700]">
-                  {isExpanded ? <ChevronUp className="w-5 h-5" /> : <ChevronDown className="w-5 h-5" />}
+                  {/* Summary / Tamil Text */}
+                  <p className="text-sm text-[var(--ink)] leading-relaxed mt-2.5 font-tamil">
+                    {lang === "ta" ? bhava.prediction_ta : bhava.prediction}
+                  </p>
+
+                  {/* English sub-note in Caveat */}
+                  {bhava.prediction && lang === "ta" && (
+                    <p className="font-caveat text-sm text-[var(--ink-soft)] leading-snug mt-1.5">
+                      {bhava.significations.slice(0, 4).join(", ")}
+                    </p>
+                  )}
+
+                  {/* Expanded Signification Tags */}
+                  {isExpanded && (
+                    <div className="mt-3 pt-3 border-t border-[rgba(43,33,23,0.15)] space-y-2 text-xs">
+                      <div className="flex flex-wrap gap-1.5">
+                        {(lang === "ta" ? bhava.significations_ta : bhava.significations).map((sig, sIdx) => (
+                          <span
+                            key={sIdx}
+                            className="px-2 py-0.5 rounded-lg bg-[var(--paper)] border border-[rgba(43,33,23,0.2)] text-[var(--ink)] text-[11px] font-tamil"
+                          >
+                            {sig}
+                          </span>
+                        ))}
+                      </div>
+
+                      {occCount > 0 && (
+                        <div className="text-[11px] text-[var(--ink-soft)] font-tamil">
+                          <strong className="text-[var(--red-deep)]">
+                            {lang === "ta" ? "அமர்ந்த கிரகங்கள்: " : "Occupants: "}
+                          </strong>
+                          {bhava.occupants.join(", ")}
+                        </div>
+                      )}
+                    </div>
+                  )}
                 </div>
               </div>
-
-              {/* Card Expanded Content */}
-              {isExpanded && (
-                <div className="px-4 pb-4 pt-2 border-t border-white/5 text-xs animate-fade-in space-y-3">
-                  {/* Significations Tags */}
-                  <div>
-                    <span className="text-[11px] text-[#d4af37] font-semibold block mb-1 font-tamil">
-                      {lang === "ta" ? "காரகத்துவங்கள்:" : "Significations:"}
-                    </span>
-                    <div className="flex flex-wrap gap-1.5">
-                      {(lang === "ta" ? bhava.significations_ta : bhava.significations).map((sig, sIdx) => (
-                        <span
-                          key={sIdx}
-                          className="px-2 py-0.5 rounded-md bg-[#13090c] border border-[#d4af37]/20 text-[#f5eedb] text-[11px] font-tamil"
-                        >
-                          {sig}
-                        </span>
-                      ))}
-                    </div>
-                  </div>
-
-                  {/* Prediction Paragraph */}
-                  <div className="bg-[#12080a] p-3 rounded-xl border border-[#d4af37]/20">
-                    <p className="text-[#f5eedb]/90 leading-relaxed font-tamil text-xs sm:text-sm">
-                      {lang === "ta" ? bhava.prediction_ta : bhava.prediction}
-                    </p>
-                  </div>
-                </div>
-              )}
-            </div>
+            </article>
           );
         })}
       </div>

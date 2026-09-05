@@ -3,6 +3,8 @@ import {
   ChartResponse,
   PoruthamRequest,
   PoruthamMatchResult,
+  StarMatchFinderRequest,
+  StarMatchFinderResponse,
   NarrationRequest,
   NarrationResult,
   ProfileCreate,
@@ -69,6 +71,47 @@ export async function generatePoruthamApi(
     body: JSON.stringify(data),
   });
   return handleResponse<PoruthamMatchResult>(res);
+}
+
+// Alias for backwards compatibility — porutham/page.tsx imports matchPoruthamApi
+export const matchPoruthamApi = generatePoruthamApi;
+
+/**
+ * NEW: Star Match Finder — MATCH feature
+ * For a given Boy (or Girl) Nakshatra/Pada, get LIKE-RATE for all target Rasi/Nakshatra combos (108 pada-level)
+ * POST /api/porutham/star-matches
+ */
+export async function findStarMatchesApi(
+  data: StarMatchFinderRequest
+): Promise<StarMatchFinderResponse> {
+  const res = await fetch(`${API_V1}/porutham/star-matches`, {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify(data),
+  });
+  return handleResponse<StarMatchFinderResponse>(res);
+}
+
+/**
+ * GET variant for quick browser testing
+ * GET /api/porutham/star-matches?nakshatra=Pushya&pada=2&gender=boy
+ */
+export async function findStarMatchesGetApi(
+  nakshatra: string,
+  pada: number,
+  gender: string = "boy",
+  filterRasi?: number,
+  sortBy: string = "score"
+): Promise<StarMatchFinderResponse> {
+  const params = new URLSearchParams({
+    nakshatra,
+    pada: String(pada),
+    gender,
+    sort_by: sortBy,
+  });
+  if (filterRasi) params.set("filter_rasi", String(filterRasi));
+  const res = await fetch(`${API_V1}/porutham/star-matches?${params.toString()}`);
+  return handleResponse<StarMatchFinderResponse>(res);
 }
 
 /**
@@ -146,9 +189,56 @@ export async function suggestPlacesApi(
   const trimmed = query.trim();
   if (trimmed.length < 2) return [];
 
-  const res = await fetch(
-    `${API_V1}/geocode/suggest?q=${encodeURIComponent(trimmed)}`
-  );
-  const data = await handleResponse<{ results: PlaceSuggestion[] }>(res);
-  return data.results;
+  // 1. Try Backend Proxy with Caching & Local Matches
+  try {
+    const res = await fetch(
+      `${API_V1}/geocode/suggest?q=${encodeURIComponent(trimmed)}`
+    );
+    if (res.ok) {
+      const data = await res.json();
+      if (data && data.results && data.results.length > 0) {
+        return data.results;
+      }
+    }
+  } catch (err) {
+    // backend unreachable or blocked, fall through to client-side free API
+  }
+
+  // 2. Client-side fallback to Free Open-Meteo Geocoding API
+  try {
+    const omRes = await fetch(
+      `https://geocoding-api.open-meteo.com/v1/search?name=${encodeURIComponent(trimmed)}&count=10&language=en&format=json`
+    );
+    if (omRes.ok) {
+      const omData = await omRes.json();
+      if (omData.results && omData.results.length > 0) {
+        return omData.results.map((r: any) => {
+          const parts = [r.name];
+          if (r.admin2) parts.push(r.admin2);
+          if (r.admin1 && r.admin1 !== r.name) parts.push(r.admin1);
+          if (r.country) parts.push(r.country);
+          return {
+            display_name: parts.join(", "),
+            display_name_ta: r.name,
+            lat: r.latitude,
+            lon: r.longitude,
+            timezone: r.timezone || "Asia/Kolkata",
+          };
+        });
+      }
+    }
+  } catch {
+    // ignore
+  }
+
+  return [];
+}
+
+/**
+ * Get pre-grouped locations for the location picker dropdown:
+ * GET /api/geocode/grouped
+ */
+export async function getGroupedLocationsApi(): Promise<import("./types").GroupedLocations> {
+  const res = await fetch(`${API_V1}/geocode/grouped`);
+  return handleResponse<import("./types").GroupedLocations>(res);
 }

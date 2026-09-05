@@ -1,28 +1,207 @@
-@import url('https://fonts.googleapis.com/css2?family=Caveat:wght@400..700&family=Cinzel:wght@400..900&family=Kalam:wght@300;400;700&family=Kavivanar&family=Noto+Sans+Tamil:wght@300;400;500;600;700;800&family=Outfit:wght@300;400;500;600;700;800&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Baloo+Thambi+2:wght@400;500;600;700&family=Caveat:wght@400..700&family=Cinzel:wght@400..900&family=Kalam:wght@300;400;700&family=Kavivanar&family=Noto+Sans+Tamil:wght@300;400;500;600;700;800&family=Noto+Serif+Tamil:wght@300;400;500;600;700&family=Outfit:wght@300;400;500;600;700;800&display=swap');
 
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
 
 :root {
-  --font-tamil: 'Noto Sans Tamil', sans-serif;
+  --paper: #f0e5cc;
+  --paper-card: #fdfaf2;
+  --ink: #2b2117;
+  --ink-soft: #6f6049;
+  --ink-faint: #a3917a;
+  --red: #b03726;
+  --red-deep: #8e2b1c;
+  --font-tamil: 'Kavivanar', 'Noto Sans Tamil', cursive, sans-serif;
   --font-script: 'Kavivanar', cursive;
   --font-cinzel: 'Cinzel', serif;
   --font-caveat: 'Caveat', cursive;
 }
 
 body {
-  font-family: 'Outfit', 'Noto Sans Tamil', sans-serif;
-  background-color: #0d0a0b;
-  color: #f5eedb;
-  background-image: 
-    radial-gradient(circle at 15% 15%, rgba(107, 20, 38, 0.15) 0%, transparent 40%),
-    radial-gradient(circle at 85% 85%, rgba(212, 175, 55, 0.1) 0%, transparent 40%),
-    radial-gradient(circle at 50% 50%, rgba(26, 18, 12, 0.6) 0%, transparent 70%);
-  background-attachment: fixed;
+  background: var(--paper);
+  color: var(--ink);
+  font-family: 'Kavivanar', 'Noto Sans Tamil', cursive, sans-serif;
+  font-size: 16.5px;
+  line-height: 1.85;
+  overflow-x: hidden;
+  -webkit-font-smoothing: antialiased;
 }
 
-/* Palm Leaf / Parchment manuscript style */
+::selection {
+  background: rgba(176, 55, 38, 0.22);
+  color: #2b2117;
+}
+
+/* ── Paper Grain & Edge Aging Overlays (from design-1.html) ── */
+.grain {
+  position: fixed;
+  inset: -40px;
+  pointer-events: none;
+  z-index: 999;
+  opacity: 0.35;
+  mix-blend-mode: multiply;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='260' height='260'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.8' numOctaves='2' stitchTiles='stitch'/%3E%3CfeColorMatrix values='0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0.55 0'/%3E%3C/filter%3E%3Crect width='260' height='260' filter='url(%23n)'/%3E%3C/svg%3E");
+}
+
+.age {
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+  z-index: 998;
+  background: radial-gradient(ellipse 130% 100% at 50% 38%, rgba(0,0,0,0) 62%, rgba(94,72,40,0.14) 100%);
+}
+
+/* ── Traditional Masthead Elements ── */
+.sri {
+  color: var(--red);
+  font-size: 26px;
+  line-height: 1.2;
+  font-family: 'Kavivanar', cursive;
+}
+
+.over-title {
+  font-family: 'Caveat', cursive;
+  letter-spacing: 0.42em;
+  text-transform: uppercase;
+  font-size: 14px;
+  color: var(--red);
+  padding-left: 0.42em;
+}
+
+/* ── Hand-Drawn Wobbly Cards & Boxes (design-1.html style) ── */
+.hand-card {
+  background: rgba(253, 250, 242, 0.9);
+  border: 1.6px solid rgba(43, 33, 23, 0.45);
+  border-radius: 255px 15px 225px 15px/15px 225px 15px 255px;
+  box-shadow: 2px 4px 0 rgba(43, 33, 23, 0.08);
+  position: relative;
+}
+
+.hand-card-clean {
+  background: rgba(253, 250, 242, 0.95);
+  border: 1.5px solid rgba(43, 33, 23, 0.35);
+  border-radius: 16px;
+  box-shadow: 0 4px 15px rgba(43, 33, 23, 0.06);
+}
+
+.facts {
+  max-width: 720px;
+  margin: 16px auto 6px;
+  padding: 10px 24px;
+  border: 1.6px solid rgba(43, 33, 23, 0.55);
+  border-radius: 255px 15px 225px 15px/15px 225px 15px 255px;
+  transform: rotate(-0.35deg);
+  background: rgba(120, 96, 58, 0.06);
+  font-size: 16px;
+  color: var(--ink);
+}
+
+.facts .fl {
+  color: var(--red);
+  font-weight: 600;
+}
+
+.fine {
+  font-size: 13.5px;
+  color: var(--ink-faint);
+}
+
+/* ── Hand-Drawn Buttons ── */
+.btn-hand {
+  font-family: 'Kavivanar', cursive;
+  font-size: 16px;
+  color: var(--ink);
+  background: transparent;
+  border: 1.7px solid rgba(43, 33, 23, 0.6);
+  border-radius: 255px 15px 225px 15px/15px 225px 15px 255px;
+  padding: 8px 22px;
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  transition: transform 0.18s ease, background 0.18s;
+}
+
+.btn-hand:hover {
+  transform: rotate(-1.2deg);
+  background: rgba(176, 55, 38, 0.08);
+}
+
+.btn-hand:active {
+  transform: translateY(1px);
+}
+
+.btn-hand-red {
+  background: #b03726;
+  color: #ffffff !important;
+  border: 1.7px solid #8e2b1c;
+  border-radius: 255px 15px 225px 15px/15px 225px 15px 255px;
+  padding: 9px 24px;
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  font-family: 'Kavivanar', cursive;
+  font-weight: 500;
+  transition: transform 0.18s ease, background 0.18s;
+  box-shadow: 0 2px 8px rgba(176, 55, 38, 0.25);
+}
+
+.btn-hand-red:hover {
+  transform: rotate(-1deg);
+  background: #8e2b1c;
+}
+
+/* ── Hand-Ruled Table Styling ── */
+.table-hand {
+  width: 100%;
+  border-collapse: collapse;
+  font-family: 'Kavivanar', cursive;
+}
+
+.table-hand th {
+  font-weight: 400;
+  font-size: 15px;
+  color: var(--ink-soft);
+  text-align: left;
+  padding: 10px 14px;
+  border-bottom: 1.5px solid rgba(43, 33, 23, 0.35);
+  vertical-align: bottom;
+}
+
+.table-hand th i {
+  display: block;
+  font-style: normal;
+  font-family: 'Caveat', cursive;
+  font-size: 13px;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  color: var(--red);
+  line-height: 1.2;
+}
+
+.table-hand td {
+  padding: 10px 14px;
+  font-size: 16px;
+  border-bottom: 1px dashed rgba(43, 33, 23, 0.18);
+  color: var(--ink);
+}
+
+.table-hand tbody tr {
+  transition: background 0.15s;
+}
+
+.table-hand tbody tr:hover {
+  background: rgba(43, 33, 23, 0.04);
+}
+
+.num-hand {
+  font-family: 'Caveat', cursive;
+  font-size: 18.5px;
+}
+
+/* Palm Leaf / Parchment legacy classes updated to warm style */
 .palm-leaf-texture {
   background-color: #f6ebd6;
   background-image: 
@@ -30,27 +209,24 @@ body {
     radial-gradient(ellipse at center, #fffcf5 0%, #ecdcc2 100%);
   background-size: 100% 24px, 100% 100%;
   color: #2b170c;
-  box-shadow: 0 10px 35px -5px rgba(0, 0, 0, 0.35), inset 0 0 40px rgba(117, 72, 34, 0.15);
+  box-shadow: 0 10px 35px -5px rgba(0, 0, 0, 0.15), inset 0 0 40px rgba(117, 72, 34, 0.1);
 }
 
 .palm-leaf-dark {
-  background-color: #1a1412;
-  background-image: 
-    radial-gradient(ellipse at top, rgba(107, 20, 38, 0.25) 0%, transparent 70%),
-    radial-gradient(ellipse at bottom, rgba(212, 175, 55, 0.12) 0%, transparent 70%);
-  border: 1px solid rgba(212, 175, 55, 0.25);
-  box-shadow: 0 15px 40px -10px rgba(0, 0, 0, 0.6), inset 0 1px 0 rgba(255, 255, 255, 0.05);
+  background: rgba(253, 250, 242, 0.95);
+  border: 1.6px solid rgba(43, 33, 23, 0.45);
+  border-radius: 255px 15px 225px 15px/15px 225px 15px 255px;
+  box-shadow: 2px 4px 0 rgba(43, 33, 23, 0.08);
+  color: var(--ink);
 }
 
 .gold-gradient-text {
-  background: linear-gradient(135deg, #ffd700 0%, #d4af37 40%, #ffdf73 70%, #aa820a 100%);
-  -webkit-background-clip: text;
-  -webkit-text-fill-color: transparent;
+  color: var(--red-deep);
 }
 
 .temple-border {
-  border: 2px solid #d4af37;
-  border-image: linear-gradient(to bottom right, #d4af37, #6b1426, #d4af37) 1;
+  border: 1.6px solid rgba(43, 33, 23, 0.5);
+  border-radius: 255px 15px 225px 15px/15px 225px 15px 255px;
 }
 
 /* Custom scrollbar */
@@ -59,14 +235,105 @@ body {
   height: 8px;
 }
 ::-webkit-scrollbar-track {
-  background: #140f10;
+  background: #f0e5cc;
 }
 ::-webkit-scrollbar-thumb {
-  background: #3e261d;
+  background: #a3917a;
   border-radius: 4px;
 }
 ::-webkit-scrollbar-thumb:hover {
-  background: #d4af37;
+  background: #b03726;
+}
+
+/* ── Handwritten Tamil Manuscript (Realistic Palm-Leaf) ── */
+.handwritten-tamil {
+  font-family: 'Kavivanar', 'Baloo Thambi 2', 'Noto Sans Tamil', cursive;
+  font-weight: 400;
+  letter-spacing: 0.6px;
+  line-height: 2.0;
+  color: #1e0f08;
+  text-shadow: 0.15px 0.15px 0 rgba(45, 18, 8, 0.45), 0.3px 0.3px 0.6px rgba(60, 30, 12, 0.18);
+  /* subtle ink bleed */
+}
+
+.handwritten-heading {
+  font-family: 'Kavivanar', 'Noto Serif Tamil', 'Noto Sans Tamil', cursive;
+  font-weight: 600;
+  letter-spacing: 0.8px;
+  color: #4a0f1a;
+  text-shadow: 0.4px 0.4px 0 rgba(110, 30, 35, 0.35);
+}
+
+.manuscript-page {
+  width: 794px; /* A4 @ 96dpi */
+  min-height: 1123px;
+  margin: 0 auto;
+  background-color: #fdf6e3;
+  background-image:
+    repeating-linear-gradient(0deg, transparent, transparent 31px, rgba(120, 70, 25, 0.08) 31px, rgba(120, 70, 25, 0.08) 32px),
+    radial-gradient(ellipse at 20% 15%, rgba(139, 92, 42, 0.10) 0%, transparent 55%),
+    radial-gradient(ellipse at 85% 85%, rgba(107, 20, 38, 0.06) 0%, transparent 55%),
+    radial-gradient(ellipse at center, #fffcf2 0%, #f5e6c8 45%, #ecdcc0 100%);
+  position: relative;
+  box-shadow:
+    0 12px 40px -8px rgba(0,0,0,0.45),
+    inset 0 0 80px rgba(120, 72, 25, 0.18),
+    inset 0 0 2px rgba(80, 40, 15, 0.4);
+  border: 1.5px solid rgba(110, 60, 20, 0.25);
+  page-break-after: always;
+  overflow: hidden;
+}
+
+.manuscript-page::before {
+  /* palm-leaf horizontal fibers */
+  content: "";
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  background-image: repeating-linear-gradient(90deg, transparent 0 120px, rgba(80,45,15,0.02) 120px 121px);
+  opacity: 0.6;
+}
+
+.manuscript-page::after {
+  /* vignette border aging */
+  content: "";
+  position: absolute;
+  inset: 12px;
+  border: 1.2px solid rgba(170, 130, 10, 0.35);
+  border-radius: 6px;
+  pointer-events: none;
+  box-shadow: inset 0 0 30px rgba(110, 60, 20, 0.12);
+}
+
+.manuscript-inner {
+  position: relative;
+  z-index: 1;
+  padding: 48px 52px 56px 52px;
+}
+
+.manuscript-rule {
+  border: none;
+  height: 1px;
+  background: linear-gradient(90deg, transparent, rgba(120, 70, 25, 0.25) 15%, rgba(120, 70, 25, 0.25) 85%, transparent);
+  margin: 14px 0;
+}
+
+.ink-underline {
+  border-bottom: 1.5px solid rgba(90, 25, 35, 0.55);
+  padding-bottom: 2px;
+  box-shadow: 0 1px 0 rgba(107, 20, 38, 0.15);
+}
+
+.manu-wobble-1 { transform: rotate(-0.25deg); }
+.manu-wobble-2 { transform: rotate(0.35deg); }
+.manu-wobble-3 { transform: rotate(-0.15deg); }
+
+/* Palm-leaf stains / coffee spots */
+.palm-stain {
+  position: absolute;
+  border-radius: 50%;
+  background: radial-gradient(ellipse at 30% 30%, rgba(120, 70, 25, 0.14) 0%, rgba(90, 45, 15, 0.08) 40%, transparent 70%);
+  pointer-events: none;
 }
 
 @media print {
@@ -80,5 +347,9 @@ body {
   .palm-leaf-texture {
     box-shadow: none !important;
     background: #ffffff !important;
+  }
+  .manuscript-page {
+    box-shadow: none !important;
+    border: none !important;
   }
 }

@@ -91,6 +91,46 @@ class BasicBirthDetails(BaseModel):
     dasha_balance_ta: Optional[str] = None
     dasha_balance_en: Optional[str] = None
 
+    # Sampoorana Jathagam Shastric Fields
+    tamil_year: Optional[str] = None
+    tamil_month: Optional[str] = None
+    tamil_month_en: Optional[str] = None
+    tamil_date: Optional[int] = None
+    salivahana_year: Optional[int] = None
+    kaliyuga_year: Optional[int] = None
+    kollam_year: Optional[int] = None
+    fasli_year: Optional[int] = None
+    hijri_year: Optional[int] = None
+    ayana: Optional[str] = None
+    ayana_ta: Optional[str] = None
+    ritu: Optional[str] = None
+    ritu_ta: Optional[str] = None
+    tatparai: Optional[int] = None
+    nethiram: Optional[str] = None
+    jeevan: Optional[str] = None
+    vaara_soolai_ta: Optional[str] = None
+    soolai_pariharam_ta: Optional[str] = None
+    yogini_ta: Optional[str] = None
+    soonya_rasis_ta: Optional[str] = None
+    pancha_pakshi_ta: Optional[str] = None
+    friendly_birds_ta: Optional[str] = None
+    enemy_birds_ta: Optional[str] = None
+    padupakshi_days_ta: Optional[str] = None
+    vainasika_star_ta: Optional[str] = None
+    yogi_graha_ta: Optional[str] = None
+    avayogi_graha_ta: Optional[str] = None
+    lagna_subar_ta: Optional[str] = None
+    lagna_pabar_ta: Optional[str] = None
+    birth_number: Optional[int] = None
+    destiny_number: Optional[int] = None
+    lucky_numbers: Optional[List[int]] = None
+    lucky_colors_ta: Optional[str] = None
+    lucky_stones_ta: Optional[str] = None
+    lucky_deity_ta: Optional[str] = None
+    paramanazhigai: Optional[str] = None
+    sentra_nazhigai: Optional[str] = None
+    nindra_nazhigai: Optional[str] = None
+
 class PlanetPosition(BaseModel):
     name: str
     name_ta: str
@@ -323,6 +363,71 @@ class GenerateChartRequest(BaseModel):
     personal_details: Optional[str] = None
     family_details: Optional[str] = None
 
+class AyurdayaResult(BaseModel):
+    ayush_category: str  # Deergha, Madhya, Alpa
+    ayush_category_label: str
+    ayush_category_ta: str
+    ayush_years_range: str
+    description: str
+    description_ta: str
+    three_pairs: Dict[str, str] = {}
+    eighth_house_sign: str
+    eighth_house_sign_ta: str
+    eighth_house_lord: str
+    eighth_house_lord_ta: str
+    eighth_house_occupants: List[str] = []
+    eighth_house_analysis: str
+    eighth_house_analysis_ta: str
+    ayushkaraka_saturn_house: int
+    ayushkaraka_saturn_dignity: str
+    ayushkaraka_saturn_analysis: str
+    ayushkaraka_saturn_analysis_ta: str
+    maraka_lords: List[str] = []
+    maraka_lords_ta: List[str] = []
+    maraka_analysis: str
+    maraka_analysis_ta: str
+    badhaka_house: int
+    badhaka_lord: str
+    badhaka_lord_ta: str
+    badhaka_analysis: str
+    badhaka_analysis_ta: str
+    ashtakavarga_ayush_points: int = 0
+    remedies: List[str] = []
+    remedies_ta: List[str] = []
+    classical_source: str = "Brihat Parashara Hora Shastra Ch. 44–45, Phaladeepika Ch. 13"
+
+class RasiNakshatraPredictionResult(BaseModel):
+    rasi_number: int
+    rasi_name: str
+    rasi_name_ta: str
+    rasi_prediction: str
+    rasi_prediction_ta: str
+    rasi_element_ta: str
+    rasi_mobility_ta: str
+    rasi_ruling_planet_ta: str
+    rasi_strengths_ta: str
+    rasi_challenges_ta: str
+    rasi_career_ta: str
+    rasi_wealth_ta: str
+    rasi_health_ta: str
+
+    nakshatra_number: int
+    nakshatra_name: str
+    nakshatra_name_ta: str
+    nakshatra_deity: str
+    nakshatra_deity_ta: str
+    nakshatra_traits_ta: str
+    nakshatra_career_ta: str
+    nakshatra_temple_ta: str
+
+    pada: int
+    pada_prediction_ta: str
+
+    lagna_number: int
+    lagna_name: str
+    lagna_name_ta: str
+    lagna_prediction_ta: str
+
 class ChartResponse(BaseModel):
     profile_id: Optional[int] = None
     name: str
@@ -349,8 +454,13 @@ class ChartResponse(BaseModel):
     ashtakavarga: AshtakavargaResult
     shadbala: Optional[ShadbalaResult] = None
     gochara: Optional[GocharaResult] = None
+    ayurdaya: Optional[AyurdayaResult] = None
+    rasi_nakshatra_predictions: Optional[RasiNakshatraPredictionResult] = None
     baby_names: Optional[BabyNameResult] = None
     narration: Optional[NarrationResult] = None
+    bhava_sphutam: Optional[List[Dict[str, Any]]] = None
+    varga_chakras: Optional[Dict[str, Dict[int, List[Dict[str, Any]]]]] = None
+    sampoorana: Optional[Dict[str, Any]] = None
     computed_at: str
 
 class ProfileCreate(BaseModel):
@@ -398,6 +508,51 @@ class PoruthamRequest(BaseModel):
     boy_pada: Optional[int] = None
     girl_nakshatra: Optional[str] = None
     girl_pada: Optional[int] = None
+
+# ─── Star Match Finder (MATCH feature): Boy/Girl Nakshatra → All compatible Rasi/Nakshatra ratings ───
+class StarMatchFinderRequest(BaseModel):
+    input_nakshatra: str = Field(..., description="Nakshatra name English (e.g. Pushya) or Tamil (பூசம்)")
+    input_pada: int = Field(1, ge=1, le=4, description="Pada 1 to 4")
+    input_gender: str = Field("boy", description="Input side: boy or girl — determines which side is fixed")
+    filter_rasi: Optional[int] = Field(None, ge=1, le=12, description="Optional filter: only return targets of this Rasi (1=Mesha .. 12=Meena)")
+    sort_by: Optional[str] = Field("score", description="Sort: score | ashta | tamil")
+
+class StarMatchItem(BaseModel):
+    target_nakshatra: str
+    target_nakshatra_ta: str
+    target_nakshatra_number: int
+    target_pada: int
+    target_rasi_number: int
+    target_rasi: str
+    target_rasi_ta: str
+    target_rasi_lord: str
+    target_rasi_lord_ta: str
+    target_rasi_element: Optional[str] = None
+    target_rasi_element_ta: Optional[str] = None
+    ashta_koota_total: float
+    ashta_koota_max: float = 36.0
+    tamil_compatible_count: int
+    tamil_total: int = 10
+    score_percentage: float
+    rajju_dosha: bool
+    rajju_type: Optional[str] = None
+    rajju_type_ta: Optional[str] = None
+    vedha_dosha: bool
+    verdict: str
+    verdict_ta: str
+    like_rate: int = Field(..., ge=1, le=5, description="1-5 star like rate")
+    like_rate_label: str
+    like_rate_label_ta: str
+    tamil_10_porutham: Optional[List[Dict[str, Any]]] = None
+    ashta_koota: Optional[Dict[str, Any]] = None
+
+class StarMatchFinderResponse(BaseModel):
+    input_details: Dict[str, Any]
+    input_rasi_number: int
+    input_nakshatra_number: int
+    matches: List[StarMatchItem]
+    rasi_summary: List[Dict[str, Any]]
+    summary: Dict[str, Any]
 
 class NarrationRequest(BaseModel):
     chart_id: Optional[int] = None

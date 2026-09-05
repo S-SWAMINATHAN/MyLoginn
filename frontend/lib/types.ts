@@ -4,25 +4,80 @@ export interface BasicBirthDetails {
   lagnam: string;
   lagnam_ta: string;
   lagnam_degree: number;
+  lagnam_dms?: string | null;
+  lagnam_total_degree?: number | null;
+  lagnam_lord?: string | null;
+  lagnam_lord_ta?: string | null;
+  lagnam_nakshatram?: string | null;
+  lagnam_nakshatram_ta?: string | null;
+  lagnam_pada?: number | null;
+  lagnam_nakshatra_lord?: string | null;
+  lagnam_nakshatra_lord_ta?: string | null;
+  lagnam_navamsa?: string | null;
+  lagnam_navamsa_ta?: string | null;
+  lagnam_navamsa_lord?: string | null;
+  lagnam_navamsa_lord_ta?: string | null;
   rasi: string;
   rasi_ta: string;
+  rasi_lord?: string | null;
+  rasi_lord_ta?: string | null;
   nakshatram: string;
   nakshatram_ta: string;
   pada: number;
+  nakshatra_lord?: string | null;
+  nakshatra_lord_ta?: string | null;
+  nakshatra_deity?: string | null;
+  nakshatra_elapsed_pct?: number | null;
   thithi: string;
   thithi_ta: string;
   paksha: string;
+  paksha_en?: string | null;
+  paksha_ta?: string | null;
+  thithi_elapsed_pct?: number | null;
   vaaram: string;
   vaaram_ta: string;
+  vaaram_lord?: string | null;
+  vaaram_lord_ta?: string | null;
   yogam: string;
   yogam_ta: string;
   karanam: string;
   karanam_ta: string;
+  subha_yogam?: string | null;
+  subha_yogam_ta?: string | null;
+  subha_yogam_desc?: string | null;
+  subha_yogam_desc_ta?: string | null;
+  subha_yogam_status?: string | null;
+  ganam?: string | null;
+  ganam_ta?: string | null;
+  yoni?: string | null;
+  yoni_ta?: string | null;
+  rajju?: string | null;
+  rajju_ta?: string | null;
+  bootham?: string | null;
+  bootham_ta?: string | null;
+  nadi?: string | null;
+  nadi_ta?: string | null;
+  vriksham_ta?: string | null;
+  pakshi_ta?: string | null;
+  mirugam_ta?: string | null;
   ayanamsa_name: string;
   ayanamsa_value: number;
+  ayanamsa_dms?: string | null;
   panchangam_system: string;
   sun_rise?: string | null;
   sun_set?: string | null;
+  dinamani?: string | null;
+  dinamani_en?: string | null;
+  ratrimana?: string | null;
+  ratrimana_en?: string | null;
+  udhayadhi_nazhigai?: string | null;
+  udhayadhi_nazhigai_en?: string | null;
+  rahu_kalam?: string | null;
+  yamagandam?: string | null;
+  kuligai?: string | null;
+  dasha_balance_ta?: string | null;
+  dasha_balance_en?: string | null;
+  [key: string]: any;
 }
 
 export interface PlanetPosition {
@@ -34,15 +89,28 @@ export interface PlanetPosition {
   rasi: string;
   rasi_ta: string;
   degree: number;
+  degree_dms?: string | null;
   total_degree: number;
+  total_degree_dms?: string | null;
   house: number;
+  lord?: string | null;
+  lord_ta?: string | null;
   nakshatra: string;
   nakshatra_ta: string;
   nakshatra_number: number;
+  nakshatra_lord?: string | null;
+  nakshatra_lord_ta?: string | null;
   pada: number;
+  navamsa_sign?: number | null;
+  navamsa_rasi?: string | null;
+  navamsa_rasi_ta?: string | null;
+  navamsa_lord?: string | null;
+  navamsa_lord_ta?: string | null;
   is_retrograde: boolean;
   speed: number;
   status: string;
+  status_ta?: string | null;
+  [key: string]: any;
 }
 
 // Used for Rasi/Navamsa kattam cell entries (rasi_kattam / navamsa_kattam values)
@@ -63,6 +131,8 @@ export interface BhuktiPeriod {
   start_date: string;
   end_date: string;
   duration_years: number;
+  is_current?: boolean;
+  antardashas?: any[];
 }
 
 export interface VimshottariDashaPeriod {
@@ -204,6 +274,73 @@ export interface GenerateChartRequest {
   family_details?: string;
 }
 
+export interface AyurdayaResult {
+  ayush_category: string; // Deergha, Madhya, Alpa
+  ayush_category_label: string;
+  ayush_category_ta: string;
+  ayush_years_range: string;
+  description: string;
+  description_ta: string;
+  three_pairs?: Record<string, string>;
+  eighth_house_sign: string;
+  eighth_house_sign_ta: string;
+  eighth_house_lord: string;
+  eighth_house_lord_ta: string;
+  eighth_house_occupants?: string[];
+  eighth_house_analysis: string;
+  eighth_house_analysis_ta: string;
+  ayushkaraka_saturn_house: number;
+  ayushkaraka_saturn_dignity: string;
+  ayushkaraka_saturn_analysis: string;
+  ayushkaraka_saturn_analysis_ta: string;
+  maraka_lords?: string[];
+  maraka_lords_ta?: string[];
+  maraka_analysis: string;
+  maraka_analysis_ta: string;
+  badhaka_house: number;
+  badhaka_lord: string;
+  badhaka_lord_ta: string;
+  badhaka_analysis: string;
+  badhaka_analysis_ta: string;
+  ashtakavarga_ayush_points: number;
+  remedies: string[];
+  remedies_ta: string[];
+  classical_source: string;
+}
+
+export interface RasiNakshatraPredictionResult {
+  rasi_number: number;
+  rasi_name: string;
+  rasi_name_ta: string;
+  rasi_prediction: string;
+  rasi_prediction_ta: string;
+  rasi_element_ta: string;
+  rasi_mobility_ta: string;
+  rasi_ruling_planet_ta: string;
+  rasi_strengths_ta: string;
+  rasi_challenges_ta: string;
+  rasi_career_ta: string;
+  rasi_wealth_ta: string;
+  rasi_health_ta: string;
+
+  nakshatra_number: number;
+  nakshatra_name: string;
+  nakshatra_name_ta: string;
+  nakshatra_deity: string;
+  nakshatra_deity_ta: string;
+  nakshatra_traits_ta: string;
+  nakshatra_career_ta: string;
+  nakshatra_temple_ta: string;
+
+  pada: number;
+  pada_prediction_ta: string;
+
+  lagna_number: number;
+  lagna_name: string;
+  lagna_name_ta: string;
+  lagna_prediction_ta: string;
+}
+
 export interface ChartResponse {
   profile_id?: number | null;
   name: string;
@@ -221,14 +358,24 @@ export interface ChartResponse {
   planets: PlanetPosition[];
   rasi_kattam: Record<number, KattamPlanet[]>;
   navamsa_kattam: Record<number, KattamPlanet[]>;
+  hora_kattam?: Record<number, KattamPlanet[]> | null;
+  drekkana_kattam?: Record<number, KattamPlanet[]> | null;
   bhava_predictions: HouseDetail[];
   vimshottari_dasha: VimshottariDashaPeriod[];
   yogas: YogaResult[];
   doshas: DoshaResult[];
   ashtakavarga: AshtakavargaResult;
+  shadbala?: any | null;
+  gochara?: any | null;
+  ayurdaya?: AyurdayaResult | null;
+  rasi_nakshatra_predictions?: RasiNakshatraPredictionResult | null;
   baby_names?: BabyNameResult | null;
   narration?: NarrationResult | null;
+  sampoorana?: any | null;
+  bhava_sphutam?: any[] | null;
+  varga_chakras?: Record<string, Record<number, string[]>> | null;
   computed_at: string;
+  [key: string]: any;
 }
 
 export interface ProfileCreate {
@@ -277,17 +424,83 @@ export interface PoruthamRequest {
   girl_pada?: number;
 }
 
+// ─── NEW: Star Match Finder (MATCH feature) ───
+export interface StarMatchFinderRequest {
+  input_nakshatra: string;
+  input_pada: number; // 1-4
+  input_gender?: string; // boy | girl
+  filter_rasi?: number | null; // 1-12
+  sort_by?: string; // score | ashta | tamil
+}
+
+export interface StarMatchItem {
+  target_nakshatra: string;
+  target_nakshatra_ta: string;
+  target_nakshatra_number: number;
+  target_pada: number;
+  target_rasi_number: number;
+  target_rasi: string;
+  target_rasi_ta: string;
+  target_rasi_lord: string;
+  target_rasi_lord_ta: string;
+  target_rasi_element?: string | null;
+  target_rasi_element_ta?: string | null;
+  ashta_koota_total: number;
+  ashta_koota_max: number;
+  tamil_compatible_count: number;
+  tamil_total: number;
+  score_percentage: number;
+  rajju_dosha: boolean;
+  rajju_type?: string | null;
+  rajju_type_ta?: string | null;
+  vedha_dosha: boolean;
+  verdict: string;
+  verdict_ta: string;
+  like_rate: number; // 1-5
+  like_rate_label: string;
+  like_rate_label_ta: string;
+  tamil_10_porutham?: Porutham10Item[];
+  ashta_koota?: Record<string, any>;
+}
+
+export interface StarMatchFinderResponse {
+  input_details: Record<string, any>;
+  input_rasi_number: number;
+  input_nakshatra_number: number;
+  matches: StarMatchItem[];
+  rasi_summary: Record<string, any>[];
+  summary: Record<string, any>;
+}
+
 export interface NarrationRequest {
   chart_id?: number;
   chart_data?: Record<string, any>;
   language?: string; // "ta" or "en"
 }
 
-// NEW: shape returned by GET /api/geocode/suggest, used by the place-of-birth
-// autocomplete in BirthDetailsForm.tsx. Does not affect any existing type.
 export interface PlaceSuggestion {
   display_name: string;
+  display_name_ta?: string;
   lat: number;
   lon: number;
   timezone: string;
+}
+
+export interface LocationItem {
+  key: string;
+  name: string;
+  name_ta: string;
+  display_name: string;
+  display_name_ta: string;
+  lat: number;
+  lon: number;
+  timezone: string;
+  state?: string;
+  country: string;
+}
+
+export interface GroupedLocations {
+  tamil_nadu: LocationItem[];
+  india: LocationItem[];
+  global: LocationItem[];
 }

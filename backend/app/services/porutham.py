@@ -308,8 +308,10 @@ def calculate_tamil_10_porutham(boy_rasi: int, boy_nak: int, girl_rasi: int, gir
     rasi_dist = ((boy_rasi - girl_rasi) % 12) + 1
 
     # 1. Dina Porutham
-    # Compatible: 2, 4, 6, 8, 9, 11, 13, 15, 18, 20, 24, 26
-    dina_good = star_dist in (2, 4, 6, 8, 9, 11, 13, 15, 18, 20, 24, 26) or (star_dist == 27 and boy_nak in (2, 4, 7, 8, 17, 22, 26))
+    # Compatible counts from Girl star to Boy star:
+    # 2, 4, 6, 8, 9 in all 3 cycles (2, 4, 6, 8, 9, 11, 13, 15, 17, 18, 20, 22, 24, 26, 27)
+    # plus same nakshatra (count 1) for Rohini, Arudra, Magha, Hasta, Vishakha, Shravana, U.Bhadra, Revati
+    dina_good = (star_dist in (2, 4, 6, 8, 9, 11, 13, 15, 17, 18, 20, 22, 24, 26, 27)) or (star_dist == 1 and boy_nak == girl_nak and boy_nak in (4, 6, 10, 13, 16, 22, 26, 27))
     results.append({
         "key": "dina", "name": "Dina Porutham", "name_ta": "1. தினப் பொருத்தம்",
         "is_compatible": dina_good,
