@@ -270,6 +270,12 @@ export interface TransitDoshaResult {
   description: string;
   description_ta: string;
   classical_source: string;
+  // NEW: precise (day-level) sign-ingress dates from the Saturn transit scan.
+  period_start_date?: string | null;
+  leg_peak_start_date?: string | null;
+  leg_setting_start_date?: string | null;
+  period_end_date?: string | null;
+  is_upcoming?: boolean;
 }
 
 export interface LifeCategoryScore {

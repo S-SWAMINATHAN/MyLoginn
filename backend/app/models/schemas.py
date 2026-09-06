@@ -361,6 +361,12 @@ class TransitDoshaResult(BaseModel):
     description: str
     description_ta: str
     classical_source: str
+    # NEW: precise (day-level) sign-ingress dates from the Saturn transit scan.
+    period_start_date: Optional[str] = None       # Ezharai: 12th-sign entry. Ashtama: entry.
+    leg_peak_start_date: Optional[str] = None      # Ezharai only: entry into Moon's own sign.
+    leg_setting_start_date: Optional[str] = None   # Ezharai only: entry into 2nd-from-Moon sign.
+    period_end_date: Optional[str] = None          # Ezharai: 2nd-sign exit. Ashtama: exit.
+    is_upcoming: bool = False                      # True if dates describe a future, not-yet-started period.
 
 class LifeCategoryScore(BaseModel):
     category: str
