@@ -2,7 +2,7 @@
 
 import React from "react";
 import Link from "next/link";
-import { Heart, Compass, Baby } from "lucide-react";
+import { Heart, Compass, Baby, Sun, CalendarSearch } from "lucide-react";
 
 interface HeaderProps {
   lang: "ta" | "en";
@@ -61,6 +61,23 @@ export const Header: React.FC<HeaderProps> = ({ lang, setLang }) => {
             linked out to its own page, so it no longer needs its own
             top-level nav entry or route.
           */}
+
+          <Link
+            href="/horoscope"
+            className="flex items-center gap-1.5 text-xs sm:text-sm text-[#2b2117] hover:text-[#b03726] px-3 py-2 rounded-lg hover:bg-[#e8d7bb]/60 transition-colors font-tamil"
+          >
+            <Sun className="w-4 h-4 text-[#b03726]" />
+            <span>{lang === "ta" ? "ராசி பலன்" : "Horoscope"}</span>
+          </Link>
+
+          {/* Muhurtha Finder nav link — same pattern as the other feature links */}
+          <Link
+            href="/muhurtha"
+            className="flex items-center gap-1.5 text-xs sm:text-sm text-[#2b2117] hover:text-[#b03726] px-3 py-2 rounded-lg hover:bg-[#e8d7bb]/60 transition-colors font-tamil"
+          >
+            <CalendarSearch className="w-4 h-4 text-[#b03726]" />
+            <span>{lang === "ta" ? "முகூர்த்தம்" : "Muhurtha"}</span>
+          </Link>
 
           <Link
             href="/baby-names"
