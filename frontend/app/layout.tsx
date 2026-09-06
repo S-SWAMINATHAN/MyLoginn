@@ -2,7 +2,7 @@ import type { Metadata } from "next";
 import "./globals.css";
 
 export const metadata: Metadata = {
-  title: "AI Jathagam · K. அருணகிரி — Handwritten Horoscope",
+  title: "MyLoginn Astrology-Handwritten Horoscope",
   description: "High-precision Vedic Astrology birth chart generator with traditional handwritten manuscript rendering and authentic readings.",
   themeColor: "#f0e5cc",
 };
