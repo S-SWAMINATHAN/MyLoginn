@@ -1,13 +1,19 @@
 "use client";
 
 import React from "react";
-import { RasiHoroscopeResult, RasiHoroscopeKeyTransit } from "@/lib/types";
-import { Sparkles, TrendingUp, TrendingDown, ShieldCheck } from "lucide-react";
+import { RasiHoroscopeResult, RasiHoroscopeKeyTransit, RasiHoroscopeCategorySection } from "@/lib/types";
+import { Sparkles, TrendingUp, TrendingDown, ShieldCheck, Briefcase, Heart, Stethoscope } from "lucide-react";
 
 interface RasiHoroscopeCardProps {
   result: RasiHoroscopeResult;
   lang: "ta" | "en";
 }
+
+const CATEGORY_ICONS: Record<string, React.ComponentType<{ className?: string }>> = {
+  career: Briefcase,
+  love: Heart,
+  health: Stethoscope,
+};
 
 export const RasiHoroscopeCard: React.FC<RasiHoroscopeCardProps> = ({ result, lang }) => {
   const isFavorable = result.benefic_transits > result.challenging_transits;
@@ -52,10 +58,38 @@ export const RasiHoroscopeCard: React.FC<RasiHoroscopeCardProps> = ({ result, la
         </div>
       </div>
 
-      {/* Narration */}
-      <p className="text-sm leading-relaxed font-tamil text-[var(--ink)]">
-        {lang === "ta" ? result.narration_ta : result.narration}
-      </p>
+      {/* Overview narration */}
+      <div>
+        <h4 className="text-sm font-bold text-[var(--ink)] font-cinzel mb-2">
+          {lang === "ta" ? "பொது பலன்" : "Overview"}
+        </h4>
+        <p className="text-sm leading-relaxed font-tamil text-[var(--ink)]">
+          {lang === "ta" ? result.narration_ta : result.narration}
+        </p>
+      </div>
+
+      {/* NEW: Prokerala-style subheaded Career / Love / Health sections */}
+      {result.category_sections && result.category_sections.length > 0 && (
+        <div className="space-y-4">
+          {result.category_sections.map((sec: RasiHoroscopeCategorySection) => {
+            const Icon = CATEGORY_ICONS[sec.key] || Sparkles;
+            return (
+              <div
+                key={sec.key}
+                className="bg-[rgba(120,96,58,0.05)] border border-[rgba(43,33,23,0.2)] rounded-2xl p-4"
+              >
+                <h4 className="text-sm font-bold text-[var(--red-deep)] font-cinzel mb-1.5 flex items-center gap-2">
+                  <Icon className="w-4 h-4" />
+                  {lang === "ta" ? sec.title_ta : sec.title_en}
+                </h4>
+                <p className="text-sm leading-relaxed font-tamil text-[var(--ink)]">
+                  {lang === "ta" ? sec.text_ta : sec.text_en}
+                </p>
+              </div>
+            );
+          })}
+        </div>
+      )}
 
       {/* Key slow-planet transits */}
       {result.key_transits.length > 0 && (

@@ -402,6 +402,14 @@ export interface RasiHoroscopeKeyTransit {
   [key: string]: any;
 }
 
+export interface RasiHoroscopeCategorySection {
+  key: string;
+  title_en: string;
+  title_ta: string;
+  text_en: string;
+  text_ta: string;
+}
+
 export interface RasiHoroscopeResult {
   rasi_number: number;
   rasi: string;
@@ -416,6 +424,8 @@ export interface RasiHoroscopeResult {
   challenging_transits: number;
   vedha_cancellations: number;
   key_transits: RasiHoroscopeKeyTransit[];
+  period_detail?: Record<string, any>;
+  category_sections?: RasiHoroscopeCategorySection[];
   narration: string;
   narration_ta: string;
   classical_source: string;
