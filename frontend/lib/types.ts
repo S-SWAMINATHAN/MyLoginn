@@ -255,7 +255,7 @@ export interface NarrationResult {
   health_and_longevity: string;
 }
 
-// --- NEW: Single-Page Report supporting types ---
+// --- Single-Page Report supporting types ---
 // Mirror backend/app/models/schemas.py's TransitDoshaResult / LifeCategoryScore /
 // RemedyGuide / CurrentPeriodSummary / SinglePageSummary. See
 // backend/app/services/single_page_report.py for what's genuinely new vs.
@@ -270,7 +270,6 @@ export interface TransitDoshaResult {
   description: string;
   description_ta: string;
   classical_source: string;
-  // NEW: precise (day-level) sign-ingress dates from the Saturn transit scan.
   period_start_date?: string | null;
   leg_peak_start_date?: string | null;
   leg_setting_start_date?: string | null;
@@ -321,6 +320,138 @@ export interface SinglePageSummary {
   saturn_transit?: TransitDoshaResult | null;
   life_scorecard: LifeCategoryScore[];
   remedies?: RemedyGuide | null;
+}
+
+// --- Muhurtha (auspicious date/time) finder types ---
+// Mirrors backend/app/models/schemas.py's Muhurtha* models. See
+// backend/app/services/muhurtha_finder.py for scope/citations.
+
+export type MuhurthaEventType = "marriage" | "griha_pravesam" | "general";
+
+export interface MuhurthaCheckItem {
+  rule: string;
+  rule_ta: string;
+  passed: boolean;
+  detail: string;
+  detail_ta: string;
+}
+
+export interface MuhurthaDayResult {
+  date: string;
+  weekday: string;
+  weekday_ta: string;
+  tithi: string;
+  tithi_ta: string;
+  nakshatra: string;
+  nakshatra_ta: string;
+  yogam_ta: string;
+  karanam: string;
+  karanam_ta: string;
+  chandrabalam_ok: boolean;
+  chandrabalam_house: number;
+  tarabalam_ok: boolean;
+  tarabalam_name: string;
+  tarabalam_name_ta: string;
+  rahu_kalam: string;
+  yamagandam: string;
+  kuligai: string;
+  checks: MuhurthaCheckItem[];
+  overall_suitable: boolean;
+  suitability_score: number;
+}
+
+export interface MuhurthaRequest {
+  event_type: MuhurthaEventType;
+  start_date: string;
+  end_date: string;
+  place: string;
+  date_of_birth: string;
+  time_of_birth: string;
+  person_place?: string;
+  latitude?: number | null;
+  longitude?: number | null;
+  timezone?: string | null;
+}
+
+export interface MuhurthaResponse {
+  event_type: string;
+  start_date: string;
+  end_date: string;
+  place: string;
+  results: MuhurthaDayResult[];
+  best_dates: string[];
+  disclaimer: string;
+  disclaimer_ta: string;
+}
+
+// --- NEW: Rasi Horoscope (Daily/Weekly/Monthly/Yearly Gochara) + Rasi Love
+// Horoscope. Mirror the plain dicts returned by backend/app/api/horoscope.py
+// (not validated against a Pydantic response_model server-side, so these
+// interfaces are the actual contract). `[key: string]: any` follows this
+// file's existing convention for backend dicts with more fields than the
+// UI currently consumes.
+
+export interface RasiHoroscopeKeyTransit {
+  planet: string;
+  planet_ta: string;
+  transit_rasi?: string;
+  transit_rasi_ta: string;
+  house_from_moon: number;
+  net_effect: string;
+  net_effect_ta: string;
+  [key: string]: any;
+}
+
+export interface RasiHoroscopeCategorySection {
+  key: string;
+  title_en: string;
+  title_ta: string;
+  text_en: string;
+  text_ta: string;
+}
+
+export interface RasiHoroscopeResult {
+  rasi_number: number;
+  rasi: string;
+  rasi_ta: string;
+  period: string;
+  period_label: string;
+  period_label_ta: string;
+  reference_date: string;
+  overall_assessment: string;
+  overall_assessment_ta: string;
+  benefic_transits: number;
+  challenging_transits: number;
+  vedha_cancellations: number;
+  key_transits: RasiHoroscopeKeyTransit[];
+  period_detail?: Record<string, any>;
+  category_sections?: RasiHoroscopeCategorySection[];
+  narration: string;
+  narration_ta: string;
+  classical_source: string;
+}
+
+export interface RasiLoveHoroscopeResult {
+  rasi1_number: number;
+  rasi1: string;
+  rasi1_ta: string;
+  rasi2_number: number;
+  rasi2: string;
+  rasi2_ta: string;
+  rasi_porutham: boolean;
+  rasi_porutham_desc: string;
+  rasi_porutham_desc_ta: string;
+  rasiyadhipathi_porutham: boolean;
+  rasiyadhipathi_relation: string;
+  rasiyadhipathi_relation_ta: string;
+  compatibility_score: number; // 0, 1, or 2
+  compatibility_label: string;
+  compatibility_label_ta: string;
+  narration: string;
+  narration_ta: string;
+  classical_source: string;
+  note: string;
+  note_ta: string;
 }
 
 export interface GenerateChartRequest {
