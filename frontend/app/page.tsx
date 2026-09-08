@@ -14,6 +14,8 @@ import { BabyNameSuggestions } from "@/components/BabyNameSuggestions";
 import { NarrationPanel } from "@/components/NarrationPanel";
 import { ShareCard } from "@/components/ShareCard";
 import { PanchangamDetailsCard } from "@/components/PanchangamDetailsCard";
+import { BioDataCard } from "@/components/BioDataCard";
+import { VakhyamCompleteCard } from "@/components/VakhyamCompleteCard";
 import { AyurdayaCard } from "@/components/AyurdayaCard";
 import { RasiNakshatraDetailsCard } from "@/components/RasiNakshatraDetailsCard";
 import { HandwrittenManuscript } from "@/components/HandwrittenManuscript";
@@ -140,7 +142,13 @@ export default function HomePage() {
               </div>
             </div>
 
-            {/* 2. Section 2: Complete Panchangam & Subha Yoga Elements */}
+            {/* 1. Parents & Candidate Bio-Data Card */}
+            <BioDataCard chart={chartResult} lang={lang} />
+
+            {/* 2. Traditional Vakhyam Complete System Full Card */}
+            <VakhyamCompleteCard chart={chartResult} lang={lang} />
+
+            {/* 3. Section 2: Complete Panchangam & Subha Yoga Elements */}
             <PanchangamDetailsCard
               details={chartResult.basic_details}
               lang={lang}

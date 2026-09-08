@@ -108,6 +108,23 @@ export const SinglePageReport: React.FC<SinglePageReportProps> = ({ chart, lang 
           <MiniFact label={lang === "ta" ? "யோகம்" : "Yogam"} value={lang === "ta" ? bd.yogam_ta : bd.yogam} />
           <MiniFact label={lang === "ta" ? "கரணம்" : "Karanam"} value={lang === "ta" ? bd.karanam_ta : bd.karanam} />
         </div>
+
+        {chart.bio_data && (chart.bio_data.father_name || chart.bio_data.mother_name || chart.bio_data.education || chart.bio_data.gothram) && (
+          <div className="mt-4 pt-3 border-t border-[#d4af37]/20 text-xs grid grid-cols-2 sm:grid-cols-4 gap-2 text-[#e0b87f] font-tamil">
+            {chart.bio_data.father_name && (
+              <div><strong className="text-white">தந்தை:</strong> {chart.bio_data.father_name}</div>
+            )}
+            {chart.bio_data.mother_name && (
+              <div><strong className="text-white">தாய்:</strong> {chart.bio_data.mother_name}</div>
+            )}
+            {chart.bio_data.gothram && (
+              <div><strong className="text-white">கோத்திரம்:</strong> {chart.bio_data.gothram}</div>
+            )}
+            {chart.bio_data.education && (
+              <div><strong className="text-white">கல்வி:</strong> {chart.bio_data.education}</div>
+            )}
+          </div>
+        )}
       </div>
 
       {/* 2. Charts side-by-side */}
@@ -250,7 +267,7 @@ export const SinglePageReport: React.FC<SinglePageReportProps> = ({ chart, lang 
             {lang === "ta" ? "வாழ்க்கை மதிப்பீடு" : "Life Scorecard"}
           </h3>
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-            {sps.life_scorecard.map((cat, idx) => {
+            {sps.life_scorecard.map((cat: any, idx: number) => {
               const Icon = CATEGORY_ICONS[cat.icon] || Sparkles;
               return (
                 <div key={idx} className="space-y-1.5">
@@ -305,7 +322,7 @@ export const SinglePageReport: React.FC<SinglePageReportProps> = ({ chart, lang 
               {lang === "ta" ? "எளிய பரிகாரங்கள்" : "Simple Rituals"}
             </p>
             <ul className="list-disc list-inside space-y-1 text-xs text-white/70 font-tamil">
-              {(lang === "ta" ? sps.remedies.simple_rituals_ta : sps.remedies.simple_rituals).map((r, i) => (
+              {((lang === "ta" ? sps.remedies.simple_rituals_ta : sps.remedies.simple_rituals) || []).map((r: string, i: number) => (
                 <li key={i}>{r}</li>
               ))}
             </ul>

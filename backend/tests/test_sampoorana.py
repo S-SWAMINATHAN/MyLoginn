@@ -56,3 +56,29 @@ def test_sampoorana_calculation():
     assert "D9_Navamsa" in samp["varga_chakras"]
     assert "D10_Dasamsa" in samp["varga_chakras"]
     assert "D60_Shashtiamsa" in samp["varga_chakras"]
+
+    # 8. Check Vakhyam Details & Jenana Vakhyam Prose
+    assert "vakhyam_details" in samp
+    vd = samp["vakhyam_details"]
+    assert "ஸ்வஸ்திஸ்ரீ" in vd["jenana_vakhyam_prose"]
+    assert vd["vikrama_year"] > 2000
+    assert "நாழிகை" in vd["nakshatra_sentra_nazhigai"]
+    assert "நாழிகை" in vd["paramanazhigai"]
+
+
+def test_vakhyam_panchangam_calculation():
+    lat = 11.0168
+    lon = 76.9558
+    tz = "Asia/Kolkata"
+    jd = get_julian_day("1996-08-15", "07:00:00", tz)
+
+    # Compute with Thirukanitham
+    eph_thiru = compute_planetary_positions(jd, lat, lon, panchangam_system="thirukkanitham")
+    # Compute with Vakhyam
+    eph_vak = compute_planetary_positions(jd, lat, lon, panchangam_system="vakhyam")
+
+    assert "Surya Siddhanta" in eph_vak["basic_details"]["ayanamsa_name"]
+    assert "Lahiri" in eph_thiru["basic_details"]["ayanamsa_name"]
+    # The sidereal positions should reflect Surya Siddhanta difference
+    assert eph_vak["basic_details"]["ayanamsa_value"] != eph_thiru["basic_details"]["ayanamsa_value"]
+

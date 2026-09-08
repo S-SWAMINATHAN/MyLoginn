@@ -154,6 +154,32 @@ def run_chart_calculation(req: GenerateChartRequest, profile_id: int = None) -> 
         if k not in ["bhava_sphutam", "varga_chakras"]:
             basic_details[k] = v
 
+    # Build Parents & Candidate Bio-Data object
+    bio_data_dict = {}
+    if req.bio_data:
+        bio_data_dict = req.bio_data.model_dump()
+    else:
+        bio_data_dict = {
+            "father_name": req.father_name or (req.parent_name if req.parent_name else None),
+            "father_occupation": req.father_occupation,
+            "mother_name": req.mother_name,
+            "mother_occupation": req.mother_occupation,
+            "gothram": req.gothram,
+            "kula_deivam": req.kula_deivam or (req.family_details if req.family_details else None),
+            "kula_deivam_place": req.kula_deivam_place,
+            "native_place": req.native_place,
+            "caste_subcaste": req.caste_subcaste,
+            "siblings": req.siblings,
+            "education": req.education,
+            "occupation": req.occupation,
+            "annual_income": req.annual_income,
+            "height": req.height,
+            "phone": req.phone,
+            "alternate_phone": req.alternate_phone,
+            "email": req.email,
+            "residence_address": req.residence_address,
+        }
+
     # Build response payload
     payload = {
         "profile_id": profile_id,
@@ -185,6 +211,8 @@ def run_chart_calculation(req: GenerateChartRequest, profile_id: int = None) -> 
         "rasi_nakshatra_predictions": rasi_nakshatra_preds,
         "baby_names": baby_names,
         "sampoorana": sampoorana,
+        "vakhyam_details": sampoorana.get("vakhyam_details"),
+        "bio_data": bio_data_dict,
         "bhava_sphutam": sampoorana.get("bhava_sphutam"),
         "varga_chakras": sampoorana.get("varga_chakras"),
         "computed_at": datetime.utcnow().isoformat()
