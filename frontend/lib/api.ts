@@ -10,8 +10,12 @@ import {
   ProfileCreate,
   ProfileResponse,
   PlaceSuggestion,
-  BabyNameRequest, // NEW
-  BabyNameResult, // NEW
+  BabyNameRequest,
+  BabyNameResult,
+  MuhurthaRequest, // NEW
+  MuhurthaResponse, // NEW
+  RasiHoroscopeResult, // NEW
+  RasiLoveHoroscopeResult, // NEW
 } from "./types";
 
 // Base URL of the FastAPI backend.
@@ -79,7 +83,7 @@ export async function generatePoruthamApi(
 export const matchPoruthamApi = generatePoruthamApi;
 
 /**
- * NEW: Star Match Finder — MATCH feature
+ * Star Match Finder — MATCH feature
  * For a given Boy (or Girl) Nakshatra/Pada, get LIKE-RATE for all target Rasi/Nakshatra combos (108 pada-level)
  * POST /api/porutham/star-matches
  */
@@ -293,4 +297,46 @@ export async function generateBabyNamesApi(
     body: JSON.stringify(data),
   });
   return handleResponse<BabyNameResult>(res);
+}
+
+/**
+ * NEW: Find auspicious dates (Muhurtha) for marriage / griha pravesam /
+ * general events within a date range, personalized to the person's natal
+ * Moon sign & nakshatra via Chandrabalam & Tarabalam.
+ * POST /api/muhurtha/find
+ */
+export async function findMuhurthaApi(
+  data: MuhurthaRequest
+): Promise<MuhurthaResponse> {
+  const res = await fetch(`${API_V1}/muhurtha/find`, {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify(data),
+  });
+  return handleResponse<MuhurthaResponse>(res);
+}
+
+/**
+ * NEW: Daily/Weekly/Monthly/Yearly Rasi (Gochara transit) horoscope.
+ * GET /api/horoscope/{period}/{rasi_number}
+ */
+export async function getRasiHoroscopeApi(
+  period: "daily" | "weekly" | "monthly" | "yearly",
+  rasiNumber: number
+): Promise<RasiHoroscopeResult> {
+  const res = await fetch(`${API_V1}/horoscope/${period}/${rasiNumber}`);
+  return handleResponse<RasiHoroscopeResult>(res);
+}
+
+/**
+ * NEW: Rasi-to-Rasi Love Horoscope (lightweight, Rasi-only compatibility —
+ * see rasi_love_horoscope.py for how this differs from the full Porutham page).
+ * GET /api/horoscope/love/{rasi1}/{rasi2}
+ */
+export async function getRasiLoveHoroscopeApi(
+  rasi1: number,
+  rasi2: number
+): Promise<RasiLoveHoroscopeResult> {
+  const res = await fetch(`${API_V1}/horoscope/love/${rasi1}/${rasi2}`);
+  return handleResponse<RasiLoveHoroscopeResult>(res);
 }
