@@ -409,6 +409,26 @@ class SinglePageSummary(BaseModel):
     life_scorecard: List[LifeCategoryScore] = []
     remedies: Optional[RemedyGuide] = None
 
+class ParentsBioData(BaseModel):
+    father_name: Optional[str] = None
+    father_occupation: Optional[str] = None
+    mother_name: Optional[str] = None
+    mother_occupation: Optional[str] = None
+    gothram: Optional[str] = None
+    kula_deivam: Optional[str] = None
+    kula_deivam_place: Optional[str] = None
+    native_place: Optional[str] = None
+    caste_subcaste: Optional[str] = None
+    siblings: Optional[str] = None
+    education: Optional[str] = None
+    occupation: Optional[str] = None
+    annual_income: Optional[str] = None
+    height: Optional[str] = None
+    phone: Optional[str] = None
+    alternate_phone: Optional[str] = None
+    email: Optional[str] = None
+    residence_address: Optional[str] = None
+
 class GenerateChartRequest(BaseModel):
     name: Optional[str] = "Jathagar"
     gender: Optional[str] = "male"
@@ -426,6 +446,24 @@ class GenerateChartRequest(BaseModel):
     email: Optional[str] = None
     personal_details: Optional[str] = None
     family_details: Optional[str] = None
+    # Extended Parents & Bio-Data fields
+    father_name: Optional[str] = None
+    father_occupation: Optional[str] = None
+    mother_name: Optional[str] = None
+    mother_occupation: Optional[str] = None
+    gothram: Optional[str] = None
+    kula_deivam: Optional[str] = None
+    kula_deivam_place: Optional[str] = None
+    native_place: Optional[str] = None
+    caste_subcaste: Optional[str] = None
+    siblings: Optional[str] = None
+    education: Optional[str] = None
+    occupation: Optional[str] = None
+    annual_income: Optional[str] = None
+    height: Optional[str] = None
+    alternate_phone: Optional[str] = None
+    residence_address: Optional[str] = None
+    bio_data: Optional[ParentsBioData] = None
 
 class AyurdayaResult(BaseModel):
     ayush_category: str  # Deergha, Madhya, Alpa
@@ -525,6 +563,8 @@ class ChartResponse(BaseModel):
     bhava_sphutam: Optional[List[Dict[str, Any]]] = None
     varga_chakras: Optional[Dict[str, Dict[int, List[Dict[str, Any]]]]] = None
     sampoorana: Optional[Dict[str, Any]] = None
+    vakhyam_details: Optional[Dict[str, Any]] = None
+    bio_data: Optional[ParentsBioData] = None
     single_page_summary: Optional[SinglePageSummary] = None
     computed_at: str
 

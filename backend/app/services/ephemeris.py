@@ -314,7 +314,15 @@ def compute_planetary_positions(
     Tamil Subha Yoga, and Astronomical timings.
     Uses Lahiri (Chitrapaksha) Ayanamsha (swe.SIDM_LAHIRI) backed by Swiss Ephemeris DE431/441 data files.
     """
-    swe.set_sid_mode(swe.SIDM_LAHIRI)
+    is_vakhyam = (panchangam_system.lower() == "vakhyam")
+    if is_vakhyam:
+        # Traditional Surya Siddhanta sidereal calculation used by Tamil Vakhyam Panchangams (Pambu Panchangam)
+        # Citations: Surya Siddhanta, AGENTS.md §1.4, Swiss Ephemeris SIDM_SURYASIDDHANTA
+        swe.set_sid_mode(swe.SIDM_SURYASIDDHANTA)
+        ayanamsa_name = "Surya Siddhanta (வாக்கிய முறை)"
+    else:
+        swe.set_sid_mode(swe.SIDM_LAHIRI)
+        ayanamsa_name = "Lahiri (Chitrapaksha)"
     ayanamsa = swe.get_ayanamsa_ut(jd)
 
     flags = swe.FLG_SIDEREAL | swe.FLG_SPEED | swe.FLG_SWIEPH
@@ -683,7 +691,7 @@ def compute_planetary_positions(
         "mirugam_ta": moon_nak_info.get("mirugam_ta", ""),
 
         # 7. High-Precision Ephemeris & Astronomical Timings
-        "ayanamsa_name": "Lahiri (Chitrapaksha)",
+        "ayanamsa_name": ayanamsa_name,
         "ayanamsa_value": round(ayanamsa, 4),
         "ayanamsa_dms": format_dms(ayanamsa),
         "panchangam_system": panchangam_system,

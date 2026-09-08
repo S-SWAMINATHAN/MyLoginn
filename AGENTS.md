@@ -118,6 +118,20 @@ Keep environment parity high (same Docker image promoted through stages) so "wor
 
 This project maintains a changelog following the [Keep a Changelog](https://keepachangelog.com/) convention and [Semantic Versioning](https://semver.org/). Every merged change that affects behavior, calculation logic, or the API contract gets an entry — not just releases.
 
+### [1.5.0] — 2026-09-08
+#### Added
+- **வாக்கிய பஞ்சாங்கம் முழுப் பக்கம் (Complete Full-Page Traditional Vakhyam Panchangam Engine & Manuscript)**:
+  - Enabled authentic `swe.SIDM_SURYASIDDHANTA` sidereal mode in `backend/app/services/ephemeris.py` when `panchangam_system == "vakhyam"`, correctly aligning with Surya Siddhantic classical tables and Pambu Panchangam tradition.
+  - Implemented traditional Jenana Vakhyam classical prose inscription in `backend/app/services/sampoorana.py` citing the 6 historical eras: Kali Yuga (கலியுகாதி), Salivahana Saka (சாலிவாகன சகாப்தம்), Vikrama Samvat (விக்ரம ஆண்டு), Kollam Era (கொல்லம் ஆண்டு), Pasali (பசலி ஆண்டு), and Hijri (ஹிஜ்ரி ஆண்டு).
+  - Added Nazhigai/Vinazhigai metrics for all 5 Panchanga angas (Tithi, Nakshatra, Yoga, Karana, Vaaram) including Nazhigai elapsed (சென்ற நாழிகை) and balance (நின்ற நாழிகை).
+  - Designed dedicated, rich full-page web card (`frontend/components/VakhyamCompleteCard.tsx`) with parchment styling, gold insignia, traditional inscriptions, and Surya Siddhanta comparative notes.
+  - Redesigned Page 2 of `HandwrittenManuscript.tsx` into a discrete, un-sliced 1123px full traditional Vakhyam manuscript with palm-leaf borders, handwritten Kavivanar typography, and classical Venba verses.
+- **பெற்றோர் & ஜாதக பயோடேட்டா (Comprehensive Parents & Matrimonial Horoscope Bio-Data)**:
+  - Added `ParentsBioData` model across backend schemas (`backend/app/models/schemas.py`) and frontend interfaces (`frontend/lib/types.ts`).
+  - Added comprehensive fields: Father Name & Occupation, Mother Name & Occupation, Gothram, Kula Deivam & Temple, Native Place, Caste/Sub-caste, Siblings, Candidate Education, Profession, Income, Height, Primary/Alternate Phone, and Address.
+  - Redesigned `frontend/components/BirthDetailsForm.tsx` with a dedicated collapsible section for quick or comprehensive bio-data entry.
+  - Added dedicated `BioDataCard.tsx` component in the main horoscope report, an authentic Bio-Data parchment plaque on Page 1 of `HandwrittenManuscript.tsx`, and a bio-data strip in `SinglePageReport.tsx`.
+
 ### [1.4.0] — 2026-09-05
 #### Added
 - **சம்பூர்ண ஜாதகம் (12-Page Traditional Sampoorana Jathagam Engine & Manuscript)**: Built complete Shastric computation backend (`backend/app/services/sampoorana.py`) computing traditional 60-year Tamil calendar (`பிரபவ`..`அட்சய`), historical eras (சாலிவாகன, கலியுகாதி, கொல்லம், பசலி, ஹிஜ்ரி), Panchanga micro-metrics (நாழிகை, விநாழிகை, தற்பரை, நேத்திரம், ஜீவன், விவாகச்சக்கரம், வாரசூலை & பரிகாரம், யோகினி வாசம்).

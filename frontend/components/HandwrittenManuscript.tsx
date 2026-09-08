@@ -209,6 +209,24 @@ export const HandwrittenManuscript: React.FC<Props> = ({ chart, lang }) => {
   const sentraNazhigai = samp.sentra_nazhigai || samp.dasha_balance_math?.sentra_nazhigai || "43 நாழிகை 28 விநா";
   const nindraNazhigai = samp.nindra_nazhigai || samp.dasha_balance_math?.nindra_nazhigai || "16 நாழிகை 32 விநா";
 
+  // Bio-Data & Vakhyam variables
+  const bio = chart.bio_data || {};
+  const vd = chart.vakhyam_details || samp.vakhyam_details || {};
+  const vikrama = vd.vikrama_year || samp.vikrama_year || (birthYear + 57);
+  const fatherName = bio.father_name || chart.parent_name || "";
+  const fatherWork = bio.father_occupation || "";
+  const motherName = bio.mother_name || "";
+  const motherWork = bio.mother_occupation || "";
+  const gothram = bio.gothram || "";
+  const nativePlace = bio.native_place || "";
+  const kulaDeivam = bio.kula_deivam || chart.family_details || "";
+  const caste = bio.caste_subcaste || "";
+  const siblings = bio.siblings || "";
+  const education = bio.education || "";
+  const occupation = bio.occupation || "";
+  const tithiSentra = vd.tithi_sentra_nazhigai || "30 நாழிகை 00 விநா";
+  const tithiNindra = vd.tithi_nindra_nazhigai || "30 நாழிகை 00 விநா";
+
   // Active dasha lord info
   const activeDasha = chart.vimshottari_dasha?.find((v) => v.is_current) || chart.vimshottari_dasha?.[0];
   const dashaLordKey = activeDasha ? activeDasha.planet : "Jupiter";
@@ -256,8 +274,12 @@ export const HandwrittenManuscript: React.FC<Props> = ({ chart, lang }) => {
             </h1>
             <p className="handwritten-tamil text-[12px] text-[#6b1426]/85">
               {lang === "ta"
-                ? "— பாரம்பர்ய திருக்கணித பஞ்சாங்க முறைப்படி கணிக்கப்பட்ட ஜெனன ஜாதகம் —"
-                : "— Traditional Thirukanitha Vedic Comprehensive Horoscope Manuscript —"}
+                ? (chart.panchangam_system === "vakhyam"
+                    ? "— பாரம்பர்ய வாக்கிய பஞ்சாங்க முறைப்படி கணிக்கப்பட்ட ஜெனன ஜாதகம் —"
+                    : "— பாரம்பர்ய திருக்கணித பஞ்சாங்க முறைப்படி கணிக்கப்பட்ட ஜெனன ஜாதகம் —")
+                : (chart.panchangam_system === "vakhyam"
+                    ? "— Traditional Vakhyam Vedic Comprehensive Horoscope Manuscript —"
+                    : "— Traditional Thirukanitha Vedic Comprehensive Horoscope Manuscript —")}
             </p>
             <div className="inline-block bg-[#6b1426] text-[#ffd700] text-[12px] font-bold px-4 py-0.5 rounded-full font-cinzel tracking-widest border border-[#ffd700]/40 mt-0.5">
               வாழ்க வளமுடன்
@@ -334,6 +356,48 @@ export const HandwrittenManuscript: React.FC<Props> = ({ chart, lang }) => {
             </div>
           </div>
 
+          {/* Parents & Family Bio-Data Plate */}
+          <div className="mt-3 mx-2 bg-[#fffaf0]/95 border-2 border-[#8b5a2b]/30 rounded-[16px] p-3 shadow-sm text-xs handwritten-tamil">
+            <div className="text-[11px] font-bold text-[#6b1426] text-center border-b border-[#8b5a2b]/20 pb-1 mb-2 font-cinzel">
+              ✦ பெற்றோர் மற்றும் குடும்ப சுயவிவரக் குறிப்பு (Parents & Family Particulars) ✦
+            </div>
+            <div className="grid grid-cols-2 sm:grid-cols-3 gap-2.5">
+              <div>
+                <span className="text-[#8b5a2b] font-bold">தந்தை: </span>
+                <span className="text-[#2b170c] font-semibold">{fatherName || "—"} {fatherWork ? `(${fatherWork})` : ""}</span>
+              </div>
+              <div>
+                <span className="text-[#8b5a2b] font-bold">தாய்: </span>
+                <span className="text-[#2b170c] font-semibold">{motherName || "—"} {motherWork ? `(${motherWork})` : ""}</span>
+              </div>
+              <div>
+                <span className="text-[#8b5a2b] font-bold">கோத்திரம்: </span>
+                <span className="text-[#2b170c] font-semibold">{gothram || "—"}</span>
+              </div>
+              <div>
+                <span className="text-[#8b5a2b] font-bold">பூர்வீகம்: </span>
+                <span className="text-[#2b170c]">{nativePlace || "—"}</span>
+              </div>
+              <div>
+                <span className="text-[#8b5a2b] font-bold">குலதெய்வம்: </span>
+                <span className="text-[#2b170c] truncate block" title={kulaDeivam}>{kulaDeivam || "—"}</span>
+              </div>
+              <div>
+                <span className="text-[#8b5a2b] font-bold">சாதி/பிரிவு: </span>
+                <span className="text-[#2b170c]">{caste || "—"}</span>
+              </div>
+            </div>
+            {(education || occupation || siblings || bio.phone || chart.phone) && (
+              <div className="mt-2 pt-1.5 border-t border-black/5 flex flex-wrap justify-between gap-2 text-[11px] text-[#6b1426]">
+                {(education || occupation) && (
+                  <span><strong>கல்வி / பணி:</strong> {education ? `${education}` : ""} {occupation ? `· ${occupation}` : ""}</span>
+                )}
+                {siblings && <span><strong>உடன் பிறந்தோர்:</strong> {siblings}</span>}
+                {(bio.phone || chart.phone) && <span><strong>தொடர்பு:</strong> {bio.phone || chart.phone}</span>}
+              </div>
+            )}
+          </div>
+
           {/* Lagna, Rasi & Ayanamsa 3-Leaf Cards */}
           <div className="grid grid-cols-3 gap-3 mt-4 mx-2">
             <div className="bg-[#fff8e6] border border-[#8b5a2b]/30 rounded-xl p-3 text-center shadow-sm">
@@ -381,134 +445,198 @@ export const HandwrittenManuscript: React.FC<Props> = ({ chart, lang }) => {
       </div>
 
       {/* ══════════════════════════════════════════════════════════
-          PAGE 2: JENANA VAKHYAM, HISTORICAL ERAS & PANCHANGA METRICS
+          PAGE 2: JENANA VAKHYAM, HISTORICAL ERAS & PANCHANGA METRICS (COMPLETE FULL PAGE)
       ══════════════════════════════════════════════════════════ */}
       <div className="manuscript-page" data-page="2">
+        <div className="palm-stain" style={{ width: 140, height: 140, top: 50, right: 30 }} />
+        <div className="palm-stain" style={{ width: 110, height: 110, bottom: 60, left: 30 }} />
         <div className="manuscript-inner flex flex-col h-full" style={{ minHeight: "1123px" }}>
           <div className="text-center">
             <div className="text-[13px] font-bold text-[#6b1426] tracking-widest font-cinzel">
               ॥ ஸ்ரீ ராமஜெயம் ॥
             </div>
-            <h2 className="handwritten-heading text-[17px] text-center mt-1">
-              — ஜெனன வாக்கியம் & வரலாற்று சகாப்தங்கள் —
+            <h2 className="handwritten-heading text-[18px] text-center mt-0.5">
+              — சம்பூர்ண ஜெனன வாக்கியம் & வரலாற்று சகாப்தங்கள் —
             </h2>
+            <p className="handwritten-tamil text-[11px] text-[#6b1426]/75 -mt-0.5">
+              பாரம்பரிய பாம்பு பஞ்சாங்க சூரிய சித்தாந்த வாக்கிய கணித உரை
+            </p>
             <hr className="manuscript-rule" />
           </div>
 
           {/* Sanskrit Sloka Banner */}
-          <div className="mt-3 bg-[#fff8e6] border border-[#8b5a2b]/30 rounded-xl p-3 text-center space-y-1">
+          <div className="mt-2.5 bg-[#fff8e6] border border-[#8b5a2b]/30 rounded-xl p-2.5 text-center space-y-1 shadow-xs">
             <div className="text-[11px] font-bold text-[#6b1426] font-cinzel">॥ சுபமஸ்து — ஸ்ரீ மகாகணபதி துணை — ஸ்ரீ மகாலட்சுமி துணை ॥</div>
-            <p className="handwritten-tamil text-[13px] text-[#3a1a0f] italic leading-relaxed">
+            <p className="handwritten-tamil text-[12.5px] text-[#3a1a0f] italic leading-relaxed">
               “ஜெனனீ ஜென்ம சௌக்யானாம் வர்த்தனீ குலசம்பதாம்<br />
               பதவீ பூர்வ புண்யானாம் லிக்யதே ஜென்ம பத்ரிகா.”
             </p>
-            <div className="text-[10px] text-[#8b5a2b] font-bold">மாதா, பிதா, ஜாதகர் தீர்க்காயுள் பெற்று வாழ்வார்களாக.</div>
+            <div className="text-[9.5px] text-[#8b5a2b] font-bold">மாதா, பிதா, ஜாதகர் சகல சௌபாக்கியங்களும் தீர்க்காயுளும் பெற்று வாழ்வார்களாக.</div>
           </div>
 
-          {/* Traditional Eras Table (சாலிவாகன, கலியுகாதி, கொல்லம், பசலி, ஹிஜ்ரி) */}
-          <div className="mt-4 border-2 border-[#6b1426]/20 rounded-xl overflow-hidden bg-[#fffaf0]/80">
-            <div className="bg-[#6b1426]/10 text-center py-1.5 handwritten-heading text-[11px] tracking-widest text-[#6b1426]">
-              ✦ சாஸ்திர வரலாற்று ஆண்டுகள் (Traditional Astronomical Eras) ✦
+          {/* Traditional 6 Eras Table (சாலிவாகன, கலியுகாதி, கொல்லம், பசலி, ஹிஜ்ரி, விக்ரம) */}
+          <div className="mt-3 border-2 border-[#6b1426]/20 rounded-xl overflow-hidden bg-[#fffaf0]/90">
+            <div className="bg-[#6b1426]/10 text-center py-1 handwritten-heading text-[11px] tracking-widest text-[#6b1426]">
+              ✦ சாஸ்திர வரலாற்று சகாப்தங்கள் (Traditional Astronomical Eras) ✦
             </div>
-            <div className="grid grid-cols-2 divide-x divide-[#8b5a2b]/20 text-xs handwritten-tamil">
-              <div className="p-3 space-y-1.5">
-                <div className="flex justify-between border-b border-black/5 pb-1">
+            <div className="grid grid-cols-3 divide-x divide-[#8b5a2b]/20 text-xs handwritten-tamil">
+              <div className="p-2 space-y-1">
+                <div className="flex justify-between border-b border-black/5 pb-0.5">
                   <span className="font-bold text-[#6b1426]">சாலிவாகன ஆண்டு:</span>
-                  <span className="font-mono font-bold text-base">{salivahana}</span>
-                </div>
-                <div className="flex justify-between border-b border-black/5 pb-1">
-                  <span className="font-bold text-[#6b1426]">கலியுகாதி ஆண்டு:</span>
-                  <span className="font-mono font-bold text-base">{kaliyuga}</span>
+                  <span className="font-mono font-bold">{salivahana}</span>
                 </div>
                 <div className="flex justify-between">
-                  <span className="font-bold text-[#6b1426]">கொல்லம் ஆண்டு:</span>
-                  <span className="font-mono font-bold text-base">{kollam}</span>
+                  <span className="font-bold text-[#6b1426]">கலியுகாதி ஆண்டு:</span>
+                  <span className="font-mono font-bold">{kaliyuga}</span>
                 </div>
               </div>
-              <div className="p-3 space-y-1.5">
-                <div className="flex justify-between border-b border-black/5 pb-1">
-                  <span className="font-bold text-[#6b1426]">பசலி ஆண்டு:</span>
-                  <span className="font-mono font-bold text-base">{fasli}</span>
-                </div>
-                <div className="flex justify-between border-b border-black/5 pb-1">
-                  <span className="font-bold text-[#6b1426]">ஹிஜ்ரி ஆண்டு:</span>
-                  <span className="font-mono font-bold text-base">{hijri}</span>
+              <div className="p-2 space-y-1">
+                <div className="flex justify-between border-b border-black/5 pb-0.5">
+                  <span className="font-bold text-[#6b1426]">கொல்லம் ஆண்டு:</span>
+                  <span className="font-mono font-bold">{kollam}</span>
                 </div>
                 <div className="flex justify-between">
-                  <span className="font-bold text-[#6b1426]">ஆங்கில ஆண்டு:</span>
-                  <span className="font-mono font-bold text-base">{birthYear}</span>
+                  <span className="font-bold text-[#6b1426]">பசலி ஆண்டு:</span>
+                  <span className="font-mono font-bold">{fasli}</span>
+                </div>
+              </div>
+              <div className="p-2 space-y-1">
+                <div className="flex justify-between border-b border-black/5 pb-0.5">
+                  <span className="font-bold text-[#6b1426]">ஹிஜ்ரி ஆண்டு:</span>
+                  <span className="font-mono font-bold">{hijri}</span>
+                </div>
+                <div className="flex justify-between">
+                  <span className="font-bold text-[#6b1426]">விக்ரம ஆண்டு:</span>
+                  <span className="font-mono font-bold">{vikrama}</span>
                 </div>
               </div>
             </div>
           </div>
 
           {/* Auspicious Tamil Birth Sentence (ஜெனன வாக்கிய உரை) */}
-          <div className="mt-4 bg-[#fffdf5] border-2 border-[#8b5a2b]/25 rounded-2xl p-4 handwritten-tamil text-xs text-[#2b170c] leading-loose shadow-sm">
-            <div className="font-bold text-[#6b1426] text-sm mb-1 text-center font-cinzel">
-              — ஜெனன வாக்கிய உரை —
+          <div className="mt-3 bg-[#fffdf5] border-2 border-[#8b5a2b]/25 rounded-2xl p-3.5 handwritten-tamil text-[11.5px] text-[#2b170c] leading-relaxed shadow-xs">
+            <div className="font-bold text-[#6b1426] text-xs mb-1 text-center font-cinzel">
+              — ஜெனன வாக்கிய உரை (Auspicious Birth Inscription) —
             </div>
             <p>
-              <strong>{chart.date_of_birth}</strong> நிகழும் மங்களகரமான <strong>{tamilYear}</strong> வருடம்{" "}
-              <strong>{tamilMonth}</strong> மாதம் <strong>{tamilDate}</strong>-ந்தேதி <strong>{d.vaaram_ta}</strong> அன்று{" "}
-              (<strong>{chart.time_of_birth}</strong>) சூரிய உதயாதி நாழிகை <strong>{uNazh}</strong> விநாழிகை <strong>{uVin}</strong> தற்பரை <strong>{uTat}</strong> அளவில்,{" "}
-              அன்று <strong>{ayanaTa}</strong>, <strong>{rituTa}</strong> காலத்தில், <strong>{d.paksha_ta || d.paksha}</strong> பட்சத்தில்{" "}
-              <strong>{d.thithi_ta}</strong> திதியும், <strong>{d.lagnam_ta}</strong> லக்கினமும்,{" "}
-              <strong>{d.nakshatram_ta}</strong> நட்சத்திரமும் <strong>{d.pada}</strong>-ஆம் பாத க்ஷேத்திர{" "}
-              <strong>{d.rasi_ta}</strong> ராசியும், <strong>{d.yogam_ta}</strong> யோகமும், <strong>{d.karanam_ta}</strong> கரணமும் கூடிய{" "}
-              சுபயோக சுபதினத்தில் சுபஜெனனம்.
+              ஸ்வஸ்திஸ்ரீ விஜயாப்யுதய சாலிவாகன சகாப்தம் <strong>{salivahana}</strong> கலியுகாதி <strong>{kaliyuga}</strong> கொல்லம் <strong>{kollam}</strong> பசலி <strong>{fasli}</strong> ஹிஜ்ரி <strong>{hijri}</strong> விக்ரம ஆண்டு <strong>{vikrama}</strong>-ல் நிகழும் மங்களகரமான <strong>{tamilYear}</strong> வருடம்{" "}
+              <strong>{ayanaTa}</strong>, <strong>{rituTa}</strong> காலத்தில், <strong>{tamilMonth}</strong> மாதம் <strong>{tamilDate}</strong>-ந்தேதி <strong>{d.vaaram_ta}</strong> அன்று{" "}
+              (ஆங்கிலத் தேதி <strong>{chart.date_of_birth}</strong>, நேரம் <strong>{chart.time_of_birth}</strong>) சூரிய உதயாதி நாழிகை <strong>{uNazh}</strong> விநாழிகை <strong>{uVin}</strong> தற்பரை <strong>{uTat}</strong> அளவில்,{" "}
+              <strong>{d.paksha_ta || d.paksha}</strong> பட்சத்தில் <strong>{d.thithi_ta}</strong> திதியும், <strong>{d.lagnam_ta}</strong> லக்கினமும்,{" "}
+              <strong>{d.nakshatram_ta}</strong> நட்சத்திரம் <strong>{d.pada}</strong>-ஆம் பாத க்ஷேத்திர <strong>{d.rasi_ta}</strong> ராசியும்,{" "}
+              <strong>{d.yogam_ta}</strong> யோகமும், <strong>{d.karanam_ta}</strong> கரணமும் கூடிய சுபயோக சுபதினத்தில் சுபஜெனனம்.
             </p>
           </div>
 
-          {/* Panchanga 5 Angas & Shastric Factors */}
-          <div className="mt-4 grid grid-cols-5 gap-2 text-center text-xs handwritten-tamil">
+          {/* Panchanga 5 Angas & Nazhigai Metrics */}
+          <div className="mt-3 grid grid-cols-5 gap-2 text-center text-xs handwritten-tamil">
             <div className="bg-[#fff8e6] border border-[#8b5a2b]/20 rounded-xl p-2">
-              <div className="text-[9px] text-[#8b5a2b] font-cinzel">திதி (Tithi)</div>
+              <div className="text-[9px] text-[#8b5a2b] font-cinzel font-bold">1. திதி (Tithi)</div>
               <div className="font-bold text-[#6b1426] mt-0.5">{d.thithi_ta}</div>
-              <div className="text-[10px] text-[#3a1a0f]">{d.paksha_ta || d.paksha}</div>
+              <div className="text-[9.5px] text-[#3a1a0f] border-t border-black/5 pt-0.5 mt-0.5">
+                <div>சென்றது: {tithiSentra}</div>
+                <div>நின்றது: {tithiNindra}</div>
+              </div>
             </div>
             <div className="bg-[#fff8e6] border border-[#8b5a2b]/20 rounded-xl p-2">
-              <div className="text-[9px] text-[#8b5a2b] font-cinzel">வாரம் (Vaaram)</div>
+              <div className="text-[9px] text-[#8b5a2b] font-cinzel font-bold">2. வாரம் (Vaaram)</div>
               <div className="font-bold text-[#6b1426] mt-0.5">{d.vaaram_ta}</div>
-              <div className="text-[10px] text-[#3a1a0f]">{d.vaaram_lord_ta || "அதிபதி"}</div>
+              <div className="text-[9.5px] text-[#3a1a0f] border-t border-black/5 pt-0.5 mt-0.5">
+                <div>அதிபதி: {d.vaaram_lord_ta || "அதிபதி"}</div>
+                <div>உதய நாழி: {uNazh} நாழி</div>
+              </div>
             </div>
             <div className="bg-[#fff8e6] border border-[#8b5a2b]/20 rounded-xl p-2">
-              <div className="text-[9px] text-[#8b5a2b] font-cinzel">நட்சத்திரம் (Star)</div>
+              <div className="text-[9px] text-[#8b5a2b] font-cinzel font-bold">3. நட்சத்திரம் (Star)</div>
               <div className="font-bold text-[#6b1426] mt-0.5">{d.nakshatram_ta}</div>
-              <div className="text-[10px] text-[#3a1a0f]">{d.pada}-ஆம் பாதம்</div>
+              <div className="text-[9.5px] text-[#3a1a0f] border-t border-black/5 pt-0.5 mt-0.5">
+                <div>சென்றது: {sentraNazhigai}</div>
+                <div>நின்றது: {nindraNazhigai}</div>
+              </div>
             </div>
             <div className="bg-[#fff8e6] border border-[#8b5a2b]/20 rounded-xl p-2">
-              <div className="text-[9px] text-[#8b5a2b] font-cinzel">யோகம் (Yogam)</div>
+              <div className="text-[9px] text-[#8b5a2b] font-cinzel font-bold">4. யோகம் (Yogam)</div>
               <div className="font-bold text-[#6b1426] mt-0.5">{d.yogam_ta}</div>
-              <div className="text-[10px] text-emerald-800 font-bold">{d.subha_yogam_ta || "சுப யோகம்"}</div>
+              <div className="text-[9.5px] text-emerald-800 font-bold border-t border-black/5 pt-0.5 mt-0.5">
+                {d.subha_yogam_ta || "சுப யோகம்"}
+                <div className="text-[8.5px] text-[#6f6049] font-normal">பஞ்சாங்க யோகம்</div>
+              </div>
             </div>
             <div className="bg-[#fff8e6] border border-[#8b5a2b]/20 rounded-xl p-2">
-              <div className="text-[9px] text-[#8b5a2b] font-cinzel">கரணம் (Karanam)</div>
+              <div className="text-[9px] text-[#8b5a2b] font-cinzel font-bold">5. கரணம் (Karanam)</div>
               <div className="font-bold text-[#6b1426] mt-0.5">{d.karanam_ta}</div>
-              <div className="text-[10px] text-[#3a1a0f]">சுப கரணம்</div>
+              <div className="text-[9.5px] text-[#3a1a0f] border-t border-black/5 pt-0.5 mt-0.5">
+                <div>சுப கரணம்</div>
+                <div className="text-[8.5px] text-[#8b5a2b]">1/2 திதி அளவு</div>
+              </div>
             </div>
           </div>
 
-          {/* Micro Metrics: Nethiram, Jeevan, Soolai, Yogini */}
-          <div className="mt-3 grid grid-cols-4 gap-2 text-center text-xs handwritten-tamil">
-            <div className="bg-[#fffdf5] border border-[#8b5a2b]/20 rounded-xl p-2">
-              <span className="text-[9px] text-[#8b5a2b] font-cinzel block">நேத்திரம் & ஜீவன்</span>
-              <span className="font-bold text-[#6b1426] text-sm">நேத்திரம் {nethiram} • ஜீவன் {jeevan}</span>
+          {/* Dasha Balance Nazhigai Math Box */}
+          <div className="mt-3 bg-[#fffaf0] border border-[#8b5a2b]/30 rounded-xl p-2.5 text-xs handwritten-tamil shadow-xs">
+            <div className="text-[11px] font-bold text-[#6b1426] text-center border-b border-[#8b5a2b]/20 pb-0.5 mb-1.5 font-cinzel">
+              ✦ வாக்கிய முறை தசா இருப்பு நாழிகை கணிதம் (Vakhyam Dasha Balance Math) ✦
             </div>
-            <div className="bg-[#fffdf5] border border-[#8b5a2b]/20 rounded-xl p-2">
-              <span className="text-[9px] text-[#8b5a2b] font-cinzel block">வாரசூலை</span>
-              <span className="font-bold text-[#6b1426] text-sm">{vaaraSoolai}</span>
-            </div>
-            <div className="bg-[#fffdf5] border border-[#8b5a2b]/20 rounded-xl p-2">
-              <span className="text-[9px] text-[#8b5a2b] font-cinzel block">சூலை பரிகாரம்</span>
-              <span className="font-bold text-[#6b1426] text-sm">{soolaiPariharam}</span>
-            </div>
-            <div className="bg-[#fffdf5] border border-[#8b5a2b]/20 rounded-xl p-2">
-              <span className="text-[9px] text-[#8b5a2b] font-cinzel block">யோகினி வாசம்</span>
-              <span className="font-bold text-[#6b1426] text-sm">{yoginiDirection}</span>
+            <div className="grid grid-cols-2 sm:grid-cols-4 gap-2 text-center">
+              <div className="bg-white/70 p-1.5 rounded-lg border border-black/5">
+                <span className="text-[9px] text-[#8b5a2b] block">பரம நாழிகை (Total Star)</span>
+                <span className="font-bold text-[#2b170c] font-mono">60 நாழிகை 00 விநா</span>
+              </div>
+              <div className="bg-white/70 p-1.5 rounded-lg border border-black/5">
+                <span className="text-[9px] text-[#8b5a2b] block">சென்ற நாழிகை (Elapsed)</span>
+                <span className="font-bold text-[#2b170c] font-mono">{sentraNazhigai}</span>
+              </div>
+              <div className="bg-white/70 p-1.5 rounded-lg border border-black/5">
+                <span className="text-[9px] text-[#8b5a2b] block">நின்ற நாழிகை (Remaining)</span>
+                <span className="font-bold text-[#2b170c] font-mono">{nindraNazhigai}</span>
+              </div>
+              <div className="bg-white/70 p-1.5 rounded-lg border border-black/5">
+                <span className="text-[9px] text-[#8b5a2b] block">பிறப்பில் தசா இருப்பு</span>
+                <span className="font-bold text-[#8e2b1c] truncate block">{d.dasha_balance_ta || "—"}</span>
+              </div>
             </div>
           </div>
 
-          <div className="mt-auto pt-4 text-center handwritten-tamil text-[11px] text-[#6b1426]/60">
+          {/* Micro Metrics & Shastric Factors: Nethiram, Jeevan, Soolai, Yogini, Soonya, Pakshi */}
+          <div className="mt-3 grid grid-cols-3 sm:grid-cols-6 gap-1.5 text-center text-xs handwritten-tamil">
+            <div className="bg-[#fffdf5] border border-[#8b5a2b]/20 rounded-xl p-1.5">
+              <span className="text-[8.5px] text-[#8b5a2b] font-cinzel block">நேத்திரம் & ஜீவன்</span>
+              <span className="font-bold text-[#6b1426] text-[11px]">நேத் {nethiram} • ஜீ {jeevan}</span>
+            </div>
+            <div className="bg-[#fffdf5] border border-[#8b5a2b]/20 rounded-xl p-1.5">
+              <span className="text-[8.5px] text-[#8b5a2b] font-cinzel block">வாரசூலை & பரிகாரம்</span>
+              <span className="font-bold text-[#6b1426] text-[11px]">{vaaraSoolai} ({soolaiPariharam})</span>
+            </div>
+            <div className="bg-[#fffdf5] border border-[#8b5a2b]/20 rounded-xl p-1.5">
+              <span className="text-[8.5px] text-[#8b5a2b] font-cinzel block">யோகினி வாசம்</span>
+              <span className="font-bold text-[#6b1426] text-[11px]">{yoginiDirection}</span>
+            </div>
+            <div className="bg-[#fffdf5] border border-[#8b5a2b]/20 rounded-xl p-1.5">
+              <span className="text-[8.5px] text-[#8b5a2b] font-cinzel block">சூன்ய ராசிகள்</span>
+              <span className="font-bold text-[#6b1426] text-[11px] truncate block" title={soonyaRasis}>{soonyaRasis}</span>
+            </div>
+            <div className="bg-[#fffdf5] border border-[#8b5a2b]/20 rounded-xl p-1.5">
+              <span className="text-[8.5px] text-[#8b5a2b] font-cinzel block">பஞ்ச பட்சி</span>
+              <span className="font-bold text-[#6b1426] text-[11px]">{panchaPakshi} ({padupakshiDays})</span>
+            </div>
+            <div className="bg-[#fffdf5] border border-[#8b5a2b]/20 rounded-xl p-1.5">
+              <span className="text-[8.5px] text-[#8b5a2b] font-cinzel block">வைநாசிக நட்சத்.</span>
+              <span className="font-bold text-[#6b1426] text-[11px] truncate block" title={vainasikaStar}>{vainasikaStar}</span>
+            </div>
+          </div>
+
+          {/* Traditional Venba Verse & Shastric Footer */}
+          <div className="mt-3 p-2.5 bg-[#fff8e6] border border-[#8b5a2b]/25 rounded-xl text-center space-y-1 shadow-xs">
+            <div className="handwritten-tamil text-[11px] text-[#3a1a0f] italic leading-relaxed">
+              “தங்க மான்மழு வேந்தேந்தித் தண்மதி தலையிற் கொண்டோன் மங்கையர் பதிக்குச் சொன்ன மாமொழிச் சோதிடத்தை<br />
+              இங்குநா முறைப்பதற்கோர் இழையெனும் பிழை வராமற் செங்கண்மால் மருகன் யானைச் சிரன் பதங் காப்பதாமே.”
+            </div>
+            <div className="text-[9px] text-[#8b5a2b] font-bold">
+              பாம்பு பஞ்சாங்கம் மற்றும் சூரிய சித்தாந்த வாக்கிய கணித முறைப்படி கணிக்கப்பட்ட சம்பூர்ண பத்திரம் — சுபமஸ்து.
+            </div>
+          </div>
+
+          <div className="mt-auto pt-3 text-center handwritten-tamil text-[11px] text-[#6b1426]/60">
             — இரண்டாம் ஓலை / பக்கம் ௨ —
           </div>
         </div>
@@ -720,6 +848,7 @@ export const HandwrittenManuscript: React.FC<Props> = ({ chart, lang }) => {
                 title="Rasi Chart (D1)"
                 titleTa="ராசி"
                 kattamData={chart.rasi_kattam}
+                chartStyle={(chart.chart_style as any) || "tamil"}
                 lang={lang}
                 width={420}
                 height={420}
@@ -738,6 +867,7 @@ export const HandwrittenManuscript: React.FC<Props> = ({ chart, lang }) => {
                 title="Navamsa Chart (D9)"
                 titleTa="நவாம்சம்"
                 kattamData={chart.navamsa_kattam}
+                chartStyle={(chart.chart_style as any) || "tamil"}
                 lang={lang}
                 width={420}
                 height={420}

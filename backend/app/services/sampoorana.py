@@ -326,6 +326,69 @@ def calculate_sampoorana_details(
     # 17. Shodashavarga (Divisional Chakras)
     vargas = compute_shodashavargas(planets, lagna_deg)
 
+    # 18. Complete Traditional Vakhyam Package (வாக்கிய பஞ்சாங்கம் & ஜெனன வாக்கிய உரை)
+    vikrama_year = base_year + 57
+    tithi_elapsed_pct = basic_details.get("thithi_elapsed_pct", 0.5)
+    tithi_sentra_val = 60.0 * (tithi_elapsed_pct if tithi_elapsed_pct is not None else 0.5)
+    tithi_nindra_val = max(0.0, 60.0 - tithi_sentra_val)
+    t_s_n = int(tithi_sentra_val)
+    t_s_v = int((tithi_sentra_val - t_s_n) * 60)
+    t_n_n = int(tithi_nindra_val)
+    t_n_v = int((tithi_nindra_val - t_n_n) * 60)
+    tithi_sentra_nazhigai = f"{t_s_n} நாழிகை {t_s_v:02d} விநா"
+    tithi_nindra_nazhigai = f"{t_n_n} நாழிகை {t_n_v:02d} விநா"
+
+    thithi_full = basic_details.get("thithi_ta") or basic_details.get("thithi", "")
+    rasi_full = basic_details.get("rasi_ta") or basic_details.get("rasi", "")
+    nak_full = basic_details.get("nakshatram_ta") or basic_details.get("nakshatram", "")
+    lagna_full = basic_details.get("lagnam_ta") or basic_details.get("lagnam", "")
+    vaaram_full = basic_details.get("vaaram_ta") or basic_details.get("vaaram", "")
+    yogam_full = basic_details.get("yogam_ta") or basic_details.get("yogam", "")
+    karanam_full = basic_details.get("karanam_ta") or basic_details.get("karanam", "")
+    subha_yogam_full = basic_details.get("subha_yogam_ta") or "சித்த யோகம்"
+    pada_num = basic_details.get("pada", 1)
+
+    jenana_vakhyam_prose = (
+        f"ஸ்வஸ்திஸ்ரீ விஜயாப்யுதய சாலிவாகன சகாப்தம் {salivahana_year}-ல், கலியுகாதி ஆண்டு {kaliyuga_year}-ல், "
+        f"கொல்லம் ஆண்டு {kollam_year}-ல், பசலி ஆண்டு {fasli_year}-ல், ஹிஜ்ரி ஆண்டு {hijri_year}-ல், "
+        f"விக்ரம சகாப்தம் {vikrama_year}-ல் நிகழும் மங்களகரமான {tamil_year_ta} வருடம் {ayana_ta} {ritu_ta} "
+        f"{tamil_month_ta} மாதம் {tamil_date}-ஆம் தேதி {vaaram_full} அன்று (ஆங்கிலத் தேதி {date_str}, நேரம் {time_str}), "
+        f"சூரிய உதயாதி நாழிகை {n_int} விநாழிகை {v_int} தற்பரை {tatparai} அளவில், {thithi_full} திதியும், "
+        f"{lagna_full} லக்னமும், {nak_full} நட்சத்திரம் {pada_num}-ஆம் பாதம் க்ஷேத்திர {rasi_full} ராசியும், "
+        f"{yogam_full} யோகமும், {karanam_full} கரணமும், {subha_yogam_full} கூடிய சுபயோக சுபதினத்தில் சுபஜெனனம்."
+    )
+
+    vakhyam_package = {
+        "jenana_vakhyam_prose": jenana_vakhyam_prose,
+        "salivahana_year": salivahana_year,
+        "kaliyuga_year": kaliyuga_year,
+        "kollam_year": kollam_year,
+        "fasli_year": fasli_year,
+        "hijri_year": hijri_year,
+        "vikrama_year": vikrama_year,
+        "tamil_year": tamil_year_ta,
+        "tamil_month": tamil_month_ta,
+        "tamil_date": tamil_date,
+        "ayana": ayana_ta,
+        "ritu": ritu_ta,
+        "udhayadhi_nazhigai": f"{n_int} நாழிகை {v_int:02d} விநாழிகை {tatparai:02d} தற்பரை",
+        "nakshatra_sentra_nazhigai": sentra_nazhigai_str,
+        "nakshatra_nindra_nazhigai": nindra_nazhigai_str,
+        "tithi_sentra_nazhigai": tithi_sentra_nazhigai,
+        "tithi_nindra_nazhigai": tithi_nindra_nazhigai,
+        "paramanazhigai": paramanazhigai_str,
+        "nethiram": nethiram,
+        "jeevan": jeevan,
+        "vaara_soolai": vaara_soolai_ta,
+        "soolai_pariharam": soolai_pariharam_ta,
+        "yogini_direction": yogini_dir,
+        "soonya_rasis": soonya_rasis_ta,
+        "pancha_pakshi": pancha_pakshi_ta,
+        "shastric_shloka_1": "ஜெனனீ ஜென்ம சௌக்யானாம் வர்த்தனீ குலசம்பதாம் | பதவீ பூர்வ புண்யானாம் லிக்யதே ஜென்ம பத்ரிகா ||",
+        "shastric_shloka_2": "ஸ்வஸ்திஸ்ரீ மன் மகா மண்டலேஸ்வர அரிஹரிபுத்திர சர்வ மங்களகாரக சுபமஸ்து ||",
+        "tradition_source": "பாம்பு பஞ்சாங்கம் மற்றும் பாரம்பரிய சூரிய சித்தாந்த வாக்கிய கணித முறை (Surya Siddhanta Tradition)",
+    }
+
     return {
         "tamil_year": tamil_year_ta,
         "tamil_month": tamil_month_ta,
@@ -336,6 +399,7 @@ def calculate_sampoorana_details(
         "kollam_year": kollam_year,
         "fasli_year": fasli_year,
         "hijri_year": hijri_year,
+        "vikrama_year": vikrama_year,
         "ayana": ayana_en,
         "ayana_ta": ayana_ta,
         "ritu": ritu_en,
@@ -367,6 +431,7 @@ def calculate_sampoorana_details(
         "nindra_nazhigai": nindra_nazhigai_str,
         "bhava_sphutam": bhava_sphutam_list,
         "varga_chakras": vargas,
+        "vakhyam_details": vakhyam_package,
     }
 
 
