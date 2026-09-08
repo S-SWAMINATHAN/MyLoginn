@@ -233,6 +233,8 @@ def compute_astronomical_timings(
     ratrimana_en = f"{n_h}h {n_m:02d}m"
 
     # Birth Time Udhayadhi Nazhigai (உதயாதி நாழிகை)
+    if time_str and len(time_str.split(':')) == 2:
+        time_str = f"{time_str}:00"
     dt_birth = datetime.strptime(f"{date_str} {time_str}", "%Y-%m-%d %H:%M:%S")
     birth_dec = dt_birth.hour + dt_birth.minute / 60.0 + dt_birth.second / 3600.0
 
@@ -292,6 +294,8 @@ def compute_astronomical_timings(
 def get_julian_day(date_str: str, time_str: str, timezone_str: str = "Asia/Kolkata") -> float:
     """Converts local date and time string to UTC Julian Day."""
     local_tz = pytz.timezone(timezone_str)
+    if time_str and len(time_str.split(':')) == 2:
+        time_str = f"{time_str}:00"
     dt_naive = datetime.strptime(f"{date_str} {time_str}", "%Y-%m-%d %H:%M:%S")
     dt_local = local_tz.localize(dt_naive)
     dt_utc = dt_local.astimezone(pytz.utc)
