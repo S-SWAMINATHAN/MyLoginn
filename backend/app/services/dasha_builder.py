@@ -83,6 +83,8 @@ def calculate_vimshottari_dasha(
     nak_number = int(moon_total_deg // nak_span) + 1
     start_idx = get_starting_dasha_idx(nak_number)
 
+    if tob_str and len(tob_str.split(':')) == 2:
+        tob_str = f"{tob_str}:00"
     birth_dt = datetime.strptime(f"{dob_str} {tob_str}", "%Y-%m-%d %H:%M:%S")
     now_dt = datetime.now()
 
