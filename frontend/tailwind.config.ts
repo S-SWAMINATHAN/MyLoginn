@@ -32,10 +32,13 @@ const config: Config = {
         }
       },
       fontFamily: {
-        tamil: ["var(--font-tamil)", "Noto Sans Tamil", "sans-serif"],
+        tamil: ["var(--font-tamil)", "Kavivanar", "cursive"],
         script: ["var(--font-script)", "Kavivanar", "cursive"],
-        cinzel: ["var(--font-cinzel)", "Cinzel", "serif"],
-        caveat: ["var(--font-caveat)", "Caveat", "cursive"]
+        cinzel: ["var(--font-cinzel)", "Caveat", "Kavivanar", "cursive"],
+        caveat: ["var(--font-caveat)", "Caveat", "cursive"],
+        mono: ["Caveat", "Kavivanar", "cursive"],
+        sans: ["Kavivanar", "Caveat", "cursive", "sans-serif"],
+        serif: ["Kavivanar", "Caveat", "cursive", "serif"],
       }
     },
   },

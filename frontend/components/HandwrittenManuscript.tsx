@@ -261,7 +261,7 @@ export const HandwrittenManuscript: React.FC<Props> = ({ chart, lang }) => {
               <span className="h-px w-14 bg-[#aa820a]/40" />
               <span
                 className="text-4xl font-bold handwritten-heading text-[#b03726]"
-                style={{ fontFamily: "'Noto Serif Tamil', serif" }}
+                style={{ fontFamily: "'Kavivanar', cursive" }}
               >
                 ௐ
               </span>

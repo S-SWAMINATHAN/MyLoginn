@@ -12,20 +12,50 @@
   --ink-faint: #a3917a;
   --red: #b03726;
   --red-deep: #8e2b1c;
-  --font-tamil: 'Kavivanar', 'Noto Sans Tamil', cursive, sans-serif;
+  --font-tamil: 'Kavivanar', 'Baloo Thambi 2', cursive;
   --font-script: 'Kavivanar', cursive;
-  --font-cinzel: 'Cinzel', serif;
+  --font-cinzel: 'Caveat', 'Kavivanar', cursive;
   --font-caveat: 'Caveat', cursive;
+  --font-mono: 'Caveat', cursive;
 }
 
 body {
   background: var(--paper);
   color: var(--ink);
-  font-family: 'Kavivanar', 'Noto Sans Tamil', cursive, sans-serif;
-  font-size: 16.5px;
+  font-family: 'Kavivanar', 'Caveat', cursive, sans-serif;
+  font-size: 17px;
   line-height: 1.85;
   overflow-x: hidden;
   -webkit-font-smoothing: antialiased;
+  text-rendering: optimizeLegibility;
+  text-shadow: 0.12px 0.12px 0 rgba(43, 33, 23, 0.22);
+}
+
+/* Universal handwritten text across entire interface */
+body, input, button, select, textarea, table, th, td, h1, h2, h3, h4, h5, h6, span, p, div, label, a {
+  font-family: 'Kavivanar', 'Caveat', cursive, sans-serif;
+}
+
+/* Handwritten numerals & technical markings */
+.num-hand, .font-mono, code, kbd, samp, pre {
+  font-family: 'Caveat', cursive !important;
+  font-size: 1.15em;
+  letter-spacing: 0.03em;
+}
+
+/* Map cinzel/serif headings to authentic cursive calligraphy */
+.font-cinzel {
+  font-family: 'Caveat', 'Kavivanar', cursive !important;
+  letter-spacing: 0.06em;
+}
+
+.font-serif, .font-sans {
+  font-family: 'Kavivanar', 'Caveat', cursive !important;
+}
+
+/* SVG Chart handwritten font */
+svg text, .chart text {
+  font-family: 'Kavivanar', 'Caveat', cursive !important;
 }
 
 ::selection {
@@ -246,22 +276,29 @@ body {
 }
 
 /* ── Handwritten Tamil Manuscript (Realistic Palm-Leaf) ── */
+.manuscript-container,
+.manuscript-container *,
+.manuscript-page,
+.manuscript-page * {
+  font-family: 'Kavivanar', 'Caveat', cursive !important;
+}
+
 .handwritten-tamil {
-  font-family: 'Kavivanar', 'Baloo Thambi 2', 'Noto Sans Tamil', cursive;
+  font-family: 'Kavivanar', cursive !important;
   font-weight: 400;
-  letter-spacing: 0.6px;
-  line-height: 2.0;
+  letter-spacing: 0.5px;
+  line-height: 1.95;
   color: #1e0f08;
-  text-shadow: 0.15px 0.15px 0 rgba(45, 18, 8, 0.45), 0.3px 0.3px 0.6px rgba(60, 30, 12, 0.18);
+  text-shadow: 0.15px 0.15px 0 rgba(45, 18, 8, 0.35);
   /* subtle ink bleed */
 }
 
 .handwritten-heading {
-  font-family: 'Kavivanar', 'Noto Serif Tamil', 'Noto Sans Tamil', cursive;
+  font-family: 'Kavivanar', 'Caveat', cursive !important;
   font-weight: 600;
-  letter-spacing: 0.8px;
-  color: #4a0f1a;
-  text-shadow: 0.4px 0.4px 0 rgba(110, 30, 35, 0.35);
+  letter-spacing: 0.7px;
+  color: #6b1426;
+  text-shadow: 0.3px 0.3px 0 rgba(107, 20, 38, 0.3);
 }
 
 .manuscript-page {
