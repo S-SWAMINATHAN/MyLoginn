@@ -52,7 +52,7 @@ export const TimeInput12h: React.FC<TimeInput12hProps> = ({ value, onChange }) =
   }
 
   const selectClass =
-    "bg-[#140b0e] border border-[#d4af37]/30 rounded-xl text-white text-sm py-2.5 px-3 focus:border-[#ffd700] focus:ring-1 focus:ring-[#ffd700] transition-all appearance-none text-center";
+    "bg-[#11162e] border border-[#d4af37]/30 rounded-xl text-white text-sm py-2.5 px-3 focus:border-[#ffd700] focus:ring-1 focus:ring-[#ffd700] transition-all appearance-none text-center";
 
   return (
     <div className="relative">
@@ -106,8 +106,8 @@ export const TimeInput12h: React.FC<TimeInput12hProps> = ({ value, onChange }) =
               }}
               className={`py-2 px-3 rounded-xl text-xs font-semibold border transition-all ${
                 ampm === period
-                  ? "bg-[#6b1426] border-[#ffd700] text-[#ffd700]"
-                  : "bg-[#140b0e] border-[#d4af37]/30 text-white/70 hover:bg-white/5"
+                  ? "bg-[#1e3a8a] border-[#ffd700] text-[#ffd700]"
+                  : "bg-[#11162e] border-[#d4af37]/30 text-white/70 hover:bg-white/5"
               }`}
             >
               {period}

@@ -5,13 +5,21 @@
 @tailwind utilities;
 
 :root {
-  --paper: #f0e5cc;
-  --paper-card: #fdfaf2;
-  --ink: #2b2117;
-  --ink-soft: #6f6049;
-  --ink-faint: #a3917a;
-  --red: #b03726;
-  --red-deep: #8e2b1c;
+  /* ── Light "sapphire & gold" site theme (from the MyLoginn logo) ──
+     Variable NAMES kept as-is (--paper, --ink, --red, ...) since ~15
+     components already reference them; only the VALUES changed, so
+     nothing needed to be renamed across the codebase. --red now holds
+     the sapphire accent (kept the name for backward compatibility). */
+  --paper: #eaf1fb;
+  --paper-card: #ffffff;
+  --ink: #161b33;
+  --ink-soft: #4a5578;
+  --ink-faint: #8b93b5;
+  --red: #2454c7;
+  --red-deep: #17348f;
+  --gold: #d4af37;
+  --gold-bright: #f2c94c;
+  --navy-deep: #11162e;
   --font-tamil: 'Kavivanar', 'Noto Sans Tamil', cursive, sans-serif;
   --font-script: 'Kavivanar', cursive;
   --font-cinzel: 'Cinzel', serif;
@@ -29,17 +37,19 @@ body {
 }
 
 ::selection {
-  background: rgba(176, 55, 38, 0.22);
-  color: #2b2117;
+  background: rgba(36, 84, 199, 0.18);
+  color: #161b33;
 }
 
-/* ── Paper Grain & Edge Aging Overlays (from design-1.html) ── */
+/* ── Paper Grain & Edge Aging Overlays (from design-1.html) ──
+   Kept as a very light grain over the new blue-white paper — opacity
+   lowered so it doesn't muddy the lighter background. */
 .grain {
   position: fixed;
   inset: -40px;
   pointer-events: none;
   z-index: 999;
-  opacity: 0.35;
+  opacity: 0.18;
   mix-blend-mode: multiply;
   background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='260' height='260'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.8' numOctaves='2' stitchTiles='stitch'/%3E%3CfeColorMatrix values='0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0.55 0'/%3E%3C/filter%3E%3Crect width='260' height='260' filter='url(%23n)'/%3E%3C/svg%3E");
 }
@@ -49,7 +59,24 @@ body {
   inset: 0;
   pointer-events: none;
   z-index: 998;
-  background: radial-gradient(ellipse 130% 100% at 50% 38%, rgba(0,0,0,0) 62%, rgba(94,72,40,0.14) 100%);
+  background: radial-gradient(ellipse 130% 100% at 50% 38%, rgba(0,0,0,0) 62%, rgba(17,22,46,0.06) 100%);
+}
+
+/* ── Twinkling stars behind hero sections (nods to the logo's zodiac ring) ── */
+.star-field {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  overflow: hidden;
+  z-index: 0;
+}
+.star-field span {
+  position: absolute;
+  width: 3px;
+  height: 3px;
+  border-radius: 50%;
+  background: var(--gold);
+  animation: twinkle 3.2s ease-in-out infinite;
 }
 
 /* ── Traditional Masthead Elements ── */
@@ -71,28 +98,40 @@ body {
 
 /* ── Hand-Drawn Wobbly Cards & Boxes (design-1.html style) ── */
 .hand-card {
-  background: rgba(253, 250, 242, 0.9);
-  border: 1.6px solid rgba(43, 33, 23, 0.45);
+  background: rgba(255, 255, 255, 0.92);
+  border: 1.6px solid rgba(22, 27, 51, 0.14);
   border-radius: 255px 15px 225px 15px/15px 225px 15px 255px;
-  box-shadow: 2px 4px 0 rgba(43, 33, 23, 0.08);
+  box-shadow: 2px 4px 0 rgba(36, 84, 199, 0.06);
   position: relative;
+  transition: transform 0.25s ease, box-shadow 0.25s ease;
+}
+
+.hand-card:hover {
+  transform: translateY(-2px);
+  box-shadow: 4px 10px 20px rgba(36, 84, 199, 0.1);
 }
 
 .hand-card-clean {
-  background: rgba(253, 250, 242, 0.95);
-  border: 1.5px solid rgba(43, 33, 23, 0.35);
+  background: rgba(255, 255, 255, 0.96);
+  border: 1.5px solid rgba(22, 27, 51, 0.12);
   border-radius: 16px;
-  box-shadow: 0 4px 15px rgba(43, 33, 23, 0.06);
+  box-shadow: 0 4px 15px rgba(36, 84, 199, 0.07);
+  transition: transform 0.25s ease, box-shadow 0.25s ease;
+}
+
+.hand-card-clean:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 10px 24px rgba(36, 84, 199, 0.12);
 }
 
 .facts {
   max-width: 720px;
   margin: 16px auto 6px;
   padding: 10px 24px;
-  border: 1.6px solid rgba(43, 33, 23, 0.55);
+  border: 1.6px solid rgba(22, 27, 51, 0.22);
   border-radius: 255px 15px 225px 15px/15px 225px 15px 255px;
   transform: rotate(-0.35deg);
-  background: rgba(120, 96, 58, 0.06);
+  background: rgba(36, 84, 199, 0.05);
   font-size: 16px;
   color: var(--ink);
 }
@@ -113,7 +152,7 @@ body {
   font-size: 16px;
   color: var(--ink);
   background: transparent;
-  border: 1.7px solid rgba(43, 33, 23, 0.6);
+  border: 1.7px solid rgba(22, 27, 51, 0.35);
   border-radius: 255px 15px 225px 15px/15px 225px 15px 255px;
   padding: 8px 22px;
   cursor: pointer;
@@ -125,7 +164,7 @@ body {
 
 .btn-hand:hover {
   transform: rotate(-1.2deg);
-  background: rgba(176, 55, 38, 0.08);
+  background: rgba(36, 84, 199, 0.08);
 }
 
 .btn-hand:active {
@@ -133,9 +172,9 @@ body {
 }
 
 .btn-hand-red {
-  background: #b03726;
+  background: var(--red);
   color: #ffffff !important;
-  border: 1.7px solid #8e2b1c;
+  border: 1.7px solid var(--red-deep);
   border-radius: 255px 15px 225px 15px/15px 225px 15px 255px;
   padding: 9px 24px;
   cursor: pointer;
@@ -144,13 +183,14 @@ body {
   gap: 8px;
   font-family: 'Kavivanar', cursive;
   font-weight: 500;
-  transition: transform 0.18s ease, background 0.18s;
-  box-shadow: 0 2px 8px rgba(176, 55, 38, 0.25);
+  transition: transform 0.18s ease, background 0.18s, box-shadow 0.18s;
+  box-shadow: 0 2px 10px rgba(36, 84, 199, 0.3);
 }
 
 .btn-hand-red:hover {
-  transform: rotate(-1deg);
-  background: #8e2b1c;
+  transform: rotate(-1deg) translateY(-1px);
+  background: var(--red-deep);
+  box-shadow: 0 6px 16px rgba(36, 84, 199, 0.35);
 }
 
 /* ── Hand-Ruled Table Styling ── */
@@ -166,7 +206,7 @@ body {
   color: var(--ink-soft);
   text-align: left;
   padding: 10px 14px;
-  border-bottom: 1.5px solid rgba(43, 33, 23, 0.35);
+  border-bottom: 1.5px solid rgba(22, 27, 51, 0.18);
   vertical-align: bottom;
 }
 
@@ -184,7 +224,7 @@ body {
 .table-hand td {
   padding: 10px 14px;
   font-size: 16px;
-  border-bottom: 1px dashed rgba(43, 33, 23, 0.18);
+  border-bottom: 1px dashed rgba(22, 27, 51, 0.14);
   color: var(--ink);
 }
 
@@ -193,7 +233,7 @@ body {
 }
 
 .table-hand tbody tr:hover {
-  background: rgba(43, 33, 23, 0.04);
+  background: rgba(36, 84, 199, 0.05);
 }
 
 .num-hand {
@@ -201,7 +241,10 @@ body {
   font-size: 18.5px;
 }
 
-/* Palm Leaf / Parchment legacy classes updated to warm style */
+/* Aged palm-leaf texture — kept fully untouched. This is the classical
+   "manuscript keepsake" background used only behind HandwrittenChartCanvas
+   (see jathagam-architecture.md §3.7); it isn't part of general site chrome
+   and should never be repainted along with the rest of the UI theme. */
 .palm-leaf-texture {
   background-color: #f6ebd6;
   background-image: 
@@ -212,20 +255,25 @@ body {
   box-shadow: 0 10px 35px -5px rgba(0, 0, 0, 0.15), inset 0 0 40px rgba(117, 72, 34, 0.1);
 }
 
+/* This one IS general site chrome (used by SinglePageReport, a plain card
+   wrapper — not the manuscript texture above), so it follows the new theme. */
 .palm-leaf-dark {
-  background: rgba(253, 250, 242, 0.95);
-  border: 1.6px solid rgba(43, 33, 23, 0.45);
+  background: rgba(255, 255, 255, 0.96);
+  border: 1.6px solid rgba(22, 27, 51, 0.14);
   border-radius: 255px 15px 225px 15px/15px 225px 15px 255px;
-  box-shadow: 2px 4px 0 rgba(43, 33, 23, 0.08);
+  box-shadow: 2px 4px 0 rgba(36, 84, 199, 0.06);
   color: var(--ink);
 }
 
 .gold-gradient-text {
-  color: var(--red-deep);
+  background: linear-gradient(90deg, var(--gold-bright), var(--gold));
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
 }
 
 .temple-border {
-  border: 1.6px solid rgba(43, 33, 23, 0.5);
+  border: 1.6px solid rgba(22, 27, 51, 0.2);
   border-radius: 255px 15px 225px 15px/15px 225px 15px 255px;
 }
 
@@ -235,14 +283,34 @@ body {
   height: 8px;
 }
 ::-webkit-scrollbar-track {
-  background: #f0e5cc;
+  background: var(--paper);
 }
 ::-webkit-scrollbar-thumb {
-  background: #a3917a;
+  background: var(--ink-faint);
   border-radius: 4px;
 }
 ::-webkit-scrollbar-thumb:hover {
-  background: #b03726;
+  background: var(--red);
+}
+
+/* ── Motion utilities (site chrome only) ── */
+@keyframes twinkle {
+  0%, 100% { opacity: 0.25; transform: scale(0.85); }
+  50% { opacity: 1; transform: scale(1.15); }
+}
+@keyframes fade-in-up {
+  0% { opacity: 0; transform: translateY(10px); }
+  100% { opacity: 1; transform: translateY(0); }
+}
+.animate-fade-in-up {
+  animation: fade-in-up 0.5s ease-out both;
+}
+.hover-lift {
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+.hover-lift:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 12px 24px rgba(36, 84, 199, 0.14);
 }
 
 /* ── Handwritten Tamil Manuscript (Realistic Palm-Leaf) ── */

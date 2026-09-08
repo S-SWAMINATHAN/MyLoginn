@@ -18,7 +18,7 @@ export const ShareCard: React.FC<ShareCardProps> = ({ chart, lang }) => {
     try {
       const canvas = await html2canvas(cardRef.current, {
         scale: 2,
-        backgroundColor: "#f0e5cc",
+        backgroundColor: "#eaf1fb",
       });
       const link = document.createElement("a");
       link.download = `${chart.name}_Jathagam_Card.png`;
@@ -48,7 +48,7 @@ export const ShareCard: React.FC<ShareCardProps> = ({ chart, lang }) => {
       {/* Actual Renderable Share Card */}
       <div
         ref={cardRef}
-        className="w-full max-w-sm rounded-2xl bg-[#f0e5cc] border-2 border-[var(--red)] p-5 shadow-md relative overflow-hidden text-[var(--ink)]"
+        className="w-full max-w-sm rounded-2xl bg-[#eaf1fb] border-2 border-[var(--red)] p-5 shadow-md relative overflow-hidden text-[var(--ink)]"
         style={{ borderRadius: "255px 15px 225px 15px / 15px 225px 15px 255px" }}
       >
         <div className="absolute top-2 right-3 text-3xl text-[rgba(176,55,38,0.15)] font-serif">ஸ்ரீ</div>

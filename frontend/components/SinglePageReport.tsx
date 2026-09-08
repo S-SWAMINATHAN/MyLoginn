@@ -63,13 +63,13 @@ export const SinglePageReport: React.FC<SinglePageReportProps> = ({ chart, lang 
     <div className="space-y-8 print:space-y-4">
       {/* Top bar: title + Download PDF */}
       <div className="flex items-center justify-between no-print">
-        <h2 className="text-xl sm:text-2xl font-bold font-cinzel text-white flex items-center gap-2">
-          <Sparkles className="w-5 h-5 text-[#ffd700]" />
+        <h2 className="text-xl sm:text-2xl font-bold font-cinzel text-[#161b33] flex items-center gap-2">
+          <Sparkles className="w-5 h-5 text-[#d4af37]" />
           {lang === "ta" ? "சுருக்க ஜாதகம் (ஒரு பக்கம்)" : "Single-Page Jathagam"}
         </h2>
         <button
           onClick={() => window.print()}
-          className="px-4 py-2 bg-[#6b1426] border border-[#ffd700]/60 rounded-xl text-xs font-bold text-[#ffd700] flex items-center gap-1.5 hover:scale-105 transition-all shadow-md"
+          className="px-4 py-2 bg-[#1e3a8a] border border-[#ffd700]/60 rounded-xl text-xs font-bold text-[#ffd700] flex items-center gap-1.5 hover:scale-105 transition-all shadow-md"
         >
           <Printer className="w-4 h-4" />
           <span>{lang === "ta" ? "PDF பதிவிறக்கம்" : "Download PDF"}</span>
@@ -79,8 +79,8 @@ export const SinglePageReport: React.FC<SinglePageReportProps> = ({ chart, lang 
       {/* 1. Core Identity Header */}
       <div className="palm-leaf-dark rounded-3xl p-6 border-2 border-[#d4af37]/40 shadow-2xl">
         <div className="flex flex-wrap items-baseline justify-between gap-2 border-b border-[#d4af37]/20 pb-4 mb-4">
-          <h3 className="text-2xl font-bold font-tamil text-white">{chart.name}</h3>
-          <p className="text-xs text-[#e0b87f] font-tamil">
+          <h3 className="text-2xl font-bold font-tamil text-[#161b33]">{chart.name}</h3>
+          <p className="text-xs text-[#c3d6f5] font-tamil">
             {chart.date_of_birth} | {chart.time_of_birth} | {chart.place} ({chart.timezone})
           </p>
         </div>
@@ -108,23 +108,6 @@ export const SinglePageReport: React.FC<SinglePageReportProps> = ({ chart, lang 
           <MiniFact label={lang === "ta" ? "யோகம்" : "Yogam"} value={lang === "ta" ? bd.yogam_ta : bd.yogam} />
           <MiniFact label={lang === "ta" ? "கரணம்" : "Karanam"} value={lang === "ta" ? bd.karanam_ta : bd.karanam} />
         </div>
-
-        {chart.bio_data && (chart.bio_data.father_name || chart.bio_data.mother_name || chart.bio_data.education || chart.bio_data.gothram) && (
-          <div className="mt-4 pt-3 border-t border-[#d4af37]/20 text-xs grid grid-cols-2 sm:grid-cols-4 gap-2 text-[#e0b87f] font-tamil">
-            {chart.bio_data.father_name && (
-              <div><strong className="text-white">தந்தை:</strong> {chart.bio_data.father_name}</div>
-            )}
-            {chart.bio_data.mother_name && (
-              <div><strong className="text-white">தாய்:</strong> {chart.bio_data.mother_name}</div>
-            )}
-            {chart.bio_data.gothram && (
-              <div><strong className="text-white">கோத்திரம்:</strong> {chart.bio_data.gothram}</div>
-            )}
-            {chart.bio_data.education && (
-              <div><strong className="text-white">கல்வி:</strong> {chart.bio_data.education}</div>
-            )}
-          </div>
-        )}
       </div>
 
       {/* 2. Charts side-by-side */}
@@ -135,20 +118,20 @@ export const SinglePageReport: React.FC<SinglePageReportProps> = ({ chart, lang 
 
       {/* 3. Current Dasa / Bhukti */}
       {sps?.current_period && (
-        <div className="rounded-2xl border-2 border-[#d4af37]/30 bg-[#160f12]/95 p-5 shadow-xl">
+        <div className="rounded-2xl border-2 border-[#d4af37]/30 bg-[#11162e]/95 p-5 shadow-xl">
           <h3 className="text-base font-bold text-[#ffd700] font-cinzel flex items-center gap-2 mb-3">
             <CalendarClock className="w-5 h-5" />
             {lang === "ta" ? "தற்போதைய திசை - புக்தி" : "Current Dasa / Bhukti"}
           </h3>
           <div className="flex flex-wrap gap-4 mb-3 text-sm">
-            <span className="px-3 py-1.5 rounded-lg bg-[#6b1426]/60 border border-[#ffd700]/40 font-bold text-[#ffd700]">
+            <span className="px-3 py-1.5 rounded-lg bg-[#1e3a8a]/60 border border-[#ffd700]/40 font-bold text-[#ffd700]">
               {lang === "ta" ? sps.current_period.mahadasha_lord_ta : sps.current_period.mahadasha_lord}{" "}
               {lang === "ta" ? "மகா திசை" : "Mahadasha"}
               <span className="block text-[10px] text-white/60 font-normal font-mono mt-0.5">
                 {sps.current_period.mahadasha_start} → {sps.current_period.mahadasha_end}
               </span>
             </span>
-            <span className="px-3 py-1.5 rounded-lg bg-[#25181c] border border-[#d4af37]/30 font-bold text-white">
+            <span className="px-3 py-1.5 rounded-lg bg-[#11162e] border border-[#d4af37]/30 font-bold text-white">
               {lang === "ta" ? sps.current_period.bhukti_lord_ta : sps.current_period.bhukti_lord}{" "}
               {lang === "ta" ? "புக்தி" : "Bhukti"}
               <span className="block text-[10px] text-white/60 font-normal font-mono mt-0.5">
@@ -156,14 +139,14 @@ export const SinglePageReport: React.FC<SinglePageReportProps> = ({ chart, lang 
               </span>
             </span>
           </div>
-          <p className="text-sm text-[#e0b87f] font-tamil leading-relaxed">
+          <p className="text-sm text-[#c3d6f5] font-tamil leading-relaxed">
             {lang === "ta" ? sps.current_period.micro_prediction_ta : sps.current_period.micro_prediction}
           </p>
         </div>
       )}
 
       {/* 4. Dosha Checklist */}
-      <div className="rounded-2xl border-2 border-[#d4af37]/30 bg-[#160f12]/95 p-5 shadow-xl">
+      <div className="rounded-2xl border-2 border-[#d4af37]/30 bg-[#11162e]/95 p-5 shadow-xl">
         <h3 className="text-base font-bold text-[#ffd700] font-cinzel flex items-center gap-2 mb-4">
           <ShieldAlert className="w-5 h-5" />
           {lang === "ta" ? "தோஷ பரிசோதனை" : "Essential Dosha Checklist"}
@@ -235,7 +218,7 @@ export const SinglePageReport: React.FC<SinglePageReportProps> = ({ chart, lang 
               </p>
 
               {st.period_start_date && st.period_end_date && (
-                <div className="flex flex-wrap gap-x-4 gap-y-1 mt-1 text-[10px] font-mono text-[#e0b87f]">
+                <div className="flex flex-wrap gap-x-4 gap-y-1 mt-1 text-[10px] font-mono text-[#c3d6f5]">
                   <span>
                     {lang === "ta" ? "தொடக்கம்" : "Start"}: {st.period_start_date}
                   </span>
@@ -261,7 +244,7 @@ export const SinglePageReport: React.FC<SinglePageReportProps> = ({ chart, lang 
 
       {/* 5. Life Scorecard */}
       {sps?.life_scorecard && sps.life_scorecard.length > 0 && (
-        <div className="rounded-2xl border-2 border-[#d4af37]/30 bg-[#160f12]/95 p-5 shadow-xl">
+        <div className="rounded-2xl border-2 border-[#d4af37]/30 bg-[#11162e]/95 p-5 shadow-xl">
           <h3 className="text-base font-bold text-[#ffd700] font-cinzel flex items-center gap-2 mb-4">
             <Sparkles className="w-5 h-5" />
             {lang === "ta" ? "வாழ்க்கை மதிப்பீடு" : "Life Scorecard"}
@@ -276,7 +259,7 @@ export const SinglePageReport: React.FC<SinglePageReportProps> = ({ chart, lang 
                       <Icon className="w-3.5 h-3.5 text-[#ffd700]" />
                       {lang === "ta" ? cat.category_ta : cat.category}
                     </span>
-                    <span className="text-[#e0b87f] font-mono">
+                    <span className="text-[#c3d6f5] font-mono">
                       {lang === "ta" ? cat.rating_ta : cat.rating}
                     </span>
                   </div>
@@ -298,7 +281,7 @@ export const SinglePageReport: React.FC<SinglePageReportProps> = ({ chart, lang 
 
       {/* 6. Remedies / Pariharam */}
       {sps?.remedies && (
-        <div className="rounded-2xl border-2 border-[#d4af37]/30 bg-[#160f12]/95 p-5 shadow-xl">
+        <div className="rounded-2xl border-2 border-[#d4af37]/30 bg-[#11162e]/95 p-5 shadow-xl">
           <h3 className="text-base font-bold text-[#ffd700] font-cinzel flex items-center gap-2 mb-4">
             <Gem className="w-5 h-5" />
             {lang === "ta" ? "பரிகாரங்கள்" : "Remedies (Pariharam)"}
@@ -322,7 +305,7 @@ export const SinglePageReport: React.FC<SinglePageReportProps> = ({ chart, lang 
               {lang === "ta" ? "எளிய பரிகாரங்கள்" : "Simple Rituals"}
             </p>
             <ul className="list-disc list-inside space-y-1 text-xs text-white/70 font-tamil">
-              {((lang === "ta" ? sps.remedies.simple_rituals_ta : sps.remedies.simple_rituals) || []).map((r: string, i: number) => (
+              {(lang === "ta" ? sps.remedies.simple_rituals_ta : sps.remedies.simple_rituals).map((r: any, i: number) => (
                 <li key={i}>{r}</li>
               ))}
             </ul>
@@ -338,7 +321,7 @@ const IdentityStat: React.FC<{ icon: React.ReactNode; label: string; value: stri
   label,
   value,
 }) => (
-  <div className="rounded-xl bg-[#25181c] border border-[#d4af37]/30 p-3">
+  <div className="rounded-xl bg-[#11162e] border border-[#d4af37]/30 p-3">
     <div className="flex items-center gap-1.5 text-[10px] text-[#d4af37] uppercase tracking-wide mb-1">
       {icon}
       <span>{label}</span>
@@ -348,7 +331,7 @@ const IdentityStat: React.FC<{ icon: React.ReactNode; label: string; value: stri
 );
 
 const MiniFact: React.FC<{ label: string; value: string }> = ({ label, value }) => (
-  <div className="rounded-lg bg-[#1b1013] border border-[#d4af37]/20 p-2.5">
+  <div className="rounded-lg bg-[#11162e] border border-[#d4af37]/20 p-2.5">
     <p className="text-[10px] text-[#d4af37]/80 uppercase tracking-wide mb-0.5">{label}</p>
     <p className="text-sm text-white font-tamil font-medium">{value}</p>
   </div>
