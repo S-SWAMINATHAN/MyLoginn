@@ -115,9 +115,161 @@ def calculate_ashtakavarga(
         sarvashtakavarga[((lagna_sign_num - 1 + h) % 12)] for h in range(12)
     ]
 
+    # Map planets occupying each sign (0-indexed sign 0..11)
+    planets_in_signs: Dict[int, List[str]] = {i: [] for i in range(12)}
+    for p_name, s_num in sign_positions.items():
+        if p_name != "Lagna":
+            planets_in_signs[(s_num - 1) % 12].append(p_name)
+
+    # Calculate Trikona Shodhana, Ekadhipatya Shodhana, and Pindas for each planet
+    trikona_shodhana_dict: Dict[str, List[int]] = {}
+    ekadhipatya_shodhana_dict: Dict[str, List[int]] = {}
+    pindas_dict: Dict[str, Dict[str, int]] = {}
+
+    for p_name, raw_bav in bhav_matrix.items():
+        tri_bav = compute_trikona_shodhana(raw_bav)
+        eka_bav = compute_ekadhipatya_shodhana(tri_bav, planets_in_signs)
+        pinda = compute_pinda_scores(eka_bav, sign_positions)
+
+        trikona_shodhana_dict[p_name] = tri_bav
+        ekadhipatya_shodhana_dict[p_name] = eka_bav
+        pindas_dict[p_name] = pinda
+
+    # Sarva Shodhita totals across all 7 planets
+    sarva_trikona = [sum(trikona_shodhana_dict[p][i] for p in bhav_matrix) for i in range(12)]
+    sarva_ekadhipatya = [sum(ekadhipatya_shodhana_dict[p][i] for p in bhav_matrix) for i in range(12)]
+    total_shodhya_pinda = sum(pindas_dict[p]["shodhya_pinda"] for p in pindas_dict)
+
     return {
         "bhinnashtakavarga": bhav_matrix,
         "sarvashtakavarga": sarvashtakavarga,
         "sarvashtakavarga_by_house": sarvashtakavarga_by_house,
-        "total_points": sum(sarvashtakavarga)
+        "total_points": sum(sarvashtakavarga),
+        "trikona_shodhana": trikona_shodhana_dict,
+        "ekadhipatya_shodhana": ekadhipatya_shodhana_dict,
+        "pindas": pindas_dict,
+        "sarva_trikona": sarva_trikona,
+        "sarva_ekadhipatya": sarva_ekadhipatya,
+        "total_shodhya_pinda": total_shodhya_pinda,
     }
+
+
+def compute_trikona_shodhana(bav: List[int]) -> List[int]:
+    """
+    Applies classical Parashara Trikona Shodhana (BPHS Ch. 67) to a 12-sign bindu array.
+    Trikona triads: (0,4,8), (1,5,9), (2,6,10), (3,7,11).
+    """
+    res = list(bav)
+    triad_groups = [
+        (0, 4, 8),   # Fire: Mesha, Simha, Dhanus
+        (1, 5, 9),   # Earth: Vrishabha, Kanya, Makara
+        (2, 6, 10),  # Air: Mithuna, Tula, Kumbha
+        (3, 7, 11),  # Water: Kataka, Vrischika, Meena
+    ]
+
+    for s1, s2, s3 in triad_groups:
+        v1, v2, v3 = res[s1], res[s2], res[s3]
+        if v1 == v2 == v3:
+            res[s1], res[s2], res[s3] = 0, 0, 0
+        elif v1 > 0 and v2 > 0 and v3 > 0:
+            m = min(v1, v2, v3)
+            res[s1], res[s2], res[s3] = v1 - m, v2 - m, v3 - m
+        else:
+            zeros = sum(1 for v in [v1, v2, v3] if v == 0)
+            if zeros == 1:
+                if v1 == 0:
+                    m = min(v2, v3)
+                    res[s2], res[s3] = v2 - m, v3 - m
+                elif v2 == 0:
+                    m = min(v1, v3)
+                    res[s1], res[s3] = v1 - m, v3 - m
+                else:
+                    m = min(v1, v2)
+                    res[s1], res[s2] = v1 - m, v2 - m
+            # If zeros == 2, no reduction
+    return res
+
+
+def compute_ekadhipatya_shodhana(tri_bav: List[int], planets_in_signs: Dict[int, List[str]]) -> List[int]:
+    """
+    Applies classical Parashara Ekadhipatya Shodhana (BPHS Ch. 68) for dual-ownership signs.
+    Pairs:
+    - Mars: Mesha (0) & Vrischika (7)
+    - Mercury: Mithuna (2) & Kanya (5)
+    - Jupiter: Dhanus (8) & Meena (11)
+    - Venus: Vrishabha (1) & Tula (6)
+    - Saturn: Makara (9) & Kumbha (10)
+    """
+    res = list(tri_bav)
+    pairs = [
+        (0, 7),   # Mars
+        (2, 5),   # Mercury
+        (8, 11),  # Jupiter
+        (1, 6),   # Venus
+        (9, 10),  # Saturn
+    ]
+
+    for s1, s2 in pairs:
+        v1, v2 = res[s1], res[s2]
+        if v1 == 0 and v2 == 0:
+            continue
+        p1 = len(planets_in_signs.get(s1, [])) > 0
+        p2 = len(planets_in_signs.get(s2, [])) > 0
+
+        if p1 and p2:
+            # Both occupied: no reduction
+            continue
+        elif not p1 and not p2:
+            # Neither occupied
+            if v1 == v2:
+                res[s1], res[s2] = 0, 0
+            elif v1 > v2:
+                res[s2] = 0
+            else:
+                res[s1] = 0
+        elif p1 and not p2:
+            # s1 occupied, s2 unoccupied
+            if v2 > v1:
+                res[s2] = v1
+            else:
+                res[s2] = 0
+        elif not p1 and p2:
+            # s2 occupied, s1 unoccupied
+            if v1 > v2:
+                res[s1] = v2
+            else:
+                res[s1] = 0
+
+    return res
+
+
+def compute_pinda_scores(eka_bav: List[int], sign_positions: Dict[str, int]) -> Dict[str, int]:
+    """
+    Calculates Rasi Pinda, Graha Pinda, and Shodhya Pinda (BPHS Ch. 73).
+    Rasi Multipliers: [7, 10, 8, 4, 10, 5, 7, 8, 9, 5, 11, 12] for signs 1-12.
+    Graha Multipliers: Sun: 5, Moon: 5, Mars: 8, Mercury: 5, Jupiter: 10, Venus: 7, Saturn: 5.
+    """
+    rasi_gunakaras = [7, 10, 8, 4, 10, 5, 7, 8, 9, 5, 11, 12]
+    graha_gunakaras = {
+        "Sun": 5, "Moon": 5, "Mars": 8, "Mercury": 5,
+        "Jupiter": 10, "Venus": 7, "Saturn": 5
+    }
+
+    # 1. Rasi Pinda
+    rasi_pinda = sum(eka_bav[i] * rasi_gunakaras[i] for i in range(12))
+
+    # 2. Graha Pinda
+    graha_pinda = 0
+    for p_name, g_mult in graha_gunakaras.items():
+        p_sign = sign_positions.get(p_name, 1) - 1  # 0-indexed
+        bindus_in_sign = eka_bav[p_sign]
+        graha_pinda += bindus_in_sign * g_mult
+
+    shodhya_pinda = rasi_pinda + graha_pinda
+
+    return {
+        "rasi_pinda": rasi_pinda,
+        "graha_pinda": graha_pinda,
+        "shodhya_pinda": shodhya_pinda
+    }
+

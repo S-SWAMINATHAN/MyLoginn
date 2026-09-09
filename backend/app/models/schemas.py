@@ -217,18 +217,30 @@ class DoshaResult(BaseModel):
     name_ta: str
     present: bool
     severity: str  # Low, Moderate, High, Cancelled, None
+    severity_ta: Optional[str] = None
+    severity_score: Optional[int] = None
+    mars_from_lagna: Optional[int] = None
+    mars_from_moon: Optional[int] = None
+    mars_from_venus: Optional[int] = None
     description: str
     description_ta: str
     remedies: List[str] = []
     remedies_ta: List[str] = []
     classical_source: str
     cancellation_rules_applied: List[str] = []
+    cancellation_rules_audit: Optional[List[Dict[str, Any]]] = None
 
 class AshtakavargaResult(BaseModel):
     bhinnashtakavarga: Dict[str, List[int]]  # Planet -> [12 scores for Mesha to Meena]
     sarvashtakavarga: List[int]  # 12 scores for signs 1-12
     sarvashtakavarga_by_house: List[int]  # 12 scores from Lagna house 1 to 12
     total_points: int = 337
+    trikona_shodhana: Optional[Dict[str, List[int]]] = None
+    ekadhipatya_shodhana: Optional[Dict[str, List[int]]] = None
+    pindas: Optional[Dict[str, Dict[str, int]]] = None
+    sarva_trikona: Optional[List[int]] = None
+    sarva_ekadhipatya: Optional[List[int]] = None
+    total_shodhya_pinda: Optional[int] = None
 
 class SthanaBalaSub(BaseModel):
     uchcha_bala: float = 0.0

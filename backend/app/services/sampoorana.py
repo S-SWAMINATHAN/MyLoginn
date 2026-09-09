@@ -437,11 +437,21 @@ def calculate_sampoorana_details(
 
 def compute_shodashavargas(planets: List[Dict[str, Any]], lagna_deg: float) -> Dict[str, Dict[int, List[Dict[str, Any]]]]:
     """
-    Computes key divisional charts:
-    D1 Rasi, D2 Hora, D3 Drekkana, D4 Chaturthamsa, D7 Saptamsa, D9 Navamsa, D10 Dasamsa, D12 Dvadasamsa, D16, D30, D60.
+    Computes all 16 Classical Parashara Shodashavargas (BPHS Ch. 6):
+    D1 (Rasi), D2 (Hora), D3 (Drekkana), D4 (Chaturthamsa), D7 (Saptamsa),
+    D9 (Navamsa), D10 (Dasamsa), D12 (Dvadasamsa), D16 (Shodasamsa),
+    D20 (Vimsamsa), D24 (Chaturvimsamsa), D27 (Saptavimsamsa),
+    D30 (Trimsamsa), D40 (Khavedamsa), D45 (Akshavedamsa), D60 (Shashtiamsa).
     """
     all_bodies = list(planets)
-    # Map sign 1-12 for each varga
+    if lagna_deg is not None and not any(b.get("name") == "Lagna" for b in all_bodies):
+        all_bodies.append({
+            "name": "Lagna",
+            "symbol": "லக்",
+            "total_degree": lagna_deg,
+            "navamsa_sign": (int(lagna_deg // (360.0 / 108)) % 12) + 1
+        })
+
     vargas: Dict[str, Dict[int, List[Dict[str, Any]]]] = {
         "D1": {i: [] for i in range(1, 13)},
         "D2_Hora": {i: [] for i in range(1, 13)},
@@ -452,28 +462,36 @@ def compute_shodashavargas(planets: List[Dict[str, Any]], lagna_deg: float) -> D
         "D10_Dasamsa": {i: [] for i in range(1, 13)},
         "D12_Dvadasamsa": {i: [] for i in range(1, 13)},
         "D16_Shodadamsa": {i: [] for i in range(1, 13)},
+        "D20_Vimsamsa": {i: [] for i in range(1, 13)},
+        "D24_Chaturvimsamsa": {i: [] for i in range(1, 13)},
+        "D27_Saptavimsamsa": {i: [] for i in range(1, 13)},
         "D30_Trimsamsa": {i: [] for i in range(1, 13)},
+        "D40_Khavedamsa": {i: [] for i in range(1, 13)},
+        "D45_Akshavedamsa": {i: [] for i in range(1, 13)},
         "D60_Shashtiamsa": {i: [] for i in range(1, 13)},
     }
 
     for b in all_bodies:
-        deg = b.get("total_degree", 0.0)
+        deg = b.get("total_degree", 0.0) % 360.0
         sign_1 = int(deg // 30.0) + 1
         deg_in_sign = deg % 30.0
+        is_odd = (sign_1 % 2 != 0)
+        sign_mob = (sign_1 - 1) % 3  # 0=Chara (Movable), 1=Sthira (Fixed), 2=Ubhaya (Dual)
+        element_idx = (sign_1 - 1) % 4  # 0=Fire, 1=Earth, 2=Air, 3=Water
+
         p_tag = {"name": b.get("name"), "symbol": b.get("symbol", b.get("name")[:2])}
 
-        # D1: Rasi
+        # 1. D1: Rasi
         vargas["D1"][sign_1].append(p_tag)
 
-        # D2: Hora (Parashara: Odd sign 0-15 Sun/Leo 5, 15-30 Moon/Cancer 4; Even sign 0-15 Cancer 4, 15-30 Leo 5)
-        is_odd = (sign_1 % 2 != 0)
+        # 2. D2: Hora (Parashara: Odd sign 0-15 Sun/Leo 5, 15-30 Moon/Cancer 4; Even sign 0-15 Cancer 4, 15-30 Leo 5)
         if is_odd:
             d2_sign = 5 if deg_in_sign < 15.0 else 4
         else:
             d2_sign = 4 if deg_in_sign < 15.0 else 5
         vargas["D2_Hora"][d2_sign].append(p_tag)
 
-        # D3: Drekkana (0-10 same, 10-20 5th, 20-30 9th)
+        # 3. D3: Drekkana (0-10 same, 10-20 5th, 20-30 9th)
         if deg_in_sign < 10.0:
             d3_sign = sign_1
         elif deg_in_sign < 20.0:
@@ -482,65 +500,95 @@ def compute_shodashavargas(planets: List[Dict[str, Any]], lagna_deg: float) -> D
             d3_sign = ((sign_1 - 1 + 8) % 12) + 1
         vargas["D3_Drekkana"][d3_sign].append(p_tag)
 
-        # D4: Chaturthamsa (0-7.5 same, 7.5-15 4th, 15-22.5 7th, 22.5-30 10th)
+        # 4. D4: Chaturthamsa (0-7.5 same, 7.5-15 4th, 15-22.5 7th, 22.5-30 10th)
         d4_step = int(deg_in_sign // 7.5)
         d4_sign = ((sign_1 - 1 + d4_step * 3) % 12) + 1
         vargas["D4_Chaturthamsa"][d4_sign].append(p_tag)
 
-        # D7: Saptamsa (Odd sign starts from same sign, Even sign starts from 7th)
+        # 5. D7: Saptamsa (Odd starts from same, Even starts from 7th)
         d7_step = int(deg_in_sign // (30.0 / 7.0))
         d7_start = sign_1 if is_odd else (((sign_1 - 1 + 6) % 12) + 1)
         d7_sign = ((d7_start - 1 + d7_step) % 12) + 1
         vargas["D7_Saptamsa"][d7_sign].append(p_tag)
 
-        # D9: Navamsa
-        d9_sign = b.get("navamsa_sign") or (int(deg // (360.0 / 108)) % 12 + 1)
+        # 6. D9: Navamsa
+        d9_sign = b.get("navamsa_sign") or ((int(deg // (360.0 / 108)) % 12) + 1)
         vargas["D9_Navamsa"][d9_sign].append(p_tag)
 
-        # D10: Dasamsa (Odd starts from same, Even starts from 9th)
+        # 7. D10: Dasamsa (Odd starts from same, Even starts from 9th)
         d10_step = int(deg_in_sign // 3.0)
         d10_start = sign_1 if is_odd else (((sign_1 - 1 + 8) % 12) + 1)
         d10_sign = ((d10_start - 1 + d10_step) % 12) + 1
         vargas["D10_Dasamsa"][d10_sign].append(p_tag)
 
-        # D12: Dvadasamsa (starts from same sign + step 0..11)
+        # 8. D12: Dvadasamsa (starts from same sign + step 0..11)
         d12_step = int(deg_in_sign // 2.5)
         d12_sign = ((sign_1 - 1 + d12_step) % 12) + 1
         vargas["D12_Dvadasamsa"][d12_sign].append(p_tag)
 
-        # D16: Shodadamsa (Chara from Aries 1, Sthira from Leo 5, Ubhaya from Sag 9)
-        sign_mob = (sign_1 - 1) % 3  # 0=Chara, 1=Sthira, 2=Ubhaya
+        # 9. D16: Shodasamsa (Chara from Aries 1, Sthira from Leo 5, Ubhaya from Sag 9)
         d16_start = 1 if sign_mob == 0 else (5 if sign_mob == 1 else 9)
         d16_step = int(deg_in_sign // (30.0 / 16.0))
         d16_sign = ((d16_start - 1 + d16_step) % 12) + 1
         vargas["D16_Shodadamsa"][d16_sign].append(p_tag)
 
-        # D30: Trimsamsa (Parashara standard degree brackets)
+        # 10. D20: Vimsamsa (Movable from Aries 1, Fixed from Sag 9, Dual from Leo 5)
+        d20_start = 1 if sign_mob == 0 else (9 if sign_mob == 1 else 5)
+        d20_step = int(deg_in_sign // 1.5)
+        d20_sign = ((d20_start - 1 + d20_step) % 12) + 1
+        vargas["D20_Vimsamsa"][d20_sign].append(p_tag)
+
+        # 11. D24: Chaturvimsamsa (Odd from Leo 5, Even from Cancer 4)
+        d24_start = 5 if is_odd else 4
+        d24_step = int(deg_in_sign // 1.25)
+        d24_sign = ((d24_start - 1 + d24_step) % 12) + 1
+        vargas["D24_Chaturvimsamsa"][d24_sign].append(p_tag)
+
+        # 12. D27: Saptavimsamsa (Fire from Aries 1, Earth from Cancer 4, Air from Libra 7, Water from Cap 10)
+        d27_starts = [1, 4, 7, 10]
+        d27_start = d27_starts[element_idx]
+        d27_step = int(deg_in_sign // (30.0 / 27.0))
+        d27_sign = ((d27_start - 1 + d27_step) % 12) + 1
+        vargas["D27_Saptavimsamsa"][d27_sign].append(p_tag)
+
+        # 13. D30: Trimsamsa (Parashara classical degree brackets)
         if is_odd:
             if deg_in_sign < 5.0:
-                d30_sign = 1  # Mars / Aries
+                d30_sign = 1   # Mars / Aries
             elif deg_in_sign < 10.0:
-                d30_sign = 11 # Saturn / Aquarius
+                d30_sign = 11  # Saturn / Aquarius
             elif deg_in_sign < 18.0:
-                d30_sign = 9  # Jupiter / Sagittarius
+                d30_sign = 9   # Jupiter / Sagittarius
             elif deg_in_sign < 25.0:
-                d30_sign = 3  # Mercury / Gemini
+                d30_sign = 3   # Mercury / Gemini
             else:
-                d30_sign = 7  # Venus / Libra
+                d30_sign = 7   # Venus / Libra
         else:
             if deg_in_sign < 5.0:
-                d30_sign = 2  # Venus / Taurus
+                d30_sign = 2   # Venus / Taurus
             elif deg_in_sign < 12.0:
-                d30_sign = 6  # Mercury / Virgo
+                d30_sign = 6   # Mercury / Virgo
             elif deg_in_sign < 20.0:
-                d30_sign = 12 # Jupiter / Pisces
+                d30_sign = 12  # Jupiter / Pisces
             elif deg_in_sign < 25.0:
-                d30_sign = 10 # Saturn / Capricorn
+                d30_sign = 10  # Saturn / Capricorn
             else:
-                d30_sign = 8  # Mars / Scorpio
+                d30_sign = 8   # Mars / Scorpio
         vargas["D30_Trimsamsa"][d30_sign].append(p_tag)
 
-        # D60: Shashtiamsa (starts from sign_1, step 0..59)
+        # 14. D40: Khavedamsa (Odd from Aries 1, Even from Libra 7)
+        d40_start = 1 if is_odd else 7
+        d40_step = int(deg_in_sign // 0.75)
+        d40_sign = ((d40_start - 1 + d40_step) % 12) + 1
+        vargas["D40_Khavedamsa"][d40_sign].append(p_tag)
+
+        # 15. D45: Akshavedamsa (Movable from Aries 1, Fixed from Leo 5, Dual from Sag 9)
+        d45_start = 1 if sign_mob == 0 else (5 if sign_mob == 1 else 9)
+        d45_step = int(deg_in_sign // (30.0 / 45.0))
+        d45_sign = ((d45_start - 1 + d45_step) % 12) + 1
+        vargas["D45_Akshavedamsa"][d45_sign].append(p_tag)
+
+        # 16. D60: Shashtiamsa (starts from sign_1, step 0..59)
         d60_step = int(deg_in_sign // 0.5)
         d60_sign = ((sign_1 - 1 + d60_step) % 12) + 1
         vargas["D60_Shashtiamsa"][d60_sign].append(p_tag)

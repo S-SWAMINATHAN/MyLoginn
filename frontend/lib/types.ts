@@ -171,17 +171,37 @@ export interface YogaResult {
   planets_involved: string[];
 }
 
+export interface DoshaCancellationAudit {
+  rule_no: number;
+  rule_ta: string;
+  condition_ta: string;
+  is_applicable: boolean;
+  explanation_ta: string;
+}
+
 export interface DoshaResult {
   name: string;
   name_ta: string;
   present: boolean;
   severity: string;
+  severity_ta?: string;
+  severity_score?: number;
+  mars_from_lagna?: number;
+  mars_from_moon?: number;
+  mars_from_venus?: number;
   description: string;
   description_ta: string;
   remedies: string[];
   remedies_ta: string[];
   classical_source: string;
   cancellation_rules_applied: string[];
+  cancellation_rules_audit?: DoshaCancellationAudit[];
+}
+
+export interface PindaScore {
+  rasi_pinda: number;
+  graha_pinda: number;
+  shodhya_pinda: number;
 }
 
 export interface AshtakavargaResult {
@@ -189,6 +209,12 @@ export interface AshtakavargaResult {
   sarvashtakavarga: number[];
   sarvashtakavarga_by_house: number[];
   total_points: number;
+  trikona_shodhana?: Record<string, number[]>;
+  ekadhipatya_shodhana?: Record<string, number[]>;
+  pindas?: Record<string, PindaScore>;
+  sarva_trikona?: number[];
+  sarva_ekadhipatya?: number[];
+  total_shodhya_pinda?: number;
 }
 
 export interface KutaDetail {

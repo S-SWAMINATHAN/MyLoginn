@@ -118,6 +118,17 @@ Keep environment parity high (same Docker image promoted through stages) so "wor
 
 This project maintains a changelog following the [Keep a Changelog](https://keepachangelog.com/) convention and [Semantic Versioning](https://semver.org/). Every merged change that affects behavior, calculation logic, or the API contract gets an entry — not just releases.
 
+### [2.0.0] — 2026-09-09
+#### Added
+- **50-பக்க சம்பூர்ண ஜாதக மகா காண்டம் (50-Page Vedic Jathaga Grand Volume & Manuscript)**:
+  - Built an exhaustive 50-page traditional A4 manuscript book (`frontend/components/HandwrittenManuscript.tsx` and 14 chapter modules in `frontend/components/manuscript/`) with zero text overlapping, precise 794px × 1123px discrete page wrappers, and sequential PDF export.
+  - **தமிழ் தாய் வாழ்த்து & கடவுள் வாழ்த்து (Invocations)**: Full authentic Tamil Thai Vazhthu poem (Manonmaniam Sundaranar), Lord Ganesha Stuti (Thirumandiram), Lord Muruga Stuti (Nalvazhi), Goddess Saraswati Vandanam, and Sri Dakshinamurthy Stotram on Pages 1–3.
+  - **குஜ (செவ்வாய்) தோஷ மகா ஆய்வு & 14 சாஸ்திர விதிவிலக்குகள் (Kuja Dosha 14 Cancellation Rules Audit)**: Exhaustive 3-page treatise (Pages 28–30) computing Mars placement from Lagna, Moon, and Venus, severity percentages (100%, 50%, 25%, 0%), and a comprehensive 14 classical South Indian cancellation rules audit matrix with automated conditional verification (`backend/app/services/yoga_dosha.py`).
+  - **அஷ்டகவர்க்க மகா காண்டம் & சோத்ய பிண்ட கணிதம் (Ashtakavarga Master Reductions & Pindas)**: 7-page chapter (Pages 21–27) featuring the 337-point Sarvashtakavarga Chakra, 8-donor Bhinnashtakavarga tables for all 7 planets and Lagna, Trikona Shodhana, Ekadhipatya Shodhana, and Rasi Pinda, Graha Pinda, and Shodhya Pinda with classical multipliers from BPHS Ch. 67–73 (`backend/app/services/ashtakavarga.py`).
+  - **16 வர்க்க சக்கரங்கள் & பாவக சலிதம் (Complete 16 Shodashavarga Chakras & Bhava Chalit)**: 7-page chapter (Pages 11–17) computing and rendering all 16 divisional charts (D1 Rasi, D2 Hora, D3 Drekkana, D4 Chaturthamsa, D7 Saptamsa, D9 Navamsa, D10 Dasamsa, D12 Dvadasamsa, D16 Sodasamsa, D20 Vimsamsa, D24 Chaturvimsamsa, D27 Saptavimsamsa, D30 Trimsamsa, D40 Khavedamsa, D45 Akshavedamsa, D60 Shashtiamsa) plus Sripati Bhava Chalit, Vargottama, and Vaisheshikamsa dignity (`backend/app/services/sampoorana.py`).
+  - **வாக்கியம் & திருக்கணிதம் இருமுறை இயக்கம் (Dual System Support)**: Seamless selection and distinct mathematical rendering for both வாக்கிய பஞ்சாங்கம் (Surya Siddhanta) and திருக்கணித பஞ்சாங்கம் (Chitrapaksha Lahiri) with 6 historical eras and dynamic Nazhigai/Vinazhigai metrics.
+  - **ஊடாடும் பக்க வழிசெலுத்தல் & உயர்ரக PDF (Interactive 50-Page Navigator & Export)**: Interactive 14-chapter jump bar, page dropdown selector (Pages 1–50), Previous/Next controls, live crisp preview, and 50-page continuous high-res A4 PDF generator (`frontend/components/HandwrittenPdfButton.tsx`).
+
 ### [1.5.0] — 2026-09-08
 #### Added
 - **வாக்கிய பஞ்சாங்கம் முழுப் பக்கம் (Complete Full-Page Traditional Vakhyam Panchangam Engine & Manuscript)**:

@@ -424,80 +424,235 @@ def detect_doshas(lagna_sign: int, planets_by_name: Dict[str, Dict[str, Any]]) -
     saturn = planets_by_name.get("Saturn")
 
     # 1. Sevvai / Mangal / Kuja Dosham (South Indian Classical Standard)
-    # Houses: 2, 4, 7, 8, 12 from Lagna, Moon, or Venus
+    # Evaluates houses 1, 2, 4, 7, 8, 12 from Lagna, Moon, and Venus
     if mars:
         m_from_lagna = ((mars["rasi_number"] - lagna_sign) % 12) + 1
         m_from_moon = ((mars["rasi_number"] - moon["rasi_number"]) % 12) + 1 if moon else 0
         m_from_venus = ((mars["rasi_number"] - venus["rasi_number"]) % 12) + 1 if venus else 0
 
-        dosha_houses = (2, 4, 7, 8, 12)
+        dosha_houses = (1, 2, 4, 7, 8, 12)
         has_lagna_dosha = m_from_lagna in dosha_houses
         has_moon_dosha = m_from_moon in dosha_houses
         has_venus_dosha = m_from_venus in dosha_houses
 
-        if has_lagna_dosha or has_moon_dosha or has_venus_dosha:
-            # Check South Indian Classical Cancellation Rules:
-            # 1. Mars in Aries, Scorpio, Capricorn, Leo, Sagittarius, Pisces
-            # 2. Mars conjunct or aspected by Jupiter or Moon
-            # 3. Mars in 2nd in Gemini/Virgo, 4th in Aries/Scorpio, 7th in Capricorn/Cancer, 8th in Sagittarius/Pisces, 12th in Taurus/Libra
-            cancellations = []
-            if mars["rasi_number"] in (1, 8, 10, 5, 9, 12):
-                cancellations.append(f"Mars is in {mars['rasi']} (Own / Exalted / Friendly sign).")
-            if jupiter and (((jupiter["rasi_number"] - mars["rasi_number"]) % 12) + 1 in (1, 5, 7, 9)):
-                cancellations.append("Mars receives the auspicious aspect/conjunction of Guru (Jupiter).")
-            if moon and moon["rasi_number"] == mars["rasi_number"]:
-                cancellations.append("Mars is conjoined with Chandra (Chandra-Mangala union cancels dosha).")
-            if m_from_lagna == 2 and mars["rasi_number"] in (3, 6):
-                cancellations.append("Mars in 2nd house in Gemini/Virgo cancels dosha.")
-            if m_from_lagna == 4 and mars["rasi_number"] in (1, 8):
-                cancellations.append("Mars in 4th house in Aries/Scorpio cancels dosha.")
-            if m_from_lagna == 7 and mars["rasi_number"] in (4, 10):
-                cancellations.append("Mars in 7th house in Cancer/Capricorn cancels dosha.")
-            if m_from_lagna == 8 and mars["rasi_number"] in (9, 12):
-                cancellations.append("Mars in 8th house in Sagittarius/Pisces cancels dosha.")
-            if m_from_lagna == 12 and mars["rasi_number"] in (2, 7):
-                cancellations.append("Mars in 12th house in Taurus/Libra cancels dosha.")
+        m_sign = mars["rasi_number"]
+        m_rasi_name = mars.get("rasi", "")
 
-            is_cancelled = len(cancellations) > 0
-            severity = "Low / Cancelled" if is_cancelled else ("High" if has_lagna_dosha and has_moon_dosha else "Moderate")
+        # 14 Classical South Indian Cancellation Rules Evaluation (சாஸ்திர விதிவிலக்குகள்)
+        rules_eval = []
 
-            doshas.append({
-                "name": "Sevvai Dosham (Mangal Dosha)",
-                "name_ta": "செவ்வாய் தோஷம்",
-                "present": not is_cancelled,
-                "severity": severity,
-                "description": f"Mars is positioned in house {m_from_lagna} from Lagna." +
-                               (f" However, the dosha is nullified due to classical exceptions: {'; '.join(cancellations)}" if is_cancelled
-                                else " Requires matching with a compatible Sevvai Dosha horoscope."),
-                "description_ta": f"செவ்வாய் பகவான் லக்னத்திற்கு {m_from_lagna}-ஆம் இடத்தில் அமர்ந்துள்ளார்." +
-                                  (f" எனினும் சாஸ்திர விதிகளின்படி தோஷ நிவர்த்தி பெற்றுள்ளது: {'; '.join(cancellations)}" if is_cancelled
-                                   else " பொருத்தமான செவ்வாய் தோஷ ஜாதகத்துடன் இணைப்பது உத்தமம்."),
-                "remedies": [
-                    "Worship Lord Muruga at Vaitheeswaran Koil / Palani.",
-                    "Recite Skanda Shasti Kavacham on Tuesdays.",
-                    "Light ghee lamp with red wick at temple on Tuesdays."
-                ],
-                "remedies_ta": [
-                    "வைத்தீஸ்வரன் கோவில் / பழனி முருகன் தரிசனம் மற்றும் வழிபாடு.",
-                    "செவ்வாய்க்கிழமைகளில் கந்த சஷ்டி கவசம் பாராயணம் செய்தல்.",
-                    "செவ்வாய்க்கிழமைகளில் துர்க்கை அல்லது முருகனுக்கு நெய் தீபம் ஏற்றுதல்."
-                ],
-                "classical_source": "Brihat Parashara Hora Shastra & Tamil Jathaga Chandrika",
-                "cancellation_rules_applied": cancellations
-            })
+        # Rule 1: Own or Exalted sign (Aries, Scorpio, Capricorn)
+        r1_pass = m_sign in (1, 8, 10)
+        rules_eval.append({
+            "rule_no": 1,
+            "rule_ta": "ஆட்சி / உச்ச ராசி விதிவிலக்கு",
+            "condition_ta": "செவ்வாய் மேஷம், விருச்சிகத்தில் ஆட்சி அல்லது மகரத்தில் உச்சம் பெறுதல்",
+            "is_applicable": r1_pass,
+            "explanation_ta": f"செவ்வாய் {mars.get('rasi_ta', m_rasi_name)}-ல் உள்ளதால் " + ("ஆட்சி/உச்சம் பெற்று தோஷ நிவர்த்தி பெறுகிறது." if r1_pass else "ஆட்சி/உச்சம் பெறவில்லை.")
+        })
+
+        # Rule 2: Friendly signs (Leo, Sagittarius, Pisces)
+        r2_pass = m_sign in (5, 9, 12)
+        rules_eval.append({
+            "rule_no": 2,
+            "rule_ta": "நட்பு ராசி விதிவிலக்கு",
+            "condition_ta": "செவ்வாய் சிம்மம், தனுசு, மீனம் ஆகிய நட்பு ராசிகளில் அமர்தல்",
+            "is_applicable": r2_pass,
+            "explanation_ta": f"செவ்வாய் {mars.get('rasi_ta', m_rasi_name)}-ல் உள்ளதால் " + ("நட்பு ஸ்தானம் பெற்று தோஷம் குறைகிறது." if r2_pass else "நட்பு ராசியில் அமையவில்லை.")
+        })
+
+        # Rule 3: Conjunction or Aspect of Jupiter (Guru)
+        r3_pass = False
+        if jupiter:
+            j_to_m = ((mars["rasi_number"] - jupiter["rasi_number"]) % 12) + 1
+            # Guru aspects 5, 7, 9 and conjoins 1
+            r3_pass = j_to_m in (1, 5, 7, 9)
+        rules_eval.append({
+            "rule_no": 3,
+            "rule_ta": "குரு பார்வை / சேர்க்கை விதிவிலக்கு",
+            "condition_ta": "குரு பகவானின் சேர்க்கை அல்லது 5, 7, 9-ஆம் பார்வை செவ்வாய்க்கு அமைதல்",
+            "is_applicable": r3_pass,
+            "explanation_ta": "தேவகுருவின் சுப பார்வை/சேர்க்கை செவ்வாய்க்கு கிட்டியுள்ளதால் தோஷ பங்கம் உண்டாகிறது." if r3_pass else "குருவின் சுப பார்வை/சேர்க்கை செவ்வாய்க்கு அமையவில்லை."
+        })
+
+        # Rule 4: Conjunction with Moon (Chandra-Mangala Yoga)
+        r4_pass = bool(moon and moon["rasi_number"] == m_sign)
+        rules_eval.append({
+            "rule_no": 4,
+            "rule_ta": "சந்திர சேர்க்கை (சந்திர மங்கள யோகம்)",
+            "condition_ta": "சந்திரனுடன் செவ்வாய் ஒரே ராசியில் இணைந்திருத்தல்",
+            "is_applicable": r4_pass,
+            "explanation_ta": "சந்திர மங்கள யோகம் அமைந்து தோஷ கடுமை முற்றிலுமாக நீங்குகிறது." if r4_pass else "சந்திரனுடன் சேர்க்கை இல்லை."
+        })
+
+        # Rule 5: Conjunction or Aspect of Sun or Saturn
+        r5_pass = bool(sun and sun["rasi_number"] == m_sign) or bool(saturn and saturn["rasi_number"] == m_sign)
+        rules_eval.append({
+            "rule_no": 5,
+            "rule_ta": "சூரியன் / சனி சேர்க்கை",
+            "condition_ta": "சூரியன் அல்லது சனியுடன் செவ்வாய் இணைந்திருத்தல்",
+            "is_applicable": r5_pass,
+            "explanation_ta": "சூரியன்/சனி சேர்க்கையால் செவ்வாய் தோஷ வீரியம் மட்டுப்படுகிறது." if r5_pass else "சூரியன்/சனி சேர்க்கை இல்லை."
+        })
+
+        # Rule 6: Mars in 2nd house in Gemini or Virgo
+        r6_pass = (m_from_lagna == 2 and m_sign in (3, 6))
+        rules_eval.append({
+            "rule_no": 6,
+            "rule_ta": "2-ஆம் இட புதன் வீடுகள்",
+            "condition_ta": "2-ஆம் இடத்துச் செவ்வாய் மிதுனம் அல்லது கன்னியில் அமைதல்",
+            "is_applicable": r6_pass,
+            "explanation_ta": "2-ஆம் பாவத்தில் புதனின் வீடுகளில் செவ்வாய் அமைந்துள்ளதால் தோஷமில்லை." if r6_pass else "2-ஆம் இடம் மிதுனம்/கன்னியாக அமையவில்லை."
+        })
+
+        # Rule 7: Mars in 4th house in Aries or Scorpio
+        r7_pass = (m_from_lagna == 4 and m_sign in (1, 8))
+        rules_eval.append({
+            "rule_no": 7,
+            "rule_ta": "4-ஆம் இட சொந்த வீடுகள்",
+            "condition_ta": "4-ஆம் இடத்துச் செவ்வாய் மேஷம் அல்லது விருச்சிகத்தில் அமைதல்",
+            "is_applicable": r7_pass,
+            "explanation_ta": "4-ஆம் பாவத்தில் சொந்த வீடான மேஷம்/விருச்சிகத்தில் நின்றதால் தோஷமில்லை." if r7_pass else "4-ஆம் இடம் சொந்த வீடாக அமையவில்லை."
+        })
+
+        # Rule 8: Mars in 7th house in Cancer or Capricorn
+        r8_pass = (m_from_lagna == 7 and m_sign in (4, 10))
+        rules_eval.append({
+            "rule_no": 8,
+            "rule_ta": "7-ஆம் இட கடகம் அல்லது மகரம்",
+            "condition_ta": "7-ஆம் இடத்துச் செவ்வாய் நீச கடகம் அல்லது உச்ச மகரத்தில் அமைதல்",
+            "is_applicable": r8_pass,
+            "explanation_ta": "7-ஆம் இடம் கடகம்/மகரமாகி விசேஷ விதிவிலக்கு பெறுகிறது." if r8_pass else "7-ஆம் இடம் கடகம்/மகரமாக அமையவில்லை."
+        })
+
+        # Rule 9: Mars in 8th house in Sagittarius or Pisces
+        r9_pass = (m_from_lagna == 8 and m_sign in (9, 12))
+        rules_eval.append({
+            "rule_no": 9,
+            "rule_ta": "8-ஆம் இட குருவின் வீடுகள்",
+            "condition_ta": "8-ஆம் இடத்துச் செவ்வாய் தனுசு அல்லது மீனத்தில் அமைதல்",
+            "is_applicable": r9_pass,
+            "explanation_ta": "8-ஆம் இடம் குருவின் வீடுகளான தனுசு/மீனமாகி தோஷம் நீங்குகிறது." if r9_pass else "8-ஆம் இடம் தனுசு/மீனமாக அமையவில்லை."
+        })
+
+        # Rule 10: Mars in 12th house in Taurus or Libra
+        r10_pass = (m_from_lagna == 12 and m_sign in (2, 7))
+        rules_eval.append({
+            "rule_no": 10,
+            "rule_ta": "12-ஆம் இட சுக்கிரன் வீடுகள்",
+            "condition_ta": "12-ஆம் இடத்துச் செவ்வாய் ரிஷபம் அல்லது துலாமில் அமைதல்",
+            "is_applicable": r10_pass,
+            "explanation_ta": "12-ஆம் இடம் சுக்கிரனின் வீடான ரிஷபம்/துலாமாகி தோஷம் ரத்தாகிறது." if r10_pass else "12-ஆம் இடம் ரிஷபம்/துலாமாக அமையவில்லை."
+        })
+
+        # Rule 11: Leo or Aquarius Lagna
+        r11_pass = lagna_sign in (5, 11)
+        rules_eval.append({
+            "rule_no": 11,
+            "rule_ta": "சிம்மம் / கும்ப லக்ன விதிவிலக்கு",
+            "condition_ta": "சிம்மம் அல்லது கும்ப லக்னத்தில் பிறந்து செவ்வாய் சுப யோககாரகனாதல்",
+            "is_applicable": r11_pass,
+            "explanation_ta": "சிம்மம்/கும்ப லக்னத்திற்கு செவ்வாய் விசேஷ யோககாரகன் என்பதால் தோஷமில்லை." if r11_pass else "சிம்மம்/கும்ப லக்னம் அல்ல."
+        })
+
+        # Rule 12: Cancer Lagna (Karka Lagna)
+        r12_pass = (lagna_sign == 4)
+        rules_eval.append({
+            "rule_no": 12,
+            "rule_ta": "கடக லக்ன ராஜயோக விதிவிலக்கு",
+            "condition_ta": "கடக லக்னத்திற்கு செவ்வாய் 5 மற்றும் 10-ஆம் அதிபதியாகி யோககாரகனாதல்",
+            "is_applicable": r12_pass,
+            "explanation_ta": "கடக லக்னத்திற்கு செவ்வாய் தர்ம-கர்மாதிபதி (ராஜயோககாரகன்) என்பதால் தோஷம் அண்டாது." if r12_pass else "கடக லக்னம் அல்ல."
+        })
+
+        # Rule 13: Mars in own nakshatras (Mrigashirsha, Chitra, Dhanishta)
+        m_nak = mars.get("nakshatra_number", 0)
+        r13_pass = m_nak in (5, 14, 23)
+        rules_eval.append({
+            "rule_no": 13,
+            "rule_ta": "செவ்வாயின் சொந்த நட்சத்திர சாரம்",
+            "condition_ta": "செவ்வாய் மிருகசீரிஷம், சித்திரை, அவிட்டம் ஆகிய சொந்த சாரத்தில் நிற்றல்",
+            "is_applicable": r13_pass,
+            "explanation_ta": "செவ்வாய் தன் சொந்த நட்சத்திரத்தில் நின்று பலம் பெறுவதால் தோஷ வலிமை குறைகிறது." if r13_pass else "சொந்த நட்சத்திர சாரம் பெறவில்லை."
+        })
+
+        # Rule 14: Conjunction with Rahu or Ketu
+        r14_pass = bool(rahu and rahu["rasi_number"] == m_sign) or bool(ketu and ketu["rasi_number"] == m_sign)
+        rules_eval.append({
+            "rule_no": 14,
+            "rule_ta": "ராகு / கேது சேர்க்கை விதிவிலக்கு",
+            "condition_ta": "செவ்வாய் ராகு அல்லது கேதுவுடன் ஒரே ராசியில் இணைந்திருத்தல்",
+            "is_applicable": r14_pass,
+            "explanation_ta": "ராகு/கேது சேர்க்கையால் செவ்வாயின் தோஷ வீரியம் தணிகிறது." if r14_pass else "ராகு/கேதுவுடன் சேர்க்கை இல்லை."
+        })
+
+        cancellations_passed = [r["explanation_ta"] for r in rules_eval if r["is_applicable"]]
+        is_cancelled = len(cancellations_passed) > 0
+
+        # Calculate severity
+        if not (has_lagna_dosha or has_moon_dosha or has_venus_dosha):
+            severity = "None"
+            severity_ta = "தோஷமில்லை (சுபம்)"
+            present = False
+            percentage = 0
+        elif is_cancelled:
+            severity = "Low / Cancelled"
+            severity_ta = "தோஷ நிவர்த்தி (ரத்து)"
+            present = False
+            percentage = 0
+        elif has_lagna_dosha and has_moon_dosha and has_venus_dosha:
+            severity = "High"
+            severity_ta = "முழு தோஷம் (100%)"
+            present = True
+            percentage = 100
+        elif (has_lagna_dosha and has_moon_dosha) or (has_lagna_dosha and has_venus_dosha):
+            severity = "Moderate"
+            severity_ta = "அரை தோஷம் (50%)"
+            present = True
+            percentage = 50
         else:
-            doshas.append({
-                "name": "Sevvai Dosham (Mangal Dosha)",
-                "name_ta": "செவ்வாய் தோஷம்",
-                "present": False,
-                "severity": "None",
-                "description": "Mars is placed in an auspicious house without causing Kuja Dosham.",
-                "description_ta": "செவ்வாய் பகவான் சுப பாவங்களில் அமர்ந்து தோஷம் இல்லாமல் உள்ளார்.",
-                "remedies": [],
-                "remedies_ta": [],
-                "classical_source": "BPHS",
-                "cancellation_rules_applied": []
-            })
+            severity = "Low"
+            severity_ta = "கால் தோஷம் (25%)"
+            present = True
+            percentage = 25
+
+        desc_en = f"Mars is in house {m_from_lagna} from Lagna, house {m_from_moon} from Moon, and house {m_from_venus} from Venus."
+        desc_ta = f"செவ்வாய் பகவான் லக்னத்திற்கு {m_from_lagna}-ஆம் பாவத்திலும், சந்திரனுக்கு {m_from_moon}-ஆம் பாவத்திலும், சுக்கிரனுக்கு {m_from_venus}-ஆம் பாவத்திலும் அமர்ந்துள்ளார்."
+
+        if is_cancelled:
+            desc_en += f" Classical cancellation rules apply: {'; '.join([r['rule_ta'] for r in rules_eval if r['is_applicable']])}."
+            desc_ta += f" எனினும் சாஸ்திர விதிகளின்படி தோஷ நிவர்த்தி பெற்றுள்ளது: {'; '.join([r['rule_ta'] for r in rules_eval if r['is_applicable']])}."
+        elif present:
+            desc_en += " Requires matrimonial matching with a horoscope having equivalent Sevvai Dosha."
+            desc_ta += " திருமணத்திற்கு இணையான செவ்வாய் தோஷம் கொண்ட ஜாதகத்தை சேர்ப்பது சாஸ்திர சம்மதம்."
+
+        doshas.append({
+            "name": "Sevvai Dosham (Mangal Dosha)",
+            "name_ta": "செவ்வாய் தோஷம் (குஜ தோஷம்)",
+            "present": present,
+            "severity": severity,
+            "severity_ta": severity_ta,
+            "severity_score": percentage,
+            "mars_from_lagna": m_from_lagna,
+            "mars_from_moon": m_from_moon,
+            "mars_from_venus": m_from_venus,
+            "description": desc_en,
+            "description_ta": desc_ta,
+            "cancellation_rules_applied": cancellations_passed,
+            "cancellation_rules_audit": rules_eval,
+            "remedies": [
+                "Worship Lord Muruga at Vaitheeswaran Koil / Palani.",
+                "Recite Skanda Shasti Kavacham on Tuesdays.",
+                "Light ghee lamp with red wick at temple on Tuesdays."
+            ],
+            "remedies_ta": [
+                "வைத்தீஸ்வரன் கோவில் / பழனி முருகன் தரிசனம் மற்றும் வழிபாடு.",
+                "செவ்வாய்க்கிழமைகளில் கந்த சஷ்டி கவசம் பாராயணம் செய்தல்.",
+                "செவ்வாய்க்கிழமைகளில் துர்க்கை அல்லது முருகனுக்கு நெய் தீபம் ஏற்றுதல்."
+            ],
+            "classical_source": "Brihat Parashara Hora Shastra Ch. 81 & Tamil Jathaga Chandrika"
+        })
+
 
     # 2. Kala Sarpa Dosham
     # All 7 planets enclosed within Rahu-Ketu axis
