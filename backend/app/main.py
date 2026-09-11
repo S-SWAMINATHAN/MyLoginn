@@ -10,6 +10,7 @@ from backend.app.api.narration import router as narration_router
 from backend.app.api.geocode import router as geocode_router
 from backend.app.api.baby_names import router as baby_names_router
 from backend.app.api.horoscope import router as horoscope_router  # NEW
+from backend.app.api.muhurtha import router as muhurtha_router  # NEW
 
 # Create Database Tables
 Base.metadata.create_all(bind=engine)
@@ -37,6 +38,7 @@ app.include_router(narration_router, prefix=settings.API_V1_STR)
 app.include_router(geocode_router, prefix=settings.API_V1_STR)
 app.include_router(baby_names_router, prefix=settings.API_V1_STR)
 app.include_router(horoscope_router, prefix=settings.API_V1_STR)  # NEW
+app.include_router(muhurtha_router, prefix=settings.API_V1_STR)  # NEW
 
 @app.get("/api/health")
 def health_check():
