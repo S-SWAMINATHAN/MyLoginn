@@ -56,7 +56,7 @@ export const HandwrittenPdfButton: React.FC<Props> = ({ chart, lang }) => {
         );
 
         const canvas = await html2canvas(pageEl, {
-          scale: 2,
+          scale: 1.6,
           backgroundColor: "#fdf6e3",
           useCORS: true,
           allowTaint: true,
@@ -64,7 +64,7 @@ export const HandwrittenPdfButton: React.FC<Props> = ({ chart, lang }) => {
           windowWidth: 794,
         });
 
-        const imgData = canvas.toDataURL("image/jpeg", 0.95);
+        const imgData = canvas.toDataURL("image/jpeg", 0.90);
 
         if (i > 0) {
           pdf.addPage("a4", "portrait");
@@ -72,13 +72,16 @@ export const HandwrittenPdfButton: React.FC<Props> = ({ chart, lang }) => {
 
         // Full A4 page coverage: 210mm x 297mm
         pdf.addImage(imgData, "JPEG", 0, 0, 210, 297);
+
+        // Small yield to allow UI repaint and garbage collection
+        await new Promise((r) => setTimeout(r, 40));
       }
 
       setProgress(lang === "ta" ? "PDF கோப்பு சேமிக்கப்படுகிறது..." : "Saving PDF file...");
       const fileName = `${chart.name.replace(
         /[^a-zA-Z0-9\u0B80-\u0BFF]/g,
         "_"
-      )}_Jathagam_Kaiyezhuthu_${chart.date_of_birth}.pdf`;
+      )}_50_Page_Sampoorana_Jathagam_${chart.date_of_birth}.pdf`;
       pdf.save(fileName);
     } catch (e: any) {
       console.error(e);
@@ -99,7 +102,7 @@ export const HandwrittenPdfButton: React.FC<Props> = ({ chart, lang }) => {
         onClick={handleDownload}
         disabled={generating}
         className="px-4 py-2 bg-[#1a0f0a] border-2 border-[#ffd700]/70 hover:border-[#ffd700] rounded-xl text-xs font-bold text-[#ffd700] flex items-center gap-2 hover:bg-[#2b170c] transition-all disabled:opacity-60 shadow-lg"
-        title={lang === "ta" ? "கையெழுத்து மஞ்சள் பத்திரம் PDF" : "Handwritten Manuscript PDF"}
+        title={lang === "ta" ? "50-பக்க மகா சம்பூர்ண ஜாதக நூல் PDF" : "50-Page Grand Horoscope Manuscript PDF"}
       >
         {generating ? (
           <Loader2 className="w-4 h-4 animate-spin text-[#ffd700]" />
@@ -110,10 +113,11 @@ export const HandwrittenPdfButton: React.FC<Props> = ({ chart, lang }) => {
           {generating
             ? progress || (lang === "ta" ? "தயாராகிறது..." : "Generating...")
             : lang === "ta"
-            ? "கையெழுத்து PDF (மஞ்சள் பத்திரம்)"
-            : "Handwritten PDF (Full Manuscript)"}
+            ? "50-பக்க ஜாதக நூல் PDF (மஞ்சள் பத்திரம்)"
+            : "50-Page Grand Jathagam PDF"}
         </span>
       </button>
     </div>
   );
 };
+

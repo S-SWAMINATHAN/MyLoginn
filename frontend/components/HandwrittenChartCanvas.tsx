@@ -158,15 +158,15 @@ function drawSouthIndianOrKerala(
 
   ctx.textAlign = "center";
   ctx.textBaseline = "middle";
-  ctx.font = "bold 24px 'Noto Sans Tamil', serif";
+  ctx.font = "bold 26px 'Kavivanar', cursive";
   ctx.fillStyle = theme.accent;
   ctx.fillText("ௐ", centerX + centerW / 2, centerY + centerH / 2 - 28);
 
-  ctx.font = "bold 16px 'Kavivanar', 'Noto Sans Tamil', cursive";
+  ctx.font = "bold 17px 'Kavivanar', cursive";
   ctx.fillStyle = theme.ink;
   ctx.fillText(lang === "ta" ? titleTa : title, centerX + centerW / 2, centerY + centerH / 2 + 2);
 
-  ctx.font = "12px 'Cinzel', serif";
+  ctx.font = "bold 15px 'Caveat', cursive";
   ctx.fillStyle = theme.inkSoft;
   ctx.fillText("Vedic Birth Chart", centerX + centerW / 2, centerY + centerH / 2 + 24);
 
@@ -176,7 +176,7 @@ function drawSouthIndianOrKerala(
 
     ctx.textAlign = "right";
     ctx.textBaseline = "top";
-    ctx.font = "10px 'Noto Sans Tamil', sans-serif";
+    ctx.font = "12px 'Kavivanar', cursive";
     ctx.fillStyle = `${theme.ink}8c`;
     ctx.fillText(lang === "ta" ? cell.nameTa : cell.name, boxX + cellW - 5, boxY + 5);
 
@@ -190,11 +190,11 @@ function drawSouthIndianOrKerala(
       const degStr = p.degree ? `${Math.floor(p.degree)}°` : "";
 
       if (p.is_lagna) {
-        ctx.font = "bold 13px 'Kavivanar', 'Noto Sans Tamil', cursive";
+        ctx.font = "bold 14px 'Kavivanar', 'Caveat', cursive";
         ctx.fillStyle = theme.accent;
         ctx.fillText(`★ ${label} ${degStr}`, boxX + 6, textY);
       } else {
-        ctx.font = "bold 12px 'Kavivanar', 'Noto Sans Tamil', cursive";
+        ctx.font = "bold 13px 'Kavivanar', 'Caveat', cursive";
         ctx.fillStyle = theme.ink;
         const retroMark = p.is_retrograde ? "(வ)" : "";
         ctx.fillText(`${label} ${degStr}${retroMark}`, boxX + 6, textY);
@@ -259,7 +259,7 @@ function drawNorthIndian(
 
     ctx.textAlign = "center";
     ctx.textBaseline = "top";
-    ctx.font = `${Math.max(9, S(10))}px 'Noto Sans Tamil', sans-serif`;
+    ctx.font = `bold ${Math.max(11, S(13))}px 'Caveat', cursive`;
     ctx.fillStyle = `${theme.ink}90`;
     ctx.fillText(String(signNum), labelX, labelY - S(20));
 
@@ -267,11 +267,11 @@ function drawNorthIndian(
     planets.forEach((p) => {
       const label = lang === "ta" ? p.symbol : p.name.substring(0, 2);
       if (p.is_lagna) {
-        ctx.font = `bold ${Math.max(10, S(12))}px 'Kavivanar', 'Noto Sans Tamil', cursive`;
+        ctx.font = `bold ${Math.max(12, S(14))}px 'Kavivanar', 'Caveat', cursive`;
         ctx.fillStyle = theme.accent;
         ctx.fillText(`★${label}`, labelX, ty);
       } else {
-        ctx.font = `${Math.max(9, S(11))}px 'Kavivanar', 'Noto Sans Tamil', cursive`;
+        ctx.font = `bold ${Math.max(11, S(13))}px 'Kavivanar', 'Caveat', cursive`;
         ctx.fillStyle = theme.ink;
         ctx.fillText(`${label}${p.is_retrograde ? "(வ)" : ""}`, labelX, ty);
       }
@@ -283,7 +283,7 @@ function drawNorthIndian(
   const cy = originY + S(200);
   ctx.textAlign = "center";
   ctx.textBaseline = "middle";
-  ctx.font = `bold ${Math.max(14, S(16))}px 'Kavivanar', 'Noto Sans Tamil', cursive`;
+  ctx.font = `bold ${Math.max(16, S(18))}px 'Kavivanar', cursive`;
   ctx.fillStyle = theme.ink;
   ctx.fillText(lang === "ta" ? titleTa : title, cx, cy);
 }

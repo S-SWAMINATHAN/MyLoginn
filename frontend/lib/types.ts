@@ -171,17 +171,37 @@ export interface YogaResult {
   planets_involved: string[];
 }
 
+export interface DoshaCancellationAudit {
+  rule_no: number;
+  rule_ta: string;
+  condition_ta: string;
+  is_applicable: boolean;
+  explanation_ta: string;
+}
+
 export interface DoshaResult {
   name: string;
   name_ta: string;
   present: boolean;
   severity: string;
+  severity_ta?: string;
+  severity_score?: number;
+  mars_from_lagna?: number;
+  mars_from_moon?: number;
+  mars_from_venus?: number;
   description: string;
   description_ta: string;
   remedies: string[];
   remedies_ta: string[];
   classical_source: string;
   cancellation_rules_applied: string[];
+  cancellation_rules_audit?: DoshaCancellationAudit[];
+}
+
+export interface PindaScore {
+  rasi_pinda: number;
+  graha_pinda: number;
+  shodhya_pinda: number;
 }
 
 export interface AshtakavargaResult {
@@ -189,6 +209,12 @@ export interface AshtakavargaResult {
   sarvashtakavarga: number[];
   sarvashtakavarga_by_house: number[];
   total_points: number;
+  trikona_shodhana?: Record<string, number[]>;
+  ekadhipatya_shodhana?: Record<string, number[]>;
+  pindas?: Record<string, PindaScore>;
+  sarva_trikona?: number[];
+  sarva_ekadhipatya?: number[];
+  total_shodhya_pinda?: number;
 }
 
 export interface KutaDetail {
@@ -454,6 +480,27 @@ export interface RasiLoveHoroscopeResult {
   note_ta: string;
 }
 
+export interface ParentsBioData {
+  father_name?: string | null;
+  father_occupation?: string | null;
+  mother_name?: string | null;
+  mother_occupation?: string | null;
+  gothram?: string | null;
+  kula_deivam?: string | null;
+  kula_deivam_place?: string | null;
+  native_place?: string | null;
+  caste_subcaste?: string | null;
+  siblings?: string | null;
+  education?: string | null;
+  occupation?: string | null;
+  annual_income?: string | null;
+  height?: string | null;
+  phone?: string | null;
+  alternate_phone?: string | null;
+  email?: string | null;
+  residence_address?: string | null;
+}
+
 export interface GenerateChartRequest {
   name?: string;
   gender?: string;
@@ -471,6 +518,24 @@ export interface GenerateChartRequest {
   email?: string;
   personal_details?: string;
   family_details?: string;
+  // Extended Parents & Bio-Data fields
+  father_name?: string;
+  father_occupation?: string;
+  mother_name?: string;
+  mother_occupation?: string;
+  gothram?: string;
+  kula_deivam?: string;
+  kula_deivam_place?: string;
+  native_place?: string;
+  caste_subcaste?: string;
+  siblings?: string;
+  education?: string;
+  occupation?: string;
+  annual_income?: string;
+  height?: string;
+  alternate_phone?: string;
+  residence_address?: string;
+  bio_data?: ParentsBioData;
 }
 
 export interface AyurdayaResult {
@@ -571,6 +636,8 @@ export interface ChartResponse {
   baby_names?: BabyNameResult | null;
   narration?: NarrationResult | null;
   sampoorana?: any | null;
+  vakhyam_details?: Record<string, any> | null;
+  bio_data?: ParentsBioData | null;
   bhava_sphutam?: any[] | null;
   varga_chakras?: Record<string, Record<number, string[]>> | null;
   single_page_summary?: any | null;

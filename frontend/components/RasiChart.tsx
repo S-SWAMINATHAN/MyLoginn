@@ -42,18 +42,18 @@ export const RasiChart: React.FC<RasiChartProps> = ({
       {/* View Mode Toggle */}
       <div className="flex items-center justify-between w-full mb-3 px-2">
         <div className="flex items-center gap-2">
-          <span className="text-base font-bold text-[#161b33] font-script">
+          <span className="text-base font-bold text-[#2b2117] font-script">
             {lang === "ta" ? "ராசி கட்டம் (Rasi D1)" : "Rasi Chart (D1)"}
           </span>
         </div>
 
-        <div className="flex items-center bg-[#e7eefb] p-1 rounded-lg border border-[#8b93b5]/50 text-xs">
+        <div className="flex items-center bg-[#eae0c6] p-1 rounded-lg border border-[#a3917a]/50 text-xs">
           <button
             onClick={() => setViewMode("handwritten")}
             className={`px-2.5 py-1 rounded-md flex items-center gap-1.5 transition-all font-tamil ${
               viewMode === "handwritten"
-                ? "bg-[#2454c7] text-white font-semibold shadow-xs"
-                : "text-[#4a5578] hover:text-[#161b33]"
+                ? "bg-[#b03726] text-white font-semibold shadow-xs"
+                : "text-[#6f6049] hover:text-[#2b2117]"
             }`}
           >
             <Palette className="w-3.5 h-3.5" />
@@ -64,8 +64,8 @@ export const RasiChart: React.FC<RasiChartProps> = ({
             onClick={() => setViewMode("digital")}
             className={`px-2.5 py-1 rounded-md flex items-center gap-1.5 transition-all font-tamil ${
               viewMode === "digital"
-                ? "bg-[#2454c7] text-white font-semibold shadow-xs"
-                : "text-[#4a5578] hover:text-[#161b33]"
+                ? "bg-[#b03726] text-white font-semibold shadow-xs"
+                : "text-[#6f6049] hover:text-[#2b2117]"
             }`}
           >
             <Eye className="w-3.5 h-3.5" />
@@ -94,7 +94,7 @@ export const RasiChart: React.FC<RasiChartProps> = ({
         />
       ) : (
         /* Digital South Indian / Kerala Grid */
-        <div className="relative w-full max-w-[450px] aspect-square rounded-2xl bg-[#ffffff] border-2 border-[#8b93b5]/60 p-2 shadow-lg">
+        <div className="relative w-full max-w-[450px] aspect-square rounded-2xl bg-[#fdfaf2] border-2 border-[#a3917a]/60 p-2 shadow-lg">
           <div className="grid grid-cols-4 grid-rows-4 w-full h-full gap-1.5">
             {SOUTH_INDIAN_BOX_ORDER.map((cell) => {
               const planets = kattamData[cell.signNum] || [];
@@ -111,12 +111,12 @@ export const RasiChart: React.FC<RasiChartProps> = ({
                   }}
                   className={`relative p-1.5 rounded-xl border flex flex-col justify-between transition-all hover:scale-[1.02] ${
                     hasLagna
-                      ? "bg-[#e7eefb] border-[#2454c7] shadow-xs"
-                      : "bg-[#fbfdff] border-[#8b93b5]/30 hover:border-[#8b93b5]/70"
+                      ? "bg-[#f5e8d5] border-[#b03726] shadow-xs"
+                      : "bg-[#fffdf8] border-[#a3917a]/30 hover:border-[#a3917a]/70"
                   }`}
                 >
                   {/* Sign watermark */}
-                  <span className="text-[10px] text-[#4a5578] font-tamil font-medium text-right self-end">
+                  <span className="text-[10px] text-[#6f6049] font-tamil font-medium text-right self-end">
                     {lang === "ta" ? cell.nameTa : cell.name}
                   </span>
 
@@ -128,8 +128,8 @@ export const RasiChart: React.FC<RasiChartProps> = ({
                         onClick={() => setSelectedPlanet(p)}
                         className={`text-xs px-1 py-0.5 rounded cursor-pointer flex items-center justify-between transition-colors border border-transparent ${
                           p.is_lagna
-                            ? "bg-[#2454c7]/15 text-[#17348f] font-bold border border-[#2454c7]/40"
-                            : "text-[#161b33] hover:bg-[#e7eefb]/60"
+                            ? "bg-[#b03726]/15 text-[#8e2b1c] font-bold border border-[#b03726]/40"
+                            : "text-[#2b2117] hover:bg-[#ebdcc2]/60"
                         }`}
                         title={p.status || undefined}
                       >
@@ -148,12 +148,12 @@ export const RasiChart: React.FC<RasiChartProps> = ({
             })}
 
             {/* Central Box */}
-            <div className="col-start-2 col-span-2 row-start-2 row-span-2 bg-[#e7eefb] rounded-2xl border border-[#8b93b5]/40 flex flex-col items-center justify-center p-3 text-center shadow-inner">
-              <span className="text-3xl text-[#2454c7] mb-1 font-bold font-script">ஸ்ரீ</span>
-              <span className="text-sm font-bold text-[#161b33] font-script tracking-wider">
+            <div className="col-start-2 col-span-2 row-start-2 row-span-2 bg-[#f7efdc] rounded-2xl border border-[#a3917a]/40 flex flex-col items-center justify-center p-3 text-center shadow-inner">
+              <span className="text-3xl text-[#b03726] mb-1 font-bold font-script">ஸ்ரீ</span>
+              <span className="text-sm font-bold text-[#2b2117] font-script tracking-wider">
                 {lang === "ta" ? "ராசி கட்டம்" : "RASI KATTAM"}
               </span>
-              <span className="text-[10px] text-[#4a5578] font-tamil mt-0.5">
+              <span className="text-[10px] text-[#6f6049] font-tamil mt-0.5">
                 D1 Chart
               </span>
             </div>
@@ -177,12 +177,12 @@ export const RasiChart: React.FC<RasiChartProps> = ({
 
       {/* Selected Planet Detail Modal / Info Pill */}
       {selectedPlanet && (
-        <div className="mt-3 w-full bg-[#11162e] border border-[#d4af37]/40 rounded-xl p-2.5 flex items-center justify-between text-xs animate-fade-in">
+        <div className="mt-3 w-full bg-[#201518] border border-[#d4af37]/40 rounded-xl p-2.5 flex items-center justify-between text-xs animate-fade-in">
           <div>
             <span className="font-bold text-[#ffd700] mr-2">
               {lang === "ta" ? selectedPlanet.name_ta : selectedPlanet.name}
             </span>
-            <span className="text-[#c3d6f5]">
+            <span className="text-[#e0b87f]">
               {selectedPlanet.degree}° | {selectedPlanet.status || "Direct"}
               {selectedPlanet.is_retrograde ? " (வக்ரம்)" : ""}
             </span>

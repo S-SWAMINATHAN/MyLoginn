@@ -217,18 +217,94 @@ class DoshaResult(BaseModel):
     name_ta: str
     present: bool
     severity: str  # Low, Moderate, High, Cancelled, None
+    severity_ta: Optional[str] = None
+    severity_score: Optional[int] = None
+    mars_from_lagna: Optional[int] = None
+    mars_from_moon: Optional[int] = None
+    mars_from_venus: Optional[int] = None
     description: str
     description_ta: str
     remedies: List[str] = []
     remedies_ta: List[str] = []
     classical_source: str
     cancellation_rules_applied: List[str] = []
+    cancellation_rules_audit: Optional[List[Dict[str, Any]]] = None
 
 class AshtakavargaResult(BaseModel):
     bhinnashtakavarga: Dict[str, List[int]]  # Planet -> [12 scores for Mesha to Meena]
     sarvashtakavarga: List[int]  # 12 scores for signs 1-12
     sarvashtakavarga_by_house: List[int]  # 12 scores from Lagna house 1 to 12
     total_points: int = 337
+    trikona_shodhana: Optional[Dict[str, List[int]]] = None
+    ekadhipatya_shodhana: Optional[Dict[str, List[int]]] = None
+    pindas: Optional[Dict[str, Dict[str, int]]] = None
+    sarva_trikona: Optional[List[int]] = None
+    sarva_ekadhipatya: Optional[List[int]] = None
+    total_shodhya_pinda: Optional[int] = None
+
+class SthanaBalaSub(BaseModel):
+    uchcha_bala: float = 0.0
+    saptavargaja_bala: float = 0.0
+    ojhayugma_bala: float = 0.0
+    kendradi_bala: float = 0.0
+    drekkana_bala: float = 0.0
+    total: float = 0.0
+
+class KaalaBalaSub(BaseModel):
+    nathonnatha_bala: float = 0.0
+    paksha_bala: float = 0.0
+    vara_bala: float = 0.0
+    hora_bala: float = 0.0
+    ayana_bala: float = 0.0
+    total: float = 0.0
+
+class PlanetShadbala(BaseModel):
+    planet: str
+    planet_ta: str
+    sthana_bala: SthanaBalaSub
+    dig_bala: float = 0.0
+    kaala_bala: KaalaBalaSub
+    cheshta_bala: float = 0.0
+    naisargika_bala: float = 0.0
+    drig_bala: float = 0.0
+    total_virupas: float = 0.0
+    total_rupas: float = 0.0
+    minimum_required_rupas: float = 5.0
+    strength: str = "Average"
+    strength_ta: str = "சராசரி"
+
+class ShadbalaResult(BaseModel):
+    planets: Dict[str, PlanetShadbala]
+    classical_source: str = "Brihat Parashara Hora Shastra Ch. 27–29"
+
+class GocharaTransitResult(BaseModel):
+    planet: str
+    planet_ta: str
+    transit_sign: int
+    transit_rasi: str
+    transit_rasi_ta: str
+    house_from_moon: int
+    degree: float
+    degree_dms: Optional[str] = None
+    is_retrograde: bool = False
+    classical_effect: str
+    classical_effect_ta: str
+    is_classically_benefic: bool = False
+    vedha_active: bool = False
+    vedha_by: Optional[str] = None
+    vedha_by_ta: Optional[str] = None
+    bav_score: Optional[int] = None
+    bav_quality: Optional[str] = None
+    bav_quality_ta: Optional[str] = None
+    net_effect: str
+    net_effect_ta: str
+    net_benefic: bool = False
+
+class GocharaResult(BaseModel):
+    transits: List[GocharaTransitResult] = []
+    summary: Dict[str, Any] = {}
+    transit_date: Optional[str] = None
+    classical_source: str = "BPHS Ch. 65, Phaladeepika Ch. 26"
 
 class SthanaBalaSub(BaseModel):
     uchcha_bala: float = 0.0
