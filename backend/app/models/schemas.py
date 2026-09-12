@@ -761,7 +761,7 @@ class BabyNameRequest(BaseModel):
 # ── Muhurtha (Vedic Electional Astrology) — see backend/app/services/muhurtha.py
 # for the full rule set and citations. ─────────────────────────────────
 class MuhurthaRequest(BaseModel):
-    event_type: str = Field(..., description="marriage | travel")
+    event_type: str = Field(..., description="marriage | travel | general")
     start_date: str = Field(..., description="YYYY-MM-DD")
     end_date: str = Field(..., description="YYYY-MM-DD, max 60 days after start_date")
     place: str = Field(..., description="Location where the event/Panchangam is evaluated")

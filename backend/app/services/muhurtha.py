@@ -2,11 +2,22 @@
 Muhurtha (Vedic Electional Astrology) scanning engine.
 Governed by AGENTS.md — every exclusion/inclusion rule below is cited.
 
-Implemented event types: "marriage" (Vivaha Muhurtham) and "travel"
-(Yatra / Dishashool). Other event types (Griha Pravesam, Business Start,
-etc.) are NOT implemented — their rule sets involve additional variables
-(house-facing direction, specific masa/paksha restrictions) that should
-not be approximated from these two without their own cited sources, per
+Implemented event types:
+  - "general" — universal Panchangam good/bad day screening only (Rikta
+    Tithi, Amavasya, Bhadra/Vishti Karana, Marana Yoga, plus Tara Bala /
+    Chandra Bala if a person's birth details are supplied). No event-specific
+    rule is applied — this is the same "is this a generally auspicious day"
+    check a traditional Tamil calendar/Panchangam gives, independent of what
+    the day is being used for.
+  - "marriage" (Vivaha Muhurtham) — general screening + Vivaha-auspicious
+    Nakshatra check.
+  - "travel" (Yatra / Dishashool) — general screening + Dishashool weekday
+    direction check.
+
+Other event types (Griha Pravesam, Business Start, etc.) are NOT
+implemented — their rule sets involve additional variables (house-facing
+direction, specific masa/paksha restrictions) that should not be
+approximated from these three without their own cited sources, per
 AGENTS.md §1.2 and §1.8 (no scope creep, flag what isn't built yet).
 """
 
@@ -47,6 +58,7 @@ _TARA_BALA_TABLE = [
 ]
 
 CLASSICAL_SOURCES = [
+    "General Panchangam good/bad day screening (Rikta Tithi, Amavasya, Bhadra/Vishti Karana, Tamil Dina Yoga)",
     "Muhurtha Chintamani (Vivaha & general Shuddhi chapters)",
     "Traditional Panchangam Dishashool table (Yatra Muhurtham)",
     "Standard Tara Bala / Chandra Bala rules used in Panchangam practice",
@@ -172,6 +184,10 @@ def scan_muhurtha_range(
             else:
                 event_specific_ok = True
                 dishashool_conflict = False
+        # event_type == "general": no event-specific rule — event_specific_ok
+        # stays None and event_flags stays empty on purpose. The day's rating
+        # then rests entirely on the universal screening above, exactly like
+        # a plain Panchangam "good day" check independent of any event.
 
         tara_a = compute_tara_bala(person_a_nak, moon["nakshatra_number"]) if person_a_nak else None
         tara_b = compute_tara_bala(person_b_nak, moon["nakshatra_number"]) if person_b_nak else None

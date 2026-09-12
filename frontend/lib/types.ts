@@ -361,7 +361,7 @@ export interface SinglePageSummary {
 // built yet — it needs its own cited rule set).
 
 export interface MuhurthaRequest {
-  event_type: "marriage" | "travel";
+  event_type: "general" | "marriage" | "travel";
   start_date: string; // YYYY-MM-DD
   end_date: string;   // YYYY-MM-DD, max 60 days after start_date
   place: string;

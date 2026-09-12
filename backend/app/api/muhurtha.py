@@ -9,7 +9,7 @@ from backend.app.services.muhurtha import scan_muhurtha_range
 
 router = APIRouter(prefix="/muhurtha", tags=["muhurtha"])
 
-SUPPORTED_EVENT_TYPES = {"marriage", "travel"}
+SUPPORTED_EVENT_TYPES = {"marriage", "travel", "general"}
 
 
 @router.post("/search", response_model=MuhurthaSearchResponse)

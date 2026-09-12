@@ -2,7 +2,7 @@
 
 import React, { useState } from "react";
 import { MuhurthaRequest } from "@/lib/types";
-import { CalendarSearch, Heart, Compass } from "lucide-react";
+import { CalendarSearch, Heart, Compass, Sparkles } from "lucide-react";
 
 interface MuhurthaFormProps {
   onSubmit: (data: MuhurthaRequest) => void;
@@ -11,7 +11,7 @@ interface MuhurthaFormProps {
 }
 
 export const MuhurthaForm: React.FC<MuhurthaFormProps> = ({ onSubmit, isLoading, lang }) => {
-  const [eventType, setEventType] = useState<"marriage" | "travel">("marriage");
+  const [eventType, setEventType] = useState<"general" | "marriage" | "travel">("general");
   const [startDate, setStartDate] = useState("");
   const [endDate, setEndDate] = useState("");
   const [place, setPlace] = useState("Coimbatore, Tamil Nadu, India");
@@ -58,12 +58,23 @@ export const MuhurthaForm: React.FC<MuhurthaFormProps> = ({ onSubmit, isLoading,
           </h2>
           <p className="text-xs mt-1" style={{ color: "var(--ink-soft)" }}>
             {lang === "ta"
-              ? "நிகழ்வு வகையையும் தேதி வரம்பையும் தேர்ந்தெடுத்து சுப நாட்களைக் கண்டறியவும்"
-              : "Pick an event type and date range to find auspicious days"}
+              ? "நிகழ்வு வகையையும் தேதி வரம்பையும் தேர்ந்தெடுத்து சுப நாட்களைக் கண்டறியவும் — 'பொது' தமிழ் காலண்டர் பாணி நாள் நல்லது/கெட்டது சரிபார்ப்பு"
+              : "Pick a date range to find auspicious days — 'General' gives a plain Tamil-calendar-style good/bad day check, or pick Marriage/Travel for event-specific rules too"}
           </p>
         </div>
 
         <div className="flex items-center bg-white border rounded-xl p-1 text-xs" style={{ borderColor: "rgba(10,37,64,0.15)" }}>
+          <button
+            type="button"
+            onClick={() => setEventType("general")}
+            className={`px-3 py-1.5 rounded-lg font-semibold transition-all flex items-center gap-1.5 ${
+              eventType === "general" ? "text-white" : ""
+            }`}
+            style={eventType === "general" ? { background: "var(--red-deep)" } : { color: "var(--ink-soft)" }}
+          >
+            <Sparkles className="w-3.5 h-3.5" />
+            {lang === "ta" ? "பொது" : "General"}
+          </button>
           <button
             type="button"
             onClick={() => setEventType("marriage")}
@@ -133,7 +144,9 @@ export const MuhurthaForm: React.FC<MuhurthaFormProps> = ({ onSubmit, isLoading,
         <h4 className="text-sm font-bold mb-3" style={{ color: "var(--red-deep)" }}>
           {eventType === "marriage"
             ? (lang === "ta" ? "நபர் A (மணமகன்/மணமகள்) — விருப்பம்" : "Person A (Partner 1) — Optional")
-            : (lang === "ta" ? "பயணி விவரங்கள் — விருப்பம்" : "Traveler's Birth Details — Optional")}
+            : eventType === "travel"
+            ? (lang === "ta" ? "பயணி விவரங்கள் — விருப்பம்" : "Traveler's Birth Details — Optional")
+            : (lang === "ta" ? "தனிநபர் விவரங்கள் — விருப்பம்" : "Personalize (Your Birth Details) — Optional")}
         </h4>
         <p className="text-[11px] mb-3" style={{ color: "var(--ink-faint)" }}>
           {lang === "ta"
