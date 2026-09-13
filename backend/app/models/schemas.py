@@ -306,6 +306,70 @@ class GocharaResult(BaseModel):
     transit_date: Optional[str] = None
     classical_source: str = "BPHS Ch. 65, Phaladeepika Ch. 26"
 
+class SthanaBalaSub(BaseModel):
+    uchcha_bala: float = 0.0
+    saptavargaja_bala: float = 0.0
+    ojhayugma_bala: float = 0.0
+    kendradi_bala: float = 0.0
+    drekkana_bala: float = 0.0
+    total: float = 0.0
+
+class KaalaBalaSub(BaseModel):
+    nathonnatha_bala: float = 0.0
+    paksha_bala: float = 0.0
+    vara_bala: float = 0.0
+    hora_bala: float = 0.0
+    ayana_bala: float = 0.0
+    total: float = 0.0
+
+class PlanetShadbala(BaseModel):
+    planet: str
+    planet_ta: str
+    sthana_bala: SthanaBalaSub
+    dig_bala: float = 0.0
+    kaala_bala: KaalaBalaSub
+    cheshta_bala: float = 0.0
+    naisargika_bala: float = 0.0
+    drig_bala: float = 0.0
+    total_virupas: float = 0.0
+    total_rupas: float = 0.0
+    minimum_required_rupas: float = 5.0
+    strength: str = "Average"
+    strength_ta: str = "சராசரி"
+
+class ShadbalaResult(BaseModel):
+    planets: Dict[str, PlanetShadbala]
+    classical_source: str = "Brihat Parashara Hora Shastra Ch. 27–29"
+
+class GocharaTransitResult(BaseModel):
+    planet: str
+    planet_ta: str
+    transit_sign: int
+    transit_rasi: str
+    transit_rasi_ta: str
+    house_from_moon: int
+    degree: float
+    degree_dms: Optional[str] = None
+    is_retrograde: bool = False
+    classical_effect: str
+    classical_effect_ta: str
+    is_classically_benefic: bool = False
+    vedha_active: bool = False
+    vedha_by: Optional[str] = None
+    vedha_by_ta: Optional[str] = None
+    bav_score: Optional[int] = None
+    bav_quality: Optional[str] = None
+    bav_quality_ta: Optional[str] = None
+    net_effect: str
+    net_effect_ta: str
+    net_benefic: bool = False
+
+class GocharaResult(BaseModel):
+    transits: List[GocharaTransitResult] = []
+    summary: Dict[str, Any] = {}
+    transit_date: Optional[str] = None
+    classical_source: str = "BPHS Ch. 65, Phaladeepika Ch. 26"
+
 class KutaDetail(BaseModel):
     name: str
     name_ta: str
@@ -692,3 +756,79 @@ class BabyNameRequest(BaseModel):
     latitude: Optional[float] = None
     longitude: Optional[float] = None
     timezone: Optional[str] = None
+
+
+# ── Muhurtha (Vedic Electional Astrology) — see backend/app/services/muhurtha.py
+# for the full rule set and citations. ─────────────────────────────────
+class MuhurthaRequest(BaseModel):
+    event_type: str = Field(..., description="marriage | travel | general")
+    start_date: str = Field(..., description="YYYY-MM-DD")
+    end_date: str = Field(..., description="YYYY-MM-DD, max 60 days after start_date")
+    place: str = Field(..., description="Location where the event/Panchangam is evaluated")
+    latitude: Optional[float] = None
+    longitude: Optional[float] = None
+    timezone: Optional[str] = None
+
+    # Person A birth details — required for a personalized (Tara Bala /
+    # Chandra Bala) search. If omitted, the search still runs but only
+    # returns universal + event-type screening (no personalization).
+    # For "marriage", Person A is one of the two partners; for "travel",
+    # Person A is the traveler.
+    person_a_dob: Optional[str] = None
+    person_a_tob: Optional[str] = None
+    person_a_place: Optional[str] = None
+
+    # Person B — marriage only (the other partner).
+    person_b_dob: Optional[str] = None
+    person_b_tob: Optional[str] = None
+    person_b_place: Optional[str] = None
+
+    # Travel only.
+    travel_direction: Optional[str] = Field(None, description="N, S, E, or W — direction of travel")
+
+class MuhurthaDayResult(BaseModel):
+    date: str
+    vaaram: str
+    vaaram_ta: str
+    tithi: str
+    tithi_ta: str
+    karanam: str
+    karanam_ta: str
+    nakshatra: str
+    nakshatra_ta: str
+    subha_yogam_status: str
+    rahu_kalam: str
+    yamagandam: str
+    kuligai: str
+
+    is_universally_clean: bool
+    universal_flags: List[str] = []
+    universal_flags_ta: List[str] = []
+
+    event_specific_ok: Optional[bool] = None
+    event_specific_flags: List[str] = []
+    event_specific_flags_ta: List[str] = []
+
+    tara_bala_a: Optional[str] = None
+    tara_bala_a_ta: Optional[str] = None
+    tara_bala_a_favorable: Optional[bool] = None
+    tara_bala_b: Optional[str] = None
+    tara_bala_b_ta: Optional[str] = None
+    tara_bala_b_favorable: Optional[bool] = None
+    chandra_bala_a_favorable: Optional[bool] = None
+    chandra_bala_b_favorable: Optional[bool] = None
+
+    dishashool_direction: Optional[str] = None
+    dishashool_conflict: Optional[bool] = None
+
+    overall_rating: str  # "Excellent" | "Good" | "Avoid"
+    overall_rating_ta: str
+    classical_source: str
+
+class MuhurthaSearchResponse(BaseModel):
+    event_type: str
+    start_date: str
+    end_date: str
+    days: List[MuhurthaDayResult]
+    best_days: List[str] = []
+    classical_sources: List[str] = []

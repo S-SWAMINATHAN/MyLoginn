@@ -1,9 +1,12 @@
-import type { Metadata } from "next";
+import type { Metadata, Viewport } from "next";
 import "./globals.css";
 
 export const metadata: Metadata = {
   title: "MyLoginn Astrology-Handwritten Horoscope",
   description: "High-precision Vedic Astrology birth chart generator with traditional handwritten manuscript rendering and authentic readings.",
+};
+
+export const viewport: Viewport = {
   themeColor: "#f0e5cc",
 };
 

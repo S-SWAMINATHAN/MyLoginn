@@ -13,7 +13,7 @@ import {
   BabyNameRequest,
   BabyNameResult,
   MuhurthaRequest, // NEW
-  MuhurthaResponse, // NEW
+  MuhurthaSearchResponse, // NEW
   RasiHoroscopeResult, // NEW
   RasiLoveHoroscopeResult, // NEW
 } from "./types";
@@ -300,20 +300,22 @@ export async function generateBabyNamesApi(
 }
 
 /**
- * NEW: Find auspicious dates (Muhurtha) for marriage / griha pravesam /
- * general events within a date range, personalized to the person's natal
- * Moon sign & nakshatra via Chandrabalam & Tarabalam.
- * POST /api/muhurtha/find
+ * Find auspicious dates (Muhurtha) for Marriage or Travel within a date
+ * range — universal screening (Rikta Tithi, Bhadra Karana, Marana Yoga,
+ * Tara Bala, Chandra Bala) plus event-specific rules (Vivaha-auspicious
+ * Nakshatra for marriage, Dishashool for travel). See
+ * backend/app/services/muhurtha.py for citations.
+ * POST /api/muhurtha/search
  */
-export async function findMuhurthaApi(
+export async function searchMuhurthaApi(
   data: MuhurthaRequest
-): Promise<MuhurthaResponse> {
-  const res = await fetch(`${API_V1}/muhurtha/find`, {
+): Promise<MuhurthaSearchResponse> {
+  const res = await fetch(`${API_V1}/muhurtha/search`, {
     method: "POST",
     headers: { "Content-Type": "application/json" },
     body: JSON.stringify(data),
   });
-  return handleResponse<MuhurthaResponse>(res);
+  return handleResponse<MuhurthaSearchResponse>(res);
 }
 
 /**

@@ -116,7 +116,7 @@ export const Chapter9Ayurdaya: React.FC<ManuscriptPageProps> = ({ chart, lang })
             </div>
             <div className="grid grid-cols-2 gap-2 text-[10.5px]">
               <div><span className="text-[#6f6049]">8-ஆம் அதிபதி: </span><span className="font-bold text-[#2b2117]">{ayur.eighth_house_lord_ta}</span></div>
-              <div><span className="text-[#6f6049]">8-ல் நின்ற கிரகங்கள்: </span><span className="font-bold text-[#8e2b1c]">{ayur.eighth_house_occupants.length > 0 ? ayur.eighth_house_occupants.join(", ") : "வெற்றிடம் (சுபம்)"}</span></div>
+              <div><span className="text-[#6f6049]">8-ல் நின்ற கிரகங்கள்: </span><span className="font-bold text-[#8e2b1c]">{(ayur.eighth_house_occupants?.length ?? 0) > 0 ? ayur.eighth_house_occupants!.join(", ") : "வெற்றிடம் (சுபம்)"}</span></div>
               <div><span className="text-[#6f6049]">அஷ்டகவர்க்க 8-ஆம் வீட்டு பிந்துக்கள்: </span><span className="font-bold text-[#15803d]">{ayur.ashtakavarga_ayush_points} பிந்துக்கள்</span></div>
               <div><span className="text-[#6f6049]">பாவக பலன்: </span><span className="font-bold text-emerald-700">ஆயுள் பலம் நன்று</span></div>
             </div>

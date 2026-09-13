@@ -48,7 +48,7 @@ export const NorthIndianDiamondChart: React.FC<NorthIndianDiamondChartProps> = (
       <svg
         viewBox="0 0 400 400"
         className="w-full h-auto rounded-2xl border-2 shadow-2xl"
-        style={{ borderColor: `${theme.inkSoft}66`, background: "linear-gradient(135deg, #1b1215, #120a0d)" }}
+        style={{ borderColor: `${theme.inkSoft}66`, background: "linear-gradient(135deg, #161d3d, #0c1024)" }}
       >
         <rect x="2" y="2" width="396" height="396" fill="none" stroke={theme.inkSoft} strokeWidth="2" />
 
@@ -84,7 +84,7 @@ export const NorthIndianDiamondChart: React.FC<NorthIndianDiamondChartProps> = (
                   textAnchor="middle"
                   fontSize="10.5"
                   fontWeight={p.is_lagna ? 700 : 600}
-                  fill={p.is_lagna ? "#ffd700" : "#f5eedb"}
+                  fill={p.is_lagna ? "#ffd700" : "#e7eefb"}
                   style={{ cursor: "pointer" }}
                   onClick={() => setSelectedPlanet(p)}
                 >
@@ -100,18 +100,18 @@ export const NorthIndianDiamondChart: React.FC<NorthIndianDiamondChartProps> = (
         <text x="200" y="192" textAnchor="middle" fontSize="20" fill={theme.accent}>
           ௐ
         </text>
-        <text x="200" y="214" textAnchor="middle" fontSize="9.5" fill="#f5eedb" fontWeight={700}>
+        <text x="200" y="214" textAnchor="middle" fontSize="9.5" fill="#e7eefb" fontWeight={700}>
           {lang === "ta" ? titleTa : title}
         </text>
       </svg>
 
       {selectedPlanet && (
-        <div className="mt-3 w-full bg-[#201518] border border-[#d4af37]/40 rounded-xl p-2.5 flex items-center justify-between text-xs">
+        <div className="mt-3 w-full bg-[#11162e] border border-[#d4af37]/40 rounded-xl p-2.5 flex items-center justify-between text-xs">
           <div>
             <span className="font-bold text-[#ffd700] mr-2">
               {lang === "ta" ? selectedPlanet.name_ta : selectedPlanet.name}
             </span>
-            <span className="text-[#e0b87f]">
+            <span className="text-[#c3d6f5]">
               {selectedPlanet.degree}° | {selectedPlanet.status || "Direct"}
               {selectedPlanet.is_retrograde ? " (வக்ரம்)" : ""}
             </span>

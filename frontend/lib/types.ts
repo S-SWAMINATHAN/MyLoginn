@@ -349,65 +349,84 @@ export interface SinglePageSummary {
 }
 
 // --- Muhurtha (auspicious date/time) finder types ---
-// Mirrors backend/app/models/schemas.py's Muhurtha* models. See
-// backend/app/services/muhurtha_finder.py for scope/citations.
+// Mirrors backend/app/models/schemas.py's Muhurtha* models exactly. See
+// backend/app/services/muhurtha.py for the full rule set and citations.
+//
+// NOTE: this replaces an earlier stub (MuhurthaEventType/MuhurthaCheckItem/
+// a "griha_pravesam"/"general" event-type shape, pointing at a
+// muhurtha_finder.py that was never actually built) that had no backend,
+// no page, and nothing importing it. This is the real, working
+// implementation — event types "marriage" | "travel" only, per
+// SUMMARY_muhurtha.md's citation scope (Griha Pravesam intentionally not
+// built yet — it needs its own cited rule set).
 
-export type MuhurthaEventType = "marriage" | "griha_pravesam" | "general";
+export interface MuhurthaRequest {
+  event_type: "general" | "marriage" | "travel";
+  start_date: string; // YYYY-MM-DD
+  end_date: string;   // YYYY-MM-DD, max 60 days after start_date
+  place: string;
+  latitude?: number | null;
+  longitude?: number | null;
+  timezone?: string | null;
 
-export interface MuhurthaCheckItem {
-  rule: string;
-  rule_ta: string;
-  passed: boolean;
-  detail: string;
-  detail_ta: string;
+  person_a_dob?: string;
+  person_a_tob?: string;
+  person_a_place?: string;
+
+  person_b_dob?: string;
+  person_b_tob?: string;
+  person_b_place?: string;
+
+  travel_direction?: "N" | "S" | "E" | "W";
 }
 
 export interface MuhurthaDayResult {
   date: string;
-  weekday: string;
-  weekday_ta: string;
+  vaaram: string;
+  vaaram_ta: string;
   tithi: string;
   tithi_ta: string;
-  nakshatra: string;
-  nakshatra_ta: string;
-  yogam_ta: string;
   karanam: string;
   karanam_ta: string;
-  chandrabalam_ok: boolean;
-  chandrabalam_house: number;
-  tarabalam_ok: boolean;
-  tarabalam_name: string;
-  tarabalam_name_ta: string;
+  nakshatra: string;
+  nakshatra_ta: string;
+  subha_yogam_status: string;
   rahu_kalam: string;
   yamagandam: string;
   kuligai: string;
-  checks: MuhurthaCheckItem[];
-  overall_suitable: boolean;
-  suitability_score: number;
+
+  is_universally_clean: boolean;
+  universal_flags: string[];
+  universal_flags_ta: string[];
+
+  event_specific_ok?: boolean | null;
+  event_specific_flags: string[];
+  event_specific_flags_ta: string[];
+
+  tara_bala_a?: string | null;
+  tara_bala_a_ta?: string | null;
+  tara_bala_a_favorable?: boolean | null;
+  tara_bala_b?: string | null;
+  tara_bala_b_ta?: string | null;
+  tara_bala_b_favorable?: boolean | null;
+  chandra_bala_a_favorable?: boolean | null;
+  chandra_bala_b_favorable?: boolean | null;
+
+  dishashool_direction?: string | null;
+  dishashool_conflict?: boolean | null;
+
+  overall_rating: "Excellent" | "Good" | "Avoid";
+  overall_rating_ta: string;
+  classical_source: string;
 }
 
-export interface MuhurthaRequest {
-  event_type: MuhurthaEventType;
-  start_date: string;
-  end_date: string;
-  place: string;
-  date_of_birth: string;
-  time_of_birth: string;
-  person_place?: string;
-  latitude?: number | null;
-  longitude?: number | null;
-  timezone?: string | null;
-}
-
-export interface MuhurthaResponse {
+export interface MuhurthaSearchResponse {
   event_type: string;
   start_date: string;
   end_date: string;
-  place: string;
-  results: MuhurthaDayResult[];
-  best_dates: string[];
-  disclaimer: string;
-  disclaimer_ta: string;
+  days: MuhurthaDayResult[];
+  best_days: string[];
+  classical_sources: string[];
 }
 
 // --- NEW: Rasi Horoscope (Daily/Weekly/Monthly/Yearly Gochara) + Rasi Love

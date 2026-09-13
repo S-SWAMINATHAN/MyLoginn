@@ -173,10 +173,10 @@ export const Chapter5Shadbala: React.FC<ManuscriptPageProps> = ({ chart, lang })
               ✦ ஷட்பல முதன்மை கிரகத்தின் வாழ்வியல் தாக்கம் ✦
             </div>
             <p className="text-[10.5px] text-[#3a1a0f] leading-relaxed">
-              ஜாதகத்தில் முதலிடம் பெற்றுள்ள <span className="font-bold text-[#8e2b1c]">‘{sortedByRank[0]?.name_ta}’</span> பகவான் ஜாதகரின் சிந்தனை, குணாதிசயம் மற்றும் வெற்றி வாய்ப்புகளை வழிநடத்தும் தலைமை கிரகமாக விளங்குகிறார்.
+              ஜாதகத்தில் முதலிடம் பெற்றுள்ள <span className="font-bold text-[#8e2b1c]">'{sortedByRank[0]?.name_ta}'</span> பகவான் ஜாதகரின் சிந்தனை, குணாதிசயம் மற்றும் வெற்றி வாய்ப்புகளை வழிநடத்தும் தலைமை கிரகமாக விளங்குகிறார்.
             </p>
             <div className="text-[10px] text-[#6f6049] italic border-t border-[#aa820a]/20 pt-1 leading-relaxed">
-              “ஷட்பலத்தில் பலம் பெற்ற சுப கிரகம் தசா காலத்தில் மகா யோகங்களை வாரி வழங்கும்; அசுப கிரகமாயின் போராட்டங்களை எதிர்கொள்ளும் அசாத்திய ஆற்றலையும் துணிவையும் அருளும்.”
+              "ஷட்பலத்தில் பலம் பெற்ற சுப கிரகம் தசா காலத்தில் மகா யோகங்களை வாரி வழங்கும்; அசுப கிரகமாயின் போராட்டங்களை எதிர்கொள்ளும் அசாத்திய ஆற்றலையும் துணிவையும் அருளும்."
             </div>
           </div>
         </div>
@@ -184,6 +184,12 @@ export const Chapter5Shadbala: React.FC<ManuscriptPageProps> = ({ chart, lang })
 
       {/* ══════════════════════════════════════════════════════════
           PAGE 20: பாவக பலக் கணிதம் (BHAVABALA 12 HOUSES)
+
+          NOTE (see chat): this table's numbers (adh/dig/dri/tot/st for
+          every house) are static/hardcoded — identical for every chart,
+          not computed from the person's actual planets. Only the crash
+          (`d.lagnam_ta`) is fixed here; the accuracy issue is left as-is
+          pending a decision on whether to build the real calculation.
       ══════════════════════════════════════════════════════════ */}
       <PageWrapper
         pageNumber={20}
@@ -214,7 +220,7 @@ export const Chapter5Shadbala: React.FC<ManuscriptPageProps> = ({ chart, lang })
               </thead>
               <tbody className="divide-y divide-[#aa820a]/20">
                 {[
-                  { bhava: "1-ஆம் பாவம்", rasi: d.lagnam_ta, karaka: "உடல், உயிர், ஆளுமை", adh: 7.2, dig: 1.0, dri: 0.4, tot: 8.6, st: "மிக உத்தமம்" },
+                  { bhava: "1-ஆம் பாவம்", rasi: chart.basic_details.lagnam_ta, karaka: "உடல், உயிர், ஆளுமை", adh: 7.2, dig: 1.0, dri: 0.4, tot: 8.6, st: "மிக உத்தமம்" },
                   { bhava: "2-ஆம் பாவம்", rasi: "தன ஸ்தானம்", karaka: "தனம், வாக்கு, குடும்பம்", adh: 6.5, dig: 0.8, dri: 0.2, tot: 7.5, st: "உத்தமம்" },
                   { bhava: "3-ஆம் பாவம்", rasi: "சகோதர ஸ்தானம்", karaka: "தைரியம், இளைய சகோதரம்", adh: 5.8, dig: 0.6, dri: -0.1, tot: 6.3, st: "நன்று" },
                   { bhava: "4-ஆம் பாவம்", rasi: "சுக ஸ்தானம்", karaka: "தாய், சுகம், சொத்து, வாகனம்", adh: 7.5, dig: 1.0, dri: 0.5, tot: 9.0, st: "அதி உத்தமம்" },
