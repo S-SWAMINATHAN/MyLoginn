@@ -3,6 +3,7 @@ import { prisma } from "@/lib/prisma";
 import type { ShowcaseProject } from "@/lib/showcaseProjects";
 import { ProjectsHero } from "@/components/projects/ProjectsHero";
 import { ProjectsExplorer } from "@/components/projects/ProjectsExplorer";
+import { ProjectsCtaBanner } from "@/components/projects/ProjectsCtaBanner";
 
 export const metadata = { title: "Student Projects — MyLoginn" };
 
@@ -19,7 +20,7 @@ export default async function ProjectsPage() {
   }));
 
   const mentorCount = new Set(showcaseProjects.map((p) => p.mentor)).size;
-  const categoryCount = new Set(showcaseProjects.flatMap((p) => p.tags)).size;
+  const techCount = new Set(showcaseProjects.flatMap((p) => p.tags)).size;
 
   return (
     <Section className="pt-14 sm:pt-16">
@@ -27,12 +28,14 @@ export default async function ProjectsPage() {
         <ProjectsHero
           projectCount={showcaseProjects.length}
           mentorCount={mentorCount}
-          categoryCount={categoryCount}
+          techCount={techCount}
         />
 
         <div className="mt-14 sm:mt-16">
           <ProjectsExplorer projects={showcaseProjects} />
         </div>
+
+        <ProjectsCtaBanner />
       </Container>
     </Section>
   );

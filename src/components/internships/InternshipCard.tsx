@@ -1,10 +1,11 @@
 "use client";
 
+import { useId, useMemo } from "react";
 import Link from "next/link";
 import { motion } from "framer-motion";
 import { Card } from "@/components/ui/Card";
 import { ContentIcon } from "@/components/ui/ContentIcon";
-import { CourseIconThumb } from "@/components/courses/CourseIconThumb";
+import { getCourseIconInfo } from "@/lib/courseIcons";
 import { AnimatedArrow } from "@/components/ui/icons/AnimatedArrow";
 import { AnimatedCrown } from "@/components/ui/icons/AnimatedCrown";
 import { AnimatedMapPin } from "@/components/ui/icons/AnimatedMapPin";
@@ -38,6 +39,12 @@ export function InternshipCard({
   applied: boolean;
   index?: number;
 }) {
+  const idSeed = useId();
+  const visual = useMemo(
+    () => getCourseIconInfo(`${internship.type} ${internship.title}`, idSeed),
+    [internship.type, internship.title, idSeed]
+  );
+
   const deadline = new Date(internship.applyDeadline);
   const daysLeft = Math.max(0, Math.ceil((deadline.getTime() - Date.now()) / (1000 * 60 * 60 * 24)));
   const urgent = daysLeft > 0 && daysLeft <= 5;
@@ -68,30 +75,25 @@ export function InternshipCard({
               style={{ background: spotlightBg }}
             />
 
-            <div className="relative h-28 shrink-0 overflow-hidden">
-              <CourseIconThumb
-                category={internship.type}
-                title={internship.title}
-                className="transition-transform duration-500 group-hover:scale-105"
+            {/* Gradient banner header */}
+            <div
+              className="relative flex h-28 shrink-0 items-center justify-center overflow-hidden"
+              style={{ background: visual.gradient }}
+            >
+              <span className="pointer-events-none absolute -right-6 -top-8 h-24 w-24 rounded-full bg-white/10 blur-xl" />
+              <span
+                className="relative flex h-11 w-11 items-center justify-center rounded-full bg-white/15 ring-1 ring-white/25 backdrop-blur-sm transition-transform duration-300 group-hover:scale-110 group-hover:rotate-3 [&>svg]:h-6 [&>svg]:w-6"
+                dangerouslySetInnerHTML={{ __html: visual.svg }}
               />
-              <div className="pointer-events-none absolute inset-x-0 bottom-0 h-14 bg-gradient-to-t from-black/55 to-transparent" />
+
               {internship.featured && (
                 <span className="absolute left-3 top-3 z-10 inline-flex items-center gap-1.5 text-[11px] font-semibold text-white [text-shadow:0_1px_3px_rgba(0,0,0,.45)]">
                   <AnimatedCrown className="h-4.5 w-4.5" /> Featured
                 </span>
               )}
-              <span className="absolute right-3 top-3 z-10 rounded-full bg-black/40 px-2.5 py-1 text-[11px] font-semibold uppercase tracking-wide text-white backdrop-blur">
+              <span className="absolute right-3 top-3 z-10 rounded-full bg-black/30 px-2.5 py-1 text-[11px] font-semibold uppercase tracking-wide text-white backdrop-blur">
                 {internship.type}
               </span>
-              {urgent && (
-                <motion.span
-                  className="absolute bottom-2.5 left-3 z-10 text-[11px] font-semibold text-amber-200 [text-shadow:0_1px_3px_rgba(0,0,0,.5)]"
-                  animate={{ opacity: [1, 0.55, 1] }}
-                  transition={{ duration: 1.6, repeat: Infinity, ease: "easeInOut" }}
-                >
-                  {daysLeft === 1 ? "Closes tomorrow" : `${daysLeft} days left`}
-                </motion.span>
-              )}
             </div>
 
             <div className="relative z-10 flex flex-1 flex-col p-6">
@@ -119,11 +121,11 @@ export function InternshipCard({
                   <AnimatedMapPin className="h-4.5 w-4.5" /> {internship.location}
                 </span>
                 <span className="flex items-center gap-1.5">
-                  <AnimatedClock className="h-4.5 w-4.5" /> {internship.durationWeeks}w
+                  <AnimatedClock className="h-4.5 w-4.5" /> {internship.durationWeeks} weeks
                 </span>
                 <span className="flex items-center gap-1.5">
                   <AnimatedRupee className="h-4.5 w-4.5" />{" "}
-                  {internship.paid ? `${internship.stipend?.toLocaleString()}/mo` : "Unpaid"}
+                  {internship.paid ? `₹${internship.stipend?.toLocaleString()} / month` : "Unpaid"}
                 </span>
               </div>
 
@@ -142,9 +144,9 @@ export function InternshipCard({
                   <span className="text-xs text-muted">
                     {daysLeft > 0 ? `${daysLeft} days left to apply` : "Deadline passed"}
                   </span>
-                  <span className="inline-flex items-center gap-1 text-sm font-medium text-brand-500">
-                    Details
-                    <AnimatedArrow className="h-5 w-5" />
+                  <span className="inline-flex items-center gap-1 rounded-full brand-gradient-bg px-3.5 py-1.5 text-xs font-medium text-white shadow-[var(--shadow-soft)] transition-transform duration-300 group-hover:scale-105">
+                    View Details
+                    <AnimatedArrow className="h-4 w-4" />
                   </span>
                 </div>
               </div>

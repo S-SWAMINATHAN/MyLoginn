@@ -8,6 +8,19 @@ import { InternshipCard, type InternshipCardData } from "./InternshipCard";
 
 type PayFilter = "all" | "paid" | "unpaid";
 
+function FilterIcon({ className }: { className?: string }) {
+  return (
+    <svg viewBox="0 0 24 24" fill="none" className={className} aria-hidden>
+      <path
+        d="M4 6h16M7.5 12h9M10.5 18h3"
+        stroke="currentColor"
+        strokeWidth="1.8"
+        strokeLinecap="round"
+      />
+    </svg>
+  );
+}
+
 export function InternshipsExplorer({
   internships,
   appliedIds,
@@ -34,34 +47,18 @@ export function InternshipsExplorer({
 
   const appliedSet = new Set(appliedIds);
 
+  function clearFilters() {
+    setType("All");
+    setPay("all");
+    setQuery("");
+  }
+
+  function scrollToAll() {
+    document.getElementById("all-internships")?.scrollIntoView({ behavior: "smooth", block: "start" });
+  }
+
   return (
     <div>
-      {featured.length > 0 && (
-        <div className="mb-14">
-          <motion.div
-            className="flex items-center gap-2.5"
-            initial={{ opacity: 0, x: -18 }}
-            whileInView={{ opacity: 1, x: 0 }}
-            viewport={{ once: true, margin: "-60px" }}
-            transition={{ duration: 0.55, ease: [0.16, 1, 0.3, 1] }}
-          >
-            <AnimatedCrown className="h-7 w-7" />
-            <h2 className="text-lg font-semibold sm:text-xl">Featured internships</h2>
-            <span className="hidden h-px flex-1 bg-gradient-to-r from-border-soft to-transparent sm:block" />
-          </motion.div>
-          <div className="mt-6 grid grid-cols-1 gap-6 sm:grid-cols-2 sm:gap-7 lg:grid-cols-3">
-            {featured.slice(0, 3).map((internship, i) => (
-              <InternshipCard
-                key={internship.id}
-                internship={internship}
-                applied={appliedSet.has(internship.id)}
-                index={i}
-              />
-            ))}
-          </div>
-        </div>
-      )}
-
       {/* Sticky glass filter bar */}
       <motion.div
         initial={{ opacity: 0, y: 20 }}
@@ -115,73 +112,120 @@ export function InternshipsExplorer({
             </motion.button>
           ))}
         </div>
-        <div className="group relative w-full sm:w-64">
-          <span className="pointer-events-none absolute left-3 top-1/2 -translate-y-1/2">
-            <AnimatedSearch className="h-5 w-5" />
-          </span>
-          <input
-            value={query}
-            onChange={(e) => setQuery(e.target.value)}
-            placeholder="Search internships…"
-            className="w-full rounded-full border border-border-soft bg-surface py-2.5 pl-10 pr-4 text-sm outline-none transition-shadow duration-300 focus:border-brand-400 focus:ring-4 focus:ring-brand-100 dark:focus:ring-brand-900/30"
-          />
+
+        <div className="flex items-center gap-2.5">
+          <div className="group relative w-full sm:w-64">
+            <span className="pointer-events-none absolute left-3 top-1/2 -translate-y-1/2">
+              <AnimatedSearch className="h-5 w-5" />
+            </span>
+            <input
+              value={query}
+              onChange={(e) => setQuery(e.target.value)}
+              placeholder="Search internships…"
+              className="w-full rounded-full border border-border-soft bg-surface py-2.5 pl-10 pr-4 text-sm outline-none transition-shadow duration-300 focus:border-brand-400 focus:ring-4 focus:ring-brand-100 dark:focus:ring-brand-900/30"
+            />
+          </div>
+          <button
+            type="button"
+            onClick={clearFilters}
+            title="Reset filters"
+            className="flex h-10 w-10 shrink-0 cursor-pointer items-center justify-center rounded-full border border-border-soft bg-surface text-foreground/70 transition-colors duration-200 hover:border-brand-400 hover:text-brand-500"
+          >
+            <FilterIcon className="h-4.5 w-4.5" />
+          </button>
         </div>
       </motion.div>
 
-      {/* Animated result count */}
-      <div className="mt-6 flex items-center justify-between text-xs text-muted">
-        <AnimatePresence mode="wait">
-          <motion.span
-            key={filtered.length}
-            initial={{ opacity: 0, y: 6 }}
-            animate={{ opacity: 1, y: 0 }}
-            exit={{ opacity: 0, y: -6 }}
-            transition={{ duration: 0.25 }}
+      {featured.length > 0 && (
+        <div className="mt-12">
+          <motion.div
+            className="flex items-center justify-between gap-3"
+            initial={{ opacity: 0, x: -18 }}
+            whileInView={{ opacity: 1, x: 0 }}
+            viewport={{ once: true, margin: "-60px" }}
+            transition={{ duration: 0.55, ease: [0.16, 1, 0.3, 1] }}
           >
-            {filtered.length} {filtered.length === 1 ? "internship" : "internships"} found
-          </motion.span>
-        </AnimatePresence>
-      </div>
-
-      <motion.div layout className="mt-4 grid grid-cols-1 gap-6 sm:grid-cols-2 sm:gap-7 lg:grid-cols-3">
-        <AnimatePresence mode="popLayout">
-          {filtered.map((internship, i) => (
-            <InternshipCard
-              key={internship.id}
-              internship={internship}
-              applied={appliedSet.has(internship.id)}
-              index={i}
-            />
-          ))}
-        </AnimatePresence>
-      </motion.div>
-
-      {filtered.length === 0 && (
-        <motion.div
-          initial={{ opacity: 0, scale: 0.92 }}
-          animate={{ opacity: 1, scale: 1 }}
-          transition={{ duration: 0.5, ease: [0.16, 1, 0.3, 1] }}
-          className="mt-16 flex flex-col items-center gap-4 text-center"
-        >
-          <AnimatedSearch className="h-16 w-16 opacity-80" />
-          <div>
-            <p className="text-sm font-medium">No internships match your search</p>
-            <p className="mt-1 text-xs text-muted">Try a different keyword or clear the filters.</p>
+            <div className="flex items-center gap-2.5">
+              <AnimatedCrown className="h-7 w-7" />
+              <div>
+                <h2 className="text-lg font-semibold sm:text-xl">Featured Internships</h2>
+                <p className="text-xs text-muted">Handpicked internships recommended for you</p>
+              </div>
+            </div>
+            <button
+              type="button"
+              onClick={scrollToAll}
+              className="hidden shrink-0 cursor-pointer items-center gap-1 text-sm font-medium text-brand-500 hover:text-brand-600 sm:inline-flex"
+            >
+              View all internships →
+            </button>
+          </motion.div>
+          <div className="mt-6 grid grid-cols-1 gap-6 sm:grid-cols-2 sm:gap-7 lg:grid-cols-3">
+            {featured.slice(0, 3).map((internship, i) => (
+              <InternshipCard
+                key={internship.id}
+                internship={internship}
+                applied={appliedSet.has(internship.id)}
+                index={i}
+              />
+            ))}
           </div>
-          <motion.button
-            whileHover={{ scale: 1.04 }}
-            whileTap={{ scale: 0.96 }}
-            onClick={() => {
-              setType("All");
-              setPay("all");
-              setQuery("");
-            }}
-            className="cursor-pointer rounded-full brand-gradient-bg px-5 py-2 text-sm font-medium text-white shadow-[var(--shadow-soft)]"
-          >
-            Clear filters
-          </motion.button>
-        </motion.div>
+        </div>
       )}
+
+      <div id="all-internships" className="mt-14 scroll-mt-24">
+        <div className="flex items-center justify-between">
+          <h2 className="text-lg font-semibold sm:text-xl">All Internships</h2>
+          <AnimatePresence mode="wait">
+            <motion.span
+              key={filtered.length}
+              initial={{ opacity: 0, y: 6 }}
+              animate={{ opacity: 1, y: 0 }}
+              exit={{ opacity: 0, y: -6 }}
+              transition={{ duration: 0.25 }}
+              className="text-xs text-muted"
+            >
+              {filtered.length} {filtered.length === 1 ? "internship" : "internships"} found
+            </motion.span>
+          </AnimatePresence>
+        </div>
+
+        <motion.div layout className="mt-5 grid grid-cols-1 gap-6 sm:grid-cols-2 sm:gap-7 lg:grid-cols-3">
+          <AnimatePresence mode="popLayout">
+            {filtered.map((internship, i) => (
+              <InternshipCard
+                key={internship.id}
+                internship={internship}
+                applied={appliedSet.has(internship.id)}
+                index={i}
+              />
+            ))}
+          </AnimatePresence>
+        </motion.div>
+
+        {filtered.length === 0 && (
+          <motion.div
+            initial={{ opacity: 0, scale: 0.92 }}
+            animate={{ opacity: 1, scale: 1 }}
+            transition={{ duration: 0.5, ease: [0.16, 1, 0.3, 1] }}
+            className="mt-16 flex flex-col items-center gap-4 text-center"
+          >
+            <AnimatedSearch className="h-16 w-16 opacity-80" />
+            <div>
+              <p className="text-sm font-medium">No internships match your search</p>
+              <p className="mt-1 text-xs text-muted">Try a different keyword or clear the filters.</p>
+            </div>
+            <motion.button
+              whileHover={{ scale: 1.04 }}
+              whileTap={{ scale: 0.96 }}
+              onClick={clearFilters}
+              className="cursor-pointer rounded-full brand-gradient-bg px-5 py-2 text-sm font-medium text-white shadow-[var(--shadow-soft)]"
+            >
+              Clear filters
+            </motion.button>
+          </motion.div>
+        )}
+      </div>
     </div>
   );
 }

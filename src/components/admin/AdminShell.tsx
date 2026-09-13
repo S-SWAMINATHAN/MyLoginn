@@ -2,11 +2,11 @@
 
 import { useEffect, useMemo, useRef, useState } from "react";
 import Link from "next/link";
-import Image from "next/image";
 import { usePathname, useRouter } from "next/navigation";
 import { AnimatePresence, motion } from "framer-motion";
 import { cn } from "@/lib/cn";
 import { Avatar } from "@/components/ui/Avatar";
+import { LogoBadge } from "@/components/ui/LogoBadge";
 import { AnimatedHome } from "@/components/ui/icons/AnimatedHome";
 import { AnimatedGraduation } from "@/components/ui/icons/AnimatedGraduation";
 import { AnimatedUsers } from "@/components/ui/icons/AnimatedUsers";
@@ -23,7 +23,6 @@ import { AnimatedSearch } from "@/components/ui/icons/AnimatedSearch";
 import { AnimatedArrow } from "@/components/ui/icons/AnimatedArrow";
 import { AnimatedLogout } from "@/components/ui/icons/AnimatedLogout";
 import { AnimatedClose } from "@/components/ui/icons/AnimatedClose";
-import logo from "@/images/Logos/Logo-trimmed.png";
 
 export type AdminNavUser = { name: string; email: string; avatarColor: string; avatarUrl: string | null };
 
@@ -79,7 +78,7 @@ function SidebarContent({ user, onNavigate }: { user: AdminNavUser; onNavigate?:
   return (
     <div className="flex h-full flex-col">
       <Link href="/" className="flex items-center gap-2 px-5 pb-2 pt-5" onClick={onNavigate}>
-        <Image src={logo} alt="MyLoginn" className="h-9 w-auto" preload />
+        <LogoBadge className="h-9 w-auto" />
       </Link>
 
       <nav className="mt-2 flex-1 overflow-y-auto px-3 pb-4">

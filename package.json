@@ -15,9 +15,11 @@
   "dependencies": {
     "@hookform/resolvers": "^5.4.0",
     "@prisma/client": "^6.19.3",
+    "@react-three/fiber": "^9.7.0",
     "bcryptjs": "^3.0.3",
     "clsx": "^2.1.1",
     "framer-motion": "^12.42.2",
+    "gsap": "^3.15.0",
     "jsonwebtoken": "^9.0.3",
     "libphonenumber-js": "^1.13.8",
     "lucide-react": "^1.23.0",
@@ -31,6 +33,7 @@
     "react-hook-form": "^7.80.0",
     "resend": "^6.17.1",
     "tailwind-merge": "^3.6.0",
+    "three": "^0.186.0",
     "twilio": "^6.0.2",
     "zod": "^4.4.3"
   },
@@ -41,6 +44,7 @@
     "@types/node": "^20",
     "@types/react": "^19",
     "@types/react-dom": "^19",
+    "@types/three": "^0.186.0",
     "eslint": "^9",
     "eslint-config-next": "16.2.10",
     "playwright": "^1.61.1",

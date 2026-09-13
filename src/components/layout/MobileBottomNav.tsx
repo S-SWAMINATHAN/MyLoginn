@@ -84,7 +84,7 @@ export function MobileBottomNav({ loggedIn }: { loggedIn: boolean }) {
               className="fixed inset-x-3 z-50 origin-bottom overflow-hidden rounded-3xl border border-border-soft bg-surface p-2 shadow-[var(--shadow-lift)]"
               style={{ bottom: "calc(5rem + env(safe-area-inset-bottom))" }}
             >
-              <div className="pointer-events-none absolute -top-20 -right-16 h-44 w-44 rounded-full bg-[radial-gradient(circle,rgba(108,77,255,0.2),transparent_70%)]" />
+              <div className="pointer-events-none absolute -top-20 -right-16 h-44 w-44 rounded-full bg-[radial-gradient(circle,rgba(31,86,214,0.2),transparent_70%)]" />
               <p className="px-3.5 pb-1 pt-2 text-[11px] font-bold uppercase tracking-[0.16em] brand-gradient-text">
                 Services
               </p>

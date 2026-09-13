@@ -131,7 +131,7 @@ export function AiAgentWidget() {
             )}
           >
             {/* ambient gradient glow */}
-            <div className="pointer-events-none absolute -top-24 -right-20 h-56 w-56 rounded-full bg-[radial-gradient(circle,rgba(108,77,255,0.2),transparent_70%)]" />
+            <div className="pointer-events-none absolute -top-24 -right-20 h-56 w-56 rounded-full bg-[radial-gradient(circle,rgba(31,86,214,0.2),transparent_70%)]" />
 
             {/* Header */}
             <div className="relative flex items-center gap-3 border-b border-border-soft px-4 py-3">
@@ -179,7 +179,7 @@ export function AiAgentWidget() {
               {messages.map((m, i) =>
                 m.role === "user" ? (
                   <div key={i} className="flex justify-end">
-                    <div className="max-w-[85%] rounded-2xl rounded-br-md brand-gradient-bg px-3.5 py-2.5 text-sm text-white shadow-[0_4px_14px_rgba(108,77,255,0.3)]">
+                    <div className="max-w-[85%] rounded-2xl rounded-br-md brand-gradient-bg px-3.5 py-2.5 text-sm text-white shadow-[0_4px_14px_rgba(31,86,214,0.3)]">
                       <p className="whitespace-pre-wrap break-words">{m.content}</p>
                     </div>
                   </div>
@@ -214,7 +214,7 @@ export function AiAgentWidget() {
                   type="submit"
                   disabled={loading || !input.trim()}
                   aria-label="Send message"
-                  className="flex h-8 w-8 shrink-0 cursor-pointer items-center justify-center rounded-full brand-gradient-bg text-white shadow-[0_4px_14px_rgba(108,77,255,0.35)] transition-all duration-200 hover:scale-105 active:scale-95 disabled:cursor-not-allowed disabled:opacity-40 disabled:hover:scale-100"
+                  className="flex h-8 w-8 shrink-0 cursor-pointer items-center justify-center rounded-full brand-gradient-bg text-white shadow-[0_4px_14px_rgba(31,86,214,0.35)] transition-all duration-200 hover:scale-105 active:scale-95 disabled:cursor-not-allowed disabled:opacity-40 disabled:hover:scale-100"
                 >
                   <Send className="h-3.5 w-3.5 -translate-x-px" />
                 </button>
