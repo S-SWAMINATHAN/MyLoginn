@@ -13,9 +13,9 @@ export function AnimatedAgent({ className, style }: { className?: string; style?
       <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" className="h-full w-full overflow-visible">
         <defs>
           <linearGradient id={`${id}g`} x1="0" y1="0" x2="1" y2="1">
-            <stop offset="0%" stopColor="#c4b5fd" />
-            <stop offset="55%" stopColor="#8b5cf6" />
-            <stop offset="100%" stopColor="#6d28d9" />
+            <stop offset="0%" stopColor="#8ab0ff" />
+            <stop offset="55%" stopColor="#2f6fed" />
+            <stop offset="100%" stopColor="#1a44ab" />
           </linearGradient>
           <linearGradient id={`${id}v`} x1="0" y1="0" x2="1" y2="0">
             <stop offset="0%" stopColor="#22d3ee" />
@@ -93,7 +93,7 @@ export function AnimatedAgent({ className, style }: { className?: string; style?
               cy="11.1"
               rx="1.15"
               ry="1.5"
-              fill="#f5f3ff"
+              fill="#eaf2ff"
               style={{ transformOrigin: `${cx}px 11.1px` }}
               animate={{ scaleY: [1, 1, 0.12, 1, 1] }}
               transition={{

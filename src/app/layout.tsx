@@ -22,9 +22,9 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "MyLoginn — AI-Powered Learning, Tutoring & Growth",
+  title: "MyLoginn — Web, Mobile, AI & Intelligent Digital Experiences",
   description:
-    "Advanced digital marketing & AI/ML courses, CBSE/State Board tutoring, internships, and AI-driven digital marketing, app & web development services.",
+    "MyLoginn Tech Private Limited builds web, mobile and custom software, AI and AI agents, and automation — plus hands-on courses and 1:1 tutoring in AI/ML, full-stack development, data and more.",
 };
 
 export default async function RootLayout({

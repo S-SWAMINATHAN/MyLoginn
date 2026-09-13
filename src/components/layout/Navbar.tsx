@@ -1,7 +1,6 @@
 "use client";
 
 import Link from "next/link";
-import Image from "next/image";
 import { usePathname } from "next/navigation";
 import { useEffect, useState, type ReactNode } from "react";
 import { motion, AnimatePresence, type Variants } from "framer-motion";
@@ -27,8 +26,9 @@ import { AnimatedUser } from "@/components/ui/icons/AnimatedUser";
 import { AiAssistantButton } from "./AiAssistantButton";
 import { ProfileMenu, type ProfileUser } from "./ProfileMenu";
 import { Button } from "@/components/ui/Button";
+import { LogoLockup } from "@/components/ui/LogoBadge";
 import { cn } from "@/lib/cn";
-import logo from "@/images/Logos/Logo-trimmed.png";
+import { usePageScrollProgress } from "@/lib/usePageScrollProgress";
 
 type NavUser = ProfileUser | null;
 
@@ -86,6 +86,8 @@ export function Navbar({ user }: { user: NavUser }) {
   const [scrolled, setScrolled] = useState(false);
   const [mobileOpen, setMobileOpen] = useState(false);
   const [servicesOpen, setServicesOpen] = useState(false);
+  const isHome = pathname === "/";
+  const storyProgress = usePageScrollProgress();
 
   useEffect(() => {
     const onScroll = () => setScrolled(window.scrollY > 12);
@@ -114,12 +116,7 @@ export function Navbar({ user }: { user: NavUser }) {
     >
       <nav className="mx-auto flex h-16 max-w-7xl items-center justify-between px-5 sm:px-8">
         <Link href="/" className="flex items-center transition-transform duration-300 ease-out hover:scale-[1.04] active:scale-[0.97]">
-          <Image
-            src={logo}
-            alt="MyLoginn"
-            preload
-            className="h-9 w-auto select-none object-contain sm:h-10"
-          />
+          <LogoLockup />
         </Link>
 
         <div className="hidden lg:flex items-center gap-1">
@@ -203,7 +200,7 @@ export function Navbar({ user }: { user: NavUser }) {
             <Link
               href="/login"
               aria-label="Log in"
-              className="flex h-10 w-10 items-center justify-center rounded-full border border-border-soft bg-surface transition-all duration-300 hover:border-brand-400 hover:shadow-[0_4px_16px_rgba(108,77,255,0.25)] active:scale-95"
+              className="flex h-10 w-10 items-center justify-center rounded-full border border-border-soft bg-surface transition-all duration-300 hover:border-brand-400 hover:shadow-[0_4px_16px_rgba(31,86,214,0.25)] active:scale-95"
             >
               <AnimatedUser className="h-6 w-6" />
             </Link>
@@ -213,6 +210,15 @@ export function Navbar({ user }: { user: NavUser }) {
       </nav>
 
       <MobileMenu open={mobileOpen} pathname={pathname} user={user} onClose={() => setMobileOpen(false)} />
+
+      {isHome && (
+        <div className="h-[2.5px] w-full bg-transparent" aria-hidden>
+          <div
+            className="h-full brand-gradient-bg"
+            style={{ width: `${storyProgress * 100}%`, transition: "width 120ms linear" }}
+          />
+        </div>
+      )}
     </header>
   );
 }
@@ -230,8 +236,8 @@ function HamburgerButton({ open, onToggle }: { open: boolean; onToggle: () => vo
       className={cn(
         "relative flex h-10 w-10 items-center justify-center rounded-2xl cursor-pointer transition-all duration-300",
         open
-          ? "brand-gradient-bg text-white shadow-[0_8px_24px_rgba(108,77,255,0.45)]"
-          : "border border-border-soft bg-surface text-foreground hover:border-brand-400 hover:shadow-[0_4px_16px_rgba(108,77,255,0.25)]"
+          ? "brand-gradient-bg text-white shadow-[0_8px_24px_rgba(31,86,214,0.45)]"
+          : "border border-border-soft bg-surface text-foreground hover:border-brand-400 hover:shadow-[0_4px_16px_rgba(31,86,214,0.25)]"
       )}
     >
       <span className="relative block h-3.5 w-5">
@@ -304,7 +310,7 @@ function MobileMenu({
             className="fixed inset-x-3 top-[4.75rem] z-50 origin-top overflow-hidden rounded-3xl border border-border-soft bg-surface shadow-[var(--shadow-lift)]"
           >
             {/* ambient gradient glow inside the sheet */}
-            <div className="pointer-events-none absolute -top-24 -right-20 h-56 w-56 rounded-full bg-[radial-gradient(circle,rgba(108,77,255,0.22),transparent_70%)]" />
+            <div className="pointer-events-none absolute -top-24 -right-20 h-56 w-56 rounded-full bg-[radial-gradient(circle,rgba(31,86,214,0.22),transparent_70%)]" />
             <div className="pointer-events-none absolute -bottom-24 -left-20 h-56 w-56 rounded-full bg-[radial-gradient(circle,rgba(6,182,212,0.18),transparent_70%)]" />
 
             <motion.div

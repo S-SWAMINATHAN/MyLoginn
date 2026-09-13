@@ -10,7 +10,7 @@ export function AiAssistantButton() {
     <button
       onClick={() => window.dispatchEvent(new Event(OPEN_AGENT_EVENT))}
       aria-label="Open AI agent chat"
-      className="group relative flex h-10 w-10 items-center justify-center rounded-full border border-border-soft bg-surface-2/60 cursor-pointer transition-all duration-300 hover:border-brand-400 hover:shadow-[0_4px_16px_rgba(108,77,255,0.25)] active:scale-95"
+      className="group relative flex h-10 w-10 items-center justify-center rounded-full border border-border-soft bg-surface-2/60 cursor-pointer transition-all duration-300 hover:border-brand-400 hover:shadow-[0_4px_16px_rgba(31,86,214,0.25)] active:scale-95"
     >
       <span className="pointer-events-none absolute inset-0 rounded-full brand-gradient-bg opacity-25 blur-md animate-pulse" />
       <span className="pointer-events-none absolute -right-1 -top-1">

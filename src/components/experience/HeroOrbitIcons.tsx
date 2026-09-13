@@ -1,8 +1,9 @@
 "use client";
 
 import { motion } from "framer-motion";
-import { Brain, Cpu, ShieldCheck, Bot, Code2, Megaphone, GraduationCap, Cloud, type LucideIcon } from "lucide-react";
+import { Brain, Cpu, ShieldCheck, Bot, CodeXml, Megaphone, GraduationCap, Cloud, type LucideIcon } from "lucide-react";
 import { HERO_ORBIT_CENTER as ORBIT_CENTER } from "@/lib/heroOrbit";
+import { useReducedMotion } from "@/lib/useReducedMotion";
 
 type ShellIcon = { Icon: LucideIcon; color: string; angle: number; name: string };
 
@@ -23,7 +24,7 @@ const shells: Shell[] = [
     duration: 22,
     icons: [
       { Icon: Brain, color: "#8874ff", angle: 20, name: "AI & ML" },
-      { Icon: Code2, color: "#22d3ee", angle: 200, name: "Web Dev" },
+      { Icon: CodeXml, color: "#22d3ee", angle: 200, name: "Web Dev" },
     ],
   },
   {
@@ -45,7 +46,7 @@ const shells: Shell[] = [
     duration: 27,
     icons: [
       { Icon: Cpu, color: "#38bdf8", angle: 0, name: "Tech Skills" },
-      { Icon: Bot, color: "#6c4dff", angle: 120, name: "AI Agent" },
+      { Icon: Bot, color: "#2f6fed", angle: 120, name: "AI Agent" },
       { Icon: Cloud, color: "#818cf8", angle: 240, name: "Cloud" },
     ],
   },
@@ -54,7 +55,7 @@ const shells: Shell[] = [
 function OrbitRingPath({ rx, ry, tilt }: { rx: number; ry: number; tilt: number }) {
   return (
     <div
-      className="pointer-events-none absolute rounded-full border border-dashed border-accent-300/40 dark:border-accent-300/25"
+      className="pointer-events-none absolute rounded-full border border-dashed border-accent-300/40"
       style={{
         left: `${ORBIT_CENTER.left}%`,
         top: `${ORBIT_CENTER.top}%`,
@@ -66,7 +67,7 @@ function OrbitRingPath({ rx, ry, tilt }: { rx: number; ry: number; tilt: number 
   );
 }
 
-function ShellIcons({ rx, ry, tilt, duration, reverse, icons }: Shell) {
+function ShellIcons({ rx, ry, tilt, duration, reverse, icons, paused }: Shell & { paused: boolean }) {
   return (
     <div
       className="orbit-shell absolute inset-0"
@@ -74,6 +75,7 @@ function ShellIcons({ rx, ry, tilt, duration, reverse, icons }: Shell) {
         transformOrigin: `${ORBIT_CENTER.left}% ${ORBIT_CENTER.top}%`,
         animationDuration: `${duration}s`,
         animationDirection: reverse ? "reverse" : "normal",
+        animationPlayState: paused ? "paused" : "running",
       }}
     >
       {icons.map(({ Icon, color, angle, name }, i) => {
@@ -98,11 +100,16 @@ function ShellIcons({ rx, ry, tilt, duration, reverse, icons }: Shell) {
               style={{
                 animationDuration: `${duration}s`,
                 animationDirection: reverse ? "normal" : "reverse",
+                animationPlayState: paused ? "paused" : "running",
               }}
             >
               <div
                 className="orbit-pulse"
-                style={{ animationDuration: "2.4s", animationDelay: `${i * 0.3}s` }}
+                style={{
+                  animationDuration: "2.4s",
+                  animationDelay: `${i * 0.3}s`,
+                  animationPlayState: paused ? "paused" : "running",
+                }}
               >
                 <div
                   className="orbit-icon group glass relative flex h-8 w-8 items-center justify-center rounded-full pointer-events-auto cursor-default sm:h-9 sm:w-9 lg:h-10 lg:w-10"
@@ -128,6 +135,8 @@ function ShellIcons({ rx, ry, tilt, duration, reverse, icons }: Shell) {
 }
 
 export function HeroOrbitIcons() {
+  const reducedMotion = useReducedMotion();
+
   return (
     <motion.div
       className="pointer-events-none absolute inset-0 z-20"
@@ -139,7 +148,7 @@ export function HeroOrbitIcons() {
         <OrbitRingPath key={i} rx={shell.rx} ry={shell.ry} tilt={shell.tilt} />
       ))}
       {shells.map((shell, i) => (
-        <ShellIcons key={i} {...shell} />
+        <ShellIcons key={i} {...shell} paused={reducedMotion} />
       ))}
     </motion.div>
   );
