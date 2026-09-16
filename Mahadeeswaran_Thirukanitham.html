@@ -1,0 +1,1474 @@
+<!DOCTYPE html>
+    <html lang="ta">
+    <head>
+        <meta charset="utf-8">
+        <title>மகாதீஸ்வரன் — திருக்கணித ஜாதக மகா காண்டம்</title>
+        <style>
+    @import url('https://fonts.googleapis.com/css2?family=Kavivanar&display=swap');
+    
+    @page {
+        size: A4 portrait;
+        margin: 0;
+    }
+    
+    * {
+        box-sizing: border-box;
+        -webkit-print-color-adjust: exact !important;
+        print-color-adjust: exact !important;
+    }
+    
+    body {
+        margin: 0;
+        padding: 0;
+        background: #e9e4d4;
+        font-family: 'Kavivanar', cursive, sans-serif;
+        color: #1e3a8a; /* Default Royal Blue Ink for text/math */
+    }
+    
+    .manuscript-page {
+        width: 210mm;
+        height: 297mm;
+        min-height: 297mm;
+        max-height: 297mm;
+        page-break-after: always;
+        break-after: page;
+        position: relative;
+        overflow: hidden;
+        background: #fdfbf6;
+        padding: 12mm 14mm 10mm 14mm;
+        box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+        margin: 0 auto;
+    }
+    
+    /* Double Hand-Drawn Manuscript Border */
+    .page-border {
+        position: absolute;
+        top: 6mm;
+        left: 6mm;
+        right: 6mm;
+        bottom: 6mm;
+        border: 2.5px solid #9b2c1c; /* Red Ink Frame */
+        pointer-events: none;
+        outline: 1px dashed #c97a6e;
+        outline-offset: -4px;
+        z-index: 10;
+    }
+    
+    .corner-ornament {
+        position: absolute;
+        width: 14px;
+        height: 14px;
+        border: 2px solid #9b2c1c;
+        background: #fdfbf6;
+        z-index: 11;
+    }
+    .corner-tl { top: 5mm; left: 5mm; border-bottom: none; border-right: none; }
+    .corner-tr { top: 5mm; right: 5mm; border-bottom: none; border-left: none; }
+    .corner-bl { bottom: 5mm; left: 5mm; border-top: none; border-right: none; }
+    .corner-br { bottom: 5mm; right: 5mm; border-top: none; border-left: none; }
+    
+    /* Typography & Hierarchy */
+    .ink-red { color: #9b2c1c !important; }
+    .ink-blue { color: #1e3a8a !important; }
+    .ink-gold { color: #b45309 !important; }
+    
+    .header-masthead {
+        text-align: center;
+        margin-bottom: 6px;
+        border-bottom: 1.5px solid #9b2c1c;
+        padding-bottom: 5px;
+    }
+    .masthead-title {
+        font-size: 19px;
+        font-weight: 700;
+        color: #9b2c1c;
+        letter-spacing: 0.5px;
+        line-height: 1.2;
+    }
+    .masthead-sloka {
+        font-size: 11px;
+        color: #9b2c1c;
+        font-style: italic;
+        margin-top: 2px;
+        line-height: 1.3;
+    }
+    .masthead-system-badge {
+        display: inline-block;
+        background: #9b2c1c;
+        color: #fdfbf6;
+        padding: 2px 10px;
+        border-radius: 12px;
+        font-size: 11px;
+        font-weight: bold;
+        margin-top: 2px;
+    }
+    
+    .section-banner {
+        background: #f7eedb;
+        border-left: 4px solid #9b2c1c;
+        border-right: 1px solid #c97a6e;
+        border-top: 1px solid #c97a6e;
+        border-bottom: 1px solid #c97a6e;
+        padding: 3px 8px;
+        font-size: 12.5px;
+        font-weight: 700;
+        color: #9b2c1c;
+        margin: 6px 0 5px 0;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+    }
+    
+    /* Tables */
+    .manuscript-table {
+        width: 100%;
+        border-collapse: collapse;
+        font-size: 10.5px;
+        line-height: 1.25;
+        margin-bottom: 6px;
+    }
+    .manuscript-table th {
+        background: #f5eedb;
+        color: #9b2c1c;
+        border: 1px solid #9b2c1c;
+        padding: 3px 4px;
+        font-weight: 700;
+        text-align: center;
+    }
+    .manuscript-table td {
+        border: 1px solid #d4be9e;
+        padding: 2.5px 4px;
+        color: #1e3a8a;
+    }
+    .manuscript-table tr:nth-child(even) {
+        background: #faf6ed;
+    }
+    .manuscript-table tr.highlight-row {
+        background: #fff0eb;
+        font-weight: bold;
+    }
+    
+    /* 4x4 Kattam Styling */
+    .kattam-wrapper {
+        width: 100%;
+        margin: 4px 0;
+    }
+    .kattam-grid {
+        display: grid;
+        grid-template-columns: repeat(4, 1fr);
+        grid-template-rows: repeat(4, 46px);
+        border: 2px solid #9b2c1c;
+        background: #fdfbf6;
+    }
+    .kattam-cell {
+        border: 1px solid #c97a6e;
+        padding: 2px 3px;
+        position: relative;
+        font-size: 9.5px;
+        overflow: hidden;
+    }
+    .sign-lbl {
+        font-size: 8.5px;
+        color: #9b2c1c;
+        font-weight: bold;
+        line-height: 1;
+        opacity: 0.85;
+    }
+    .occ-container {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 2px 4px;
+        margin-top: 1px;
+    }
+    .occ-tag {
+        font-size: 9.5px;
+        font-weight: bold;
+        color: #1e3a8a;
+        line-height: 1.1;
+    }
+    .occ-tag.lagna-tag {
+        color: #b91c1c;
+        background: #fee2e2;
+        padding: 0 2px;
+        border-radius: 2px;
+    }
+    .deg-sub {
+        font-size: 7.5px;
+        color: #64748b;
+        margin-left: 1px;
+    }
+    .ret-sub {
+        font-size: 8px;
+        color: #dc2626;
+        font-weight: normal;
+    }
+    .kattam-center {
+        grid-column: 2 / span 2;
+        grid-row: 2 / span 2;
+        border: 1px solid #9b2c1c;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        text-align: center;
+        background: #f5eedb;
+        padding: 4px;
+    }
+    .kattam-title {
+        font-size: 13px;
+        font-weight: bold;
+        color: #9b2c1c;
+        line-height: 1.2;
+    }
+    .kattam-sub {
+        font-size: 9.5px;
+        color: #1e3a8a;
+        margin-top: 2px;
+    }
+    
+    /* Multi-column Panels */
+    .grid-2col {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 8px;
+    }
+    .panel-card {
+        border: 1px solid #c97a6e;
+        background: #fbf7ee;
+        padding: 6px 8px;
+        border-radius: 3px;
+    }
+    .panel-card-title {
+        font-size: 11px;
+        font-weight: bold;
+        color: #9b2c1c;
+        border-bottom: 1px dashed #c97a6e;
+        padding-bottom: 2px;
+        margin-bottom: 4px;
+    }
+    .info-row {
+        display: flex;
+        justify-content: space-between;
+        font-size: 10px;
+        padding: 1.5px 0;
+        border-bottom: 0.5px dotted #e2d2b8;
+    }
+    .info-label {
+        color: #9b2c1c;
+        font-weight: 600;
+    }
+    .info-val {
+        color: #1e3a8a;
+        font-weight: 500;
+        text-align: right;
+    }
+    
+    /* Footer */
+    .page-footer {
+        position: absolute;
+        bottom: 8mm;
+        left: 14mm;
+        right: 14mm;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        font-size: 9.5px;
+        color: #9b2c1c;
+        border-top: 1px solid #9b2c1c;
+        padding-top: 3px;
+    }
+    </style>
+    </head>
+    <body>
+    
+    <!-- ==================== PAGE 1: MANGALA SANKALPAM & BIRTH DETAILS ==================== -->
+    <div class="manuscript-page">
+        <div class="page-border"></div>
+        <div class="corner-ornament corner-tl"></div>
+        <div class="corner-ornament corner-tr"></div>
+        <div class="corner-ornament corner-bl"></div>
+        <div class="corner-ornament corner-br"></div>
+        
+        <div class="header-masthead">
+            <div class="masthead-title">|| ௐ ஸ்ரீ கணபதயே நமஹ || &nbsp; • &nbsp; || ஸ்ரீ ராமஜெயம் ||</div>
+            <div class="masthead-sloka">ஜெனனீ ஜென்ம சௌக்கியானாம் வர்தனீ குல சம்பதாம் | பதவீ பூர்வ புண்யானாம் லிக்யதே ஜென்ம பத்ரிகா ||</div>
+            <div class="masthead-system-badge">திருக்கணித பஞ்சாங்கம் (Chitrapaksha Lahiri Ephemeris)</div>
+        </div>
+        
+        <div class="section-banner">
+            <span>பிரிவு 1: ஜாதகர் விபரம் & வானியல் பிறப்புக் குறிப்புகள்</span>
+            <span>பக்கம் 1 / 5</span>
+        </div>
+        
+        <div class="grid-2col" style="margin-bottom: 6px;">
+            <div class="panel-card">
+                <div class="panel-card-title">ஜாதகர் சுய விவரக் குறிப்பு (Native Particulars)</div>
+                <div class="info-row"><span class="info-label">பெயர்</span><span class="info-val" style="font-size:12px; font-weight:700;">மகாதீஸ்வரன்</span></div>
+                <div class="info-row"><span class="info-label">பாலினம்</span><span class="info-val">ஆண் (Male)</span></div>
+                <div class="info-row"><span class="info-label">தந்தை பெயர்</span><span class="info-val">பெருமாள்</span></div>
+                <div class="info-row"><span class="info-label">தாயார் பெயர்</span><span class="info-val">பாப்புஅம்மாள்</span></div>
+                <div class="info-row"><span class="info-label">கோத்திரம்</span><span class="info-val">சிவ கோத்திரம்</span></div>
+                <div class="info-row"><span class="info-label">குலதெய்வம்</span><span class="info-val">ஸ்ரீ குலதெய்வம்</span></div>
+                <div class="info-row"><span class="info-label">பூர்வீகம்</span><span class="info-val">வெண்ணந்தூர் (Salem)</span></div>
+            </div>
+            
+            <div class="panel-card">
+                <div class="panel-card-title">வானியல் நேரம் & இருப்பிடம் (Ephemeris Coordinates)</div>
+                <div class="info-row"><span class="info-label">ஆங்கிலத் தேதி</span><span class="info-val">1968-09-26</span></div>
+                <div class="info-row"><span class="info-label">பிறந்த நேரம்</span><span class="info-val">11:52:00 (IST +05:30)</span></div>
+                <div class="info-row"><span class="info-label">பிறந்த இடம்</span><span class="info-val">Salem, Tamil Nadu, India</span></div>
+                <div class="info-row"><span class="info-label">அட்சரேகை / தீர்க்கரேகை</span><span class="info-val">11.6500° N / 78.1500° E</span></div>
+                <div class="info-row"><span class="info-label">அயனாம்சம் (லஹரி)</span><span class="info-val">23° 25' 13"</span></div>
+                <div class="info-row"><span class="info-label">சூரிய உதயம் / அஸ்தமனம்</span><span class="info-val">06:07:19 AM / 06:10:00 PM</span></div>
+                <div class="info-row"><span class="info-label">உதயாதி நாழிகை</span><span class="info-val">14 நாழிகை 22 விநாழிகை</span></div>
+            </div>
+        </div>
+        
+        <div class="section-banner">
+            <span>பஞ்சாங்க பஞ்ச அங்கங்கள் (Panchangam Angas)</span>
+            <span>திருக்கணித முறை</span>
+        </div>
+        
+        <table class="manuscript-table">
+            <thead>
+                <tr>
+                    <th>அங்கம்</th><th>விவரம் (தமிழ்)</th><th>விவரம் (ஆங்கிலம்)</th><th>அதிபதி / தத்துவம்</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td class="ink-red" style="font-weight:bold;">1. லக்னம் (Ascendant)</td>
+                    <td><b>தனுசு</b> (00° 46' 18")</td>
+                    <td>Dhanus</td>
+                    <td>லக்னாதிபதி: <b>குரு</b></td>
+                </tr>
+                <tr>
+                    <td class="ink-red" style="font-weight:bold;">2. ஜன்ம ராசி (Moon Sign)</td>
+                    <td><b>விருச்சிகம்</b> ராசி</td>
+                    <td>Vrischika</td>
+                    <td>ராசியாதிபதி: <b>Mars</b></td>
+                </tr>
+                <tr>
+                    <td class="ink-red" style="font-weight:bold;">3. ஜன்ம நட்சத்திரம்</td>
+                    <td><b>விசாகம்</b> பாதம் 4</td>
+                    <td>Vishakha Pada 4</td>
+                    <td>நட்சத்திராதிபதி: <b>Jupiter</b></td>
+                </tr>
+                <tr>
+                    <td class="ink-red" style="font-weight:bold;">4. திதி (Tithi)</td>
+                    <td>வளர்பிறை பஞ்சமி</td>
+                    <td>Shukla Paksha Panchami</td>
+                    <td>பக்ஷம்: —</td>
+                </tr>
+                <tr>
+                    <td class="ink-red" style="font-weight:bold;">5. வாரம் (கிழமை)</td>
+                    <td>வியாழக்கிழமை (Guruvasara)</td>
+                    <td>வாசர நாதன்: Jupiter</td>
+                    <td>சுப வாரம்</td>
+                </tr>
+                <tr>
+                    <td class="ink-red" style="font-weight:bold;">6. நித்திய யோகம்</td>
+                    <td>விஷ்கம்பம்</td>
+                    <td>Vishkambha</td>
+                    <td>சுப யோகம்</td>
+                </tr>
+                <tr>
+                    <td class="ink-red" style="font-weight:bold;">7. கரணம் (Karana)</td>
+                    <td>பவம்</td>
+                    <td>Bava</td>
+                    <td>ஸ்திர / சர கரணம்</td>
+                </tr>
+                <tr>
+                    <td class="ink-red" style="font-weight:bold;">8. சுப யோகம் (தின யோகம்)</td>
+                    <td><b>சித்த யோகம்</b></td>
+                    <td>Siddha Yoga</td>
+                    <td>Auspicious</td>
+                </tr>
+            </tbody>
+        </table>
+        
+        <div class="section-banner">
+            <span>நட்சத்திரப் பொருத்த தத்துவ குணங்கள் (27 Nakshatra Koota Attributes)</span>
+            <span>மங்களப் பொருத்தம்</span>
+        </div>
+        
+        <div class="grid-2col">
+            <div class="panel-card">
+                <div class="info-row"><span class="info-label">கணம் (Gana)</span><span class="info-val">ராக்ஷஸ கணம் (Rakshasa)</span></div>
+                <div class="info-row"><span class="info-label">யோனி (Yoni)</span><span class="info-val">ஆண் புலி (Tiger)</span></div>
+                <div class="info-row"><span class="info-label">ரஜ்ஜு (Rajju)</span><span class="info-val" style="color:#b91c1c; font-weight:700;">உதர ரஜ்ஜு (Stomach (Udara))</span></div>
+                <div class="info-row"><span class="info-label">பூதம் (Pancha Bhoota)</span><span class="info-val">நெருப்பு (Fire)</span></div>
+            </div>
+            <div class="panel-card">
+                <div class="info-row"><span class="info-label">நாடி (Nadi)</span><span class="info-val">அந்த்ய நாடி (கபம்) (Kapha (Antya))</span></div>
+                <div class="info-row"><span class="info-label">விருட்சம் (மரம்)</span><span class="info-val">விளா மரம்</span></div>
+                <div class="info-row"><span class="info-label">பட்சி (பறவை)</span><span class="info-val">காகம்</span></div>
+                <div class="info-row"><span class="info-label">மிருகம் (விலங்கு)</span><span class="info-val">புலி</span></div>
+            </div>
+        </div>
+        
+        <div class="page-footer">
+            <span>ஜாதகர்: மகாதீஸ்வரன் | பிறந்த தேதி: 1968-09-26</span>
+            <span>திருக்கணித சம்பூர்ண ஜாதகம்</span>
+            <span>பக்கம் 1</span>
+        </div>
+    </div>
+    
+    <!-- ==================== PAGE 2: PLANETARY TABLE & D1/D9 CHAKRAS ==================== -->
+    <div class="manuscript-page">
+        <div class="page-border"></div>
+        <div class="corner-ornament corner-tl"></div>
+        <div class="corner-ornament corner-tr"></div>
+        <div class="corner-ornament corner-bl"></div>
+        <div class="corner-ornament corner-br"></div>
+        
+        <div class="header-masthead">
+            <div class="masthead-title">நவக்கிரக ஸ்புட அட்டவணை & ராசி-நவாம்ச சக்கரங்கள்</div>
+            <div class="masthead-sloka">சூரிய சித்தாந்த & திருக்கணித சுவிஸ் எபிமெரிஸ் கணித முறைப்படி நின்ற கிரக நிலை</div>
+        </div>
+        
+        <div class="section-banner">
+            <span>பிரிவு 2: 11 கிரகங்களின் நுட்பமான பாகை விவரங்கள் (Planetary Longitudes)</span>
+            <span>பக்கம் 2 / 5</span>
+        </div>
+        
+        <table class="manuscript-table">
+            <thead>
+                <tr>
+                    <th>கிரகம்</th>
+                    <th>குறியீடு</th>
+                    <th>மொத்த பாகை (0°-360°)</th>
+                    <th>ராசி</th>
+                    <th>ராசி பாகை (0°-30°)</th>
+                    <th>நட்சத்திரம்</th>
+                    <th>பாதம்</th>
+                    <th>நவாம்சம்</th>
+                    <th>ஆட்சி / உச்ச நிலை</th>
+                </tr>
+            </thead>
+            <tbody>
+                
+                <tr class="highlight-row">
+                    <td style="font-weight:bold; color:#9b2c1c;">லக்னம்</td>
+                    <td style="text-align:center; font-weight:bold;">லக்</td>
+                    <td style="text-align:center;">240° 46′ 18″</td>
+                    <td style="font-weight:600;">தனுசு</td>
+                    <td style="text-align:center; font-weight:bold;">00° 46' 18"</td>
+                    <td>மூலம்</td>
+                    <td style="text-align:center;">1</td>
+                    <td style="text-align:center;">மேஷம்</td>
+                    <td style="font-size:9.5px; color:#047857; font-weight:600;">ஆரோகண கேந்திரம்</td>
+                </tr>
+                
+                <tr class="">
+                    <td style="font-weight:bold; color:#1e3a8a;">சூரியன்</td>
+                    <td style="text-align:center; font-weight:bold;">சூ</td>
+                    <td style="text-align:center;">159° 48' 16"</td>
+                    <td style="font-weight:600;">கன்னி</td>
+                    <td style="text-align:center; font-weight:bold;">09° 48' 16"</td>
+                    <td>உத்திரம்</td>
+                    <td style="text-align:center;">4</td>
+                    <td style="text-align:center;">மீனம்</td>
+                    <td style="font-size:9.5px; color:#047857; font-weight:600;">சமம்</td>
+                </tr>
+                
+                <tr class="">
+                    <td style="font-weight:bold; color:#1e3a8a;">சந்திரன்</td>
+                    <td style="text-align:center; font-weight:bold;">சந்</td>
+                    <td style="text-align:center;">210° 28' 46"</td>
+                    <td style="font-weight:600;">விருச்சிகம்</td>
+                    <td style="text-align:center; font-weight:bold;">00° 28' 46"</td>
+                    <td>விசாகம்</td>
+                    <td style="text-align:center;">4</td>
+                    <td style="text-align:center;">கடகம்</td>
+                    <td style="font-size:9.5px; color:#047857; font-weight:600;">நீசம்</td>
+                </tr>
+                
+                <tr class="">
+                    <td style="font-weight:bold; color:#1e3a8a;">செவ்வாய்</td>
+                    <td style="text-align:center; font-weight:bold;">செவ்</td>
+                    <td style="text-align:center;">129° 23' 49"</td>
+                    <td style="font-weight:600;">சிம்மம்</td>
+                    <td style="text-align:center; font-weight:bold;">09° 23' 49"</td>
+                    <td>மகம்</td>
+                    <td style="text-align:center;">3</td>
+                    <td style="text-align:center;">மிதுனம்</td>
+                    <td style="font-size:9.5px; color:#047857; font-weight:600;">நட்பு</td>
+                </tr>
+                
+                <tr class="">
+                    <td style="font-weight:bold; color:#1e3a8a;">புதன்</td>
+                    <td style="text-align:center; font-weight:bold;">புத</td>
+                    <td style="text-align:center;">185° 13' 49"</td>
+                    <td style="font-weight:600;">துலாம்</td>
+                    <td style="text-align:center; font-weight:bold;">05° 13' 49"</td>
+                    <td>சித்திரை</td>
+                    <td style="text-align:center;">4</td>
+                    <td style="text-align:center;">விருச்சிகம்</td>
+                    <td style="font-size:9.5px; color:#047857; font-weight:600;">நட்பு</td>
+                </tr>
+                
+                <tr class="">
+                    <td style="font-weight:bold; color:#1e3a8a;">குரு</td>
+                    <td style="text-align:center; font-weight:bold;">குரு</td>
+                    <td style="text-align:center;">146° 41' 14"</td>
+                    <td style="font-weight:600;">சிம்மம்</td>
+                    <td style="text-align:center; font-weight:bold;">26° 41' 14"</td>
+                    <td>உத்திரம்</td>
+                    <td style="text-align:center;">1</td>
+                    <td style="text-align:center;">தனுசு</td>
+                    <td style="font-size:9.5px; color:#047857; font-weight:600;">நட்பு</td>
+                </tr>
+                
+                <tr class="">
+                    <td style="font-weight:bold; color:#1e3a8a;">சுக்கிரன்</td>
+                    <td style="text-align:center; font-weight:bold;">சுக்</td>
+                    <td style="text-align:center;">186° 02' 58"</td>
+                    <td style="font-weight:600;">துலாம்</td>
+                    <td style="text-align:center; font-weight:bold;">06° 02' 58"</td>
+                    <td>சித்திரை</td>
+                    <td style="text-align:center;">4</td>
+                    <td style="text-align:center;">விருச்சிகம்</td>
+                    <td style="font-size:9.5px; color:#047857; font-weight:600;">ஆட்சி</td>
+                </tr>
+                
+                <tr class="">
+                    <td style="font-weight:bold; color:#1e3a8a;">சனி</td>
+                    <td style="text-align:center; font-weight:bold;">சனி</td>
+                    <td style="text-align:center;">00° 08' 13"</td>
+                    <td style="font-weight:600;">மேஷம்</td>
+                    <td style="text-align:center; font-weight:bold;">00° 08' 13"</td>
+                    <td>அசுவினி</td>
+                    <td style="text-align:center;">1</td>
+                    <td style="text-align:center;">மேஷம்</td>
+                    <td style="font-size:9.5px; color:#dc2626; font-weight:600;">நீசம் (வக்ரம்)</td>
+                </tr>
+                
+                <tr class="">
+                    <td style="font-weight:bold; color:#1e3a8a;">ராகு</td>
+                    <td style="text-align:center; font-weight:bold;">ராகு</td>
+                    <td style="text-align:center;">346° 18' 57"</td>
+                    <td style="font-weight:600;">மீனம்</td>
+                    <td style="text-align:center; font-weight:bold;">16° 18' 57"</td>
+                    <td>உத்திரட்டாதி</td>
+                    <td style="text-align:center;">4</td>
+                    <td style="text-align:center;">விருச்சிகம்</td>
+                    <td style="font-size:9.5px; color:#dc2626; font-weight:600;">வக்ரம்</td>
+                </tr>
+                
+                <tr class="">
+                    <td style="font-weight:bold; color:#1e3a8a;">கேது</td>
+                    <td style="text-align:center; font-weight:bold;">கேது</td>
+                    <td style="text-align:center;">166° 18' 57"</td>
+                    <td style="font-weight:600;">கன்னி</td>
+                    <td style="text-align:center; font-weight:bold;">16° 18' 57"</td>
+                    <td>அஸ்தம்</td>
+                    <td style="text-align:center;">2</td>
+                    <td style="text-align:center;">ரிஷபம்</td>
+                    <td style="font-size:9.5px; color:#dc2626; font-weight:600;">வக்ரம்</td>
+                </tr>
+                
+                <tr class="">
+                    <td style="font-weight:bold; color:#1e3a8a;">மாந்தி (குளிகன்)</td>
+                    <td style="text-align:center; font-weight:bold;">மா</td>
+                    <td style="text-align:center;">203° 08′ 16″</td>
+                    <td style="font-weight:600;">துலாம்</td>
+                    <td style="text-align:center; font-weight:bold;">23° 08' 16"</td>
+                    <td>விசாகம்</td>
+                    <td style="text-align:center;">1</td>
+                    <td style="text-align:center;">மேஷம்</td>
+                    <td style="font-size:9.5px; color:#047857; font-weight:600;">உபகிரகம்</td>
+                </tr>
+                
+            </tbody>
+        </table>
+        
+        <div class="section-banner">
+            <span>ராசி சக்கரம் (Rasi D1) & நவாம்ச சக்கரம் (Navamsa D9)</span>
+            <span>தென்னிந்திய பாரம்பரிய 4x4 கட்டம்</span>
+        </div>
+        
+        <div class="grid-2col">
+            
+    <div class='kattam-wrapper'>
+        <div class='kattam-grid'>
+            
+        <div class='kattam-cell cell-12'>
+            <div class='sign-lbl'>மீனம்</div>
+            <div class='occ-container'><div class='occ-tag'>ராகு<span class='deg-sub'>16°</span><span class='ret-sub'>(வ)</span></div></div>
+        </div>
+        
+            
+        <div class='kattam-cell cell-1'>
+            <div class='sign-lbl'>மேஷம்</div>
+            <div class='occ-container'><div class='occ-tag'>சனி<span class='deg-sub'>0°</span><span class='ret-sub'>(வ)</span></div></div>
+        </div>
+        
+            
+        <div class='kattam-cell cell-2'>
+            <div class='sign-lbl'>ரிஷபம்</div>
+            <div class='occ-container'></div>
+        </div>
+        
+            
+        <div class='kattam-cell cell-3'>
+            <div class='sign-lbl'>மிதுனம்</div>
+            <div class='occ-container'></div>
+        </div>
+        
+            
+            
+        <div class='kattam-cell cell-11'>
+            <div class='sign-lbl'>கும்பம்</div>
+            <div class='occ-container'></div>
+        </div>
+        
+            <div class='kattam-center'>
+                <div class='kattam-title'>ராசி சக்கரம்</div>
+                <div class='kattam-sub'>மகாதீஸ்வரன் (D1)</div>
+            </div>
+            
+        <div class='kattam-cell cell-4'>
+            <div class='sign-lbl'>கடகம்</div>
+            <div class='occ-container'></div>
+        </div>
+        
+            
+            
+        <div class='kattam-cell cell-10'>
+            <div class='sign-lbl'>மகரம்</div>
+            <div class='occ-container'></div>
+        </div>
+        
+            
+        <div class='kattam-cell cell-5'>
+            <div class='sign-lbl'>சிம்மம்</div>
+            <div class='occ-container'><div class='occ-tag'>செவ்<span class='deg-sub'>9°</span></div><div class='occ-tag'>குரு<span class='deg-sub'>26°</span></div></div>
+        </div>
+        
+            
+            
+        <div class='kattam-cell cell-9'>
+            <div class='sign-lbl'>தனுசு</div>
+            <div class='occ-container'><div class='occ-tag lagna-tag'>லக்<span class='deg-sub'>0°</span></div></div>
+        </div>
+        
+            
+        <div class='kattam-cell cell-8'>
+            <div class='sign-lbl'>விருச்சிகம்</div>
+            <div class='occ-container'><div class='occ-tag'>சந்<span class='deg-sub'>0°</span></div></div>
+        </div>
+        
+            
+        <div class='kattam-cell cell-7'>
+            <div class='sign-lbl'>துலாம்</div>
+            <div class='occ-container'><div class='occ-tag'>புத<span class='deg-sub'>5°</span></div><div class='occ-tag'>சுக்<span class='deg-sub'>6°</span></div></div>
+        </div>
+        
+            
+        <div class='kattam-cell cell-6'>
+            <div class='sign-lbl'>கன்னி</div>
+            <div class='occ-container'><div class='occ-tag'>சூ<span class='deg-sub'>9°</span></div><div class='occ-tag'>கேது<span class='deg-sub'>16°</span><span class='ret-sub'>(வ)</span></div></div>
+        </div>
+        
+        </div>
+    </div>
+    
+            
+    <div class='kattam-wrapper'>
+        <div class='kattam-grid'>
+            
+        <div class='kattam-cell cell-12'>
+            <div class='sign-lbl'>மீனம்</div>
+            <div class='occ-container'><div class='occ-tag'>சூ<span class='deg-sub'>3°</span></div></div>
+        </div>
+        
+            
+        <div class='kattam-cell cell-1'>
+            <div class='sign-lbl'>மேஷம்</div>
+            <div class='occ-container'><div class='occ-tag lagna-tag'>லக்<span class='deg-sub'>0°</span></div><div class='occ-tag'>சனி<span class='deg-sub'>0°</span><span class='ret-sub'>(வ)</span></div></div>
+        </div>
+        
+            
+        <div class='kattam-cell cell-2'>
+            <div class='sign-lbl'>ரிஷபம்</div>
+            <div class='occ-container'><div class='occ-tag'>கேது<span class='deg-sub'>2°</span><span class='ret-sub'>(வ)</span></div></div>
+        </div>
+        
+            
+        <div class='kattam-cell cell-3'>
+            <div class='sign-lbl'>மிதுனம்</div>
+            <div class='occ-container'><div class='occ-tag'>செவ்<span class='deg-sub'>2°</span></div></div>
+        </div>
+        
+            
+            
+        <div class='kattam-cell cell-11'>
+            <div class='sign-lbl'>கும்பம்</div>
+            <div class='occ-container'></div>
+        </div>
+        
+            <div class='kattam-center'>
+                <div class='kattam-title'>நவாம்ச சக்கரம்</div>
+                <div class='kattam-sub'>மகாதீஸ்வரன் (D9)</div>
+            </div>
+            
+        <div class='kattam-cell cell-4'>
+            <div class='sign-lbl'>கடகம்</div>
+            <div class='occ-container'><div class='occ-tag'>சந்<span class='deg-sub'>0°</span></div></div>
+        </div>
+        
+            
+            
+        <div class='kattam-cell cell-10'>
+            <div class='sign-lbl'>மகரம்</div>
+            <div class='occ-container'></div>
+        </div>
+        
+            
+        <div class='kattam-cell cell-5'>
+            <div class='sign-lbl'>சிம்மம்</div>
+            <div class='occ-container'></div>
+        </div>
+        
+            
+            
+        <div class='kattam-cell cell-9'>
+            <div class='sign-lbl'>தனுசு</div>
+            <div class='occ-container'><div class='occ-tag'>குரு<span class='deg-sub'>0°</span></div></div>
+        </div>
+        
+            
+        <div class='kattam-cell cell-8'>
+            <div class='sign-lbl'>விருச்சிகம்</div>
+            <div class='occ-container'><div class='occ-tag'>புத<span class='deg-sub'>1°</span></div><div class='occ-tag'>சுக்<span class='deg-sub'>2°</span></div><div class='occ-tag'>ராகு<span class='deg-sub'>2°</span><span class='ret-sub'>(வ)</span></div></div>
+        </div>
+        
+            
+        <div class='kattam-cell cell-7'>
+            <div class='sign-lbl'>துலாம்</div>
+            <div class='occ-container'></div>
+        </div>
+        
+            
+        <div class='kattam-cell cell-6'>
+            <div class='sign-lbl'>கன்னி</div>
+            <div class='occ-container'></div>
+        </div>
+        
+        </div>
+    </div>
+    
+        </div>
+        
+        <div class="page-footer">
+            <span>ஜாதகர்: மகாதீஸ்வரன் | பிறந்த தேதி: 1968-09-26</span>
+            <span>திருக்கணித சம்பூர்ண ஜாதகம்</span>
+            <span>பக்கம் 2</span>
+        </div>
+    </div>
+
+    <!-- ==================== PAGE 3: D3, BHAVA CHALIT & SRIPATI BHAVAS ==================== -->
+    <div class="manuscript-page">
+        <div class="page-border"></div>
+        <div class="corner-ornament corner-tl"></div>
+        <div class="corner-ornament corner-tr"></div>
+        <div class="corner-ornament corner-bl"></div>
+        <div class="corner-ornament corner-br"></div>
+        
+        <div class="header-masthead">
+            <div class="masthead-title">திரேக்காணம், பாவ சலிதம் & ஸ்ரீபதி பாவக ஸ்புடம்</div>
+            <div class="masthead-sloka">பராசர ஹோரா சாஸ்திர முறைப்படி 12 பாவக ஆரம்ப-மத்திம-சந்தி எல்லைகள்</div>
+        </div>
+        
+        <div class="section-banner">
+            <span>பிரிவு 3: திரேக்காண சக்கரம் (D3) & பாவ சலித சக்கரம் (Bhava Chalit)</span>
+            <span>பக்கம் 3 / 5</span>
+        </div>
+        
+        <div class="grid-2col" style="margin-bottom: 8px;">
+            
+    <div class='kattam-wrapper'>
+        <div class='kattam-grid'>
+            
+        <div class='kattam-cell cell-12'>
+            <div class='sign-lbl'>மீனம்</div>
+            <div class='occ-container'></div>
+        </div>
+        
+            
+        <div class='kattam-cell cell-1'>
+            <div class='sign-lbl'>மேஷம்</div>
+            <div class='occ-container'><div class='occ-tag'>குரு<span class='deg-sub'>26°</span></div><div class='occ-tag'>சனி<span class='deg-sub'>0°</span><span class='ret-sub'>(வ)</span></div></div>
+        </div>
+        
+            
+        <div class='kattam-cell cell-2'>
+            <div class='sign-lbl'>ரிஷபம்</div>
+            <div class='occ-container'></div>
+        </div>
+        
+            
+        <div class='kattam-cell cell-3'>
+            <div class='sign-lbl'>மிதுனம்</div>
+            <div class='occ-container'></div>
+        </div>
+        
+            
+            
+        <div class='kattam-cell cell-11'>
+            <div class='sign-lbl'>கும்பம்</div>
+            <div class='occ-container'></div>
+        </div>
+        
+            <div class='kattam-center'>
+                <div class='kattam-title'>திரேக்காண சக்கரம்</div>
+                <div class='kattam-sub'>சகோதர & தைரிய ஆய்வு (D3)</div>
+            </div>
+            
+        <div class='kattam-cell cell-4'>
+            <div class='sign-lbl'>கடகம்</div>
+            <div class='occ-container'><div class='occ-tag'>ராகு<span class='deg-sub'>16°</span><span class='ret-sub'>(வ)</span></div></div>
+        </div>
+        
+            
+            
+        <div class='kattam-cell cell-10'>
+            <div class='sign-lbl'>மகரம்</div>
+            <div class='occ-container'><div class='occ-tag'>கேது<span class='deg-sub'>16°</span><span class='ret-sub'>(வ)</span></div></div>
+        </div>
+        
+            
+        <div class='kattam-cell cell-5'>
+            <div class='sign-lbl'>சிம்மம்</div>
+            <div class='occ-container'><div class='occ-tag'>செவ்<span class='deg-sub'>9°</span></div></div>
+        </div>
+        
+            
+            
+        <div class='kattam-cell cell-9'>
+            <div class='sign-lbl'>தனுசு</div>
+            <div class='occ-container'><div class='occ-tag lagna-tag'>லக்<span class='deg-sub'>0°</span></div></div>
+        </div>
+        
+            
+        <div class='kattam-cell cell-8'>
+            <div class='sign-lbl'>விருச்சிகம்</div>
+            <div class='occ-container'><div class='occ-tag'>சந்<span class='deg-sub'>0°</span></div></div>
+        </div>
+        
+            
+        <div class='kattam-cell cell-7'>
+            <div class='sign-lbl'>துலாம்</div>
+            <div class='occ-container'><div class='occ-tag'>புத<span class='deg-sub'>5°</span></div><div class='occ-tag'>சுக்<span class='deg-sub'>6°</span></div></div>
+        </div>
+        
+            
+        <div class='kattam-cell cell-6'>
+            <div class='sign-lbl'>கன்னி</div>
+            <div class='occ-container'><div class='occ-tag'>சூ<span class='deg-sub'>9°</span></div></div>
+        </div>
+        
+        </div>
+    </div>
+    
+            
+    <div class='kattam-wrapper'>
+        <div class='kattam-grid'>
+            
+        <div class='kattam-cell cell-12'>
+            <div class='sign-lbl'>மீனம்</div>
+            <div class='occ-container'></div>
+        </div>
+        
+            
+        <div class='kattam-cell cell-1'>
+            <div class='sign-lbl'>மேஷம்</div>
+            <div class='occ-container'><div class='occ-tag'>சனி<span class='deg-sub'>0°</span><span class='ret-sub'>(வ)</span></div><div class='occ-tag'>ராகு<span class='deg-sub'>16°</span><span class='ret-sub'>(வ)</span></div></div>
+        </div>
+        
+            
+        <div class='kattam-cell cell-2'>
+            <div class='sign-lbl'>ரிஷபம்</div>
+            <div class='occ-container'></div>
+        </div>
+        
+            
+        <div class='kattam-cell cell-3'>
+            <div class='sign-lbl'>மிதுனம்</div>
+            <div class='occ-container'></div>
+        </div>
+        
+            
+            
+        <div class='kattam-cell cell-11'>
+            <div class='sign-lbl'>கும்பம்</div>
+            <div class='occ-container'></div>
+        </div>
+        
+            <div class='kattam-center'>
+                <div class='kattam-title'>பாவ சலித சக்கரம்</div>
+                <div class='kattam-sub'>ஸ்ரீபதி பாவக சலிதம்</div>
+            </div>
+            
+        <div class='kattam-cell cell-4'>
+            <div class='sign-lbl'>கடகம்</div>
+            <div class='occ-container'></div>
+        </div>
+        
+            
+            
+        <div class='kattam-cell cell-10'>
+            <div class='sign-lbl'>மகரம்</div>
+            <div class='occ-container'></div>
+        </div>
+        
+            
+        <div class='kattam-cell cell-5'>
+            <div class='sign-lbl'>சிம்மம்</div>
+            <div class='occ-container'><div class='occ-tag'>செவ்<span class='deg-sub'>9°</span></div></div>
+        </div>
+        
+            
+            
+        <div class='kattam-cell cell-9'>
+            <div class='sign-lbl'>தனுசு</div>
+            <div class='occ-container'><div class='occ-tag lagna-tag'>லக்<span class='deg-sub'>0°</span></div></div>
+        </div>
+        
+            
+        <div class='kattam-cell cell-8'>
+            <div class='sign-lbl'>விருச்சிகம்</div>
+            <div class='occ-container'><div class='occ-tag'>சந்<span class='deg-sub'>0°</span></div></div>
+        </div>
+        
+            
+        <div class='kattam-cell cell-7'>
+            <div class='sign-lbl'>துலாம்</div>
+            <div class='occ-container'><div class='occ-tag'>புத<span class='deg-sub'>5°</span></div><div class='occ-tag'>சுக்<span class='deg-sub'>6°</span></div><div class='occ-tag'>கேது<span class='deg-sub'>16°</span><span class='ret-sub'>(வ)</span></div></div>
+        </div>
+        
+            
+        <div class='kattam-cell cell-6'>
+            <div class='sign-lbl'>கன்னி</div>
+            <div class='occ-container'><div class='occ-tag'>சூ<span class='deg-sub'>9°</span></div><div class='occ-tag'>குரு<span class='deg-sub'>26°</span></div></div>
+        </div>
+        
+        </div>
+    </div>
+    
+        </div>
+        
+        <div class="section-banner">
+            <span>ஸ்ரீபதி 12 பாவக ஸ்புட அட்டவணை (12 Houses Sripati Sphutam)</span>
+            <span>ஆரம்பம் • மத்திமம் (Bhava Madhya) • முடிவு</span>
+        </div>
+        
+        <table class="manuscript-table">
+            <thead>
+                <tr>
+                    <th>பாவம்</th>
+                    <th>பாவகப் பெயர்</th>
+                    <th>ஆரம்ப பாகை (Sandhi)</th>
+                    <th>மத்திம பாகை (Cusp)</th>
+                    <th>முடிவு பாகை (Sandhi)</th>
+                    <th>பாவாதிபதி</th>
+                    <th>பாவக காரகத்துவம் & பலன் குறிப்பு</th>
+                </tr>
+            </thead>
+            <tbody>
+                
+                <tr>
+                    <td style="text-align:center; font-weight:bold; color:#9b2c1c;">1</td>
+                    <td style="font-weight:bold;">லக்னம் (தனு)</td>
+                    <td style="text-align:center;">15° 46′ 18″</td>
+                    <td style="text-align:center; font-weight:bold; color:#1e3a8a;">00° 46′ 18″</td>
+                    <td style="text-align:center;">15° 46′ 18″</td>
+                    <td style="text-align:center; font-weight:600;">—</td>
+                    <td style="font-size:9px;">உடல் நலம், ஆளுமை, தலைமை</td>
+                </tr>
+                
+                <tr>
+                    <td style="text-align:center; font-weight:bold; color:#9b2c1c;">2</td>
+                    <td style="font-weight:bold;">தனம் / வாக்கு</td>
+                    <td style="text-align:center;">15° 46′ 18″</td>
+                    <td style="text-align:center; font-weight:bold; color:#1e3a8a;">00° 46′ 18″</td>
+                    <td style="text-align:center;">15° 46′ 18″</td>
+                    <td style="text-align:center; font-weight:600;">—</td>
+                    <td style="font-size:9px;">பொருளாதாரம், குடும்ப மேன்மை</td>
+                </tr>
+                
+                <tr>
+                    <td style="text-align:center; font-weight:bold; color:#9b2c1c;">3</td>
+                    <td style="font-weight:bold;">சகோதரம் / தைரியம்</td>
+                    <td style="text-align:center;">15° 46′ 18″</td>
+                    <td style="text-align:center; font-weight:bold; color:#1e3a8a;">00° 46′ 18″</td>
+                    <td style="text-align:center;">15° 46′ 18″</td>
+                    <td style="text-align:center; font-weight:600;">—</td>
+                    <td style="font-size:9px;">இளைய சகோதரம், மன உறுதி</td>
+                </tr>
+                
+                <tr>
+                    <td style="text-align:center; font-weight:bold; color:#9b2c1c;">4</td>
+                    <td style="font-weight:bold;">மாத்ரு / சுகம்</td>
+                    <td style="text-align:center;">15° 46′ 18″</td>
+                    <td style="text-align:center; font-weight:bold; color:#1e3a8a;">00° 46′ 18″</td>
+                    <td style="text-align:center;">15° 46′ 18″</td>
+                    <td style="text-align:center; font-weight:600;">—</td>
+                    <td style="font-size:9px;">தாய், வீடு, வாகனம், கல்வி சுகம்</td>
+                </tr>
+                
+                <tr>
+                    <td style="text-align:center; font-weight:bold; color:#9b2c1c;">5</td>
+                    <td style="font-weight:bold;">புத்ர / பூர்வபுண்ணியம்</td>
+                    <td style="text-align:center;">15° 46′ 18″</td>
+                    <td style="text-align:center; font-weight:bold; color:#1e3a8a;">00° 46′ 18″</td>
+                    <td style="text-align:center;">15° 46′ 18″</td>
+                    <td style="text-align:center; font-weight:600;">—</td>
+                    <td style="font-size:9px;">புத்தி கூர்மை, வம்ச விருத்தி</td>
+                </tr>
+                
+                <tr>
+                    <td style="text-align:center; font-weight:bold; color:#9b2c1c;">6</td>
+                    <td style="font-weight:bold;">சத்ரு / ரோகம் / கடன்</td>
+                    <td style="text-align:center;">15° 46′ 18″</td>
+                    <td style="text-align:center; font-weight:bold; color:#1e3a8a;">00° 46′ 18″</td>
+                    <td style="text-align:center;">15° 46′ 18″</td>
+                    <td style="text-align:center; font-weight:600;">—</td>
+                    <td style="font-size:9px;">ரோக நிவாரணம், வெற்றி</td>
+                </tr>
+                
+                <tr>
+                    <td style="text-align:center; font-weight:bold; color:#9b2c1c;">7</td>
+                    <td style="font-weight:bold;">களத்திரம் / நட்பு</td>
+                    <td style="text-align:center;">15° 46′ 18″</td>
+                    <td style="text-align:center; font-weight:bold; color:#1e3a8a;">00° 46′ 18″</td>
+                    <td style="text-align:center;">15° 46′ 18″</td>
+                    <td style="text-align:center; font-weight:600;">—</td>
+                    <td style="font-size:9px;">வாழ்க்கைத் துணை, கூட்டுத் தொழில்</td>
+                </tr>
+                
+                <tr>
+                    <td style="text-align:center; font-weight:bold; color:#9b2c1c;">8</td>
+                    <td style="font-weight:bold;">ஆயுள் / மரணம்</td>
+                    <td style="text-align:center;">15° 46′ 18″</td>
+                    <td style="text-align:center; font-weight:bold; color:#1e3a8a;">00° 46′ 18″</td>
+                    <td style="text-align:center;">15° 46′ 18″</td>
+                    <td style="text-align:center; font-weight:600;">—</td>
+                    <td style="font-size:9px;">ஆயுள் பலம், மறைமுக தனம்</td>
+                </tr>
+                
+                <tr>
+                    <td style="text-align:center; font-weight:bold; color:#9b2c1c;">9</td>
+                    <td style="font-weight:bold;">பாக்கியம் / தர்மம்</td>
+                    <td style="text-align:center;">15° 46′ 18″</td>
+                    <td style="text-align:center; font-weight:bold; color:#1e3a8a;">00° 46′ 18″</td>
+                    <td style="text-align:center;">15° 46′ 18″</td>
+                    <td style="text-align:center; font-weight:600;">—</td>
+                    <td style="font-size:9px;">தந்தை ஆதரவு, இறையருள்</td>
+                </tr>
+                
+                <tr>
+                    <td style="text-align:center; font-weight:bold; color:#9b2c1c;">10</td>
+                    <td style="font-weight:bold;">கர்மம் / தொழில்</td>
+                    <td style="text-align:center;">15° 46′ 18″</td>
+                    <td style="text-align:center; font-weight:bold; color:#1e3a8a;">00° 46′ 18″</td>
+                    <td style="text-align:center;">15° 46′ 18″</td>
+                    <td style="text-align:center; font-weight:600;">—</td>
+                    <td style="font-size:9px;">உத்தியோகம், சமூக அந்தஸ்து</td>
+                </tr>
+                
+                <tr>
+                    <td style="text-align:center; font-weight:bold; color:#9b2c1c;">11</td>
+                    <td style="font-weight:bold;">லாபம் / ஆசை</td>
+                    <td style="text-align:center;">15° 46′ 18″</td>
+                    <td style="text-align:center; font-weight:bold; color:#1e3a8a;">00° 46′ 18″</td>
+                    <td style="text-align:center;">15° 46′ 18″</td>
+                    <td style="text-align:center; font-weight:600;">—</td>
+                    <td style="font-size:9px;">தொழில் ஆதாயம், ஆசை நிறைவேறுதல்</td>
+                </tr>
+                
+                <tr>
+                    <td style="text-align:center; font-weight:bold; color:#9b2c1c;">12</td>
+                    <td style="font-weight:bold;">விரயம் / மோக்ஷம்</td>
+                    <td style="text-align:center;">15° 46′ 18″</td>
+                    <td style="text-align:center; font-weight:bold; color:#1e3a8a;">00° 46′ 18″</td>
+                    <td style="text-align:center;">15° 46′ 18″</td>
+                    <td style="text-align:center; font-weight:600;">—</td>
+                    <td style="font-size:9px;">சுப விரயம், ஆன்மீகம், தூக்கம்</td>
+                </tr>
+                
+            </tbody>
+        </table>
+        
+        <div class="page-footer">
+            <span>ஜாதகர்: மகாதீஸ்வரன் | பிறந்த தேதி: 1968-09-26</span>
+            <span>திருக்கணித சம்பூர்ண ஜாதகம்</span>
+            <span>பக்கம் 3</span>
+        </div>
+    </div>
+
+    <!-- ==================== PAGE 4: VIMSHOTTARI DASHA TIMELINE ==================== -->
+    <div class="manuscript-page">
+        <div class="page-border"></div>
+        <div class="corner-ornament corner-tl"></div>
+        <div class="corner-ornament corner-tr"></div>
+        <div class="corner-ornament corner-bl"></div>
+        <div class="corner-ornament corner-br"></div>
+        
+        <div class="header-masthead">
+            <div class="masthead-title">விம்சோத்தரி மகா தசா - அந்தர்தசா கால அட்டவணை</div>
+            <div class="masthead-sloka">120 வருட பராசர விம்சோத்தரி தசா கணிதம் & நவதானிய-இரத்தின பரிகாரங்கள்</div>
+        </div>
+        
+        <div class="section-banner">
+            <span>பிரிவு 4: பிறப்பு தசா இருப்பு (Dasha Balance at Birth)</span>
+            <span>பக்கம் 4 / 5</span>
+        </div>
+        
+        <div class="panel-card" style="margin-bottom: 8px; background:#fffbf0; border: 1.5px solid #9b2c1c;">
+            <div style="font-size:12px; font-weight:bold; color:#9b2c1c; margin-bottom:3px;">
+                பிறந்த நேரத்தில் நின்ற தசா இருப்பு:
+            </div>
+            <div style="font-size:13px; font-weight:bold; color:#1e3a8a; line-height:1.4;">
+                குரு மகா திசை — 3 ஆண்டுகள், 5 மாதங்கள், 3 நாட்கள்
+            </div>
+            <div style="font-size:10px; color:#64748b; margin-top:2px;">
+                Jupiter Mahadasha — 3 years, 5 months, 3 days
+            </div>
+        </div>
+        
+        <div class="section-banner">
+            <span>விம்சோத்தரி 9 மகா தசா வரிசை & தெய்வ வழிபாட்டுப் பரிகாரங்கள்</span>
+            <span>120 ஆண்டு காலம்</span>
+        </div>
+        
+        <table class="manuscript-table">
+            <thead>
+                <tr>
+                    <th>தசா நாதன்</th>
+                    <th>ஆரம்ப தேதி</th>
+                    <th>முடிவு தேதி</th>
+                    <th>கால அளவு</th>
+                    <th>அதிதேவதை & வழிபாட்டுத் தலம்</th>
+                    <th>இரத்தினம் & தானியம்</th>
+                    <th>தசா நிலை</th>
+                </tr>
+            </thead>
+            <tbody>
+                
+                <tr class="">
+                    <td style="font-weight:bold; color:#1e3a8a;">
+                        குரு தசை
+                    </td>
+                    <td style="text-align:center;">1968-09-26</td>
+                    <td style="text-align:center; font-weight:600;">1972-02-29</td>
+                    <td style="text-align:center;">3.4 வருடம்</td>
+                    <td style="font-size:9px;">ஆலங்குடி ஆபத்சகாயேஸ்வரர் </td>
+                    <td style="font-size:9px;"> கொண்டைக்கடலை, முல்லை, புஷ்பராகம்</td>
+                    <td style="text-align:center; font-weight:bold; color:#047857;">
+                        கடந்த / வருங்காலம்
+                    </td>
+                </tr>
+                
+                <tr class="">
+                    <td style="font-weight:bold; color:#1e3a8a;">
+                        சனி தசை
+                    </td>
+                    <td style="text-align:center;">1972-02-29</td>
+                    <td style="text-align:center; font-weight:600;">1991-02-28</td>
+                    <td style="text-align:center;">19.0 வருடம்</td>
+                    <td style="font-size:9px;">திருநள்ளாறு தர்பாரண்யேஸ்வரர் </td>
+                    <td style="font-size:9px;"> எள், கருங்குவளை, நீலமணி</td>
+                    <td style="text-align:center; font-weight:bold; color:#047857;">
+                        கடந்த / வருங்காலம்
+                    </td>
+                </tr>
+                
+                <tr class="">
+                    <td style="font-weight:bold; color:#1e3a8a;">
+                        புதன் தசை
+                    </td>
+                    <td style="text-align:center;">1991-02-28</td>
+                    <td style="text-align:center; font-weight:600;">2008-02-29</td>
+                    <td style="text-align:center;">17.0 வருடம்</td>
+                    <td style="font-size:9px;">திருவெண்காடு சுவேதாரண்யேஸ்வரர் </td>
+                    <td style="font-size:9px;"> பச்சைப்பயறு, வெண்காந்தள், மரகதம்</td>
+                    <td style="text-align:center; font-weight:bold; color:#047857;">
+                        கடந்த / வருங்காலம்
+                    </td>
+                </tr>
+                
+                <tr class="">
+                    <td style="font-weight:bold; color:#1e3a8a;">
+                        கேது தசை
+                    </td>
+                    <td style="text-align:center;">2008-02-29</td>
+                    <td style="text-align:center; font-weight:600;">2015-02-28</td>
+                    <td style="text-align:center;">7.0 வருடம்</td>
+                    <td style="font-size:9px;">கீழப்பெரும்பள்ளம் நாகநாதர் </td>
+                    <td style="font-size:9px;"> கொள்ளு, செவ்வல்லி, வைடூரியம்</td>
+                    <td style="text-align:center; font-weight:bold; color:#047857;">
+                        கடந்த / வருங்காலம்
+                    </td>
+                </tr>
+                
+                <tr class="highlight-row">
+                    <td style="font-weight:bold; color:#b91c1c;">
+                        சுக்கிரன் தசை
+                    </td>
+                    <td style="text-align:center;">2015-02-28</td>
+                    <td style="text-align:center; font-weight:600;">2035-02-28</td>
+                    <td style="text-align:center;">20.0 வருடம்</td>
+                    <td style="font-size:9px;">கஞ்சனூர் அக்னீஸ்வரர் </td>
+                    <td style="font-size:9px;"> மொச்சை, வெண்தாமரை, வைரம்</td>
+                    <td style="text-align:center; font-weight:bold; color:#b91c1c;">
+                        ◄ தற்போதைய தசை
+                    </td>
+                </tr>
+                
+                <tr class="">
+                    <td style="font-weight:bold; color:#1e3a8a;">
+                        சூரியன் தசை
+                    </td>
+                    <td style="text-align:center;">2035-02-28</td>
+                    <td style="text-align:center; font-weight:600;">2041-02-28</td>
+                    <td style="text-align:center;">6.0 வருடம்</td>
+                    <td style="font-size:9px;">சூரியனார் கோவில் (தஞ்சாவூர்) </td>
+                    <td style="font-size:9px;"> கோதுமை, செந்தாமரை, மாணிக்கம்</td>
+                    <td style="text-align:center; font-weight:bold; color:#047857;">
+                        கடந்த / வருங்காலம்
+                    </td>
+                </tr>
+                
+                <tr class="">
+                    <td style="font-weight:bold; color:#1e3a8a;">
+                        சந்திரன் தசை
+                    </td>
+                    <td style="text-align:center;">2041-02-28</td>
+                    <td style="text-align:center; font-weight:600;">2051-02-28</td>
+                    <td style="text-align:center;">10.0 வருடம்</td>
+                    <td style="font-size:9px;">திங்களூர் கைலாசநாதர் (தஞ்சாவூர்) </td>
+                    <td style="font-size:9px;"> நெல் (பச்சரிசி), வெண்தாமரை, முத்து</td>
+                    <td style="text-align:center; font-weight:bold; color:#047857;">
+                        கடந்த / வருங்காலம்
+                    </td>
+                </tr>
+                
+                <tr class="">
+                    <td style="font-weight:bold; color:#1e3a8a;">
+                        செவ்வாய் தசை
+                    </td>
+                    <td style="text-align:center;">2051-02-28</td>
+                    <td style="text-align:center; font-weight:600;">2058-02-28</td>
+                    <td style="text-align:center;">7.0 வருடம்</td>
+                    <td style="font-size:9px;">வைத்தீஸ்வரன் கோவில் (மயிலாடுதுறை) </td>
+                    <td style="font-size:9px;"> துவரை, செவ்வரளி, பவளம்</td>
+                    <td style="text-align:center; font-weight:bold; color:#047857;">
+                        கடந்த / வருங்காலம்
+                    </td>
+                </tr>
+                
+                <tr class="">
+                    <td style="font-weight:bold; color:#1e3a8a;">
+                        ராகு தசை
+                    </td>
+                    <td style="text-align:center;">2058-02-28</td>
+                    <td style="text-align:center; font-weight:600;">2076-02-28</td>
+                    <td style="text-align:center;">18.0 வருடம்</td>
+                    <td style="font-size:9px;">திருநாகேஸ்வரம் நாகநாதசுவாமி </td>
+                    <td style="font-size:9px;"> உளுந்து, மந்தாரை, கோமேதகம்</td>
+                    <td style="text-align:center; font-weight:bold; color:#047857;">
+                        கடந்த / வருங்காலம்
+                    </td>
+                </tr>
+                
+            </tbody>
+        </table>
+        
+        <div class="section-banner">
+            <span>தசா நாதனின் பாரம்பரிய வெண்பா & சாந்தி முறை</span>
+            <span>சுப பலன் பெறுக</span>
+        </div>
+        
+        <div class="panel-card" style="background:#fefbf3;">
+            <div style="font-weight:bold; color:#9b2c1c; font-size:11px; margin-bottom:2px;">
+                குரு வெண்பா:
+            </div>
+            <div style="font-style:italic; font-size:10.5px; color:#1e3a8a; line-height:1.4;">
+                "மறைநூல் புகலும் மாமுனி தேசிகன் | குறைவில்லாச் செல்வம் கொழித்திடச் செய்பவன் | நறையணி வேந்தன் நற்புகழ் ஈந்திடும் | இறையவன் பொற்பாதம் ஏத்திடு வோமே."
+            </div>
+            <div style="font-size:9.5px; color:#9b2c1c; margin-top:3px;">
+                <b>பரிகார சாந்தி:</b> தினமும் சூரிய நமஸ்காரம், விநாயகர் அகவல், கந்த சஷ்டி கவசம் மற்றும் இஷ்ட தெய்வ வழிபாட்டை நம்பிக்கையுடன் இயற்றி வர சகல தோஷங்களும் நிவர்த்தியாகி சகல நன்மைகளும் உண்டாகும்.
+            </div>
+        </div>
+        
+        <div class="page-footer">
+            <span>ஜாதகர்: மகாதீஸ்வரன் | பிறந்த தேதி: 1968-09-26</span>
+            <span>திருக்கணித சம்பூர்ண ஜாதகம்</span>
+            <span>பக்கம் 4</span>
+        </div>
+    </div>
+
+    <!-- ==================== PAGE 5: ASHTAKAVARGA, YOGAS & DOSHAS ==================== -->
+    <div class="manuscript-page">
+        <div class="page-border"></div>
+        <div class="corner-ornament corner-tl"></div>
+        <div class="corner-ornament corner-tr"></div>
+        <div class="corner-ornament corner-bl"></div>
+        <div class="corner-ornament corner-br"></div>
+        
+        <div class="header-masthead">
+            <div class="masthead-title">சர்வ அஷ்டகவர்க்கம், தாரா பலம் & யோக-தோஷ ஆய்வு</div>
+            <div class="masthead-sloka">337-பரல் சர்வ அஷ்டகவர்க்க கணிதம் & 14 சாஸ்திர செவ்வாய் தோஷ விதிவிலக்குகள்</div>
+        </div>
+        
+        <div class="section-banner">
+            <span>பிரிவு 5: சர்வ அஷ்டகவர்க்க பரல்கள் (Sarvashtakavarga 337 Bindus)</span>
+            <span>பக்கம் 5 / 5</span>
+        </div>
+        
+        <div class="grid-2col" style="margin-bottom: 6px;">
+            <div>
+                <table class="manuscript-table" style="margin-bottom:0;">
+                    <thead>
+                        <tr>
+                            <th>ராசி</th><th>பரல்கள்</th><th>ராசி</th><th>பரல்கள்</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        
+                        <tr>
+                            <td style="font-weight:600;">மேஷம்</td>
+                            <td style="text-align:center; font-weight:bold; color:#b91c1c;">24</td>
+                            <td style="font-weight:600;">துலாம்</td>
+                            <td style="text-align:center; font-weight:bold; color:#b91c1c;">23</td>
+                        </tr>
+                        
+                        <tr>
+                            <td style="font-weight:600;">ரிஷபம்</td>
+                            <td style="text-align:center; font-weight:bold; color:#047857;">28</td>
+                            <td style="font-weight:600;">விருச்சிகம்</td>
+                            <td style="text-align:center; font-weight:bold; color:#b91c1c;">21</td>
+                        </tr>
+                        
+                        <tr>
+                            <td style="font-weight:600;">மிதுனம்</td>
+                            <td style="text-align:center; font-weight:bold; color:#047857;">35</td>
+                            <td style="font-weight:600;">தனுசு</td>
+                            <td style="text-align:center; font-weight:bold; color:#047857;">28</td>
+                        </tr>
+                        
+                        <tr>
+                            <td style="font-weight:600;">கடகம்</td>
+                            <td style="text-align:center; font-weight:bold; color:#047857;">29</td>
+                            <td style="font-weight:600;">மகரம்</td>
+                            <td style="text-align:center; font-weight:bold; color:#b91c1c;">26</td>
+                        </tr>
+                        
+                        <tr>
+                            <td style="font-weight:600;">சிம்மம்</td>
+                            <td style="text-align:center; font-weight:bold; color:#047857;">30</td>
+                            <td style="font-weight:600;">கும்பம்</td>
+                            <td style="text-align:center; font-weight:bold; color:#047857;">32</td>
+                        </tr>
+                        
+                        <tr>
+                            <td style="font-weight:600;">கன்னி</td>
+                            <td style="text-align:center; font-weight:bold; color:#047857;">31</td>
+                            <td style="font-weight:600;">மீனம்</td>
+                            <td style="text-align:center; font-weight:bold; color:#047857;">30</td>
+                        </tr>
+                        
+                        <tr class="highlight-row">
+                            <td colspan="3" style="text-align:right; font-weight:bold; color:#9b2c1c;">மொத்த சர்வ அஷ்டகவர்க்க பரல்கள்:</td>
+                            <td style="text-align:center; font-weight:bold; color:#9b2c1c; font-size:12px;">337</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+            
+            <div class="panel-card">
+                <div class="panel-card-title">சர்வ அஷ்டகவர்க்க பலன் விளக்கம்</div>
+                <div style="font-size:9.5px; color:#1e3a8a; line-height:1.35;">
+                    • <b>28 பரல்களுக்கு மேல்:</b> மிகுந்த சுப பலன், தன விருத்தி, காரிய சித்தி, தைரியம் தரும் நல் ராசிகள்.<br>
+                    • <b>25 - 28 பரல்கள்:</b> மத்திம சுப பலன், சீரான உழைப்புக்குரிய பலன் தரும் ராசிகள்.<br>
+                    • <b>25 பரல்களுக்கு கீழ்:</b> சுப காரியங்கள் துவங்கும் போது எச்சரிக்கை தேவைப்படும் ராசிகள்.<br>
+                    • <b>10-ஆம் பாவம் (தொழில்):</b> 31 பரல்கள் — தொழில் மேன்மை.<br>
+                    • <b>11-ஆம் பாவம் (லாபம்):</b> 23 பரல்கள் — தன ஆளுமை.
+                </div>
+            </div>
+        </div>
+        
+        <div class="section-banner">
+            <span>செவ்வாய் தோஷ மகா ஆய்வு & 14 விதிவிலக்குகள் (Kuja Dosha Audit)</span>
+            <span>சாஸ்திர முடிவு</span>
+        </div>
+        
+        <div class="panel-card" style="margin-bottom: 6px; background:#fffbf0; border-left: 3px solid #9b2c1c;">
+            <div style="font-size:11px; font-weight:bold; color:#9b2c1c;">
+                செவ்வாய் தோஷ நிலைப்பாடு (Kuja Dosha Verdict):
+            </div>
+            <div style="font-size:10px; color:#1e3a8a; margin-top:2px; line-height:1.35;">
+                லக்னம், சந்திரன், சுக்கிரனிலிருந்து செவ்வாயின் நிலை ஆராயப்பட்டது. செவ்வாய் தனது சொந்த வீட்டில் (மேஷம்/விருச்சிகம்) இருப்பதாலும் அல்லது குருவின் பார்வை/கேந்திர அமைப்பாலும் 14 சாஸ்திர விதிவிலக்குகளின் கீழ் <b>செவ்வாய் தோஷம் முற்றிலும் நிவர்த்தி ஆகிறது (தோஷ நிவர்த்தி / தோஷமில்லை).</b>
+            </div>
+        </div>
+        
+        <div class="section-banner">
+            <span>ஜாதகத்தில் அமைந்த விசேஷ சுப யோகங்கள் (Auspicious Yogas Detected)</span>
+            <span>பராசர சாஸ்திரம்</span>
+        </div>
+        
+        <div style="display:flex; flex-direction:column; gap:4px; margin-bottom:8px;">
+            
+            <div class="panel-card" style="padding:4px 6px;">
+                <div style="display:flex; justify-content:space-between; align-items:center;">
+                    <span style="font-size:11px; font-weight:bold; color:#9b2c1c;">• கஜகேசரி யோகம்</span>
+                    <span style="font-size:9px; background:#e0f2fe; color:#0369a1; padding:1px 5px; border-radius:4px;">Maha Shubha Yoga</span>
+                </div>
+                <div style="font-size:9.5px; color:#1e3a8a; margin-top:2px; line-height:1.25;">
+                    சந்திரனுக்கு கேந்திரத்தில் (1, 4, 7, 10) குரு பகவான் அமர்ந்துள்ளதால் கஜகேசரி யோகம் உண்டாகிறது. இது சிறந்த கல்வி, நுண்ணறிவு, தலைமைப் பண்பு மற்றும் நீடித்த புகழை தரும்.
+                </div>
+            </div>
+            
+            <div class="panel-card" style="padding:4px 6px;">
+                <div style="display:flex; justify-content:space-between; align-items:center;">
+                    <span style="font-size:11px; font-weight:bold; color:#9b2c1c;">• குரு மங்கள யோகம்</span>
+                    <span style="font-size:9px; background:#e0f2fe; color:#0369a1; padding:1px 5px; border-radius:4px;">Bhagya & Bhoomi Yoga</span>
+                </div>
+                <div style="font-size:9.5px; color:#1e3a8a; margin-top:2px; line-height:1.25;">
+                    குரு மற்றும் செவ்வாய் இணைவு அல்லது சமசப்தம பார்வை காரணமாக அமைவது. நிலம், வீடு மனை யோகம், துணிச்சல் மற்றும் நேர்மையான தலைமைத்துவத்தை அளிக்கும்.
+                </div>
+            </div>
+            
+            <div class="panel-card" style="padding:4px 6px;">
+                <div style="display:flex; justify-content:space-between; align-items:center;">
+                    <span style="font-size:11px; font-weight:bold; color:#9b2c1c;">• அனபா யோகம்</span>
+                    <span style="font-size:9px; background:#e0f2fe; color:#0369a1; padding:1px 5px; border-radius:4px;">Chandra Yoga</span>
+                </div>
+                <div style="font-size:9.5px; color:#1e3a8a; margin-top:2px; line-height:1.25;">
+                    சந்திரனுக்கு 12-ஆம் இடத்தில் புதன், சுக்கிரன் அமர்ந்துள்ளதால் அனபா யோகம் உண்டாகிறது. உடல் வலிமை, கவர்ச்சிகரமான ஆளுமை மற்றும் நற்செயல் புகழ் தரும்.
+                </div>
+            </div>
+            
+        </div>
+        
+        <div class="panel-card" style="text-align:center; background:#f5eedb; border: 1.5px solid #9b2c1c; padding:6px;">
+            <div style="font-size:12px; font-weight:bold; color:#9b2c1c;">
+                || ஸ்வஸ்திஸ்ரீ மன் மகா மண்டலேஸ்வர சர்வ மங்களகாரக சுபமஸ்து ||
+            </div>
+            <div style="font-size:9.5px; color:#1e3a8a; margin-top:2px;">
+                ஆயுள், ஆரோக்கியம், கல்வி, தனம், தானியம், சௌபாக்கியம் பெற்று பல்லாண்டு வாழ்க என வாழ்த்துகிறோம்.
+            </div>
+        </div>
+        
+        <div class="page-footer">
+            <span>ஜாதகர்: மகாதீஸ்வரன் | பிறந்த தேதி: 1968-09-26</span>
+            <span>திருக்கணித சம்பூர்ண ஜாதகம்</span>
+            <span>பக்கம் 5</span>
+        </div>
+    </div>
+    
+    </body>
+    </html>
+    
