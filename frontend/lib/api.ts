@@ -13,9 +13,12 @@ import {
   BabyNameRequest,
   BabyNameResult,
   MuhurthaRequest, // NEW
-  MuhurthaSearchResponse, // NEW
+  MuhurthaResponse, // NEW
   RasiHoroscopeResult, // NEW
   RasiLoveHoroscopeResult, // NEW
+  NumerologyCheckRequest, // NEW
+  NumerologyProfile, // NEW
+  NumerologyReference, // NEW
 } from "./types";
 
 // Base URL of the FastAPI backend.
@@ -300,22 +303,37 @@ export async function generateBabyNamesApi(
 }
 
 /**
- * Find auspicious dates (Muhurtha) for Marriage or Travel within a date
- * range — universal screening (Rikta Tithi, Bhadra Karana, Marana Yoga,
- * Tara Bala, Chandra Bala) plus event-specific rules (Vivaha-auspicious
- * Nakshatra for marriage, Dishashool for travel). See
- * backend/app/services/muhurtha.py for citations.
- * POST /api/muhurtha/search
+ * NEW: Standalone Chaldean numerology check for any candidate name + DOB.
+ * Independent of the Nakshatra-Pada suggestion flow — lets a parent test a
+ * name that isn't in the suggestion list.
+ * POST /api/numerology/check
  */
-export async function searchMuhurthaApi(
-  data: MuhurthaRequest
-): Promise<MuhurthaSearchResponse> {
-  const res = await fetch(`${API_V1}/muhurtha/search`, {
+export async function checkNumerologyApi(
+  data: NumerologyCheckRequest
+): Promise<NumerologyProfile> {
+  const res = await fetch(`${API_V1}/numerology/check`, {
     method: "POST",
     headers: { "Content-Type": "application/json" },
     body: JSON.stringify(data),
   });
-  return handleResponse<MuhurthaSearchResponse>(res);
+  return handleResponse<NumerologyProfile>(res);
+}
+
+/**
+ * NEW: Find auspicious dates (Muhurtha) for marriage / griha pravesam /
+ * general events within a date range, personalized to the person's natal
+ * Moon sign & nakshatra via Chandrabalam & Tarabalam.
+ * POST /api/muhurtha/find
+ */
+export async function findMuhurthaApi(
+  data: MuhurthaRequest
+): Promise<MuhurthaResponse> {
+  const res = await fetch(`${API_V1}/muhurtha/find`, {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify(data),
+  });
+  return handleResponse<MuhurthaResponse>(res);
 }
 
 /**
@@ -341,4 +359,14 @@ export async function getRasiLoveHoroscopeApi(
 ): Promise<RasiLoveHoroscopeResult> {
   const res = await fetch(`${API_V1}/horoscope/love/${rasi1}/${rasi2}`);
   return handleResponse<RasiLoveHoroscopeResult>(res);
+}
+
+/**
+ * NEW: static numerology reference tables (Meaning of Numbers 1-9, Chaldean
+ * letter chart, Master Numbers). Pure lookup — safe to fetch once and cache.
+ * GET /api/numerology/reference
+ */
+export async function getNumerologyReferenceApi(): Promise<NumerologyReference> {
+  const res = await fetch(`${API_V1}/numerology/reference`);
+  return handleResponse<NumerologyReference>(res);
 }

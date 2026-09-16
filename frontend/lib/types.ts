@@ -259,6 +259,18 @@ export interface BabyNameSuggestionItem {
   meaning: string;
   meaning_ta: string;
   gender: string;
+  // NEW: Chaldean numerology annotation, added per-name by the backend AFTER
+  // Nakshatra-Pada selection. Optional because numerology enrichment is
+  // allowed to fail without taking down the classical suggestions.
+  numerology_name_number?: number;
+  numerology_compound_total?: number;
+  numerology_relation_birth?: string;
+  numerology_relation_birth_ta?: string;
+  numerology_relation_destiny?: string;
+  numerology_relation_destiny_ta?: string;
+  numerology_alignment_status?: string;
+  numerology_alignment_status_ta?: string;
+  numerology_is_favorable?: boolean;
 }
 
 export interface BabyNameResult {
@@ -269,6 +281,100 @@ export interface BabyNameResult {
   target_syllable?: string | null;
   gender?: string | null;
   suggestions: BabyNameSuggestionItem[];
+  numerology_birth_number?: number;
+  numerology_destiny_number?: number;
+}
+
+// --- NEW: Chaldean Numerology (separate system from Nakshatra-Pada) ---
+// Mirrors backend/app/models/schemas.py NumerologyProfile. See
+// backend/app/services/numerology.py for scope and confidence levels.
+
+export interface ChaldeanLetterValue {
+  letter: string;
+  value: number;
+}
+
+export interface NumerologyPersonalitySection {
+  key: string;
+  title: string;
+  title_ta: string;
+  source_label: string;
+  source_label_ta: string;
+  text: string;
+  text_ta: string;
+}
+
+export interface NumerologyNumberAttributes {
+  number: number;
+  planet: string;
+  planet_ta: string;
+  traits: string;
+  traits_ta: string;
+  lucky_numbers: number[];
+  lucky_colors: string[];
+  lucky_colors_ta: string[];
+  lucky_days: string[];
+  lucky_days_ta: string[];
+}
+
+export interface NumerologyMasterNumber {
+  number: number;
+  title: string;
+  title_ta: string;
+  text: string;
+  text_ta: string;
+}
+
+export interface NumerologyLetterChartRow {
+  value: number;
+  letters: string[];
+}
+
+export interface NumerologyReference {
+  numbers: NumerologyNumberAttributes[];
+  letter_chart: NumerologyLetterChartRow[];
+  master_numbers: NumerologyMasterNumber[];
+  note: string;
+  note_ta: string;
+}
+
+export interface NumerologyProfile {
+  name: string;
+  name_number: number;
+  name_compound_total: number;
+  name_number_breakdown: ChaldeanLetterValue[];
+  birth_number: number;
+  destiny_number: number;
+  birth_number_planet: string;
+  birth_number_planet_ta: string;
+  name_number_planet: string;
+  name_number_planet_ta: string;
+  relation_with_birth_number: string;
+  relation_with_birth_number_ta: string;
+  relation_with_destiny_number: string;
+  relation_with_destiny_number_ta: string;
+  is_favorable: boolean;
+  alignment_status: string;
+  alignment_status_ta: string;
+  headline: string;
+  headline_ta: string;
+  analysis: string;
+  analysis_ta: string;
+  name_number_attributes?: NumerologyNumberAttributes | null;
+  birth_number_attributes?: NumerologyNumberAttributes | null;
+  destiny_number_attributes?: NumerologyNumberAttributes | null;
+  master_numbers_present?: NumerologyMasterNumber[];
+  personality_sections: NumerologyPersonalitySection[];
+  personality: string;
+  personality_ta: string;
+  classical_source: string;
+  disclaimer: string;
+  disclaimer_ta: string;
+}
+
+export interface NumerologyCheckRequest {
+  name: string;
+  date_of_birth: string; // YYYY-MM-DD
 }
 
 export interface NarrationResult {
@@ -349,84 +455,65 @@ export interface SinglePageSummary {
 }
 
 // --- Muhurtha (auspicious date/time) finder types ---
-// Mirrors backend/app/models/schemas.py's Muhurtha* models exactly. See
-// backend/app/services/muhurtha.py for the full rule set and citations.
-//
-// NOTE: this replaces an earlier stub (MuhurthaEventType/MuhurthaCheckItem/
-// a "griha_pravesam"/"general" event-type shape, pointing at a
-// muhurtha_finder.py that was never actually built) that had no backend,
-// no page, and nothing importing it. This is the real, working
-// implementation — event types "marriage" | "travel" only, per
-// SUMMARY_muhurtha.md's citation scope (Griha Pravesam intentionally not
-// built yet — it needs its own cited rule set).
+// Mirrors backend/app/models/schemas.py's Muhurtha* models. See
+// backend/app/services/muhurtha_finder.py for scope/citations.
 
-export interface MuhurthaRequest {
-  event_type: "general" | "marriage" | "travel";
-  start_date: string; // YYYY-MM-DD
-  end_date: string;   // YYYY-MM-DD, max 60 days after start_date
-  place: string;
-  latitude?: number | null;
-  longitude?: number | null;
-  timezone?: string | null;
+export type MuhurthaEventType = "marriage" | "griha_pravesam" | "general";
 
-  person_a_dob?: string;
-  person_a_tob?: string;
-  person_a_place?: string;
-
-  person_b_dob?: string;
-  person_b_tob?: string;
-  person_b_place?: string;
-
-  travel_direction?: "N" | "S" | "E" | "W";
+export interface MuhurthaCheckItem {
+  rule: string;
+  rule_ta: string;
+  passed: boolean;
+  detail: string;
+  detail_ta: string;
 }
 
 export interface MuhurthaDayResult {
   date: string;
-  vaaram: string;
-  vaaram_ta: string;
+  weekday: string;
+  weekday_ta: string;
   tithi: string;
   tithi_ta: string;
-  karanam: string;
-  karanam_ta: string;
   nakshatra: string;
   nakshatra_ta: string;
-  subha_yogam_status: string;
+  yogam_ta: string;
+  karanam: string;
+  karanam_ta: string;
+  chandrabalam_ok: boolean;
+  chandrabalam_house: number;
+  tarabalam_ok: boolean;
+  tarabalam_name: string;
+  tarabalam_name_ta: string;
   rahu_kalam: string;
   yamagandam: string;
   kuligai: string;
-
-  is_universally_clean: boolean;
-  universal_flags: string[];
-  universal_flags_ta: string[];
-
-  event_specific_ok?: boolean | null;
-  event_specific_flags: string[];
-  event_specific_flags_ta: string[];
-
-  tara_bala_a?: string | null;
-  tara_bala_a_ta?: string | null;
-  tara_bala_a_favorable?: boolean | null;
-  tara_bala_b?: string | null;
-  tara_bala_b_ta?: string | null;
-  tara_bala_b_favorable?: boolean | null;
-  chandra_bala_a_favorable?: boolean | null;
-  chandra_bala_b_favorable?: boolean | null;
-
-  dishashool_direction?: string | null;
-  dishashool_conflict?: boolean | null;
-
-  overall_rating: "Excellent" | "Good" | "Avoid";
-  overall_rating_ta: string;
-  classical_source: string;
+  checks: MuhurthaCheckItem[];
+  overall_suitable: boolean;
+  suitability_score: number;
 }
 
-export interface MuhurthaSearchResponse {
+export interface MuhurthaRequest {
+  event_type: MuhurthaEventType;
+  start_date: string;
+  end_date: string;
+  place: string;
+  date_of_birth: string;
+  time_of_birth: string;
+  person_place?: string;
+  latitude?: number | null;
+  longitude?: number | null;
+  timezone?: string | null;
+}
+
+export interface MuhurthaResponse {
   event_type: string;
   start_date: string;
   end_date: string;
-  days: MuhurthaDayResult[];
-  best_days: string[];
-  classical_sources: string[];
+  place: string;
+  results: MuhurthaDayResult[];
+  best_dates: string[];
+  disclaimer: string;
+  disclaimer_ta: string;
 }
 
 // --- NEW: Rasi Horoscope (Daily/Weekly/Monthly/Yearly Gochara) + Rasi Love

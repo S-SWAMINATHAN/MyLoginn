@@ -410,7 +410,10 @@ class BabyNameResult(BaseModel):
     starting_syllables: List[str]
     target_syllable: Optional[str] = None
     gender: Optional[str] = None
-    suggestions: List[Dict[str, str]] = []  # [{name, name_ta, meaning, meaning_ta, gender}]
+    suggestions: List[Dict[str, Any]] = []  # [{name, name_ta, meaning, meaning_ta, gender, numerology_*}]
+    # NEW: baby-level numerology numbers, derived from date_of_birth only.
+    numerology_birth_number: Optional[int] = None
+    numerology_destiny_number: Optional[int] = None
 
 class NarrationResult(BaseModel):
     language: str = "ta"
@@ -758,77 +761,78 @@ class BabyNameRequest(BaseModel):
     timezone: Optional[str] = None
 
 
-# ── Muhurtha (Vedic Electional Astrology) — see backend/app/services/muhurtha.py
-# for the full rule set and citations. ─────────────────────────────────
-class MuhurthaRequest(BaseModel):
-    event_type: str = Field(..., description="marriage | travel | general")
-    start_date: str = Field(..., description="YYYY-MM-DD")
-    end_date: str = Field(..., description="YYYY-MM-DD, max 60 days after start_date")
-    place: str = Field(..., description="Location where the event/Panchangam is evaluated")
-    latitude: Optional[float] = None
-    longitude: Optional[float] = None
-    timezone: Optional[str] = None
+# --- NEW: Chaldean Numerology models -----------------------------------------
+# Numerology is a SEPARATE tradition from the Vedic astrology used elsewhere in
+# this app. See backend/app/services/numerology.py for the full system-boundary
+# rationale, confidence levels per component, and citations. Fields are kept
+# under explicit numerology_* / dedicated models so the two systems are never
+# visually or structurally merged (AGENTS.md 1.7).
 
-    # Person A birth details — required for a personalized (Tara Bala /
-    # Chandra Bala) search. If omitted, the search still runs but only
-    # returns universal + event-type screening (no personalization).
-    # For "marriage", Person A is one of the two partners; for "travel",
-    # Person A is the traveler.
-    person_a_dob: Optional[str] = None
-    person_a_tob: Optional[str] = None
-    person_a_place: Optional[str] = None
+class ChaldeanLetterValue(BaseModel):
+    letter: str
+    value: int
 
-    # Person B — marriage only (the other partner).
-    person_b_dob: Optional[str] = None
-    person_b_tob: Optional[str] = None
-    person_b_place: Optional[str] = None
+class NumerologyPersonalitySection(BaseModel):
+    key: str                   # core | path | expression
+    title: str
+    title_ta: str
+    source_label: str          # which input drives this section
+    source_label_ta: str
+    text: str
+    text_ta: str
 
-    # Travel only.
-    travel_direction: Optional[str] = Field(None, description="N, S, E, or W — direction of travel")
+class NumerologyNumberAttributes(BaseModel):
+    number: int
+    planet: str
+    planet_ta: str
+    traits: str
+    traits_ta: str
+    lucky_numbers: List[int] = []
+    lucky_colors: List[str] = []
+    lucky_colors_ta: List[str] = []
+    lucky_days: List[str] = []
+    lucky_days_ta: List[str] = []
 
-class MuhurthaDayResult(BaseModel):
-    date: str
-    vaaram: str
-    vaaram_ta: str
-    tithi: str
-    tithi_ta: str
-    karanam: str
-    karanam_ta: str
-    nakshatra: str
-    nakshatra_ta: str
-    subha_yogam_status: str
-    rahu_kalam: str
-    yamagandam: str
-    kuligai: str
+class NumerologyMasterNumber(BaseModel):
+    number: int
+    title: str
+    title_ta: str
+    text: str
+    text_ta: str
 
-    is_universally_clean: bool
-    universal_flags: List[str] = []
-    universal_flags_ta: List[str] = []
-
-    event_specific_ok: Optional[bool] = None
-    event_specific_flags: List[str] = []
-    event_specific_flags_ta: List[str] = []
-
-    tara_bala_a: Optional[str] = None
-    tara_bala_a_ta: Optional[str] = None
-    tara_bala_a_favorable: Optional[bool] = None
-    tara_bala_b: Optional[str] = None
-    tara_bala_b_ta: Optional[str] = None
-    tara_bala_b_favorable: Optional[bool] = None
-    chandra_bala_a_favorable: Optional[bool] = None
-    chandra_bala_b_favorable: Optional[bool] = None
-
-    dishashool_direction: Optional[str] = None
-    dishashool_conflict: Optional[bool] = None
-
-    overall_rating: str  # "Excellent" | "Good" | "Avoid"
-    overall_rating_ta: str
+class NumerologyProfile(BaseModel):
+    name: str
+    name_number: int                      # Namank
+    name_compound_total: int              # raw pre-reduction total
+    name_number_breakdown: List[ChaldeanLetterValue] = []
+    birth_number: int                     # Moolank
+    destiny_number: int                   # Bhagyank
+    birth_number_planet: str = ""
+    birth_number_planet_ta: str = ""
+    name_number_planet: str = ""
+    name_number_planet_ta: str = ""
+    relation_with_birth_number: str       # Friendly | Neutral | Enemy
+    relation_with_birth_number_ta: str
+    relation_with_destiny_number: str
+    relation_with_destiny_number_ta: str
+    is_favorable: bool
+    alignment_status: str                 # Favourable | Partially Aligned | Needs Better Alignment
+    alignment_status_ta: str
+    headline: str
+    headline_ta: str
+    analysis: str
+    analysis_ta: str
+    name_number_attributes: Optional[NumerologyNumberAttributes] = None
+    birth_number_attributes: Optional[NumerologyNumberAttributes] = None
+    destiny_number_attributes: Optional[NumerologyNumberAttributes] = None
+    master_numbers_present: List[NumerologyMasterNumber] = []
+    personality_sections: List[NumerologyPersonalitySection] = []
+    personality: str
+    personality_ta: str
     classical_source: str
+    disclaimer: str
+    disclaimer_ta: str
 
-class MuhurthaSearchResponse(BaseModel):
-    event_type: str
-    start_date: str
-    end_date: str
-    days: List[MuhurthaDayResult]
-    best_days: List[str] = []
-    classical_sources: List[str] = []
+class NumerologyCheckRequest(BaseModel):
+    name: str = Field(..., description="Candidate name, Latin/English spelling")
+    date_of_birth: str = Field(..., description="YYYY-MM-DD")
