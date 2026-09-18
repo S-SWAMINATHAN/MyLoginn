@@ -389,4 +389,13 @@ svg text, .chart text {
     box-shadow: none !important;
     border: none !important;
   }
+  .thirukanitham-manuscript-card,
+  .vakhyam-manuscript-card {
+    box-shadow: none !important;
+    page-break-inside: avoid;
+    break-inside: avoid;
+    margin: 0 !important;
+    border-width: 2px !important;
+  }
 }
+

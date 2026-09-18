@@ -16,6 +16,7 @@ import { ShareCard } from "@/components/ShareCard";
 import { PanchangamDetailsCard } from "@/components/PanchangamDetailsCard";
 import { BioDataCard } from "@/components/BioDataCard";
 import { VakhyamCompleteCard } from "@/components/VakhyamCompleteCard";
+import { ThirukanithamCompleteCard } from "@/components/ThirukanithamCompleteCard";
 import { AyurdayaCard } from "@/components/AyurdayaCard";
 import { RasiNakshatraDetailsCard } from "@/components/RasiNakshatraDetailsCard";
 import { HandwrittenManuscript } from "@/components/HandwrittenManuscript";
@@ -101,6 +102,7 @@ export default function HomePage() {
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
   const [previewPage, setPreviewPage] = useState<number>(1);
   const [showIndex, setShowIndex] = useState<boolean>(false);
+  const [panchangamTab, setPanchangamTab] = useState<"thirukanitham" | "vakhyam" | "both">("thirukanitham");
 
   const handleGenerate = async (formData: GenerateChartRequest) => {
     setIsLoading(true);
@@ -108,6 +110,7 @@ export default function HomePage() {
     try {
       const res = await generateChartApi(formData);
       setChartResult(res);
+      setPanchangamTab(res.panchangam_system === "vakhyam" ? "vakhyam" : "thirukanitham");
 
       // Smooth scroll to chart
       setTimeout(() => {
@@ -217,8 +220,68 @@ export default function HomePage() {
             {/* 1. Parents & Candidate Bio-Data Card */}
             <BioDataCard chart={chartResult} lang={lang} />
 
-            {/* 2. Traditional Vakhyam Complete System Full Card */}
-            <VakhyamCompleteCard chart={chartResult} lang={lang} />
+            {/* 2. Traditional Panchangam Master Full-Page Cards (Thirukanitham & Vakhyam) */}
+            <div className="no-print flex items-center justify-between flex-wrap gap-2 bg-[#fffdfa] border-2 border-[#8b5a2b]/30 p-3 rounded-2xl shadow-xs">
+              <div className="flex items-center gap-2">
+                <BookOpen className="w-4 h-4 text-[#b03726]" />
+                <span className="text-xs font-bold text-[#6b1426]">
+                  {lang === "ta"
+                    ? "பாரம்பரிய பஞ்சாங்க முறைத் தெரிவு (முழுப் பக்க கையெழுத்துப் பார்வை):"
+                    : "Traditional Panchangam System View:"}
+                </span>
+              </div>
+              <div className="flex items-center gap-1.5 flex-wrap">
+                <button
+                  type="button"
+                  onClick={() => setPanchangamTab("thirukanitham")}
+                  className={`px-3 py-1.5 rounded-xl text-xs font-bold transition-all flex items-center gap-1.5 ${
+                    panchangamTab === "thirukanitham"
+                      ? "bg-[#8e2b1c] text-white shadow-xs"
+                      : "bg-white text-[#6f6049] border border-[#8b5a2b]/25 hover:bg-[#fffaf0]"
+                  }`}
+                >
+                  <span>திருக்கணித பஞ்சாங்கம் (Thirukanitham)</span>
+                  {chartResult.panchangam_system !== "vakhyam" && (
+                    <span className="text-[9px] px-1 py-0.2 rounded bg-white/20 text-white font-mono">முதன்மை</span>
+                  )}
+                </button>
+                <button
+                  type="button"
+                  onClick={() => setPanchangamTab("vakhyam")}
+                  className={`px-3 py-1.5 rounded-xl text-xs font-bold transition-all flex items-center gap-1.5 ${
+                    panchangamTab === "vakhyam"
+                      ? "bg-[#8e2b1c] text-white shadow-xs"
+                      : "bg-white text-[#6f6049] border border-[#8b5a2b]/25 hover:bg-[#fffaf0]"
+                  }`}
+                >
+                  <span>வாக்கிய பஞ்சாங்கம் (Vakhyam)</span>
+                  {chartResult.panchangam_system === "vakhyam" && (
+                    <span className="text-[9px] px-1 py-0.2 rounded bg-white/20 text-white font-mono">முதன்மை</span>
+                  )}
+                </button>
+                <button
+                  type="button"
+                  onClick={() => setPanchangamTab("both")}
+                  className={`px-3 py-1.5 rounded-xl text-xs font-bold transition-all ${
+                    panchangamTab === "both"
+                      ? "bg-[#8e2b1c] text-white shadow-xs"
+                      : "bg-white text-[#6f6049] border border-[#8b5a2b]/25 hover:bg-[#fffaf0]"
+                  }`}
+                >
+                  <span>இரண்டும் (Both Systems)</span>
+                </button>
+              </div>
+            </div>
+
+            {/* Thirukanitham Complete Full Page Card (Red & Blue Default Ink) */}
+            {(panchangamTab === "thirukanitham" || panchangamTab === "both") && (
+              <ThirukanithamCompleteCard chart={chartResult} lang={lang} />
+            )}
+
+            {/* Traditional Vakhyam Complete System Full Card */}
+            {(panchangamTab === "vakhyam" || panchangamTab === "both") && (
+              <VakhyamCompleteCard chart={chartResult} lang={lang} />
+            )}
 
             {/* 3. Section 2: Complete Panchangam & Subha Yoga Elements */}
             <PanchangamDetailsCard
