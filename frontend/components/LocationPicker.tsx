@@ -14,6 +14,27 @@ interface LocationPickerProps {
   placeholder?: string;
 }
 
+/**
+ * ICON-OVERLAP FIX (the pin sitting on top of the "பிறந்த இடம்" label, and the
+ * chevron floating above the field):
+ *
+ * The trigger button used to place its two icons with
+ *     className="absolute left-3.5 top-3.5 …"
+ * but the button itself was NOT a positioned element. `position: absolute`
+ * resolves against the nearest *positioned* ancestor, which here was the
+ * outer `<div className="relative">` — the wrapper that also contains the
+ * <label>. So both icons were measured from the top of the whole field group,
+ * i.e. from the label, not from the button, and landed on top of the label
+ * text. It looked roughly right only when there was no label.
+ *
+ * The fix is to drop absolute positioning entirely: the button is a flex row
+ * and the icons are ordinary flex children, so they can never escape it. Any
+ * label/help text above or below now has no effect on where they sit.
+ *
+ * This component holds no default location of its own — whatever the caller
+ * passes as `value` is what shows. Callers must start it empty on a fresh
+ * page load.
+ */
 export const LocationPicker: React.FC<LocationPickerProps> = ({
   value,
   onChange,
@@ -37,14 +58,12 @@ export const LocationPicker: React.FC<LocationPickerProps> = ({
   const containerRef = useRef<HTMLDivElement>(null);
   const searchInputRef = useRef<HTMLInputElement>(null);
 
-  // Load grouped locations once on mount for quick selection
   useEffect(() => {
     getGroupedLocationsApi()
       .then((data) => setGroupedData(data))
       .catch((err) => console.warn("Failed to load grouped locations:", err));
   }, []);
 
-  // Handle outside click
   useEffect(() => {
     const handleClickOutside = (e: MouseEvent) => {
       if (containerRef.current && !containerRef.current.contains(e.target as Node)) {
@@ -55,16 +74,12 @@ export const LocationPicker: React.FC<LocationPickerProps> = ({
     return () => document.removeEventListener("mousedown", handleClickOutside);
   }, []);
 
-  // Focus search input when opening
   useEffect(() => {
     if (isOpen) {
-      setTimeout(() => {
-        searchInputRef.current?.focus();
-      }, 50);
+      setTimeout(() => searchInputRef.current?.focus(), 50);
     }
   }, [isOpen]);
 
-  // Fetch live suggestions when typing search query using the free dynamic geocoding API
   useEffect(() => {
     if (!search || search.trim().length < 2) {
       setLiveSuggestions([]);
@@ -74,23 +89,25 @@ export const LocationPicker: React.FC<LocationPickerProps> = ({
     setIsSearching(true);
     const timer = setTimeout(() => {
       suggestPlacesApi(search.trim())
-        .then((res) => {
-          setLiveSuggestions(res || []);
-        })
+        .then((res) => setLiveSuggestions(res || []))
         .catch(() => setLiveSuggestions([]))
         .finally(() => setIsSearching(false));
     }, 250);
     return () => clearTimeout(timer);
   }, [search]);
 
-  const handleSelectLocation = (loc: { display_name: string; lat: number; lon: number; timezone?: string }) => {
+  const handleSelectLocation = (loc: {
+    display_name: string;
+    lat: number;
+    lon: number;
+    timezone?: string;
+  }) => {
     onChange(loc.display_name, loc.lat, loc.lon, loc.timezone || "Asia/Kolkata");
     setIsOpen(false);
     setSearch("");
     setCustomMode(false);
   };
 
-  // Dynamically resolve any typed query using the Geocoding API (Zero hardcoding)
   const handleResolveAndApply = async (placeQuery: string) => {
     const query = (placeQuery || "").trim();
     if (!query) return;
@@ -101,7 +118,6 @@ export const LocationPicker: React.FC<LocationPickerProps> = ({
       if (match) {
         onChange(match.display_name, match.lat, match.lon, match.timezone || "Asia/Kolkata");
       } else {
-        // If not matched immediately, pass the query so backend can also resolve
         onChange(query, undefined, undefined, "Asia/Kolkata");
       }
     } catch {
@@ -123,7 +139,6 @@ export const LocationPicker: React.FC<LocationPickerProps> = ({
     setCustomMode(false);
   };
 
-  // Compile quick-select items based on active tab and search
   const allLocations: LocationItem[] = groupedData
     ? [
         ...(activeTab === "all" || activeTab === "tamil_nadu" ? groupedData.tamil_nadu || [] : []),
@@ -150,33 +165,34 @@ export const LocationPicker: React.FC<LocationPickerProps> = ({
         </label>
       )}
 
-      {/* Trigger Button - Parchment Style */}
+      {/* Trigger — flex row, NO absolutely-positioned icons (see note above) */}
       <button
         type="button"
         onClick={() => setIsOpen(!isOpen)}
-        className="w-full pl-10 pr-10 py-2.5 bg-[#fbf7ee] border-2 border-[#a3917a]/60 hover:border-[#b03726] rounded-xl text-left text-sm text-[#2b2117] focus:outline-none focus:ring-2 focus:ring-[#b03726]/30 transition-all flex items-center justify-between shadow-sm"
+        className="w-full flex items-center gap-2 px-3 py-2.5 bg-[#fbf7ee] border-2 border-[#a3917a]/60 hover:border-[#b03726] rounded-xl text-left text-sm text-[#2b2117] focus:outline-none focus:ring-2 focus:ring-[#b03726]/30 transition-all shadow-sm"
       >
-        <MapPin className="absolute left-3.5 top-3.5 w-4 h-4 text-[#b03726]" />
-        <span className={`truncate font-tamil font-medium ${value ? "text-[#2b2117]" : "text-[#a3917a]"}`}>
+        <MapPin className="w-4 h-4 shrink-0 text-[#b03726]" />
+        <span
+          className={`flex-1 min-w-0 truncate font-tamil font-medium ${
+            value ? "text-[#2b2117]" : "text-[#a3917a]"
+          }`}
+        >
           {value || placeholder}
         </span>
         <ChevronDown
-          className={`absolute right-3.5 top-3.5 w-4 h-4 text-[#6f6049] transition-transform ${
-            isOpen ? "rotate-180" : ""
-          }`}
+          className={`w-4 h-4 shrink-0 text-[#6f6049] transition-transform ${isOpen ? "rotate-180" : ""}`}
         />
       </button>
 
-      {/* Dropdown Modal */}
       {isOpen && (
-        <div className="absolute z-50 top-full left-0 right-0 mt-2 bg-[#fdfaf2] border-2 border-[#8e2b1c]/50 rounded-2xl shadow-2xl overflow-hidden backdrop-blur-md animate-fade-in max-w-lg w-full text-[#2b2117]">
-          {/* Header Search with Live API indicator */}
+        <div className="absolute z-50 top-full left-0 right-0 mt-2 bg-[#fdfaf2] border-2 border-[#8e2b1c]/50 rounded-2xl shadow-2xl overflow-hidden max-w-lg w-full text-[#2b2117]">
+          {/* Search header */}
           <div className="p-3 border-b border-[#a3917a]/30 bg-[#f7efdc] space-y-2">
-            <div className="relative">
+            <div className="flex items-center gap-2 bg-[#fffcf5] border border-[#a3917a]/70 rounded-xl px-2.5 py-1.5 focus-within:border-[#b03726]">
               {isSearching || isResolving ? (
-                <Loader2 className="absolute left-3 top-2.5 w-4 h-4 text-[#b03726] animate-spin" />
+                <Loader2 className="w-4 h-4 shrink-0 text-[#b03726] animate-spin" />
               ) : (
-                <Search className="absolute left-3 top-2.5 w-4 h-4 text-[#8e2b1c]" />
+                <Search className="w-4 h-4 shrink-0 text-[#8e2b1c]" />
               )}
               <input
                 ref={searchInputRef}
@@ -186,13 +202,9 @@ export const LocationPicker: React.FC<LocationPickerProps> = ({
                 onKeyDown={(e) => {
                   if (e.key === "Enter") {
                     e.preventDefault();
-                    if (liveSuggestions.length > 0) {
-                      handleSelectLocation(liveSuggestions[0]);
-                    } else if (filteredItems.length > 0) {
-                      handleSelectLocation(filteredItems[0]);
-                    } else if (search.trim()) {
-                      handleResolveAndApply(search);
-                    }
+                    if (liveSuggestions.length > 0) handleSelectLocation(liveSuggestions[0]);
+                    else if (filteredItems.length > 0) handleSelectLocation(filteredItems[0]);
+                    else if (search.trim()) handleResolveAndApply(search);
                   }
                 }}
                 placeholder={
@@ -200,14 +212,14 @@ export const LocationPicker: React.FC<LocationPickerProps> = ({
                     ? "எந்த ஊரையும் தேடுக... (எ.கா. தென்காசி, Srivilliputhur, லண்டன்)"
                     : "Search any village, town, city worldwide (e.g. Tenkasi, London)..."
                 }
-                className="w-full pl-9 pr-20 py-2 bg-[#fffcf5] border border-[#a3917a]/70 rounded-xl text-[#2b2117] text-xs placeholder-[#6f6049]/60 outline-none focus:border-[#b03726] focus:ring-1 focus:ring-[#b03726]/40"
+                className="flex-1 min-w-0 bg-transparent text-[#2b2117] text-xs placeholder-[#6f6049]/60 outline-none"
               />
               {search.trim().length >= 2 && (
                 <button
                   type="button"
                   onClick={() => handleResolveAndApply(search)}
                   disabled={isResolving}
-                  className="absolute right-1.5 top-1.5 px-2.5 py-1 bg-[#b03726] hover:bg-[#8e2b1c] text-white text-[10px] font-bold rounded-lg transition-colors flex items-center gap-1"
+                  className="shrink-0 px-2.5 py-1 bg-[#b03726] hover:bg-[#8e2b1c] text-white text-[10px] font-bold rounded-lg transition-colors inline-flex items-center gap-1"
                 >
                   {isResolving ? (
                     <Loader2 className="w-3 h-3 animate-spin" />
@@ -218,70 +230,45 @@ export const LocationPicker: React.FC<LocationPickerProps> = ({
               )}
             </div>
 
-            {/* Category Tabs for fast 1-click popular locations */}
             <div className="flex gap-1 overflow-x-auto text-[11px] font-tamil scrollbar-none">
-              <button
-                type="button"
-                onClick={() => setActiveTab("tamil_nadu")}
-                className={`px-2.5 py-1 rounded-lg shrink-0 font-medium transition-all ${
-                  activeTab === "tamil_nadu"
-                    ? "bg-[#b03726] text-[#fffcf5] shadow-xs"
-                    : "bg-[#eee2c7] text-[#2b2117]/80 hover:bg-[#e6d6b6]"
-                }`}
-              >
-                {lang === "ta" ? "தமிழ்நாடு" : "Tamil Nadu"}
-              </button>
-              <button
-                type="button"
-                onClick={() => setActiveTab("india")}
-                className={`px-2.5 py-1 rounded-lg shrink-0 font-medium transition-all ${
-                  activeTab === "india"
-                    ? "bg-[#b03726] text-[#fffcf5] shadow-xs"
-                    : "bg-[#eee2c7] text-[#2b2117]/80 hover:bg-[#e6d6b6]"
-                }`}
-              >
-                {lang === "ta" ? "இந்திய நகரங்கள்" : "Indian Cities"}
-              </button>
-              <button
-                type="button"
-                onClick={() => setActiveTab("global")}
-                className={`px-2.5 py-1 rounded-lg shrink-0 font-medium transition-all ${
-                  activeTab === "global"
-                    ? "bg-[#b03726] text-[#fffcf5] shadow-xs"
-                    : "bg-[#eee2c7] text-[#2b2117]/80 hover:bg-[#e6d6b6]"
-                }`}
-              >
-                {lang === "ta" ? "சர்வதேசம்" : "Global"}
-              </button>
-              <button
-                type="button"
-                onClick={() => setActiveTab("all")}
-                className={`px-2.5 py-1 rounded-lg shrink-0 font-medium transition-all ${
-                  activeTab === "all"
-                    ? "bg-[#b03726] text-[#fffcf5] shadow-xs"
-                    : "bg-[#eee2c7] text-[#2b2117]/80 hover:bg-[#e6d6b6]"
-                }`}
-              >
-                {lang === "ta" ? "அனைத்தும்" : "All"}
-              </button>
+              {(
+                [
+                  ["tamil_nadu", lang === "ta" ? "தமிழ்நாடு" : "Tamil Nadu"],
+                  ["india", lang === "ta" ? "இந்திய நகரங்கள்" : "Indian Cities"],
+                  ["global", lang === "ta" ? "சர்வதேசம்" : "Global"],
+                  ["all", lang === "ta" ? "அனைத்தும்" : "All"],
+                ] as const
+              ).map(([key, text]) => (
+                <button
+                  key={key}
+                  type="button"
+                  onClick={() => setActiveTab(key as any)}
+                  className={`px-2.5 py-1 rounded-lg shrink-0 font-medium transition-all ${
+                    activeTab === key
+                      ? "bg-[#b03726] text-[#fffcf5] shadow-xs"
+                      : "bg-[#eee2c7] text-[#2b2117]/80 hover:bg-[#e6d6b6]"
+                  }`}
+                >
+                  {text}
+                </button>
+              ))}
             </div>
           </div>
 
-          {/* Dynamic Geocoding Resolution Bar */}
           {search && search.trim().length >= 2 && (
-            <div className="bg-[#f2e5cb] px-3.5 py-2 border-b border-[#a3917a]/30 flex items-center justify-between">
-              <div className="text-xs text-[#2b2117] font-tamil truncate flex items-center gap-1.5">
+            <div className="bg-[#f2e5cb] px-3.5 py-2 border-b border-[#a3917a]/30 flex items-center justify-between gap-2">
+              <div className="text-xs text-[#2b2117] font-tamil truncate flex items-center gap-1.5 min-w-0">
                 <Globe className="w-3.5 h-3.5 text-[#b03726] shrink-0" />
-                <span>
+                <span className="truncate">
                   {lang === "ta" ? "தேடும் ஊர்: " : "Searching: "}
-                  <strong className="text-[#8e2b1c] font-bold">"{search}"</strong>
+                  <strong className="text-[#8e2b1c] font-bold">&quot;{search}&quot;</strong>
                 </span>
               </div>
               <button
                 type="button"
                 onClick={() => handleResolveAndApply(search)}
                 disabled={isResolving}
-                className="px-2.5 py-1 bg-[#b03726] hover:bg-[#8e2b1c] text-white rounded-lg text-[11px] font-bold flex items-center gap-1 transition-colors shrink-0 shadow-xs"
+                className="px-2.5 py-1 bg-[#b03726] hover:bg-[#8e2b1c] text-white rounded-lg text-[11px] font-bold inline-flex items-center gap-1 transition-colors shrink-0 shadow-xs"
               >
                 {isResolving ? (
                   <>
@@ -298,9 +285,7 @@ export const LocationPicker: React.FC<LocationPickerProps> = ({
             </div>
           )}
 
-          {/* Location Results List */}
           <div className="max-h-64 overflow-y-auto divide-y divide-[#a3917a]/20 scrollbar-thin">
-            {/* 1. Live Dynamic Suggestions from Free Geocoding API (Open-Meteo & Nominatim) */}
             {liveSuggestions.length > 0 && (
               <div className="bg-[#fbf4e2]">
                 <div className="px-3 py-1.5 text-[10px] text-[#8e2b1c] uppercase font-bold tracking-wider bg-[#f3e7ce] flex items-center justify-between">
@@ -311,64 +296,72 @@ export const LocationPicker: React.FC<LocationPickerProps> = ({
                       : "Live Dynamic Results (Open Geocoding API)"}
                   </span>
                   <span className="font-mono font-normal text-[9px] text-[#6f6049]">
-                    {liveSuggestions.length} இடங்கள்
+                    {liveSuggestions.length}
                   </span>
                 </div>
                 {liveSuggestions.map((item, idx) => (
                   <div
                     key={`live-${idx}`}
                     onClick={() => handleSelectLocation(item)}
-                    className="px-4 py-2.5 text-xs text-[#2b2117] hover:bg-[#ecdcc2] cursor-pointer flex items-center justify-between transition-colors"
+                    className="px-4 py-2.5 text-xs text-[#2b2117] hover:bg-[#ecdcc2] cursor-pointer flex items-center justify-between gap-2 transition-colors"
                   >
-                    <div className="flex items-center gap-2.5">
+                    <div className="flex items-center gap-2.5 min-w-0">
                       <Navigation className="w-3.5 h-3.5 text-[#b03726] shrink-0" />
-                      <div>
-                        <div className="font-tamil font-bold text-sm text-[#1e0f08]">
+                      <div className="min-w-0">
+                        <div className="font-tamil font-bold text-sm text-[#1e0f08] truncate">
                           {item.display_name}
                         </div>
                         <div className="text-[10.5px] text-[#6f6049] flex items-center gap-2 mt-0.5">
                           <span>{item.timezone}</span>
                           <span>•</span>
-                          <span className="font-mono">{item.lat.toFixed(4)}°, {item.lon.toFixed(4)}°</span>
+                          <span className="font-mono">
+                            {item.lat.toFixed(4)}°, {item.lon.toFixed(4)}°
+                          </span>
                         </div>
                       </div>
                     </div>
-                    <span className="px-2 py-0.5 bg-[#b03726]/10 text-[#8e2b1c] text-[10px] font-bold rounded shrink-0 ml-2">
-                      தேர்ந்தெடு
+                    <span className="px-2 py-0.5 bg-[#b03726]/10 text-[#8e2b1c] text-[10px] font-bold rounded shrink-0">
+                      {lang === "ta" ? "தேர்ந்தெடு" : "Select"}
                     </span>
                   </div>
                 ))}
               </div>
             )}
 
-            {/* 2. Quick Popular Matching Locations */}
             {filteredItems.map((loc) => {
-              const isSelected = value.toLowerCase().includes(loc.name.toLowerCase());
+              const isSelected = !!value && value.toLowerCase().includes(loc.name.toLowerCase());
               return (
                 <div
                   key={loc.key}
                   onClick={() => handleSelectLocation(loc)}
-                  className={`px-4 py-2 text-xs cursor-pointer flex items-center justify-between hover:bg-[#ecdcc2] transition-colors ${
+                  className={`px-4 py-2 text-xs cursor-pointer flex items-center justify-between gap-2 hover:bg-[#ecdcc2] transition-colors ${
                     isSelected ? "bg-[#e8d7bb] text-[#8e2b1c] font-bold" : "text-[#2b2117]"
                   }`}
                 >
-                  <div className="flex items-center gap-2.5">
-                    <MapPin className={`w-3.5 h-3.5 shrink-0 ${isSelected ? "text-[#8e2b1c]" : "text-[#a3917a]"}`} />
-                    <div>
-                      <div className="font-bold font-tamil">
+                  <div className="flex items-center gap-2.5 min-w-0">
+                    <MapPin
+                      className={`w-3.5 h-3.5 shrink-0 ${isSelected ? "text-[#8e2b1c]" : "text-[#a3917a]"}`}
+                    />
+                    <div className="min-w-0">
+                      <div className="font-bold font-tamil truncate">
                         {lang === "ta" ? loc.name_ta : loc.name}
-                        {lang === "ta" && <span className="text-[#6f6049] text-[10px] ml-1.5 font-sans font-normal">({loc.name})</span>}
+                        {lang === "ta" && (
+                          <span className="text-[#6f6049] text-[10px] ml-1.5 font-sans font-normal">
+                            ({loc.name})
+                          </span>
+                        )}
                       </div>
-                      <div className="text-[10px] text-[#6f6049]">
-                        {loc.state ? `${loc.state}, ` : ""}{loc.country}
+                      <div className="text-[10px] text-[#6f6049] truncate">
+                        {loc.state ? `${loc.state}, ` : ""}
+                        {loc.country}
                       </div>
                     </div>
                   </div>
 
                   {isSelected ? (
-                    <Check className="w-4 h-4 text-[#8e2b1c]" />
+                    <Check className="w-4 h-4 text-[#8e2b1c] shrink-0" />
                   ) : (
-                    <span className="text-[10px] text-[#a3917a] font-mono">
+                    <span className="text-[10px] text-[#a3917a] font-mono shrink-0">
                       {loc.lat.toFixed(2)}° N
                     </span>
                   )}
@@ -376,38 +369,41 @@ export const LocationPicker: React.FC<LocationPickerProps> = ({
               );
             })}
 
-            {/* No match state */}
-            {filteredItems.length === 0 && liveSuggestions.length === 0 && !isSearching && search.trim().length >= 2 && (
-              <div className="p-6 text-center text-xs text-[#6f6049] font-tamil space-y-2.5">
-                <Globe className="w-8 h-8 text-[#b03726]/60 mx-auto" />
-                <div>
-                  {lang === "ta"
-                    ? `"${search}" என்ற ஊரின் அட்ச தீர்க்க ரேகைகளை Geocoding API மூலம் கண்டறியலாம்.`
-                    : `Resolve coordinates for "${search}" via Open Geocoding API.`}
+            {filteredItems.length === 0 &&
+              liveSuggestions.length === 0 &&
+              !isSearching &&
+              search.trim().length >= 2 && (
+                <div className="p-6 text-center text-xs text-[#6f6049] font-tamil space-y-2.5">
+                  <Globe className="w-8 h-8 text-[#b03726]/60 mx-auto" />
+                  <div>
+                    {lang === "ta"
+                      ? `"${search}" என்ற ஊரின் அட்ச தீர்க்க ரேகைகளை Geocoding API மூலம் கண்டறியலாம்.`
+                      : `Resolve coordinates for "${search}" via Open Geocoding API.`}
+                  </div>
+                  <button
+                    type="button"
+                    onClick={() => handleResolveAndApply(search)}
+                    disabled={isResolving}
+                    className="px-4 py-2 bg-[#b03726] hover:bg-[#8e2b1c] text-white rounded-xl text-xs font-bold inline-flex items-center gap-1.5 transition-colors shadow-sm"
+                  >
+                    {isResolving ? (
+                      <>
+                        <Loader2 className="w-3.5 h-3.5 animate-spin" />
+                        <span>{lang === "ta" ? "கணிக்கப்படுகிறது..." : "Resolving coordinates..."}</span>
+                      </>
+                    ) : (
+                      <>
+                        <Navigation className="w-3.5 h-3.5" />
+                        <span>
+                          {lang === "ta" ? `"${search}"-ஐ நேரடியாகப் பயன்படுத்து` : `Use "${search}"`}
+                        </span>
+                      </>
+                    )}
+                  </button>
                 </div>
-                <button
-                  type="button"
-                  onClick={() => handleResolveAndApply(search)}
-                  disabled={isResolving}
-                  className="px-4 py-2 bg-[#b03726] hover:bg-[#8e2b1c] text-white rounded-xl text-xs font-bold inline-flex items-center gap-1.5 transition-colors shadow-sm"
-                >
-                  {isResolving ? (
-                    <>
-                      <Loader2 className="w-3.5 h-3.5 animate-spin" />
-                      <span>{lang === "ta" ? "கணிக்கப்படுகிறது..." : "Resolving coordinates..."}</span>
-                    </>
-                  ) : (
-                    <>
-                      <Navigation className="w-3.5 h-3.5" />
-                      <span>{lang === "ta" ? `"${search}"-ஐ நேரடியாகப் பயன்படுத்து` : `Use "${search}" with live GPS`}</span>
-                    </>
-                  )}
-                </button>
-              </div>
-            )}
+              )}
           </div>
 
-          {/* Footer: Manual Custom Coordinate Option */}
           <div className="p-3 bg-[#f7efdc] border-t border-[#a3917a]/30 flex flex-col gap-2">
             {!customMode ? (
               <button
@@ -429,7 +425,9 @@ export const LocationPicker: React.FC<LocationPickerProps> = ({
                   type="text"
                   value={customPlace}
                   onChange={(e) => setCustomPlace(e.target.value)}
-                  placeholder={lang === "ta" ? "ஊரின் பெயர் (e.g. Srivilliputhur / Tenkasi)" : "Place name (e.g. Srivilliputhur)"}
+                  placeholder={
+                    lang === "ta" ? "ஊரின் பெயர் (e.g. Srivilliputhur / Tenkasi)" : "Place name"
+                  }
                   className="w-full px-3 py-1.5 bg-[#fffcf5] border border-[#a3917a]/70 rounded-lg text-xs text-[#2b2117] outline-none focus:border-[#b03726]"
                 />
                 <div className="grid grid-cols-2 gap-2">
@@ -474,3 +472,5 @@ export const LocationPicker: React.FC<LocationPickerProps> = ({
     </div>
   );
 };
+
+export default LocationPicker;

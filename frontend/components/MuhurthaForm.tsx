@@ -1,8 +1,10 @@
 "use client";
 
-import React, { useState } from "react";
-import { MuhurthaRequest } from "@/lib/types";
-import { CalendarSearch, Heart, Compass, Sparkles } from "lucide-react";
+import React, { useMemo, useState } from "react";
+import { MuhurthaRequest, MuhurthaEventType } from "@/lib/types";
+import { CalendarSearch, Heart, Compass, Sparkles, AlertTriangle } from "lucide-react";
+import { LocationPicker } from "./LocationPicker";
+import { TimeInput12h } from "./TimeInput12h";
 
 interface MuhurthaFormProps {
   onSubmit: (data: MuhurthaRequest) => void;
@@ -10,49 +12,145 @@ interface MuhurthaFormProps {
   lang: "ta" | "en";
 }
 
+/**
+ * Muhurtha search form.
+ *
+ * TWO THINGS FIXED HERE
+ * ---------------------
+ * 1. LOCATION + TIME PARITY WITH THE JATHAGAM FORM. This form used plain
+ *    <input type="text"> boxes for the event place and both birth places and
+ *    a free-text "07:00:00" time, so there was no keyword geocoding, no quick
+ *    lists, no custom lat/lon, and — worse — no latitude/longitude/timezone was
+ *    ever sent, leaving the backend to re-geocode a raw string. It now uses the
+ *    same <LocationPicker> and <TimeInput12h> as the Jathagam intake form and
+ *    sends the resolved coordinates for every place.
+ *
+ * 2. NO PRE-FILLED VALUES. Every field starts empty on a fresh load — no
+ *    default city, no default date range. The earlier version seeded
+ *    "Coimbatore, Tamil Nadu, India" plus today→+30 days, which made a fresh
+ *    visit look like a half-finished form and, worse, would silently search
+ *    the wrong city if the person only changed the dates. The one exception is
+ *    the time-of-birth control, which needs a value to render at all; it shows
+ *    07:00 AM and is ignored entirely unless a date of birth is also entered.
+ */
+
+interface PlaceState {
+  place: string;
+  latitude?: number;
+  longitude?: number;
+  timezone?: string;
+}
+
+const EMPTY_PLACE: PlaceState = { place: "" };
+
 export const MuhurthaForm: React.FC<MuhurthaFormProps> = ({ onSubmit, isLoading, lang }) => {
-  const [eventType, setEventType] = useState<"general" | "marriage" | "travel">("general");
+  const [eventType, setEventType] = useState<MuhurthaEventType>("general");
+
   const [startDate, setStartDate] = useState("");
   const [endDate, setEndDate] = useState("");
-  const [place, setPlace] = useState("Coimbatore, Tamil Nadu, India");
+
+  const [eventPlace, setEventPlace] = useState<PlaceState>(EMPTY_PLACE);
 
   const [personADob, setPersonADob] = useState("");
   const [personATob, setPersonATob] = useState("07:00:00");
-  const [personAPlace, setPersonAPlace] = useState("");
+  const [personAPlace, setPersonAPlace] = useState<PlaceState>(EMPTY_PLACE);
 
   const [personBDob, setPersonBDob] = useState("");
   const [personBTob, setPersonBTob] = useState("07:00:00");
-  const [personBPlace, setPersonBPlace] = useState("");
+  const [personBPlace, setPersonBPlace] = useState<PlaceState>(EMPTY_PLACE);
 
-  const [travelDirection, setTravelDirection] = useState<"N" | "S" | "E" | "W">("N");
+  const [travelDirection, setTravelDirection] = useState<"N" | "S" | "E" | "W" | null>(null);
+
+  const validationError = useMemo(() => {
+    if (startDate && endDate) {
+      const s = new Date(startDate).getTime();
+      const e = new Date(endDate).getTime();
+      if (!Number.isNaN(s) && !Number.isNaN(e)) {
+        if (e < s) {
+          return lang === "ta"
+            ? "முடிவு தேதி தொடக்க தேதிக்குப் பிறகு இருக்க வேண்டும்."
+            : "End date must be on or after the start date.";
+        }
+        const days = Math.round((e - s) / 86400000) + 1;
+        if (days > 60) {
+          return lang === "ta"
+            ? `தேர்ந்தெடுத்த வரம்பு ${days} நாட்கள் — அதிகபட்சம் 60 நாட்கள்.`
+            : `Selected range is ${days} days — the maximum is 60 days per search.`;
+        }
+      }
+    }
+    return null;
+  }, [startDate, endDate, lang]);
+
+  const canSubmit =
+    !!startDate && !!endDate && !!eventPlace.place.trim() && !validationError && !isLoading;
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
+    if (!canSubmit) return;
+
     const payload: MuhurthaRequest = {
       event_type: eventType,
       start_date: startDate,
       end_date: endDate,
-      place,
-      person_a_dob: personADob || undefined,
-      person_a_tob: personADob ? personATob : undefined,
-      person_a_place: personADob ? personAPlace : undefined,
+      place: eventPlace.place,
+      latitude: eventPlace.latitude ?? null,
+      longitude: eventPlace.longitude ?? null,
+      timezone: eventPlace.timezone ?? null,
     };
-    if (eventType === "marriage") {
-      payload.person_b_dob = personBDob || undefined;
-      payload.person_b_tob = personBDob ? personBTob : undefined;
-      payload.person_b_place = personBDob ? personBPlace : undefined;
+
+    if (personADob) {
+      payload.person_a_dob = personADob;
+      payload.person_a_tob = personATob;
+      payload.person_a_place = personAPlace.place || eventPlace.place;
+      payload.person_a_latitude = personAPlace.latitude ?? null;
+      payload.person_a_longitude = personAPlace.longitude ?? null;
+      payload.person_a_timezone = personAPlace.timezone ?? null;
     }
-    if (eventType === "travel") {
+
+    if (eventType === "marriage" && personBDob) {
+      payload.person_b_dob = personBDob;
+      payload.person_b_tob = personBTob;
+      payload.person_b_place = personBPlace.place || eventPlace.place;
+      payload.person_b_latitude = personBPlace.latitude ?? null;
+      payload.person_b_longitude = personBPlace.longitude ?? null;
+      payload.person_b_timezone = personBPlace.timezone ?? null;
+    }
+
+    if (eventType === "travel" && travelDirection) {
       payload.travel_direction = travelDirection;
     }
+
     onSubmit(payload);
   };
+
+  const tabBtn = (
+    key: MuhurthaEventType,
+    label: string,
+    Icon: React.ComponentType<{ className?: string }>
+  ) => (
+    <button
+      key={key}
+      type="button"
+      onClick={() => setEventType(key)}
+      className={`px-3 py-1.5 rounded-lg font-semibold transition-all inline-flex items-center gap-1.5 ${
+        eventType === key ? "text-white" : ""
+      }`}
+      style={eventType === key ? { background: "var(--red-deep)" } : { color: "var(--ink-soft)" }}
+    >
+      <Icon className="w-3.5 h-3.5" />
+      {label}
+    </button>
+  );
 
   return (
     <form onSubmit={handleSubmit} className="palm-leaf-dark p-6 sm:p-8">
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-6 pb-4 border-b border-[rgba(10,37,64,0.08)]">
         <div>
-          <h2 className="text-xl sm:text-2xl font-bold flex items-center gap-2" style={{ color: "var(--ink)" }}>
+          <h2
+            className="text-xl sm:text-2xl font-bold flex items-center gap-2"
+            style={{ color: "var(--ink)" }}
+          >
             <CalendarSearch className="w-6 h-6" style={{ color: "var(--red)" }} />
             {lang === "ta" ? "முகூர்த்த தேடல்" : "Muhurtha Search"}
           </h2>
@@ -63,61 +161,39 @@ export const MuhurthaForm: React.FC<MuhurthaFormProps> = ({ onSubmit, isLoading,
           </p>
         </div>
 
-        <div className="flex items-center bg-white border rounded-xl p-1 text-xs" style={{ borderColor: "rgba(10,37,64,0.15)" }}>
-          <button
-            type="button"
-            onClick={() => setEventType("general")}
-            className={`px-3 py-1.5 rounded-lg font-semibold transition-all flex items-center gap-1.5 ${
-              eventType === "general" ? "text-white" : ""
-            }`}
-            style={eventType === "general" ? { background: "var(--red-deep)" } : { color: "var(--ink-soft)" }}
-          >
-            <Sparkles className="w-3.5 h-3.5" />
-            {lang === "ta" ? "பொது" : "General"}
-          </button>
-          <button
-            type="button"
-            onClick={() => setEventType("marriage")}
-            className={`px-3 py-1.5 rounded-lg font-semibold transition-all flex items-center gap-1.5 ${
-              eventType === "marriage" ? "text-white" : ""
-            }`}
-            style={eventType === "marriage" ? { background: "var(--red-deep)" } : { color: "var(--ink-soft)" }}
-          >
-            <Heart className="w-3.5 h-3.5" />
-            {lang === "ta" ? "திருமணம்" : "Marriage"}
-          </button>
-          <button
-            type="button"
-            onClick={() => setEventType("travel")}
-            className={`px-3 py-1.5 rounded-lg font-semibold transition-all flex items-center gap-1.5 ${
-              eventType === "travel" ? "text-white" : ""
-            }`}
-            style={eventType === "travel" ? { background: "var(--red-deep)" } : { color: "var(--ink-soft)" }}
-          >
-            <Compass className="w-3.5 h-3.5" />
-            {lang === "ta" ? "பயணம்" : "Travel"}
-          </button>
+        <div
+          className="flex items-center bg-white border rounded-xl p-1 text-xs"
+          style={{ borderColor: "rgba(10,37,64,0.15)" }}
+        >
+          {tabBtn("general", lang === "ta" ? "பொது" : "General", Sparkles)}
+          {tabBtn("marriage", lang === "ta" ? "திருமணம்" : "Marriage", Heart)}
+          {tabBtn("travel", lang === "ta" ? "பயணம்" : "Travel", Compass)}
         </div>
       </div>
 
       <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6">
         <div>
-          <label className="block text-xs font-semibold mb-1.5" style={{ color: "var(--ink-soft)" }}>
-            {lang === "ta" ? "தொடக்க தேதி" : "Start Date"} *
+          <label className="block text-sm font-semibold mb-1.5" style={{ color: "var(--ink-soft)" }}>
+            {lang === "ta" ? "தொடக்க தேதி" : "Start Date"} <span className="text-[#b03726]">*</span>
           </label>
           <input
-            type="date" required value={startDate}
+            type="date"
+            required
+            value={startDate}
             onChange={(e) => setStartDate(e.target.value)}
             className="w-full px-3 py-2.5 bg-white border rounded-xl text-sm"
             style={{ borderColor: "rgba(10,37,64,0.15)", color: "var(--ink)" }}
           />
         </div>
         <div>
-          <label className="block text-xs font-semibold mb-1.5" style={{ color: "var(--ink-soft)" }}>
-            {lang === "ta" ? "முடிவு தேதி" : "End Date"} *
+          <label className="block text-sm font-semibold mb-1.5" style={{ color: "var(--ink-soft)" }}>
+            {lang === "ta" ? "முடிவு தேதி" : "End Date"} <span className="text-[#b03726]">*</span>
           </label>
           <input
-            type="date" required value={endDate}
+            type="date"
+            required
+            value={endDate}
+            min={startDate || undefined}
             onChange={(e) => setEndDate(e.target.value)}
             className="w-full px-3 py-2.5 bg-white border rounded-xl text-sm"
             style={{ borderColor: "rgba(10,37,64,0.15)", color: "var(--ink)" }}
@@ -127,93 +203,150 @@ export const MuhurthaForm: React.FC<MuhurthaFormProps> = ({ onSubmit, isLoading,
           </p>
         </div>
         <div>
-          <label className="block text-xs font-semibold mb-1.5" style={{ color: "var(--ink-soft)" }}>
-            {lang === "ta" ? "நிகழ்வு இடம்" : "Event Location"} *
-          </label>
-          <input
-            type="text" required value={place}
-            onChange={(e) => setPlace(e.target.value)}
-            placeholder="e.g. Coimbatore, Tamil Nadu"
-            className="w-full px-3 py-2.5 bg-white border rounded-xl text-sm"
-            style={{ borderColor: "rgba(10,37,64,0.15)", color: "var(--ink)" }}
+          <LocationPicker
+            lang={lang}
+            label={lang === "ta" ? "நிகழ்வு இடம் (Event Location)" : "Event Location"}
+            required
+            value={eventPlace.place}
+            placeholder={lang === "ta" ? "ஊரைத் தேடி தேர்ந்தெடுக்கவும்" : "Search and pick a place"}
+            onChange={(place, lat, lon, tz) =>
+              setEventPlace({ place, latitude: lat, longitude: lon, timezone: tz })
+            }
           />
+          {eventPlace.latitude != null && eventPlace.longitude != null && (
+            <p className="text-[10px] mt-1 font-mono" style={{ color: "var(--ink-faint)" }}>
+              {eventPlace.latitude.toFixed(4)}°, {eventPlace.longitude.toFixed(4)}° ·{" "}
+              {eventPlace.timezone || "Asia/Kolkata"}
+            </p>
+          )}
         </div>
       </div>
 
+      {validationError && (
+        <div
+          className="mb-4 p-3 rounded-xl text-xs font-semibold flex items-center gap-2"
+          style={{ background: "#fdecec", border: "1px solid #d93025", color: "#a31515" }}
+        >
+          <AlertTriangle className="w-4 h-4 shrink-0" />
+          <span>{validationError}</span>
+        </div>
+      )}
+
+      {/* Person A */}
       <div className="bg-white border rounded-2xl p-5 mb-4" style={{ borderColor: "rgba(10,37,64,0.10)" }}>
         <h4 className="text-sm font-bold mb-3" style={{ color: "var(--red-deep)" }}>
           {eventType === "marriage"
-            ? (lang === "ta" ? "நபர் A (மணமகன்/மணமகள்) — விருப்பம்" : "Person A (Partner 1) — Optional")
+            ? lang === "ta"
+              ? "நபர் A (மணமகன்/மணமகள்) — விருப்பம்"
+              : "Person A (Partner 1) — Optional"
             : eventType === "travel"
-            ? (lang === "ta" ? "பயணி விவரங்கள் — விருப்பம்" : "Traveler's Birth Details — Optional")
-            : (lang === "ta" ? "தனிநபர் விவரங்கள் — விருப்பம்" : "Personalize (Your Birth Details) — Optional")}
+            ? lang === "ta"
+              ? "பயணி விவரங்கள் — விருப்பம்"
+              : "Traveler's Birth Details — Optional"
+            : lang === "ta"
+            ? "தனிநபர் விவரங்கள் — விருப்பம்"
+            : "Personalize (Your Birth Details) — Optional"}
         </h4>
         <p className="text-[11px] mb-3" style={{ color: "var(--ink-faint)" }}>
           {lang === "ta"
             ? "இதை நிரப்பினால் தாரா பலம் & சந்திர பலம் தனிப்பட்ட முறையில் சரிபார்க்கப்படும்."
             : "Filling this in adds personalized Tara Bala & Chandra Bala checks to the results."}
         </p>
-        <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
+        <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
           <div>
-            <label className="block text-xs mb-1" style={{ color: "var(--ink-soft)" }}>Date of Birth</label>
-            <input type="date" value={personADob} onChange={(e) => setPersonADob(e.target.value)}
-              className="w-full px-3 py-2 bg-[var(--paper)] border rounded-lg text-xs" style={{ borderColor: "rgba(10,37,64,0.12)" }} />
+            <label className="block text-sm font-semibold mb-1.5" style={{ color: "var(--ink-soft)" }}>
+              {lang === "ta" ? "பிறந்த தேதி" : "Date of Birth"}
+            </label>
+            <input
+              type="date"
+              value={personADob}
+              onChange={(e) => setPersonADob(e.target.value)}
+              className="w-full px-3 py-2.5 bg-[var(--paper)] border rounded-xl text-sm"
+              style={{ borderColor: "rgba(10,37,64,0.15)" }}
+            />
           </div>
           <div>
-            <label className="block text-xs mb-1" style={{ color: "var(--ink-soft)" }}>Time of Birth</label>
-            <input type="text" value={personATob} onChange={(e) => setPersonATob(e.target.value)}
-              placeholder="07:00:00"
-              className="w-full px-3 py-2 bg-[var(--paper)] border rounded-lg text-xs" style={{ borderColor: "rgba(10,37,64,0.12)" }} />
+            <label className="block text-sm font-semibold mb-1.5" style={{ color: "var(--ink-soft)" }}>
+              {lang === "ta" ? "பிறந்த நேரம்" : "Time of Birth"}
+            </label>
+            <TimeInput12h value={personATob} onChange={setPersonATob} />
           </div>
           <div>
-            <label className="block text-xs mb-1" style={{ color: "var(--ink-soft)" }}>Place of Birth</label>
-            <input type="text" value={personAPlace} onChange={(e) => setPersonAPlace(e.target.value)}
-              placeholder="e.g. Coimbatore, Tamil Nadu"
-              className="w-full px-3 py-2 bg-[var(--paper)] border rounded-lg text-xs" style={{ borderColor: "rgba(10,37,64,0.12)" }} />
+            <LocationPicker
+              lang={lang}
+              label={lang === "ta" ? "பிறந்த இடம்" : "Place of Birth"}
+              required={false}
+              value={personAPlace.place}
+              placeholder={lang === "ta" ? "ஊரைத் தேடுக" : "Search a place"}
+              onChange={(place, lat, lon, tz) =>
+                setPersonAPlace({ place, latitude: lat, longitude: lon, timezone: tz })
+              }
+            />
           </div>
         </div>
       </div>
 
+      {/* Person B — marriage only */}
       {eventType === "marriage" && (
         <div className="bg-white border rounded-2xl p-5 mb-4" style={{ borderColor: "rgba(10,37,64,0.10)" }}>
           <h4 className="text-sm font-bold mb-3" style={{ color: "var(--red-deep)" }}>
             {lang === "ta" ? "நபர் B (துணை) — விருப்பம்" : "Person B (Partner 2) — Optional"}
           </h4>
-          <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
+          <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
             <div>
-              <label className="block text-xs mb-1" style={{ color: "var(--ink-soft)" }}>Date of Birth</label>
-              <input type="date" value={personBDob} onChange={(e) => setPersonBDob(e.target.value)}
-                className="w-full px-3 py-2 bg-[var(--paper)] border rounded-lg text-xs" style={{ borderColor: "rgba(10,37,64,0.12)" }} />
+              <label className="block text-sm font-semibold mb-1.5" style={{ color: "var(--ink-soft)" }}>
+                {lang === "ta" ? "பிறந்த தேதி" : "Date of Birth"}
+              </label>
+              <input
+                type="date"
+                value={personBDob}
+                onChange={(e) => setPersonBDob(e.target.value)}
+                className="w-full px-3 py-2.5 bg-[var(--paper)] border rounded-xl text-sm"
+                style={{ borderColor: "rgba(10,37,64,0.15)" }}
+              />
             </div>
             <div>
-              <label className="block text-xs mb-1" style={{ color: "var(--ink-soft)" }}>Time of Birth</label>
-              <input type="text" value={personBTob} onChange={(e) => setPersonBTob(e.target.value)}
-                placeholder="07:00:00"
-                className="w-full px-3 py-2 bg-[var(--paper)] border rounded-lg text-xs" style={{ borderColor: "rgba(10,37,64,0.12)" }} />
+              <label className="block text-sm font-semibold mb-1.5" style={{ color: "var(--ink-soft)" }}>
+                {lang === "ta" ? "பிறந்த நேரம்" : "Time of Birth"}
+              </label>
+              <TimeInput12h value={personBTob} onChange={setPersonBTob} />
             </div>
             <div>
-              <label className="block text-xs mb-1" style={{ color: "var(--ink-soft)" }}>Place of Birth</label>
-              <input type="text" value={personBPlace} onChange={(e) => setPersonBPlace(e.target.value)}
-                placeholder="e.g. Chennai, Tamil Nadu"
-                className="w-full px-3 py-2 bg-[var(--paper)] border rounded-lg text-xs" style={{ borderColor: "rgba(10,37,64,0.12)" }} />
+              <LocationPicker
+                lang={lang}
+                label={lang === "ta" ? "பிறந்த இடம்" : "Place of Birth"}
+                required={false}
+                value={personBPlace.place}
+                placeholder={lang === "ta" ? "ஊரைத் தேடுக" : "Search a place"}
+                onChange={(place, lat, lon, tz) =>
+                  setPersonBPlace({ place, latitude: lat, longitude: lon, timezone: tz })
+                }
+              />
             </div>
           </div>
         </div>
       )}
 
+      {/* Travel direction — travel only, nothing preselected */}
       {eventType === "travel" && (
         <div className="bg-white border rounded-2xl p-5 mb-4" style={{ borderColor: "rgba(10,37,64,0.10)" }}>
           <h4 className="text-sm font-bold mb-3" style={{ color: "var(--red-deep)" }}>
-            {lang === "ta" ? "பயண திசை (திசைசூல் சோதனை)" : "Direction of Travel (Dishashool check)"}
+            {lang === "ta" ? "பயண திசை (திசைசூல் சோதனை) — விருப்பம்" : "Direction of Travel (Dishashool check) — Optional"}
           </h4>
           <div className="grid grid-cols-4 gap-2">
             {(["N", "S", "E", "W"] as const).map((d) => (
               <button
-                key={d} type="button" onClick={() => setTravelDirection(d)}
-                className={`py-2 rounded-xl text-xs font-bold border ${travelDirection === d ? "text-white" : ""}`}
-                style={travelDirection === d
-                  ? { background: "var(--red-deep)", borderColor: "var(--red-deep)" }
-                  : { borderColor: "rgba(10,37,64,0.15)", color: "var(--ink-soft)" }}
+                key={d}
+                type="button"
+                onClick={() => setTravelDirection(travelDirection === d ? null : d)}
+                className={`py-2 rounded-xl text-xs font-bold border ${
+                  travelDirection === d ? "text-white" : ""
+                }`}
+                style={
+                  travelDirection === d
+                    ? { background: "var(--red-deep)", borderColor: "var(--red-deep)" }
+                    : { borderColor: "rgba(10,37,64,0.15)", color: "var(--ink-soft)" }
+                }
               >
                 {d}
               </button>
@@ -223,12 +356,25 @@ export const MuhurthaForm: React.FC<MuhurthaFormProps> = ({ onSubmit, isLoading,
       )}
 
       <div className="flex justify-center mt-6">
-        <button type="submit" disabled={isLoading} className="btn-hand-red">
+        <button type="submit" disabled={!canSubmit} className="btn-hand-red disabled:opacity-50">
           {isLoading
-            ? (lang === "ta" ? "தேடுகிறது..." : "Searching...")
-            : (lang === "ta" ? "சுப நாட்களைத் தேடு" : "Find Auspicious Days")}
+            ? lang === "ta"
+              ? "தேடுகிறது..."
+              : "Searching..."
+            : lang === "ta"
+            ? "சுப நாட்களைத் தேடு"
+            : "Find Auspicious Days"}
         </button>
       </div>
+      {!canSubmit && !isLoading && !validationError && (
+        <p className="text-[11px] text-center mt-2" style={{ color: "var(--ink-faint)" }}>
+          {lang === "ta"
+            ? "தொடக்க தேதி, முடிவு தேதி மற்றும் நிகழ்வு இடத்தை நிரப்பவும்."
+            : "Fill in the start date, end date and event location to search."}
+        </p>
+      )}
     </form>
   );
 };
+
+export default MuhurthaForm;

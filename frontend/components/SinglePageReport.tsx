@@ -9,17 +9,8 @@ import {
   CHART_STYLE_THEMES,
   ChartStyle,
 } from "@/lib/chartLayouts";
-import {
-  Sparkles,
-  ShieldCheck,
-  ShieldAlert,
-  CalendarClock,
-  Gem,
-  Briefcase,
-  Heart,
-  GraduationCap,
-  Stethoscope,
-} from "lucide-react";
+import { Sparkles } from "lucide-react";
+import { formatTime12h } from "@/lib/timeFormat";
 import { SinglePagePdfButton } from "./SinglePagePdfButton";
 
 interface SinglePageReportProps {
@@ -27,12 +18,52 @@ interface SinglePageReportProps {
   lang: "ta" | "en";
 }
 
-const CATEGORY_ICONS: Record<string, React.ComponentType<{ className?: string }>> = {
-  briefcase: Briefcase,
-  heart: Heart,
-  "graduation-cap": GraduationCap,
-  stethoscope: Stethoscope,
-};
+/* ===========================================================================
+ * LAYOUT CONTRACT FOR THIS SHEET — read before restyling
+ * ===========================================================================
+ * This sheet is rasterised into a PDF. Three rules keep screen and PDF
+ * identical, and breaking any one of them reintroduces the overlap bug:
+ *
+ *  1. NO CSS GRID, NO FLEXBOX anywhere inside #single-page-report.
+ *     html2canvas (the fallback rasteriser) has no CSS Grid implementation
+ *     at all — it lays grid children out as ordinary static blocks, which is
+ *     what made the identity cards, mini-facts, chart row and scorecard pile
+ *     on top of each other in the download. All multi-column layout here is
+ *     done with <table>, which every rasteriser handles correctly.
+ *     (lib/pdfExport.ts' primary foreignObject path would survive grid, but
+ *     this sheet stays grid-free as a second line of defence.)
+ *
+ *  2. EXPLICIT PIXEL LINE-HEIGHTS on everything. The Tamil handwriting face
+ *     (Kavivanar) has tall ascenders/descenders; with `leading-none` or
+ *     unitless line-heights the rasteriser's own line boxes land a few px off
+ *     per line and the error accumulates down the page. Never use
+ *     `leading-none` here.
+ *
+ *  3. INLINE STYLES, not Tailwind classes, for colour and type. Tailwind v4
+ *     emits oklch() colours which the fallback rasteriser cannot parse.
+ *
+ * The sheet is 794 px wide (A4 @96dpi) with a 1123 px minimum height, and the
+ * exporter fits it to A4 preserving aspect ratio. `minHeight` rather than a
+ * fixed `height` on purpose: a fixed height silently CLIPS a long chart
+ * (11 planets + a long place name), which was the on-screen "content outside
+ * the box" complaint. Growing slightly past A4 just means the exporter scales
+ * the sheet down a few percent, which is harmless.
+ *
+ * Nothing here recomputes astrology — every value comes from `chart`. Layout
+ * only, per AGENTS.md §1.
+ * ========================================================================= */
+
+const SHEET_W = 794;
+const SHEET_MIN_H = 1123;
+
+const INK = "#2b2117";
+const INK_SOFT = "#6f6049";
+const RED = "#8e2b1c";
+const GOLD = "#aa820a";
+const PAPER = "#fdf6e3";
+const PAPER_CARD = "#fffaf0";
+
+const FONT_STACK = "'Kavivanar', 'Noto Sans Tamil', 'Latha', sans-serif";
 
 function toPlanetsBySign(
   kattam: Record<number, KattamPlanet[]>
@@ -49,178 +80,260 @@ function toPlanetsBySign(
   return out;
 }
 
-// ---------------------------------------------------------------------
-// South Indian fixed-sign box grid — same geometry for Tamil & Kerala
-// (see lib/chartLayouts.ts citation: both use the identical fixed-sign
-// grid, only the ink/accent colour differs). Colours come from
-// CHART_STYLE_THEMES so this actually responds to the selected style,
-// unlike the earlier hardcoded-colour version.
-// ---------------------------------------------------------------------
-const SouthIndianMiniChart: React.FC<{
-  titleTa: string;
-  planetsBySign: Record<number, Array<{ name: string; symbol: string; is_lagna?: boolean }>>;
-  theme: ReturnType<typeof themeFor>;
-}> = ({ titleTa, planetsBySign, theme }) => {
-  const cell = (signNum: number) => {
-    const list = planetsBySign[signNum] || [];
-    return (
-      <div
-        style={{ borderColor: `${theme.ink}55` }}
-        className="border p-0.5 h-full flex flex-col justify-start items-center text-[9px] leading-tight overflow-hidden"
-      >
-        <div className="flex flex-wrap gap-0.5 justify-center items-center font-bold">
-          {list.map((p, idx) => (
-            <span
-              key={idx}
-              style={
-                p.is_lagna
-                  ? { background: theme.accent, color: "#fff" }
-                  : { background: "#fffaf0", border: `1px solid ${theme.ink}33`, color: theme.ink }
-              }
-              className="px-0.5 rounded"
-            >
-              {p.symbol || p.name.slice(0, 2)}
-            </span>
-          ))}
-        </div>
-      </div>
-    );
-  };
-
-  return (
-    <div
-      style={{ borderColor: theme.ink, background: `${theme.paper}f2` }}
-      className="border-2 rounded-lg p-1.5 shadow-sm"
-    >
-      <div style={{ color: theme.accent }} className="text-center font-bold text-[11px] mb-1 leading-none">
-        {titleTa}
-      </div>
-      <div style={{ borderColor: theme.ink }} className="grid grid-cols-4 grid-rows-4 border w-full h-[155px] text-center">
-        {cell(12)}
-        {cell(1)}
-        {cell(2)}
-        {cell(3)}
-        {cell(11)}
-        <div
-          style={{ borderColor: theme.ink, background: theme.paper }}
-          className="col-span-2 row-span-2 border flex flex-col items-center justify-center p-1"
-        >
-          <span style={{ color: theme.accent }} className="text-[10px] font-bold leading-tight">{titleTa}</span>
-        </div>
-        {cell(4)}
-        {cell(10)}
-        {cell(5)}
-        {cell(9)}
-        {cell(8)}
-        {cell(7)}
-        {cell(6)}
-      </div>
-    </div>
-  );
-};
-
-// ---------------------------------------------------------------------
-// North Indian fixed-house diamond grid — reuses the exact same
-// geometry (NORTH_INDIAN_HOUSES / signForNorthIndianHouse) as the main
-// chart canvas, so the single-page report finally matches what the
-// full-mode Rasi/Navamsa charts draw for "north_indian".
-// ---------------------------------------------------------------------
-const NorthIndianMiniChart: React.FC<{
-  titleTa: string;
-  planetsBySign: Record<number, Array<{ name: string; symbol: string; is_lagna?: boolean }>>;
-  lagnaSignNum: number;
-  theme: ReturnType<typeof themeFor>;
-}> = ({ titleTa, planetsBySign, lagnaSignNum, theme }) => {
-  return (
-    <div
-      style={{ borderColor: theme.ink, background: `${theme.paper}f2` }}
-      className="border-2 rounded-lg p-1.5 shadow-sm"
-    >
-      <div style={{ color: theme.accent }} className="text-center font-bold text-[11px] mb-1 leading-none">
-        {titleTa}
-      </div>
-      <div className="w-full h-[155px] flex items-center justify-center">
-        <svg viewBox="0 0 400 400" className="w-full h-full">
-          <rect x={2} y={2} width={396} height={396} fill="none" stroke={theme.ink} strokeWidth={3} />
-          {NORTH_INDIAN_HOUSES.map((h) => {
-            const signNum = signForNorthIndianHouse(lagnaSignNum, h.house);
-            const planets = planetsBySign[signNum] || [];
-            const label = planets.map((p) => p.symbol || p.name.slice(0, 2)).join(" ");
-            return (
-              <g key={h.house}>
-                <polygon
-                  points={h.points}
-                  fill={h.house === 1 ? `${theme.accent}22` : "transparent"}
-                  stroke={theme.ink}
-                  strokeWidth={h.house === 1 ? 2.5 : 1.5}
-                />
-                <text
-                  x={h.labelX}
-                  y={h.labelY - 14}
-                  textAnchor="middle"
-                  fontSize={13}
-                  fill={`${theme.ink}90`}
-                >
-                  {signNum}
-                </text>
-                {label && (
-                  <text
-                    x={h.labelX}
-                    y={h.labelY + 6}
-                    textAnchor="middle"
-                    fontSize={13}
-                    fontWeight="bold"
-                    fill={h.house === 1 ? theme.accent : theme.ink}
-                  >
-                    {label}
-                  </text>
-                )}
-              </g>
-            );
-          })}
-        </svg>
-      </div>
-    </div>
-  );
-};
-
 function themeFor(style: string) {
   const key = (style === "kerala" || style === "north_indian" ? style : "tamil") as ChartStyle;
   return CHART_STYLE_THEMES[key];
 }
+type Theme = ReturnType<typeof themeFor>;
+
+type SignPlanets = Record<number, Array<{ name: string; symbol: string; is_lagna?: boolean }>>;
+
+/* --------------------------------------------------------------------------
+ * South Indian fixed-sign grid — rendered as a <table>, not a CSS grid.
+ * Same geometry for Tamil & Kerala (lib/chartLayouts.ts: identical fixed-sign
+ * grid, only ink/accent colour differs).
+ * ------------------------------------------------------------------------ */
+const CHART_BOX_H = 178;
+const CELL_H = 36;
+
+const SouthIndianMiniChart: React.FC<{
+  title: string;
+  planetsBySign: SignPlanets;
+  theme: Theme;
+}> = ({ title, planetsBySign, theme }) => {
+  const cellStyle: React.CSSProperties = {
+    border: `1px solid ${theme.ink}55`,
+    height: `${CELL_H}px`,
+    width: "25%",
+    padding: "2px",
+    textAlign: "center",
+    verticalAlign: "top",
+    overflow: "hidden",
+  };
+
+  const chip = (p: { symbol: string; name: string; is_lagna?: boolean }, idx: number) => (
+    <span
+      key={idx}
+      style={{
+        display: "inline-block",
+        margin: "0 1px",
+        padding: "0 3px",
+        borderRadius: "3px",
+        fontSize: "9px",
+        lineHeight: "13px",
+        fontWeight: 700,
+        whiteSpace: "nowrap",
+        background: p.is_lagna ? theme.accent : "#fffaf0",
+        color: p.is_lagna ? "#ffffff" : theme.ink,
+        border: `1px solid ${p.is_lagna ? theme.accent : `${theme.ink}33`}`,
+      }}
+    >
+      {p.symbol || p.name.slice(0, 2)}
+    </span>
+  );
+
+  const cell = (signNum: number) => (
+    <td style={cellStyle}>{(planetsBySign[signNum] || []).map(chip)}</td>
+  );
+
+  return (
+    <div
+      style={{
+        border: `2px solid ${theme.ink}`,
+        borderRadius: "8px",
+        background: theme.paper,
+        padding: "6px",
+        height: `${CHART_BOX_H}px`,
+        boxSizing: "border-box",
+      }}
+    >
+      <div
+        style={{
+          textAlign: "center",
+          color: theme.accent,
+          fontSize: "11px",
+          lineHeight: "17px",
+          fontWeight: 700,
+          marginBottom: "4px",
+        }}
+      >
+        {title}
+      </div>
+      <table
+        style={{
+          width: "100%",
+          borderCollapse: "collapse",
+          tableLayout: "fixed",
+          border: `1px solid ${theme.ink}`,
+        }}
+      >
+        <tbody>
+          <tr>
+            {cell(12)}
+            {cell(1)}
+            {cell(2)}
+            {cell(3)}
+          </tr>
+          <tr>
+            {cell(11)}
+            <td
+              colSpan={2}
+              rowSpan={2}
+              style={{
+                border: `1px solid ${theme.ink}`,
+                background: theme.paper,
+                textAlign: "center",
+                verticalAlign: "middle",
+                color: theme.accent,
+                fontSize: "10px",
+                lineHeight: "15px",
+                fontWeight: 700,
+              }}
+            >
+              {title}
+            </td>
+            {cell(4)}
+          </tr>
+          <tr>
+            {cell(10)}
+            {cell(5)}
+          </tr>
+          <tr>
+            {cell(9)}
+            {cell(8)}
+            {cell(7)}
+            {cell(6)}
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  );
+};
+
+/* --------------------------------------------------------------------------
+ * North Indian fixed-house diamond — same geometry as the main chart canvas.
+ * Plain SVG, which rasterises reliably.
+ * ------------------------------------------------------------------------ */
+const NorthIndianMiniChart: React.FC<{
+  title: string;
+  planetsBySign: SignPlanets;
+  lagnaSignNum: number;
+  theme: Theme;
+}> = ({ title, planetsBySign, lagnaSignNum, theme }) => {
+  const svgSize = CHART_BOX_H - 40;
+  return (
+    <div
+      style={{
+        border: `2px solid ${theme.ink}`,
+        borderRadius: "8px",
+        background: theme.paper,
+        padding: "6px",
+        height: `${CHART_BOX_H}px`,
+        boxSizing: "border-box",
+        textAlign: "center",
+      }}
+    >
+      <div
+        style={{
+          color: theme.accent,
+          fontSize: "11px",
+          lineHeight: "17px",
+          fontWeight: 700,
+          marginBottom: "2px",
+        }}
+      >
+        {title}
+      </div>
+      <svg viewBox="0 0 400 400" width={svgSize} height={svgSize} style={{ display: "inline-block" }}>
+        <rect x={2} y={2} width={396} height={396} fill="none" stroke={theme.ink} strokeWidth={3} />
+        {NORTH_INDIAN_HOUSES.map((h) => {
+          const signNum = signForNorthIndianHouse(lagnaSignNum, h.house);
+          const planets = planetsBySign[signNum] || [];
+          const label = planets.map((p) => p.symbol || p.name.slice(0, 2)).join(" ");
+          return (
+            <g key={h.house}>
+              <polygon
+                points={h.points}
+                fill={h.house === 1 ? `${theme.accent}22` : "transparent"}
+                stroke={theme.ink}
+                strokeWidth={h.house === 1 ? 2.5 : 1.5}
+              />
+              <text x={h.labelX} y={h.labelY - 14} textAnchor="middle" fontSize={13} fill={`${theme.ink}90`}>
+                {signNum}
+              </text>
+              {label && (
+                <text
+                  x={h.labelX}
+                  y={h.labelY + 6}
+                  textAnchor="middle"
+                  fontSize={13}
+                  fontWeight="bold"
+                  fill={h.house === 1 ? theme.accent : theme.ink}
+                >
+                  {label}
+                </text>
+              )}
+            </g>
+          );
+        })}
+      </svg>
+    </div>
+  );
+};
 
 const MiniChart: React.FC<{
-  titleTa: string;
+  title: string;
   chartStyle: string;
-  planetsBySign: Record<number, Array<{ name: string; symbol: string; is_lagna?: boolean }>>;
+  planetsBySign: SignPlanets;
   lagnaSignNum: number;
-}> = ({ titleTa, chartStyle, planetsBySign, lagnaSignNum }) => {
+}> = ({ title, chartStyle, planetsBySign, lagnaSignNum }) => {
   const theme = themeFor(chartStyle);
   if (chartStyle === "north_indian") {
     return (
       <NorthIndianMiniChart
-        titleTa={titleTa}
+        title={title}
         planetsBySign={planetsBySign}
         lagnaSignNum={lagnaSignNum}
         theme={theme}
       />
     );
   }
-  return <SouthIndianMiniChart titleTa={titleTa} planetsBySign={planetsBySign} theme={theme} />;
+  return <SouthIndianMiniChart title={title} planetsBySign={planetsBySign} theme={theme} />;
 };
 
-/**
- * Single-Page Jathagam — one printable A4 sheet, styled to match the
- * palm-leaf manuscript theme, reusing the SAME chart geometry
- * (South Indian fixed-sign grid for Tamil/Kerala, North Indian diamond
- * for north_indian — from lib/chartLayouts.ts) that the full 12-section
- * report already uses, so switching chart style on the intake form now
- * actually changes what's drawn here too.
- *
- * Nothing here recomputes astrology — every field comes from `chart`
- * (basic_details, planets, rasi_kattam/navamsa_kattam, vimshottari_dasha,
- * doshas, single_page_summary). This is layout only.
- */
+/* ------------------------------ primitives ------------------------------ */
+
+const SectionTitle: React.FC<{ children: React.ReactNode }> = ({ children }) => (
+  <div
+    style={{
+      color: RED,
+      fontSize: "12px",
+      lineHeight: "20px",
+      fontWeight: 700,
+      marginBottom: "4px",
+    }}
+  >
+    {children}
+  </div>
+);
+
+const Line: React.FC<{ label: string; value: React.ReactNode }> = ({ label, value }) => (
+  <div style={{ fontSize: "10.5px", lineHeight: "17px", color: INK }}>
+    <strong style={{ fontWeight: 700 }}>{label}:</strong> {value}
+  </div>
+);
+
+const cardStyle: React.CSSProperties = {
+  border: `1px solid ${GOLD}66`,
+  borderRadius: "8px",
+  padding: "7px 9px",
+  background: PAPER_CARD,
+  boxSizing: "border-box",
+  verticalAlign: "top",
+};
+
+/* ------------------------------ main sheet ------------------------------ */
+
 export const SinglePageReport: React.FC<SinglePageReportProps> = ({ chart, lang }) => {
   const bd = chart.basic_details;
   const sps = chart.single_page_summary;
@@ -230,250 +343,433 @@ export const SinglePageReport: React.FC<SinglePageReportProps> = ({ chart, lang 
   const rasiPlanetsBySign = toPlanetsBySign(chart.rasi_kattam as any);
   const navamsaPlanetsBySign = toPlanetsBySign(chart.navamsa_kattam as any);
 
-  const tableRows = chart.planets;
+  const tableRows = chart.planets || [];
 
-  const doshaChips = chart.doshas.map((d) => ({
+  const doshaChips = (chart.doshas || []).map((d) => ({
     name: lang === "ta" ? d.name_ta : d.name,
     present: d.present,
   }));
 
+  const th: React.CSSProperties = {
+    border: `1px solid ${GOLD}66`,
+    padding: "2px 3px",
+    fontSize: "9.5px",
+    lineHeight: "15px",
+    fontWeight: 700,
+    color: RED,
+    background: "rgba(142,43,28,0.10)",
+    textAlign: "center",
+  };
+  const td: React.CSSProperties = {
+    border: `1px solid ${GOLD}44`,
+    padding: "1px 3px",
+    fontSize: "9.5px",
+    lineHeight: "15px",
+    textAlign: "center",
+    color: INK,
+  };
+  const factCell: React.CSSProperties = {
+    width: "25%",
+    padding: "0 4px 0 0",
+    verticalAlign: "top",
+  };
+
+  const miniFact = (label: string, value: string) => (
+    <div
+      style={{
+        background: PAPER_CARD,
+        border: `1px solid ${GOLD}55`,
+        borderRadius: "6px",
+        padding: "4px",
+        textAlign: "center",
+      }}
+    >
+      <div style={{ fontSize: "8.5px", lineHeight: "14px", color: RED }}>{label}</div>
+      <div style={{ fontSize: "10px", lineHeight: "16px", fontWeight: 700, color: INK }}>{value}</div>
+    </div>
+  );
+
+  const chip = (text: string, tone: "bad" | "warn" | "ok", key: React.Key) => {
+    const palette =
+      tone === "bad"
+        ? { bg: "#ffe4e6", border: "#e11d48", fg: "#9f1239", mark: "!" }
+        : tone === "warn"
+        ? { bg: "#fef3c7", border: "#d97706", fg: "#92400e", mark: "•" }
+        : { bg: "#d1fae5", border: "#059669", fg: "#065f46", mark: "✓" };
+    return (
+      <span
+        key={key}
+        style={{
+          display: "inline-block",
+          margin: "0 5px 5px 0",
+          padding: "1px 9px",
+          borderRadius: "999px",
+          fontSize: "9.5px",
+          lineHeight: "16px",
+          whiteSpace: "nowrap",
+          background: palette.bg,
+          border: `1px solid ${palette.border}`,
+          color: palette.fg,
+        }}
+      >
+        {palette.mark} {text}
+      </span>
+    );
+  };
+
+  const scorecard = sps?.life_scorecard || [];
+  const scorecardRows: any[][] = [];
+  for (let i = 0; i < scorecard.length; i += 2) scorecardRows.push(scorecard.slice(i, i + 2));
+
   return (
     <div className="space-y-3">
-      {/* Toolbar */}
+      {/* Toolbar — outside #single-page-report, so it is never captured */}
       <div className="flex items-center justify-between no-print">
-        <h2 className="text-lg sm:text-xl font-bold font-script text-[#2b2117] flex items-center gap-2">
-          <Sparkles className="w-5 h-5 text-[#b03726]" />
+        <h2
+          className="text-lg sm:text-xl font-bold flex items-center gap-2"
+          style={{ color: INK, fontFamily: FONT_STACK }}
+        >
+          <Sparkles className="w-5 h-5" style={{ color: "#b03726" }} />
           {lang === "ta" ? "சுருக்க ஜாதகம் (ஒரு பக்கம்)" : "Single-Page Jathagam"}
         </h2>
         <SinglePagePdfButton chart={chart} lang={lang} />
       </div>
 
-      {/* The single printable/exportable sheet */}
       <div className="flex justify-center">
         <div
           id="single-page-report"
-          className="manuscript-page-single relative"
+          className="manuscript-page-single"
           style={{
-            width: "794px",
-            background: "#fdf6e3",
-            border: "2px solid rgba(170,130,10,0.4)",
+            position: "relative",
+            width: `${SHEET_W}px`,
+            minHeight: `${SHEET_MIN_H}px`,
+            background: PAPER,
+            border: `2px solid ${GOLD}66`,
             borderRadius: "6px",
-            padding: "28px 34px 40px",
+            padding: "24px 30px 20px",
             boxSizing: "border-box",
-            color: "#2b2117",
-            fontFamily: "'Kavivanar', 'Noto Sans Tamil', sans-serif",
+            color: INK,
+            fontFamily: FONT_STACK,
+            fontSize: "11px",
+            lineHeight: "17px",
           }}
         >
-          {/* aged paper corner marks */}
-          <div className="absolute top-2 left-2 text-[#aa820a]">⚜</div>
-          <div className="absolute top-2 right-2 text-[#aa820a]">⚜</div>
-          <div className="absolute bottom-2 left-2 text-[#aa820a]">⚜</div>
-          <div className="absolute bottom-2 right-2 text-[#aa820a]">⚜</div>
+          {/* aged-paper corner marks */}
+          <div style={{ position: "absolute", top: "6px", left: "9px", color: GOLD, fontSize: "12px", lineHeight: "14px" }}>⚜</div>
+          <div style={{ position: "absolute", top: "6px", right: "9px", color: GOLD, fontSize: "12px", lineHeight: "14px" }}>⚜</div>
+          <div style={{ position: "absolute", bottom: "6px", left: "9px", color: GOLD, fontSize: "12px", lineHeight: "14px" }}>⚜</div>
+          <div style={{ position: "absolute", bottom: "6px", right: "9px", color: GOLD, fontSize: "12px", lineHeight: "14px" }}>⚜</div>
 
           {/* Header */}
-          <div className="text-center border-b-2 border-[#aa820a]/40 pb-2 mb-3">
-            <div className="text-[#8e2b1c] text-lg font-bold">ௐ ॥ ஸ்ரீ ராமஜெயம் ॥</div>
-            <h1 className="text-2xl font-bold text-[#8e2b1c] mt-1">
+          <div
+            style={{
+              textAlign: "center",
+              borderBottom: `2px solid ${GOLD}66`,
+              paddingBottom: "8px",
+              marginBottom: "10px",
+            }}
+          >
+            <div style={{ color: RED, fontSize: "15px", lineHeight: "24px", fontWeight: 700 }}>
+              ௐ ॥ ஸ்ரீ ராமஜெயம் ॥
+            </div>
+            <div style={{ color: RED, fontSize: "24px", lineHeight: "36px", fontWeight: 700 }}>
               {lang === "ta" ? "சுருக்க ஜாதகம்" : "Single-Page Jathagam"}
-            </h1>
-            <p className="text-[10px] text-[#6f6049] uppercase tracking-widest mt-0.5">
+            </div>
+            <div style={{ color: INK_SOFT, fontSize: "9px", lineHeight: "15px", letterSpacing: "1.2px" }}>
               {chart.panchangam_system === "vakhyam"
                 ? "வாக்கிய பஞ்சாங்கம் (VAKHYAM)"
                 : "திருக்கணித பஞ்சாங்கம் (THIRUKANITHAM) — DRIK-SIDDHA"}
-            </p>
-          </div>
-
-          {/* Identity + Birth Details */}
-          <div className="grid grid-cols-2 gap-3 text-xs mb-3">
-            <div className="border border-[#aa820a]/30 rounded-lg p-2 bg-[#fffaf0]/70">
-              <p><strong>{lang === "ta" ? "பெயர்" : "Name"}:</strong> {chart.name}</p>
-              <p><strong>{lang === "ta" ? "பிறந்த தேதி" : "DOB"}:</strong> {chart.date_of_birth}</p>
-              <p><strong>{lang === "ta" ? "பிறந்த நேரம்" : "TOB"}:</strong> {chart.time_of_birth}</p>
-              <p><strong>{lang === "ta" ? "இடம்" : "Place"}:</strong> {chart.place}</p>
-            </div>
-            <div className="border border-[#aa820a]/30 rounded-lg p-2 bg-[#fffaf0]/70">
-              <p><strong>{lang === "ta" ? "லக்னம்" : "Lagnam"}:</strong> {lang === "ta" ? bd.lagnam_ta : bd.lagnam}</p>
-              <p><strong>{lang === "ta" ? "ராசி" : "Rasi"}:</strong> {lang === "ta" ? bd.rasi_ta : bd.rasi}</p>
-              <p><strong>{lang === "ta" ? "நட்சத்திரம்" : "Nakshatram"}:</strong> {lang === "ta" ? bd.nakshatram_ta : bd.nakshatram} ({lang === "ta" ? "பாதம்" : "Pada"} {bd.pada})</p>
-              <p><strong>{lang === "ta" ? "திதி / யோகம் / கரணம்" : "Thithi/Yogam/Karanam"}:</strong> {lang === "ta" ? bd.thithi_ta : bd.thithi} / {lang === "ta" ? bd.yogam_ta : bd.yogam} / {lang === "ta" ? bd.karanam_ta : bd.karanam}</p>
             </div>
           </div>
 
-          {/* Sunrise/Sunset/Ayanamsa/Dasa Balance strip */}
-          <div className="grid grid-cols-4 gap-2 text-[10px] mb-3">
-            <MiniFact label={lang === "ta" ? "சூரிய உதயம்" : "Sunrise"} value={bd.sun_rise || "—"} />
-            <MiniFact label={lang === "ta" ? "சூரிய அஸ்தமனம்" : "Sunset"} value={bd.sun_set || "—"} />
-            <MiniFact label={lang === "ta" ? "அயனாம்சம்" : "Ayanamsa"} value={bd.ayanamsa_dms || bd.ayanamsa_value?.toFixed(2) || "—"} />
-            <MiniFact
-              label={lang === "ta" ? "இருப்பு தசை" : "Dasa Balance"}
-              value={(lang === "ta" ? bd.dasha_balance_ta : bd.dasha_balance_en) || "—"}
-            />
-          </div>
+          {/* Identity + birth details — table, not grid */}
+          <table style={{ width: "100%", borderCollapse: "separate", borderSpacing: "0 0", tableLayout: "fixed", marginBottom: "10px" }}>
+            <tbody>
+              <tr>
+                <td style={{ width: "50%", paddingRight: "5px", verticalAlign: "top" }}>
+                  <div style={cardStyle}>
+                    <Line label={lang === "ta" ? "பெயர்" : "Name"} value={chart.name} />
+                    <Line label={lang === "ta" ? "பிறந்த தேதி" : "DOB"} value={chart.date_of_birth} />
+                    <Line
+                      label={lang === "ta" ? "பிறந்த நேரம்" : "TOB"}
+                      value={formatTime12h(chart.time_of_birth)}
+                    />
+                    <Line label={lang === "ta" ? "இடம்" : "Place"} value={chart.place} />
+                  </div>
+                </td>
+                <td style={{ width: "50%", paddingLeft: "5px", verticalAlign: "top" }}>
+                  <div style={cardStyle}>
+                    <Line
+                      label={lang === "ta" ? "லக்னம்" : "Lagnam"}
+                      value={lang === "ta" ? bd.lagnam_ta : bd.lagnam}
+                    />
+                    <Line label={lang === "ta" ? "ராசி" : "Rasi"} value={lang === "ta" ? bd.rasi_ta : bd.rasi} />
+                    <Line
+                      label={lang === "ta" ? "நட்சத்திரம்" : "Nakshatram"}
+                      value={`${lang === "ta" ? bd.nakshatram_ta : bd.nakshatram} (${
+                        lang === "ta" ? "பாதம்" : "Pada"
+                      } ${bd.pada})`}
+                    />
+                    <Line
+                      label={lang === "ta" ? "திதி / யோகம் / கரணம்" : "Thithi / Yogam / Karanam"}
+                      value={`${lang === "ta" ? bd.thithi_ta : bd.thithi} / ${
+                        lang === "ta" ? bd.yogam_ta : bd.yogam
+                      } / ${lang === "ta" ? bd.karanam_ta : bd.karanam}`}
+                    />
+                  </div>
+                </td>
+              </tr>
+            </tbody>
+          </table>
 
-          {/* Charts row: Rasi + Navamsa — now responds to chart.chart_style */}
-          <div className="grid grid-cols-2 gap-3 mb-3">
-            <MiniChart
-              titleTa={`${lang === "ta" ? "ராசி கட்டம் (D1)" : "Rasi (D1)"}`}
-              chartStyle={chart.chart_style}
-              planetsBySign={rasiPlanetsBySign}
-              lagnaSignNum={lagnaSignNum}
-            />
-            <MiniChart
-              titleTa={`${lang === "ta" ? "நவாம்சம் (D9)" : "Navamsa (D9)"}`}
-              chartStyle={chart.chart_style}
-              planetsBySign={navamsaPlanetsBySign}
-              lagnaSignNum={lagnaSignNum}
-            />
-          </div>
+          {/* Sunrise / Sunset / Ayanamsa / Dasa balance */}
+          <table style={{ width: "100%", tableLayout: "fixed", borderCollapse: "collapse", marginBottom: "10px" }}>
+            <tbody>
+              <tr>
+                <td style={factCell}>
+                  {miniFact(lang === "ta" ? "சூரிய உதயம்" : "Sunrise", formatTime12h(bd.sun_rise))}
+                </td>
+                <td style={factCell}>
+                  {miniFact(lang === "ta" ? "சூரிய அஸ்தமனம்" : "Sunset", formatTime12h(bd.sun_set))}
+                </td>
+                <td style={factCell}>
+                  {miniFact(
+                    lang === "ta" ? "அயனாம்சம்" : "Ayanamsa",
+                    bd.ayanamsa_dms || bd.ayanamsa_value?.toFixed(2) || "—"
+                  )}
+                </td>
+                <td style={{ ...factCell, paddingRight: 0 }}>
+                  {miniFact(
+                    lang === "ta" ? "இருப்பு தசை" : "Dasa Balance",
+                    (lang === "ta" ? bd.dasha_balance_ta : bd.dasha_balance_en) || "—"
+                  )}
+                </td>
+              </tr>
+            </tbody>
+          </table>
 
-          {/* Graha Sphutam — compact 11-row planetary table */}
-          <div className="mb-3">
-            <p className="text-xs font-bold text-[#8e2b1c] mb-1">
+          {/* Rasi + Navamsa */}
+          <table style={{ width: "100%", tableLayout: "fixed", borderCollapse: "collapse", marginBottom: "10px" }}>
+            <tbody>
+              <tr>
+                <td style={{ width: "50%", paddingRight: "5px", verticalAlign: "top" }}>
+                  <MiniChart
+                    title={lang === "ta" ? "ராசி கட்டம் (D1)" : "Rasi (D1)"}
+                    chartStyle={chart.chart_style}
+                    planetsBySign={rasiPlanetsBySign}
+                    lagnaSignNum={lagnaSignNum}
+                  />
+                </td>
+                <td style={{ width: "50%", paddingLeft: "5px", verticalAlign: "top" }}>
+                  <MiniChart
+                    title={lang === "ta" ? "நவாம்சம் (D9)" : "Navamsa (D9)"}
+                    chartStyle={chart.chart_style}
+                    planetsBySign={navamsaPlanetsBySign}
+                    lagnaSignNum={lagnaSignNum}
+                  />
+                </td>
+              </tr>
+            </tbody>
+          </table>
+
+          {/* Graha Sphutam */}
+          <div style={{ marginBottom: "10px" }}>
+            <SectionTitle>
               {lang === "ta" ? "கிரக ஸ்புடம் (Planetary Positions)" : "Graha Sphutam (Planetary Positions)"}
-            </p>
-            <table className="w-full text-[9.5px] border-collapse">
+            </SectionTitle>
+            <table style={{ width: "100%", borderCollapse: "collapse", tableLayout: "fixed" }}>
+              <colgroup>
+                <col style={{ width: "18%" }} />
+                <col style={{ width: "16%" }} />
+                <col style={{ width: "20%" }} />
+                <col style={{ width: "24%" }} />
+                <col style={{ width: "10%" }} />
+                <col style={{ width: "12%" }} />
+              </colgroup>
               <thead>
-                <tr className="bg-[#8e2b1c]/10 text-[#8e2b1c] font-bold">
-                  <th className="border border-[#aa820a]/30 py-0.5">{lang === "ta" ? "கிரகம்" : "Planet"}</th>
-                  <th className="border border-[#aa820a]/30 py-0.5">{lang === "ta" ? "ராசி" : "Sign"}</th>
-                  <th className="border border-[#aa820a]/30 py-0.5">{lang === "ta" ? "பாகை" : "Deg"}</th>
-                  <th className="border border-[#aa820a]/30 py-0.5">{lang === "ta" ? "நட்சத்திரம்" : "Nakshatra"}</th>
-                  <th className="border border-[#aa820a]/30 py-0.5">{lang === "ta" ? "பாதம்" : "Pada"}</th>
-                  <th className="border border-[#aa820a]/30 py-0.5">{lang === "ta" ? "இல்லம்" : "House"}</th>
+                <tr>
+                  <th style={th}>{lang === "ta" ? "கிரகம்" : "Planet"}</th>
+                  <th style={th}>{lang === "ta" ? "ராசி" : "Sign"}</th>
+                  <th style={th}>{lang === "ta" ? "பாகை" : "Degree"}</th>
+                  <th style={th}>{lang === "ta" ? "நட்சத்திரம்" : "Nakshatra"}</th>
+                  <th style={th}>{lang === "ta" ? "பாதம்" : "Pada"}</th>
+                  <th style={th}>{lang === "ta" ? "இல்லம்" : "House"}</th>
                 </tr>
               </thead>
               <tbody>
                 {tableRows.map((p: any, idx: number) => (
-                  <tr key={idx} className={p.is_lagna ? "bg-[#d4af37]/15 font-bold" : idx % 2 === 0 ? "bg-white/40" : ""}>
-                    <td className="border border-[#aa820a]/20 py-0.5 text-center">
-                      {lang === "ta" ? p.name_ta : p.name}
-                    </td>
-                    <td className="border border-[#aa820a]/20 py-0.5 text-center">
-                      {lang === "ta" ? p.rasi_ta : p.rasi}
-                    </td>
-                    <td className="border border-[#aa820a]/20 py-0.5 text-center font-mono">
-                      {typeof p.degree === "number" ? p.degree.toFixed(2) + "°" : p.degree_dms || "—"}
+                  <tr
+                    key={idx}
+                    style={{
+                      background: p.is_lagna
+                        ? "rgba(212,175,55,0.18)"
+                        : idx % 2 === 0
+                        ? "rgba(255,255,255,0.45)"
+                        : "transparent",
+                      fontWeight: p.is_lagna ? 700 : 400,
+                    }}
+                  >
+                    <td style={td}>{lang === "ta" ? p.name_ta : p.name}</td>
+                    <td style={td}>{lang === "ta" ? p.rasi_ta : p.rasi}</td>
+                    <td style={td}>
+                      {typeof p.degree === "number" ? `${p.degree.toFixed(2)}°` : p.degree_dms || "—"}
                       {p.is_retrograde ? " (வ)" : ""}
                     </td>
-                    <td className="border border-[#aa820a]/20 py-0.5 text-center">
-                      {lang === "ta" ? p.nakshatra_ta : p.nakshatra}
-                    </td>
-                    <td className="border border-[#aa820a]/20 py-0.5 text-center">{p.pada ?? "—"}</td>
-                    <td className="border border-[#aa820a]/20 py-0.5 text-center">{p.house ?? "—"}</td>
+                    <td style={td}>{lang === "ta" ? p.nakshatra_ta : p.nakshatra}</td>
+                    <td style={td}>{p.pada ?? "—"}</td>
+                    <td style={td}>{p.house ?? "—"}</td>
                   </tr>
                 ))}
               </tbody>
             </table>
           </div>
 
-          {/* Current Dasa/Bhukti micro-prediction */}
+          {/* Current Dasa / Bhukti */}
           {sps?.current_period && (
-            <div className="mb-3 border border-[#aa820a]/30 rounded-lg p-2 bg-[#fffaf0]/70">
-              <p className="text-xs font-bold text-[#8e2b1c] flex items-center gap-1 mb-1">
-                <CalendarClock className="w-3.5 h-3.5" />
+            <div style={{ ...cardStyle, marginBottom: "10px" }}>
+              <SectionTitle>
                 {lang === "ta" ? "தற்போதைய திசை - புக்தி" : "Current Dasa / Bhukti"}
-              </p>
-              <p className="text-[10.5px]">
+              </SectionTitle>
+              <div style={{ fontSize: "10.5px", lineHeight: "17px" }}>
                 <strong>
                   {lang === "ta" ? sps.current_period.mahadasha_lord_ta : sps.current_period.mahadasha_lord}
                 </strong>{" "}
-                {lang === "ta" ? "மகா திசை" : "Mahadasha"} ({sps.current_period.mahadasha_start} → {sps.current_period.mahadasha_end}) —{" "}
+                {lang === "ta" ? "மகா திசை" : "Mahadasha"} ({sps.current_period.mahadasha_start} →{" "}
+                {sps.current_period.mahadasha_end}) —{" "}
                 <strong>
                   {lang === "ta" ? sps.current_period.bhukti_lord_ta : sps.current_period.bhukti_lord}
                 </strong>{" "}
-                {lang === "ta" ? "புக்தி" : "Bhukti"} ({sps.current_period.bhukti_start} → {sps.current_period.bhukti_end})
-              </p>
-              <p className="text-[10px] text-[#6f6049] mt-1">
-                {lang === "ta" ? sps.current_period.micro_prediction_ta : sps.current_period.micro_prediction}
-              </p>
+                {lang === "ta" ? "புக்தி" : "Bhukti"} ({sps.current_period.bhukti_start} →{" "}
+                {sps.current_period.bhukti_end})
+              </div>
+              <div style={{ fontSize: "9.5px", lineHeight: "16px", color: INK_SOFT, marginTop: "3px" }}>
+                {lang === "ta"
+                  ? sps.current_period.micro_prediction_ta
+                  : sps.current_period.micro_prediction}
+              </div>
             </div>
           )}
 
           {/* Dosha chips + Saturn transit */}
-          <div className="mb-3">
-            <p className="text-xs font-bold text-[#8e2b1c] mb-1">
-              {lang === "ta" ? "தோஷ பரிசோதனை" : "Dosha Checklist"}
-            </p>
-            <div className="flex flex-wrap gap-1.5">
-              {doshaChips.map((d, i) => (
-                <span
-                  key={i}
-                  className={`text-[9.5px] px-2 py-0.5 rounded-full border flex items-center gap-1 ${
-                    d.present ? "bg-rose-100 border-rose-400 text-rose-800" : "bg-emerald-100 border-emerald-400 text-emerald-800"
-                  }`}
-                >
-                  {d.present ? <ShieldAlert className="w-3 h-3" /> : <ShieldCheck className="w-3 h-3" />}
-                  {d.name}
-                </span>
-              ))}
-              {st && (
-                <span
-                  className={`text-[9.5px] px-2 py-0.5 rounded-full border flex items-center gap-1 ${
-                    st.present
-                      ? "bg-rose-100 border-rose-400 text-rose-800"
-                      : st.is_upcoming
-                      ? "bg-amber-100 border-amber-400 text-amber-800"
-                      : "bg-emerald-100 border-emerald-400 text-emerald-800"
-                  }`}
-                >
-                  {st.present ? <ShieldAlert className="w-3 h-3" /> : <ShieldCheck className="w-3 h-3" />}
-                  {lang === "ta" ? st.name_ta : st.name}
-                </span>
-              )}
+          <div style={{ marginBottom: "8px" }}>
+            <SectionTitle>{lang === "ta" ? "தோஷ பரிசோதனை" : "Dosha Checklist"}</SectionTitle>
+            <div>
+              {doshaChips.map((d, i) => chip(d.name, d.present ? "bad" : "ok", `d${i}`))}
+              {st &&
+                chip(
+                  lang === "ta" ? st.name_ta : st.name,
+                  st.present ? "bad" : st.is_upcoming ? "warn" : "ok",
+                  "saturn"
+                )}
             </div>
           </div>
 
-          {/* Life Scorecard — compact bars */}
-          {sps?.life_scorecard && sps.life_scorecard.length > 0 && (
-            <div className="mb-3">
-              <p className="text-xs font-bold text-[#8e2b1c] mb-1">
-                {lang === "ta" ? "வாழ்க்கை மதிப்பீடு" : "Life Scorecard"}
-              </p>
-              <div className="grid grid-cols-2 gap-x-3 gap-y-1.5">
-                {sps.life_scorecard.map((cat: any, idx: number) => {
-                  const Icon = CATEGORY_ICONS[cat.icon] || Sparkles;
-                  return (
-                    <div key={idx}>
-                      <div className="flex items-center justify-between text-[9.5px]">
-                        <span className="flex items-center gap-1 font-semibold">
-                          <Icon className="w-3 h-3 text-[#8e2b1c]" />
-                          {lang === "ta" ? cat.category_ta : cat.category}
-                        </span>
-                        <span className="text-[#6f6049]">{lang === "ta" ? cat.rating_ta : cat.rating}</span>
-                      </div>
-                      <div className="w-full h-1.5 rounded-full bg-[#e5d9b8] overflow-hidden">
-                        <div
-                          className="h-full bg-[#b03726]"
-                          style={{ width: `${Math.max(4, cat.score_percentage)}%` }}
-                        />
-                      </div>
-                    </div>
-                  );
-                })}
-              </div>
+          {/* Life Scorecard — table rows, not a 2-column grid */}
+          {scorecard.length > 0 && (
+            <div style={{ marginBottom: "10px" }}>
+              <SectionTitle>{lang === "ta" ? "வாழ்க்கை மதிப்பீடு" : "Life Scorecard"}</SectionTitle>
+              <table style={{ width: "100%", tableLayout: "fixed", borderCollapse: "collapse" }}>
+                <tbody>
+                  {scorecardRows.map((row, rIdx) => (
+                    <tr key={rIdx}>
+                      {[0, 1].map((cIdx) => {
+                        const cat = row[cIdx];
+                        return (
+                          <td
+                            key={cIdx}
+                            style={{
+                              width: "50%",
+                              padding: cIdx === 0 ? "0 8px 7px 0" : "0 0 7px 8px",
+                              verticalAlign: "top",
+                            }}
+                          >
+                            {cat && (
+                              <>
+                                <table style={{ width: "100%", borderCollapse: "collapse" }}>
+                                  <tbody>
+                                    <tr>
+                                      <td
+                                        style={{
+                                          fontSize: "9.5px",
+                                          lineHeight: "16px",
+                                          fontWeight: 700,
+                                          color: INK,
+                                          textAlign: "left",
+                                        }}
+                                      >
+                                        {lang === "ta" ? cat.category_ta : cat.category}
+                                      </td>
+                                      <td
+                                        style={{
+                                          fontSize: "9.5px",
+                                          lineHeight: "16px",
+                                          color: INK_SOFT,
+                                          textAlign: "right",
+                                        }}
+                                      >
+                                        {lang === "ta" ? cat.rating_ta : cat.rating}
+                                      </td>
+                                    </tr>
+                                  </tbody>
+                                </table>
+                                <div
+                                  style={{
+                                    width: "100%",
+                                    height: "6px",
+                                    borderRadius: "999px",
+                                    background: "#e5d9b8",
+                                    overflow: "hidden",
+                                  }}
+                                >
+                                  <div
+                                    style={{
+                                      height: "6px",
+                                      background: "#b03726",
+                                      width: `${Math.max(4, Math.min(100, cat.score_percentage))}%`,
+                                    }}
+                                  />
+                                </div>
+                              </>
+                            )}
+                          </td>
+                        );
+                      })}
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
             </div>
           )}
 
           {/* Remedies */}
           {sps?.remedies && (
-            <div className="border-t-2 border-[#aa820a]/30 pt-2">
-              <p className="text-xs font-bold text-[#8e2b1c] mb-1 flex items-center gap-1">
-                <Gem className="w-3.5 h-3.5" />
-                {lang === "ta" ? "பரிகாரங்கள்" : "Remedies (Pariharam)"}
-              </p>
-              <p className="text-[10px] leading-snug">
+            <div style={{ borderTop: `2px solid ${GOLD}66`, paddingTop: "7px" }}>
+              <SectionTitle>{lang === "ta" ? "பரிகாரங்கள்" : "Remedies (Pariharam)"}</SectionTitle>
+              <div style={{ fontSize: "10px", lineHeight: "17px" }}>
                 <strong>{lang === "ta" ? "தேவதை" : "Deity"}:</strong>{" "}
-                {lang === "ta" ? sps.remedies.presiding_deity_ta : sps.remedies.presiding_deity} &nbsp;|&nbsp;
+                {lang === "ta" ? sps.remedies.presiding_deity_ta : sps.remedies.presiding_deity}
+                {"  |  "}
                 <strong>{lang === "ta" ? "நல்ல நாள்" : "Day"}:</strong>{" "}
-                {lang === "ta" ? sps.remedies.favorable_day_ta : sps.remedies.favorable_day} &nbsp;|&nbsp;
-                <strong>{lang === "ta" ? "நிறம்/எண்" : "Color/No."}:</strong>{" "}
-                {lang === "ta" ? sps.remedies.lucky_color_ta : sps.remedies.lucky_color} / {sps.remedies.lucky_number}
-              </p>
+                {lang === "ta" ? sps.remedies.favorable_day_ta : sps.remedies.favorable_day}
+                {"  |  "}
+                <strong>{lang === "ta" ? "நிறம் / எண்" : "Color / No."}:</strong>{" "}
+                {lang === "ta" ? sps.remedies.lucky_color_ta : sps.remedies.lucky_color} /{" "}
+                {sps.remedies.lucky_number}
+              </div>
             </div>
           )}
 
-          {/* Footer */}
-          <div className="text-center text-[8px] text-[#6f6049] mt-3 pt-2 border-t border-[#aa820a]/20">
+          <div
+            style={{
+              textAlign: "center",
+              fontSize: "8px",
+              lineHeight: "14px",
+              color: INK_SOFT,
+              borderTop: `1px solid ${GOLD}44`,
+              paddingTop: "6px",
+              marginTop: "10px",
+            }}
+          >
             MYLoginn Astrology — Swiss Ephemeris · Lahiri Ayanamsha · BPHS Classical Rules
           </div>
         </div>
@@ -482,9 +778,4 @@ export const SinglePageReport: React.FC<SinglePageReportProps> = ({ chart, lang 
   );
 };
 
-const MiniFact: React.FC<{ label: string; value: string }> = ({ label, value }) => (
-  <div className="rounded-md bg-[#fffaf0]/70 border border-[#aa820a]/25 p-1.5 text-center">
-    <p className="text-[8.5px] text-[#8e2b1c]/80 uppercase tracking-wide">{label}</p>
-    <p className="text-[10px] font-bold">{value}</p>
-  </div>
-);
+export default SinglePageReport;

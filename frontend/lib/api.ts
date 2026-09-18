@@ -12,20 +12,21 @@ import {
   PlaceSuggestion,
   BabyNameRequest,
   BabyNameResult,
-  MuhurthaRequest, // NEW
-  MuhurthaResponse, // NEW
-  RasiHoroscopeResult, // NEW
-  RasiLoveHoroscopeResult, // NEW
-  NumerologyCheckRequest, // NEW
-  NumerologyProfile, // NEW
-  NumerologyReference, // NEW
+  MuhurthaRequest,
+  MuhurthaSearchResponse,
+  RasiHoroscopeResult,
+  RasiLoveHoroscopeResult,
+  NumerologyCheckRequest,
+  NumerologyProfile,
+  NumerologyReference,
+  GroupedLocations,
 } from "./types";
+import { formatTime12h } from "./timeFormat";
 
 // Base URL of the FastAPI backend.
 // Override via NEXT_PUBLIC_API_BASE_URL in a .env.local file if the backend
 // runs somewhere other than the default local dev address.
-const API_BASE_URL =
-  process.env.NEXT_PUBLIC_API_BASE_URL || "http://127.0.0.1:8000";
+const API_BASE_URL = process.env.NEXT_PUBLIC_API_BASE_URL || "http://127.0.0.1:8000";
 
 const API_V1 = `${API_BASE_URL}/api`;
 
@@ -43,19 +44,46 @@ async function handleResponse<T>(res: Response): Promise<T> {
   return res.json() as Promise<T>;
 }
 
+/* ---------------------------------------------------------------------------
+ * Chart post-processing — the single place that decides how a birth time is
+ * DISPLAYED across the whole site.
+ *
+ * The bug: someone enters 12:58 AM, and every screen then prints "00:58:00".
+ * Both are the same instant (12:58 AM *is* 00:58 in 24-hour time), so the
+ * conversion was never wrong — but the site was echoing back the internal
+ * 24-hour value instead of what the person typed.
+ *
+ * Fixing it here, at the API boundary, fixes it everywhere at once: the
+ * single-page sheet, all 50 manuscript chapters, and every other component
+ * that renders `chart.time_of_birth`. The raw 24-hour value is preserved as
+ * `time_of_birth_24h`.
+ *
+ * IMPORTANT: if you ever re-post a chart's own values back to the backend
+ * (regeneration, save-as-profile), use `time_of_birth_24h`, never the
+ * display string. Every computed value inside `chart` was already produced by
+ * the backend from the 24-hour time, so nothing recalculates from this field.
+ * ------------------------------------------------------------------------- */
+function decorateChart(chart: ChartResponse): ChartResponse {
+  if (!chart || typeof chart !== "object") return chart;
+  const raw = (chart as any).time_of_birth_24h || chart.time_of_birth;
+  return {
+    ...chart,
+    time_of_birth_24h: raw,
+    time_of_birth: formatTime12h(raw),
+  } as ChartResponse;
+}
+
 /**
  * Generate a full Vedic Jathagam chart from birth details.
  * POST /api/charts/generate
  */
-export async function generateChartApi(
-  data: GenerateChartRequest
-): Promise<ChartResponse> {
+export async function generateChartApi(data: GenerateChartRequest): Promise<ChartResponse> {
   const res = await fetch(`${API_V1}/charts/generate`, {
     method: "POST",
     headers: { "Content-Type": "application/json" },
     body: JSON.stringify(data),
   });
-  return handleResponse<ChartResponse>(res);
+  return decorateChart(await handleResponse<ChartResponse>(res));
 }
 
 /**
@@ -64,16 +92,14 @@ export async function generateChartApi(
  */
 export async function getChartApi(chartId: number): Promise<ChartResponse> {
   const res = await fetch(`${API_V1}/charts/${chartId}`);
-  return handleResponse<ChartResponse>(res);
+  return decorateChart(await handleResponse<ChartResponse>(res));
 }
 
 /**
  * Run a Porutham (compatibility) match.
  * POST /api/porutham
  */
-export async function generatePoruthamApi(
-  data: PoruthamRequest
-): Promise<PoruthamMatchResult> {
+export async function generatePoruthamApi(data: PoruthamRequest): Promise<PoruthamMatchResult> {
   const res = await fetch(`${API_V1}/porutham`, {
     method: "POST",
     headers: { "Content-Type": "application/json" },
@@ -86,8 +112,7 @@ export async function generatePoruthamApi(
 export const matchPoruthamApi = generatePoruthamApi;
 
 /**
- * Star Match Finder — MATCH feature
- * For a given Boy (or Girl) Nakshatra/Pada, get LIKE-RATE for all target Rasi/Nakshatra combos (108 pada-level)
+ * Star Match Finder — MATCH feature.
  * POST /api/porutham/star-matches
  */
 export async function findStarMatchesApi(
@@ -102,7 +127,7 @@ export async function findStarMatchesApi(
 }
 
 /**
- * GET variant for quick browser testing
+ * GET variant for quick browser testing.
  * GET /api/porutham/star-matches?nakshatra=Pushya&pada=2&gender=boy
  */
 export async function findStarMatchesGetApi(
@@ -127,9 +152,7 @@ export async function findStarMatchesGetApi(
  * Generate/re-generate AI narration for a chart.
  * POST /api/narration
  */
-export async function generateNarrationApi(
-  data: NarrationRequest
-): Promise<NarrationResult> {
+export async function generateNarrationApi(data: NarrationRequest): Promise<NarrationResult> {
   const res = await fetch(`${API_V1}/narration`, {
     method: "POST",
     headers: { "Content-Type": "application/json" },
@@ -138,13 +161,8 @@ export async function generateNarrationApi(
   return handleResponse<NarrationResult>(res);
 }
 
-/**
- * Create a saved profile.
- * POST /api/profiles
- */
-export async function createProfileApi(
-  data: ProfileCreate
-): Promise<ProfileResponse> {
+/** Create a saved profile. POST /api/profiles */
+export async function createProfileApi(data: ProfileCreate): Promise<ProfileResponse> {
   const res = await fetch(`${API_V1}/profiles`, {
     method: "POST",
     headers: { "Content-Type": "application/json" },
@@ -153,70 +171,49 @@ export async function createProfileApi(
   return handleResponse<ProfileResponse>(res);
 }
 
-/**
- * List saved profiles.
- * GET /api/profiles
- */
-export async function listProfilesApi(
-  skip = 0,
-  limit = 100
-): Promise<ProfileResponse[]> {
+/** List saved profiles. GET /api/profiles */
+export async function listProfilesApi(skip = 0, limit = 100): Promise<ProfileResponse[]> {
   const res = await fetch(`${API_V1}/profiles?skip=${skip}&limit=${limit}`);
   return handleResponse<ProfileResponse[]>(res);
 }
 
-/**
- * Fetch a single saved profile.
- * GET /api/profiles/{profile_id}
- */
-export async function getProfileApi(
-  profileId: number
-): Promise<ProfileResponse> {
+/** Fetch a single saved profile. GET /api/profiles/{profile_id} */
+export async function getProfileApi(profileId: number): Promise<ProfileResponse> {
   const res = await fetch(`${API_V1}/profiles/${profileId}`);
   return handleResponse<ProfileResponse>(res);
 }
 
-/**
- * Fetch the most recent computed chart for a saved profile.
- * GET /api/profiles/{profile_id}/chart
- */
-export async function getProfileChartApi(
-  profileId: number
-): Promise<ChartResponse> {
+/** Most recent computed chart for a saved profile. GET /api/profiles/{id}/chart */
+export async function getProfileChartApi(profileId: number): Promise<ChartResponse> {
   const res = await fetch(`${API_V1}/profiles/${profileId}/chart`);
-  return handleResponse<ChartResponse>(res);
+  return decorateChart(await handleResponse<ChartResponse>(res));
 }
 
 /**
- * Get place-of-birth autocomplete suggestions.
- * GET /api/geocode/suggest?q=...
+ * Place autocomplete. GET /api/geocode/suggest?q=...
  * Returns [] for queries under 2 characters without hitting the network.
  */
-export async function suggestPlacesApi(
-  query: string
-): Promise<PlaceSuggestion[]> {
+export async function suggestPlacesApi(query: string): Promise<PlaceSuggestion[]> {
   const trimmed = query.trim();
   if (trimmed.length < 2) return [];
 
-  // 1. Try Backend Proxy with Caching & Local Matches
+  // 1. Backend proxy with caching & local matches
   try {
-    const res = await fetch(
-      `${API_V1}/geocode/suggest?q=${encodeURIComponent(trimmed)}`
-    );
+    const res = await fetch(`${API_V1}/geocode/suggest?q=${encodeURIComponent(trimmed)}`);
     if (res.ok) {
       const data = await res.json();
-      if (data && data.results && data.results.length > 0) {
-        return data.results;
-      }
+      if (data && data.results && data.results.length > 0) return data.results;
     }
-  } catch (err) {
-    // backend unreachable or blocked, fall through to client-side free API
+  } catch {
+    // backend unreachable — fall through to the client-side free APIs
   }
 
-  // 2. Client-side fallback to Free Open-Meteo Geocoding API
+  // 2. Open-Meteo geocoding
   try {
     const omRes = await fetch(
-      `https://geocoding-api.open-meteo.com/v1/search?name=${encodeURIComponent(trimmed)}&count=10&language=en&format=json`
+      `https://geocoding-api.open-meteo.com/v1/search?name=${encodeURIComponent(
+        trimmed
+      )}&count=10&language=en&format=json`
     );
     if (omRes.ok) {
       const omData = await omRes.json();
@@ -237,13 +234,15 @@ export async function suggestPlacesApi(
       }
     }
   } catch {
-    // ignore
+    /* ignore */
   }
 
-  // 3. Fallback to OpenStreetMap Nominatim for Tamil or regional queries
+  // 3. Nominatim for Tamil / regional queries
   try {
     const nomRes = await fetch(
-      `https://nominatim.openstreetmap.org/search?q=${encodeURIComponent(trimmed)}&format=json&limit=8&addressdetails=1`
+      `https://nominatim.openstreetmap.org/search?q=${encodeURIComponent(
+        trimmed
+      )}&format=json&limit=8&addressdetails=1`
     );
     if (nomRes.ok) {
       const nomData = await nomRes.json();
@@ -258,42 +257,26 @@ export async function suggestPlacesApi(
       }
     }
   } catch {
-    // ignore
+    /* ignore */
   }
 
   return [];
 }
 
-/**
- * Direct geocoding resolver for any place name.
- * Resolves any custom typed place using dynamic geocoding API.
- */
-export async function directGeocodeApi(
-  placeName: string
-): Promise<PlaceSuggestion | null> {
+/** Resolves any typed place name to its best geocoding match. */
+export async function directGeocodeApi(placeName: string): Promise<PlaceSuggestion | null> {
   const suggestions = await suggestPlacesApi(placeName);
-  if (suggestions && suggestions.length > 0) {
-    return suggestions[0];
-  }
-  return null;
+  return suggestions && suggestions.length > 0 ? suggestions[0] : null;
 }
 
-/**
- * Get pre-grouped locations for the location picker dropdown:
- * GET /api/geocode/grouped
- */
-export async function getGroupedLocationsApi(): Promise<import("./types").GroupedLocations> {
+/** Pre-grouped locations for the picker dropdown. GET /api/geocode/grouped */
+export async function getGroupedLocationsApi(): Promise<GroupedLocations> {
   const res = await fetch(`${API_V1}/geocode/grouped`);
-  return handleResponse<import("./types").GroupedLocations>(res);
+  return handleResponse<GroupedLocations>(res);
 }
 
-/**
- * Generate Nakshatra-Pada based baby name suggestions from birth details directly.
- * POST /api/baby-names/generate
- */
-export async function generateBabyNamesApi(
-  data: BabyNameRequest
-): Promise<BabyNameResult> {
+/** Nakshatra-Pada baby name suggestions. POST /api/baby-names/generate */
+export async function generateBabyNamesApi(data: BabyNameRequest): Promise<BabyNameResult> {
   const res = await fetch(`${API_V1}/baby-names/generate`, {
     method: "POST",
     headers: { "Content-Type": "application/json" },
@@ -302,15 +285,8 @@ export async function generateBabyNamesApi(
   return handleResponse<BabyNameResult>(res);
 }
 
-/**
- * NEW: Standalone Chaldean numerology check for any candidate name + DOB.
- * Independent of the Nakshatra-Pada suggestion flow — lets a parent test a
- * name that isn't in the suggestion list.
- * POST /api/numerology/check
- */
-export async function checkNumerologyApi(
-  data: NumerologyCheckRequest
-): Promise<NumerologyProfile> {
+/** Standalone Chaldean numerology check. POST /api/numerology/check */
+export async function checkNumerologyApi(data: NumerologyCheckRequest): Promise<NumerologyProfile> {
   const res = await fetch(`${API_V1}/numerology/check`, {
     method: "POST",
     headers: { "Content-Type": "application/json" },
@@ -320,26 +296,28 @@ export async function checkNumerologyApi(
 }
 
 /**
- * NEW: Find auspicious dates (Muhurtha) for marriage / griha pravesam /
- * general events within a date range, personalized to the person's natal
- * Moon sign & nakshatra via Chandrabalam & Tarabalam.
- * POST /api/muhurtha/find
+ * Muhurtha date-range search.
+ * POST /api/muhurtha/search
+ *
+ * FIXED: this used to be `findMuhurthaApi` posting to `/api/muhurtha/find`
+ * with a `MuhurthaResponse` type — an endpoint the backend does not expose
+ * (the router is `/muhurtha/search`) and a type that no longer exists. The
+ * Muhurtha page imports `searchMuhurthaApi`, so the page could not even
+ * compile against the old file.
  */
-export async function findMuhurthaApi(
-  data: MuhurthaRequest
-): Promise<MuhurthaResponse> {
-  const res = await fetch(`${API_V1}/muhurtha/find`, {
+export async function searchMuhurthaApi(data: MuhurthaRequest): Promise<MuhurthaSearchResponse> {
+  const res = await fetch(`${API_V1}/muhurtha/search`, {
     method: "POST",
     headers: { "Content-Type": "application/json" },
     body: JSON.stringify(data),
   });
-  return handleResponse<MuhurthaResponse>(res);
+  return handleResponse<MuhurthaSearchResponse>(res);
 }
 
-/**
- * NEW: Daily/Weekly/Monthly/Yearly Rasi (Gochara transit) horoscope.
- * GET /api/horoscope/{period}/{rasi_number}
- */
+/** @deprecated Old name kept so any stale import keeps compiling. */
+export const findMuhurthaApi = searchMuhurthaApi;
+
+/** Daily/Weekly/Monthly/Yearly Rasi transit horoscope. */
 export async function getRasiHoroscopeApi(
   period: "daily" | "weekly" | "monthly" | "yearly",
   rasiNumber: number
@@ -348,11 +326,7 @@ export async function getRasiHoroscopeApi(
   return handleResponse<RasiHoroscopeResult>(res);
 }
 
-/**
- * NEW: Rasi-to-Rasi Love Horoscope (lightweight, Rasi-only compatibility —
- * see rasi_love_horoscope.py for how this differs from the full Porutham page).
- * GET /api/horoscope/love/{rasi1}/{rasi2}
- */
+/** Rasi-to-Rasi love horoscope. GET /api/horoscope/love/{rasi1}/{rasi2} */
 export async function getRasiLoveHoroscopeApi(
   rasi1: number,
   rasi2: number
@@ -361,11 +335,7 @@ export async function getRasiLoveHoroscopeApi(
   return handleResponse<RasiLoveHoroscopeResult>(res);
 }
 
-/**
- * NEW: static numerology reference tables (Meaning of Numbers 1-9, Chaldean
- * letter chart, Master Numbers). Pure lookup — safe to fetch once and cache.
- * GET /api/numerology/reference
- */
+/** Static numerology reference tables. GET /api/numerology/reference */
 export async function getNumerologyReferenceApi(): Promise<NumerologyReference> {
   const res = await fetch(`${API_V1}/numerology/reference`);
   return handleResponse<NumerologyReference>(res);

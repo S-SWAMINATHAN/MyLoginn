@@ -3,8 +3,8 @@
 import React, { useState } from "react";
 import { ChartResponse } from "@/lib/types";
 import { Loader2, FileDown } from "lucide-react";
+import { captureNode, addCanvasToPdf, safeFileName } from "@/lib/pdfExport";
 import jsPDF from "jspdf";
-import html2canvas from "html2canvas";
 
 interface Props {
   chart: ChartResponse;
@@ -13,10 +13,14 @@ interface Props {
 
 /**
  * Downloads ONLY the #single-page-report node as a single A4 PDF page.
- * Deliberately separate from <HandwrittenPdfButton>, which walks every
- * `.manuscript-page` inside #handwritten-manuscript and always produces the
- * 50-page book — using that button here was the reason "Single Page" was
- * still producing the full multi-page output.
+ *
+ * All the capture/placement logic now lives in lib/pdfExport.ts, shared with
+ * HandwrittenPdfButton — see the long comment at the top of that file for why
+ * the old `pdf.addImage(img, "JPEG", 0, 0, 210, 297)` and html2canvas' missing
+ * CSS Grid support were producing the misaligned output.
+ *
+ * Still deliberately separate from <HandwrittenPdfButton>: that one walks every
+ * `.manuscript-page` and always produces the 50-page book.
  */
 export const SinglePagePdfButton: React.FC<Props> = ({ chart, lang }) => {
   const [generating, setGenerating] = useState(false);
@@ -30,32 +34,16 @@ export const SinglePagePdfButton: React.FC<Props> = ({ chart, lang }) => {
 
     try {
       setGenerating(true);
-
-      // @ts-ignore
-      if (document.fonts && document.fonts.ready) {
-        // @ts-ignore
-        await document.fonts.ready;
-      }
-      await new Promise((r) => setTimeout(r, 300));
-
-      const canvas = await html2canvas(el, {
-        scale: 2,
-        backgroundColor: "#fdf6e3",
-        useCORS: true,
-        allowTaint: true,
-        logging: false,
-        windowWidth: 794,
-      });
-
-      const imgData = canvas.toDataURL("image/jpeg", 0.95);
-      const pdf = new jsPDF({ orientation: "portrait", unit: "mm", format: "a4" });
-      pdf.addImage(imgData, "JPEG", 0, 0, 210, 297);
-
-      const fileName = `${chart.name.replace(/[^a-zA-Z0-9\u0B80-\u0BFF]/g, "_")}_Single_Page_Jathagam_${chart.date_of_birth}.pdf`;
-      pdf.save(fileName);
+      const canvas = await captureNode(el, { pixelRatio: 2, background: "#fdf6e3" });
+      const pdf = new jsPDF({ orientation: "portrait", unit: "mm", format: "a4", compress: true });
+      addCanvasToPdf(pdf, canvas, { background: "#fdf6e3" });
+      pdf.save(`${safeFileName(chart.name)}_Single_Page_Jathagam_${chart.date_of_birth}.pdf`);
     } catch (e: any) {
       console.error(e);
-      alert((lang === "ta" ? "PDF உருவாக்குவதில் பிழை: " : "Error generating PDF: ") + (e.message || e));
+      alert(
+        (lang === "ta" ? "PDF உருவாக்குவதில் பிழை: " : "Error generating PDF: ") +
+          (e?.message || String(e))
+      );
     } finally {
       setGenerating(false);
     }
@@ -66,14 +54,21 @@ export const SinglePagePdfButton: React.FC<Props> = ({ chart, lang }) => {
       type="button"
       onClick={handleDownload}
       disabled={generating}
-      className="px-4 py-2 bg-[#1a0f0a] border-2 border-[#ffd700]/70 hover:border-[#ffd700] rounded-xl text-xs font-bold text-[#ffd700] flex items-center gap-2 hover:bg-[#2b170c] transition-all disabled:opacity-60 shadow-lg"
+      className="px-4 py-2 rounded-xl text-xs font-bold inline-flex items-center gap-2 transition-all disabled:opacity-60 shadow-lg"
+      style={{ background: "#1a0f0a", border: "2px solid rgba(255,215,0,0.7)", color: "#ffd700" }}
     >
       {generating ? <Loader2 className="w-4 h-4 animate-spin" /> : <FileDown className="w-4 h-4" />}
       <span>
         {generating
-          ? lang === "ta" ? "தயாராகிறது..." : "Generating..."
-          : lang === "ta" ? "ஒரு பக்க PDF பதிவிறக்கம்" : "Download Single-Page PDF"}
+          ? lang === "ta"
+            ? "தயாராகிறது..."
+            : "Generating..."
+          : lang === "ta"
+          ? "ஒரு பக்க PDF பதிவிறக்கம்"
+          : "Download Single-Page PDF"}
       </span>
     </button>
   );
 };
+
+export default SinglePagePdfButton;

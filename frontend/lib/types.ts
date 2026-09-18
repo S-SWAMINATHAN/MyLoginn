@@ -259,7 +259,7 @@ export interface BabyNameSuggestionItem {
   meaning: string;
   meaning_ta: string;
   gender: string;
-  // NEW: Chaldean numerology annotation, added per-name by the backend AFTER
+  // Chaldean numerology annotation, added per-name by the backend AFTER
   // Nakshatra-Pada selection. Optional because numerology enrichment is
   // allowed to fail without taking down the classical suggestions.
   numerology_name_number?: number;
@@ -285,7 +285,7 @@ export interface BabyNameResult {
   numerology_destiny_number?: number;
 }
 
-// --- NEW: Chaldean Numerology (separate system from Nakshatra-Pada) ---
+// --- Chaldean Numerology (separate system from Nakshatra-Pada) ---
 // Mirrors backend/app/models/schemas.py NumerologyProfile. See
 // backend/app/services/numerology.py for scope and confidence levels.
 
@@ -454,69 +454,121 @@ export interface SinglePageSummary {
   remedies?: RemedyGuide | null;
 }
 
-// --- Muhurtha (auspicious date/time) finder types ---
-// Mirrors backend/app/models/schemas.py's Muhurtha* models. See
-// backend/app/services/muhurtha_finder.py for scope/citations.
+// ---------------------------------------------------------------------------
+// Muhurtha (auspicious date finder)
+// ---------------------------------------------------------------------------
+// FIXED: this block previously held pre-reintegration STUB types — event types
+// "marriage" | "griha_pravesam" | "general", a flat `date_of_birth`/
+// `person_place` request, and a `results[]` / `overall_suitable` response.
+// None of that matched what the app actually runs: MuhurthaForm.tsx and
+// MuhurthaResults.tsx use `person_a_*`/`person_b_*`/`travel_direction` and a
+// `days[]` response with `is_universally_clean` / `overall_rating`, which is
+// exactly what backend/app/services/muhurtha.py returns. `next dev` tolerated
+// the drift because those components were reading through `any`-ish paths;
+// `tsc --noEmit` (and therefore a production build) would not.
+//
+// These now mirror backend/app/models/schemas.py's MuhurthaRequest /
+// MuhurthaDayResult / MuhurthaSearchResponse exactly, including the resolved
+// latitude/longitude/timezone fields the LocationPicker supplies.
 
-export type MuhurthaEventType = "marriage" | "griha_pravesam" | "general";
+export type MuhurthaEventType = "general" | "marriage" | "travel";
 
-export interface MuhurthaCheckItem {
-  rule: string;
-  rule_ta: string;
-  passed: boolean;
-  detail: string;
-  detail_ta: string;
+export type MuhurthaDirection = "N" | "S" | "E" | "W";
+
+export type MuhurthaRating = "Excellent" | "Good" | "Avoid";
+
+export interface MuhurthaRequest {
+  event_type: MuhurthaEventType;
+  start_date: string; // YYYY-MM-DD
+  end_date: string; // YYYY-MM-DD (max 60 days after start_date)
+
+  // Event location — coordinates come from <LocationPicker>; the backend only
+  // geocodes by name when they're absent.
+  place: string;
+  latitude?: number | null;
+  longitude?: number | null;
+  timezone?: string | null;
+
+  // Person A — optional; enables personalised Tara Bala / Chandra Bala.
+  person_a_dob?: string;
+  person_a_tob?: string; // 24-hour "HH:MM:SS" as emitted by <TimeInput12h>
+  person_a_place?: string;
+  person_a_latitude?: number | null;
+  person_a_longitude?: number | null;
+  person_a_timezone?: string | null;
+
+  // Person B — marriage only.
+  person_b_dob?: string;
+  person_b_tob?: string;
+  person_b_place?: string;
+  person_b_latitude?: number | null;
+  person_b_longitude?: number | null;
+  person_b_timezone?: string | null;
+
+  // Travel only — Dishashool direction check.
+  travel_direction?: MuhurthaDirection;
 }
 
 export interface MuhurthaDayResult {
   date: string;
-  weekday: string;
-  weekday_ta: string;
+  vaaram: string;
+  vaaram_ta: string;
   tithi: string;
   tithi_ta: string;
-  nakshatra: string;
-  nakshatra_ta: string;
-  yogam_ta: string;
   karanam: string;
   karanam_ta: string;
-  chandrabalam_ok: boolean;
-  chandrabalam_house: number;
-  tarabalam_ok: boolean;
-  tarabalam_name: string;
-  tarabalam_name_ta: string;
-  rahu_kalam: string;
-  yamagandam: string;
-  kuligai: string;
-  checks: MuhurthaCheckItem[];
-  overall_suitable: boolean;
-  suitability_score: number;
+  nakshatra: string;
+  nakshatra_ta: string;
+  subha_yogam_status?: string | null;
+  rahu_kalam?: string | null;
+  yamagandam?: string | null;
+  kuligai?: string | null;
+
+  is_universally_clean: boolean;
+  universal_flags: string[];
+  universal_flags_ta: string[];
+
+  event_specific_ok?: boolean | null;
+  event_specific_flags: string[];
+  event_specific_flags_ta: string[];
+
+  tara_bala_a?: string | null;
+  tara_bala_a_ta?: string | null;
+  tara_bala_a_favorable?: boolean | null;
+  tara_bala_b?: string | null;
+  tara_bala_b_ta?: string | null;
+  tara_bala_b_favorable?: boolean | null;
+  chandra_bala_a_favorable?: boolean | null;
+  chandra_bala_b_favorable?: boolean | null;
+
+  dishashool_direction?: string | null;
+  dishashool_conflict?: boolean | null;
+
+  overall_rating: MuhurthaRating | string;
+  overall_rating_ta: string;
+  classical_source: string;
 }
 
-export interface MuhurthaRequest {
-  event_type: MuhurthaEventType;
+export interface MuhurthaSearchResponse {
+  event_type: MuhurthaEventType | string;
   start_date: string;
   end_date: string;
   place: string;
-  date_of_birth: string;
-  time_of_birth: string;
-  person_place?: string;
   latitude?: number | null;
   longitude?: number | null;
   timezone?: string | null;
+  travel_direction?: string | null;
+  person_a_location_assumed?: boolean;
+  person_b_location_assumed?: boolean;
+  days: MuhurthaDayResult[];
+  best_days: string[];
+  classical_sources: string[];
 }
 
-export interface MuhurthaResponse {
-  event_type: string;
-  start_date: string;
-  end_date: string;
-  place: string;
-  results: MuhurthaDayResult[];
-  best_dates: string[];
-  disclaimer: string;
-  disclaimer_ta: string;
-}
+/** @deprecated Kept only so older imports keep compiling — use MuhurthaSearchResponse. */
+export type MuhurthaResponse = MuhurthaSearchResponse;
 
-// --- NEW: Rasi Horoscope (Daily/Weekly/Monthly/Yearly Gochara) + Rasi Love
+// --- Rasi Horoscope (Daily/Weekly/Monthly/Yearly Gochara) + Rasi Love
 // Horoscope. Mirror the plain dicts returned by backend/app/api/horoscope.py
 // (not validated against a Pydantic response_model server-side, so these
 // interfaces are the actual contract). `[key: string]: any` follows this
@@ -746,7 +798,7 @@ export interface ChartResponse {
   bio_data?: ParentsBioData | null;
   bhava_sphutam?: any[] | null;
   varga_chakras?: Record<string, Record<number, string[]>> | null;
-  single_page_summary?: any | null;
+  single_page_summary?: SinglePageSummary | null;
   computed_at: string;
   [key: string]: any;
 }
@@ -797,7 +849,7 @@ export interface PoruthamRequest {
   girl_pada?: number;
 }
 
-// ─── NEW: Star Match Finder (MATCH feature) ───
+// ─── Star Match Finder (MATCH feature) ───
 export interface StarMatchFinderRequest {
   input_nakshatra: string;
   input_pada: number; // 1-4
@@ -852,7 +904,7 @@ export interface NarrationRequest {
 }
 
 // Shape returned by GET /api/geocode/suggest, used by the place-of-birth
-// autocomplete in BirthDetailsForm.tsx.
+// autocomplete in BirthDetailsForm.tsx and (now) MuhurthaForm.tsx.
 export interface PlaceSuggestion {
   display_name: string;
   display_name_ta?: string;

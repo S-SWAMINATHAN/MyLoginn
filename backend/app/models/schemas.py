@@ -836,3 +836,118 @@ class NumerologyProfile(BaseModel):
 class NumerologyCheckRequest(BaseModel):
     name: str = Field(..., description="Candidate name, Latin/English spelling")
     date_of_birth: str = Field(..., description="YYYY-MM-DD")
+
+
+    # ============================================================================
+# PASTE THIS WHOLE BLOCK AT THE END OF backend/app/models/schemas.py
+# ============================================================================
+# The Muhurtha models are the request/response contract for
+# POST /api/muhurtha/search (backend/app/api/muhurtha.py →
+# backend/app/services/muhurtha.py).
+#
+# If your schemas.py already contains Muhurtha* models, DELETE the old ones
+# and use these — the old ones were the pre-reintegration stubs
+# (event_type "griha_pravesam", a flat `date_of_birth`/`person_place`, a
+# `results[]` response) which no longer match either the service or the
+# frontend. That mismatch is the same one that existed in
+# frontend/lib/types.ts and is fixed in this delivery.
+#
+# The only new fields versus the previously-working shape are the resolved
+# location fields (`latitude`/`longitude`/`timezone` for the event, and
+# `person_a_*`/`person_b_*` equivalents), which mirror GenerateChartRequest
+# so the Muhurtha page can use the very same LocationPicker component as the
+# Jathagam intake form. No astrological rule or output field was invented.
+#
+# Requires (already imported at the top of schemas.py):
+#   from typing import List, Dict, Optional, Any
+#   from pydantic import BaseModel, Field
+# ============================================================================
+
+
+class MuhurthaRequest(BaseModel):
+    event_type: str = Field("general", description="general | marriage | travel")
+    start_date: str = Field(..., description="YYYY-MM-DD")
+    end_date: str = Field(..., description="YYYY-MM-DD (max 60 days after start_date)")
+
+    # Event location — latitude/longitude/timezone are supplied by the
+    # frontend LocationPicker after it resolves the place; the backend only
+    # geocodes by name when they are absent.
+    place: str = Field(..., description="City, State, Country")
+    latitude: Optional[float] = None
+    longitude: Optional[float] = None
+    timezone: Optional[str] = None
+
+    # Person A — optional; enables personalised Tara Bala / Chandra Bala.
+    person_a_dob: Optional[str] = None            # YYYY-MM-DD
+    person_a_tob: Optional[str] = None            # HH:MM or HH:MM:SS (24h)
+    person_a_place: Optional[str] = None
+    person_a_latitude: Optional[float] = None
+    person_a_longitude: Optional[float] = None
+    person_a_timezone: Optional[str] = None
+
+    # Person B — marriage only.
+    person_b_dob: Optional[str] = None
+    person_b_tob: Optional[str] = None
+    person_b_place: Optional[str] = None
+    person_b_latitude: Optional[float] = None
+    person_b_longitude: Optional[float] = None
+    person_b_timezone: Optional[str] = None
+
+    # Travel only — Dishashool direction check.
+    travel_direction: Optional[str] = Field(None, description="N | S | E | W")
+
+
+class MuhurthaDayResult(BaseModel):
+    date: str
+    vaaram: str
+    vaaram_ta: str
+    tithi: str
+    tithi_ta: str
+    karanam: str
+    karanam_ta: str
+    nakshatra: str
+    nakshatra_ta: str
+    subha_yogam_status: Optional[str] = None
+    rahu_kalam: Optional[str] = None
+    yamagandam: Optional[str] = None
+    kuligai: Optional[str] = None
+
+    is_universally_clean: bool
+    universal_flags: List[str] = []
+    universal_flags_ta: List[str] = []
+
+    event_specific_ok: Optional[bool] = None
+    event_specific_flags: List[str] = []
+    event_specific_flags_ta: List[str] = []
+
+    tara_bala_a: Optional[str] = None
+    tara_bala_a_ta: Optional[str] = None
+    tara_bala_a_favorable: Optional[bool] = None
+    tara_bala_b: Optional[str] = None
+    tara_bala_b_ta: Optional[str] = None
+    tara_bala_b_favorable: Optional[bool] = None
+    chandra_bala_a_favorable: Optional[bool] = None
+    chandra_bala_b_favorable: Optional[bool] = None
+
+    dishashool_direction: Optional[str] = None
+    dishashool_conflict: Optional[bool] = None
+
+    overall_rating: str          # Excellent | Good | Avoid
+    overall_rating_ta: str
+    classical_source: str
+
+
+class MuhurthaSearchResponse(BaseModel):
+    event_type: str
+    start_date: str
+    end_date: str
+    place: str
+    latitude: Optional[float] = None
+    longitude: Optional[float] = None
+    timezone: Optional[str] = None
+    travel_direction: Optional[str] = None
+    person_a_location_assumed: bool = False
+    person_b_location_assumed: bool = False
+    days: List[MuhurthaDayResult] = []
+    best_days: List[str] = []
+    classical_sources: List[str] = []
