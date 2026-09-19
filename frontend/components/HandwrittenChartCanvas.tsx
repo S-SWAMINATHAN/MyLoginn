@@ -12,6 +12,7 @@ import {
   ChartStyle,
   ChartStyleTheme,
 } from "@/lib/chartLayouts";
+import { useJathagamTheme } from "@/lib/jathagamTheme";
 
 interface HandwrittenChartCanvasProps {
   title: string;
@@ -35,6 +36,9 @@ export const HandwrittenChartCanvas: React.FC<HandwrittenChartCanvasProps> = ({
   height = 460,
 }) => {
   const canvasRef = useRef<HTMLCanvasElement | null>(null);
+  const jatTheme = useJathagamTheme();
+  // The chosen Tamil face, minus its quotes, for canvas ctx.font strings.
+  const fontStack = jatTheme.font.stack;
 
   useEffect(() => {
     const canvas = canvasRef.current;
@@ -42,7 +46,19 @@ export const HandwrittenChartCanvas: React.FC<HandwrittenChartCanvasProps> = ({
     const ctx = canvas.getContext("2d");
     if (!ctx) return;
 
-    const theme = CHART_STYLE_THEMES[chartStyle] || CHART_STYLE_THEMES.tamil;
+    // The chart is painted onto a <canvas>, so the theme stylesheet cannot
+    // reach it the way it reaches the rest of the Jathagam. The regional style
+    // (Tamil / Kerala / North Indian) still decides the GEOMETRY and remains
+    // the base palette; the user's chosen ink simply overrides its ink/accent
+    // so the charts match the pages around them — on screen and in the PDF.
+    const base = CHART_STYLE_THEMES[chartStyle] || CHART_STYLE_THEMES.tamil;
+    const theme: ChartStyleTheme = {
+      ...base,
+      ink: jatTheme.palette.ink,
+      inkSoft: jatTheme.palette.gold,
+      accent: jatTheme.palette.accent,
+      paper: jatTheme.palette.paperCard,
+    };
 
     ctx.clearRect(0, 0, width, height);
     const rc = rough.canvas(canvas);
@@ -63,13 +79,13 @@ export const HandwrittenChartCanvas: React.FC<HandwrittenChartCanvasProps> = ({
     const padding = 16;
 
     if (chartStyle === "north_indian") {
-      drawNorthIndian(ctx, rc, kattamData, lang, theme, title, titleTa, width, height, padding);
+      drawNorthIndian(ctx, rc, kattamData, lang, theme, title, titleTa, width, height, padding, fontStack);
     } else {
       // "tamil" and "kerala" share the same fixed-sign box geometry
       // (see lib/chartLayouts.ts citation) — only the theme differs.
-      drawSouthIndianOrKerala(ctx, rc, kattamData, lang, theme, title, titleTa, width, height, padding);
+      drawSouthIndianOrKerala(ctx, rc, kattamData, lang, theme, title, titleTa, width, height, padding, fontStack);
     }
-  }, [kattamData, chartStyle, lang, title, titleTa, width, height]);
+  }, [kattamData, chartStyle, lang, title, titleTa, width, height, jatTheme]);
 
   return (
     <div className="relative rounded-2xl overflow-hidden palm-leaf-texture p-4 flex flex-col items-center border border-[#d4af37]/40 shadow-2xl">
@@ -115,7 +131,8 @@ function drawSouthIndianOrKerala(
   titleTa: string,
   width: number,
   height: number,
-  padding: number
+  padding: number,
+  fontStack: string
 ) {
   const chartW = width - padding * 2;
   const chartH = height - padding * 2;
@@ -158,15 +175,15 @@ function drawSouthIndianOrKerala(
 
   ctx.textAlign = "center";
   ctx.textBaseline = "middle";
-  ctx.font = "bold 26px 'Kavivanar', cursive";
+  ctx.font = `bold 26px ${fontStack}`;
   ctx.fillStyle = theme.accent;
   ctx.fillText("ௐ", centerX + centerW / 2, centerY + centerH / 2 - 28);
 
-  ctx.font = "bold 17px 'Kavivanar', cursive";
+  ctx.font = `bold 17px ${fontStack}`;
   ctx.fillStyle = theme.ink;
   ctx.fillText(lang === "ta" ? titleTa : title, centerX + centerW / 2, centerY + centerH / 2 + 2);
 
-  ctx.font = "bold 15px 'Caveat', cursive";
+  ctx.font = `bold 15px ${fontStack}`;
   ctx.fillStyle = theme.inkSoft;
   ctx.fillText("Vedic Birth Chart", centerX + centerW / 2, centerY + centerH / 2 + 24);
 
@@ -176,7 +193,7 @@ function drawSouthIndianOrKerala(
 
     ctx.textAlign = "right";
     ctx.textBaseline = "top";
-    ctx.font = "12px 'Kavivanar', cursive";
+    ctx.font = `12px ${fontStack}`;
     ctx.fillStyle = `${theme.ink}8c`;
     ctx.fillText(lang === "ta" ? cell.nameTa : cell.name, boxX + cellW - 5, boxY + 5);
 
@@ -190,11 +207,11 @@ function drawSouthIndianOrKerala(
       const degStr = p.degree ? `${Math.floor(p.degree)}°` : "";
 
       if (p.is_lagna) {
-        ctx.font = "bold 14px 'Kavivanar', 'Caveat', cursive";
+        ctx.font = `bold 14px ${fontStack}`;
         ctx.fillStyle = theme.accent;
         ctx.fillText(`★ ${label} ${degStr}`, boxX + 6, textY);
       } else {
-        ctx.font = "bold 13px 'Kavivanar', 'Caveat', cursive";
+        ctx.font = `bold 13px ${fontStack}`;
         ctx.fillStyle = theme.ink;
         const retroMark = p.is_retrograde ? "(வ)" : "";
         ctx.fillText(`${label} ${degStr}${retroMark}`, boxX + 6, textY);
@@ -218,7 +235,8 @@ function drawNorthIndian(
   titleTa: string,
   width: number,
   height: number,
-  padding: number
+  padding: number,
+  fontStack: string
 ) {
   const size = Math.min(width, height) - padding * 2;
   const originX = (width - size) / 2;
@@ -259,7 +277,7 @@ function drawNorthIndian(
 
     ctx.textAlign = "center";
     ctx.textBaseline = "top";
-    ctx.font = `bold ${Math.max(11, S(13))}px 'Caveat', cursive`;
+    ctx.font = `bold ${Math.max(11, S(13))}px ${fontStack}`;
     ctx.fillStyle = `${theme.ink}90`;
     ctx.fillText(String(signNum), labelX, labelY - S(20));
 
@@ -267,11 +285,11 @@ function drawNorthIndian(
     planets.forEach((p) => {
       const label = lang === "ta" ? p.symbol : p.name.substring(0, 2);
       if (p.is_lagna) {
-        ctx.font = `bold ${Math.max(12, S(14))}px 'Kavivanar', 'Caveat', cursive`;
+        ctx.font = `bold ${Math.max(12, S(14))}px ${fontStack}`;
         ctx.fillStyle = theme.accent;
         ctx.fillText(`★${label}`, labelX, ty);
       } else {
-        ctx.font = `bold ${Math.max(11, S(13))}px 'Kavivanar', 'Caveat', cursive`;
+        ctx.font = `bold ${Math.max(11, S(13))}px ${fontStack}`;
         ctx.fillStyle = theme.ink;
         ctx.fillText(`${label}${p.is_retrograde ? "(வ)" : ""}`, labelX, ty);
       }
@@ -283,7 +301,7 @@ function drawNorthIndian(
   const cy = originY + S(200);
   ctx.textAlign = "center";
   ctx.textBaseline = "middle";
-  ctx.font = `bold ${Math.max(16, S(18))}px 'Kavivanar', cursive`;
+  ctx.font = `bold ${Math.max(16, S(18))}px ${fontStack}`;
   ctx.fillStyle = theme.ink;
   ctx.fillText(lang === "ta" ? titleTa : title, cx, cy);
 }

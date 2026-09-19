@@ -32,11 +32,11 @@ export const BirthDetailsForm: React.FC<BirthDetailsFormProps> = ({
   lang,
 }) => {
   const [formData, setFormData] = useState<GenerateChartRequest>({
-    name: "மனோசக்தி",
-    gender: "male",
-    date_of_birth: "1996-08-15",
+    name: "",
+    gender: "",
+    date_of_birth: "",
     time_of_birth: "07:00:00",
-    place: "Coimbatore, Tamil Nadu, India",
+    place: "",
     latitude: null,
     longitude: null,
     timezone: null,
@@ -68,6 +68,15 @@ export const BirthDetailsForm: React.FC<BirthDetailsFormProps> = ({
   });
 
   const [showAdvanced, setShowAdvanced] = useState(false);
+
+  // Fresh-load guard: nothing is pre-filled any more, so the form must not be
+  // submittable until the four values the ephemeris actually needs are present.
+  const canSubmit =
+    !!(formData.name || "").trim() &&
+    !!formData.gender &&
+    !!formData.date_of_birth &&
+    !!(formData.place || "").trim() &&
+    !isLoading;
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
@@ -584,7 +593,7 @@ export const BirthDetailsForm: React.FC<BirthDetailsFormProps> = ({
       <div className="mt-8 flex justify-center">
         <button
           type="submit"
-          disabled={isLoading}
+          disabled={!canSubmit}
           className="btn-hand-red text-base sm:text-lg px-8 sm:px-12 py-3.5 shadow-lg hover:scale-[1.02] active:scale-[0.98] transition-all disabled:opacity-50 flex items-center gap-3 font-semibold"
         >
           {isLoading ? (

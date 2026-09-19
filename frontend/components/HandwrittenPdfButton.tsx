@@ -11,30 +11,25 @@ interface Props {
 }
 
 /**
- * 50-page Sampoorana Jathagam manuscript → one A4 PDF, one `.manuscript-page`
- * per PDF page.
+ * 50-page Sampoorana Jathagam manuscript → one A4 PDF.
  *
- * WHAT WAS WRONG (same two faults as the single-page export):
- *  1. Every page was pasted with `pdf.addImage(img, "JPEG", 0, 0, 210, 297)`,
- *     stretching each captured bitmap onto A4 regardless of its real aspect
- *     ratio — so text, chart boxes and table rules all drifted.
- *  2. The capture itself was html2canvas at scale 1.6. html2canvas 1.4.x has
- *     no CSS Grid implementation and only partial flexbox, and the manuscript
- *     chapters lean heavily on Tailwind `grid`/`flex`/`gap`. Grid children
- *     collapsed into a stack, which is why tables, charts and symbols landed
- *     on top of each other in the download but looked fine on screen.
+ * TWO CHANGES
+ * -----------
+ * 1. TABLE OF CONTENTS AS PAGE 2. The contents list only ever existed as an
+ *    on-screen pop-over in app/page.tsx, so the downloaded book had none. The
+ *    printed version (components/manuscript/ManuscriptTocPage.tsx) is rendered
+ *    off-screen as #manuscript-toc-page and spliced in here, directly after
+ *    the cover — giving cover → contents → pages 1..50 of the manuscript.
  *
- * Both are fixed in lib/pdfExport.ts: capture now goes through an SVG
- * <foreignObject> (the browser's own layout engine draws the page, so grid,
- * flex, gap, shadows and oklch() colours all survive), and placement fits each
- * page to A4 preserving aspect ratio. No chapter component was modified.
+ * 2. ALIGNMENT. Capture and placement moved to lib/pdfExport.ts, which fits
+ *    each page to A4 preserving its aspect ratio instead of stretching it onto
+ *    210×297 mm, and captures at 2× rather than 1.6×. See the comment block at
+ *    the top of that file.
  *
- * There is also a hidden trap this button must avoid: HandwrittenManuscript
- * injects a <style> block that sets
- *     #manuscript-preview-container .manuscript-page { display: none }
- * when it is rendering the on-screen single-page preview. A hidden node
- * rasterises as a blank page, so we filter those out below and export only
- * the pages that are actually laid out.
+ * One trap this button must avoid: HandwrittenManuscript injects a <style>
+ * that hides all but one `.manuscript-page` when it renders the on-screen
+ * single-page preview. A hidden node rasterises as a blank sheet, so only
+ * pages with a real layout box are collected below.
  */
 export const HandwrittenPdfButton: React.FC<Props> = ({ chart, lang }) => {
   const [generating, setGenerating] = useState(false);
@@ -51,8 +46,6 @@ export const HandwrittenPdfButton: React.FC<Props> = ({ chart, lang }) => {
       return;
     }
 
-    // Only pages that are genuinely laid out (see the note above about the
-    // preview container's display:none rule).
     const pages = Array.from(
       container.querySelectorAll<HTMLElement>(".manuscript-page")
     ).filter((el) => el.offsetWidth > 0 && el.offsetHeight > 0);
@@ -62,6 +55,10 @@ export const HandwrittenPdfButton: React.FC<Props> = ({ chart, lang }) => {
       return;
     }
 
+    // Cover, then contents, then the rest of the manuscript.
+    const toc = document.getElementById("manuscript-toc-page");
+    const nodes: HTMLElement[] = toc ? [pages[0], toc, ...pages.slice(1)] : pages;
+
     try {
       setGenerating(true);
       setProgress(
@@ -69,11 +66,11 @@ export const HandwrittenPdfButton: React.FC<Props> = ({ chart, lang }) => {
       );
 
       await exportNodesToPdf(
-        pages,
+        nodes,
         `${safeFileName(chart.name)}_50_Page_Sampoorana_Jathagam_${chart.date_of_birth}.pdf`,
         {
           background: "#fdf6e3",
-          pixelRatio: 2,
+          scale: 2,
           onProgress: (done, total) => {
             setProgress(
               lang === "ta"
@@ -100,12 +97,11 @@ export const HandwrittenPdfButton: React.FC<Props> = ({ chart, lang }) => {
       type="button"
       onClick={handleDownload}
       disabled={generating}
-      className="px-4 py-2 rounded-xl text-xs font-bold inline-flex items-center gap-2 transition-all disabled:opacity-60 shadow-lg"
-      style={{ background: "#1a0f0a", border: "2px solid rgba(255,215,0,0.7)", color: "#ffd700" }}
+      className="px-4 py-2 rounded-xl text-xs font-bold inline-flex items-center gap-2 transition-all disabled:opacity-60 shadow-lg bg-[#1a0f0a] border-2 border-[#ffd700]/70 hover:border-[#ffd700] text-[#ffd700] hover:bg-[#2b170c]"
       title={
         lang === "ta"
-          ? "50-பக்க மகா சம்பூர்ண ஜாதக நூல் PDF"
-          : "50-Page Grand Horoscope Manuscript PDF"
+          ? "50-பக்க மகா சம்பூர்ண ஜாதக நூல் PDF (பொருளடக்கத்துடன்)"
+          : "50-Page Grand Horoscope Manuscript PDF (with contents page)"
       }
     >
       {generating ? <Loader2 className="w-4 h-4 animate-spin" /> : <PenLine className="w-4 h-4" />}

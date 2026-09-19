@@ -1,25 +1,25 @@
 // frontend/lib/chartLayouts.ts
 //
 // Chart-style RENDERING layer (Tamil / South Indian, Kerala, North Indian).
-// AGENTS.md Â§1: this module never alters which planet is in which
-// sign/house â€” it only changes how that same data is laid out visually.
+// AGENTS.md §1: this module never alters which planet is in which
+// sign/house — it only changes how that same data is laid out visually.
 // Mirrors the geometry already defined server-side in
 // backend/app/services/chart_style.py so both layers agree.
 //
 // Cited sources for the layout conventions themselves (chart-drawing
 // rules, not astrological facts):
 // - Kerala uses the SAME fixed-sign South Indian box grid as Tamil Nadu,
-//   not a different box order -- "Kerala and Tamil Nadu astrologers use
+//   not a different box order — "Kerala and Tamil Nadu astrologers use
 //   the South Indian chart format, a fixed-sign grid in which every box
 //   always represents the same rashi" (Paramarsh, "Kerala vs North
 //   Indian Jyotish"; GoodStars Jyotish, "How to Read Vedic Astrology
 //   Charts"). The Kerala/Tamil visual distinction is therefore in
-//   colour & calligraphy, not grid geometry -- matches
-//   jathagam-architecture.md Â§3.7 (Kerala gets its own Kathakali-inspired
-//   palette) and Â§8 ("authentic Kerala visual style" on the standard
+//   colour & calligraphy, not grid geometry — matches
+//   jathagam-architecture.md §3.7 (Kerala gets its own Kathakali-inspired
+//   palette) and §8 ("authentic Kerala visual style" on the standard
 //   fixed-sign layout, calculation-wise treated as standard Vedic).
 // - North Indian chart: houses are fixed, signs rotate, Lagna is always
-//   in the top diamond, houses numbered clockwise 1â†’12 (matches
+//   in the top diamond, houses numbered clockwise 1→12 (matches
 //   backend/app/services/chart_style.py's north_indian branch, and the
 //   standard "diagonals + inner diamond" construction used in every
 //   North Indian Kundli template).
@@ -29,7 +29,7 @@ import { KattamPlanet } from "./types";
 export type ChartStyle = "tamil" | "kerala" | "north_indian";
 
 // ---------------------------------------------------------------------
-// Tamil / South Indian / Kerala â€” fixed-sign box grid
+// Tamil / South Indian / Kerala — fixed-sign box grid
 // ---------------------------------------------------------------------
 export interface SouthIndianBox {
   signNum: number;
@@ -40,29 +40,29 @@ export interface SouthIndianBox {
 }
 
 export const SOUTH_INDIAN_BOX_ORDER: SouthIndianBox[] = [
-  { signNum: 12, row: 0, col: 0, name: "Meena", nameTa: "à®®à¯€à®©à®®à¯" },
-  { signNum: 1, row: 0, col: 1, name: "Mesha", nameTa: "à®®à¯‡à®·à®®à¯" },
-  { signNum: 2, row: 0, col: 2, name: "Vrishabha", nameTa: "à®°à®¿à®·à®ªà®®à¯" },
-  { signNum: 3, row: 0, col: 3, name: "Mithuna", nameTa: "à®®à®¿à®¤à¯à®©à®®à¯" },
-  { signNum: 4, row: 1, col: 3, name: "Karkataka", nameTa: "à®•à®Ÿà®•à®®à¯" },
-  { signNum: 5, row: 2, col: 3, name: "Simha", nameTa: "à®šà®¿à®®à¯à®®à®®à¯" },
-  { signNum: 6, row: 3, col: 3, name: "Kanya", nameTa: "à®•à®©à¯à®©à®¿" },
-  { signNum: 7, row: 3, col: 2, name: "Tula", nameTa: "à®¤à¯à®²à®¾à®®à¯" },
-  { signNum: 8, row: 3, col: 1, name: "Vrischika", nameTa: "à®µà®¿à®°à¯à®šà¯à®šà®¿à®•à®®à¯" },
-  { signNum: 9, row: 3, col: 0, name: "Dhanus", nameTa: "à®¤à®©à¯à®šà¯" },
-  { signNum: 10, row: 2, col: 0, name: "Makara", nameTa: "à®®à®•à®°à®®à¯" },
-  { signNum: 11, row: 1, col: 0, name: "Kumbha", nameTa: "à®•à¯à®®à¯à®ªà®®à¯" },
+  { signNum: 12, row: 0, col: 0, name: "Meena", nameTa: "மீனம்" },
+  { signNum: 1, row: 0, col: 1, name: "Mesha", nameTa: "மேஷம்" },
+  { signNum: 2, row: 0, col: 2, name: "Vrishabha", nameTa: "ரிஷபம்" },
+  { signNum: 3, row: 0, col: 3, name: "Mithuna", nameTa: "மிதுனம்" },
+  { signNum: 4, row: 1, col: 3, name: "Karkataka", nameTa: "கடகம்" },
+  { signNum: 5, row: 2, col: 3, name: "Simha", nameTa: "சிம்மம்" },
+  { signNum: 6, row: 3, col: 3, name: "Kanya", nameTa: "கன்னி" },
+  { signNum: 7, row: 3, col: 2, name: "Tula", nameTa: "துலாம்" },
+  { signNum: 8, row: 3, col: 1, name: "Vrischika", nameTa: "விருச்சிகம்" },
+  { signNum: 9, row: 3, col: 0, name: "Dhanus", nameTa: "தனுசு" },
+  { signNum: 10, row: 2, col: 0, name: "Makara", nameTa: "மகரம்" },
+  { signNum: 11, row: 1, col: 0, name: "Kumbha", nameTa: "கும்பம்" },
 ];
 
 // ---------------------------------------------------------------------
-// North Indian â€” fixed-house diamond grid
+// North Indian — fixed-house diamond grid
 // ---------------------------------------------------------------------
 // Classic construction: outer square + both diagonals + inner diamond
 // connecting the four side-midpoints. Yields 4 kite-shaped "kendra"
 // houses at the diamond points (1, 4, 7, 10) and 8 triangular houses
 // filling the four corners (2/3, 5/6, 8/9, 11/12), read clockwise from
 // the top, House 1 (Lagna) always at the top point. All coordinates are
-// in a fixed 0-400 x 0-400 box.
+// in a fixed 0–400 x 0–400 box.
 export interface NorthIndianHouse {
   house: number; // 1-12
   points: string; // SVG polygon "x,y x,y ..." string
@@ -121,7 +121,7 @@ export function findLagnaSignNum(kattamData: Record<number, KattamPlanet[]>): nu
 }
 
 // ---------------------------------------------------------------------
-// Colour theme per regional style (jathagam-architecture.md Â§3.7)
+// Colour theme per regional style (jathagam-architecture.md §3.7)
 // ---------------------------------------------------------------------
 export interface ChartStyleTheme {
   ink: string;
@@ -136,7 +136,7 @@ export interface ChartStyleTheme {
 
 export const CHART_STYLE_THEMES: Record<ChartStyle, ChartStyleTheme> = {
   tamil: {
-    // Temple-gopuram tones â€” maroon, mustard-gold, deep green
+    // Temple-gopuram tones — maroon, mustard-gold, deep green
     ink: "#542410",
     inkSoft: "#aa820a",
     accent: "#8c2a38",
@@ -147,7 +147,7 @@ export const CHART_STYLE_THEMES: Record<ChartStyle, ChartStyleTheme> = {
     lagnaBorder: "rgba(255,215,0,0.6)",
   },
   kerala: {
-    // Kathakali-inspired â€” emerald green, gold, deep red
+    // Kathakali-inspired — emerald green, gold, deep red
     ink: "#1f4d3a",
     inkSoft: "#c99a1e",
     accent: "#7a1220",

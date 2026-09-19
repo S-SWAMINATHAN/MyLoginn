@@ -3,8 +3,9 @@
 import React, { useState } from "react";
 import { ChartResponse } from "@/lib/types";
 import { Loader2, FileDown } from "lucide-react";
-import { captureNode, addCanvasToPdf, safeFileName } from "@/lib/pdfExport";
 import jsPDF from "jspdf";
+import { captureNode, addCanvasToPdf, safeFileName } from "@/lib/pdfExport";
+import { useJathagamTheme } from "@/lib/jathagamTheme";
 
 interface Props {
   chart: ChartResponse;
@@ -14,16 +15,16 @@ interface Props {
 /**
  * Downloads ONLY the #single-page-report node as a single A4 PDF page.
  *
- * All the capture/placement logic now lives in lib/pdfExport.ts, shared with
- * HandwrittenPdfButton — see the long comment at the top of that file for why
- * the old `pdf.addImage(img, "JPEG", 0, 0, 210, 297)` and html2canvas' missing
- * CSS Grid support were producing the misaligned output.
+ * Capture and placement live in lib/pdfExport.ts, shared with
+ * HandwrittenPdfButton — see the comment block there for why the old
+ * `pdf.addImage(img, "JPEG", 0, 0, 210, 297)` produced a stretched sheet.
  *
- * Still deliberately separate from <HandwrittenPdfButton>: that one walks every
- * `.manuscript-page` and always produces the 50-page book.
+ * The page background is taken from the active theme so a dark-ink palette on
+ * tinted paper doesn't end up with white gutters around the sheet.
  */
 export const SinglePagePdfButton: React.FC<Props> = ({ chart, lang }) => {
   const [generating, setGenerating] = useState(false);
+  const { palette } = useJathagamTheme();
 
   const handleDownload = async () => {
     const el = document.getElementById("single-page-report");
@@ -34,9 +35,9 @@ export const SinglePagePdfButton: React.FC<Props> = ({ chart, lang }) => {
 
     try {
       setGenerating(true);
-      const canvas = await captureNode(el, { pixelRatio: 2, background: "#fdf6e3" });
+      const canvas = await captureNode(el, { scale: 2, background: palette.paper });
       const pdf = new jsPDF({ orientation: "portrait", unit: "mm", format: "a4", compress: true });
-      addCanvasToPdf(pdf, canvas, { background: "#fdf6e3" });
+      addCanvasToPdf(pdf, canvas, { background: palette.paper });
       pdf.save(`${safeFileName(chart.name)}_Single_Page_Jathagam_${chart.date_of_birth}.pdf`);
     } catch (e: any) {
       console.error(e);
@@ -54,8 +55,7 @@ export const SinglePagePdfButton: React.FC<Props> = ({ chart, lang }) => {
       type="button"
       onClick={handleDownload}
       disabled={generating}
-      className="px-4 py-2 rounded-xl text-xs font-bold inline-flex items-center gap-2 transition-all disabled:opacity-60 shadow-lg"
-      style={{ background: "#1a0f0a", border: "2px solid rgba(255,215,0,0.7)", color: "#ffd700" }}
+      className="px-4 py-2 rounded-xl text-xs font-bold inline-flex items-center gap-2 transition-all disabled:opacity-60 shadow-lg bg-[#1a0f0a] border-2 border-[#ffd700]/70 hover:border-[#ffd700] text-[#ffd700] hover:bg-[#2b170c]"
     >
       {generating ? <Loader2 className="w-4 h-4 animate-spin" /> : <FileDown className="w-4 h-4" />}
       <span>

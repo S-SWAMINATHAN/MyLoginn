@@ -15,6 +15,8 @@ Strictly follows classical Parashari and traditional Tamil Panchanga texts with 
 """
 
 from typing import Dict, Any, List, Tuple
+
+from backend.app.services.tamil_labels import SIGN_LABELS, PLANET_LABELS
 import math
 from datetime import datetime
 
@@ -304,6 +306,18 @@ def calculate_sampoorana_details(
     # 16. Bhava Sphutam (12 Bhavas start, madhya, and end longitudes)
     lagna_deg = lagna_obj.get("total_degree", 0.0)
     bhava_sphutam_list = []
+
+    # Which planets sit in which sign, so each Bhava row can name its
+    # occupants. Built from the already-computed positions — nothing is
+    # recalculated here.
+    occupants_by_sign: Dict[int, List[str]] = {i: [] for i in range(1, 13)}
+    for _p in planets:
+        _name = _p.get("name")
+        if not _name or _name in ("Lagna", "Mandi", "Gulika", "Maandi"):
+            continue
+        _sign = _p.get("rasi_number") or (int(_p.get("total_degree", 0.0) // 30.0) + 1)
+        if 1 <= _sign <= 12:
+            occupants_by_sign[_sign].append(_name)
     # In Sripati / equal house system:
     for h in range(1, 13):
         # Madhya is Lagna + (h-1)*30
@@ -311,16 +325,37 @@ def calculate_sampoorana_details(
         start_deg = (madhya_deg - 15.0) % 360.0
         end_deg = (madhya_deg + 15.0) % 360.0
 
+        sign_num = int(madhya_deg // 30.0) + 1
+        sign_info = SIGN_LABELS.get(sign_num, {})
+        lord_en = sign_info.get("lord", "")
+        lord_info = PLANET_LABELS.get(lord_en, {})
+        occ = occupants_by_sign.get(sign_num, [])
+
         bhava_sphutam_list.append({
             "house": h,
+            "bhava_number": h,
             "house_ta": f"{h}-ஆம் பாவம்",
+            # NEW: the Rasi / அதிபதி / occupant columns of the Bhava Sphutam
+            # table (manuscript page 12) read these keys. They were never
+            # emitted, which is why those columns printed "—" and "()" in the
+            # downloaded PDF. The sign itself was already being computed one
+            # line below as `sign_num`; this only labels it.
+            "rasi": sign_info.get("sa", ""),
+            "rasi_ta": sign_info.get("ta", ""),
+            "rasi_en": sign_info.get("en", ""),
+            "lord": lord_en,
+            "lord_ta": lord_info.get("ta", lord_en),
+            "occupants": occ,
+            "occupants_ta": ", ".join(
+                PLANET_LABELS.get(o, {}).get("ta", o) for o in occ
+            ) or "வெற்றிடம்",
             "start_deg": round(start_deg, 4),
             "start_dms": format_dms(start_deg % 30.0),
             "madhya_deg": round(madhya_deg, 4),
             "madhya_dms": format_dms(madhya_deg % 30.0),
             "end_deg": round(end_deg, 4),
             "end_dms": format_dms(end_deg % 30.0),
-            "sign_num": int(madhya_deg // 30.0) + 1
+            "sign_num": sign_num,
         })
 
     # 17. Shodashavarga (Divisional Chakras)

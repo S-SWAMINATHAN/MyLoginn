@@ -1,6 +1,7 @@
 "use client";
 
-import React, { useState, useRef } from "react";
+import React, { useState, useRef, useEffect } from "react";
+import { useJathagamTheme } from "@/lib/jathagamTheme";
 import { ChartResponse } from "@/lib/types";
 import {
   Printer,
@@ -55,6 +56,31 @@ export const ThirukanithamCompleteCard: React.FC<ThirukanithamCompleteCardProps>
   const [paperBg, setPaperBg] = useState("#fcf8ed"); // Antique Parchment
   const [fontFamily, setFontFamily] = useState<string>("'Kavivanar', cursive");
   const [showCustomizer, setShowCustomizer] = useState(false);
+  
+
+  // This card used to own its own colour/font state, which is why changing it
+
+  // restyled this card ALONE and left the rest of the Jathagam (and the PDF)
+
+  // in the old ink. The global panel is now the source of truth; the local
+
+  // controls below still work as a per-card override until the global theme
+
+  // changes again.
+
+  const jatTheme = useJathagamTheme();
+
+  useEffect(() => {
+
+    setAccentColor(jatTheme.palette.accent);
+
+    setBodyColor(jatTheme.palette.ink);
+
+    setPaperBg(jatTheme.palette.paperCard);
+
+    setFontFamily(jatTheme.font.stack);
+
+  }, [jatTheme.palette, jatTheme.font]);
   const [activeSection, setActiveSection] = useState<"all" | "sphutam" | "chakras" | "bhavas">("all");
 
   // Chart data shortcuts

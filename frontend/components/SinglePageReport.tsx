@@ -12,6 +12,7 @@ import {
 import { Sparkles } from "lucide-react";
 import { formatTime12h } from "@/lib/timeFormat";
 import { SinglePagePdfButton } from "./SinglePagePdfButton";
+import { useJathagamTheme, JathagamPalette } from "@/lib/jathagamTheme";
 
 interface SinglePageReportProps {
   chart: ChartResponse;
@@ -56,14 +57,14 @@ interface SinglePageReportProps {
 const SHEET_W = 794;
 const SHEET_MIN_H = 1123;
 
-const INK = "#2b2117";
-const INK_SOFT = "#6f6049";
-const RED = "#8e2b1c";
-const GOLD = "#aa820a";
-const PAPER = "#fdf6e3";
-const PAPER_CARD = "#fffaf0";
+const INK = "var(--jat-ink, #2b2117)";
+const INK_SOFT = "var(--jat-ink-soft, #6f6049)";
+const RED = "var(--jat-accent, #8e2b1c)";
+const GOLD = "var(--jat-gold, #aa820a)";
+const PAPER = "var(--jat-paper, #fdf6e3)";
+const PAPER_CARD = "var(--jat-paper-card, #fffaf0)";
 
-const FONT_STACK = "'Kavivanar', 'Noto Sans Tamil', 'Latha', sans-serif";
+const FONT_STACK = "var(--jat-font, 'Kavivanar', 'Noto Sans Tamil', sans-serif)";
 
 function toPlanetsBySign(
   kattam: Record<number, KattamPlanet[]>
@@ -83,6 +84,23 @@ function toPlanetsBySign(
 function themeFor(style: string) {
   const key = (style === "kerala" || style === "north_indian" ? style : "tamil") as ChartStyle;
   return CHART_STYLE_THEMES[key];
+}
+
+/**
+ * The mini charts paint their own borders and chips with explicit colours, so
+ * the theme stylesheet (which remaps Tailwind classes) cannot reach them. The
+ * regional style still decides the GEOMETRY and stays the base palette; the
+ * user's chosen ink overrides its ink/accent/paper so the charts match the
+ * sheet around them, on screen and in the PDF alike.
+ */
+function themedChartTheme(style: string, palette: JathagamPalette) {
+  return {
+    ...themeFor(style),
+    ink: palette.ink,
+    inkSoft: palette.gold,
+    accent: palette.accent,
+    paper: palette.paperCard,
+  };
 }
 type Theme = ReturnType<typeof themeFor>;
 
@@ -286,8 +304,9 @@ const MiniChart: React.FC<{
   chartStyle: string;
   planetsBySign: SignPlanets;
   lagnaSignNum: number;
-}> = ({ title, chartStyle, planetsBySign, lagnaSignNum }) => {
-  const theme = themeFor(chartStyle);
+  palette: JathagamPalette;
+}> = ({ title, chartStyle, planetsBySign, lagnaSignNum, palette }) => {
+  const theme = themedChartTheme(chartStyle, palette);
   if (chartStyle === "north_indian") {
     return (
       <NorthIndianMiniChart
@@ -324,7 +343,7 @@ const Line: React.FC<{ label: string; value: React.ReactNode }> = ({ label, valu
 );
 
 const cardStyle: React.CSSProperties = {
-  border: `1px solid ${GOLD}66`,
+  border: `1px solid var(--jat-gold-40, rgba(170,130,10,0.4))`,
   borderRadius: "8px",
   padding: "7px 9px",
   background: PAPER_CARD,
@@ -335,6 +354,7 @@ const cardStyle: React.CSSProperties = {
 /* ------------------------------ main sheet ------------------------------ */
 
 export const SinglePageReport: React.FC<SinglePageReportProps> = ({ chart, lang }) => {
+  const { palette } = useJathagamTheme();
   const bd = chart.basic_details;
   const sps = chart.single_page_summary;
   const st = sps?.saturn_transit;
@@ -351,17 +371,17 @@ export const SinglePageReport: React.FC<SinglePageReportProps> = ({ chart, lang 
   }));
 
   const th: React.CSSProperties = {
-    border: `1px solid ${GOLD}66`,
+    border: `1px solid var(--jat-gold-40, rgba(170,130,10,0.4))`,
     padding: "2px 3px",
     fontSize: "9.5px",
     lineHeight: "15px",
     fontWeight: 700,
     color: RED,
-    background: "rgba(142,43,28,0.10)",
+    background: "var(--jat-accent-10, rgba(142,43,28,0.10))",
     textAlign: "center",
   };
   const td: React.CSSProperties = {
-    border: `1px solid ${GOLD}44`,
+    border: `1px solid var(--jat-gold-25, rgba(170,130,10,0.25))`,
     padding: "1px 3px",
     fontSize: "9.5px",
     lineHeight: "15px",
@@ -378,7 +398,7 @@ export const SinglePageReport: React.FC<SinglePageReportProps> = ({ chart, lang 
     <div
       style={{
         background: PAPER_CARD,
-        border: `1px solid ${GOLD}55`,
+        border: `1px solid var(--jat-gold-33, rgba(170,130,10,0.33))`,
         borderRadius: "6px",
         padding: "4px",
         textAlign: "center",
@@ -444,7 +464,7 @@ export const SinglePageReport: React.FC<SinglePageReportProps> = ({ chart, lang 
             width: `${SHEET_W}px`,
             minHeight: `${SHEET_MIN_H}px`,
             background: PAPER,
-            border: `2px solid ${GOLD}66`,
+            border: `2px solid var(--jat-gold-40, rgba(170,130,10,0.4))`,
             borderRadius: "6px",
             padding: "24px 30px 20px",
             boxSizing: "border-box",
@@ -464,7 +484,7 @@ export const SinglePageReport: React.FC<SinglePageReportProps> = ({ chart, lang 
           <div
             style={{
               textAlign: "center",
-              borderBottom: `2px solid ${GOLD}66`,
+              borderBottom: `2px solid var(--jat-gold-40, rgba(170,130,10,0.4))`,
               paddingBottom: "8px",
               marginBottom: "10px",
             }}
@@ -558,6 +578,7 @@ export const SinglePageReport: React.FC<SinglePageReportProps> = ({ chart, lang 
                     chartStyle={chart.chart_style}
                     planetsBySign={rasiPlanetsBySign}
                     lagnaSignNum={lagnaSignNum}
+                    palette={palette}
                   />
                 </td>
                 <td style={{ width: "50%", paddingLeft: "5px", verticalAlign: "top" }}>
@@ -566,6 +587,7 @@ export const SinglePageReport: React.FC<SinglePageReportProps> = ({ chart, lang 
                     chartStyle={chart.chart_style}
                     planetsBySign={navamsaPlanetsBySign}
                     lagnaSignNum={lagnaSignNum}
+                    palette={palette}
                   />
                 </td>
               </tr>
@@ -602,7 +624,7 @@ export const SinglePageReport: React.FC<SinglePageReportProps> = ({ chart, lang 
                     key={idx}
                     style={{
                       background: p.is_lagna
-                        ? "rgba(212,175,55,0.18)"
+                        ? "var(--jat-accent-18, rgba(212,175,55,0.18))"
                         : idx % 2 === 0
                         ? "rgba(255,255,255,0.45)"
                         : "transparent",
@@ -743,7 +765,7 @@ export const SinglePageReport: React.FC<SinglePageReportProps> = ({ chart, lang 
 
           {/* Remedies */}
           {sps?.remedies && (
-            <div style={{ borderTop: `2px solid ${GOLD}66`, paddingTop: "7px" }}>
+            <div style={{ borderTop: `2px solid var(--jat-gold-40, rgba(170,130,10,0.4))`, paddingTop: "7px" }}>
               <SectionTitle>{lang === "ta" ? "பரிகாரங்கள்" : "Remedies (Pariharam)"}</SectionTitle>
               <div style={{ fontSize: "10px", lineHeight: "17px" }}>
                 <strong>{lang === "ta" ? "தேவதை" : "Deity"}:</strong>{" "}
@@ -765,7 +787,7 @@ export const SinglePageReport: React.FC<SinglePageReportProps> = ({ chart, lang 
               fontSize: "8px",
               lineHeight: "14px",
               color: INK_SOFT,
-              borderTop: `1px solid ${GOLD}44`,
+              borderTop: `1px solid var(--jat-gold-25, rgba(170,130,10,0.25))`,
               paddingTop: "6px",
               marginTop: "10px",
             }}
