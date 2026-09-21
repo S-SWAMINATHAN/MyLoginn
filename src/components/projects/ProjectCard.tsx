@@ -8,6 +8,7 @@ import { ContentIcon } from "@/components/ui/ContentIcon";
 import { AnimatedTrending } from "@/components/ui/icons/AnimatedTrending";
 import { AnimatedUsers } from "@/components/ui/icons/AnimatedUsers";
 import { getCourseIconInfo } from "@/lib/courseIcons";
+import { getProjectCardArt } from "@/lib/projectCardArt";
 import { useReducedMotion } from "@/lib/useReducedMotion";
 import type { ShowcaseProject } from "@/lib/showcaseProjects";
 
@@ -45,6 +46,7 @@ export function ProjectCard({ project: p, className }: { project: ShowcaseProjec
 
   const primaryTag = p.tags[0] ?? p.title;
   const visual = getCourseIconInfo(primaryTag, `card-${p.id}`);
+  const art = getProjectCardArt(primaryTag, `card-art-${p.id}`);
   const avatar = AVATAR_COLORS[hashIndex(p.student, AVATAR_COLORS.length)];
 
   function handlePointerMove(e: PointerEvent<HTMLDivElement>) {
@@ -86,24 +88,25 @@ export function ProjectCard({ project: p, className }: { project: ShowcaseProjec
             }}
           />
 
-          {/* Category banner */}
-          <div
-            className="relative flex h-36 shrink-0 items-center overflow-hidden px-6"
-            style={{ background: visual.gradient }}
-          >
-            <span className="pointer-events-none absolute -right-10 -top-12 h-40 w-40 rounded-full bg-white/10 blur-2xl" />
-            <span className="pointer-events-none absolute -left-6 -bottom-10 h-32 w-32 rounded-full bg-black/20 blur-2xl" />
-            <span className="absolute right-4 top-4 flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-white/90 text-brand-600 shadow-[var(--shadow-soft)] transition-transform duration-300 group-hover:scale-110">
+          {/* Category banner — illustrated scene */}
+          <div className="relative flex h-40 shrink-0 items-end overflow-hidden">
+            <span
+              aria-hidden
+              className="absolute inset-0 transition-transform duration-500 group-hover:scale-105 [&>svg]:h-full [&>svg]:w-full"
+              dangerouslySetInnerHTML={{ __html: art.svg }}
+            />
+            <span
+              aria-hidden
+              className="pointer-events-none absolute inset-x-0 bottom-0 h-24 bg-gradient-to-t from-black/60 via-black/10 to-transparent"
+            />
+            <span className="absolute right-4 top-4 z-10 flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-white/90 text-brand-600 shadow-[var(--shadow-soft)] transition-transform duration-300 group-hover:scale-110">
               <svg viewBox="0 0 24 24" fill="none" className="h-4 w-4" aria-hidden>
                 <path d="M7 17 17 7M17 7H9M17 7v8" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
               </svg>
             </span>
-            <div className="relative flex items-center gap-3 text-white">
-              <span className="flex h-12 w-12 shrink-0 items-center justify-center rounded-2xl bg-white/15 ring-1 ring-white/25 backdrop-blur-sm transition-transform duration-300 group-hover:scale-110 group-hover:rotate-3">
-                <ContentIcon keyword={primaryTag} className="h-7 w-7" />
-              </span>
-              <p className="truncate text-lg font-semibold leading-snug">{p.title}</p>
-            </div>
+            <p className="relative z-10 min-w-0 line-clamp-2 px-5 pb-4 text-lg font-semibold leading-snug text-white [text-shadow:0_1px_6px_rgba(0,0,0,.45)]">
+              {p.title}
+            </p>
           </div>
 
           <div className="relative z-10 flex flex-1 flex-col p-6">
@@ -118,10 +121,7 @@ export function ProjectCard({ project: p, className }: { project: ShowcaseProjec
               {primaryTag}
             </span>
 
-            <h3 className="mt-3 text-base font-semibold leading-snug transition-colors duration-300 group-hover:text-brand-500">
-              {p.title}
-            </h3>
-            <p className="mt-2 flex-1 text-sm text-muted">{p.description}</p>
+            <p className="mt-3 flex-1 text-sm text-muted">{p.description}</p>
 
             <div className="mt-5 flex items-center justify-between gap-3">
               <div className="flex min-w-0 items-center gap-2.5">
@@ -139,9 +139,9 @@ export function ProjectCard({ project: p, className }: { project: ShowcaseProjec
               </span>
             </div>
 
-            <div className="mt-4 flex items-center gap-2 rounded-xl bg-success/10 px-3 py-2.5 text-xs font-semibold text-success">
-              <AnimatedTrending className="h-5 w-5 shrink-0" />
-              {p.result}
+            <div className="mt-3 flex items-center gap-1.5 rounded-lg bg-success/10 px-3 py-1.5 text-xs font-semibold text-success">
+              <AnimatedTrending className="h-4 w-4 shrink-0" />
+              <span className="truncate">{p.result}</span>
             </div>
           </div>
         </Card>

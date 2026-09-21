@@ -1,10 +1,9 @@
 "use client";
 
-import { useMemo, useRef, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import { gsap } from "gsap";
-import { Flip } from "gsap/Flip";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
-import { ChevronDown } from "lucide-react";
+import { ChevronDown, ChevronLeft, ChevronRight, LayoutGrid } from "lucide-react";
 import { ContentIcon } from "@/components/ui/ContentIcon";
 import { AnimatedSearch } from "@/components/ui/icons/AnimatedSearch";
 import { AnimatedFolder } from "@/components/ui/icons/AnimatedFolder";
@@ -13,7 +12,7 @@ import { useReducedMotion } from "@/lib/useReducedMotion";
 import { useIsomorphicLayoutEffect } from "@/hooks/useIsomorphicLayoutEffect";
 import type { ShowcaseProject } from "@/lib/showcaseProjects";
 
-gsap.registerPlugin(Flip, ScrollTrigger);
+gsap.registerPlugin(ScrollTrigger);
 
 type SortKey = "latest" | "az";
 
@@ -22,11 +21,16 @@ const SORT_OPTIONS: { value: SortKey; label: string }[] = [
   { value: "az", label: "A – Z" },
 ];
 
+const CARD_WIDTH_CLASS =
+  "h-full w-[84%] shrink-0 snap-start sm:w-[calc(50%-14px)] lg:w-[calc(33.333%-18.67px)] xl:w-[calc(25%-21px)]";
+
 export function ProjectsExplorer({ projects }: { projects: ShowcaseProject[] }) {
   const reducedMotion = useReducedMotion();
   const [tag, setTag] = useState("All Projects");
   const [query, setQuery] = useState("");
   const [sort, setSort] = useState<SortKey>("latest");
+  const [canScrollLeft, setCanScrollLeft] = useState(false);
+  const [canScrollRight, setCanScrollRight] = useState(false);
 
   const tags = useMemo(() => ["All Projects", ...new Set(projects.flatMap((p) => p.tags))], [projects]);
 
@@ -48,8 +52,8 @@ export function ProjectsExplorer({ projects }: { projects: ShowcaseProject[] }) 
   const pillsWrapRef = useRef<HTMLDivElement>(null);
   const indicatorRef = useRef<HTMLSpanElement>(null);
   const btnRefs = useRef<Record<string, HTMLButtonElement | null>>({});
-  const gridRef = useRef<HTMLDivElement>(null);
-  const flipStateRef = useRef<Flip.FlipState | null>(null);
+  const trackRef = useRef<HTMLDivElement>(null);
+  const isFirstFilterRun = useRef(true);
 
   useIsomorphicLayoutEffect(() => {
     const btn = btnRefs.current[tag];
@@ -71,50 +75,99 @@ export function ProjectsExplorer({ projects }: { projects: ShowcaseProject[] }) 
     }
   }, [tag, reducedMotion, tags.length]);
 
-  useIsomorphicLayoutEffect(() => {
-    const state = flipStateRef.current;
-    flipStateRef.current = null;
-    if (!state) return;
+  const updateScrollState = () => {
+    const el = trackRef.current;
+    if (!el) return;
+    const maxScroll = el.scrollWidth - el.clientWidth;
+    setCanScrollLeft(el.scrollLeft > 8);
+    setCanScrollRight(el.scrollLeft < maxScroll - 8);
+  };
 
-    Flip.from(state, {
-      duration: reducedMotion ? 0 : 0.5,
-      ease: "power2.inOut",
-      stagger: 0.03,
-      absolute: true,
-      onEnter: (els) =>
-        gsap.fromTo(els, { opacity: 0, scale: 0.85 }, { opacity: 1, scale: 1, duration: 0.35, stagger: 0.04, delay: 0.1 }),
-      onLeave: (els) => gsap.to(els, { opacity: 0, scale: 0.85, duration: 0.2 }),
-      onComplete: () => ScrollTrigger.refresh(),
-    });
-  }, [filtered]);
-
+  // Entrance reveal the first time the grid scrolls into view.
   useIsomorphicLayoutEffect(() => {
-    if (!gridRef.current) return;
-    const cards = Array.from(gridRef.current.children);
+    if (!trackRef.current) return;
+    const cards = Array.from(trackRef.current.children);
 
     if (reducedMotion) {
       gsap.set(cards, { opacity: 1, y: 0, scale: 1 });
-      return;
-    }
-
-    const ctx = gsap.context(() => {
-      gsap.from(cards, {
-        opacity: 0,
-        y: 34,
-        scale: 0.96,
-        duration: 0.55,
-        stagger: 0.08,
-        ease: "power2.out",
-        scrollTrigger: { trigger: gridRef.current, start: "top 88%" },
+    } else {
+      const ctx = gsap.context(() => {
+        gsap.from(cards, {
+          opacity: 0,
+          y: 34,
+          scale: 0.96,
+          duration: 0.55,
+          stagger: 0.08,
+          ease: "power2.out",
+          scrollTrigger: { trigger: trackRef.current, start: "top 88%" },
+        });
       });
-    });
-    return () => ctx.revert();
+      updateScrollState();
+      return () => ctx.revert();
+    }
+    updateScrollState();
   }, []);
 
+  // Re-animate + reset scroll position whenever the filtered set changes.
+  useIsomorphicLayoutEffect(() => {
+    if (isFirstFilterRun.current) {
+      isFirstFilterRun.current = false;
+      return;
+    }
+    const el = trackRef.current;
+    if (!el) return;
+    el.scrollTo({ left: 0, behavior: "auto" });
+
+    const cards = Array.from(el.children);
+    if (reducedMotion) {
+      gsap.set(cards, { opacity: 1, y: 0, scale: 1 });
+    } else {
+      gsap.fromTo(
+        cards,
+        { opacity: 0, y: 16, scale: 0.96 },
+        { opacity: 1, y: 0, scale: 1, duration: 0.4, stagger: 0.05, ease: "power2.out" }
+      );
+    }
+    requestAnimationFrame(updateScrollState);
+  }, [filtered]);
+
+  useEffect(() => {
+    const el = trackRef.current;
+    if (!el) return;
+    updateScrollState();
+
+    const onScroll = () => updateScrollState();
+    const onResize = () => updateScrollState();
+    el.addEventListener("scroll", onScroll, { passive: true });
+    window.addEventListener("resize", onResize);
+
+    // Let a vertical mouse-wheel gesture pan the row horizontally, like a
+    // media-row carousel, without hijacking normal page scroll.
+    const onWheel = (e: WheelEvent) => {
+      const maxScroll = el.scrollWidth - el.clientWidth;
+      if (maxScroll <= 0) return;
+      if (Math.abs(e.deltaY) <= Math.abs(e.deltaX)) return;
+      e.preventDefault();
+      el.scrollLeft += e.deltaY;
+    };
+    el.addEventListener("wheel", onWheel, { passive: false });
+
+    return () => {
+      el.removeEventListener("scroll", onScroll);
+      window.removeEventListener("resize", onResize);
+      el.removeEventListener("wheel", onWheel);
+    };
+  }, [filtered]);
+
   function selectTag(next: string) {
-    if (next === tag || !gridRef.current) return;
-    flipStateRef.current = Flip.getState(gridRef.current.children);
+    if (next === tag) return;
     setTag(next);
+  }
+
+  function scrollByPage(direction: 1 | -1) {
+    const el = trackRef.current;
+    if (!el) return;
+    el.scrollBy({ left: direction * el.clientWidth * 0.86, behavior: "smooth" });
   }
 
   return (
@@ -144,7 +197,11 @@ export function ProjectsExplorer({ projects }: { projects: ShowcaseProject[] }) 
                   tag === t ? "text-white" : "text-foreground/80 hover:text-foreground"
                 }`}
               >
-                {t !== "All Projects" && <ContentIcon keyword={t} className="h-4 w-4" />}
+                {t === "All Projects" ? (
+                  <LayoutGrid className="h-4 w-4" strokeWidth={2.25} />
+                ) : (
+                  <ContentIcon keyword={t} className="h-4 w-4" />
+                )}
                 {t}
               </button>
             ))}
@@ -186,10 +243,35 @@ export function ProjectsExplorer({ projects }: { projects: ShowcaseProject[] }) 
         {query ? ` matching "${query}"` : ""}
       </p>
 
-      <div ref={gridRef} className="mt-6 grid grid-cols-1 gap-6 sm:grid-cols-2 sm:gap-7 lg:grid-cols-3">
-        {filtered.map((p) => (
-          <ProjectCard key={p.id} project={p} className="h-full" />
-        ))}
+      {/* Horizontally scrollable card row, mirroring the reference's carousel layout */}
+      <div className="relative mt-6">
+        <div
+          ref={trackRef}
+          className="flex gap-6 overflow-x-auto no-scrollbar scroll-smooth snap-x snap-mandatory sm:gap-7"
+        >
+          {filtered.map((p) => (
+            <ProjectCard key={p.id} project={p} className={CARD_WIDTH_CLASS} />
+          ))}
+        </div>
+
+        <button
+          type="button"
+          onClick={() => scrollByPage(-1)}
+          aria-label="Scroll to previous projects"
+          disabled={!canScrollLeft}
+          className="absolute left-0 top-1/2 z-20 hidden h-11 w-11 -translate-x-1/2 -translate-y-1/2 items-center justify-center rounded-full border border-border-soft bg-surface text-foreground shadow-[var(--shadow-lift)] transition-all duration-200 hover:scale-105 disabled:pointer-events-none disabled:opacity-0 sm:flex"
+        >
+          <ChevronLeft className="h-5 w-5" />
+        </button>
+        <button
+          type="button"
+          onClick={() => scrollByPage(1)}
+          aria-label="Scroll to more projects"
+          disabled={!canScrollRight}
+          className="absolute right-0 top-1/2 z-20 hidden h-11 w-11 -translate-y-1/2 translate-x-1/2 items-center justify-center rounded-full border border-border-soft bg-surface text-foreground shadow-[var(--shadow-lift)] transition-all duration-200 hover:scale-105 disabled:pointer-events-none disabled:opacity-0 sm:flex"
+        >
+          <ChevronRight className="h-5 w-5" />
+        </button>
       </div>
 
       {filtered.length === 0 && (
