@@ -5,7 +5,7 @@ import Link from "next/link";
 import { motion } from "framer-motion";
 import { Card } from "@/components/ui/Card";
 import { ContentIcon } from "@/components/ui/ContentIcon";
-import { getCourseIconInfo } from "@/lib/courseIcons";
+import { getProjectCardArt } from "@/lib/projectCardArt";
 import { AnimatedArrow } from "@/components/ui/icons/AnimatedArrow";
 import { AnimatedCrown } from "@/components/ui/icons/AnimatedCrown";
 import { AnimatedMapPin } from "@/components/ui/icons/AnimatedMapPin";
@@ -40,8 +40,8 @@ export function InternshipCard({
   index?: number;
 }) {
   const idSeed = useId();
-  const visual = useMemo(
-    () => getCourseIconInfo(`${internship.type} ${internship.title}`, idSeed),
+  const art = useMemo(
+    () => getProjectCardArt(`${internship.type} ${internship.title}`, idSeed),
     [internship.type, internship.title, idSeed]
   );
 
@@ -75,15 +75,16 @@ export function InternshipCard({
               style={{ background: spotlightBg }}
             />
 
-            {/* Gradient banner header */}
-            <div
-              className="relative flex h-28 shrink-0 items-center justify-center overflow-hidden"
-              style={{ background: visual.gradient }}
-            >
-              <span className="pointer-events-none absolute -right-6 -top-8 h-24 w-24 rounded-full bg-white/10 blur-xl" />
+            {/* Illustrated banner header */}
+            <div className="relative flex h-28 shrink-0 items-center justify-center overflow-hidden">
               <span
-                className="relative flex h-11 w-11 items-center justify-center rounded-full bg-white/15 ring-1 ring-white/25 backdrop-blur-sm transition-transform duration-300 group-hover:scale-110 group-hover:rotate-3 [&>svg]:h-6 [&>svg]:w-6"
-                dangerouslySetInnerHTML={{ __html: visual.svg }}
+                aria-hidden
+                className="absolute inset-0 transition-transform duration-500 group-hover:scale-105 [&>svg]:h-full [&>svg]:w-full"
+                dangerouslySetInnerHTML={{ __html: art.svg }}
+              />
+              <span
+                aria-hidden
+                className="pointer-events-none absolute inset-x-0 top-0 h-12 bg-gradient-to-b from-black/35 to-transparent"
               />
 
               {internship.featured && (
