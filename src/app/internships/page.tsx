@@ -15,6 +15,8 @@ export const metadata: Metadata = {
   alternates: { canonical: "/internships" },
 };
 
+export const dynamic = "force-dynamic";
+
 export default async function InternshipsPage() {
   const [user, internships] = await Promise.all([
     getCurrentUser(),

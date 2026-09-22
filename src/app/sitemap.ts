@@ -13,6 +13,8 @@ const publicRoutes = [
   { path: "/services/digital-marketing", priority: 0.8, changeFrequency: "monthly" as const },
 ];
 
+export const dynamic = "force-dynamic";
+
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   const [courses, internships] = await Promise.all([
     prisma.course.findMany({ select: { slug: true, updatedAt: true } }),
