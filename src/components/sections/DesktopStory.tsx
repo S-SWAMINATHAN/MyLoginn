@@ -5,6 +5,7 @@ import { Chapter } from "@/components/experience/Chapter";
 import { SplitHeadline } from "@/components/experience/SplitHeadline";
 import { Reveal } from "@/components/ui/Reveal";
 import { Button } from "@/components/ui/Button";
+import { openProjectRequest } from "@/components/services/ProjectRequestModal";
 import { useReducedMotion } from "@/lib/useReducedMotion";
 
 const SIDEBAR_ITEMS = ["Dashboard", "Analytics", "Workflow", "Users", "Reports"];
@@ -139,7 +140,7 @@ export function DesktopStory() {
         </Reveal>
 
         <Reveal direction="up" delay={0.45} className="mt-8">
-          <Button href="/services/app-web-development" variant="outline">
+          <Button type="button" onClick={() => openProjectRequest("software")} variant="outline">
             Talk about custom software
           </Button>
         </Reveal>

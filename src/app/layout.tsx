@@ -6,6 +6,7 @@ import { ThemeProvider } from "@/components/layout/ThemeProvider";
 import { Navbar } from "@/components/layout/Navbar";
 import { MobileBottomNav } from "@/components/layout/MobileBottomNav";
 import { AiAgentWidget } from "@/components/layout/AiAgentWidget";
+import { ProjectRequestModal } from "@/components/services/ProjectRequestModal";
 import { Footer } from "@/components/layout/Footer";
 import { PageTransition } from "@/components/layout/PageTransition";
 import { HideOnAdmin } from "@/components/layout/HideOnAdmin";
@@ -60,6 +61,7 @@ export default async function RootLayout({
               <Footer />
               <MobileBottomNav loggedIn={Boolean(user)} />
               <AiAgentWidget />
+              <ProjectRequestModal />
             </HideOnAdmin>
           </ThemeProvider>
         </MotionConfig>

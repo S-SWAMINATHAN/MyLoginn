@@ -14,6 +14,7 @@ import { BusinessSolutions } from "@/components/sections/BusinessSolutions";
 import { Education } from "@/components/sections/Education";
 import { WhyMyLoginn } from "@/components/sections/WhyMyLoginn";
 import { FinalCta } from "@/components/sections/FinalCta";
+import { ProjectShowcase } from "@/components/sections/ProjectShowcase";
 
 export default function Home() {
   return (
@@ -33,6 +34,7 @@ export default function Home() {
         <BusinessSolutions />
         <Education />
         <WhyMyLoginn />
+        <ProjectShowcase />
         <FinalCta />
       </StoryStage>
     </>

@@ -6,6 +6,7 @@ import { Chapter } from "@/components/experience/Chapter";
 import { SplitHeadline } from "@/components/experience/SplitHeadline";
 import { Reveal } from "@/components/ui/Reveal";
 import { Button } from "@/components/ui/Button";
+import { openProjectRequest } from "@/components/services/ProjectRequestModal";
 import { useReducedMotion } from "@/lib/useReducedMotion";
 
 type ScreenKey = "login" | "home" | "product" | "payment" | "notifications";
@@ -167,7 +168,7 @@ export function MobileStory() {
           </Reveal>
 
           <Reveal direction="up" delay={0.4} className="mt-8 flex justify-center lg:justify-start">
-            <Button href="/services/app-web-development" variant="outline">
+            <Button type="button" onClick={() => openProjectRequest("mobile")} variant="outline">
               Plan a mobile app
             </Button>
           </Reveal>

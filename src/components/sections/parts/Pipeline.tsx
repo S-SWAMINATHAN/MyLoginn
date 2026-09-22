@@ -91,7 +91,7 @@ function Pill({ label, isLive }: { label: string; isLive: boolean }) {
 function PillRow({ steps, offset, activeIndex }: { steps: string[]; offset: number; activeIndex?: number }) {
   return (
     <RevealGroup
-      className="no-scrollbar flex items-center gap-1.5 overflow-x-auto px-1 py-2 sm:flex-wrap sm:justify-center"
+      className="no-scrollbar flex max-w-full items-center gap-1.5 overflow-x-auto px-1 py-2 sm:flex-wrap sm:justify-center"
       stagger={0.06}
     >
       <FlowCap live={activeIndex === undefined || offset <= activeIndex} />
