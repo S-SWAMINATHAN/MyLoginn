@@ -51,8 +51,6 @@ const contactPoints: { icon: typeof AnimatedMail; title: string; description: st
   },
 ];
 
-export const metadata = { title: "Contact — MyLoginn" };
-
 export default function ContactPage() {
   return (
     <Section className="pt-14">
