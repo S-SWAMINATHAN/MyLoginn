@@ -10,6 +10,21 @@ const nextConfig: NextConfig = {
     // speed for not needing that manual recovery.
     turbopackFileSystemCacheForDev: false,
   },
+  async headers() {
+    return [
+      {
+        source: "/:path*",
+        headers: [
+          // Prevent a valid HTTPS certificate from being undermined if an
+          // HTTP URL is accidentally introduced in a page or third-party
+          // integration. Browsers upgrade those requests before loading them.
+          { key: "Content-Security-Policy", value: "upgrade-insecure-requests" },
+          // Remember that this domain (and www) must only be opened over HTTPS.
+          { key: "Strict-Transport-Security", value: "max-age=63072000; includeSubDomains" },
+        ],
+      },
+    ];
+  },
 };
 
 export default nextConfig;

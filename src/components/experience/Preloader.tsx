@@ -66,7 +66,6 @@ export function Preloader() {
 
   useEffect(() => {
     if (seen) return;
-    document.body.style.overflow = "hidden";
     const holdMs = reducedMotion ? 350 : 2300;
     const timer = window.setTimeout(() => {
       setHolding(false);
@@ -80,7 +79,16 @@ export function Preloader() {
   }, [seen, reducedMotion]);
 
   useEffect(() => {
-    if (!visible) document.body.style.overflow = "";
+    if (!visible) return;
+
+    const previousOverflow = document.body.style.overflow;
+    document.body.style.overflow = "hidden";
+
+    // The home page can be unmounted before the intro timer completes. Always
+    // restore the body's prior scroll state so the next route is never stuck.
+    return () => {
+      document.body.style.overflow = previousOverflow;
+    };
   }, [visible]);
 
   return (
