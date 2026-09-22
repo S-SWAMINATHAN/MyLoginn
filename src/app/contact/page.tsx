@@ -1,3 +1,4 @@
+import type { Metadata } from "next";
 import { Section, Container, Eyebrow } from "@/components/ui/Section";
 import { Card } from "@/components/ui/Card";
 import { LeadForm } from "@/components/services/LeadForm";
@@ -10,6 +11,12 @@ import { toWhatsAppLink } from "@/lib/whatsapp";
 import { CONTACT_EMAIL, CONTACT_PHONES, WHATSAPP_PHONE, CONTACT_HOURS } from "@/lib/contactInfo";
 
 type ContactAction = { label: string; href?: string; external?: boolean };
+
+export const metadata: Metadata = {
+  title: "Contact MyLoginn",
+  description: "Contact MyLoginn about software development, digital marketing, courses, tutoring, and internships.",
+  alternates: { canonical: "/contact" },
+};
 
 const contactPoints: { icon: typeof AnimatedMail; title: string; description: string; actions: ContactAction[] }[] = [
   {
