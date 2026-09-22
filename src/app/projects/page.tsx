@@ -12,6 +12,8 @@ export const metadata: Metadata = {
   alternates: { canonical: "/projects" },
 };
 
+export const dynamic = "force-dynamic";
+
 export default async function ProjectsPage() {
   const rows = await prisma.showcaseProject.findMany({ orderBy: { sortOrder: "asc" } });
   const showcaseProjects: ShowcaseProject[] = rows.map((p) => ({

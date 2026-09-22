@@ -11,6 +11,8 @@ export const metadata: Metadata = {
   alternates: { canonical: "/courses" },
 };
 
+export const dynamic = "force-dynamic";
+
 export default async function CoursesPage() {
   const [user, courses] = await Promise.all([
     getCurrentUser(),
