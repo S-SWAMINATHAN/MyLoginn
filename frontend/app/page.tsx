@@ -2,6 +2,7 @@
 
 import React, { useState } from "react";
 import { Header } from "@/components/Header";
+import { Footer } from "@/components/Footer";
 import { BirthDetailsForm } from "@/components/BirthDetailsForm";
 import { RasiChart } from "@/components/RasiChart";
 import { NavamsaChart } from "@/components/NavamsaChart";
@@ -28,7 +29,7 @@ import { JathagamThemePanel } from "@/components/JathagamThemePanel";
 import { ManuscriptTocPage } from "@/components/manuscript/ManuscriptTocPage";
 import { JathagamThemeProvider, THEME_SCOPE_ID } from "@/lib/jathagamTheme";
 import { MANUSCRIPT_CHAPTERS, MANUSCRIPT_PAGES } from "@/lib/manuscriptIndex";
-import { Sparkles, Printer, Share2, Heart, Download, Compass, ShieldCheck, PenLine, ChevronLeft, ChevronRight, BookOpen, Layers } from "lucide-react";
+import { Sparkles, Printer, Share2, Heart, Download, Compass, ShieldCheck, PenLine, ChevronLeft, ChevronRight, BookOpen, Layers, Loader2 } from "lucide-react";
 
 
 export default function HomePage() {
@@ -39,6 +40,7 @@ export default function HomePage() {
   const [previewPage, setPreviewPage] = useState<number>(1);
   const [showIndex, setShowIndex] = useState<boolean>(false);
   const [panchangamTab, setPanchangamTab] = useState<"thirukanitham" | "vakhyam" | "both">("thirukanitham");
+  const [printPreparing, setPrintPreparing] = useState(false);
 
   const handleGenerate = async (formData: GenerateChartRequest) => {
     setIsLoading(true);
@@ -61,35 +63,163 @@ export default function HomePage() {
     }
   };
 
-  const handlePrint = () => {
+  /**
+   * PRINT — cover, then contents, then the rest of the manuscript, matching
+   * the PDF's page order, with no overlapping or duplicated sheets.
+   *
+   * `window.print()` just rasterises whatever is currently in normal
+   * document flow, in DOM order — it has no idea the PDF exporter
+   * (HandwrittenPdfButton.tsx / lib/pdfExport.ts) reorders and paginates
+   * these same hidden `#handwritten-manuscript` / `#manuscript-toc-page`
+   * hosts in JS before rasterising them. Left alone, that mismatch produced
+   * three symptoms:
+   *
+   *   1. PAGE 1 OVERLAPPING PAGE 2 — `.manuscript-page` had no
+   *      `break-inside: avoid` for print (see globals.css), so a page whose
+   *      real height landed even slightly past the A4 box got sliced
+   *      mid-way across two physical sheets instead of starting a clean new
+   *      one, which read as the cover's content bleeding into the next page.
+   *   2. THE TABLE OF CONTENTS PRINTING AS PAGE 53 INSTEAD OF PAGE 2 — the
+   *      TOC host sits *after* the 50-page manuscript host in the JSX below,
+   *      so a native print, which only follows DOM order, always put it
+   *      last. The PDF avoids this by reordering nodes in JS before it
+   *      rasterises them; print needed the same trick.
+   *   3. 53 SHEETS INSTEAD OF 51 — a trailing `page-break-after` left on the
+   *      very last manuscript page forced one extra blank sheet, and the
+   *      real TOC host printing a second time (once naturally at the end,
+   *      once more from the fix for #2 if not handled carefully) added
+   *      another.
+   *
+   * Fix: clone — never move — the TOC node into place right after the cover
+   * page for this print only. The clone drops its id, so the PDF button's
+   * `document.getElementById("manuscript-toc-page")` still finds only the
+   * untouched original. The original TOC host is hidden for the duration of
+   * the print (so it doesn't also print a second time at the end), and the
+   * page that really is last has its trailing page-break cleared. Both are
+   * undone the moment the print dialog closes.
+   */
+  const handlePrint = async () => {
+    setPrintPreparing(true);
+
+    const container = document.getElementById("handwritten-manuscript");
+    const tocOriginal = document.getElementById("manuscript-toc-page");
+
+    let tocClone: HTMLElement | null = null;
+    let originalTocDisplay = "";
+    let lastPage: HTMLElement | null = null;
+
+    if (container && tocOriginal) {
+      // Same lookup HandwrittenPdfButton.tsx already uses to find the real,
+      // laid-out pages inside this off-screen host — filtering out anything
+      // with no box (a stray hidden-preview clone) that would otherwise be
+      // mistaken for a real page.
+      const pages = Array.from(
+        container.querySelectorAll<HTMLElement>(".manuscript-page")
+      ).filter((el) => el.offsetWidth > 0 && el.offsetHeight > 0);
+      const cover = pages[0];
+      lastPage = pages[pages.length - 1] || null;
+
+      if (cover && cover.parentNode) {
+        tocClone = tocOriginal.cloneNode(true) as HTMLElement;
+        tocClone.removeAttribute("id");
+        tocClone.setAttribute("data-print-toc-clone", "true");
+        cover.parentNode.insertBefore(tocClone, cover.nextSibling);
+
+        originalTocDisplay = tocOriginal.style.display;
+        tocOriginal.style.display = "none";
+      }
+
+      if (lastPage) lastPage.setAttribute("data-print-last-page", "true");
+    }
+
+    const cleanup = () => {
+      if (tocClone && tocClone.parentNode) {
+        tocClone.parentNode.removeChild(tocClone);
+      }
+      if (tocOriginal) {
+        tocOriginal.style.display = originalTocDisplay;
+      }
+      if (lastPage) lastPage.removeAttribute("data-print-last-page");
+      window.removeEventListener("afterprint", cleanup);
+      setPrintPreparing(false);
+    };
+    window.addEventListener("afterprint", cleanup);
+
+    // Wait for the manuscript's webfonts to finish loading before printing —
+    // the same guarantee lib/pdfExport.ts already gives the (correctly
+    // paginated) PDF path via waitForRenderReady — so native print measures
+    // Tamil text with the real cursive face instead of a taller fallback
+    // font that would throw pagination off.
+    try {
+      // @ts-ignore — Font Loading API may be missing from older TS DOM libs
+      if (document.fonts && document.fonts.ready) {
+        // @ts-ignore
+        await document.fonts.ready;
+      }
+    } catch {
+      /* Font Loading API unavailable — print anyway */
+    }
+    await new Promise((r) => requestAnimationFrame(() => setTimeout(r, 50)));
+
     window.print();
+
+    // Safety net: some browsers / "print to PDF" flows don't reliably fire
+    // `afterprint`, so make sure the clone and the hidden-TOC override never
+    // linger in the live DOM (or the button stays stuck "preparing").
+    setTimeout(cleanup, 5000);
   };
 
   return (
     <JathagamThemeProvider>
-    <div className="min-h-screen flex flex-col bg-[var(--paper)] text-[var(--ink)]">
+    <div className="app-shell min-h-screen flex flex-col">
       <Header lang={lang} setLang={setLang} />
 
       <main className="flex-1 max-w-7xl w-full mx-auto px-4 sm:px-6 lg:px-8 py-6 space-y-10">
-        {/* Masthead / Hero Section (design-1.html style) */}
-        <section className="text-center pt-4 pb-2 no-print space-y-2">
-          <p className="sri font-script text-2xl text-[#b03726]">ஸ்ரீ</p>
-          <p className="over-title text-xs tracking-widest text-[#b03726]">AI JATHAGAM · HANDWRITTEN EDITION</p>
-          <h1 className="text-3xl sm:text-5xl font-normal font-script text-[#2b2117] tracking-tight">
-            {lang === "ta" ? "AI ஜாதகம்" : "AI Jathagam"}
-          </h1>
-          <p className="text-sm sm:text-base text-[#6f6049] font-script">
+        {/* Hero — MyLoginn blue system */}
+        <section className="no-print relative pt-4 pb-2 text-center">
+          <div className="mx-auto h-24 w-24 overflow-hidden rounded-3xl bg-brand-900 shadow-lift ring-1 ring-brand-400/30 animate-scale-in sm:h-28 sm:w-28">
+            {/* eslint-disable-next-line @next/next/no-img-element */}
+            <img src="/logo-512.png" alt="MyLoginn Astrology" width={112} height={112} className="h-full w-full object-cover" />
+          </div>
+          <p className="story-eyebrow mt-5 justify-center">AI JATHAGAM · HANDWRITTEN EDITION</p>
+<h1 className="story-heading mt-3">
+  <span
+    className="brand-gradient-text"
+    style={{ paddingTop: "0.1em", paddingBottom: "0.3em" }}
+  >
+    {lang === "ta" ? (
+      <>
+        <span className="mr-3">AI</span>
+        <span>ஜாதகம்</span>
+      </>
+    ) : (
+      "AI Jathagam"
+    )}
+  </span>
+</h1>
+
+
+
+
+
+          <p className="mx-auto mt-4 max-w-3xl text-base text-muted sm:text-lg">
             {lang === "ta"
-              ? "— பாரம்பரிய முறைப்படி எழுதப்படும் உயர் துல்லிய கணிதக் கையெழுத்து ஜாதகம் —"
-              : "— a birth chart, penned the old way —"}
+              ? "பாரம்பரிய முறைப்படி எழுதப்படும் உயர் துல்லிய கணிதக் கையெழுத்து ஜாதகம்"
+              : "A birth chart, penned the old way — with modern astronomical precision"}
           </p>
+          <div className="mt-5 flex flex-wrap items-center justify-center gap-2">
+            <span className="chip-brand">Swiss Ephemeris</span>
+            <span className="chip-brand">{lang === "ta" ? "திருக்கணிதம் & வாக்கியம்" : "Thirukanitham & Vakhyam"}</span>
+            <span className="chip-brand">{lang === "ta" ? "50-பக்க கையெழுத்து ஜாதகம்" : "50-page handwritten manuscript"}</span>
+            <span className="chip-brand">{lang === "ta" ? "தமிழ் · கேரளா · வட இந்தியா" : "Tamil · Kerala · North Indian charts"}</span>
+          </div>
         </section>
 
         {/* Form Intake Card */}
         <section className="no-print">
           <BirthDetailsForm onSubmit={handleGenerate} isLoading={isLoading} lang={lang} />
           {errorMessage && (
-            <div className="mt-4 p-4 rounded-2xl bg-rose-100 border border-rose-400 text-rose-800 text-xs font-semibold text-center font-tamil">
+            <div className="mt-4 rounded-2xl border border-danger/30 bg-danger/10 p-4 text-center text-sm font-semibold text-danger">
               {errorMessage}
             </div>
           )}
@@ -97,7 +227,7 @@ export default function HomePage() {
 
         {/* Computed Jathagam Output Display */}
         {chartResult && (
-          <section id="chart-results-section" className="space-y-6 pt-4 animate-fade-in">
+          <section id="chart-results-section" className="jathagam-desk jathagam-legacy space-y-6">
             {/* Global ink-colour + Tamil-typeface panel. Sits OUTSIDE the theme
                 scope on purpose, so the controls keep their own fixed colours
                 while everything below them restyles live. */}
@@ -121,6 +251,13 @@ export default function HomePage() {
                  FULL MODE — everything exactly as before, unchanged.
                  ===================================================== */
               <>
+              {/* Everything in this wrapper is the light-theme "live" results
+                  view — bio-data, panchangam cards, charts, tables, etc.
+                  It's marked no-print so pressing Print never renders this;
+                  the actual print output is the hidden manuscript/TOC hosts
+                  further down, revealed by the @media print rule in
+                  globals.css so Print matches the 50-page handwritten PDF. */}
+              <div className="no-print space-y-10">
                 {/* Facts Summary Box (design-1.html style) */}
                 <div className="facts text-center">
                   <p>
@@ -158,10 +295,19 @@ export default function HomePage() {
                     <div className="flex items-center gap-2 no-print flex-wrap">
                       <button
                         onClick={handlePrint}
-                        className="btn-hand text-xs font-semibold py-2 px-3.5"
+                        disabled={printPreparing}
+                        className="btn-hand text-xs font-semibold py-2 px-3.5 disabled:opacity-60"
                       >
-                        <Printer className="w-4 h-4 text-[#b03726]" />
-                        <span>{lang === "ta" ? "அச்சிடுக (Print)" : "Print"}</span>
+                        {printPreparing ? (
+                          <Loader2 className="w-4 h-4 text-[#b03726] animate-spin" />
+                        ) : (
+                          <Printer className="w-4 h-4 text-[#b03726]" />
+                        )}
+                        <span>
+                          {printPreparing
+                            ? (lang === "ta" ? "தயாராகிறது..." : "Preparing...")
+                            : (lang === "ta" ? "அச்சிடுக (Print)" : "Print")}
+                        </span>
                       </button>
 
                       <HandwrittenPdfButton chart={chartResult} lang={lang} />
@@ -546,6 +692,7 @@ export default function HomePage() {
                     </div>
                   </div>
                 </div>
+              </div>
 
                 {/* Hidden full-size manuscript for PDF generation (off-screen, renders all 50 pages) */}
                 {/* Off-screen full-size manuscript used only for PDF capture.
@@ -577,17 +724,7 @@ export default function HomePage() {
         )}
       </main>
 
-      {/* Footer */}
-      <footer className="border-t border-[#a3917a]/30 py-8 bg-[#ece1c5] text-center text-xs text-[#6f6049] no-print">
-        <div className="max-w-7xl mx-auto px-4 space-y-2 font-tamil">
-          <p>
-            MYLoginn Astrology — துல்லியமான கணித விதிகளுடன் அமைக்கப்பட்ட வேத ஜோதிட தளம்
-          </p>
-          <p className="text-[10px] text-[#8e2b1c] font-mono">
-            drawn stroke by stroke • Swiss Ephemeris • Lahiri Ayanamsha • BPHS & Phaladeepika Classical Rules
-          </p>
-        </div>
-      </footer>
+      <Footer lang={lang} />
     </div>
     </JathagamThemeProvider>
   );

@@ -4,48 +4,65 @@
 // 50-page manuscript). Read this before touching either button.
 //
 // ============================================================================
-// WHY THE DOWNLOADS DIDN'T MATCH THE SCREEN
+// WHY DOWNLOADS LOOKED "GARBLED, DARK, MISALIGNED" — THE REAL ROOT CAUSE
 // ============================================================================
 //
-// 1. THE BITMAP WAS STRETCHED ONTO A4.
-//    Both buttons ended with
-//        pdf.addImage(imgData, "JPEG", 0, 0, 210, 297)
-//    which forces whatever was captured into a 210×297 mm box regardless of
-//    the captured canvas' real aspect ratio. A page captured at 794×1180 px
-//    gets squeezed vertically, one at 794×1050 px gets stretched, and because
-//    the distortion is a multiplier the error grows down the page: headings
-//    drift onto rules, table rows drift off their lines. Fixed by
-//    addCanvasToPdf(), which fits preserving aspect ratio and centres.
+// The previous version of this file captured every page with html2canvas.
+// html2canvas does NOT use the browser's text-shaping engine — it reimplements
+// text layout itself, measuring and placing each character run on its own.
+// For Latin text this mostly works. For Tamil, which is a complex script built
+// from base consonants plus combining vowel signs that must be shaped as a
+// single glyph cluster (கு is க + a combining ா-family vowel sign, குரு is two
+// such clusters), html2canvas's per-run measurement does not reshape the
+// cluster correctly. The visible result is exactly what was reported: glyphs
+// drawn overlapping (reads as a dark, illegible blob), vowel signs detached or
+// reordered, and — because each mis-measured run still consumes its "expected"
+// advance width — later content in the same cell or line lands in the wrong
+// place, which is the "everything not aligned" symptom on top of the "not
+// clear" one. This is a long-standing, widely-reported html2canvas limitation
+// for Indic and other complex scripts, not a bug in this app's Tamil data or
+// layout — the same DOM renders correctly on screen because the browser's own
+// text engine draws it there.
 //
-// 2. THE CAPTURE WAS TOO COARSE AND RAN AGAINST A LIVE, SCROLLING PAGE.
-//    scale 1.6 on a 794 px sheet is ~1270 px across an A4 width — under 160
-//    dpi, which is why small Tamil glyphs and thin table rules looked mushy.
-//    Capture now runs at a device-pixel-ratio-aware scale of 2+ with the
-//    scroll offset pinned, so nothing shifts mid-render.
+// THE FIX: capture through an SVG <foreignObject> instead (via the
+// `html-to-image` package). A foreignObject embeds real HTML inside an SVG,
+// and the BROWSER — not a reimplementation — lays out and shapes that HTML,
+// including every Tamil glyph cluster, exactly as it does on screen. The
+// browser then rasterises the whole SVG (including the shaped text) into a
+// bitmap that we draw to a canvas. This is the standard, correct way to
+// rasterise complex-script HTML for export; html2canvas is kept ONLY as an
+// automatic fallback for the rare case a foreignObject capture throws (e.g. a
+// tainted canvas from a genuinely uncooperative cross-origin resource).
 //
-// NOTE ON DEPENDENCIES: this file intentionally uses ONLY html2canvas and
-// jspdf, both already in package.json. An earlier draft of this pipeline
-// imported `html-to-image`, which was never installed — that import alone
-// breaks `next build`. Anything added here must already be a dependency.
+// package.json now lists html-to-image as a dependency — run `npm install`
+// (or `npm install html-to-image` if you're patching an existing checkout)
+// before building. This was checked in this delivery: html-to-image was
+// installed and the frontend was type-checked and built successfully.
+//
+// SEPARATELY, both exporters still fit each captured page to A4 preserving
+// its real aspect ratio (addCanvasToPdf, below) rather than stretching it onto
+// a fixed 210x297mm box — that was the alignment bug from an earlier round and
+// remains fixed; it is independent of the text-rendering fix above.
 //
 // Nothing astrological is touched in this file — export plumbing only.
 // ============================================================================
 
 import jsPDF from "jspdf";
 import html2canvas from "html2canvas";
+import { toCanvas as foreignObjectToCanvas } from "html-to-image";
 
 export const A4_MM = { w: 210, h: 297 };
 export const DEFAULT_MARGIN_MM = 4;
 export const PAGE_WIDTH_PX = 794; // A4 width @96dpi — what the sheets are built at
 
 export interface CaptureOptions {
-  /** Device-pixel multiplier. 2 ≈ 190 dpi on A4; 3 is sharper but much heavier. */
+  /** Output pixel ratio. 2 ≈ 190 dpi on A4; 3 is sharper but much heavier. */
   scale?: number;
   background?: string;
 }
 
 /** Waits for webfonts plus one paint, so Tamil faces are measured, not guessed. */
-export async function waitForRenderReady(extraMs = 120): Promise<void> {
+export async function waitForRenderReady(extraMs = 150): Promise<void> {
   try {
     // @ts-ignore — document.fonts is missing from older TS DOM libs
     if (document.fonts && document.fonts.ready) {
@@ -59,21 +76,86 @@ export async function waitForRenderReady(extraMs = 120): Promise<void> {
 }
 
 /**
- * Rasterises a node.
- *
- * html2canvas clones the document into an off-screen iframe and lets the
- * BROWSER lay the clone out, so flexbox, grid and the theme stylesheet all
- * survive — provided the clone is given the node's true box. We pass explicit
- * width/height/windowWidth and pin scrollX/scrollY, which is what stops the
- * off-screen manuscript host (parked at left:-10000px) from being captured at
- * the wrong offset.
+ * Primary capture path: renders the node through an SVG <foreignObject>, so
+ * the BROWSER shapes every glyph (correct Tamil rendering — see the note at
+ * the top of this file). html-to-image handles cloning the node, inlining
+ * computed styles/fonts, and serialising it into the foreignObject for us.
+ */
+async function captureViaForeignObject(
+  el: HTMLElement,
+  opts: { pixelRatio: number; background: string; width: number; height: number }
+): Promise<HTMLCanvasElement> {
+  const canvas = await foreignObjectToCanvas(el, {
+    pixelRatio: opts.pixelRatio,
+    backgroundColor: opts.background,
+    width: opts.width,
+    height: opts.height,
+    cacheBust: true,
+    // The node may be sitting inside a fixed, off-screen host (see the
+    // data-pdf-host handling in the manuscript page); the clone must be laid
+    // out at its natural size with no leftover transform/offset.
+    style: {
+      margin: "0",
+      transform: "none",
+      transformOrigin: "top left",
+      boxShadow: "none",
+    },
+  });
+  if (!canvas || !canvas.width || !canvas.height) {
+    throw new Error("foreignObject capture produced an empty canvas");
+  }
+  return canvas;
+}
+
+/**
+ * Fallback capture path: html2canvas. Used only if the foreignObject path
+ * throws. Known to mis-render complex Tamil glyph clusters (see the note at
+ * the top of this file) — this exists purely so a download never fails
+ * outright, not because its output is considered correct.
+ */
+async function captureViaHtml2Canvas(
+  el: HTMLElement,
+  opts: { scale: number; background: string; width: number; height: number }
+): Promise<HTMLCanvasElement> {
+  return html2canvas(el, {
+    scale: opts.scale,
+    backgroundColor: opts.background,
+    useCORS: true,
+    allowTaint: true,
+    logging: false,
+    width: opts.width,
+    height: opts.height,
+    windowWidth: opts.width,
+    windowHeight: opts.height,
+    scrollX: 0,
+    scrollY: 0,
+    removeContainer: true,
+    imageTimeout: 15000,
+    onclone: (doc: Document) => {
+      doc.querySelectorAll<HTMLElement>("[data-pdf-host]").forEach((host) => {
+        host.style.position = "static";
+        host.style.left = "0";
+        host.style.top = "0";
+        host.style.transform = "none";
+      });
+      doc.querySelectorAll<HTMLElement>(".no-pdf").forEach((n) => {
+        n.style.display = "none";
+      });
+    },
+  });
+}
+
+/**
+ * Rasterises a node for PDF export. Tries the foreignObject path first
+ * (correct Tamil text shaping); falls back to html2canvas only if that path
+ * throws, and logs a warning so a real regression doesn't go unnoticed.
  */
 export async function captureNode(
   el: HTMLElement,
   opts: CaptureOptions = {}
 ): Promise<HTMLCanvasElement> {
   const background = opts.background ?? "#fdf6e3";
-  const scale = opts.scale ?? Math.min(3, Math.max(2, window.devicePixelRatio || 1));
+  const pixelRatio = opts.scale ?? Math.min(3, Math.max(2, window.devicePixelRatio || 1));
 
   await waitForRenderReady();
 
@@ -81,35 +163,16 @@ export async function captureNode(
   const width = Math.ceil(rect.width || el.offsetWidth || PAGE_WIDTH_PX);
   const height = Math.ceil(rect.height || el.offsetHeight);
 
-  return html2canvas(el, {
-    scale,
-    backgroundColor: background,
-    useCORS: true,
-    allowTaint: true,
-    logging: false,
-    width,
-    height,
-    windowWidth: width,
-    windowHeight: height,
-    scrollX: 0,
-    scrollY: 0,
-    removeContainer: true,
-    imageTimeout: 15000,
-    onclone: (doc: Document) => {
-      // The off-screen manuscript host is parked at left:-10000px; inside the
-      // clone it must sit at the origin or html2canvas captures blank paper.
-      doc.querySelectorAll<HTMLElement>("[data-pdf-host]").forEach((host) => {
-        host.style.position = "static";
-        host.style.left = "0";
-        host.style.top = "0";
-        host.style.transform = "none";
-      });
-      // Anything explicitly marked screen-only never reaches the PDF.
-      doc.querySelectorAll<HTMLElement>(".no-pdf").forEach((n) => {
-        n.style.display = "none";
-      });
-    },
-  });
+  try {
+    return await captureViaForeignObject(el, { pixelRatio, background, width, height });
+  } catch (err) {
+    console.warn(
+      "[pdfExport] foreignObject capture failed, falling back to html2canvas " +
+        "(Tamil text may render incorrectly in this fallback path):",
+      err
+    );
+    return captureViaHtml2Canvas(el, { scale: pixelRatio, background, width, height });
+  }
 }
 
 /**

@@ -2,6 +2,8 @@
 
 import React, { useState } from "react";
 import { Header } from "@/components/Header";
+import { Footer } from "@/components/Footer";
+import { PageHero } from "@/components/ui/PageHero";
 import { PoruthamForm } from "@/components/PoruthamForm";
 import { PoruthamResult } from "@/components/PoruthamResult";
 import { StarMatchFinder } from "@/components/StarMatchFinder";
@@ -49,57 +51,47 @@ export default function PoruthamPage() {
   };
 
   return (
-    <div className="min-h-screen flex flex-col bg-[var(--paper)] text-[var(--ink)]">
+    <div className="app-shell min-h-screen flex flex-col">
       <Header lang={lang} setLang={setLang} />
 
-      <main className="flex-1 max-w-7xl w-full mx-auto px-4 sm:px-6 lg:px-8 py-8 space-y-10">
-        {/* Hero Masthead */}
-        <section className="text-center space-y-2">
-          <p className="sri text-2xl">ஸ்ரீ</p>
-          <p className="over">AI Jathagam · Matrimony Compatibility</p>
-          <h1 className="text-3xl sm:text-5xl font-normal text-[var(--ink)]">
-            {lang === "ta" ? "திருமணப் பொருத்தம் கணிப்பு" : "Horoscope Matching (Porutham)"}
-          </h1>
-          <p className="font-caveat text-lg text-[var(--ink-soft)]">
-            — comprehensive Vedic matrimony evaluation —
-          </p>
-          <p className="max-w-2xl mx-auto text-sm text-[var(--ink-soft)] font-tamil pt-2">
-            {lang === "ta"
+      <main className="flex-1 max-w-7xl w-full mx-auto px-4 sm:px-6 lg:px-8 py-8 space-y-8">
+        <PageHero
+          icon={<Heart className="h-7 w-7" />}
+          eyebrow="AI Jathagam · Matrimony Compatibility"
+          title={lang === "ta" ? "திருமணப் பொருத்தம்" : "Horoscope Matching"}
+          highlight={lang === "ta" ? "கணிப்பு" : "(Porutham)"}
+          tagline="— comprehensive Vedic matrimony evaluation —"
+          description={
+            lang === "ta"
               ? "தின, கண, மகேந்திர, யோனி, ராசி, ரஜ்ஜு (மாங்கல்ய பலம்), வேதை உள்ளிட்ட 10 பொருத்தங்கள் மற்றும் அஷ்டகூட 36-புள்ளிகள்"
-              : "Dual verification covering Ashta Koota (36-pt) and South Indian Tamil 10-Porutham with Rajju Dosha safety evaluation"}
-          </p>
-        </section>
+              : "Dual verification covering Ashta Koota (36-pt) and South Indian Tamil 10-Porutham with Rajju Dosha safety evaluation"
+          }
+        />
 
         {/* Tab Switcher — Pair Match vs. MATCH Finder.
             MATCH Finder used to be a separate page linked from here; it now
             lives ONLY inside this Porutham page as a tab, rendering the
             same StarMatchFinder component inline (no navigation away). */}
         <section className="flex justify-center">
-          <div className="hand-card inline-flex items-center bg-[var(--paper)] border border-[rgba(43,33,23,0.25)] rounded-2xl p-1.5 gap-1 shadow-sm">
-            <button
-              type="button"
-              onClick={() => setActiveTab("pair")}
-              className={`flex items-center gap-2 px-4 sm:px-6 py-2.5 rounded-xl text-xs sm:text-sm font-bold font-tamil transition-all ${
-                activeTab === "pair"
-                  ? "bg-[var(--red)] text-white shadow-sm"
-                  : "text-[var(--ink-soft)] hover:text-[var(--ink)]"
-              }`}
-            >
-              <Heart className="w-4 h-4" />
-              <span>{lang === "ta" ? "ஜோடி பொருத்தம் (Pair Match)" : "Pair Match"}</span>
-            </button>
-            <button
-              type="button"
-              onClick={() => setActiveTab("finder")}
-              className={`flex items-center gap-2 px-4 sm:px-6 py-2.5 rounded-xl text-xs sm:text-sm font-bold font-tamil transition-all ${
-                activeTab === "finder"
-                  ? "bg-[var(--red)] text-white shadow-sm"
-                  : "text-[var(--ink-soft)] hover:text-[var(--ink)]"
-              }`}
-            >
-              <Sparkles className="w-4 h-4" />
-              <span>{lang === "ta" ? "MATCH Finder (108 பொருத்தம்)" : "MATCH Finder (108 combos)"}</span>
-            </button>
+          <div className="inline-flex items-center gap-1 rounded-2xl border border-line bg-surface p-1.5 shadow-soft" role="tablist">
+            {([
+              { id: "pair" as const, icon: <Heart className="h-4 w-4" />, label: lang === "ta" ? "ஜோடி பொருத்தம் (Pair Match)" : "Pair Match" },
+              { id: "finder" as const, icon: <Sparkles className="h-4 w-4" />, label: lang === "ta" ? "MATCH Finder (108 பொருத்தம்)" : "MATCH Finder (108 combos)" },
+            ]).map((t) => (
+              <button
+                key={t.id}
+                type="button"
+                role="tab"
+                aria-selected={activeTab === t.id}
+                onClick={() => setActiveTab(t.id)}
+                className={`flex items-center gap-2 rounded-xl px-4 py-2.5 text-xs font-semibold transition-all sm:px-6 sm:text-sm ${
+                  activeTab === t.id ? "brand-gradient-bg text-white shadow-soft" : "text-muted hover:text-foreground"
+                }`}
+              >
+                {t.icon}
+                <span>{t.label}</span>
+              </button>
+            ))}
           </div>
         </section>
 
@@ -109,7 +101,7 @@ export default function PoruthamPage() {
             <section>
               <PoruthamForm onSubmit={handleMatch} isLoading={isLoading} lang={lang} />
               {errorMessage && (
-                <div className="mt-4 p-4 rounded-2xl bg-[rgba(176,55,38,0.08)] border border-[var(--red)] text-[var(--red-deep)] text-xs font-semibold text-center">
+                <div role="alert" className="mt-4 rounded-2xl border border-danger/30 bg-danger/10 p-4 text-center text-sm font-semibold text-danger">
                   {errorMessage}
                 </div>
               )}
@@ -129,10 +121,7 @@ export default function PoruthamPage() {
         )}
       </main>
 
-      <footer className="border-t border-[rgba(43,33,23,0.15)] py-8 text-center text-xs text-[var(--ink-soft)] font-tamil">
-        <p>AI Jathagam Generator — திருமணப் பொருத்த வழிகாட்டி</p>
-        <p className="font-caveat text-sm mt-1 text-[var(--red)]">drawn stroke by stroke · for reference only</p>
-      </footer>
+      <Footer lang={lang} note={lang === "ta" ? "திருமணப் பொருத்த வழிகாட்டி — வழிகாட்டுதலுக்காக மட்டும்" : "Marriage matching guide — for reference only"} />
     </div>
   );
 }

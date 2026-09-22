@@ -20,38 +20,38 @@ export const RasiHoroscopeCard: React.FC<RasiHoroscopeCardProps> = ({ result, la
   const isMixed = result.benefic_transits === result.challenging_transits;
 
   return (
-    <div className="hand-card p-6 sm:p-8 shadow-sm text-[var(--ink)] space-y-6 animate-fade-in">
+    <div className="card p-6 sm:p-8 shadow-sm text-foreground space-y-6 animate-fade-in">
       {/* Verdict banner */}
       <div
         className={`rounded-2xl p-5 border text-center ${
           isFavorable
-            ? "bg-[rgba(46,125,50,0.08)] border-[#2e7d32]"
+            ? "bg-success/10 border-success"
             : isMixed
-            ? "bg-[rgba(120,96,58,0.06)] border-[rgba(43,33,23,0.25)]"
-            : "bg-[rgba(176,55,38,0.08)] border-[var(--red)]"
+            ? "bg-brand-500/5 border-line"
+            : "bg-brand-500/10 border-brand-500"
         }`}
       >
         <div className="flex items-center justify-center gap-2 mb-1">
           <span className="text-2xl">{isFavorable ? "✨" : isMixed ? "⚖️" : "🔶"}</span>
-          <h3 className="text-xl sm:text-2xl font-bold font-tamil text-[var(--red-deep)]">
+          <h3 className="text-xl sm:text-2xl font-bold text-brand-fg-strong">
             {lang === "ta" ? result.rasi_ta : result.rasi}
           </h3>
         </div>
-        <p className="text-sm font-caveat text-lg text-[var(--ink)]">
+        <p className="text-sm text-lg text-foreground">
           {lang === "ta" ? result.overall_assessment_ta : result.overall_assessment}
         </p>
         <div className="flex items-center justify-center gap-3 mt-3 text-xs">
-          <span className="px-2.5 py-1 bg-[var(--paper)] border border-[rgba(43,33,23,0.2)] rounded-full flex items-center gap-1">
-            <TrendingUp className="w-3.5 h-3.5 text-[#2e7d32]" />
+          <span className="px-2.5 py-1 bg-surface-2 border border-border-soft rounded-full flex items-center gap-1">
+            <TrendingUp className="w-3.5 h-3.5 text-success" />
             {result.benefic_transits} {lang === "ta" ? "சுபம்" : "favorable"}
           </span>
-          <span className="px-2.5 py-1 bg-[var(--paper)] border border-[rgba(43,33,23,0.2)] rounded-full flex items-center gap-1">
-            <TrendingDown className="w-3.5 h-3.5 text-[var(--red)]" />
+          <span className="px-2.5 py-1 bg-surface-2 border border-border-soft rounded-full flex items-center gap-1">
+            <TrendingDown className="w-3.5 h-3.5 text-brand-fg" />
             {result.challenging_transits} {lang === "ta" ? "சவாலானது" : "challenging"}
           </span>
           {result.vedha_cancellations > 0 && (
-            <span className="px-2.5 py-1 bg-[var(--paper)] border border-[rgba(43,33,23,0.2)] rounded-full flex items-center gap-1">
-              <ShieldCheck className="w-3.5 h-3.5 text-[var(--ink-soft)]" />
+            <span className="px-2.5 py-1 bg-surface-2 border border-border-soft rounded-full flex items-center gap-1">
+              <ShieldCheck className="w-3.5 h-3.5 text-muted" />
               {result.vedha_cancellations} {lang === "ta" ? "வேதை" : "vedha"}
             </span>
           )}
@@ -60,10 +60,10 @@ export const RasiHoroscopeCard: React.FC<RasiHoroscopeCardProps> = ({ result, la
 
       {/* Overview narration */}
       <div>
-        <h4 className="text-sm font-bold text-[var(--ink)] font-cinzel mb-2">
+        <h4 className="text-sm font-bold text-foreground font-display mb-2">
           {lang === "ta" ? "பொது பலன்" : "Overview"}
         </h4>
-        <p className="text-sm leading-relaxed font-tamil text-[var(--ink)]">
+        <p className="text-sm leading-relaxed text-foreground">
           {lang === "ta" ? result.narration_ta : result.narration}
         </p>
       </div>
@@ -76,13 +76,13 @@ export const RasiHoroscopeCard: React.FC<RasiHoroscopeCardProps> = ({ result, la
             return (
               <div
                 key={sec.key}
-                className="bg-[rgba(120,96,58,0.05)] border border-[rgba(43,33,23,0.2)] rounded-2xl p-4"
+                className="bg-brand-500/5 border border-border-soft rounded-2xl p-4"
               >
-                <h4 className="text-sm font-bold text-[var(--red-deep)] font-cinzel mb-1.5 flex items-center gap-2">
+                <h4 className="text-sm font-bold text-brand-fg-strong font-display mb-1.5 flex items-center gap-2">
                   <Icon className="w-4 h-4" />
                   {lang === "ta" ? sec.title_ta : sec.title_en}
                 </h4>
-                <p className="text-sm leading-relaxed font-tamil text-[var(--ink)]">
+                <p className="text-sm leading-relaxed text-foreground">
                   {lang === "ta" ? sec.text_ta : sec.text_en}
                 </p>
               </div>
@@ -94,23 +94,23 @@ export const RasiHoroscopeCard: React.FC<RasiHoroscopeCardProps> = ({ result, la
       {/* Key slow-planet transits */}
       {result.key_transits.length > 0 && (
         <div>
-          <h4 className="text-sm font-bold text-[var(--ink)] font-cinzel mb-3 flex items-center gap-2">
-            <Sparkles className="w-4 h-4 text-[var(--red)]" />
+          <h4 className="text-sm font-bold text-foreground font-display mb-3 flex items-center gap-2">
+            <Sparkles className="w-4 h-4 text-brand-fg" />
             {lang === "ta" ? "முக்கிய கிரக சஞ்சாரங்கள்" : "Key Planetary Transits"}
           </h4>
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
             {result.key_transits.map((kt: RasiHoroscopeKeyTransit, idx: number) => (
               <div
                 key={idx}
-                className="bg-[rgba(120,96,58,0.05)] border border-[rgba(43,33,23,0.2)] rounded-2xl p-3 text-xs"
+                className="bg-brand-500/5 border border-border-soft rounded-2xl p-3 text-xs"
               >
-                <div className="font-bold text-[var(--red-deep)] font-tamil mb-1">
+                <div className="font-bold text-brand-fg-strong mb-1">
                   {lang === "ta" ? kt.planet_ta : kt.planet} —{" "}
                   {lang === "ta" ? kt.transit_rasi_ta : kt.transit_rasi || kt.transit_rasi_ta} (
                   {kt.house_from_moon}
                   {lang === "ta" ? "-ஆம் இடம்" : "th house"})
                 </div>
-                <div className="text-[var(--ink-soft)] font-tamil">
+                <div className="text-muted">
                   {lang === "ta" ? kt.net_effect_ta : kt.net_effect}
                 </div>
               </div>
@@ -119,7 +119,7 @@ export const RasiHoroscopeCard: React.FC<RasiHoroscopeCardProps> = ({ result, la
         </div>
       )}
 
-      <p className="text-[10px] text-[var(--ink-soft)] font-mono text-center pt-2 border-t border-[rgba(43,33,23,0.1)]">
+      <p className="text-[10px] text-muted font-mono text-center pt-2 border-t border-border-soft">
         {result.classical_source} · {result.reference_date}
       </p>
     </div>

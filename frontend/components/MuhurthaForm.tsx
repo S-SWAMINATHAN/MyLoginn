@@ -134,9 +134,8 @@ export const MuhurthaForm: React.FC<MuhurthaFormProps> = ({ onSubmit, isLoading,
       type="button"
       onClick={() => setEventType(key)}
       className={`px-3 py-1.5 rounded-lg font-semibold transition-all inline-flex items-center gap-1.5 ${
-        eventType === key ? "text-white" : ""
+        eventType === key ? "brand-gradient-bg text-white shadow-soft" : "text-muted hover:text-foreground"
       }`}
-      style={eventType === key ? { background: "var(--red-deep)" } : { color: "var(--ink-soft)" }}
     >
       <Icon className="w-3.5 h-3.5" />
       {label}
@@ -144,17 +143,17 @@ export const MuhurthaForm: React.FC<MuhurthaFormProps> = ({ onSubmit, isLoading,
   );
 
   return (
-    <form onSubmit={handleSubmit} className="palm-leaf-dark p-6 sm:p-8">
-      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-6 pb-4 border-b border-[rgba(10,37,64,0.08)]">
+    <form onSubmit={handleSubmit} className="card p-6 sm:p-8">
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-6 pb-4 border-b border-border-soft">
         <div>
           <h2
             className="text-xl sm:text-2xl font-bold flex items-center gap-2"
-            style={{ color: "var(--ink)" }}
+            style={{ color: "var(--foreground)" }}
           >
-            <CalendarSearch className="w-6 h-6" style={{ color: "var(--red)" }} />
+            <CalendarSearch className="w-6 h-6" style={{ color: "var(--brand-fg)" }} />
             {lang === "ta" ? "முகூர்த்த தேடல்" : "Muhurtha Search"}
           </h2>
-          <p className="text-xs mt-1" style={{ color: "var(--ink-soft)" }}>
+          <p className="text-xs mt-1" style={{ color: "var(--muted)" }}>
             {lang === "ta"
               ? "நிகழ்வு வகையையும் தேதி வரம்பையும் தேர்ந்தெடுத்து சுப நாட்களைக் கண்டறியவும் — 'பொது' தமிழ் காலண்டர் பாணி நாள் நல்லது/கெட்டது சரிபார்ப்பு"
               : "Pick a date range to find auspicious days — 'General' gives a plain Tamil-calendar-style good/bad day check, or pick Marriage/Travel for event-specific rules too"}
@@ -162,8 +161,7 @@ export const MuhurthaForm: React.FC<MuhurthaFormProps> = ({ onSubmit, isLoading,
         </div>
 
         <div
-          className="flex items-center bg-white border rounded-xl p-1 text-xs"
-          style={{ borderColor: "rgba(10,37,64,0.15)" }}
+          className="flex items-center rounded-xl border border-line bg-surface-2 p-1 text-xs"
         >
           {tabBtn("general", lang === "ta" ? "பொது" : "General", Sparkles)}
           {tabBtn("marriage", lang === "ta" ? "திருமணம்" : "Marriage", Heart)}
@@ -173,21 +171,20 @@ export const MuhurthaForm: React.FC<MuhurthaFormProps> = ({ onSubmit, isLoading,
 
       <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6">
         <div>
-          <label className="block text-sm font-semibold mb-1.5" style={{ color: "var(--ink-soft)" }}>
-            {lang === "ta" ? "தொடக்க தேதி" : "Start Date"} <span className="text-[#b03726]">*</span>
+          <label className="field-label">
+            {lang === "ta" ? "தொடக்க தேதி" : "Start Date"} <span className="text-brand-fg">*</span>
           </label>
           <input
             type="date"
             required
             value={startDate}
             onChange={(e) => setStartDate(e.target.value)}
-            className="w-full px-3 py-2.5 bg-white border rounded-xl text-sm"
-            style={{ borderColor: "rgba(10,37,64,0.15)", color: "var(--ink)" }}
+            className="field"
           />
         </div>
         <div>
-          <label className="block text-sm font-semibold mb-1.5" style={{ color: "var(--ink-soft)" }}>
-            {lang === "ta" ? "முடிவு தேதி" : "End Date"} <span className="text-[#b03726]">*</span>
+          <label className="field-label">
+            {lang === "ta" ? "முடிவு தேதி" : "End Date"} <span className="text-brand-fg">*</span>
           </label>
           <input
             type="date"
@@ -195,10 +192,9 @@ export const MuhurthaForm: React.FC<MuhurthaFormProps> = ({ onSubmit, isLoading,
             value={endDate}
             min={startDate || undefined}
             onChange={(e) => setEndDate(e.target.value)}
-            className="w-full px-3 py-2.5 bg-white border rounded-xl text-sm"
-            style={{ borderColor: "rgba(10,37,64,0.15)", color: "var(--ink)" }}
+            className="field"
           />
-          <p className="text-[10px] mt-1" style={{ color: "var(--ink-faint)" }}>
+          <p className="text-[10px] mt-1" style={{ color: "var(--muted)" }}>
             {lang === "ta" ? "அதிகபட்சம் 60 நாட்கள்" : "Max 60 days per search"}
           </p>
         </div>
@@ -214,7 +210,7 @@ export const MuhurthaForm: React.FC<MuhurthaFormProps> = ({ onSubmit, isLoading,
             }
           />
           {eventPlace.latitude != null && eventPlace.longitude != null && (
-            <p className="text-[10px] mt-1 font-mono" style={{ color: "var(--ink-faint)" }}>
+            <p className="text-[10px] mt-1 font-mono" style={{ color: "var(--muted)" }}>
               {eventPlace.latitude.toFixed(4)}°, {eventPlace.longitude.toFixed(4)}° ·{" "}
               {eventPlace.timezone || "Asia/Kolkata"}
             </p>
@@ -225,7 +221,7 @@ export const MuhurthaForm: React.FC<MuhurthaFormProps> = ({ onSubmit, isLoading,
       {validationError && (
         <div
           className="mb-4 p-3 rounded-xl text-xs font-semibold flex items-center gap-2"
-          style={{ background: "#fdecec", border: "1px solid #d93025", color: "#a31515" }}
+          style={{ background: "rgba(220,38,38,0.10)", border: "1px solid var(--danger)", color: "var(--danger)" }}
         >
           <AlertTriangle className="w-4 h-4 shrink-0" />
           <span>{validationError}</span>
@@ -233,8 +229,8 @@ export const MuhurthaForm: React.FC<MuhurthaFormProps> = ({ onSubmit, isLoading,
       )}
 
       {/* Person A */}
-      <div className="bg-white border rounded-2xl p-5 mb-4" style={{ borderColor: "rgba(10,37,64,0.10)" }}>
-        <h4 className="text-sm font-bold mb-3" style={{ color: "var(--red-deep)" }}>
+      <div className="well p-5 mb-4">
+        <h4 className="text-sm font-bold mb-3" style={{ color: "var(--brand-fg-strong)" }}>
           {eventType === "marriage"
             ? lang === "ta"
               ? "நபர் A (மணமகன்/மணமகள்) — விருப்பம்"
@@ -247,26 +243,25 @@ export const MuhurthaForm: React.FC<MuhurthaFormProps> = ({ onSubmit, isLoading,
             ? "தனிநபர் விவரங்கள் — விருப்பம்"
             : "Personalize (Your Birth Details) — Optional"}
         </h4>
-        <p className="text-[11px] mb-3" style={{ color: "var(--ink-faint)" }}>
+        <p className="text-[11px] mb-3" style={{ color: "var(--muted)" }}>
           {lang === "ta"
             ? "இதை நிரப்பினால் தாரா பலம் & சந்திர பலம் தனிப்பட்ட முறையில் சரிபார்க்கப்படும்."
             : "Filling this in adds personalized Tara Bala & Chandra Bala checks to the results."}
         </p>
         <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
           <div>
-            <label className="block text-sm font-semibold mb-1.5" style={{ color: "var(--ink-soft)" }}>
+            <label className="field-label">
               {lang === "ta" ? "பிறந்த தேதி" : "Date of Birth"}
             </label>
             <input
               type="date"
               value={personADob}
               onChange={(e) => setPersonADob(e.target.value)}
-              className="w-full px-3 py-2.5 bg-[var(--paper)] border rounded-xl text-sm"
-              style={{ borderColor: "rgba(10,37,64,0.15)" }}
+              className="field"
             />
           </div>
           <div>
-            <label className="block text-sm font-semibold mb-1.5" style={{ color: "var(--ink-soft)" }}>
+            <label className="field-label">
               {lang === "ta" ? "பிறந்த நேரம்" : "Time of Birth"}
             </label>
             <TimeInput12h value={personATob} onChange={setPersonATob} />
@@ -288,25 +283,24 @@ export const MuhurthaForm: React.FC<MuhurthaFormProps> = ({ onSubmit, isLoading,
 
       {/* Person B — marriage only */}
       {eventType === "marriage" && (
-        <div className="bg-white border rounded-2xl p-5 mb-4" style={{ borderColor: "rgba(10,37,64,0.10)" }}>
-          <h4 className="text-sm font-bold mb-3" style={{ color: "var(--red-deep)" }}>
+        <div className="well p-5 mb-4">
+          <h4 className="text-sm font-bold mb-3" style={{ color: "var(--brand-fg-strong)" }}>
             {lang === "ta" ? "நபர் B (துணை) — விருப்பம்" : "Person B (Partner 2) — Optional"}
           </h4>
           <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
             <div>
-              <label className="block text-sm font-semibold mb-1.5" style={{ color: "var(--ink-soft)" }}>
+              <label className="field-label">
                 {lang === "ta" ? "பிறந்த தேதி" : "Date of Birth"}
               </label>
               <input
                 type="date"
                 value={personBDob}
                 onChange={(e) => setPersonBDob(e.target.value)}
-                className="w-full px-3 py-2.5 bg-[var(--paper)] border rounded-xl text-sm"
-                style={{ borderColor: "rgba(10,37,64,0.15)" }}
+                className="field"
               />
             </div>
             <div>
-              <label className="block text-sm font-semibold mb-1.5" style={{ color: "var(--ink-soft)" }}>
+              <label className="field-label">
                 {lang === "ta" ? "பிறந்த நேரம்" : "Time of Birth"}
               </label>
               <TimeInput12h value={personBTob} onChange={setPersonBTob} />
@@ -329,8 +323,8 @@ export const MuhurthaForm: React.FC<MuhurthaFormProps> = ({ onSubmit, isLoading,
 
       {/* Travel direction — travel only, nothing preselected */}
       {eventType === "travel" && (
-        <div className="bg-white border rounded-2xl p-5 mb-4" style={{ borderColor: "rgba(10,37,64,0.10)" }}>
-          <h4 className="text-sm font-bold mb-3" style={{ color: "var(--red-deep)" }}>
+        <div className="well p-5 mb-4">
+          <h4 className="text-sm font-bold mb-3" style={{ color: "var(--brand-fg-strong)" }}>
             {lang === "ta" ? "பயண திசை (திசைசூல் சோதனை) — விருப்பம்" : "Direction of Travel (Dishashool check) — Optional"}
           </h4>
           <div className="grid grid-cols-4 gap-2">
@@ -344,8 +338,8 @@ export const MuhurthaForm: React.FC<MuhurthaFormProps> = ({ onSubmit, isLoading,
                 }`}
                 style={
                   travelDirection === d
-                    ? { background: "var(--red-deep)", borderColor: "var(--red-deep)" }
-                    : { borderColor: "rgba(10,37,64,0.15)", color: "var(--ink-soft)" }
+                    ? { background: "var(--brand-700)", borderColor: "var(--brand-700)" }
+                    : { borderColor: "var(--line)", color: "var(--muted)" }
                 }
               >
                 {d}
@@ -356,7 +350,7 @@ export const MuhurthaForm: React.FC<MuhurthaFormProps> = ({ onSubmit, isLoading,
       )}
 
       <div className="flex justify-center mt-6">
-        <button type="submit" disabled={!canSubmit} className="btn-hand-red disabled:opacity-50">
+        <button type="submit" disabled={!canSubmit} className="btn-primary disabled:opacity-50">
           {isLoading
             ? lang === "ta"
               ? "தேடுகிறது..."
@@ -367,7 +361,7 @@ export const MuhurthaForm: React.FC<MuhurthaFormProps> = ({ onSubmit, isLoading,
         </button>
       </div>
       {!canSubmit && !isLoading && !validationError && (
-        <p className="text-[11px] text-center mt-2" style={{ color: "var(--ink-faint)" }}>
+        <p className="text-[11px] text-center mt-2" style={{ color: "var(--muted)" }}>
           {lang === "ta"
             ? "தொடக்க தேதி, முடிவு தேதி மற்றும் நிகழ்வு இடத்தை நிரப்பவும்."
             : "Fill in the start date, end date and event location to search."}

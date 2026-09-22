@@ -12,7 +12,7 @@ interface TimeInput12hProps {
 }
 
 function parse24h(value: string) {
-  const [hStr, mStr, sStr] = (value || "07:00:00").split(":");
+  const [hStr, mStr, sStr] = (value || "00:00:00").split(":");
   const h24 = parseInt(hStr, 10) || 0;
   const minute = parseInt(mStr, 10) || 0;
   const second = sStr ?? "00";
@@ -52,12 +52,12 @@ export const TimeInput12h: React.FC<TimeInput12hProps> = ({ value, onChange }) =
   }
 
   const selectClass =
-    "bg-[#11162e] border border-[#d4af37]/30 rounded-xl text-white text-sm py-2.5 px-3 focus:border-[#ffd700] focus:ring-1 focus:ring-[#ffd700] transition-all appearance-none text-center";
+    "field !w-auto appearance-none text-center font-semibold tabular-nums";
 
   return (
     <div className="relative">
       <div className="flex items-center gap-2 pl-1">
-        <Clock className="w-4 h-4 text-[#d4af37]/70 shrink-0" />
+        <Clock className="w-4 h-4 text-brand-500 shrink-0" />
 
         <select
           aria-label="Hour"
@@ -76,7 +76,7 @@ export const TimeInput12h: React.FC<TimeInput12hProps> = ({ value, onChange }) =
           ))}
         </select>
 
-        <span className="text-[#d4af37]">:</span>
+        <span className="font-semibold text-muted">:</span>
 
         <select
           aria-label="Minute"
@@ -106,8 +106,8 @@ export const TimeInput12h: React.FC<TimeInput12hProps> = ({ value, onChange }) =
               }}
               className={`py-2 px-3 rounded-xl text-xs font-semibold border transition-all ${
                 ampm === period
-                  ? "bg-[#1e3a8a] border-[#ffd700] text-[#ffd700]"
-                  : "bg-[#11162e] border-[#d4af37]/30 text-white/70 hover:bg-white/5"
+                  ? "choice-active"
+                  : "choice"
               }`}
             >
               {period}

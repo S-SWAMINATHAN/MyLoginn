@@ -76,35 +76,35 @@ export const NumerologyPanel: React.FC<NumerologyPanelProps> = ({
   const statusTone = (status?: string) => {
     if (status === "Favourable")
       return {
-        wrap: "bg-[rgba(46,125,50,0.07)] border-[#2e7d32]",
-        text: "text-[#2e7d32]",
+        wrap: "bg-success/10 border-success",
+        text: "text-success",
         Icon: CheckCircle2,
       };
     if (status === "Partially Aligned")
       return {
-        wrap: "bg-[rgba(230,145,0,0.08)] border-[#e69100]",
-        text: "text-[#b36b00]",
+        wrap: "bg-warning/10 border-warning",
+        text: "text-warning",
         Icon: AlertTriangle,
       };
     return {
-      wrap: "bg-[rgba(176,55,38,0.07)] border-[var(--red)]",
-      text: "text-[var(--red-deep)]",
+      wrap: "bg-brand-500/10 border-brand-500",
+      text: "text-brand-fg-strong",
       Icon: XCircle,
     };
   };
 
   const inputCls =
-    "w-full px-4 py-2.5 bg-[var(--paper)] border border-[rgba(43,33,23,0.3)] rounded-xl text-sm text-[var(--ink)] focus:outline-none focus:border-[var(--red)] transition-all";
+    "w-full px-4 py-2.5 bg-surface-2 border border-line rounded-xl text-sm text-foreground focus:outline-none focus:border-brand-500 transition-all";
 
   return (
-    <div className="hand-card p-6 sm:p-8 shadow-sm text-[var(--ink)] space-y-6">
+    <div className="card p-6 sm:p-8 shadow-sm text-foreground space-y-6">
       {/* Header */}
-      <div className="pb-4 border-b border-[rgba(43,33,23,0.2)]">
-        <h3 className="text-xl sm:text-2xl font-bold font-cinzel flex items-center gap-2">
-          <Hash className="w-5 h-5 text-[var(--red)]" />
+      <div className="pb-4 border-b border-border-soft">
+        <h3 className="text-xl sm:text-2xl font-bold font-display flex items-center gap-2">
+          <Hash className="w-5 h-5 text-brand-fg" />
           {lang === "ta" ? "பெயர் எண் கணிதம்" : "Name Numerology"}
         </h3>
-        <p className="text-xs text-[var(--ink-soft)] font-tamil mt-1">
+        <p className="text-xs text-muted mt-1">
           {lang === "ta"
             ? "கால்டியன் எண் கணித முறை — இது மேலே உள்ள நட்சத்திர-பாத முறையிலிருந்து வேறுபட்ட ஒரு தனி முறை. இரண்டும் தனித்தனியாகக் காட்டப்படுகின்றன."
             : "Chaldean numerology — a separate tradition from the Nakshatra-Pada system above. Both are shown independently, never merged."}
@@ -114,7 +114,7 @@ export const NumerologyPanel: React.FC<NumerologyPanelProps> = ({
       {/* Input form */}
       <form onSubmit={handleSubmit} className="grid grid-cols-1 sm:grid-cols-3 gap-4">
         <div className="sm:col-span-2">
-          <label className="block text-xs font-semibold text-[var(--ink-soft)] mb-1.5 font-tamil">
+          <label className="block text-xs font-semibold text-muted mb-1.5">
             {lang === "ta" ? "பெயர் (ஆங்கில எழுத்தில்)" : "Full Name (English spelling)"} *
           </label>
           <input
@@ -127,7 +127,7 @@ export const NumerologyPanel: React.FC<NumerologyPanelProps> = ({
           />
         </div>
         <div>
-          <label className="block text-xs font-semibold text-[var(--ink-soft)] mb-1.5 font-tamil">
+          <label className="block text-xs font-semibold text-muted mb-1.5">
             {lang === "ta" ? "பிறந்த தேதி" : "Date of Birth"} *
           </label>
           <input
@@ -140,7 +140,7 @@ export const NumerologyPanel: React.FC<NumerologyPanelProps> = ({
         </div>
 
         <div className="sm:col-span-3">
-          <p className="text-[11px] text-[var(--ink-soft)] font-tamil mb-3">
+          <p className="text-[11px] text-muted mb-3">
             {lang === "ta"
               ? "குறிப்பு: அன்றாட வாழ்வில் நீங்கள் உண்மையில் பயன்படுத்தும் பெயரைப் பயன்படுத்தவும் (ஆவணங்கள் / வங்கி / அடையாள அட்டை)."
               : "Tip: use the name actually used in daily life (documents / bank / ID card)."}
@@ -149,7 +149,7 @@ export const NumerologyPanel: React.FC<NumerologyPanelProps> = ({
             <button
               type="submit"
               disabled={isLoading}
-              className="btn-hand px-8 py-2.5 rounded-2xl bg-[var(--red)] text-white font-bold text-sm shadow-md hover:bg-[var(--red-deep)] transition-all disabled:opacity-50 flex items-center gap-2"
+              className="btn-secondary px-8 py-2.5 rounded-2xl brand-gradient-bg text-white font-bold text-sm shadow-md hover:bg-brand-700 transition-all disabled:opacity-50 flex items-center gap-2"
             >
               {isLoading ? (
                 <Loader2 className="w-4 h-4 animate-spin" />
@@ -163,7 +163,7 @@ export const NumerologyPanel: React.FC<NumerologyPanelProps> = ({
       </form>
 
       {error && (
-        <div className="p-3 rounded-xl bg-[rgba(176,55,38,0.08)] border border-[var(--red)] text-[var(--red-deep)] text-xs font-semibold text-center">
+        <div className="p-3 rounded-xl bg-brand-500/10 border border-brand-500 text-brand-fg-strong text-xs font-semibold text-center">
           {error}
         </div>
       )}
@@ -178,12 +178,12 @@ export const NumerologyPanel: React.FC<NumerologyPanelProps> = ({
               the candidate name changes. */}
           <div className="space-y-3">
             <div>
-              <h4 className="text-sm font-bold text-[var(--red-deep)] font-cinzel">
+              <h4 className="text-sm font-bold text-brand-fg-strong font-display">
                 {lang === "ta" ? "உங்கள் ஆளுமை & இயல்பான பலங்கள்" : "Personality & Natural Strengths"}
               </h4>
-              <p className="text-xs text-[var(--ink-soft)] font-tamil mt-0.5">
+              <p className="text-xs text-muted mt-0.5">
                 {lang === "ta" ? "அன்புள்ள" : "Dear"}{" "}
-                <strong className="text-[var(--ink)]">{result.name}</strong>,
+                <strong className="text-foreground">{result.name}</strong>,
               </p>
             </div>
 
@@ -192,19 +192,19 @@ export const NumerologyPanel: React.FC<NumerologyPanelProps> = ({
                 key={sec.key}
                 className={`rounded-2xl p-4 border ${
                   sec.key === "expression"
-                    ? "bg-[rgba(176,55,38,0.05)] border-[rgba(176,55,38,0.35)]"
-                    : "bg-[rgba(120,96,58,0.05)] border-[rgba(43,33,23,0.2)]"
+                    ? "bg-brand-500/10 border-brand-500/30"
+                    : "bg-brand-500/5 border-border-soft"
                 }`}
               >
                 <div className="flex flex-wrap items-baseline justify-between gap-2 mb-1.5">
-                  <h5 className="text-xs font-bold text-[var(--ink)] font-cinzel">
+                  <h5 className="text-xs font-bold text-foreground font-display">
                     {lang === "ta" ? sec.title_ta : sec.title}
                   </h5>
-                  <span className="text-[10px] text-[var(--ink-soft)] font-tamil italic">
+                  <span className="text-[10px] text-muted italic">
                     {lang === "ta" ? sec.source_label_ta : sec.source_label}
                   </span>
                 </div>
-                <p className="text-sm leading-relaxed font-tamil text-[var(--ink)]">
+                <p className="text-sm leading-relaxed text-foreground">
                   {lang === "ta" ? sec.text_ta : sec.text}
                 </p>
               </div>
@@ -213,31 +213,31 @@ export const NumerologyPanel: React.FC<NumerologyPanelProps> = ({
 
           {/* The three numbers */}
           <div>
-            <h4 className="text-sm font-bold text-[var(--ink)] font-cinzel mb-3">
+            <h4 className="text-sm font-bold text-foreground font-display mb-3">
               {lang === "ta" ? "உங்கள் எண்கள்" : "Your Numbers"}
             </h4>
             <div className="grid grid-cols-3 gap-3 text-center">
-              <div className="p-3 rounded-xl bg-[var(--paper)] border border-[rgba(43,33,23,0.2)]">
-                <p className="text-[10px] text-[var(--ink-soft)] uppercase font-tamil tracking-wide">
+              <div className="p-3 rounded-xl bg-surface-2 border border-border-soft">
+                <p className="text-[10px] text-muted uppercase tracking-wide">
                   {lang === "ta" ? "பிறப்பு எண் (மூலாங்கம்)" : "Birth No. (Moolank)"}
                 </p>
-                <p className="text-3xl font-bold text-[var(--ink)]">{result.birth_number}</p>
-                <p className="text-[10px] text-[var(--ink-soft)] font-tamil">
+                <p className="text-3xl font-bold text-foreground">{result.birth_number}</p>
+                <p className="text-[10px] text-muted">
                   {lang === "ta" ? result.birth_number_planet_ta : result.birth_number_planet}
                 </p>
               </div>
-              <div className="p-3 rounded-xl bg-[var(--paper)] border border-[rgba(43,33,23,0.2)]">
-                <p className="text-[10px] text-[var(--ink-soft)] uppercase font-tamil tracking-wide">
+              <div className="p-3 rounded-xl bg-surface-2 border border-border-soft">
+                <p className="text-[10px] text-muted uppercase tracking-wide">
                   {lang === "ta" ? "ஊழ் எண் (பாக்யாங்கம்)" : "Destiny No. (Bhagyank)"}
                 </p>
-                <p className="text-3xl font-bold text-[var(--ink)]">{result.destiny_number}</p>
+                <p className="text-3xl font-bold text-foreground">{result.destiny_number}</p>
               </div>
-              <div className="p-3 rounded-xl bg-[rgba(176,55,38,0.08)] border border-[var(--red)]">
-                <p className="text-[10px] text-[var(--red-deep)] uppercase font-tamil tracking-wide">
+              <div className="p-3 rounded-xl bg-brand-500/10 border border-brand-500">
+                <p className="text-[10px] text-brand-fg-strong uppercase tracking-wide">
                   {lang === "ta" ? "பெயர் எண் (நாமாங்கம்)" : "Name No. (Namank)"}
                 </p>
-                <p className="text-3xl font-bold text-[var(--red-deep)]">{result.name_number}</p>
-                <p className="text-[10px] text-[var(--ink-soft)] font-mono">
+                <p className="text-3xl font-bold text-brand-fg-strong">{result.name_number}</p>
+                <p className="text-[10px] text-muted font-mono">
                   total {result.name_compound_total}
                 </p>
               </div>
@@ -252,25 +252,25 @@ export const NumerologyPanel: React.FC<NumerologyPanelProps> = ({
               <div className={`rounded-2xl p-4 border ${tone.wrap}`}>
                 <div className={`flex items-center gap-2 font-bold text-sm mb-3 ${tone.text}`}>
                   <Icon className="w-4 h-4" />
-                  <span className="font-tamil">
+                  <span>
                     {lang === "ta" ? result.headline_ta : result.headline}
                   </span>
                 </div>
 
                 <div className="flex flex-wrap gap-2 mb-3">
-                  <span className="px-2.5 py-1 rounded-lg bg-[var(--paper)] border border-[rgba(43,33,23,0.2)] text-[11px] font-tamil">
+                  <span className="px-2.5 py-1 rounded-lg bg-surface-2 border border-border-soft text-[11px]">
                     {lang === "ta" ? "நாமாங்கம்" : "Namank"} {result.name_number} ↔{" "}
                     {lang === "ta" ? "மூலாங்கம்" : "Moolank"} {result.birth_number}
-                    <strong className="ml-1.5 text-[var(--red-deep)]">
+                    <strong className="ml-1.5 text-brand-fg-strong">
                       {lang === "ta"
                         ? result.relation_with_birth_number_ta
                         : result.relation_with_birth_number}
                     </strong>
                   </span>
-                  <span className="px-2.5 py-1 rounded-lg bg-[var(--paper)] border border-[rgba(43,33,23,0.2)] text-[11px] font-tamil">
+                  <span className="px-2.5 py-1 rounded-lg bg-surface-2 border border-border-soft text-[11px]">
                     {lang === "ta" ? "நாமாங்கம்" : "Namank"} {result.name_number} ↔{" "}
                     {lang === "ta" ? "பாக்யாங்கம்" : "Bhagyank"} {result.destiny_number}
-                    <strong className="ml-1.5 text-[var(--red-deep)]">
+                    <strong className="ml-1.5 text-brand-fg-strong">
                       {lang === "ta"
                         ? result.relation_with_destiny_number_ta
                         : result.relation_with_destiny_number}
@@ -278,7 +278,7 @@ export const NumerologyPanel: React.FC<NumerologyPanelProps> = ({
                   </span>
                 </div>
 
-                <p className="text-sm leading-relaxed font-tamil text-[var(--ink)]">
+                <p className="text-sm leading-relaxed text-foreground">
                   {lang === "ta" ? result.analysis_ta : result.analysis}
                 </p>
               </div>
@@ -287,7 +287,7 @@ export const NumerologyPanel: React.FC<NumerologyPanelProps> = ({
 
           {/* Letter-by-letter breakdown */}
           <div>
-            <p className="text-[11px] font-semibold text-[var(--ink-soft)] mb-2 font-tamil">
+            <p className="text-[11px] font-semibold text-muted mb-2">
               {lang === "ta"
                 ? `எழுத்து மதிப்புகள் (கால்டியன்) — மொத்தம் ${result.name_compound_total}`
                 : `Letter values (Chaldean) — total ${result.name_compound_total}`}
@@ -296,7 +296,7 @@ export const NumerologyPanel: React.FC<NumerologyPanelProps> = ({
               {result.name_number_breakdown.map((b, i) => (
                 <span
                   key={i}
-                  className="px-2 py-1 rounded-lg bg-[var(--paper)] border border-[rgba(43,33,23,0.2)] text-[11px] font-mono"
+                  className="px-2 py-1 rounded-lg bg-surface-2 border border-border-soft text-[11px] font-mono"
                 >
                   {b.letter}={b.value}
                 </span>
@@ -308,20 +308,20 @@ export const NumerologyPanel: React.FC<NumerologyPanelProps> = ({
               calculators publish. Lucky numbers use the verified series
               n, n+9, n+18, n+27. */}
           {result.name_number_attributes && (
-            <div className="rounded-2xl p-4 border border-[rgba(43,33,23,0.2)] bg-[rgba(120,96,58,0.05)]">
-              <h4 className="text-xs font-bold text-[var(--ink)] font-cinzel mb-3">
+            <div className="rounded-2xl p-4 border border-border-soft bg-brand-500/5">
+              <h4 className="text-xs font-bold text-foreground font-display mb-3">
                 {lang === "ta"
                   ? `பெயர் எண் ${result.name_number} — அதிர்ஷ்ட அம்சங்கள்`
                   : `Name Number ${result.name_number} — Lucky Attributes`}
               </h4>
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 text-xs">
                 <div className="flex items-start gap-2">
-                  <Sparkles className="w-3.5 h-3.5 text-[var(--red)] shrink-0 mt-0.5" />
+                  <Sparkles className="w-3.5 h-3.5 text-brand-fg shrink-0 mt-0.5" />
                   <div>
-                    <p className="text-[10px] uppercase text-[var(--ink-soft)] font-tamil">
+                    <p className="text-[10px] uppercase text-muted">
                       {lang === "ta" ? "ஆளும் கிரகம்" : "Ruling Planet"}
                     </p>
-                    <p className="font-semibold text-[var(--ink)] font-tamil">
+                    <p className="font-semibold text-foreground">
                       {lang === "ta"
                         ? result.name_number_attributes.planet_ta
                         : result.name_number_attributes.planet}
@@ -329,23 +329,23 @@ export const NumerologyPanel: React.FC<NumerologyPanelProps> = ({
                   </div>
                 </div>
                 <div className="flex items-start gap-2">
-                  <Star className="w-3.5 h-3.5 text-[var(--red)] shrink-0 mt-0.5" />
+                  <Star className="w-3.5 h-3.5 text-brand-fg shrink-0 mt-0.5" />
                   <div>
-                    <p className="text-[10px] uppercase text-[var(--ink-soft)] font-tamil">
+                    <p className="text-[10px] uppercase text-muted">
                       {lang === "ta" ? "அதிர்ஷ்ட எண்கள்" : "Lucky Numbers"}
                     </p>
-                    <p className="font-semibold text-[var(--ink)] font-mono">
+                    <p className="font-semibold text-foreground font-mono">
                       {result.name_number_attributes.lucky_numbers.join(", ")}
                     </p>
                   </div>
                 </div>
                 <div className="flex items-start gap-2">
-                  <Palette className="w-3.5 h-3.5 text-[var(--red)] shrink-0 mt-0.5" />
+                  <Palette className="w-3.5 h-3.5 text-brand-fg shrink-0 mt-0.5" />
                   <div>
-                    <p className="text-[10px] uppercase text-[var(--ink-soft)] font-tamil">
+                    <p className="text-[10px] uppercase text-muted">
                       {lang === "ta" ? "அதிர்ஷ்ட நிறங்கள்" : "Lucky Colours"}
                     </p>
-                    <p className="font-semibold text-[var(--ink)] font-tamil">
+                    <p className="font-semibold text-foreground">
                       {(lang === "ta"
                         ? result.name_number_attributes.lucky_colors_ta
                         : result.name_number_attributes.lucky_colors
@@ -354,12 +354,12 @@ export const NumerologyPanel: React.FC<NumerologyPanelProps> = ({
                   </div>
                 </div>
                 <div className="flex items-start gap-2">
-                  <CalendarDays className="w-3.5 h-3.5 text-[var(--red)] shrink-0 mt-0.5" />
+                  <CalendarDays className="w-3.5 h-3.5 text-brand-fg shrink-0 mt-0.5" />
                   <div>
-                    <p className="text-[10px] uppercase text-[var(--ink-soft)] font-tamil">
+                    <p className="text-[10px] uppercase text-muted">
                       {lang === "ta" ? "நல்ல நாட்கள்" : "Lucky Days"}
                     </p>
-                    <p className="font-semibold text-[var(--ink)] font-tamil">
+                    <p className="font-semibold text-foreground">
                       {(lang === "ta"
                         ? result.name_number_attributes.lucky_days_ta
                         : result.name_number_attributes.lucky_days
@@ -368,7 +368,7 @@ export const NumerologyPanel: React.FC<NumerologyPanelProps> = ({
                   </div>
                 </div>
               </div>
-              <p className="text-[11px] text-[var(--ink-soft)] font-tamil mt-3 pt-2 border-t border-[rgba(43,33,23,0.12)]">
+              <p className="text-[11px] text-muted mt-3 pt-2 border-t border-border-soft">
                 <strong>{lang === "ta" ? "குணங்கள்: " : "Traits: "}</strong>
                 {lang === "ta"
                   ? result.name_number_attributes.traits_ta
@@ -380,21 +380,21 @@ export const NumerologyPanel: React.FC<NumerologyPanelProps> = ({
           {/* Master numbers actually detected for THIS name/DOB. Informational
               only — the headline numbers stay fully reduced (1-9). */}
           {result.master_numbers_present && result.master_numbers_present.length > 0 && (
-            <div className="rounded-2xl p-4 border border-[rgba(176,55,38,0.35)] bg-[rgba(176,55,38,0.05)]">
-              <h4 className="text-xs font-bold text-[var(--red-deep)] font-cinzel mb-2">
+            <div className="rounded-2xl p-4 border border-brand-500/30 bg-brand-500/10">
+              <h4 className="text-xs font-bold text-brand-fg-strong font-display mb-2">
                 {lang === "ta" ? "மாஸ்டர் எண் காணப்பட்டது" : "Master Number Detected"}
               </h4>
               {result.master_numbers_present.map((m) => (
                 <div key={m.number} className="mb-2 last:mb-0">
-                  <p className="text-sm font-bold text-[var(--ink)] font-tamil">
+                  <p className="text-sm font-bold text-foreground">
                     {m.number} — {lang === "ta" ? m.title_ta : m.title}
                   </p>
-                  <p className="text-xs text-[var(--ink-soft)] font-tamil leading-relaxed">
+                  <p className="text-xs text-muted leading-relaxed">
                     {lang === "ta" ? m.text_ta : m.text}
                   </p>
                 </div>
               ))}
-              <p className="text-[10px] text-[var(--ink-soft)] font-tamil mt-2 pt-2 border-t border-[rgba(43,33,23,0.12)]">
+              <p className="text-[10px] text-muted mt-2 pt-2 border-t border-border-soft">
                 {lang === "ta"
                   ? "குறிப்பு: இக்கணிப்பான் அடிப்படை எண்களை 1-9 ஆகக் குறைக்கிறது (நியம கால்டியன் மரபு). மாஸ்டர் எண் தகவலுக்காக மட்டும்."
                   : "Note: this calculator reduces core numbers fully to 1-9 (standard Chaldean convention). The master number is shown for information only."}
@@ -403,14 +403,14 @@ export const NumerologyPanel: React.FC<NumerologyPanelProps> = ({
           )}
 
           {/* Honest scope disclaimer */}
-          <div className="p-3.5 rounded-xl bg-[rgba(120,96,58,0.05)] border border-[rgba(43,33,23,0.2)] flex items-start gap-2">
-            <AlertTriangle className="w-4 h-4 text-[var(--ink-soft)] shrink-0 mt-0.5" />
-            <p className="text-[11px] text-[var(--ink-soft)] font-tamil leading-relaxed">
+          <div className="p-3.5 rounded-xl bg-brand-500/5 border border-border-soft flex items-start gap-2">
+            <AlertTriangle className="w-4 h-4 text-muted shrink-0 mt-0.5" />
+            <p className="text-[11px] text-muted leading-relaxed">
               {lang === "ta" ? result.disclaimer_ta : result.disclaimer}
             </p>
           </div>
 
-          <p className="text-[10px] text-[var(--ink-soft)] font-mono text-center pt-2 border-t border-[rgba(43,33,23,0.1)]">
+          <p className="text-[10px] text-muted font-mono text-center pt-2 border-t border-border-soft">
             {result.classical_source}
           </p>
         </div>
@@ -420,14 +420,14 @@ export const NumerologyPanel: React.FC<NumerologyPanelProps> = ({
           actual result. Meaning of Numbers 1-9, the Chaldean letter chart,
           and the master numbers. */}
       {reference && (
-        <div className="pt-2 border-t border-[rgba(43,33,23,0.15)]">
+        <div className="pt-2 border-t border-border-soft">
           <button
             type="button"
             onClick={() => setShowReference((v) => !v)}
-            className="w-full flex items-center justify-between px-3 py-2.5 rounded-xl bg-[var(--paper)] border border-[rgba(43,33,23,0.2)] text-xs font-semibold text-[var(--ink)] hover:border-[var(--red)] transition-all font-tamil"
+            className="w-full flex items-center justify-between px-3 py-2.5 rounded-xl bg-surface-2 border border-border-soft text-xs font-semibold text-foreground hover:border-brand-500 transition-all"
           >
             <span className="flex items-center gap-2">
-              <Table2 className="w-4 h-4 text-[var(--red)]" />
+              <Table2 className="w-4 h-4 text-brand-fg" />
               {lang === "ta"
                 ? "எண்களின் பொருள், எழுத்து அட்டவணை & மாஸ்டர் எண்கள்"
                 : "Meaning of Numbers, Letter Chart & Master Numbers"}
@@ -441,12 +441,12 @@ export const NumerologyPanel: React.FC<NumerologyPanelProps> = ({
             <div className="mt-4 space-y-6">
               {/* Meaning of Numbers 1-9 */}
               <div>
-                <h4 className="text-xs font-bold text-[var(--ink)] font-cinzel mb-2">
+                <h4 className="text-xs font-bold text-foreground font-display mb-2">
                   {lang === "ta" ? "1 முதல் 9 வரை எண்களின் பொருள்" : "Meaning of Numbers 1–9"}
                 </h4>
-                <div className="overflow-x-auto rounded-xl border border-[rgba(43,33,23,0.2)]">
-                  <table className="w-full text-[11px] font-tamil">
-                    <thead className="bg-[rgba(120,96,58,0.08)] text-[var(--ink-soft)]">
+                <div className="overflow-x-auto rounded-xl border border-border-soft">
+                  <table className="w-full text-[11px]">
+                    <thead className="bg-brand-500/5 text-muted">
                       <tr>
                         <th className="px-2 py-1.5 text-left">{lang === "ta" ? "எண்" : "No."}</th>
                         <th className="px-2 py-1.5 text-left">{lang === "ta" ? "கிரகம்" : "Planet"}</th>
@@ -460,13 +460,13 @@ export const NumerologyPanel: React.FC<NumerologyPanelProps> = ({
                       {reference.numbers.map((r) => (
                         <tr
                           key={r.number}
-                          className={`border-t border-[rgba(43,33,23,0.12)] ${
+                          className={`border-t border-border-soft ${
                             result && r.number === result.name_number
-                              ? "bg-[rgba(176,55,38,0.07)] font-semibold"
+                              ? "bg-brand-500/10 font-semibold"
                               : ""
                           }`}
                         >
-                          <td className="px-2 py-1.5 font-bold text-[var(--red-deep)]">{r.number}</td>
+                          <td className="px-2 py-1.5 font-bold text-brand-fg-strong">{r.number}</td>
                           <td className="px-2 py-1.5">{lang === "ta" ? r.planet_ta : r.planet}</td>
                           <td className="px-2 py-1.5">{lang === "ta" ? r.traits_ta : r.traits}</td>
                           <td className="px-2 py-1.5 font-mono">{r.lucky_numbers.join(", ")}</td>
@@ -485,7 +485,7 @@ export const NumerologyPanel: React.FC<NumerologyPanelProps> = ({
 
               {/* Chaldean letter chart */}
               <div>
-                <h4 className="text-xs font-bold text-[var(--ink)] font-cinzel mb-2">
+                <h4 className="text-xs font-bold text-foreground font-display mb-2">
                   {lang === "ta"
                     ? "கால்டியன் எழுத்து-எண் அட்டவணை"
                     : "Chaldean Letter–Number Chart"}
@@ -494,16 +494,16 @@ export const NumerologyPanel: React.FC<NumerologyPanelProps> = ({
                   {reference.letter_chart.map((row) => (
                     <div
                       key={row.value}
-                      className="rounded-xl border border-[rgba(43,33,23,0.2)] bg-[var(--paper)] p-2.5 text-center"
+                      className="rounded-xl border border-border-soft bg-surface-2 p-2.5 text-center"
                     >
-                      <p className="text-lg font-bold text-[var(--red-deep)]">{row.value}</p>
-                      <p className="text-[11px] font-mono text-[var(--ink-soft)]">
+                      <p className="text-lg font-bold text-brand-fg-strong">{row.value}</p>
+                      <p className="text-[11px] font-mono text-muted">
                         {row.letters.join(", ")}
                       </p>
                     </div>
                   ))}
                 </div>
-                <p className="text-[10px] text-[var(--ink-soft)] font-tamil mt-2">
+                <p className="text-[10px] text-muted mt-2">
                   {lang === "ta"
                     ? "குறிப்பு: கால்டியன் முறையில் எந்த எழுத்துக்கும் 9 ஒதுக்கப்படுவதில்லை — இது இம்முறையின் நியம அமைப்பே."
                     : "Note: in the Chaldean system no letter is assigned 9 — that exclusion is part of the standard chart."}
@@ -512,22 +512,22 @@ export const NumerologyPanel: React.FC<NumerologyPanelProps> = ({
 
               {/* Master numbers */}
               <div>
-                <h4 className="text-xs font-bold text-[var(--ink)] font-cinzel mb-2">
+                <h4 className="text-xs font-bold text-foreground font-display mb-2">
                   {lang === "ta" ? "மாஸ்டர் எண்கள் 11, 22, 33" : "Master Numbers 11, 22, 33"}
                 </h4>
                 <div className="grid grid-cols-1 sm:grid-cols-3 gap-2">
                   {reference.master_numbers.map((m) => (
                     <div
                       key={m.number}
-                      className="rounded-xl border border-[rgba(43,33,23,0.2)] bg-[var(--paper)] p-3"
+                      className="rounded-xl border border-border-soft bg-surface-2 p-3"
                     >
-                      <p className="text-xl font-bold text-[var(--red-deep)] text-center">
+                      <p className="text-xl font-bold text-brand-fg-strong text-center">
                         {m.number}
                       </p>
-                      <p className="text-[11px] font-bold text-[var(--ink)] text-center font-tamil mb-1">
+                      <p className="text-[11px] font-bold text-foreground text-center mb-1">
                         {lang === "ta" ? m.title_ta : m.title}
                       </p>
-                      <p className="text-[10px] text-[var(--ink-soft)] font-tamil leading-relaxed">
+                      <p className="text-[10px] text-muted leading-relaxed">
                         {lang === "ta" ? m.text_ta : m.text}
                       </p>
                     </div>
@@ -535,7 +535,7 @@ export const NumerologyPanel: React.FC<NumerologyPanelProps> = ({
                 </div>
               </div>
 
-              <p className="text-[10px] text-[var(--ink-soft)] font-tamil italic">
+              <p className="text-[10px] text-muted italic">
                 {lang === "ta" ? reference.note_ta : reference.note}
               </p>
             </div>

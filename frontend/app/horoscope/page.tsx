@@ -2,6 +2,8 @@
 
 import React, { useState } from "react";
 import { Header } from "@/components/Header";
+import { Footer } from "@/components/Footer";
+import { PageHero } from "@/components/ui/PageHero";
 import { RasiPickerGrid } from "@/components/RasiPickerGrid";
 import { RasiHoroscopeCard } from "@/components/RasiHoroscopeCard";
 import { RasiLoveHoroscopeCard } from "@/components/RasiLoveHoroscopeCard";
@@ -81,39 +83,35 @@ export default function HoroscopePage() {
   };
 
   return (
-    <div className="min-h-screen flex flex-col bg-[var(--paper)] text-[var(--ink)]">
+    <div className="app-shell min-h-screen flex flex-col">
       <Header lang={lang} setLang={setLang} />
 
       <main className="flex-1 max-w-7xl w-full mx-auto px-4 sm:px-6 lg:px-8 py-8 space-y-8">
-        {/* Hero Masthead */}
-        <section className="text-center space-y-2">
-          <p className="sri text-2xl">ஸ்ரீ</p>
-          <p className="over">AI Jathagam · Gochara Rasi Horoscope</p>
-          <h1 className="text-3xl sm:text-5xl font-normal text-[var(--ink)]">
-            {lang === "ta" ? "ராசி பலன்கள்" : "Horoscope"}
-          </h1>
-          <p className="font-caveat text-lg text-[var(--ink-soft)]">
-            — grounded in real transit positions, not guesswork —
-          </p>
-          <p className="max-w-2xl mx-auto text-sm text-[var(--ink-soft)] font-tamil pt-2">
-            {lang === "ta"
+        <PageHero
+          icon={<Sun className="h-7 w-7" />}
+          eyebrow="AI Jathagam · Gochara Rasi Horoscope"
+          title={lang === "ta" ? "ராசி" : "Rasi"}
+          highlight={lang === "ta" ? "பலன்கள்" : "Horoscope"}
+          tagline="— grounded in real transit positions, not guesswork —"
+          description={
+            lang === "ta"
               ? "உங்கள் ராசியைத் தேர்ந்தெடுக்கவும் — சூரிய, சந்திர, செவ்வாய் உள்ளிட்ட கிரகங்களின் தற்போதைய நிலைகளின் அடிப்படையில், கோச்சார பலன்கள் கணிக்கப்படுகிறது."
-              : "Select your Rasi to see Gochara (transit) predictions computed from the actual current positions of the planets — not a generic template."}
-          </p>
-        </section>
+              : "Select your Rasi to see Gochara (transit) predictions computed from the actual current positions of the planets — not a generic template."
+          }
+        />
 
         {/* Tab Switcher */}
         <section className="flex justify-center">
-          <div className="hand-card inline-flex flex-wrap items-center justify-center bg-[var(--paper)] border border-[rgba(43,33,23,0.25)] rounded-2xl p-1.5 gap-1 shadow-sm">
+          <div className="inline-flex flex-wrap items-center justify-center gap-1 rounded-2xl border border-line bg-surface p-1.5 shadow-soft" role="tablist">
             {TABS.map((tab) => (
               <button
                 key={tab.id}
                 type="button"
+                role="tab"
+                aria-selected={activeTab === tab.id}
                 onClick={() => handleTabChange(tab.id)}
-                className={`flex items-center gap-1.5 px-3 sm:px-4 py-2.5 rounded-xl text-xs sm:text-sm font-bold font-tamil transition-all ${
-                  activeTab === tab.id
-                    ? "bg-[var(--red)] text-white shadow-sm"
-                    : "text-[var(--ink-soft)] hover:text-[var(--ink)]"
+                className={`flex items-center gap-1.5 rounded-xl px-3 py-2.5 text-xs font-semibold transition-all sm:px-4 sm:text-sm ${
+                  activeTab === tab.id ? "brand-gradient-bg text-white shadow-soft" : "text-muted hover:text-foreground"
                 }`}
               >
                 {tab.icon}
@@ -126,7 +124,7 @@ export default function HoroscopePage() {
         {activeTab !== "love" ? (
           <>
             {/* Daily/Weekly/Monthly/Yearly: Rasi picker */}
-            <section className="hand-card p-6 sm:p-8 shadow-sm">
+            <section className="card p-6 sm:p-8">
               <RasiPickerGrid
                 selected={selectedRasi}
                 onSelect={handleSelectRasi}
@@ -134,12 +132,12 @@ export default function HoroscopePage() {
                 label={lang === "ta" ? "உங்கள் ராசியைத் தேர்ந்தெடுக்கவும்" : "Select your Rasi"}
               />
               {isLoading && (
-                <div className="mt-4 text-center text-xs text-[var(--ink-soft)] font-tamil">
+                <div className="mt-4 text-center text-sm text-muted">
                   {lang === "ta" ? "கணிக்கப்படுகிறது..." : "Computing…"}
                 </div>
               )}
               {errorMessage && (
-                <div className="mt-4 p-4 rounded-2xl bg-[rgba(176,55,38,0.08)] border border-[var(--red)] text-[var(--red-deep)] text-xs font-semibold text-center">
+                <div role="alert" className="mt-4 rounded-2xl border border-danger/30 bg-danger/10 p-4 text-center text-sm font-semibold text-danger">
                   {errorMessage}
                 </div>
               )}
@@ -154,14 +152,14 @@ export default function HoroscopePage() {
         ) : (
           <>
             {/* Love tab: two Rasi pickers */}
-            <section className="hand-card p-6 sm:p-8 shadow-sm space-y-6">
+            <section className="card p-6 sm:p-8 space-y-6">
               <RasiPickerGrid
                 selected={loveRasi1}
                 onSelect={setLoveRasi1}
                 lang={lang}
                 label={lang === "ta" ? "உங்கள் ராசி" : "Your Rasi"}
               />
-              <div className="border-t border-[rgba(43,33,23,0.15)] pt-6">
+              <div className="border-t border-border-soft pt-6">
                 <RasiPickerGrid
                   selected={loveRasi2}
                   onSelect={setLoveRasi2}
@@ -175,7 +173,7 @@ export default function HoroscopePage() {
                   type="button"
                   onClick={handleCheckLove}
                   disabled={!loveRasi1 || !loveRasi2 || loveLoading}
-                  className="btn-hand px-8 py-3 rounded-2xl bg-[var(--red)] text-white font-bold text-sm shadow-md hover:bg-[var(--red-deep)] transition-all disabled:opacity-50 flex items-center gap-2"
+                  className="btn-primary px-8 py-3"
                 >
                   {loveLoading ? (
                     <div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin" />
@@ -187,7 +185,7 @@ export default function HoroscopePage() {
               </div>
 
               {loveError && (
-                <div className="p-4 rounded-2xl bg-[rgba(176,55,38,0.08)] border border-[var(--red)] text-[var(--red-deep)] text-xs font-semibold text-center">
+                <div role="alert" className="rounded-2xl border border-danger/30 bg-danger/10 p-4 text-center text-sm font-semibold text-danger">
                   {loveError}
                 </div>
               )}
@@ -202,10 +200,7 @@ export default function HoroscopePage() {
         )}
       </main>
 
-      <footer className="border-t border-[rgba(43,33,23,0.15)] py-8 text-center text-xs text-[var(--ink-soft)] font-tamil">
-        <p>MyLoginn Astrology — கோச்சார ராசி பலன்கள்</p>
-        <p className="font-caveat text-sm mt-1 text-[var(--red)]">drawn stroke by stroke · for reference only</p>
-      </footer>
+      <Footer lang={lang} note={lang === "ta" ? "கோச்சார ராசி பலன்கள்" : "Gochara transit horoscope"} />
     </div>
   );
 }

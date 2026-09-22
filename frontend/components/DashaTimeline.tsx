@@ -30,7 +30,7 @@ export const DashaTimeline: React.FC<DashaTimelineProps> = ({
         <div>
           <h3 className="text-xl sm:text-2xl font-bold font-cinzel text-[var(--ink)] flex items-center gap-2">
             <Clock className="w-5 h-5 text-[var(--red)]" />
-            {lang === "ta" ? "5. விம்சோத்தரி தசா - புக்தி காலவரிசை" : "5. Vimshottari Dasha-Bhukti Timeline"}
+            {lang === "ta" ? "விம்சோத்தரி தசா - புக்தி காலவரிசை" : "Vimshottari Dasha-Bhukti Timeline"}
           </h3>
           <p className="text-xs text-[var(--ink-soft)] font-tamil mt-1">
             {lang === "ta"

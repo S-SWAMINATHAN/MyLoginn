@@ -59,14 +59,14 @@ export const BabyNameForm: React.FC<BabyNameFormProps> = ({ onSubmit, isLoading,
   };
 
   return (
-    <form onSubmit={handleSubmit} className="hand-card p-6 sm:p-8 shadow-sm text-[var(--ink)]">
-      <div className="flex items-center justify-between mb-6 pb-4 border-b border-[rgba(43,33,23,0.2)]">
+    <form onSubmit={handleSubmit} className="card p-6 sm:p-8 shadow-sm text-foreground">
+      <div className="flex items-center justify-between mb-6 pb-4 border-b border-border-soft">
         <div>
-          <h2 className="text-xl sm:text-2xl font-bold font-cinzel text-[var(--ink)] flex items-center gap-2">
-            <Baby className="w-6 h-6 text-[var(--red)]" />
+          <h2 className="text-xl sm:text-2xl font-bold font-display text-foreground flex items-center gap-2">
+            <Baby className="w-6 h-6 text-brand-fg" />
             {lang === "ta" ? "குழந்தையின் பிறப்பு விவரங்கள்" : "Baby's Birth Details"}
           </h2>
-          <p className="text-xs text-[var(--ink-soft)] font-tamil mt-1">
+          <p className="text-xs text-muted mt-1">
             {lang === "ta"
               ? "நட்சத்திரம் & பாதம் அடிப்படையிலான துல்லியமான பெயர் எழுத்துக்களுக்கு பிறந்த நேரம், இடம் உள்ளிடவும்"
               : "Enter exact birth time and place for accurate Nakshatra-Pada based naming syllables"}
@@ -77,16 +77,16 @@ export const BabyNameForm: React.FC<BabyNameFormProps> = ({ onSubmit, isLoading,
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5">
         {/* Optional display name */}
         <div>
-          <label className="block text-sm font-semibold text-[var(--ink-soft)] mb-1.5 font-tamil">
+          <label className="field-label">
             {lang === "ta" ? "குழந்தை / பெற்றோர் பெயர் (விருப்பம்)" : "Child / Parent Name (Optional)"}
           </label>
-          <div className="flex items-center gap-2 w-full px-3 py-2.5 bg-[var(--paper)] border border-[rgba(43,33,23,0.3)] rounded-xl focus-within:border-[var(--red)] transition-all">
-            <User className="w-4 h-4 shrink-0 text-[var(--ink-soft)]" />
+          <div className="flex items-center gap-2 w-full px-3 py-2.5 bg-surface-2 border border-line rounded-xl focus-within:border-brand-500 transition-all">
+            <User className="w-4 h-4 shrink-0 text-muted" />
             <input
               type="text"
               value={formData.name}
               onChange={(e) => setFormData({ ...formData, name: e.target.value })}
-              className="flex-1 min-w-0 bg-transparent text-[var(--ink)] placeholder:text-[var(--ink-soft)] outline-none text-sm"
+              className="flex-1 min-w-0 bg-transparent text-foreground placeholder:text-muted outline-none text-sm"
               placeholder={lang === "ta" ? "எ.கா. ராமநாதன் & மரகதம்" : "e.g. Ramanathan & Maragatham"}
             />
           </div>
@@ -94,7 +94,7 @@ export const BabyNameForm: React.FC<BabyNameFormProps> = ({ onSubmit, isLoading,
 
         {/* Gender — nothing preselected */}
         <div>
-          <label className="block text-sm font-semibold text-[var(--ink-soft)] mb-1.5 font-tamil">
+          <label className="field-label">
             {lang === "ta" ? "பாலினம் (Gender)" : "Gender"}
           </label>
           <div className="grid grid-cols-2 gap-2">
@@ -112,15 +112,15 @@ export const BabyNameForm: React.FC<BabyNameFormProps> = ({ onSubmit, isLoading,
                 }
                 className={`py-2.5 px-4 rounded-xl text-xs font-semibold border transition-all ${
                   formData.gender === key
-                    ? "bg-[var(--red)] border-[var(--red)] text-white shadow-sm"
-                    : "bg-[var(--paper)] border-[rgba(43,33,23,0.25)] text-[var(--ink)] hover:border-[var(--red)]"
+                    ? "bg-brand-600 border-brand-500 text-white shadow-sm"
+                    : "bg-surface-2 border-line text-foreground hover:border-brand-500"
                 }`}
               >
                 {text}
               </button>
             ))}
           </div>
-          <p className="text-[10px] text-[var(--ink-soft)] mt-1 font-tamil">
+          <p className="text-[10px] text-muted mt-1">
             {lang === "ta"
               ? "தேர்வு செய்யவில்லை எனில் இரு பாலினப் பெயர்களும் காட்டப்படும்."
               : "Leave unselected to see names for both."}
@@ -129,27 +129,27 @@ export const BabyNameForm: React.FC<BabyNameFormProps> = ({ onSubmit, isLoading,
 
         {/* Date of birth */}
         <div>
-          <label className="block text-sm font-semibold text-[var(--ink-soft)] mb-1.5 font-tamil">
+          <label className="field-label">
             {lang === "ta" ? "பிறந்த தேதி (Date of Birth)" : "Date of Birth"}{" "}
-            <span className="text-[var(--red)]">*</span>
+            <span className="text-brand-fg">*</span>
           </label>
-          <div className="flex items-center gap-2 w-full px-3 py-2.5 bg-[var(--paper)] border border-[rgba(43,33,23,0.3)] rounded-xl focus-within:border-[var(--red)] transition-all">
-            <Calendar className="w-4 h-4 shrink-0 text-[var(--ink-soft)]" />
+          <div className="flex items-center gap-2 w-full px-3 py-2.5 bg-surface-2 border border-line rounded-xl focus-within:border-brand-500 transition-all">
+            <Calendar className="w-4 h-4 shrink-0 text-muted" />
             <input
               type="date"
               required
               value={formData.date_of_birth}
               onChange={(e) => setFormData({ ...formData, date_of_birth: e.target.value })}
-              className="flex-1 min-w-0 bg-transparent text-[var(--ink)] outline-none text-sm"
+              className="flex-1 min-w-0 bg-transparent text-foreground outline-none text-sm"
             />
           </div>
         </div>
 
         {/* Time of birth */}
         <div>
-          <label className="block text-sm font-semibold text-[var(--ink-soft)] mb-1.5 font-tamil">
+          <label className="field-label">
             {lang === "ta" ? "பிறந்த நேரம் (Time of Birth)" : "Time of Birth"}{" "}
-            <span className="text-[var(--red)]">*</span>
+            <span className="text-brand-fg">*</span>
           </label>
           <TimeInput12h
             value={formData.time_of_birth}
@@ -178,7 +178,7 @@ export const BabyNameForm: React.FC<BabyNameFormProps> = ({ onSubmit, isLoading,
             }
           />
           {formData.latitude != null && formData.longitude != null && (
-            <p className="text-[10px] mt-1 font-mono text-[var(--ink-soft)]">
+            <p className="text-[10px] mt-1 font-mono text-muted">
               {formData.latitude.toFixed(4)}°, {formData.longitude.toFixed(4)}° ·{" "}
               {formData.timezone || "Asia/Kolkata"}
             </p>
@@ -190,7 +190,7 @@ export const BabyNameForm: React.FC<BabyNameFormProps> = ({ onSubmit, isLoading,
         <button
           type="submit"
           disabled={!canSubmit}
-          className="btn-hand px-8 sm:px-12 py-3 rounded-2xl bg-[var(--red)] text-white font-bold text-sm sm:text-base shadow-md hover:bg-[var(--red-deep)] transition-all disabled:opacity-50 flex items-center gap-2"
+          className="btn-secondary px-8 sm:px-12 py-3 rounded-2xl brand-gradient-bg text-white font-bold text-sm sm:text-base shadow-md hover:bg-brand-700 transition-all disabled:opacity-50 flex items-center gap-2"
         >
           {isLoading ? (
             <>
@@ -205,7 +205,7 @@ export const BabyNameForm: React.FC<BabyNameFormProps> = ({ onSubmit, isLoading,
           )}
         </button>
         {!canSubmit && !isLoading && (
-          <p className="text-[11px] text-[var(--ink-soft)] font-tamil">
+          <p className="text-[11px] text-muted">
             {lang === "ta"
               ? "பிறந்த தேதி மற்றும் பிறந்த இடத்தை நிரப்பவும்."
               : "Enter the date of birth and the place of birth to continue."}

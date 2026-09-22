@@ -10,9 +10,9 @@ interface MuhurthaResultsProps {
 }
 
 function ratingStyle(rating: string) {
-  if (rating === "Excellent") return { bg: "#e6f7ed", border: "#34a853", text: "#1e7e42", Icon: CheckCircle2 };
-  if (rating === "Good") return { bg: "#eef6f8", border: "#0891b2", text: "#0a5568", Icon: CheckCircle2 };
-  return { bg: "#fdecec", border: "#d93025", text: "#a31515", Icon: XCircle };
+  if (rating === "Excellent") return { bg: "rgba(22,163,74,0.10)", border: "var(--success)", text: "var(--success)", Icon: CheckCircle2 };
+  if (rating === "Good") return { bg: "var(--surface-2)", border: "var(--accent-600)", text: "var(--accent-600)", Icon: CheckCircle2 };
+  return { bg: "rgba(220,38,38,0.10)", border: "var(--danger)", text: "var(--danger)", Icon: XCircle };
 }
 
 /**
@@ -31,15 +31,15 @@ const GeneralOverviewStrip: React.FC<{ days: MuhurthaDayResult[]; lang: "ta" | "
   return (
     <div
       className="rounded-2xl border p-4 sm:p-5 mb-6"
-      style={{ borderColor: "rgba(10,37,64,0.12)", background: "rgba(255,255,255,0.6)" }}
+      style={{ borderColor: "var(--border-soft)", background: "rgb(var(--surface-rgb) / 0.6)" }}
     >
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-1.5 mb-4">
-        <h4 className="text-sm sm:text-base font-bold" style={{ color: "var(--red-deep)" }}>
+        <h4 className="text-sm sm:text-base font-bold" style={{ color: "var(--brand-fg-strong)" }}>
           {lang === "ta"
             ? "இந்த காலத்தின் பொது சுப நாட்கள் (தமிழ் காலண்டர்)"
             : "General Auspicious Days for This Period (Tamil Calendar)"}
         </h4>
-        <span className="text-xs font-semibold" style={{ color: "var(--ink-soft)" }}>
+        <span className="text-xs font-semibold" style={{ color: "var(--muted)" }}>
           {lang === "ta"
             ? `${days.length}-ல் ${cleanCount} நாட்கள் பொதுவாக சுபம்`
             : `${cleanCount} of ${days.length} days are generally auspicious`}
@@ -58,36 +58,36 @@ const GeneralOverviewStrip: React.FC<{ days: MuhurthaDayResult[]; lang: "ta" | "
               onClick={() => setExpanded(isOpen ? null : day.date)}
               className="rounded-xl border px-2 py-2 text-left transition-all hover:-translate-y-0.5"
               style={{
-                background: clean ? "#e6f7ed" : "#fdecec",
-                borderColor: clean ? "#34a85355" : "#d9302555",
+                background: clean ? "rgba(22,163,74,0.10)" : "rgba(220,38,38,0.10)",
+                borderColor: clean ? "rgba(22,163,74,0.33)" : "rgba(220,38,38,0.33)",
               }}
             >
               <div className="flex items-center justify-between">
-                <span className="text-base font-bold" style={{ color: clean ? "#1e7e42" : "#a31515" }}>
+                <span className="text-base font-bold" style={{ color: clean ? "var(--success)" : "var(--danger)" }}>
                   {dayNum}
                 </span>
                 {clean ? (
-                  <CheckCircle2 className="w-3.5 h-3.5" style={{ color: "#34a853" }} />
+                  <CheckCircle2 className="w-3.5 h-3.5" style={{ color: "var(--success)" }} />
                 ) : (
-                  <XCircle className="w-3.5 h-3.5" style={{ color: "#d93025" }} />
+                  <XCircle className="w-3.5 h-3.5" style={{ color: "var(--danger)" }} />
                 )}
               </div>
-              <div className="text-[10px] mt-0.5" style={{ color: "var(--ink-soft)" }}>
+              <div className="text-[10px] mt-0.5" style={{ color: "var(--muted)" }}>
                 {lang === "ta" ? day.vaaram_ta : day.vaaram}
               </div>
-              <div className="text-[10px]" style={{ color: "var(--ink-faint)" }}>
+              <div className="text-[10px]" style={{ color: "var(--muted)" }}>
                 {lang === "ta" ? day.tithi_ta : day.tithi}
               </div>
               {!clean && (
-                <div className="flex items-center gap-0.5 mt-1" style={{ color: "#a31515" }}>
+                <div className="flex items-center gap-0.5 mt-1" style={{ color: "var(--danger)" }}>
                   <span className="text-[9px] font-semibold">{lang === "ta" ? "காரணம்" : "Why"}</span>
                   {isOpen ? <ChevronUp className="w-3 h-3" /> : <ChevronDown className="w-3 h-3" />}
                 </div>
               )}
               {!clean && isOpen && (
-                <ul className="mt-1.5 space-y-1 border-t pt-1.5" style={{ borderColor: "#d9302533" }}>
+                <ul className="mt-1.5 space-y-1 border-t pt-1.5" style={{ borderColor: "rgba(220,38,38,0.2)" }}>
                   {(lang === "ta" ? day.universal_flags_ta : day.universal_flags).map((f, i) => (
-                    <li key={i} className="text-[9.5px] leading-snug" style={{ color: "#a31515" }}>
+                    <li key={i} className="text-[9.5px] leading-snug" style={{ color: "var(--danger)" }}>
                       • {f}
                     </li>
                   ))}
@@ -98,7 +98,7 @@ const GeneralOverviewStrip: React.FC<{ days: MuhurthaDayResult[]; lang: "ta" | "
         })}
       </div>
 
-      <p className="text-[10.5px] mt-3" style={{ color: "var(--ink-faint)" }}>
+      <p className="text-[10.5px] mt-3" style={{ color: "var(--muted)" }}>
         {lang === "ta"
           ? "அடிப்படை: ரிக்தை திதி, அமாவாசை, பத்திரை கரணம், மரண யோகம் — நிகழ்வு தேர்வுக்கு முன் பொதுவான பஞ்சாங்க பரிசோதனை."
           : "Based on Rikta Tithi, Amavasya, Bhadra Karana, and Marana Yoga — a plain Panchangam screening, independent of the event type below."}
@@ -109,18 +109,18 @@ const GeneralOverviewStrip: React.FC<{ days: MuhurthaDayResult[]; lang: "ta" | "
 
 export const MuhurthaResults: React.FC<MuhurthaResultsProps> = ({ result, lang }) => {
   return (
-    <div className="palm-leaf-dark p-6 sm:p-8">
-      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 mb-5 pb-4 border-b border-[rgba(10,37,64,0.08)]">
+    <div className="card p-6 sm:p-8">
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 mb-5 pb-4 border-b border-border-soft">
         <div>
-          <h3 className="text-lg font-bold" style={{ color: "var(--ink)" }}>
+          <h3 className="text-lg font-bold" style={{ color: "var(--foreground)" }}>
             {lang === "ta" ? "தேடல் முடிவுகள்" : "Search Results"}{" "}
-            <span className="text-sm font-normal" style={{ color: "var(--ink-soft)" }}>
+            <span className="text-sm font-normal" style={{ color: "var(--muted)" }}>
               ({result.start_date} → {result.end_date})
             </span>
           </h3>
           {result.place && (
-            <p className="text-xs flex items-center gap-1 mt-1" style={{ color: "var(--ink-soft)" }}>
-              <MapPin className="w-3.5 h-3.5" style={{ color: "var(--red)" }} />
+            <p className="text-xs flex items-center gap-1 mt-1" style={{ color: "var(--muted)" }}>
+              <MapPin className="w-3.5 h-3.5" style={{ color: "var(--brand-fg)" }} />
               {result.place}
               {result.timezone ? ` · ${result.timezone}` : ""}
               {typeof result.latitude === "number" && typeof result.longitude === "number"
@@ -129,7 +129,7 @@ export const MuhurthaResults: React.FC<MuhurthaResultsProps> = ({ result, lang }
             </p>
           )}
         </div>
-        <span className="text-xs font-semibold" style={{ color: "var(--red)" }}>
+        <span className="text-xs font-semibold" style={{ color: "var(--brand-fg)" }}>
           {result.best_days.length} {lang === "ta" ? "நல்ல நாட்கள் கிடைத்தன" : "good day(s) found"}
         </span>
       </div>
@@ -138,7 +138,7 @@ export const MuhurthaResults: React.FC<MuhurthaResultsProps> = ({ result, lang }
       <GeneralOverviewStrip days={result.days} lang={lang} />
 
       {result.event_type !== "general" && (
-        <h4 className="text-sm font-bold mb-3" style={{ color: "var(--red-deep)" }}>
+        <h4 className="text-sm font-bold mb-3" style={{ color: "var(--brand-fg-strong)" }}>
           {lang === "ta"
             ? result.event_type === "marriage"
               ? "திருமணத்திற்கான விரிவான நாள்வாரி பரிசோதனை"
@@ -165,7 +165,7 @@ export const MuhurthaResults: React.FC<MuhurthaResultsProps> = ({ result, lang }
                     <div className="font-bold text-sm" style={{ color: s.text }}>
                       {day.date} — {lang === "ta" ? day.vaaram_ta : day.vaaram}
                     </div>
-                    <div className="text-xs" style={{ color: "var(--ink-soft)" }}>
+                    <div className="text-xs" style={{ color: "var(--muted)" }}>
                       {lang === "ta"
                         ? `${day.tithi_ta} · ${day.nakshatra_ta} · ${day.karanam_ta}`
                         : `${day.tithi} · ${day.nakshatra} · ${day.karanam}`}
@@ -190,7 +190,7 @@ export const MuhurthaResults: React.FC<MuhurthaResultsProps> = ({ result, lang }
 
               <div
                 className="mt-3 pt-3 border-t flex flex-wrap gap-x-5 gap-y-1 text-[11px]"
-                style={{ borderColor: s.border + "33", color: "var(--ink-faint)" }}
+                style={{ borderColor: s.border + "33", color: "var(--muted)" }}
               >
                 <span>
                   {lang === "ta" ? "ராகு காலம்" : "Rahu Kalam"}: {day.rahu_kalam}
@@ -228,7 +228,7 @@ export const MuhurthaResults: React.FC<MuhurthaResultsProps> = ({ result, lang }
 
       <p
         className="text-[11px] mt-5 pt-4 border-t"
-        style={{ borderColor: "rgba(10,37,64,0.08)", color: "var(--ink-faint)" }}
+        style={{ borderColor: "var(--border-soft)", color: "var(--muted)" }}
       >
         {lang === "ta" ? "ஆதாரம்" : "Sources"}: {result.classical_sources.join(" · ")}
       </p>

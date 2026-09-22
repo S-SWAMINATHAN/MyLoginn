@@ -4,15 +4,10 @@ import React, { useState, useRef, useEffect } from "react";
 import { useJathagamTheme } from "@/lib/jathagamTheme";
 import { ChartResponse } from "@/lib/types";
 import {
-  Printer,
-  Palette,
-  Type,
   Sparkles,
   BookOpen,
   Calendar,
   Compass,
-  ChevronDown,
-  ChevronUp,
   FileText,
   ShieldCheck,
   Flame,
@@ -60,7 +55,6 @@ export const VakhyamCompleteCard: React.FC<VakhyamCompleteCardProps> = ({ chart,
   const [bodyColor, setBodyColor] = useState("#1e3a8a"); // Royal Blue
   const [paperBg, setPaperBg] = useState("#fcf8ed"); // Antique Parchment
   const [fontFamily, setFontFamily] = useState<string>("'Kavivanar', cursive");
-  const [showCustomizer, setShowCustomizer] = useState(false);
   
 
   // This card used to own its own colour/font state, which is why changing it
@@ -86,7 +80,9 @@ export const VakhyamCompleteCard: React.FC<VakhyamCompleteCardProps> = ({ chart,
     setFontFamily(jatTheme.font.stack);
 
   }, [jatTheme.palette, jatTheme.font]);
-  const [activeSection, setActiveSection] = useState<
+  // Section-view filter had a UI toggle only in the removed per-card
+  // toolbar; it always defaults to "all" now, showing every section.
+  const [activeSection] = useState<
     "all" | "birth" | "chakras" | "upagrahas" | "dashas" | "ashtakavarga"
   >("all");
 
@@ -217,52 +213,6 @@ export const VakhyamCompleteCard: React.FC<VakhyamCompleteCardProps> = ({ chart,
   const induLagnaDeg = (moonPos.total_degree + 15.0) % 360;
   const beejaSphutamDeg = (sunDeg + (venPos.total_degree || 0) + (jupPos.total_degree || 0)) % 360;
 
-  // Curated Palettes Presets
-  const curatedPalettes = [
-    {
-      name: "பாரம்பரிய சிகப்பு-நீலம் (Red & Blue)",
-      accent: "#b03726",
-      body: "#1e3a8a",
-      bg: "#fcf8ed",
-    },
-    {
-      name: "செந்தூரம் & மைக்கரி (Vermilion & Charcoal)",
-      accent: "#c02626",
-      body: "#1f2937",
-      bg: "#fffdf5",
-    },
-    {
-      name: "கோவில் பொன் & அரக்கு (Gold & Maroon)",
-      accent: "#991b1b",
-      body: "#78350f",
-      bg: "#fffbeb",
-    },
-    {
-      name: "ராஜ நீலம் & கரும்சிவப்பு (Indigo & Crimson)",
-      accent: "#881337",
-      body: "#1e40af",
-      bg: "#faf5ff",
-    },
-    {
-      name: "சுப மரகதம் & நீலம் (Emerald & Blue)",
-      accent: "#15803d",
-      body: "#1e3a8a",
-      bg: "#f0fdf4",
-    },
-  ];
-
-  // Strictly Handwritten Cursive Fonts
-  const handwrittenFonts = [
-    { label: "கவிவாணர் (Kavivanar - பாரம்பரிய தமிழ் கையெழுத்து)", value: "'Kavivanar', cursive" },
-    { label: "கலாம் (Kalam - சாஸ்திர தூரிகை கையெழுத்து)", value: "'Kalam', cursive" },
-    { label: "பாலூ தம்பி (Baloo Thambi 2 - வட்டெழுத்து நளினம்)", value: "'Baloo Thambi 2', cursive" },
-    { label: "கேவியட் (Caveat - துரித கையெழுத்துக் குறிப்பேடு)", value: "'Caveat', 'Kavivanar', cursive" },
-  ];
-
-  const handlePrint = () => {
-    window.print();
-  };
-
   // 4x4 South Indian Box Renderer
   const renderSouthIndianSign = (
     signNum: number,
@@ -317,229 +267,11 @@ export const VakhyamCompleteCard: React.FC<VakhyamCompleteCardProps> = ({ chart,
   return (
     <div className="vakhyam-master-wrapper w-full my-6 font-tamil">
       {/* ───────────────────────────────────────────────────────────
-          TOP INTERACTIVE CUSTOMIZER TOOLBAR
-      ─────────────────────────────────────────────────────────── */}
-      <div className="no-print bg-[#fffdfa] border-2 border-[#8b5a2b]/35 rounded-2xl p-3.5 mb-5 shadow-md">
-        <div className="flex flex-wrap items-center justify-between gap-3 border-b border-[#8b5a2b]/20 pb-2.5">
-          <div className="flex items-center gap-2">
-            <span
-              className="text-xl font-bold font-script"
-              style={{ color: accentColor }}
-            >
-              ஸ்ரீ
-            </span>
-            <div>
-              <h3 className="text-sm font-bold text-[#2b2117]">
-                {lang === "ta"
-                  ? "வாக்கிய பஞ்சாங்க கையெழுத்து வடிவமைப்பு & வண்ணக் கட்டுப்பாடு"
-                  : "Traditional Vakhyam Handwritten Styling & Color Controls"}
-              </h3>
-              <p className="text-[11px] text-[#6f6049]">
-                {lang === "ta"
-                  ? "சூரிய சித்தாந்த வாக்கிய கணிதம் (சிவப்பு & நீலம் பாரம்பரிய கையெழுத்து மை)"
-                  : "Classical Surya Siddhanta Vakkiyam (Default: Red Headings & Blue Body Ink)"}
-              </p>
-            </div>
-          </div>
-
-          <div className="flex items-center gap-2 flex-wrap">
-            <button
-              type="button"
-              onClick={() => setShowCustomizer(!showCustomizer)}
-              className="px-3 py-1.5 rounded-xl border border-[#8b5a2b]/40 bg-[#fffaf0] hover:bg-[#f5ebd2] text-xs font-bold text-[#6b1426] flex items-center gap-1.5 transition-all shadow-xs"
-            >
-              <Palette className="w-3.5 h-3.5 text-[#b03726]" />
-              <span>{showCustomizer ? "அமைப்புகளை மறைக்க" : "வண்ணம் & எழுத்துரு மாற்று"}</span>
-              {showCustomizer ? <ChevronUp className="w-3.5 h-3.5" /> : <ChevronDown className="w-3.5 h-3.5" />}
-            </button>
-
-            <button
-              type="button"
-              onClick={handlePrint}
-              className="px-3.5 py-1.5 rounded-xl bg-[#8e2b1c] hover:bg-[#6b1426] text-white text-xs font-bold flex items-center gap-1.5 transition-all shadow-sm"
-              title="அச்சிடுக (Print / Save as PDF)"
-            >
-              <Printer className="w-3.5 h-3.5" />
-              <span>{lang === "ta" ? "முழுப் பக்கத்தை அச்சிடுக" : "Print Full Page"}</span>
-            </button>
-          </div>
-        </div>
-
-        {/* Expandable Controls Tray */}
-        {showCustomizer && (
-          <div className="mt-3 pt-2 text-xs space-y-3.5 animate-fade-in">
-            {/* 1-Click Curated Palettes */}
-            <div>
-              <span className="font-bold text-[#6b1426] block mb-1.5 flex items-center gap-1">
-                <Sparkles className="w-3.5 h-3.5 text-[#b03726]" />
-                விரைவு வண்ணத் தொகுப்புகள் (1-Click Color Palettes):
-              </span>
-              <div className="flex flex-wrap gap-2">
-                {curatedPalettes.map((p, idx) => (
-                  <button
-                    key={idx}
-                    type="button"
-                    onClick={() => {
-                      setAccentColor(p.accent);
-                      setBodyColor(p.body);
-                      setPaperBg(p.bg);
-                    }}
-                    className="px-2.5 py-1.5 rounded-xl border border-[#8b5a2b]/30 text-[11px] font-medium flex items-center gap-1.5 transition-transform hover:scale-102 bg-white"
-                    style={{
-                      boxShadow: accentColor === p.accent && bodyColor === p.body ? "0 0 0 2px #b03726" : "none",
-                    }}
-                  >
-                    <span className="w-3 h-3 rounded-full border border-black/20" style={{ backgroundColor: p.accent }} />
-                    <span className="w-3 h-3 rounded-full border border-black/20" style={{ backgroundColor: p.body }} />
-                    <span>{p.name}</span>
-                  </button>
-                ))}
-              </div>
-            </div>
-
-            <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 border-t border-[#8b5a2b]/15 pt-3">
-              {/* Custom Accent Color (Red default) */}
-              <div>
-                <label className="font-bold text-[#6b1426] flex items-center justify-between mb-1">
-                  <span>தலைப்பு & மங்கள மை (Accent Ink):</span>
-                  <span className="font-mono text-[10px] uppercase text-[#6f6049]">{accentColor}</span>
-                </label>
-                <div className="flex items-center gap-2">
-                  <input
-                    type="color"
-                    value={accentColor}
-                    onChange={(e) => setAccentColor(e.target.value)}
-                    className="w-8 h-8 rounded-lg border border-[#8b5a2b]/40 cursor-pointer p-0.5 bg-transparent"
-                  />
-                  <div className="flex gap-1.5 flex-wrap">
-                    {["#b03726", "#991b1b", "#7f1d1d", "#c2410c", "#6b21a8", "#15803d"].map((c) => (
-                      <button
-                        key={c}
-                        type="button"
-                        onClick={() => setAccentColor(c)}
-                        className="w-5 h-5 rounded-full border border-black/20 transition-transform hover:scale-115"
-                        style={{ backgroundColor: c }}
-                        title={c}
-                      />
-                    ))}
-                  </div>
-                </div>
-              </div>
-
-              {/* Custom Body Color (Royal Blue default) */}
-              <div>
-                <label className="font-bold text-[#6b1426] flex items-center justify-between mb-1">
-                  <span>விவரம் & ஸ்புட கணித மை (Body Ink):</span>
-                  <span className="font-mono text-[10px] uppercase text-[#6f6049]">{bodyColor}</span>
-                </label>
-                <div className="flex items-center gap-2">
-                  <input
-                    type="color"
-                    value={bodyColor}
-                    onChange={(e) => setBodyColor(e.target.value)}
-                    className="w-8 h-8 rounded-lg border border-[#8b5a2b]/40 cursor-pointer p-0.5 bg-transparent"
-                  />
-                  <div className="flex gap-1.5 flex-wrap">
-                    {["#1e3a8a", "#0f3b7a", "#0369a1", "#1f2937", "#2b2117", "#312e81"].map((c) => (
-                      <button
-                        key={c}
-                        type="button"
-                        onClick={() => setBodyColor(c)}
-                        className="w-5 h-5 rounded-full border border-black/20 transition-transform hover:scale-115"
-                        style={{ backgroundColor: c }}
-                        title={c}
-                      />
-                    ))}
-                  </div>
-                </div>
-              </div>
-
-              {/* Custom Paper Tone */}
-              <div>
-                <label className="font-bold text-[#6b1426] flex items-center justify-between mb-1">
-                  <span>சுவடித் தாள் வண்ணம் (Paper Tone):</span>
-                  <span className="font-mono text-[10px] uppercase text-[#6f6049]">{paperBg}</span>
-                </label>
-                <div className="flex items-center gap-2">
-                  <input
-                    type="color"
-                    value={paperBg}
-                    onChange={(e) => setPaperBg(e.target.value)}
-                    className="w-8 h-8 rounded-lg border border-[#8b5a2b]/40 cursor-pointer p-0.5 bg-transparent"
-                  />
-                  <div className="flex gap-1.5 flex-wrap">
-                    {["#fcf8ed", "#fff8e1", "#fbf5e8", "#ffffff", "#f4ecd8"].map((c) => (
-                      <button
-                        key={c}
-                        type="button"
-                        onClick={() => setPaperBg(c)}
-                        className="w-5 h-5 rounded-full border border-black/30 transition-transform hover:scale-115"
-                        style={{ backgroundColor: c }}
-                        title={c}
-                      />
-                    ))}
-                  </div>
-                </div>
-              </div>
-            </div>
-
-            {/* Strictly Handwritten Font Selector */}
-            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 border-t border-[#8b5a2b]/15 pt-3">
-              <div>
-                <label className="font-bold text-[#6b1426] block mb-1 flex items-center gap-1">
-                  <Type className="w-3.5 h-3.5 text-[#b03726]" />
-                  <span>கையெழுத்து எழுத்துரு (Only Handwritten Fonts):</span>
-                </label>
-                <select
-                  value={fontFamily}
-                  onChange={(e) => setFontFamily(e.target.value)}
-                  className="w-full text-xs font-bold rounded-xl border border-[#8b5a2b]/35 p-2 bg-white text-[#2b2117] focus:outline-none focus:ring-1 focus:ring-[#b03726]"
-                >
-                  {handwrittenFonts.map((f, idx) => (
-                    <option key={idx} value={f.value}>
-                      {f.label}
-                    </option>
-                  ))}
-                </select>
-              </div>
-
-              {/* View Section Filter */}
-              <div>
-                <label className="font-bold text-[#6b1426] block mb-1 flex items-center gap-1">
-                  <BookOpen className="w-3.5 h-3.5 text-[#b03726]" />
-                  <span>பிரிவுத் தேர்வு (Section View):</span>
-                </label>
-                <div className="flex gap-1.5 flex-wrap">
-                  {[
-                    { id: "all", label: "முழுப் பக்கம் (Full)" },
-                    { id: "birth", label: "ஜனன விபரம் & நாழிகை" },
-                    { id: "chakras", label: "4 சக்கரங்கள் & ஸ்புடம்" },
-                    { id: "upagrahas", label: "உபகிரகங்கள்" },
-                    { id: "dashas", label: "தசா புக்தி" },
-                    { id: "ashtakavarga", label: "அஷ்டகவர்க்கம்" },
-                  ].map((sec) => (
-                    <button
-                      key={sec.id}
-                      type="button"
-                      onClick={() => setActiveSection(sec.id as any)}
-                      className={`px-2 py-1 rounded-xl text-xs font-bold border transition-all ${
-                        activeSection === sec.id
-                          ? "bg-[#8e2b1c] text-white border-[#8e2b1c]"
-                          : "bg-white text-[#6f6049] border-[#8b5a2b]/25 hover:bg-[#fffaf0]"
-                      }`}
-                    >
-                      {sec.label}
-                    </button>
-                  ))}
-                </div>
-              </div>
-            </div>
-          </div>
-        )}
-      </div>
-
-      {/* ───────────────────────────────────────────────────────────
           THE FULL-PAGE HANDWRITTEN VAKHYAM MANUSCRIPT CARD
+          (Per-card colour/font toolbar removed — the global
+          JathagamThemePanel is the single source of truth for
+          styling now; accentColor/bodyColor/paperBg/fontFamily below
+          are still driven live by that panel via useJathagamTheme().)
       ─────────────────────────────────────────────────────────── */}
       <div
         ref={cardRef}

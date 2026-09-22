@@ -33,7 +33,7 @@ export const RasiPickerGrid: React.FC<RasiPickerGridProps> = ({
   return (
     <div>
       {label && (
-        <div className="text-xs font-semibold text-[var(--ink-soft)] mb-2 font-tamil">
+        <div className="text-xs font-semibold text-muted mb-2">
           {label}
         </div>
       )}
@@ -47,12 +47,12 @@ export const RasiPickerGrid: React.FC<RasiPickerGridProps> = ({
               onClick={() => onSelect(r.num)}
               className={`flex flex-col items-center justify-center gap-1 py-3 px-2 rounded-2xl border transition-all ${
                 isSelected
-                  ? "bg-[var(--red)] border-[var(--red)] text-white shadow-md scale-[1.03]"
-                  : "bg-[var(--paper)] border-[rgba(43,33,23,0.2)] text-[var(--ink)] hover:border-[var(--red)] hover:scale-[1.02]"
+                  ? "bg-brand-600 border-brand-500 text-white shadow-md scale-[1.03]"
+                  : "bg-surface-2 border-border-soft text-foreground hover:border-brand-500 hover:scale-[1.02]"
               }`}
             >
-              <span className="text-lg font-bold font-tamil">{r.ta.charAt(0)}</span>
-              <span className="text-[11px] font-tamil font-semibold text-center leading-tight">
+              <span className="text-lg font-bold">{r.ta.charAt(0)}</span>
+              <span className="text-[11px] font-semibold text-center leading-tight">
                 {lang === "ta" ? r.ta : r.sa}
               </span>
             </button>

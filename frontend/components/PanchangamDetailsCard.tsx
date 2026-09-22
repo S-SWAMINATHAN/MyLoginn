@@ -32,9 +32,6 @@ export const PanchangamDetailsCard: React.FC<PanchangamDetailsCardProps> = ({ de
       {/* Section Header */}
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 border-b border-[#a3917a]/30 pb-4">
         <div className="flex items-center gap-2.5">
-          <div className="w-8 h-8 rounded-xl bg-[#b03726] border border-[#8e2b1c] flex items-center justify-center text-white font-bold text-sm">
-            2
-          </div>
           <div>
             <h3 className="text-lg sm:text-xl font-bold font-script text-[#2b2117] flex items-center gap-2">
               <Sparkles className="w-5 h-5 text-[#b03726]" />

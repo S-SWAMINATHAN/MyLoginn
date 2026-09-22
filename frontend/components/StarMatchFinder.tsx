@@ -50,7 +50,7 @@ function Stars({ count }: { count: number }) {
         <Star
           key={n}
           className={`w-3.5 h-3.5 ${
-            n <= count ? "fill-[var(--red)] text-[var(--red)]" : "text-[rgba(43,33,23,0.2)]"
+            n <= count ? "fill-brand-500 text-brand-fg" : "text-muted/30"
           }`}
         />
       ))}
@@ -125,26 +125,26 @@ export const StarMatchFinder: React.FC<Props> = ({ lang }) => {
     }) || [];
 
   return (
-    <div className="space-y-6 text-[var(--ink)]">
-      <form onSubmit={handleFind} className="hand-card p-6 sm:p-8 shadow-sm space-y-5">
+    <div className="space-y-6 text-foreground">
+      <form onSubmit={handleFind} className="card p-6 sm:p-8 shadow-sm space-y-5">
         <div className="flex items-center gap-2 mb-2">
-          <Crown className="w-5 h-5 text-[var(--red)]" />
-          <h2 className="text-xl sm:text-2xl font-bold font-cinzel text-[var(--ink)]">
+          <Crown className="w-5 h-5 text-brand-fg" />
+          <h2 className="text-xl sm:text-2xl font-bold font-display text-foreground">
             {lang === "ta" ? "நட்சத்திர பொருத்த தேடல் (MATCH Finder)" : "Star Match Finder — MATCH"}
           </h2>
         </div>
 
         <div className="grid grid-cols-1 lg:grid-cols-4 gap-4">
           <div className="lg:col-span-1">
-            <label className="block text-xs text-[var(--ink-soft)] mb-1 font-tamil">
+            <label className="block text-xs text-muted mb-1">
               {lang === "ta" ? "யாருடைய நட்சத்திரம்?" : "Input belongs to"}
             </label>
-            <div className="flex bg-[var(--paper)] border border-[rgba(43,33,23,0.25)] rounded-xl p-1">
+            <div className="flex bg-surface-2 border border-line rounded-xl p-1">
               <button
                 type="button"
                 onClick={() => setGender("boy")}
                 className={`flex-1 py-2 rounded-lg text-xs font-bold transition-all ${
-                  gender === "boy" ? "bg-[var(--red)] text-white shadow-sm" : "text-[var(--ink-soft)]"
+                  gender === "boy" ? "brand-gradient-bg text-white shadow-sm" : "text-muted"
                 }`}
               >
                 {lang === "ta" ? "மணமகன் (Boy)" : "Boy"}
@@ -153,7 +153,7 @@ export const StarMatchFinder: React.FC<Props> = ({ lang }) => {
                 type="button"
                 onClick={() => setGender("girl")}
                 className={`flex-1 py-2 rounded-lg text-xs font-bold transition-all ${
-                  gender === "girl" ? "bg-[var(--red)] text-white shadow-sm" : "text-[var(--ink-soft)]"
+                  gender === "girl" ? "brand-gradient-bg text-white shadow-sm" : "text-muted"
                 }`}
               >
                 {lang === "ta" ? "மணமகள் (Girl)" : "Girl"}
@@ -162,7 +162,7 @@ export const StarMatchFinder: React.FC<Props> = ({ lang }) => {
           </div>
 
           <div className="lg:col-span-2">
-            <label className="block text-xs text-[var(--ink-soft)] mb-1 font-tamil">
+            <label className="block text-xs text-muted mb-1">
               {gender === "boy"
                 ? lang === "ta"
                   ? "மணமகன் நட்சத்திரம்"
@@ -174,7 +174,7 @@ export const StarMatchFinder: React.FC<Props> = ({ lang }) => {
             <select
               value={inputNak}
               onChange={(e) => setInputNak(e.target.value)}
-              className="w-full px-3 py-2.5 bg-[var(--paper)] border border-[rgba(43,33,23,0.3)] rounded-xl text-[var(--ink)] text-sm font-tamil focus:outline-none focus:border-[var(--red)]"
+              className="w-full px-3 py-2.5 bg-surface-2 border border-line rounded-xl text-foreground text-sm focus:outline-none focus:border-brand-500"
             >
               {NAKSHATRAS.map((n, idx) => (
                 <option key={idx} value={n.en}>
@@ -185,7 +185,7 @@ export const StarMatchFinder: React.FC<Props> = ({ lang }) => {
           </div>
 
           <div className="lg:col-span-1">
-            <label className="block text-xs text-[var(--ink-soft)] mb-1 font-tamil">
+            <label className="block text-xs text-muted mb-1">
               {lang === "ta" ? "பாதம் (1-4)" : "Pada (1-4)"}
             </label>
             <div className="grid grid-cols-4 gap-1.5">
@@ -196,8 +196,8 @@ export const StarMatchFinder: React.FC<Props> = ({ lang }) => {
                   onClick={() => setInputPada(p)}
                   className={`py-2 rounded-xl text-xs font-bold border transition-all ${
                     inputPada === p
-                      ? "bg-[var(--red)] border-[var(--red)] text-white shadow-sm"
-                      : "bg-[var(--paper)] border-[rgba(43,33,23,0.25)] text-[var(--ink)]"
+                      ? "bg-brand-600 border-brand-500 text-white shadow-sm"
+                      : "bg-surface-2 border-line text-foreground"
                   }`}
                 >
                   {p}
@@ -207,15 +207,15 @@ export const StarMatchFinder: React.FC<Props> = ({ lang }) => {
           </div>
         </div>
 
-        <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 pt-2 border-t border-[rgba(43,33,23,0.12)]">
+        <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 pt-2 border-t border-border-soft">
           <div>
-            <label className="block text-xs text-[var(--ink-soft)] mb-1 font-tamil">
+            <label className="block text-xs text-muted mb-1">
               {lang === "ta" ? "குறிப்பிட்ட ராசி மட்டும் (விருப்பத்திற்கு)" : "Filter by Target Rasi"}
             </label>
             <select
               value={filterRasi}
               onChange={(e) => setFilterRasi(Number(e.target.value))}
-              className="w-full px-3 py-2 bg-[var(--paper)] border border-[rgba(43,33,23,0.3)] rounded-xl text-[var(--ink)] text-xs font-tamil focus:outline-none focus:border-[var(--red)]"
+              className="w-full px-3 py-2 bg-surface-2 border border-line rounded-xl text-foreground text-xs focus:outline-none focus:border-brand-500"
             >
               {RASI_OPTIONS.map((r) => (
                 <option key={r.num} value={r.num}>
@@ -226,13 +226,13 @@ export const StarMatchFinder: React.FC<Props> = ({ lang }) => {
           </div>
 
           <div>
-            <label className="block text-xs text-[var(--ink-soft)] mb-1 font-tamil">
+            <label className="block text-xs text-muted mb-1">
               {lang === "ta" ? "வரிசைப்படுத்துக" : "Sort By"}
             </label>
             <select
               value={sortBy}
               onChange={(e) => setSortBy(e.target.value)}
-              className="w-full px-3 py-2 bg-[var(--paper)] border border-[rgba(43,33,23,0.3)] rounded-xl text-[var(--ink)] text-xs font-tamil focus:outline-none focus:border-[var(--red)]"
+              className="w-full px-3 py-2 bg-surface-2 border border-line rounded-xl text-foreground text-xs focus:outline-none focus:border-brand-500"
             >
               <option value="score">{lang === "ta" ? "Score % (அதிகபட்சம்)" : "Score % (Highest first)"}</option>
               <option value="like_rate">{lang === "ta" ? "LIKE-RATE (நட்சத்திரங்கள்)" : "LIKE-RATE (Stars)"}</option>
@@ -244,7 +244,7 @@ export const StarMatchFinder: React.FC<Props> = ({ lang }) => {
             <button
               type="submit"
               disabled={loading}
-              className="btn-hand w-full py-2.5 rounded-xl bg-[var(--red)] text-white font-bold text-xs sm:text-sm shadow-md hover:bg-[var(--red-deep)] transition-all disabled:opacity-50 flex items-center justify-center gap-2"
+              className="btn-secondary w-full py-2.5 rounded-xl brand-gradient-bg text-white font-bold text-xs sm:text-sm shadow-md hover:bg-brand-700 transition-all disabled:opacity-50 flex items-center justify-center gap-2"
             >
               {loading ? (
                 <div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin" />
@@ -258,7 +258,7 @@ export const StarMatchFinder: React.FC<Props> = ({ lang }) => {
       </form>
 
       {error && (
-        <div className="p-4 bg-[rgba(176,55,38,0.08)] border border-[var(--red)] rounded-2xl text-[var(--red-deep)] text-xs font-tamil">
+        <div className="p-4 bg-brand-500/10 border border-brand-500 rounded-2xl text-brand-fg-strong text-xs">
           {error}
         </div>
       )}
@@ -266,17 +266,17 @@ export const StarMatchFinder: React.FC<Props> = ({ lang }) => {
       {data && (
         <div id="match-results" className="space-y-6 animate-fade-in">
           {/* Summary Banner */}
-          <div className="hand-card p-5 shadow-sm flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+          <div className="card p-5 shadow-sm flex flex-col sm:flex-row sm:items-center justify-between gap-3">
             <div>
-              <div className="text-xs text-[var(--ink-soft)] font-tamil">
+              <div className="text-xs text-muted">
                 {lang === "ta" ? "உள்ளீடு விவரங்கள்:" : "Input Star:"}
               </div>
-              <div className="text-base font-bold text-[var(--ink)] font-tamil">
+              <div className="text-base font-bold text-foreground">
                 {gender === "boy" ? (lang === "ta" ? "மணமகன்: " : "Boy: ") : lang === "ta" ? "மணமகள்: " : "Girl: "}
-                <span className="text-[var(--red-deep)]">
+                <span className="text-brand-fg-strong">
                   {lang === "ta" ? data.input_details.nakshatra_ta : data.input_details.nakshatra}
                 </span>
-                <span className="text-[var(--ink-soft)]">
+                <span className="text-muted">
                   {" "}
                   ({lang === "ta" ? data.input_details.rasi_ta : data.input_details.rasi}, பாதம்{" "}
                   {data.input_details.pada})
@@ -284,10 +284,10 @@ export const StarMatchFinder: React.FC<Props> = ({ lang }) => {
               </div>
             </div>
             <div className="flex gap-2 text-xs">
-              <span className="px-2.5 py-1 bg-[rgba(176,55,38,0.08)] text-[var(--red-deep)] rounded-full font-bold border border-[var(--red)]">
+              <span className="px-2.5 py-1 bg-brand-500/10 text-brand-fg-strong rounded-full font-bold border border-brand-500">
                 {data.summary.total_combinations} {lang === "ta" ? "ஆய்வு செய்யப்பட்டது" : "Evaluated"}
               </span>
-              <span className="px-2.5 py-1 bg-[var(--paper)] border border-[rgba(43,33,23,0.2)] rounded-full text-[var(--ink-soft)]">
+              <span className="px-2.5 py-1 bg-surface-2 border border-border-soft rounded-full text-muted">
                 Target:{" "}
                 {gender === "boy"
                   ? lang === "ta"
@@ -301,40 +301,40 @@ export const StarMatchFinder: React.FC<Props> = ({ lang }) => {
           </div>
 
           {/* Rasi-wise Summary */}
-          <div className="hand-card p-5 shadow-sm">
-            <h3 className="text-sm font-bold text-[var(--ink)] flex items-center gap-2 mb-3">
-              <Award className="w-4 h-4 text-[var(--red)]" />{" "}
+          <div className="card p-5 shadow-sm">
+            <h3 className="text-sm font-bold text-foreground flex items-center gap-2 mb-3">
+              <Award className="w-4 h-4 text-brand-fg" />{" "}
               {lang === "ta" ? "ராசி வாரியாக LIKE-RATE சுருக்கம்" : "Rasi-wise LIKE-RATE Summary"}
             </h3>
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3">
               {data.rasi_summary.map((r) => (
                 <div
                   key={r.rasi_number}
-                  className="bg-[rgba(120,96,58,0.05)] border border-[rgba(43,33,23,0.2)] rounded-2xl p-3 space-y-1"
+                  className="bg-brand-500/5 border border-border-soft rounded-2xl p-3 space-y-1"
                 >
                   <div className="flex items-center justify-between">
-                    <span className="text-sm font-bold text-[var(--ink)] font-tamil">
+                    <span className="text-sm font-bold text-foreground">
                       {lang === "ta" ? r.rasi_ta : r.rasi}{" "}
-                      <span className="text-[10px] text-[var(--ink-soft)]">({r.rasi_lord})</span>
+                      <span className="text-[10px] text-muted">({r.rasi_lord})</span>
                     </span>
-                    <span className="text-xs font-caveat font-bold text-base text-[var(--red-deep)]">
+                    <span className="text-xs font-bold text-base text-brand-fg-strong">
                       {r.avg_score}% avg
                     </span>
                   </div>
-                  <div className="text-xs text-[var(--ink-soft)] font-tamil">
+                  <div className="text-xs text-muted">
                     Best: {lang === "ta" ? r.best_nakshatra_ta : r.best_nakshatra} P{r.best_pada} — {r.best_score}%
                   </div>
                   <div className="flex gap-2 text-[10px]">
-                    <span className="px-1.5 py-0.5 bg-[rgba(46,125,50,0.1)] text-[#1b5e20] rounded-full border border-[#2e7d32]">
+                    <span className="px-1.5 py-0.5 bg-success/10 text-success rounded-full border border-success">
                       Uthama {r.uthama_count}
                     </span>
-                    <span className="px-1.5 py-0.5 bg-[var(--paper)] text-[var(--ink-soft)] rounded-full border border-[rgba(43,33,23,0.2)]">
+                    <span className="px-1.5 py-0.5 bg-surface-2 text-muted rounded-full border border-border-soft">
                       Safe {r.rajju_safe_count}/{r.total_combinations}
                     </span>
                   </div>
                   <button
                     onClick={() => setFilterRasi(r.rasi_number)}
-                    className="text-[10px] text-[var(--red-deep)] underline mt-1 block"
+                    className="text-[10px] text-brand-fg-strong underline mt-1 block"
                   >
                     {lang === "ta" ? "இந்த ராசியை வடிகட்டு" : "Filter to this Rasi"}
                   </button>
@@ -344,9 +344,9 @@ export const StarMatchFinder: React.FC<Props> = ({ lang }) => {
           </div>
 
           {/* Quick Filters */}
-          <div className="hand-card p-4 shadow-sm space-y-3">
-            <div className="flex flex-wrap gap-2 text-xs font-tamil">
-              <span className="text-[var(--ink-soft)] font-bold self-center mr-1">
+          <div className="card p-4 shadow-sm space-y-3">
+            <div className="flex flex-wrap gap-2 text-xs">
+              <span className="text-muted font-bold self-center mr-1">
                 {lang === "ta" ? "விரைவு வடிகட்டிகள்:" : "Quick Filters:"}
               </span>
               {[
@@ -362,8 +362,8 @@ export const StarMatchFinder: React.FC<Props> = ({ lang }) => {
                   onClick={() => setQuickFilter(tab.id as any)}
                   className={`px-3 py-1.5 rounded-xl border font-semibold transition-all ${
                     quickFilter === tab.id
-                      ? "bg-[var(--red)] border-[var(--red)] text-white shadow-sm"
-                      : "bg-[var(--paper)] border-[rgba(43,33,23,0.2)] text-[var(--ink-soft)] hover:text-[var(--ink)]"
+                      ? "bg-brand-600 border-brand-500 text-white shadow-sm"
+                      : "bg-surface-2 border-border-soft text-muted hover:text-foreground"
                   }`}
                 >
                   {lang === "ta" ? tab.labelTa : tab.labelEn}
@@ -371,18 +371,18 @@ export const StarMatchFinder: React.FC<Props> = ({ lang }) => {
               ))}
             </div>
 
-            <div className="flex flex-col sm:flex-row gap-3 items-stretch sm:items-center justify-between pt-2 border-t border-[rgba(43,33,23,0.1)]">
-              <div className="flex-1 flex items-center gap-2 bg-[var(--paper)] border border-[rgba(43,33,23,0.25)] rounded-xl px-3 py-2">
-                <Search className="w-4 h-4 text-[var(--ink-soft)]" />
+            <div className="flex flex-col sm:flex-row gap-3 items-stretch sm:items-center justify-between pt-2 border-t border-border-soft">
+              <div className="flex-1 flex items-center gap-2 bg-surface-2 border border-line rounded-xl px-3 py-2">
+                <Search className="w-4 h-4 text-muted" />
                 <input
                   value={search}
                   onChange={(e) => setSearch(e.target.value)}
                   placeholder={lang === "ta" ? "நட்சத்திரம் / ராசி தேடுக..." : "Search nakshatra / rasi..."}
-                  className="flex-1 bg-transparent outline-none text-sm text-[var(--ink)] placeholder:text-[var(--ink-soft)]"
+                  className="flex-1 bg-transparent outline-none text-sm text-foreground placeholder:text-muted"
                 />
               </div>
               <div className="flex gap-2 items-center text-xs">
-                <label className="flex items-center gap-1.5 text-[var(--ink)]">
+                <label className="flex items-center gap-1.5 text-foreground">
                   <input
                     type="checkbox"
                     checked={showOnlySafe}
@@ -394,7 +394,7 @@ export const StarMatchFinder: React.FC<Props> = ({ lang }) => {
                 <select
                   value={minStars}
                   onChange={(e) => setMinStars(Number(e.target.value))}
-                  className="bg-[var(--paper)] border border-[rgba(43,33,23,0.25)] rounded-xl px-2 py-1.5 text-[var(--ink)]"
+                  className="bg-surface-2 border border-line rounded-xl px-2 py-1.5 text-foreground"
                 >
                   <option value={0}>{lang === "ta" ? "அனைத்து நட்சத்திரம்" : "All stars"}</option>
                   <option value={5}>★★★★★ (5)</option>
@@ -402,17 +402,17 @@ export const StarMatchFinder: React.FC<Props> = ({ lang }) => {
                   <option value={3}>★★★☆☆ (3+)</option>
                 </select>
               </div>
-              <div className="text-xs text-[var(--ink-soft)]">
+              <div className="text-xs text-muted">
                 {filteredMatches.length} / {data.matches.length} {lang === "ta" ? "பொருத்தங்கள்" : "matches"}
               </div>
             </div>
           </div>
 
           {/* Results Table */}
-          <div className="hand-card shadow-sm overflow-hidden p-0">
+          <div className="card shadow-sm overflow-hidden p-0">
             <div className="overflow-x-auto">
               <table className="w-full text-left text-xs border-collapse">
-                <thead className="bg-[rgba(120,96,58,0.08)] text-[var(--ink)] border-b border-[rgba(43,33,23,0.25)] sticky top-0 font-tamil font-bold">
+                <thead className="bg-brand-500/5 text-foreground border-b border-line sticky top-0 font-bold">
                   <tr>
                     <th className="py-3 px-3 w-8">#</th>
                     <th className="py-3 px-3">
@@ -423,13 +423,13 @@ export const StarMatchFinder: React.FC<Props> = ({ lang }) => {
                     <th className="py-3 px-2 text-center">Score</th>
                     <th className="py-3 px-2 text-center">LIKE-RATE</th>
                     <th className="py-3 px-2 text-center">
-                      <ShieldCheck className="w-3.5 h-3.5 inline text-[var(--red)]" />
+                      <ShieldCheck className="w-3.5 h-3.5 inline text-brand-fg" />
                     </th>
                     <th className="py-3 px-3">{lang === "ta" ? "தீர்ப்பு" : "Verdict"}</th>
                     <th className="py-3 px-2 text-center">{lang === "ta" ? "விவரம்" : "Details"}</th>
                   </tr>
                 </thead>
-                <tbody className="divide-y divide-[rgba(43,33,23,0.12)] text-[var(--ink)]">
+                <tbody className="divide-y divide-border-soft text-foreground">
                   {filteredMatches.map((m, idx) => {
                     const rowKey = `${m.target_nakshatra_number}-${m.target_pada}`;
                     const isExpanded = expandedKey === rowKey;
@@ -437,35 +437,35 @@ export const StarMatchFinder: React.FC<Props> = ({ lang }) => {
                       <React.Fragment key={rowKey}>
                         <tr
                           onClick={() => setExpandedKey(isExpanded ? null : rowKey)}
-                          className={`hover:bg-[rgba(43,33,23,0.04)] cursor-pointer transition-colors ${
-                            m.rajju_dosha ? "bg-[rgba(176,55,38,0.03)]" : ""
-                          } ${isExpanded ? "bg-[rgba(176,55,38,0.06)] border-l-4 border-[var(--red)]" : ""}`}
+                          className={`hover:bg-brand-500/5 cursor-pointer transition-colors ${
+                            m.rajju_dosha ? "bg-brand-500/10" : ""
+                          } ${isExpanded ? "bg-brand-500/10 border-l-4 border-brand-500" : ""}`}
                         >
-                          <td className="py-2.5 px-3 text-[var(--ink-soft)] font-caveat text-sm">{idx + 1}</td>
+                          <td className="py-2.5 px-3 text-muted text-sm">{idx + 1}</td>
                           <td className="py-2.5 px-3">
-                            <div className="font-bold text-[var(--ink)] font-tamil">
+                            <div className="font-bold text-foreground">
                               {lang === "ta" ? m.target_nakshatra_ta : m.target_nakshatra}{" "}
-                              <span className="text-[var(--red-deep)]">P{m.target_pada}</span>
+                              <span className="text-brand-fg-strong">P{m.target_pada}</span>
                             </div>
-                            <div className="text-[11px] text-[var(--ink-soft)] font-tamil">
+                            <div className="text-[11px] text-muted">
                               {lang === "ta" ? m.target_rasi_ta : m.target_rasi} ({m.target_rasi_lord}) •{" "}
                               {m.target_rasi_element}
                             </div>
                           </td>
-                          <td className="py-2.5 px-2 text-center font-caveat font-bold text-base text-[var(--ink)]">
+                          <td className="py-2.5 px-2 text-center font-bold text-base text-foreground">
                             {m.ashta_koota_total}/36
                           </td>
-                          <td className="py-2.5 px-2 text-center font-caveat font-bold text-base text-[#1b5e20]">
+                          <td className="py-2.5 px-2 text-center font-bold text-base text-success">
                             {m.tamil_compatible_count}/10
                           </td>
                           <td className="py-2.5 px-2 text-center">
                             <span
-                              className={`px-2 py-0.5 rounded-full font-bold font-caveat text-sm border ${
+                              className={`px-2 py-0.5 rounded-full font-bold text-sm border ${
                                 m.score_percentage >= 70 && !m.rajju_dosha
-                                  ? "bg-[rgba(46,125,50,0.1)] text-[#1b5e20] border-[#2e7d32]"
+                                  ? "bg-success/10 text-success border-success"
                                   : m.score_percentage >= 50 && !m.rajju_dosha
-                                  ? "bg-[rgba(230,81,0,0.1)] text-[#b23c00] border-[#e65100]"
-                                  : "bg-[rgba(176,55,38,0.1)] text-[var(--red-deep)] border-[var(--red)]"
+                                  ? "bg-warning/10 text-warning border-warning"
+                                  : "bg-brand-500/10 text-brand-fg-strong border-brand-500"
                               }`}
                             >
                               {m.score_percentage}%
@@ -474,7 +474,7 @@ export const StarMatchFinder: React.FC<Props> = ({ lang }) => {
                           <td className="py-2.5 px-2 text-center">
                             <div className="flex flex-col items-center gap-0.5">
                               <Stars count={m.like_rate} />
-                              <span className="text-[10px] text-[var(--ink-soft)] leading-none font-tamil">
+                              <span className="text-[10px] text-muted leading-none">
                                 {lang === "ta" ? m.like_rate_label_ta : m.like_rate_label}
                               </span>
                             </div>
@@ -483,18 +483,18 @@ export const StarMatchFinder: React.FC<Props> = ({ lang }) => {
                             <div className="flex flex-col items-center gap-1">
                               <span
                                 className={`w-2.5 h-2.5 rounded-full ${
-                                  m.rajju_dosha ? "bg-[var(--red)]" : "bg-[#2e7d32]"
+                                  m.rajju_dosha ? "bg-brand-600" : "bg-success"
                                 }`}
                                 title={m.rajju_dosha ? "Rajju Dosha" : "Rajju Safe"}
                               />
                             </div>
                           </td>
                           <td className="py-2.5 px-3">
-                            <div className="text-xs font-tamil text-[var(--ink)] leading-tight">
+                            <div className="text-xs text-foreground leading-tight">
                               {lang === "ta" ? m.verdict_ta : m.verdict}
                             </div>
                             {m.rajju_dosha && (
-                              <div className="text-[10px] text-[var(--red-deep)] flex items-center gap-1 mt-0.5 font-tamil">
+                              <div className="text-[10px] text-brand-fg-strong flex items-center gap-1 mt-0.5">
                                 <AlertTriangle className="w-3 h-3" /> Rajju:{" "}
                                 {lang === "ta" ? m.rajju_type_ta : m.rajju_type}
                               </div>
@@ -503,7 +503,7 @@ export const StarMatchFinder: React.FC<Props> = ({ lang }) => {
                           <td className="py-2.5 px-2 text-center">
                             <button
                               type="button"
-                              className="p-1 rounded-lg bg-[var(--paper)] border border-[rgba(43,33,23,0.25)] text-[var(--ink)] hover:bg-[rgba(176,55,38,0.08)]"
+                              className="p-1 rounded-lg bg-surface-2 border border-line text-foreground hover:bg-brand-500/10"
                             >
                               {isExpanded ? (
                                 <ChevronUp className="w-3.5 h-3.5" />
@@ -516,84 +516,118 @@ export const StarMatchFinder: React.FC<Props> = ({ lang }) => {
 
                         {/* Expandable Accordion */}
                         {isExpanded && (
-                          <tr className="bg-[var(--paper)] border-b-2 border-[var(--red)] animate-fade-in">
+                          <tr className="bg-surface-2 border-b-2 border-brand-500 animate-fade-in">
                             <td colSpan={9} className="p-4 sm:p-6 space-y-4">
-                              <div className="border-b border-[rgba(43,33,23,0.15)] pb-2 flex items-center justify-between">
-                                <span className="text-xs font-bold text-[var(--red-deep)] font-tamil flex items-center gap-2">
-                                  <Sparkles className="w-4 h-4 text-[var(--red)]" />
+                              <div className="border-b border-border-soft pb-2 flex items-center justify-between">
+                                <span className="text-xs font-bold text-brand-fg-strong flex items-center gap-2">
+                                  <Sparkles className="w-4 h-4 text-brand-fg" />
                                   {lang === "ta"
                                     ? `தமிழ் 10 பொருத்தங்கள் & அஷ்டகூட விரிவான அட்டவணை (${m.target_nakshatra_ta} - பாதம் ${m.target_pada})`
                                     : `Tamil 10-Porutham & Ashta Koota Breakdown (${m.target_nakshatra} - Pada ${m.target_pada})`}
                                 </span>
-                                <span className="text-[11px] text-[var(--ink-soft)] font-tamil">
+                                <span className="text-[11px] text-muted">
                                   {m.tamil_compatible_count}/10{" "}
                                   {lang === "ta" ? "பொருத்தங்கள் கூடின" : "Matched"}
                                 </span>
                               </div>
 
-                              {/* 10-Porutham Grid */}
+                              {/*
+                                FIX (10-Porutham grid): this used to read `Object.entries(m.tamil_10_porutham)`
+                                and check `p.compatible`. `tamil_10_porutham` is an ARRAY of items — see
+                                backend/app/services/porutham.py's `calculate_tamil_10_porutham()`, which
+                                returns a list of dicts shaped
+                                  { key, name, name_ta, is_compatible, description, description_ta }
+                                — there is no `compatible` field, only `is_compatible`. Because the check
+                                read the wrong key, `p.compatible` was always `undefined` (falsy), so EVERY
+                                item rendered the red ✕ / "Not Matched" state regardless of its real value —
+                                exactly the "6/10 says matched but everything below shows wrong" symptom.
+                                The 6/10 (or 8/10) count itself was always correct, because that count comes
+                                from a different, correctly-named field: `m.tamil_compatible_count`, computed
+                                server-side in backend/app/api/porutham.py's `_build_star_matches()`. Now maps
+                                the array directly and reads `p.is_compatible`.
+                              */}
                               {m.tamil_10_porutham && (
                                 <div>
-                                  <div className="text-[11px] font-bold text-[var(--ink-soft)] font-tamil mb-2">
+                                  <div className="text-[11px] font-bold text-muted mb-2">
                                     {lang === "ta"
                                       ? "தென்னிந்திய 10 பொருத்த விவரங்கள்:"
                                       : "South Indian 10 Poruthams:"}
                                   </div>
-                                  <div className="grid grid-cols-2 sm:grid-cols-5 gap-2 text-xs font-tamil">
-                                    {Object.entries(m.tamil_10_porutham).map(
-                                      ([k, p]: [string, any]) => (
-                                        <div
-                                          key={k}
-                                          className={`p-2 rounded-xl border flex flex-col justify-between ${
-                                            p.compatible
-                                              ? "bg-[rgba(46,125,50,0.06)] border-[#2e7d32] text-[#1b5e20]"
-                                              : "bg-[rgba(176,55,38,0.05)] border-[rgba(176,55,38,0.3)] text-[var(--red-deep)]"
-                                          }`}
-                                        >
-                                          <div className="flex items-center justify-between mb-1">
-                                            <span className="font-bold text-[11px] truncate">
-                                              {lang === "ta" ? p.name_ta : p.name}
-                                            </span>
-                                            {p.compatible ? (
-                                              <CheckCircle2 className="w-3.5 h-3.5 text-[#2e7d32] shrink-0" />
-                                            ) : (
-                                              <XCircle className="w-3.5 h-3.5 text-[var(--red)] shrink-0" />
-                                            )}
-                                          </div>
-                                          <div className="text-[10px] text-[var(--ink-soft)] line-clamp-2">
-                                            {lang === "ta" ? p.description_ta : p.description}
-                                          </div>
+                                  <div className="grid grid-cols-2 sm:grid-cols-5 gap-2 text-xs">
+                                    {m.tamil_10_porutham.map((p: any, pIdx: number) => (
+                                      <div
+                                        key={p.key || pIdx}
+                                        className={`p-2 rounded-xl border flex flex-col justify-between ${
+                                          p.is_compatible
+                                            ? "bg-success/10 border-success text-success"
+                                            : "bg-brand-500/10 border-brand-500/30 text-brand-fg-strong"
+                                        }`}
+                                      >
+                                        <div className="flex items-center justify-between mb-1">
+                                          <span className="font-bold text-[11px] truncate">
+                                            {lang === "ta" ? p.name_ta : p.name}
+                                          </span>
+                                          {p.is_compatible ? (
+                                            <CheckCircle2 className="w-3.5 h-3.5 text-success shrink-0" />
+                                          ) : (
+                                            <XCircle className="w-3.5 h-3.5 text-brand-fg shrink-0" />
+                                          )}
                                         </div>
-                                      )
-                                    )}
+                                        <div className="text-[10px] text-muted line-clamp-2">
+                                          {lang === "ta" ? p.description_ta : p.description}
+                                        </div>
+                                      </div>
+                                    ))}
                                   </div>
                                 </div>
                               )}
 
-                              {/* Ashta Koota Breakdown */}
+                              {/*
+                                FIX (Ashta Koota grid): this used to read
+                                `Object.entries(m.ashta_koota)` and treat every VALUE as a kuta object with
+                                `.name_ta` / `.obtained` / `.max_points`. But `m.ashta_koota` is the dict
+                                returned by `calculate_ashta_koota()`:
+                                  { total_points: number, max_points: 36.0, kutas: [ {..8 kutas..} ] }
+                                so `Object.entries()` produced exactly THREE entries — "total_points" (a
+                                number), "max_points" (a number) and "kutas" (an array) — and `.name_ta` /
+                                `.obtained` do not exist on any of those, so every box rendered blank with
+                                just the literal " / " left over from `{ak.obtained} / {ak.max_points}`.
+                                That is precisely the "36 pulli shows no numbers" symptom, and it's why there
+                                were only 3 empty boxes instead of the 8 named kutas (Varna, Vashya, Tara,
+                                Yoni, Graha Maitri, Gana, Bhakoot, Nadi). Now iterates `m.ashta_koota.kutas`
+                                and reads each kuta's real fields (`obtained_points`, `max_points`, `status`).
+                              */}
                               {m.ashta_koota && (
-                                <div className="pt-2 border-t border-[rgba(43,33,23,0.1)]">
-                                  <div className="text-[11px] font-bold text-[var(--ink-soft)] font-tamil mb-2">
-                                    {lang === "ta"
-                                      ? "அஷ்டகூட 36-புள்ளி விவரங்கள்:"
-                                      : "Ashta Koota 36-Point Breakdown:"}
+                                <div className="pt-2 border-t border-border-soft">
+                                  <div className="text-[11px] font-bold text-muted mb-2 flex items-center justify-between">
+                                    <span>
+                                      {lang === "ta"
+                                        ? "அஷ்டகூட 36-புள்ளி விவரங்கள்:"
+                                        : "Ashta Koota 36-Point Breakdown:"}
+                                    </span>
+                                    <span className="text-brand-fg-strong font-bold text-xs">
+                                      {m.ashta_koota.total_points} / {m.ashta_koota.max_points ?? 36}
+                                    </span>
                                   </div>
-                                  <div className="grid grid-cols-2 sm:grid-cols-4 lg:grid-cols-8 gap-2 text-xs font-tamil">
-                                    {Object.entries(m.ashta_koota).map(
-                                      ([k, ak]: [string, any]) => (
-                                        <div
-                                          key={k}
-                                          className="bg-[rgba(120,96,58,0.05)] p-2 rounded-xl border border-[rgba(43,33,23,0.2)] text-center"
-                                        >
-                                          <div className="text-[10px] text-[var(--ink-soft)] mb-0.5 truncate">
-                                            {lang === "ta" ? ak.name_ta : ak.name}
-                                          </div>
-                                          <div className="font-bold text-[var(--red-deep)] font-caveat text-base">
-                                            {ak.obtained} / {ak.max_points}
-                                          </div>
+                                  <div className="grid grid-cols-2 sm:grid-cols-4 lg:grid-cols-8 gap-2 text-xs">
+                                    {(m.ashta_koota.kutas || []).map((ak: any, akIdx: number) => (
+                                      <div
+                                        key={ak.name || akIdx}
+                                        className="bg-brand-500/5 p-2 rounded-xl border border-border-soft text-center"
+                                      >
+                                        <div className="text-[10px] text-muted mb-0.5 truncate">
+                                          {lang === "ta" ? ak.name_ta : ak.name}
                                         </div>
-                                      )
-                                    )}
+                                        <div className="font-bold text-brand-fg-strong text-base">
+                                          {ak.obtained_points} / {ak.max_points}
+                                        </div>
+                                        {ak.status && (
+                                          <div className="text-[9px] text-muted mt-0.5 truncate">
+                                            {ak.status}
+                                          </div>
+                                        )}
+                                      </div>
+                                    ))}
                                   </div>
                                 </div>
                               )}
@@ -607,7 +641,7 @@ export const StarMatchFinder: React.FC<Props> = ({ lang }) => {
               </table>
             </div>
             {filteredMatches.length === 0 && (
-              <div className="p-8 text-center text-[var(--ink-soft)] text-sm font-tamil">
+              <div className="p-8 text-center text-muted text-sm">
                 {lang === "ta"
                   ? "பொருத்தங்கள் எதுவும் கிடைக்கவில்லை. வடிகட்டியை மாற்றவும்."
                   : "No matches found. Adjust filters."}
@@ -619,3 +653,5 @@ export const StarMatchFinder: React.FC<Props> = ({ lang }) => {
     </div>
   );
 };
+
+export default StarMatchFinder;

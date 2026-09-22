@@ -1,10 +1,78 @@
-@import url('https://fonts.googleapis.com/css2?family=Baloo+Thambi+2:wght@400;500;600;700&family=Caveat:wght@400..700&family=Cinzel:wght@400..900&family=Kalam:wght@300;400;700&family=Kavivanar&family=Noto+Sans+Tamil:wght@300;400;500;600;700;800&family=Noto+Serif+Tamil:wght@300;400;500;600;700&family=Outfit:wght@300;400;500;600;700;800&display=swap');
+/* Fonts
+   New UI : Inter (Latin) + Outfit (display) + Noto Sans Tamil (Tamil glyphs)
+   Legacy : Kavivanar / Caveat / Baloo Thambi 2 / Noto Serif Tamil / Cinzel …
+            still required by the handwritten Jathagam and its ink/typeface panel. */
+@import url('https://fonts.googleapis.com/css2?family=Baloo+Thambi+2:wght@400;500;600;700&family=Caveat:wght@400..700&family=Cinzel:wght@400..900&family=Inter:wght@400;500;600;700;800&family=Kalam:wght@300;400;700&family=Kavivanar&family=Noto+Sans+Tamil:wght@300;400;500;600;700;800&family=Noto+Serif+Tamil:wght@300;400;500;600;700&family=Outfit:wght@300;400;500;600;700;800&display=swap');
 
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
 
+/* ==========================================================================
+ * MyLoginn Astrology — design tokens
+ * Ported from the reference project's global.css (Tailwind v4 → v3.4).
+ * Brand: deep navy → royal / electric blue → cyan.
+ * ========================================================================== */
 :root {
+  --background: #ffffff;
+  --foreground: #0b1220;
+  --surface: #ffffff;
+  --surface-2: #f3f7fd;
+  --muted: #576179;
+
+  /* RGB channels — lets Tailwind apply opacity (bg-surface/70 …) */
+  --background-rgb: 255 255 255;
+  --foreground-rgb: 11 18 32;
+  --surface-rgb: 255 255 255;
+  --surface-2-rgb: 243 247 253;
+  --muted-rgb: 87 97 121;
+  --brand-fg-rgb: 31 86 214;          /* brand-600 */
+  --brand-fg-strong-rgb: 22 51 126;   /* brand-800 */
+  --brand-fg: rgb(31 86 214);
+  --brand-fg-strong: rgb(22 51 126);
+
+  --border-soft: rgba(11, 31, 77, 0.09);
+  --line: rgba(11, 31, 77, 0.16);      /* form-control borders */
+  --glass-bg: rgba(255, 255, 255, 0.62);
+  --glass-nav-bg: rgba(255, 255, 255, 0.92);
+  --glass-border: rgba(11, 31, 77, 0.08);
+
+  --brand-50: #eef4ff;
+  --brand-100: #dbe7ff;
+  --brand-200: #b6d0ff;
+  --brand-300: #86b0ff;
+  --brand-400: #5590ff;
+  --brand-500: #2f6fed;
+  --brand-600: #1f56d6;
+  --brand-700: #1a44ab;
+  --brand-800: #16337e;
+  --brand-900: #0b1f4d;
+
+  --accent-400: #22d3ee;
+  --accent-500: #06b6d4;
+  --accent-600: #0891b2;
+
+  --success: #16a34a;
+  --warning: #d97706;
+  --danger: #dc2626;
+
+  --shadow-soft: 0 1px 2px rgba(11, 31, 77, 0.05), 0 8px 24px rgba(11, 31, 77, 0.07);
+  --shadow-lift: 0 12px 32px rgba(31, 86, 214, 0.18), 0 2px 8px rgba(11, 31, 77, 0.07);
+  --link-line: var(--brand-600);
+
+  /* Story-engine palette (same names as the reference project) */
+  --story-navy: #0b1f4d;
+  --story-royal: #1f56d6;
+  --story-electric: #2f6fed;
+  --story-bright: #5590ff;
+  --story-cyan: #22d3ee;
+  --story-mist: #f4f8ff;
+  --story-line: rgba(11, 31, 77, 0.1);
+
+  --font-ui: 'Inter', 'Noto Sans Tamil', ui-sans-serif, system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif;
+  --font-display: 'Outfit', 'Inter', 'Noto Sans Tamil', ui-sans-serif, system-ui, sans-serif;
+
+  /* ── Legacy parchment variables — read ONLY by the handwritten Jathagam ── */
   --paper: #f0e5cc;
   --paper-card: #fdfaf2;
   --ink: #2b2117;
@@ -19,48 +87,539 @@
   --font-mono: 'Caveat', cursive;
 }
 
-body {
-  background: var(--paper);
+:root[data-theme="dark"] {
+  --background: #060912;
+  --foreground: #eef3ff;
+  --surface: #0c1222;
+  --surface-2: #101a30;
+  --muted: #93a0c2;
+
+  --background-rgb: 6 9 18;
+  --foreground-rgb: 238 243 255;
+  --surface-rgb: 12 18 34;
+  --surface-2-rgb: 16 26 48;
+  --muted-rgb: 147 160 194;
+  --brand-fg-rgb: 134 176 255;        /* brand-300 */
+  --brand-fg-strong-rgb: 182 208 255; /* brand-200 */
+  --brand-fg: rgb(134 176 255);
+  --brand-fg-strong: rgb(182 208 255);
+
+  --border-soft: rgba(134, 176, 255, 0.14);
+  --line: rgba(134, 176, 255, 0.24);
+  --glass-bg: rgba(12, 18, 34, 0.55);
+  --glass-nav-bg: rgba(9, 14, 26, 0.92);
+  --glass-border: rgba(134, 176, 255, 0.14);
+
+  --shadow-soft: 0 1px 2px rgba(0, 0, 0, 0.3), 0 8px 24px rgba(0, 0, 0, 0.35);
+  --shadow-lift: 0 16px 40px rgba(47, 111, 237, 0.32), 0 2px 8px rgba(0, 0, 0, 0.4);
+  --link-line: var(--brand-300);
+  --story-mist: #0c1630;
+  --story-line: rgba(134, 176, 255, 0.14);
+}
+
+/* ==========================================================================
+ * Base
+ * ========================================================================== */
+@layer base {
+  html {
+    scroll-behavior: smooth;
+  }
+
+  body {
+    background: var(--background);
+    color: var(--foreground);
+    font-family: var(--font-ui);
+    /* 17px / 1.85 is the typography the handwritten Jathagam was designed and
+       PDF-exported against (html2canvas measures text against the page's body
+       metrics). Keeping it here keeps both PDFs identical to before; Tamil also
+       benefits from the generous line-height. */
+    font-size: 17px;
+    line-height: 1.85;
+    overflow-x: hidden;
+    -webkit-font-smoothing: antialiased;
+    text-rendering: optimizeLegibility;
+    transition: background-color 0.5s ease, color 0.5s ease;
+  }
+
+  h1, h2, h3, h4 {
+    font-family: var(--font-display);
+    line-height: 1.25;
+  }
+
+  ::selection {
+    background: var(--brand-400);
+    color: #fff;
+  }
+
+  :focus-visible {
+    outline: 2px solid var(--brand-400);
+    outline-offset: 2px;
+  }
+
+  input::placeholder,
+  textarea::placeholder {
+    color: rgb(var(--muted-rgb) / 0.65);
+  }
+
+  /* native date / select widgets follow the theme */
+  :root { color-scheme: light; }
+  :root[data-theme="dark"] { color-scheme: dark; }
+}
+
+::-webkit-scrollbar { width: 8px; height: 8px; }
+::-webkit-scrollbar-track { background: transparent; }
+::-webkit-scrollbar-thumb { background: var(--line); border-radius: 999px; }
+::-webkit-scrollbar-thumb:hover { background: var(--brand-400); }
+
+/* ==========================================================================
+ * Components
+ * ========================================================================== */
+@layer components {
+  /* ── Buttons ── */
+  .btn {
+    @apply inline-flex items-center justify-center gap-2 rounded-xl px-4 py-2.5 text-sm font-semibold
+           transition-all duration-200 select-none disabled:cursor-not-allowed disabled:opacity-50;
+  }
+  .btn-primary {
+    @apply btn text-white shadow-soft hover:-translate-y-0.5 hover:shadow-lift active:translate-y-0;
+    background: linear-gradient(135deg, var(--brand-600), var(--brand-500) 45%, var(--accent-500));
+  }
+  .btn-secondary {
+    @apply btn border border-line bg-surface text-foreground hover:border-brand-400 hover:bg-brand-500/5;
+  }
+  .btn-ghost {
+    @apply btn text-muted hover:bg-brand-500/10 hover:text-brand-fg;
+  }
+
+  /* ── Surfaces ── */
+  .card {
+    @apply rounded-2xl border border-border-soft bg-surface shadow-soft;
+  }
+  .card-glass {
+    background: var(--glass-bg);
+    backdrop-filter: blur(20px) saturate(160%);
+    -webkit-backdrop-filter: blur(20px) saturate(160%);
+    border: 1px solid var(--glass-border);
+    box-shadow: var(--shadow-soft);
+    @apply rounded-3xl;
+  }
+  .card-hover {
+    @apply transition-all duration-300 hover:-translate-y-0.5 hover:shadow-lift hover:border-brand-400/40;
+  }
+  .well {
+    @apply rounded-xl border border-border-soft bg-surface-2;
+  }
+
+  /* ── Form controls ── */
+  .field {
+    @apply w-full rounded-xl border border-line bg-surface px-3.5 py-2.5 text-sm text-foreground outline-none
+           transition-all placeholder:text-muted/60
+           hover:border-brand-400/60 focus:border-brand-500 focus:ring-2 focus:ring-brand-500/20;
+  }
+  .field-label {
+    @apply mb-1.5 block text-xs font-semibold text-muted;
+  }
+  /* segmented / choice button */
+  .choice {
+    @apply rounded-xl border border-line bg-surface-2 px-3 py-2.5 text-center text-xs font-semibold text-foreground
+           transition-all hover:border-brand-400 hover:bg-brand-500/10;
+  }
+  .choice-active {
+    @apply border-brand-600 text-white shadow-soft hover:border-brand-600 hover:bg-transparent;
+    background: linear-gradient(135deg, var(--brand-600), var(--brand-500));
+  }
+
+  /* ── Chips / badges ── */
+  .chip {
+    @apply inline-flex items-center gap-1.5 rounded-full border border-border-soft bg-surface-2 px-3 py-1 text-xs font-medium text-muted;
+  }
+  .chip-brand   { @apply chip border-brand-500/25 bg-brand-500/10 text-brand-fg; }
+  .chip-success { @apply chip border-success/30 bg-success/10 text-success; }
+  .chip-warning { @apply chip border-warning/30 bg-warning/10 text-warning; }
+  .chip-danger  { @apply chip border-danger/30 bg-danger/10 text-danger; }
+
+  /* ── Tables ── */
+  .table-clean {
+    @apply w-full border-collapse text-sm;
+  }
+  .table-clean th {
+    @apply border-b border-line bg-surface-2 px-3.5 py-2.5 text-left text-xs font-semibold uppercase tracking-wide text-muted;
+  }
+  .table-clean td {
+    @apply border-b border-border-soft px-3.5 py-2.5 text-foreground;
+  }
+  .table-clean tbody tr {
+    @apply transition-colors hover:bg-brand-500/5;
+  }
+}
+
+/* ==========================================================================
+ * Brand utilities (from the reference project)
+ * ========================================================================== */
+.glass {
+  background: var(--glass-bg);
+  backdrop-filter: blur(18px) saturate(160%);
+  -webkit-backdrop-filter: blur(18px) saturate(160%);
+  border: 1px solid var(--glass-border);
+}
+
+.glass-panel {
+  background: var(--glass-bg);
+  backdrop-filter: blur(24px) saturate(160%);
+  -webkit-backdrop-filter: blur(24px) saturate(160%);
+  border: 1px solid var(--glass-border);
+  box-shadow: var(--shadow-soft);
+}
+
+/* Near-opaque glass for fixed navigation chrome */
+.glass-nav {
+  background: var(--glass-nav-bg);
+  backdrop-filter: blur(18px) saturate(160%);
+  -webkit-backdrop-filter: blur(18px) saturate(160%);
+}
+
+.brand-gradient-text {
+  background: linear-gradient(120deg, var(--brand-500), var(--accent-500) 60%, var(--brand-400));
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+}
+
+.brand-gradient-bg {
+  background: linear-gradient(135deg, var(--brand-600), var(--brand-500) 45%, var(--accent-500));
+}
+
+/* Cinematic entrance animations */
+@keyframes fade-up {
+  from { opacity: 0; transform: translateY(28px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+@keyframes fade-in {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+@keyframes scale-in {
+  from { opacity: 0; transform: scale(0.94); }
+  to { opacity: 1; transform: scale(1); }
+}
+@keyframes float-y {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-10px); }
+}
+@keyframes gradient-shift {
+  0% { background-position: 0% 50%; }
+  50% { background-position: 100% 50%; }
+  100% { background-position: 0% 50%; }
+}
+@keyframes pulse-glow {
+  0%, 100% { opacity: 0.55; transform: scale(1); }
+  50% { opacity: 1; transform: scale(1.08); }
+}
+.animate-pulse-glow { animation: pulse-glow 2.6s ease-in-out infinite; }
+.animate-fade-up { animation: fade-up 0.8s cubic-bezier(0.16, 1, 0.3, 1) both; }
+.animate-fade-in { animation: fade-in 1s ease both; }
+.animate-scale-in { animation: scale-in 0.7s cubic-bezier(0.16, 1, 0.3, 1) both; }
+.animate-float { animation: float-y 5s ease-in-out infinite; }
+
+.bg-size-200 {
+  background-size: 200% 200%;
+  animation: gradient-shift 8s ease infinite;
+}
+
+.stagger-1 { animation-delay: 0.08s; }
+.stagger-2 { animation-delay: 0.16s; }
+.stagger-3 { animation-delay: 0.24s; }
+.stagger-4 { animation-delay: 0.32s; }
+.stagger-5 { animation-delay: 0.4s; }
+.stagger-6 { animation-delay: 0.48s; }
+
+@keyframes breathe-ring {
+  0%, 100% { box-shadow: 0 0 0 0 rgba(85, 144, 255, 0.45); }
+  50% { box-shadow: 0 0 0 6px rgba(85, 144, 255, 0); }
+}
+.animate-breathe-ring { animation: breathe-ring 3s ease-in-out infinite; }
+
+@keyframes icon-thumb-shimmer {
+  0% { background-position: -200% center; }
+  100% { background-position: 200% center; }
+}
+
+/* Card hover shine sweep — add .card-shine to any overflow-hidden card */
+.card-shine::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  z-index: 5;
+  pointer-events: none;
+  opacity: 0;
+  background: linear-gradient(105deg, transparent 40%, rgba(255, 255, 255, 0.22) 50%, transparent 60%);
+  background-size: 220% 100%;
+  background-position: 180% center;
+  transition: opacity 0.3s ease;
+}
+.card-shine:hover::before {
+  opacity: 1;
+  animation: icon-thumb-shimmer 0.8s ease;
+}
+
+/* Animated gradient border for highlight cards */
+@keyframes border-flow {
+  0% { background-position: 0% 50%; }
+  50% { background-position: 100% 50%; }
+  100% { background-position: 0% 50%; }
+}
+.gradient-border { position: relative; }
+.gradient-border::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+  border-radius: inherit;
+  padding: 1.5px;
+  background: linear-gradient(120deg, var(--brand-400), var(--accent-400), var(--brand-600), var(--brand-400));
+  background-size: 300% 300%;
+  animation: border-flow 6s ease infinite;
+  -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+   mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+  -webkit-mask-composite: xor;
+  mask-composite: exclude;
+  pointer-events: none;
+}
+
+/* Hero aurora / ambient page glows */
+@keyframes aurora-drift {
+  0%, 100% { transform: translate(0, 0) scale(1); }
+  33% { transform: translate(4%, -6%) scale(1.12); }
+  66% { transform: translate(-5%, 4%) scale(0.94); }
+}
+@keyframes aurora-drift-alt {
+  0%, 100% { transform: translate(0, 0) scale(1); }
+  40% { transform: translate(-6%, 5%) scale(1.15); }
+  75% { transform: translate(5%, -4%) scale(0.92); }
+}
+.aurora-blob {
+  position: absolute;
+  border-radius: 9999px;
+  filter: blur(70px);
+  pointer-events: none;
+  animation: aurora-drift 16s ease-in-out infinite;
+}
+.aurora-blob-alt { animation: aurora-drift-alt 19s ease-in-out infinite; }
+
+/* Fixed, page-wide ambient backdrop (sits behind everything, never printed) */
+.app-ambient {
+  position: fixed;
+  inset: 0;
+  z-index: -1;
+  pointer-events: none;
+  overflow: hidden;
+}
+.app-ambient::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background:
+    radial-gradient(60% 45% at 50% -5%, rgba(85, 144, 255, 0.16), transparent 70%),
+    radial-gradient(40% 35% at 90% 12%, rgba(34, 211, 238, 0.10), transparent 70%);
+}
+:root[data-theme="dark"] .app-ambient::before {
+  background:
+    radial-gradient(60% 45% at 50% -5%, rgba(47, 111, 237, 0.28), transparent 70%),
+    radial-gradient(40% 35% at 90% 12%, rgba(34, 211, 238, 0.12), transparent 70%);
+}
+
+/* Cinematic story headings */
+.story-heading {
+  font-family: var(--font-display);
+  font-weight: 600;
+  letter-spacing: -0.015em;
+  line-height: 1.3;
+  font-size: clamp(2.2rem, 1.2rem + 5vw, 4.5rem);
+  /* Gradient text is clipped to its own box, which cuts off tall Tamil glyphs.
+   Extra padding on an inline element grows the painted area only; it doesn't move the layout. */
+.story-heading .brand-gradient-text,
+.story-subheading .brand-gradient-text {
+  padding-top: 0.1em;
+  padding-bottom: 0.3em;
+}
+}
+.story-subheading {
+  font-family: var(--font-display);
+  font-weight: 600;
+  letter-spacing: -0.01em;
+  line-height: 1.12;
+  font-size: clamp(1.5rem, 1rem + 2.4vw, 2.5rem);
+}
+.story-eyebrow {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  font-size: 0.7rem;
+  font-weight: 700;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  color: var(--brand-600);
+}
+:root[data-theme="dark"] .story-eyebrow { color: var(--brand-300); }
+
+.story-grid-bg {
+  background-image: linear-gradient(var(--story-line) 1px, transparent 1px),
+    linear-gradient(90deg, var(--story-line) 1px, transparent 1px);
+  background-size: 44px 44px;
+  mask-image: radial-gradient(60% 60% at 50% 40%, black, transparent 85%);
+  -webkit-mask-image: radial-gradient(60% 60% at 50% 40%, black, transparent 85%);
+}
+
+.story-panel {
+  background: linear-gradient(180deg, rgba(255, 255, 255, 0.97), rgba(248, 251, 255, 0.94));
+  backdrop-filter: blur(20px) saturate(160%);
+  -webkit-backdrop-filter: blur(20px) saturate(160%);
+  border: 1px solid rgba(11, 31, 77, 0.08);
+  box-shadow: 0 1px 1px rgba(11, 31, 77, 0.04), 0 20px 48px -12px rgba(11, 31, 77, 0.16);
+}
+:root[data-theme="dark"] .story-panel {
+  background: linear-gradient(180deg, rgba(14, 22, 42, 0.96), rgba(10, 16, 32, 0.94));
+  border-color: var(--glass-border);
+  box-shadow: 0 1px 1px rgba(0, 0, 0, 0.3), 0 20px 48px -12px rgba(0, 0, 0, 0.55);
+}
+
+.no-scrollbar { scrollbar-width: none; }
+.no-scrollbar::-webkit-scrollbar { display: none; }
+
+@media (prefers-reduced-motion: reduce) {
+  .app-shell *,
+  .app-shell *::before,
+  .app-shell *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+}
+
+/* ==========================================================================
+ * The Jathagam "desk"
+ * The results area (theme panel + full report / single-page sheet + 50-page
+ * viewer) is a piece of handwritten paper lying on the new blue app. The desk
+ * supplies the parchment the legacy cards were designed to sit on (the old
+ * body background + grain + edge-ageing overlays), so the Jathagam looks the
+ * same as before — and the ink/typeface panel keeps working — with no change
+ * to any Jathagam component.
+ * ========================================================================== */
+.jathagam-desk {
+  position: relative;
+  background-color: #f0e5cc; /* legacy --paper */
+  background-image:
+    url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='260' height='260'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.8' numOctaves='2' stitchTiles='stitch'/%3E%3CfeColorMatrix values='0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0.2 0'/%3E%3C/filter%3E%3Crect width='260' height='260' filter='url(%23n)'/%3E%3C/svg%3E"),
+    radial-gradient(ellipse 130% 100% at 50% 38%, rgba(0, 0, 0, 0) 62%, rgba(94, 72, 40, 0.14) 100%);
+  border-radius: 1.75rem;
+  /* The frame is a box-shadow, not a border, and the side padding only exists on
+     wide screens: both PDF exporters lay the page out in a 794px-wide clone, and
+     anything that narrows the container there would re-wrap the sheet. */
+  box-shadow: 0 0 0 1px rgba(94, 72, 40, 0.28), var(--shadow-lift);
+  padding: 1rem 0;
+}
+@media (min-width: 900px) {
+  .jathagam-desk { padding: 1.5rem; }
+}
+
+/* Small "paper" label that introduces the desk */
+.desk-tab {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  border-radius: 9999px;
+  padding: 0.35rem 0.9rem;
+  font-size: 0.75rem;
+  font-weight: 600;
+  color: var(--brand-800);
+  background: var(--brand-50);
+  border: 1px solid var(--brand-200);
+}
+
+/* ==========================================================================
+ * JATHAGAM LEGACY LAYER  —  DO NOT RESTYLE
+ *
+ * The handwritten Jathagam (full-report cards, 50-page manuscript, single-page
+ * sheet, ink/typeface theme panel and BOTH PDF exports) was designed against the
+ * old parchment stylesheet. Everything below is that stylesheet, kept as it was.
+ *
+ * What changed is only SCOPE. The old file applied its handwriting typography to
+ * <body> and to every element type site-wide. That is now confined to
+ * `.jathagam-legacy` (the results "desk" in app/page.tsx), so the rest of the
+ * site can use the new blue system without touching the Jathagam.
+ *
+ * `:where()` is used on purpose: it adds ZERO specificity, so every rule here
+ * cascades against Tailwind utilities exactly as it did before.
+ * ========================================================================== */
+
+/* Base typography that used to live on <body> */
+:where(.jathagam-legacy) {
   color: var(--ink);
   font-family: 'Kavivanar', 'Caveat', cursive, sans-serif;
   font-size: 17px;
   line-height: 1.85;
-  overflow-x: hidden;
   -webkit-font-smoothing: antialiased;
   text-rendering: optimizeLegibility;
   text-shadow: 0.12px 0.12px 0 rgba(43, 33, 23, 0.22);
 }
 
-/* Universal handwritten text across entire interface */
-body, input, button, select, textarea, table, th, td, h1, h2, h3, h4, h5, h6, span, p, div, label, a {
+/* Universal handwritten text across the Jathagam */
+:where(.jathagam-legacy) input,
+:where(.jathagam-legacy) button,
+:where(.jathagam-legacy) select,
+:where(.jathagam-legacy) textarea,
+:where(.jathagam-legacy) table,
+:where(.jathagam-legacy) th,
+:where(.jathagam-legacy) td,
+:where(.jathagam-legacy) h1,
+:where(.jathagam-legacy) h2,
+:where(.jathagam-legacy) h3,
+:where(.jathagam-legacy) h4,
+:where(.jathagam-legacy) h5,
+:where(.jathagam-legacy) h6,
+:where(.jathagam-legacy) span,
+:where(.jathagam-legacy) p,
+:where(.jathagam-legacy) div,
+:where(.jathagam-legacy) label,
+:where(.jathagam-legacy) a {
   font-family: 'Kavivanar', 'Caveat', cursive, sans-serif;
 }
 
+/* The new base styles give headings a display face + tight line-height. The
+   Jathagam never had a heading rule (headings inherited the body's 1.85), so
+   restore that inheritance here. */
+:where(.jathagam-legacy) :is(h1, h2, h3, h4) {
+  line-height: inherit;
+}
+
 /* Handwritten numerals & technical markings */
-.num-hand, .font-mono, code, kbd, samp, pre {
+:where(.jathagam-legacy) .num-hand,
+:where(.jathagam-legacy) .font-mono,
+:where(.jathagam-legacy) code,
+:where(.jathagam-legacy) kbd,
+:where(.jathagam-legacy) samp,
+:where(.jathagam-legacy) pre {
   font-family: 'Caveat', cursive !important;
   font-size: 1.15em;
   letter-spacing: 0.03em;
 }
 
 /* Map cinzel/serif headings to authentic cursive calligraphy */
-.font-cinzel {
+:where(.jathagam-legacy) .font-cinzel {
   font-family: 'Caveat', 'Kavivanar', cursive !important;
   letter-spacing: 0.06em;
 }
 
-.font-serif, .font-sans {
+:where(.jathagam-legacy) .font-serif,
+:where(.jathagam-legacy) .font-sans {
   font-family: 'Kavivanar', 'Caveat', cursive !important;
 }
 
-/* SVG Chart handwritten font */
-svg text, .chart text {
+/* SVG chart handwritten font */
+:where(.jathagam-legacy) svg text,
+:where(.jathagam-legacy) .chart text {
   font-family: 'Kavivanar', 'Caveat', cursive !important;
-}
-
-::selection {
-  background: rgba(176, 55, 38, 0.22);
-  color: #2b2117;
 }
 
 /* ── Paper Grain & Edge Aging Overlays (from design-1.html) ── */
@@ -259,22 +818,6 @@ svg text, .chart text {
   border-radius: 255px 15px 225px 15px/15px 225px 15px 255px;
 }
 
-/* Custom scrollbar */
-::-webkit-scrollbar {
-  width: 8px;
-  height: 8px;
-}
-::-webkit-scrollbar-track {
-  background: #f0e5cc;
-}
-::-webkit-scrollbar-thumb {
-  background: #a3917a;
-  border-radius: 4px;
-}
-::-webkit-scrollbar-thumb:hover {
-  background: #b03726;
-}
-
 /* ── Handwritten Tamil Manuscript (Realistic Palm-Leaf) ── */
 .manuscript-container,
 .manuscript-container *,
@@ -399,3 +942,221 @@ svg text, .chart text {
   }
 }
 
+
+
+@media print {
+  .jathagam-desk {
+    background: none !important;
+    box-shadow: none !important;
+    padding: 0 !important;
+    border-radius: 0 !important;
+  }
+}
+
+/* ═══════════════════════════════════════════════════════════════════
+   PRINT = THE HANDWRITTEN MANUSCRIPT, NOT THE LIGHT-THEME PAGE.
+   Pressing "Print" used to run window.print() on whatever was on
+   screen — the smooth light-theme results view — because nothing told
+   the browser to print the off-screen manuscript instead. That view is
+   now wrapped in `.no-print` (see app/page.tsx), which the rule above
+   already turns into `display:none` (no leftover blank space).
+   All that's left is to bring the actual print targets back into
+   normal, visible document flow:
+     - #handwritten-manuscript + the ManuscriptTocPage host (both carry
+       `data-pdf-host`, full-mode 50-page book), and
+     - #single-page-report (single-page mode).
+   Both are ordinary DOM/canvas content already styled exactly like the
+   downloaded PDF, so printing them natively reproduces that same
+   layout, page-by-page, via each .manuscript-page's own
+   page-break-after rule — no separate print stylesheet to maintain.
+   ═══════════════════════════════════════════════════════════════════ */
+@media print {
+  [data-pdf-host] {
+    position: static !important;
+    left: auto !important;
+    top: auto !important;
+    pointer-events: auto !important;
+  }
+
+  /* .manuscript-container is `flex flex-col` for the on-screen scrollable
+     viewer — several browsers don't honour page-break-after on flex
+     children, so force normal block flow for print, where each
+     .manuscript-page already centers itself via margin:0 auto. */
+  .manuscript-container {
+    display: block !important;
+  }
+
+  /* ── Pagination hardening (fixes "page 1 overlaps page 2" / 53-vs-51
+     sheets) ─────────────────────────────────────────────────────────────
+     `.manuscript-page` previously had a page-break-AFTER rule but no
+     page-break-INSIDE rule. If a page's real height ever landed even
+     slightly past the A4 box (a webfont metric difference, a long line),
+     the browser sliced that ONE logical page mid-way across TWO physical
+     sheets instead of starting a clean new one — which is exactly what
+     read as one page's content overlapping into the next. `break-inside:
+     avoid` makes a page that doesn't fit move to a fresh sheet instead of
+     fracturing across two. This also covers the cloned contents page that
+     handlePrint (app/page.tsx) inserts right after the cover for print, so
+     it prints as a single, complete page-2 sheet. */
+  .manuscript-page,
+  #manuscript-toc-page,
+  [data-print-toc-clone] {
+    break-inside: avoid !important;
+    page-break-inside: avoid !important;
+  }
+
+  /* The cloned contents page always opens on its own fresh sheet right
+     after the cover, and always hands off to a fresh sheet for the rest
+     of the manuscript that follows it. */
+  [data-print-toc-clone] {
+    break-before: page !important;
+    page-break-before: always !important;
+    break-after: page !important;
+    page-break-after: always !important;
+  }
+
+  /* The page that is genuinely last must not force another page-break
+     after itself — that stray trailing break was producing an extra blank
+     sheet at the end of every print job. handlePrint tags the true last
+     page with this attribute only for the duration of the print. */
+  .manuscript-page[data-print-last-page] {
+    break-after: auto !important;
+    page-break-after: auto !important;
+  }
+
+  /* ── ROOT-CAUSE FIX: "page 1 overlaps / spills onto page 2" ───────────────
+     On screen a page is `width: 794px; min-height: 1123px`. A physical A4
+     sheet is 210mm x 297mm = 793.7px x 1122.52px, so every page was ~0.5px
+     TALLER than the sheet it prints on. `break-inside: avoid` cannot help
+     when a box is taller than the page, so the browser fragmented it: a
+     0.5px sliver flowed onto the next sheet — carrying the page's absolutely
+     positioned footer ("பக்கம் 1/50") to the TOP of sheet 2 — and then the
+     page-break-after pushed real content to sheet 3. That is exactly the
+     "footer at the top of a blank page 2" seen in the print preview, and the
+     reason the sheet count balloons past 51.
+     Fix: in print, give each page an EXACT, slightly-under-A4 fixed height
+     (1mm of slack) instead of min-height, and clip anything beyond it. */
+  .manuscript-page,
+  [data-print-toc-clone] {
+    box-sizing: border-box !important;
+    width: 210mm !important;
+    height: 296mm !important;
+    min-height: 0 !important;
+    max-height: 296mm !important;
+    margin: 0 !important;
+    overflow: hidden !important;
+    break-after: page !important;
+    page-break-after: always !important;
+  }
+
+  /* A cloned TOC wrapper should not add its own extra box — its child page
+     is what fills the sheet. Only apply if the clone is a plain wrapper. */
+  [data-print-toc-clone] > .manuscript-page {
+    height: 100% !important;
+    max-height: 100% !important;
+    break-after: auto !important;
+    page-break-after: auto !important;
+  }
+
+  /* ── SECOND ROOT CAUSE: whole page pushed down/right ─────────────────────
+     The print preview showed the cover starting ~20mm below the top and
+     ~15mm in from the left, so its bottom (and footer) fell onto sheet 2.
+     Something wrapping the pages (the scroll-viewer container, padding,
+     gap, centering, scale transform) was still adding space in print.
+     Flatten every wrapper that sits between the host and a page. */
+  [data-pdf-host],
+  [data-pdf-host] :has(.manuscript-page),
+  [data-pdf-host]:has(.manuscript-page) {
+    position: static !important;
+    display: block !important;
+    margin: 0 !important;
+    padding: 0 !important;
+    border: 0 !important;
+    gap: 0 !important;
+    width: auto !important;
+    min-width: 0 !important;
+    max-width: none !important;
+    height: auto !important;
+    min-height: 0 !important;
+    max-height: none !important;
+    overflow: visible !important;
+    transform: none !important;
+    zoom: 1 !important;
+    inset: auto !important;
+    background: none !important;
+    box-shadow: none !important;
+  }
+
+  /* ── THIRD (ACTUAL) ROOT CAUSE: the ANCESTORS of the hosts ──────────────
+     The previous rule only flattened wrappers INSIDE the host. But the
+     hosts live inside <main class="px-4 sm:px-6 py-6 max-w-7xl mx-auto
+     space-y-10"> → <section.jathagam-desk space-y-6> → <div space-y-10>.
+     In print that padding pushed every page ~6mm right and ~6mm+ down, and
+     the space-y margins added more, so a full-height page starting below
+     the top edge always ran off the bottom of the sheet: its footer landed
+     on the next sheet and everything after it drifted (53 sheets).
+     Flatten every ancestor that contains a print host, and drop the site
+     header/footer (they were adding an extra printed sheet). */
+  .app-shell > :not(main) {
+    display: none !important;
+  }
+  body :has([data-pdf-host]),
+  body :has(#single-page-report),
+  body:has([data-pdf-host]) main {
+    display: block !important;
+    position: static !important;
+    margin: 0 !important;
+    padding: 0 !important;
+    border: 0 !important;
+    gap: 0 !important;
+    width: auto !important;
+    max-width: none !important;
+    min-width: 0 !important;
+    height: auto !important;
+    min-height: 0 !important;
+    max-height: none !important;
+    overflow: visible !important;
+    transform: none !important;
+    background: none !important;
+    box-shadow: none !important;
+    border-radius: 0 !important;
+  }
+
+  /* Ancestors must not clip / cap pagination to one viewport-high box. */
+  html,
+  body,
+  .app-shell {
+    height: auto !important;
+    min-height: 0 !important;
+    overflow: visible !important;
+    display: block !important;
+  }
+
+  /* The last page must not force a trailing blank sheet (re-asserted after
+     the height block above so it wins on specificity/order). */
+  .manuscript-page[data-print-last-page] {
+    break-after: auto !important;
+    page-break-after: auto !important;
+  }
+
+  #single-page-report {
+    position: static !important;
+    margin: 0 auto !important;
+  }
+
+  /* The flex/centering wrapper SinglePageReport renders #single-page-report
+     inside is otherwise harmless for print, but reset it in case its
+     flex context clips or off-centers a static-flow child during
+     pagination. */
+  #single-page-report,
+  #single-page-report * {
+    box-shadow: none !important;
+  }
+}
+
+/* @page must live at the top level — Chrome can ignore it when nested in
+   @media. Without margin:0 honoured, Chrome adds its own default margins. */
+@page {
+  size: A4;
+  margin: 0;
+}

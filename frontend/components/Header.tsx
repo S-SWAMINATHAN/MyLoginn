@@ -1,117 +1,142 @@
 "use client";
 
-import React from "react";
+import React, { useEffect, useState } from "react";
 import Link from "next/link";
-import { Heart, Compass, Baby, Sun, CalendarSearch } from "lucide-react";
+import { usePathname } from "next/navigation";
+import { Heart, Compass, Baby, Sun, CalendarSearch, Menu, X } from "lucide-react";
+import { ThemeToggle } from "@/components/ui/ThemeToggle";
 
 interface HeaderProps {
   lang: "ta" | "en";
   setLang: (l: "ta" | "en") => void;
 }
 
+/**
+ * NOTE: the standalone "MATCH Finder" nav link/route was removed earlier —
+ * that feature lives ONLY inside the Porutham page as a tab
+ * (app/porutham/page.tsx), so it has no top-level nav entry.
+ */
+const NAV = [
+  { href: "/", icon: Compass, ta: "ஜாதகக் கணிப்பு", en: "Generate Chart" },
+  { href: "/porutham", icon: Heart, ta: "திருமணப் பொருத்தம்", en: "Marriage Match" },
+  { href: "/horoscope", icon: Sun, ta: "ராசி பலன்", en: "Horoscope" },
+  { href: "/muhurtha", icon: CalendarSearch, ta: "முகூர்த்தம்", en: "Muhurtha" },
+  { href: "/baby-names", icon: Baby, ta: "குழந்தை பெயர்", en: "Baby Name" },
+];
+
 export const Header: React.FC<HeaderProps> = ({ lang, setLang }) => {
+  const pathname = usePathname() || "/";
+  const [open, setOpen] = useState(false);
+
+  // close the mobile menu whenever the route changes
+  useEffect(() => {
+    setOpen(false);
+  }, [pathname]);
+
+  const isActive = (href: string) => (href === "/" ? pathname === "/" : pathname.startsWith(href));
+
+  const LangToggle = (
+    <div className="flex items-center rounded-xl border border-line bg-surface-2 p-0.5" role="group" aria-label="Language">
+      {(["ta", "en"] as const).map((l) => (
+        <button
+          key={l}
+          type="button"
+          onClick={() => setLang(l)}
+          aria-pressed={lang === l}
+          className={`rounded-lg px-2.5 py-1.5 text-xs font-semibold transition-all ${
+            lang === l ? "brand-gradient-bg text-white shadow-soft" : "text-muted hover:text-foreground"
+          }`}
+        >
+          {l === "ta" ? "தமிழ்" : "English"}
+        </button>
+      ))}
+    </div>
+  );
+
   return (
-    <header className="sticky top-0 z-50 backdrop-blur-md bg-[#f0e5cc]/92 border-b border-[#a3917a]/35 no-print shadow-xs">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-20 flex items-center justify-between">
+    <header className="glass-nav sticky top-0 z-50 border-b border-border-soft no-print">
+      <div className="mx-auto flex h-[4.5rem] max-w-7xl items-center justify-between gap-3 px-4 sm:px-6 lg:px-8">
         {/* Brand */}
-        <Link href="/" className="flex items-center gap-3 group">
-          <div className="w-11 h-11 rounded-xl bg-gradient-to-tr from-[#b03726] to-[#6f6049] p-0.5 shadow-sm group-hover:scale-105 transition-transform flex items-center justify-center">
-            <div className="w-full h-full bg-[#fdfaf2] rounded-[10px] flex items-center justify-center">
-              <span className="text-2xl text-[#b03726] font-bold font-script">ஸ்ரீ</span>
-            </div>
-          </div>
-          <div>
-            <div className="flex items-center gap-2">
-              <h1 className="text-xl sm:text-2xl font-bold tracking-tight font-cinzel text-white group-hover:text-[#ffd700] transition-colors">
-                MYLoginn Astrology
-              </h1>
-              <span className="text-xs bg-[#b03726] text-white px-2 py-0.5 rounded-full font-tamil font-medium">
+        <Link href="/" className="group flex min-w-0 items-center gap-3">
+          <span className="relative h-11 w-11 shrink-0 overflow-hidden rounded-xl bg-brand-900 shadow-soft ring-1 ring-brand-400/30 transition-transform group-hover:scale-105">
+            {/* eslint-disable-next-line @next/next/no-img-element */}
+            <img src="/logo-mark.png" alt="MyLoginn Astrology" width={44} height={44} className="h-full w-full object-cover" />
+          </span>
+          <span className="min-w-0 leading-tight">
+            <span className="flex items-center gap-2">
+              <span className="font-display text-lg font-semibold tracking-tight brand-gradient-text sm:text-xl">
+                MyLoginn Astrology
+              </span>
+              <span className="hidden rounded-full bg-brand-500/10 px-2 py-0.5 text-[11px] font-semibold text-brand-fg sm:inline">
                 ஜாதகம்
               </span>
-            </div>
-            <p className="text-xs text-[#6f6049] font-tamil">
+            </span>
+            <span className="hidden truncate text-[11px] text-muted sm:block">
               {lang === "ta" ? "துல்லியமான கையெழுத்து வேத ஜோதிட ஜாதகம்" : "Traditional Handwritten Vedic Horoscope"}
-            </p>
-          </div>
+            </span>
+          </span>
         </Link>
 
-        {/* Navigation Actions */}
-        <nav className="flex items-center gap-2 sm:gap-4">
-          <Link
-            href="/"
-            className="flex items-center gap-1.5 text-xs sm:text-sm text-[#2b2117] hover:text-[#b03726] px-3 py-2 rounded-lg hover:bg-[#e8d7bb]/60 transition-colors font-tamil"
+        {/* Desktop navigation */}
+        <nav className="hidden items-center gap-1 lg:flex" aria-label="Primary">
+          {NAV.map(({ href, icon: Icon, ta, en }) => {
+            const active = isActive(href);
+            return (
+              <Link
+                key={href}
+                href={href}
+                aria-current={active ? "page" : undefined}
+                className={`flex items-center gap-1.5 rounded-xl px-3 py-2 text-sm font-medium transition-all ${
+                  active
+                    ? "bg-brand-500/10 text-brand-fg shadow-[inset_0_0_0_1px_rgba(47,111,237,0.25)]"
+                    : "text-muted hover:bg-brand-500/5 hover:text-foreground"
+                }`}
+              >
+                <Icon className={`h-4 w-4 ${active ? "text-brand-fg" : "text-brand-500"}`} />
+                <span>{lang === "ta" ? ta : en}</span>
+              </Link>
+            );
+          })}
+        </nav>
+
+        <div className="flex items-center gap-2">
+          {LangToggle}
+          <ThemeToggle lang={lang} />
+          <button
+            type="button"
+            onClick={() => setOpen((v) => !v)}
+            aria-expanded={open}
+            aria-label={open ? "Close menu" : "Open menu"}
+            className="inline-flex h-9 w-9 items-center justify-center rounded-xl border border-line bg-surface text-foreground transition-all hover:border-brand-400 lg:hidden"
           >
-            <Compass className="w-4 h-4 text-[#b03726]" />
-            <span>{lang === "ta" ? "ஜாதகக் கணிப்பு" : "Generate Chart"}</span>
-          </Link>
+            {open ? <X className="h-4 w-4" /> : <Menu className="h-4 w-4" />}
+          </button>
+        </div>
+      </div>
 
-          <Link
-            href="/porutham"
-            className="flex items-center gap-1.5 text-xs sm:text-sm text-[#2b2117] hover:text-[#b03726] px-3 py-2 rounded-lg hover:bg-[#e8d7bb]/60 transition-colors font-tamil"
-          >
-            <Heart className="w-4 h-4 text-[#b03726]" />
-            <span>{lang === "ta" ? "திருமணப் பொருத்தம்" : "Marriage Match"}</span>
-          </Link>
-
-          {/*
-            NOTE: the standalone "MATCH Finder" nav link/route was removed
-            here. That feature now lives ONLY inside the Porutham page as a
-            tab (see app/porutham/page.tsx) — it's the same
-            StarMatchFinder component, just embedded inline instead of
-            linked out to its own page, so it no longer needs its own
-            top-level nav entry or route.
-          */}
-
-          <Link
-            href="/horoscope"
-            className="flex items-center gap-1.5 text-xs sm:text-sm text-[#2b2117] hover:text-[#b03726] px-3 py-2 rounded-lg hover:bg-[#e8d7bb]/60 transition-colors font-tamil"
-          >
-            <Sun className="w-4 h-4 text-[#b03726]" />
-            <span>{lang === "ta" ? "ராசி பலன்" : "Horoscope"}</span>
-          </Link>
-
-          {/* Muhurtha Finder nav link — same pattern as the other feature links */}
-          <Link
-            href="/muhurtha"
-            className="flex items-center gap-1.5 text-xs sm:text-sm text-[#2b2117] hover:text-[#b03726] px-3 py-2 rounded-lg hover:bg-[#e8d7bb]/60 transition-colors font-tamil"
-          >
-            <CalendarSearch className="w-4 h-4 text-[#b03726]" />
-            <span>{lang === "ta" ? "முகூர்த்தம்" : "Muhurtha"}</span>
-          </Link>
-
-          <Link
-            href="/baby-names"
-            className="flex items-center gap-1.5 text-xs sm:text-sm text-[#2b2117] hover:text-[#b03726] px-3 py-2 rounded-lg hover:bg-[#e8d7bb]/60 transition-colors font-tamil"
-          >
-            <Baby className="w-4 h-4 text-[#b03726]" />
-            <span>{lang === "ta" ? "குழந்தை பெயர்" : "Baby Name"}</span>
-          </Link>
-
-          {/* Language Toggle */}
-          <div className="flex items-center bg-[#eae0c6] border border-[#a3917a]/50 rounded-lg p-1">
-            <button
-              onClick={() => setLang("ta")}
-              className={`px-2.5 py-1 text-xs font-semibold rounded-md transition-all font-tamil ${
-                lang === "ta"
-                  ? "bg-[#b03726] text-white shadow-xs"
-                  : "text-[#6f6049] hover:text-[#2b2117]"
-              }`}
-            >
-              தமிழ்
-            </button>
-            <button
-              onClick={() => setLang("en")}
-              className={`px-2.5 py-1 text-xs font-semibold rounded-md transition-all font-tamil ${
-                lang === "en"
-                  ? "bg-[#b03726] text-white shadow-xs"
-                  : "text-[#6f6049] hover:text-[#2b2117]"
-              }`}
-            >
-              English
-            </button>
+      {/* Mobile navigation */}
+      {open && (
+        <nav className="border-t border-border-soft bg-surface/95 px-4 pb-4 pt-2 lg:hidden" aria-label="Primary mobile">
+          <div className="mx-auto grid max-w-7xl gap-1 sm:grid-cols-2">
+            {NAV.map(({ href, icon: Icon, ta, en }) => {
+              const active = isActive(href);
+              return (
+                <Link
+                  key={href}
+                  href={href}
+                  aria-current={active ? "page" : undefined}
+                  className={`flex items-center gap-2.5 rounded-xl px-3 py-3 text-sm font-medium transition-all ${
+                    active ? "bg-brand-500/10 text-brand-fg" : "text-foreground hover:bg-brand-500/5"
+                  }`}
+                >
+                  <Icon className="h-4 w-4 text-brand-500" />
+                  <span>{lang === "ta" ? ta : en}</span>
+                </Link>
+              );
+            })}
           </div>
         </nav>
-      </div>
+      )}
     </header>
   );
 };
