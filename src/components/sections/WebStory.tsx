@@ -7,6 +7,7 @@ import { SplitHeadline } from "@/components/experience/SplitHeadline";
 import { Pipeline } from "@/components/sections/parts/Pipeline";
 import { Reveal } from "@/components/ui/Reveal";
 import { Button } from "@/components/ui/Button";
+import { openProjectRequest } from "@/components/services/ProjectRequestModal";
 import { useReducedMotion } from "@/lib/useReducedMotion";
 
 const PIPELINE_STEPS = ["Idea", "Design", "Frontend", "Backend", "API", "Database", "Testing", "Deployment"];
@@ -159,7 +160,7 @@ function ComputerMockup() {
             animate={{ opacity: 1, y: 0 }}
             exit={{ opacity: 0, y: -8 }}
             transition={{ duration: 0.4 }}
-            className="h-[210px] w-full p-5"
+            className="h-[150px] w-full p-3.5 min-[380px]:h-[210px] min-[380px]:p-5"
           >
             <ScreenContent screen={screen} />
           </motion.div>
@@ -190,8 +191,8 @@ function ComputerMockup() {
 export function WebStory() {
   return (
     <Chapter formation="grid" variant="web" title="Web development">
-      <div className="mx-auto grid w-full max-w-6xl gap-12 px-5 sm:px-8 lg:grid-cols-2 lg:items-center lg:gap-16">
-        <div className="text-center lg:text-left">
+      <div className="mx-auto grid w-full min-w-0 max-w-6xl gap-10 px-4 sm:gap-12 sm:px-8 lg:grid-cols-2 lg:items-center lg:gap-16">
+        <div className="min-w-0 text-center lg:text-left">
           <Reveal>
             <span className="story-eyebrow justify-center lg:justify-start">Web development</span>
           </Reveal>
@@ -214,13 +215,13 @@ export function WebStory() {
           </Reveal>
 
           <Reveal direction="up" delay={0.4} className="mt-8 flex justify-center lg:justify-start">
-            <Button href="/services/app-web-development" variant="outline">
+            <Button type="button" onClick={() => openProjectRequest("web")} variant="outline">
               Plan a web project
             </Button>
           </Reveal>
         </div>
 
-        <div className="mx-auto w-full max-w-sm">
+        <div className="mx-auto w-full max-w-[14rem] min-w-0 min-[380px]:max-w-sm">
           <ComputerMockup />
         </div>
       </div>

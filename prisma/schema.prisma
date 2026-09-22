@@ -252,6 +252,38 @@ model Lead {
   createdAt   DateTime @default(now())
 }
 
+model ProjectRequest {
+  id                String   @id @default(cuid())
+  requestId         String   @unique
+  service           String
+  name              String
+  company           String?
+  email             String
+  phone             String
+  whatsapp          String?
+  preferredContact  String?
+  projectName       String?
+  industry          String?
+  currentUrl        String?
+  description       String
+  objective         String?
+  targetAudience    String?
+  projectType       String?
+  platform          String?
+  requirements      Json
+  budget            String?
+  timeline          String?
+  status            String   @default("new")
+  priority          String   @default("normal")
+  assignedTo        String?
+  internalNotes     String?
+  createdAt         DateTime @default(now())
+  updatedAt         DateTime @updatedAt
+
+  @@index([service, status, createdAt])
+  @@index([email, createdAt])
+}
+
 model Notification {
   id        String   @id @default(cuid())
   userId    String

@@ -10,9 +10,6 @@ import { AnimatedArrow } from "@/components/ui/icons/AnimatedArrow";
 import { AnimatedExploreCourses } from "@/components/ui/icons/AnimatedExploreCourses";
 import { Eyebrow } from "@/components/ui/Section";
 import { RotatingHeadline } from "@/components/ui/RotatingHeadline";
-import { IconBadge } from "@/components/ui/IconBadge";
-import { ContentIcon } from "@/components/ui/ContentIcon";
-import type { CourseIconKey } from "@/lib/courseIcons";
 import heroImage from "@/images/Hero Section images/15.png";
 
 const heroPhrases = [
@@ -21,12 +18,6 @@ const heroPhrases = [
   "Learning with Direction. Careers with Impact.",
   "From Aspiration to Achievement",
   "A Smarter Path to Professional Growth",
-];
-
-const stats: { iconKey: CourseIconKey; value: string; label: string; ring: string }[] = [
-  { iconKey: "student", value: "50k+", label: "Learners upskilled", ring: "border-brand-400/50 text-brand-600" },
-  { iconKey: "career", value: "1,200+", label: "Internships placed", ring: "border-teal-400/50 text-teal-600" },
-  { iconKey: "comm", value: "98%", label: "Mentor satisfaction", ring: "border-amber-400/50 text-amber-600" },
 ];
 
 /**
@@ -88,24 +79,6 @@ export function Hero() {
               </Button>
             </motion.div>
 
-            <motion.div
-              initial={{ opacity: 0, y: 16 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.7, delay: 1.1 }}
-              className="mt-10 grid grid-cols-1 gap-3 sm:grid-cols-3"
-            >
-              {stats.map((s) => (
-                <div key={s.label} className="glass-panel flex items-center gap-3 rounded-2xl px-4 py-3 text-left">
-                  <IconBadge size="sm" className={`border bg-transparent ${s.ring}`}>
-                    <ContentIcon keyword={s.iconKey} className="h-6 w-6" />
-                  </IconBadge>
-                  <span>
-                    <p className="text-lg font-semibold text-foreground sm:text-xl">{s.value}</p>
-                    <p className="text-xs text-muted">{s.label}</p>
-                  </span>
-                </div>
-              ))}
-            </motion.div>
           </div>
 
           <motion.div
@@ -116,7 +89,7 @@ export function Hero() {
               scale: { duration: 1, delay: 0.3, ease: [0.16, 1, 0.3, 1] },
               y: { duration: 6, delay: 1.3, repeat: Infinity, ease: "easeInOut" },
             }}
-            className="relative -mx-5 w-[calc(100%+2.5rem)] max-w-none sm:mx-auto sm:w-full sm:max-w-2xl lg:mx-0 lg:w-[118%] lg:max-w-none"
+            className="relative -mx-5 hidden w-[calc(100%+2.5rem)] max-w-none lg:mx-0 lg:block lg:w-[118%] lg:max-w-none"
           >
             <Image
               src={heroImage}

@@ -50,6 +50,13 @@ const progressCell = (key: string) => (row: Row) => {
   );
 };
 
+function requestAttachmentsCell(row: Row) {
+  const value = row.requirements as { attachments?: { name?: string; url?: string }[] } | null;
+  const attachments = Array.isArray(value?.attachments) ? value.attachments : [];
+  if (attachments.length === 0) return <span className="text-muted">—</span>;
+  return <div className="flex max-w-40 flex-wrap gap-1">{attachments.map((attachment, index) => attachment.url ? <a key={`${attachment.url}-${index}`} href={attachment.url} target="_blank" rel="noreferrer" className="max-w-36 truncate rounded bg-brand-50 px-1.5 py-0.5 text-xs font-medium text-brand-600 hover:underline dark:bg-brand-900/25">{attachment.name || "Attachment"}</a> : null)}</div>;
+}
+
 const LEVEL_OPTIONS = [
   { label: "Beginner", value: "Beginner" },
   { label: "Intermediate", value: "Intermediate" },
@@ -501,6 +508,61 @@ export const leadConfig: EntityConfig = {
         { label: "Closed", value: "closed" },
       ],
     },
+  ],
+};
+
+export const projectRequestConfig: EntityConfig = {
+  entity: "project-requests",
+  titleSingular: "Project request",
+  titlePlural: "Project requests",
+  description: "Requirements submitted by prospective clients from the service request forms.",
+  nameKey: "requestId",
+  canDelete: false,
+  columns: [
+    { key: "requestId", label: "Request ID", className: "font-mono text-xs font-medium" },
+    { key: "name", label: "Client", className: "font-medium" },
+    { key: "company", label: "Company", hideBelow: "md" },
+    { key: "service", label: "Service" },
+    { key: "budget", label: "Budget", hideBelow: "xl" },
+    { key: "priority", label: "Priority", hideBelow: "lg", render: statusCell("priority") },
+    { key: "assignedTo", label: "Assigned to", hideBelow: "xl" },
+    { key: "description", label: "Project brief", hideBelow: "xl", render: (row) => <span title={String(row.description ?? "")} className="block max-w-56 truncate text-muted">{String(row.description ?? "—")}</span> },
+    { key: "requirements", label: "Files", hideBelow: "xl", render: requestAttachmentsCell },
+    { key: "email", label: "Email", hideBelow: "lg", className: "text-muted" },
+    { key: "status", label: "Status", render: statusCell("status") },
+    { key: "createdAt", label: "Received", hideBelow: "lg", render: dateCell("createdAt") },
+  ] as Column[],
+  editFields: [
+    {
+      name: "status",
+      label: "Status",
+      type: "select",
+      options: [
+        { label: "New", value: "new" },
+        { label: "Contacted", value: "contacted" },
+        { label: "Requirement discussion", value: "requirement_discussion" },
+        { label: "Proposal sent", value: "proposal_sent" },
+        { label: "Negotiation", value: "negotiation" },
+        { label: "Approved", value: "approved" },
+        { label: "In development", value: "in_development" },
+        { label: "Completed", value: "completed" },
+        { label: "Rejected", value: "rejected" },
+        { label: "On hold", value: "on_hold" },
+      ],
+    },
+    {
+      name: "priority",
+      label: "Priority",
+      type: "select",
+      options: [
+        { label: "Low", value: "low" },
+        { label: "Normal", value: "normal" },
+        { label: "High", value: "high" },
+        { label: "Urgent", value: "urgent" },
+      ],
+    },
+    { name: "assignedTo", label: "Assigned team member", type: "text" },
+    { name: "internalNotes", label: "Internal notes", type: "textarea", full: true },
   ],
 };
 

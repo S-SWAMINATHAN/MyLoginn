@@ -42,7 +42,7 @@ export function Chapter({
       id={id}
       aria-label={title}
       data-chapter={variant}
-      className={cn("relative flex min-h-[480px] scroll-mt-16 flex-col justify-center py-12 sm:py-14", className)}
+      className={cn("relative flex min-h-0 min-w-0 max-w-full scroll-mt-16 flex-col justify-start overflow-x-clip py-9 sm:min-h-[480px] sm:justify-center sm:py-14", className)}
     >
       {children}
     </section>

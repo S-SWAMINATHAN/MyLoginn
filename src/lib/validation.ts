@@ -60,6 +60,30 @@ export const leadSchema = z.object({
   message: z.string().trim().max(1000).optional().or(z.literal("")),
 });
 
+const optionalText = z.string().trim().max(500).optional().or(z.literal(""));
+
+export const projectRequestSchema = z.object({
+  service: z.enum(["web", "mobile", "software", "marketing"]),
+  name: z.string().trim().min(2, "Enter your full name").max(100),
+  company: optionalText,
+  email: emailSchema,
+  phone: phoneSchema,
+  whatsapp: optionalText,
+  preferredContact: z.enum(["Phone", "WhatsApp", "Email"]).optional(),
+  projectName: optionalText,
+  industry: optionalText,
+  currentUrl: z.string().trim().url("Enter a valid website URL").optional().or(z.literal("")),
+  description: z.string().trim().min(20, "Please provide a little more detail").max(5000),
+  objective: optionalText,
+  targetAudience: optionalText,
+  projectType: optionalText,
+  platform: optionalText,
+  requirements: z.array(z.string().trim().min(1).max(80)).max(30).default([]),
+  budget: optionalText,
+  timeline: optionalText,
+  additionalNotes: z.string().trim().max(3000).optional().or(z.literal("")),
+});
+
 export const internshipApplicationSchema = z.object({
   internshipId: z.string().min(1),
   coverNote: z.string().trim().max(1500).optional().or(z.literal("")),
@@ -78,3 +102,4 @@ export const tutoringBookingSchema = z.object({
 export type SignupInput = z.input<typeof signupSchema>;
 export type LoginInput = z.infer<typeof loginSchema>;
 export type LeadInput = z.infer<typeof leadSchema>;
+export type ProjectRequestInput = z.input<typeof projectRequestSchema>;

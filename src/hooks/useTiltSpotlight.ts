@@ -15,7 +15,7 @@ export function useTiltSpotlight() {
   const spotY = useTransform(smoothY, [0, 1], ["0%", "100%"]);
   const spotlightBg = useMotionTemplate`radial-gradient(420px circle at ${spotX} ${spotY}, color-mix(in srgb, var(--brand-400) 18%, transparent), transparent 70%)`;
 
-  function onMouseMove(e: MouseEvent<HTMLDivElement>) {
+  function onMouseMove(e: MouseEvent<HTMLElement>) {
     const rect = e.currentTarget.getBoundingClientRect();
     mouseX.set((e.clientX - rect.left) / rect.width);
     mouseY.set((e.clientY - rect.top) / rect.height);

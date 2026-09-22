@@ -4,6 +4,8 @@ import { LeadForm } from "@/components/services/LeadForm";
 import { DigitalMarketingHero } from "@/components/services/DigitalMarketingHero";
 import { FeatureBentoGrid } from "@/components/services/FeatureBentoGrid";
 import { HowItWorksTimeline } from "@/components/services/HowItWorksTimeline";
+import { Button } from "@/components/ui/Button";
+import { openProjectRequest } from "@/components/services/ProjectRequestModal";
 
 export const metadata: Metadata = {
   title: "Digital Marketing Services — MyLoginn",
@@ -18,6 +20,9 @@ export default function DigitalMarketingServicesPage() {
         <div className="grid grid-cols-1 gap-12 lg:grid-cols-5">
           <div className="lg:col-span-3">
             <DigitalMarketingHero />
+            <Button type="button" onClick={() => openProjectRequest("marketing")} variant="outline" className="mt-8">
+              Plan your marketing campaign
+            </Button>
             <FeatureBentoGrid />
             <HowItWorksTimeline />
           </div>

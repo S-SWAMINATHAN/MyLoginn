@@ -44,6 +44,7 @@ const NAV_GROUPS: { label: string; items: { href: string; label: string; icon: R
       { href: "/admin/projects", label: "Projects", icon: AnimatedFolder },
       { href: "/admin/tutoring", label: "Tutoring", icon: AnimatedCalendar },
       { href: "/admin/leads", label: "Client Requests", icon: AnimatedChat },
+      { href: "/admin/project-requests", label: "Project Requests", icon: AnimatedFolder },
     ],
   },
   {

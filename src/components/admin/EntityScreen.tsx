@@ -12,6 +12,7 @@ import {
   projectConfig,
   tutoringConfig,
   leadConfig,
+  projectRequestConfig,
   paymentConfig,
 } from "@/components/admin/entityConfigs";
 
@@ -26,6 +27,7 @@ const configs: Record<string, EntityConfig> = {
   projects: projectConfig,
   tutoring: tutoringConfig,
   leads: leadConfig,
+  "project-requests": projectRequestConfig,
   payments: paymentConfig,
 };
 
