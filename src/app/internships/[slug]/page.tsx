@@ -1,4 +1,5 @@
 import { notFound } from "next/navigation";
+import type { Metadata } from "next";
 import { prisma } from "@/lib/prisma";
 import { getCurrentUser } from "@/lib/auth";
 import { Section, Container, Eyebrow } from "@/components/ui/Section";
@@ -8,6 +9,22 @@ import { AnimatedMapPin } from "@/components/ui/icons/AnimatedMapPin";
 import { AnimatedClock } from "@/components/ui/icons/AnimatedClock";
 import { AnimatedRupee } from "@/components/ui/icons/AnimatedRupee";
 import { AnimatedCrown } from "@/components/ui/icons/AnimatedCrown";
+
+export async function generateMetadata({ params }: { params: Promise<{ slug: string }> }): Promise<Metadata> {
+  const { slug } = await params;
+  const internship = await prisma.internship.findUnique({
+    where: { slug },
+    select: { title: true, description: true, slug: true },
+  });
+
+  if (!internship) return {};
+
+  return {
+    title: `${internship.title} — MyLoginn Internships`,
+    description: internship.description,
+    alternates: { canonical: `/internships/${internship.slug}` },
+  };
+}
 
 export default async function InternshipDetailPage({
   params,

@@ -1,10 +1,15 @@
+import type { Metadata } from "next";
 import { prisma } from "@/lib/prisma";
 import { getCurrentUser } from "@/lib/auth";
 import { Section, Container, Eyebrow } from "@/components/ui/Section";
 import { CoursesExplorer } from "@/components/courses/CoursesExplorer";
 import type { CourseCardData } from "@/components/courses/CourseCard";
 
-export const metadata = { title: "Courses — MyLoginn" };
+export const metadata: Metadata = {
+  title: "Courses — MyLoginn",
+  description: "Learn AI, machine learning, digital marketing, and full-stack development with live mentor-led courses.",
+  alternates: { canonical: "/courses" },
+};
 
 export default async function CoursesPage() {
   const [user, courses] = await Promise.all([

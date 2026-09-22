@@ -10,6 +10,7 @@ import { Footer } from "@/components/layout/Footer";
 import { PageTransition } from "@/components/layout/PageTransition";
 import { HideOnAdmin } from "@/components/layout/HideOnAdmin";
 import { getCurrentUser } from "@/lib/auth";
+import { siteUrl } from "@/lib/site";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -22,9 +23,11 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
+  metadataBase: new URL(siteUrl),
   title: "MyLoginn — Web, Mobile, AI & Intelligent Digital Experiences",
   description:
     "MyLoginn Tech Private Limited builds web, mobile and custom software, AI and AI agents, and automation — plus hands-on courses and 1:1 tutoring in AI/ML, full-stack development, data and more.",
+  alternates: { canonical: "/" },
 };
 
 export default async function RootLayout({
