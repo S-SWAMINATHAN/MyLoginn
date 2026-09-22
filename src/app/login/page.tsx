@@ -203,9 +203,6 @@ export default function LoginPage() {
                   </Button>
                 </form>
 
-                <p className="mt-4 text-center text-xs text-muted">
-                  Demo admin: <strong>admin@myloginn.ai</strong> / <strong>Admin@123</strong>
-                </p>
               </motion.div>
             ) : (
               <motion.div
