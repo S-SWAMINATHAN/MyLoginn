@@ -661,6 +661,8 @@ export interface ParentsBioData {
 
 export interface GenerateChartRequest {
   name?: string;
+  /** Latin spelling of `name` when the user picked a Tamil suggestion. */
+  name_en?: string;
   gender?: string;
   date_of_birth: string; // YYYY-MM-DD
   time_of_birth: string; // HH:MM:SS
@@ -766,6 +768,7 @@ export interface RasiNakshatraPredictionResult {
 export interface ChartResponse {
   profile_id?: number | null;
   name: string;
+  name_en?: string | null;
   gender?: string | null;
   date_of_birth: string;
   time_of_birth: string;

@@ -19,6 +19,7 @@ import {
 } from "lucide-react";
 import { TimeInput12h } from "./TimeInput12h";
 import { LocationPicker } from "./LocationPicker";
+import { TamilNameInput } from "./TamilNameInput";
 
 interface BirthDetailsFormProps {
   onSubmit: (data: GenerateChartRequest) => void;
@@ -109,17 +110,23 @@ export const BirthDetailsForm: React.FC<BirthDetailsFormProps> = ({
           <label className="block text-xs font-semibold text-muted mb-1.5">
             {lang === "ta" ? "பெயர் (Name)" : "Full Name"} <span className="text-brand-fg">*</span>
           </label>
-          <div className="relative">
-            <User className="absolute left-3.5 top-3.5 w-4 h-4 text-brand-fg/80" />
-            <input
-              type="text"
-              required
-              value={formData.name}
-              onChange={(e) => setFormData({ ...formData, name: e.target.value })}
-              className="w-full pl-10 pr-4 py-2.5 bg-surface border-2 border-line rounded-xl text-foreground placeholder:text-muted/60 focus:border-brand-500 focus:ring-1 focus:ring-brand-500/30 transition-all text-sm outline-none"
-              placeholder={lang === "ta" ? "உங்கள் பெயர்" : "e.g. Anand"}
-            />
-          </div>
+          {/* Bug 1: in Tamil mode, Thanglish input gets Tamil spelling suggestions */}
+          <TamilNameInput
+            required
+            value={formData.name || ""}
+            onChange={(v, latin) =>
+              setFormData((prev) => ({
+                ...prev,
+                name: v,
+                // Keep the Thanglish original only when a Tamil suggestion was
+                // accepted, so the chart can show the name in either language.
+                name_en: latin || undefined,
+              }))
+            }
+            lang={lang}
+            className="w-full pl-10 pr-4 py-2.5 bg-surface border-2 border-line rounded-xl text-foreground placeholder:text-muted/60 focus:border-brand-500 focus:ring-1 focus:ring-brand-500/30 transition-all text-sm outline-none"
+            placeholder={lang === "ta" ? "உங்கள் பெயர் (எ.கா. guruprasath → குருபிரசாத்)" : "e.g. Anand"}
+          />
         </div>
 
         {/* Gender */}

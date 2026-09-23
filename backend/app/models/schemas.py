@@ -510,6 +510,11 @@ class ParentsBioData(BaseModel):
 
 class GenerateChartRequest(BaseModel):
     name: Optional[str] = "Jathagar"
+    # Latin/English spelling of `name`, sent by the frontend when the user
+    # accepted a Tamil transliteration suggestion for a Thanglish name. It is
+    # echoed back untouched so the UI can show the name in whichever language
+    # the reader has selected. Nothing is calculated from either field.
+    name_en: Optional[str] = None
     gender: Optional[str] = "male"
     date_of_birth: str = Field(..., description="YYYY-MM-DD")
     time_of_birth: str = Field(..., description="HH:MM:SS")
@@ -612,6 +617,7 @@ class RasiNakshatraPredictionResult(BaseModel):
 class ChartResponse(BaseModel):
     profile_id: Optional[int] = None
     name: str
+    name_en: Optional[str] = None  # see GenerateChartRequest.name_en
     gender: Optional[str] = None
     date_of_birth: str
     time_of_birth: str

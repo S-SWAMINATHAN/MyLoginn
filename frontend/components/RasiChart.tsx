@@ -184,7 +184,7 @@ export const RasiChart: React.FC<RasiChartProps> = ({
             </span>
             <span className="text-[#e0b87f]">
               {selectedPlanet.degree}° | {selectedPlanet.status || "Direct"}
-              {selectedPlanet.is_retrograde ? " (வக்ரம்)" : ""}
+              {selectedPlanet.is_retrograde ? (lang === "ta" ? " (வக்ரம்)" : " (Retrograde)") : ""}
             </span>
           </div>
           <button

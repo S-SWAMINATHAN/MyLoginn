@@ -61,8 +61,8 @@ const INK = "var(--jat-ink, #2b2117)";
 const INK_SOFT = "var(--jat-ink-soft, #6f6049)";
 const RED = "var(--jat-accent, #8e2b1c)";
 const GOLD = "var(--jat-gold, #aa820a)";
-const PAPER = "var(--jat-paper, #fdf6e3)";
-const PAPER_CARD = "var(--jat-paper-card, #fffaf0)";
+const PAPER = "var(--jat-paper, #ffffff)"; // Bug 3: white sheet
+const PAPER_CARD = "var(--jat-paper-card, #ffffff)";
 
 const FONT_STACK = "var(--jat-font, 'Kavivanar', 'Noto Sans Tamil', sans-serif)";
 
@@ -444,12 +444,12 @@ export const SinglePageReport: React.FC<SinglePageReportProps> = ({ chart, lang 
   return (
     <div className="space-y-3">
       {/* Toolbar — outside #single-page-report, so it is never captured */}
-      <div className="flex items-center justify-between no-print">
-        <h2
-          className="text-lg sm:text-xl font-bold flex items-center gap-2"
-          style={{ color: INK, fontFamily: FONT_STACK }}
-        >
-          <Sparkles className="w-5 h-5" style={{ color: "#b03726" }} />
+      {/* Bug 2: website-style toolbar (jat-chrome = not themed / not handwritten) */}
+      <div className="jat-chrome card no-print flex flex-wrap items-center justify-between gap-3 px-5 py-3.5">
+        <h2 className="text-lg sm:text-xl font-bold flex items-center gap-2 text-foreground">
+          <span className="w-8 h-8 rounded-xl brand-gradient-bg flex items-center justify-center shadow-soft">
+            <Sparkles className="w-4 h-4 text-white" />
+          </span>
           {lang === "ta" ? "சுருக்க ஜாதகம் (ஒரு பக்கம்)" : "Single-Page Jathagam"}
         </h2>
         <SinglePagePdfButton chart={chart} lang={lang} />
@@ -739,7 +739,7 @@ export const SinglePageReport: React.FC<SinglePageReportProps> = ({ chart, lang 
                                     width: "100%",
                                     height: "6px",
                                     borderRadius: "999px",
-                                    background: "#e5d9b8",
+                                    background: "#e5e7eb", // score-bar track: neutral grey on the white sheet
                                     overflow: "hidden",
                                   }}
                                 >

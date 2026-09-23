@@ -113,7 +113,7 @@ export const NorthIndianDiamondChart: React.FC<NorthIndianDiamondChartProps> = (
             </span>
             <span className="text-[#c3d6f5]">
               {selectedPlanet.degree}° | {selectedPlanet.status || "Direct"}
-              {selectedPlanet.is_retrograde ? " (வக்ரம்)" : ""}
+              {selectedPlanet.is_retrograde ? (lang === "ta" ? " (வக்ரம்)" : " (Retrograde)") : ""}
             </span>
           </div>
           <button

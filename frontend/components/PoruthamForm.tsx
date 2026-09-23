@@ -7,6 +7,14 @@ import { TimeInput12h } from "./TimeInput12h";
 
 interface PoruthamFormProps {
   onSubmit: (params: any) => void;
+  /**
+   * Bug 3: the input mode (By Nakshatra / By Birth Details) lives in THIS
+   * component, but the result lives in the page. Without this callback the
+   * page had no way to know the mode changed, so a result computed in one
+   * mode stayed on screen under the other mode's form — the two engines'
+   * outputs appearing to overlap. The page clears its result on this.
+   */
+  onModeChange?: (mode: "nakshatra" | "birthDetails") => void;
   isLoading: boolean;
   lang: "ta" | "en";
 }
@@ -23,8 +31,19 @@ const NAKSHATRAS = [
   { en: "Purva Bhadrapada", ta: "பூரட்டாதி" }, { en: "Uttara Bhadrapada", ta: "உத்திரட்டாதி" }, { en: "Revati", ta: "ரேவதி" }
 ];
 
-export const PoruthamForm: React.FC<PoruthamFormProps> = ({ onSubmit, isLoading, lang }) => {
-  const [mode, setMode] = useState<"nakshatra" | "birthDetails">("nakshatra");
+export const PoruthamForm: React.FC<PoruthamFormProps> = ({
+  onSubmit,
+  isLoading,
+  lang,
+  onModeChange,
+}) => {
+  const [mode, setModeState] = useState<"nakshatra" | "birthDetails">("nakshatra");
+
+  const setMode = (next: "nakshatra" | "birthDetails") => {
+    if (next === mode) return;
+    setModeState(next);
+    onModeChange?.(next);
+  };
 
   // State for direct star matching (dropdown-based, so a default selection
   // here is fine — there's no meaningful "empty" nakshatra/pada to show).

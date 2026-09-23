@@ -1,9 +1,10 @@
 "use client";
 
-import React, { useState, useEffect, useRef } from "react";
+import React, { useState, useEffect, useRef, useMemo } from "react";
 import { MapPin, Search, ChevronDown, Check, Plus, Globe, Navigation, Loader2 } from "lucide-react";
 import { getGroupedLocationsApi, suggestPlacesApi, directGeocodeApi } from "@/lib/api";
 import { GroupedLocations, LocationItem, PlaceSuggestion } from "@/lib/types";
+import { tamilPlaceLabel } from "@/lib/tamilTransliterate";
 
 interface LocationPickerProps {
   value: string;
@@ -58,6 +59,33 @@ export const LocationPicker: React.FC<LocationPickerProps> = ({
   const containerRef = useRef<HTMLDivElement>(null);
   const searchInputRef = useRef<HTMLInputElement>(null);
 
+  // ── Bug 1 / Bug 6: Tamil place names in Tamil mode ─────────────────────
+  // DISPLAY ONLY. `onChange` still receives the exact same English
+  // display_name + lat/lon/timezone as before, so geocoding and every
+  // calculation are unchanged. (The value must stay English: the backend's
+  // resolve_place() silently falls back to Coimbatore when it cannot
+  // geocode a place string, so a Tamil string there could quietly produce a
+  // chart for the wrong city whenever lat/lon were missing.)
+  // Priority: curated Tamil name (backend KNOWN_LOCATIONS) -> phonetic
+  // Tamil transliteration of the English name.
+  const [taLabels, setTaLabels] = useState<Record<string, string>>({});
+  const rememberTa = (english: string, ta: string) =>
+    setTaLabels((prev) => (prev[english] === ta ? prev : { ...prev, [english]: ta }));
+
+  const curatedTaFor = (english: string): string | undefined => {
+    if (!groupedData || !english) return undefined;
+    const lower = english.toLowerCase();
+    const all = [...(groupedData.tamil_nadu || []), ...(groupedData.india || []), ...(groupedData.global || [])];
+    const hit = all.find((it) => lower.startsWith(it.name.toLowerCase()));
+    return hit?.name_ta;
+  };
+
+  const triggerTa = useMemo(() => {
+    if (lang !== "ta" || !value) return "";
+    return taLabels[value] || tamilPlaceLabel(value, curatedTaFor(value));
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [lang, value, taLabels, groupedData]);
+
   useEffect(() => {
     getGroupedLocationsApi()
       .then((data) => setGroupedData(data))
@@ -98,10 +126,13 @@ export const LocationPicker: React.FC<LocationPickerProps> = ({
 
   const handleSelectLocation = (loc: {
     display_name: string;
+    display_name_ta?: string;
+    name_ta?: string;
     lat: number;
     lon: number;
     timezone?: string;
   }) => {
+    rememberTa(loc.display_name, tamilPlaceLabel(loc.display_name, loc.name_ta || loc.display_name_ta));
     onChange(loc.display_name, loc.lat, loc.lon, loc.timezone || "Asia/Kolkata");
     setIsOpen(false);
     setSearch("");
@@ -116,6 +147,7 @@ export const LocationPicker: React.FC<LocationPickerProps> = ({
     try {
       const match = await directGeocodeApi(query);
       if (match) {
+        rememberTa(match.display_name, tamilPlaceLabel(match.display_name, match.display_name_ta));
         onChange(match.display_name, match.lat, match.lon, match.timezone || "Asia/Kolkata");
       } else {
         onChange(query, undefined, undefined, "Asia/Kolkata");
@@ -177,7 +209,18 @@ export const LocationPicker: React.FC<LocationPickerProps> = ({
             value ? "text-foreground" : "text-muted/70"
           }`}
         >
-          {value || placeholder}
+          {value ? (
+            lang === "ta" && triggerTa && triggerTa !== value ? (
+              <>
+                {triggerTa}
+                <span className="ml-1.5 text-[11px] font-normal text-muted">({value})</span>
+              </>
+            ) : (
+              value
+            )
+          ) : (
+            placeholder
+          )}
         </span>
         <ChevronDown
           className={`w-4 h-4 shrink-0 text-muted transition-transform ${isOpen ? "rotate-180" : ""}`}
@@ -309,8 +352,11 @@ export const LocationPicker: React.FC<LocationPickerProps> = ({
                       <Navigation className="w-3.5 h-3.5 text-brand-fg shrink-0" />
                       <div className="min-w-0">
                         <div className="font-bold text-sm text-foreground truncate">
-                          {item.display_name}
+                          {lang === "ta" ? tamilPlaceLabel(item.display_name, item.display_name_ta) : item.display_name}
                         </div>
+                        {lang === "ta" && (
+                          <div className="text-[10.5px] text-muted truncate">{item.display_name}</div>
+                        )}
                         <div className="text-[10.5px] text-muted flex items-center gap-2 mt-0.5">
                           <span>{item.timezone}</span>
                           <span>•</span>

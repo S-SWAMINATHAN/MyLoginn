@@ -115,10 +115,10 @@ export const AyurdayaCard: React.FC<AyurdayaCardProps> = ({ ayurdaya, lang }) =>
                 <div>
                   <span className="text-[var(--ink-soft)] text-[11px] block">
                     {k === "pair1_lagna_8th_lord"
-                      ? "லக்னாதிபதி + 8ம் அதிபதி"
+                      ? lang === "ta" ? "லக்னாதிபதி + 8ம் அதிபதி" : "Lagna lord + 8th lord"
                       : k === "pair2_moon_saturn"
-                      ? "சந்திரன் + சனி பகவான்"
-                      : "லக்னம் + ஹோரா லக்னம்"}
+                      ? lang === "ta" ? "சந்திரன் + சனி பகவான்" : "Moon + Saturn"
+                      : lang === "ta" ? "லக்னம் + ஹோரா லக்னம்" : "Lagna + Hora Lagna"}
                   </span>
                   <span className="font-bold text-[var(--red-deep)]">{rule}</span>
                 </div>

@@ -23,7 +23,7 @@ export const PlanetaryTable: React.FC<PlanetaryTableProps> = ({ planets, lang })
           </p>
         </div>
         <span className="text-xs text-[#8e2b1c] font-mono self-start sm:self-auto bg-[#f0e5cc] px-2.5 py-1 rounded-lg border border-[#a3917a]/40">
-          9 கிரக நிலைகள்
+          {lang === "ta" ? "9 கிரக நிலைகள்" : "9 planetary positions"}
         </span>
       </div>
 
@@ -31,15 +31,27 @@ export const PlanetaryTable: React.FC<PlanetaryTableProps> = ({ planets, lang })
         <table className="table-hand w-full text-left text-xs sm:text-sm">
           <thead>
             <tr>
-              <th>கிரகம்<i>Planet</i></th>
-              <th>ராசி<i>Sign</i></th>
-              <th>பாகை<i>Degree</i></th>
-              <th className="text-center">பாவம்<i>House</i></th>
-              <th>நட்சத்திரம்<i>Star</i></th>
-              <th className="text-center">பதம்<i>Pada</i></th>
-              <th>நவாம்சம்<i>Navamsa</i></th>
-              <th>வேகம்<i>Speed</i></th>
-              <th>நிலை<i>Status</i></th>
+              {/* Bug 1: the main label follows the chosen language; the small
+                  italic caption shows the other language. Previously the main
+                  label was always Tamil, so English mode showed Tamil headers. */}
+              {(
+                [
+                  ["கிரகம்", "Planet", false],
+                  ["ராசி", "Sign", false],
+                  ["பாகை", "Degree", false],
+                  ["பாவம்", "House", true],
+                  ["நட்சத்திரம்", "Star", false],
+                  ["பதம்", "Pada", true],
+                  ["நவாம்சம்", "Navamsa", false],
+                  ["வேகம்", "Speed", false],
+                  ["நிலை", "Status", false],
+                ] as Array<[string, string, boolean]>
+              ).map(([ta, en, center]) => (
+                <th key={en} className={center ? "text-center" : undefined}>
+                  {lang === "ta" ? ta : en}
+                  <i>{lang === "ta" ? en : ta}</i>
+                </th>
+              ))}
             </tr>
           </thead>
           <tbody className="divide-y divide-[#a3917a]/20">

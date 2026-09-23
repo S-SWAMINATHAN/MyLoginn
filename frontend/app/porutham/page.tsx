@@ -16,10 +16,34 @@ type PoruthamTab = "pair" | "finder";
 
 export default function PoruthamPage() {
   const [lang, setLang] = useState<"ta" | "en">("ta");
-  const [activeTab, setActiveTab] = useState<PoruthamTab>("pair");
+  const [activeTab, setActiveTabState] = useState<PoruthamTab>("pair");
   const [isLoading, setIsLoading] = useState(false);
   const [matchResult, setMatchResult] = useState<PoruthamMatchResult | null>(null);
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
+
+  /**
+   * Bug 3: one place to drop a stale result.
+   * The result is only meaningful for the exact inputs that produced it, so
+   * it must not survive a change of INPUT — the input mode (By Nakshatra vs
+   * By Birth Details) or the page tab. Previously it survived both, so a
+   * previous run's verdict sat under a form that no longer matched it, which
+   * read as the two engines' results overlapping.
+   *
+   * Switching LANGUAGE deliberately keeps the result: the API response
+   * carries both Tamil and English fields, so it simply re-renders in the
+   * new language. Clearing it there would throw away the user's search for
+   * nothing.
+   */
+  const clearResult = () => {
+    setMatchResult(null);
+    setErrorMessage(null);
+  };
+
+  const setActiveTab = (t: PoruthamTab) => {
+    if (t === activeTab) return;
+    setActiveTabState(t);
+    clearResult();
+  };
 
   const handleMatch = async (params: any) => {
     setIsLoading(true);
@@ -99,7 +123,7 @@ export default function PoruthamPage() {
           <>
             {/* Input Form */}
             <section>
-              <PoruthamForm onSubmit={handleMatch} isLoading={isLoading} lang={lang} />
+              <PoruthamForm onSubmit={handleMatch} isLoading={isLoading} lang={lang} onModeChange={clearResult} />
               {errorMessage && (
                 <div role="alert" className="mt-4 rounded-2xl border border-danger/30 bg-danger/10 p-4 text-center text-sm font-semibold text-danger">
                   {errorMessage}

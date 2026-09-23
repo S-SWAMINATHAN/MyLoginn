@@ -154,7 +154,7 @@ export async function captureNode(
   el: HTMLElement,
   opts: CaptureOptions = {}
 ): Promise<HTMLCanvasElement> {
-  const background = opts.background ?? "#fdf6e3";
+  const background = opts.background ?? "#ffffff"; // Bug 3: white
   const pixelRatio = opts.scale ?? Math.min(3, Math.max(2, window.devicePixelRatio || 1));
 
   await waitForRenderReady();
@@ -214,7 +214,7 @@ export function addCanvasToPdf(
     part.height = thisSlice;
     const ctx = part.getContext("2d");
     if (!ctx) break;
-    ctx.fillStyle = opts.background ?? "#fdf6e3";
+    ctx.fillStyle = opts.background ?? "#ffffff"; // Bug 3: white
     ctx.fillRect(0, 0, part.width, part.height);
     ctx.drawImage(canvas, 0, offset, canvas.width, thisSlice, 0, 0, canvas.width, thisSlice);
 

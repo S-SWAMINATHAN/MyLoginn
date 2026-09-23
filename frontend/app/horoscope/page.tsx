@@ -39,10 +39,18 @@ export default function HoroscopePage() {
   const [loveError, setLoveError] = useState<string | null>(null);
 
   const handleTabChange = (tab: HoroscopeTab) => {
+    if (tab === activeTab) return;
     setActiveTab(tab);
     setHoroscopeResult(null);
     setSelectedRasi(null);
     setErrorMessage(null);
+    // The Love tab kept its own result across tab changes, so leaving Love
+    // and coming back showed the previous pair's verdict. Same stale-result
+    // class as Bugs 3 and 4 — cleared here too.
+    setLoveResult(null);
+    setLoveError(null);
+    setLoveRasi1(null);
+    setLoveRasi2(null);
   };
 
   const handleSelectRasi = async (rasiNumber: number) => {

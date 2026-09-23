@@ -65,15 +65,16 @@ export const PoruthamResult: React.FC<PoruthamResultProps> = ({ result, lang }) 
           </span>
           <div className="text-sm text-foreground space-y-1">
             <div>
-              <span className="text-muted">ராசி: </span>
+              <span className="text-muted">{lang === "ta" ? "ராசி" : "Rasi"}: </span>
               <span className="font-bold">
                 {lang === "ta" ? result.boy_details.rasi_ta : result.boy_details.rasi}
               </span>
             </div>
             <div>
-              <span className="text-muted">நட்சத்திரம்: </span>
+              <span className="text-muted">{lang === "ta" ? "நட்சத்திரம்" : "Star"}: </span>
               <span className="font-bold">
-                {lang === "ta" ? result.boy_details.nakshatra_ta : result.boy_details.nakshatra} (பாதம் {result.boy_details.pada})
+                {lang === "ta" ? result.boy_details.nakshatra_ta : result.boy_details.nakshatra}{" "}
+                ({lang === "ta" ? `பாதம் ${result.boy_details.pada}` : `Pada ${result.boy_details.pada}`})
               </span>
             </div>
           </div>
@@ -85,15 +86,16 @@ export const PoruthamResult: React.FC<PoruthamResultProps> = ({ result, lang }) 
           </span>
           <div className="text-sm text-foreground space-y-1">
             <div>
-              <span className="text-muted">ராசி: </span>
+              <span className="text-muted">{lang === "ta" ? "ராசி" : "Rasi"}: </span>
               <span className="font-bold">
                 {lang === "ta" ? result.girl_details.rasi_ta : result.girl_details.rasi}
               </span>
             </div>
             <div>
-              <span className="text-muted">நட்சத்திரம்: </span>
+              <span className="text-muted">{lang === "ta" ? "நட்சத்திரம்" : "Star"}: </span>
               <span className="font-bold">
-                {lang === "ta" ? result.girl_details.nakshatra_ta : result.girl_details.nakshatra} (பாதம் {result.girl_details.pada})
+                {lang === "ta" ? result.girl_details.nakshatra_ta : result.girl_details.nakshatra}{" "}
+                ({lang === "ta" ? `பாதம் ${result.girl_details.pada}` : `Pada ${result.girl_details.pada}`})
               </span>
             </div>
           </div>

@@ -114,7 +114,7 @@ export const BioDataCard: React.FC<BioDataCardProps> = ({ chart, lang }) => {
           <div className="space-y-2.5 text-xs handwritten-tamil flex-1">
             <div className="flex justify-between border-b border-black/5 pb-1">
               <span className="text-[#6f6049]">{lang === "ta" ? "பெயர்:" : "Full Name:"}</span>
-              <span className="font-bold text-[#2b2117]">{chart.name} ({chart.gender === "male" ? (lang === "ta" ? "ஆண்" : "Male") : (lang === "ta" ? "பெண்" : "Female")})</span>
+              <span className="font-bold text-[#2b2117]">{lang === "en" && chart.name_en ? chart.name_en : chart.name} ({chart.gender === "male" ? (lang === "ta" ? "ஆண்" : "Male") : (lang === "ta" ? "பெண்" : "Female")})</span>
             </div>
 
             <div className="flex justify-between border-b border-black/5 pb-1">

@@ -184,6 +184,7 @@ def run_chart_calculation(req: GenerateChartRequest, profile_id: int = None) -> 
     payload = {
         "profile_id": profile_id,
         "name": req.name or "Jathagar",
+        "name_en": req.name_en or None,
         "gender": req.gender,
         "date_of_birth": req.date_of_birth,
         "time_of_birth": req.time_of_birth,

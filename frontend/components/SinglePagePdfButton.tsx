@@ -35,9 +35,9 @@ export const SinglePagePdfButton: React.FC<Props> = ({ chart, lang }) => {
 
     try {
       setGenerating(true);
-      const canvas = await captureNode(el, { scale: 2, background: palette.paper });
+      const canvas = await captureNode(el, { scale: 2, background: "#ffffff" }); // Bug 3
       const pdf = new jsPDF({ orientation: "portrait", unit: "mm", format: "a4", compress: true });
-      addCanvasToPdf(pdf, canvas, { background: palette.paper });
+      addCanvasToPdf(pdf, canvas, { background: "#ffffff" });
       pdf.save(`${safeFileName(chart.name)}_Single_Page_Jathagam_${chart.date_of_birth}.pdf`);
     } catch (e: any) {
       console.error(e);
@@ -55,7 +55,7 @@ export const SinglePagePdfButton: React.FC<Props> = ({ chart, lang }) => {
       type="button"
       onClick={handleDownload}
       disabled={generating}
-      className="px-4 py-2 rounded-xl text-xs font-bold inline-flex items-center gap-2 transition-all disabled:opacity-60 shadow-lg bg-[#1a0f0a] border-2 border-[#ffd700]/70 hover:border-[#ffd700] text-[#ffd700] hover:bg-[#2b170c]"
+      className="jat-chrome btn-primary text-xs disabled:opacity-60"
     >
       {generating ? <Loader2 className="w-4 h-4 animate-spin" /> : <FileDown className="w-4 h-4" />}
       <span>

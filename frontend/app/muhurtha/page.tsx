@@ -11,10 +11,35 @@ import { MuhurthaRequest, MuhurthaSearchResponse } from "@/lib/types";
 import { CalendarSearch } from "lucide-react";
 
 export default function MuhurthaPage() {
-  const [lang, setLang] = useState<"ta" | "en">("ta");
+  const [lang, setLangState] = useState<"ta" | "en">("ta");
   const [isLoading, setIsLoading] = useState(false);
   const [result, setResult] = useState<MuhurthaSearchResponse | null>(null);
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
+
+  /**
+   * Bug 4: one place to drop a stale result.
+   * A Muhurtha result belongs to the exact event type and date range that
+   * produced it, so it must not survive a change of event type (General /
+   * Marriage / Travel). Previously it did, so the General search's days
+   * stayed on screen under the Marriage and Travel tabs — all three tabs
+   * appearing to show the same details.
+   *
+   * It is also cleared on a LANGUAGE switch. The response does carry both
+   * Tamil and English fields, so technically it could just re-render — that
+   * was the earlier behaviour. But a result left on screen through a
+   * language switch still reads as the previous search's output sitting
+   * under the current form, so it is dropped here too, as asked.
+   */
+  const clearResult = () => {
+    setResult(null);
+    setErrorMessage(null);
+  };
+
+  const setLang = (l: "ta" | "en") => {
+    if (l === lang) return;
+    setLangState(l);
+    clearResult();
+  };
 
   const handleSearch = async (data: MuhurthaRequest) => {
     setIsLoading(true);
@@ -51,7 +76,7 @@ export default function MuhurthaPage() {
         />
 
         <section>
-          <MuhurthaForm onSubmit={handleSearch} isLoading={isLoading} lang={lang} />
+          <MuhurthaForm onSubmit={handleSearch} isLoading={isLoading} lang={lang} onEventTypeChange={clearResult} />
           {errorMessage && (
             <div role="alert" className="mt-4 rounded-2xl border border-danger/30 bg-danger/10 p-4 text-center text-sm font-semibold text-danger">
               {errorMessage}

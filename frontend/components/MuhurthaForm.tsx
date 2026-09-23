@@ -8,6 +8,14 @@ import { TimeInput12h } from "./TimeInput12h";
 
 interface MuhurthaFormProps {
   onSubmit: (data: MuhurthaRequest) => void;
+  /**
+   * Bug 4: the event type (General / Marriage / Travel) lives in THIS
+   * component while the results live in the page, so switching tabs left the
+   * previous search's day-by-day results on screen under the new tab — all
+   * three tabs appearing to show the same details. The page clears its
+   * result on this.
+   */
+  onEventTypeChange?: (eventType: MuhurthaEventType) => void;
   isLoading: boolean;
   lang: "ta" | "en";
 }
@@ -43,8 +51,38 @@ interface PlaceState {
 
 const EMPTY_PLACE: PlaceState = { place: "" };
 
-export const MuhurthaForm: React.FC<MuhurthaFormProps> = ({ onSubmit, isLoading, lang }) => {
-  const [eventType, setEventType] = useState<MuhurthaEventType>("general");
+export const MuhurthaForm: React.FC<MuhurthaFormProps> = ({
+  onSubmit,
+  isLoading,
+  lang,
+  onEventTypeChange,
+}) => {
+  const [eventType, setEventTypeState] = useState<MuhurthaEventType>("general");
+
+  /**
+   * Switching tab starts that tab's search from scratch.
+   *
+   * The three tabs share only the date range and the event location. The
+   * optional blocks below them are per-tab — the SAME state was being shown
+   * under three different headings ("தனிநபர் விவரங்கள்" / "நபர் A" /
+   * "பயணி விவரங்கள்"), so details typed for one event type reappeared,
+   * pre-filled, under the next one. They are reset here, together with the
+   * previous result (cleared by the page through onEventTypeChange).
+   */
+  const setEventType = (next: MuhurthaEventType) => {
+    if (next === eventType) return;
+    setEventTypeState(next);
+
+    setPersonADob("");
+    setPersonATob("07:00:00");
+    setPersonAPlace(EMPTY_PLACE);
+    setPersonBDob("");
+    setPersonBTob("07:00:00");
+    setPersonBPlace(EMPTY_PLACE);
+    setTravelDirection(null);
+
+    onEventTypeChange?.(next);
+  };
 
   const [startDate, setStartDate] = useState("");
   const [endDate, setEndDate] = useState("");
@@ -82,8 +120,25 @@ export const MuhurthaForm: React.FC<MuhurthaFormProps> = ({ onSubmit, isLoading,
     return null;
   }, [startDate, endDate, lang]);
 
+  /**
+   * The travel direction is REQUIRED on the Travel tab.
+   *
+   * Dishashool is the only rule the Travel tab adds over the General
+   * screening, and it needs a direction. With no direction chosen, the
+   * backend applied no event-specific rule at all, so a Travel search
+   * returned exactly the same days as a General one — which is why the tabs
+   * looked like they were showing each other's output. Asking for the
+   * direction makes the Travel tab actually do something different.
+   */
+  const needsTravelDirection = eventType === "travel" && !travelDirection;
+
   const canSubmit =
-    !!startDate && !!endDate && !!eventPlace.place.trim() && !validationError && !isLoading;
+    !!startDate &&
+    !!endDate &&
+    !!eventPlace.place.trim() &&
+    !needsTravelDirection &&
+    !validationError &&
+    !isLoading;
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
@@ -325,7 +380,8 @@ export const MuhurthaForm: React.FC<MuhurthaFormProps> = ({ onSubmit, isLoading,
       {eventType === "travel" && (
         <div className="well p-5 mb-4">
           <h4 className="text-sm font-bold mb-3" style={{ color: "var(--brand-fg-strong)" }}>
-            {lang === "ta" ? "பயண திசை (திசைசூல் சோதனை) — விருப்பம்" : "Direction of Travel (Dishashool check) — Optional"}
+            {lang === "ta" ? "பயண திசை (திசைசூல் சோதனை)" : "Direction of Travel (Dishashool check)"}{" "}
+            <span style={{ color: "var(--danger)" }}>*</span>
           </h4>
           <div className="grid grid-cols-4 gap-2">
             {(["N", "S", "E", "W"] as const).map((d) => (
@@ -362,7 +418,11 @@ export const MuhurthaForm: React.FC<MuhurthaFormProps> = ({ onSubmit, isLoading,
       </div>
       {!canSubmit && !isLoading && !validationError && (
         <p className="text-[11px] text-center mt-2" style={{ color: "var(--muted)" }}>
-          {lang === "ta"
+          {needsTravelDirection && !!startDate && !!endDate && !!eventPlace.place.trim()
+            ? lang === "ta"
+              ? "பயணத் திசையைத் தேர்ந்தெடுக்கவும் — திசைசூல் சோதனைக்கு இது தேவை."
+              : "Choose the direction of travel — the Dishashool check needs it."
+            : lang === "ta"
             ? "தொடக்க தேதி, முடிவு தேதி மற்றும் நிகழ்வு இடத்தை நிரப்பவும்."
             : "Fill in the start date, end date and event location to search."}
         </p>

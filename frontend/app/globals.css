@@ -507,20 +507,13 @@
  * to any Jathagam component.
  * ========================================================================== */
 .jathagam-desk {
+  /* Bug 2: the parchment "desk" behind the results was removed — the
+     Jathagam now sits directly on the website like every other page.
+     Kept as a no-op class so nothing that references it breaks. */
   position: relative;
-  background-color: #f0e5cc; /* legacy --paper */
-  background-image:
-    url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='260' height='260'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.8' numOctaves='2' stitchTiles='stitch'/%3E%3CfeColorMatrix values='0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0.2 0'/%3E%3C/filter%3E%3Crect width='260' height='260' filter='url(%23n)'/%3E%3C/svg%3E"),
-    radial-gradient(ellipse 130% 100% at 50% 38%, rgba(0, 0, 0, 0) 62%, rgba(94, 72, 40, 0.14) 100%);
-  border-radius: 1.75rem;
-  /* The frame is a box-shadow, not a border, and the side padding only exists on
-     wide screens: both PDF exporters lay the page out in a 794px-wide clone, and
-     anything that narrows the container there would re-wrap the sheet. */
-  box-shadow: 0 0 0 1px rgba(94, 72, 40, 0.28), var(--shadow-lift);
-  padding: 1rem 0;
 }
 @media (min-width: 900px) {
-  .jathagam-desk { padding: 1.5rem; }
+  .jathagam-desk { padding: 0; }
 }
 
 /* Small "paper" label that introduces the desk */
@@ -660,30 +653,38 @@
 
 /* ── Hand-Drawn Wobbly Cards & Boxes (design-1.html style) ── */
 .hand-card {
-  background: rgba(253, 250, 242, 0.9);
-  border: 1.6px solid rgba(43, 33, 23, 0.45);
-  border-radius: 255px 15px 225px 15px/15px 225px 15px 255px;
-  box-shadow: 2px 4px 0 rgba(43, 33, 23, 0.08);
+  /* Bug 2: website card look (was a wobbly hand-drawn parchment card).
+     Fixed white on purpose: the ink colours inside are dark in every
+     palette, so the card must stay a light "document" even in dark mode. */
+  background: #ffffff;
+  border: 1px solid rgba(11, 31, 77, 0.10);
+  border-radius: 1rem;
+  box-shadow: 0 1px 2px rgba(11, 31, 77, 0.05), 0 8px 24px rgba(11, 31, 77, 0.07);
   position: relative;
 }
 
 .hand-card-clean {
-  background: rgba(253, 250, 242, 0.95);
-  border: 1.5px solid rgba(43, 33, 23, 0.35);
-  border-radius: 16px;
-  box-shadow: 0 4px 15px rgba(43, 33, 23, 0.06);
+  /* Bug 2: website card look (was a wobbly hand-drawn parchment card).
+     Fixed white on purpose: the ink colours inside are dark in every
+     palette, so the card must stay a light "document" even in dark mode. */
+  background: #ffffff;
+  border: 1px solid rgba(11, 31, 77, 0.10);
+  border-radius: 1rem;
+  box-shadow: 0 1px 2px rgba(11, 31, 77, 0.05), 0 8px 24px rgba(11, 31, 77, 0.07);
+
 }
 
 .facts {
-  max-width: 720px;
-  margin: 16px auto 6px;
-  padding: 10px 24px;
-  border: 1.6px solid rgba(43, 33, 23, 0.55);
-  border-radius: 255px 15px 225px 15px/15px 225px 15px 255px;
-  transform: rotate(-0.35deg);
-  background: rgba(120, 96, 58, 0.06);
-  font-size: 16px;
-  color: var(--ink);
+  /* Bug 2: website card look (was rotated, hand-drawn) */
+  max-width: 760px;
+  margin: 8px auto 0;
+  padding: 12px 24px;
+  background: #ffffff;
+  border: 1px solid rgba(11, 31, 77, 0.10);
+  border-radius: 1rem;
+  box-shadow: 0 1px 2px rgba(11, 31, 77, 0.05), 0 8px 24px rgba(11, 31, 77, 0.07);
+  font-size: 15px;
+  color: #0b1220;
 }
 
 .facts .fl {
@@ -698,23 +699,26 @@
 
 /* ── Hand-Drawn Buttons ── */
 .btn-hand {
-  font-family: 'Kavivanar', cursive;
-  font-size: 16px;
-  color: var(--ink);
-  background: transparent;
-  border: 1.7px solid rgba(43, 33, 23, 0.6);
-  border-radius: 255px 15px 225px 15px/15px 225px 15px 255px;
-  padding: 8px 22px;
+  /* Bug 2: website secondary-button look (was a hand-drawn outline) */
+  font-family: var(--font-ui);
+  font-size: 14px;
+  font-weight: 600;
+  color: #0b1220;
+  background: #ffffff;
+  border: 1px solid rgba(11, 31, 77, 0.16);
+  border-radius: 0.75rem;
+  padding: 8px 16px;
   cursor: pointer;
   display: inline-flex;
   align-items: center;
   gap: 8px;
-  transition: transform 0.18s ease, background 0.18s;
+  transition: border-color 0.18s, background 0.18s, transform 0.18s;
 }
 
 .btn-hand:hover {
-  transform: rotate(-1.2deg);
-  background: rgba(176, 55, 38, 0.08);
+  transform: translateY(-1px);
+  border-color: var(--brand-400);
+  background: rgba(47, 111, 237, 0.06);
 }
 
 .btn-hand:active {
@@ -722,24 +726,25 @@
 }
 
 .btn-hand-red {
-  background: #b03726;
+  /* Bug 2: website primary-button look */
+  background: linear-gradient(135deg, var(--brand-600), var(--brand-500) 45%, var(--accent-500));
   color: #ffffff !important;
-  border: 1.7px solid #8e2b1c;
-  border-radius: 255px 15px 225px 15px/15px 225px 15px 255px;
-  padding: 9px 24px;
+  border: 0;
+  border-radius: 0.75rem;
+  padding: 10px 24px;
   cursor: pointer;
   display: inline-flex;
   align-items: center;
   gap: 8px;
-  font-family: 'Kavivanar', cursive;
-  font-weight: 500;
-  transition: transform 0.18s ease, background 0.18s;
-  box-shadow: 0 2px 8px rgba(176, 55, 38, 0.25);
+  font-family: var(--font-ui);
+  font-weight: 600;
+  transition: transform 0.18s ease, box-shadow 0.18s;
+  box-shadow: var(--shadow-soft);
 }
 
 .btn-hand-red:hover {
-  transform: rotate(-1deg);
-  background: #8e2b1c;
+  transform: translateY(-1px);
+  box-shadow: var(--shadow-lift);
 }
 
 /* ── Hand-Ruled Table Styling ── */
@@ -792,20 +797,20 @@
 
 /* Palm Leaf / Parchment legacy classes updated to warm style */
 .palm-leaf-texture {
-  background-color: #f6ebd6;
-  background-image: 
-    linear-gradient(rgba(138, 86, 44, 0.06) 1px, transparent 1px),
-    radial-gradient(ellipse at center, #fffcf5 0%, #ecdcc2 100%);
-  background-size: 100% 24px, 100% 100%;
+  /* Bug 3: plain white (was an aged, ruled parchment gradient) */
+  background: #ffffff;
   color: #2b170c;
-  box-shadow: 0 10px 35px -5px rgba(0, 0, 0, 0.15), inset 0 0 40px rgba(117, 72, 34, 0.1);
+  box-shadow: 0 1px 2px rgba(11, 31, 77, 0.05), 0 8px 24px rgba(11, 31, 77, 0.07);
 }
 
 .palm-leaf-dark {
-  background: rgba(253, 250, 242, 0.95);
-  border: 1.6px solid rgba(43, 33, 23, 0.45);
-  border-radius: 255px 15px 225px 15px/15px 225px 15px 255px;
-  box-shadow: 2px 4px 0 rgba(43, 33, 23, 0.08);
+  /* Bug 2: website card look (was a wobbly hand-drawn parchment card).
+     Fixed white on purpose: the ink colours inside are dark in every
+     palette, so the card must stay a light "document" even in dark mode. */
+  background: #ffffff;
+  border: 1px solid rgba(11, 31, 77, 0.10);
+  border-radius: 1rem;
+  box-shadow: 0 1px 2px rgba(11, 31, 77, 0.05), 0 8px 24px rgba(11, 31, 77, 0.07);
   color: var(--ink);
 }
 
@@ -814,8 +819,8 @@
 }
 
 .temple-border {
-  border: 1.6px solid rgba(43, 33, 23, 0.5);
-  border-radius: 255px 15px 225px 15px/15px 225px 15px 255px;
+  border: 1px solid rgba(11, 31, 77, 0.12);
+  border-radius: 1rem;
 }
 
 /* ── Handwritten Tamil Manuscript (Realistic Palm-Leaf) ── */
@@ -848,30 +853,20 @@
   width: 794px; /* A4 @ 96dpi */
   min-height: 1123px;
   margin: 0 auto;
-  background-color: #fdf6e3;
-  background-image:
-    repeating-linear-gradient(0deg, transparent, transparent 31px, rgba(120, 70, 25, 0.08) 31px, rgba(120, 70, 25, 0.08) 32px),
-    radial-gradient(ellipse at 20% 15%, rgba(139, 92, 42, 0.10) 0%, transparent 55%),
-    radial-gradient(ellipse at 85% 85%, rgba(107, 20, 38, 0.06) 0%, transparent 55%),
-    radial-gradient(ellipse at center, #fffcf2 0%, #f5e6c8 45%, #ecdcc0 100%);
+  /* Bug 3: pure white page (was parchment + ruled lines + stain gradients).
+     The same DOM is rasterised for the 50-page PDF and printed natively, so
+     this one rule makes the screen, the PDF and the print all white. */
+  background: #ffffff;
   position: relative;
-  box-shadow:
-    0 12px 40px -8px rgba(0,0,0,0.45),
-    inset 0 0 80px rgba(120, 72, 25, 0.18),
-    inset 0 0 2px rgba(80, 40, 15, 0.4);
-  border: 1.5px solid rgba(110, 60, 20, 0.25);
+  box-shadow: 0 1px 2px rgba(11, 31, 77, 0.06), 0 10px 30px rgba(11, 31, 77, 0.10);
+  border: 1px solid rgba(11, 31, 77, 0.10);
   page-break-after: always;
   overflow: hidden;
 }
 
 .manuscript-page::before {
-  /* palm-leaf horizontal fibers */
-  content: "";
-  position: absolute;
-  inset: 0;
-  pointer-events: none;
-  background-image: repeating-linear-gradient(90deg, transparent 0 120px, rgba(80,45,15,0.02) 120px 121px);
-  opacity: 0.6;
+  /* Bug 3: the palm-leaf fibre texture was removed (white pages) */
+  content: none;
 }
 
 .manuscript-page::after {
@@ -882,7 +877,7 @@
   border: 1.2px solid rgba(170, 130, 10, 0.35);
   border-radius: 6px;
   pointer-events: none;
-  box-shadow: inset 0 0 30px rgba(110, 60, 20, 0.12);
+  /* Bug 3: brown inner vignette removed; the thin frame line stays */
 }
 
 .manuscript-inner {
@@ -910,10 +905,8 @@
 
 /* Palm-leaf stains / coffee spots */
 .palm-stain {
-  position: absolute;
-  border-radius: 50%;
-  background: radial-gradient(ellipse at 30% 30%, rgba(120, 70, 25, 0.14) 0%, rgba(90, 45, 15, 0.08) 40%, transparent 70%);
-  pointer-events: none;
+  /* Bug 3: aging stains removed — pages are plain white */
+  display: none;
 }
 
 @media print {
@@ -1160,3 +1153,22 @@
   size: A4;
   margin: 0;
 }
+
+/* ==========================================================================
+ * Bug 2 — website chrome inside the Jathagam
+ * Controls marked `.jat-chrome` (toolbars, tabs, download buttons) use the
+ * website's normal UI font and colours, even when they sit inside a
+ * handwritten "document island". The theme's own font rule already skips
+ * them (lib/jathagamTheme.tsx); this undoes the legacy element-level
+ * handwriting defaults for them too. Specificity (0,1,0) beats the legacy
+ * `:where(.jathagam-legacy) div` rules (0,0,1).
+ * ========================================================================== */
+.jat-chrome,
+.jat-chrome * {
+  font-family: var(--font-ui);
+  text-shadow: none;
+}
+.jat-chrome {
+  color: var(--foreground);
+}
+

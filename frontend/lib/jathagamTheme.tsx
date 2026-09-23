@@ -39,6 +39,11 @@
 import React, { createContext, useContext, useMemo, useState } from "react";
 
 export const THEME_SCOPE_ID = "jathagam-theme-scope";
+/** Class form of the scope — put it on every handwritten "document island". */
+export const THEME_SCOPE_CLASS = "jathagam-theme-scope";
+/** Mark website-style controls inside an island so the handwriting font and
+ *  ink remap leave them alone (they use the site's normal UI styles). */
+export const CHROME_CLASS = "jat-chrome";
 
 /* ------------------------------- palettes ------------------------------- */
 
@@ -83,8 +88,8 @@ export const JATHAGAM_PALETTES: JathagamPalette[] = [
     accentSoft: "#b03726",
     gold: "#aa820a",
     goldDeep: "#8b5a2b",
-    paper: "#f0e5cc",
-    paperCard: "#fffaf0",
+    paper: "#ffffff",
+    paperCard: "#ffffff",
   },
   {
     id: "temple-red-blue",
@@ -97,8 +102,8 @@ export const JATHAGAM_PALETTES: JathagamPalette[] = [
     accentSoft: "#dc2626",
     gold: "#b7791f",
     goldDeep: "#8a5a1f",
-    paper: "#f3ead3",
-    paperCard: "#fffdf6",
+    paper: "#ffffff",
+    paperCard: "#ffffff",
   },
   {
     id: "kumkumam",
@@ -111,8 +116,8 @@ export const JATHAGAM_PALETTES: JathagamPalette[] = [
     accentSoft: "#c62a4f",
     gold: "#c08a15",
     goldDeep: "#8e5f16",
-    paper: "#f7e9d6",
-    paperCard: "#fffaf3",
+    paper: "#ffffff",
+    paperCard: "#ffffff",
   },
   {
     id: "marudhani",
@@ -125,8 +130,8 @@ export const JATHAGAM_PALETTES: JathagamPalette[] = [
     accentSoft: "#2f8f5b",
     gold: "#b08a1e",
     goldDeep: "#7f6416",
-    paper: "#eee9d2",
-    paperCard: "#fbfdf5",
+    paper: "#ffffff",
+    paperCard: "#ffffff",
   },
   {
     id: "neela-indigo",
@@ -139,8 +144,8 @@ export const JATHAGAM_PALETTES: JathagamPalette[] = [
     accentSoft: "#3b57b5",
     gold: "#9c7b26",
     goldDeep: "#6f5a1c",
-    paper: "#eee8d8",
-    paperCard: "#fbfaf4",
+    paper: "#ffffff",
+    paperCard: "#ffffff",
   },
   {
     id: "manjal",
@@ -153,8 +158,8 @@ export const JATHAGAM_PALETTES: JathagamPalette[] = [
     accentSoft: "#d2791f",
     gold: "#a8871b",
     goldDeep: "#7d6413",
-    paper: "#f6ead0",
-    paperCard: "#fffcf2",
+    paper: "#ffffff",
+    paperCard: "#ffffff",
   },
   {
     id: "olai-sepia",
@@ -167,8 +172,8 @@ export const JATHAGAM_PALETTES: JathagamPalette[] = [
     accentSoft: "#9c6428",
     gold: "#9d8028",
     goldDeep: "#75601d",
-    paper: "#eee2c4",
-    paperCard: "#fdf8ea",
+    paper: "#ffffff",
+    paperCard: "#ffffff",
   },
   {
     id: "night-royal",
@@ -181,8 +186,8 @@ export const JATHAGAM_PALETTES: JathagamPalette[] = [
     accentSoft: "#8c45ab",
     gold: "#b08d1c",
     goldDeep: "#836816",
-    paper: "#f1e9dd",
-    paperCard: "#fdfaf6",
+    paper: "#ffffff",
+    paperCard: "#ffffff",
   },
 ];
 
@@ -282,11 +287,10 @@ export const TAMIL_FONTS: TamilFontOption[] = [
 export interface JathagamThemeValue {
   palette: JathagamPalette;
   font: TamilFontOption;
-  /** Multiplies every font-size inside the scope. 0.9 – 1.2. */
-  fontScale: number;
+  // Bug 4: the text-size option was removed from the panel and from the
+  // theme entirely, so nothing can leave the Jathagam scaled.
   setPaletteId: (id: string) => void;
   setFontId: (id: string) => void;
-  setFontScale: (scale: number) => void;
   reset: () => void;
 }
 
@@ -296,10 +300,8 @@ const DEFAULT_FONT = TAMIL_FONTS[0];
 const JathagamThemeContext = createContext<JathagamThemeValue>({
   palette: DEFAULT_PALETTE,
   font: DEFAULT_FONT,
-  fontScale: 1,
   setPaletteId: () => {},
   setFontId: () => {},
-  setFontScale: () => {},
   reset: () => {},
 });
 
@@ -308,7 +310,6 @@ export const useJathagamTheme = () => useContext(JathagamThemeContext);
 export const JathagamThemeProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
   const [paletteId, setPaletteId] = useState(DEFAULT_PALETTE.id);
   const [fontId, setFontId] = useState(DEFAULT_FONT.id);
-  const [fontScale, setFontScale] = useState(1);
 
   const value = useMemo<JathagamThemeValue>(() => {
     const palette = JATHAGAM_PALETTES.find((p) => p.id === paletteId) || DEFAULT_PALETTE;
@@ -316,17 +317,14 @@ export const JathagamThemeProvider: React.FC<{ children: React.ReactNode }> = ({
     return {
       palette,
       font,
-      fontScale,
       setPaletteId,
       setFontId,
-      setFontScale,
       reset: () => {
         setPaletteId(DEFAULT_PALETTE.id);
         setFontId(DEFAULT_FONT.id);
-        setFontScale(1);
       },
     };
-  }, [paletteId, fontId, fontScale]);
+  }, [paletteId, fontId]);
 
   return (
     <JathagamThemeContext.Provider value={value}>
@@ -366,6 +364,42 @@ const HEX_MAP: Array<[string, keyof JathagamPalette]> = [
 ];
 
 /** Tailwind colour prefix → the CSS property it sets. */
+// Bug 3: every remaining warm "paper" tone that components use as a
+// BACKGROUND. These are remapped for background prefixes ONLY (never text or
+// border), so a beige border or text colour can never turn invisible — only
+// fills become the palette's (now white) paper.
+const BG_PAPER_HEXES = [
+  "#e8d7ba", "#eae0c6", "#ebdcb9", "#ebdcc2", "#ecdcc2", "#ede2c8", "#eee4cb",
+  "#f0e5cc", "#f4ebd0", "#f5e8d5", "#f5ebd2", "#f7efdc", "#fcf8ec", "#fdf6e3",
+  "#fdfaf2", "#fff8ee", "#fffaf0", "#fffcf5", "#fffdf8", "#fffdfa", "#f6ebd6",
+  "#fcf8ed", "#fffdf5",
+];
+// Bug (round 4): two more families of "old parchment" fills that the hex
+// remap above could never reach, because they are not hex values.
+//
+//  1. `bg-[var(--paper)]` / `bg-[var(--paper-card)]` — these read the LEGACY
+//     cream variables straight off :root (#f0e5cc / #fffaf0), so seven of the
+//     report cards kept painting themselves cream no matter what the palette
+//     said. Fixed by re-declaring those two variables inside the theme scope.
+//  2. `bg-[rgba(120,96,58,0.0X)]` — a warm brown at low alpha, used as the
+//     subtle panel tint inside the Ashtakavarga / Dasha / Yoga / Bhava /
+//     Ayurdaya / Baby-name cards. Over white paper it reads as beige.
+//     Remapped to the site's own panel tone so those panels still read as
+//     panels, but in the website's colour instead of parchment.
+const LEGACY_PAPER_VARS = ["var(--paper)", "var(--paper-card)"];
+const BG_TINT_RGBA = [
+  "rgba(120,96,58,0.03)", "rgba(120,96,58,0.04)", "rgba(120,96,58,0.05)",
+  "rgba(120,96,58,0.06)", "rgba(120,96,58,0.07)", "rgba(120,96,58,0.08)",
+  "rgba(43,33,23,0.04)",
+];
+
+const BG_PREFIXES: Array<[string, string]> = [
+  ["bg", "background-color"],
+  ["from", "--tw-gradient-from"],
+  ["via", "--tw-gradient-via"],
+  ["to", "--tw-gradient-to"],
+];
+
 const PREFIX_MAP: Array<[string, string]> = [
   ["text", "color"],
   ["bg", "background-color"],
@@ -382,8 +416,13 @@ const PREFIX_MAP: Array<[string, string]> = [
   ["via", "--tw-gradient-via"],
 ];
 
-function buildThemeCss(palette: JathagamPalette, font: TamilFontOption, fontScale: number): string {
-  const scope = `#${THEME_SCOPE_ID}`;
+function buildThemeCss(palette: JathagamPalette, font: TamilFontOption): string {
+  // Bug 2: the theme now applies to every "document island" (class
+  // THEME_SCOPE_CLASS) as well as the original id, so the Jathagam content can
+  // sit inside normal website chrome. `:is()` takes the specificity of its most
+  // specific argument, so every rule still carries ID-level weight — exactly
+  // as before — and keeps beating globals.css' `!important` font rules.
+  const scope = `:is(#${THEME_SCOPE_ID}, .${THEME_SCOPE_CLASS})`;
   const lines: string[] = [];
 
   // Palette as CSS variables, so components can also read them directly.
@@ -416,10 +455,7 @@ function buildThemeCss(palette: JathagamPalette, font: TamilFontOption, fontScal
 
   // Typeface: one broad rule beats every per-component font-family, including
   // globals.css' `.font-tamil { … !important }` (ID + class outranks class).
-  lines.push(`${scope}, ${scope} *:not(.allow-own-font){font-family:var(--jat-font) !important;}`);
-  if (fontScale !== 1) {
-    lines.push(`${scope}{font-size:${(fontScale * 100).toFixed(1)}%;}`);
-  }
+  lines.push(`${scope}, ${scope} *:not(.allow-own-font):not(.${CHROME_CLASS}):not(.${CHROME_CLASS} *){font-family:var(--jat-font) !important;}`);
 
   // Colour remap. `[class*=…]` also matches opacity variants such as
   // `text-[#8e2b1c]/90`, and !important outranks plain inline styles.
@@ -428,6 +464,27 @@ function buildThemeCss(palette: JathagamPalette, font: TamilFontOption, fontScal
     for (const [prefix, prop] of PREFIX_MAP) {
       for (const h of [hex, hex.toUpperCase()]) {
         lines.push(`${scope} [class*="${prefix}-[${h}]"]{${prop}:${value} !important;}`);
+      }
+    }
+  }
+
+  // The legacy cream variables, re-declared inside the scope (see note above).
+  lines.push(`${scope}{--paper:${palette.paper};--paper-card:${palette.paperCard};}`);
+
+  for (const value of LEGACY_PAPER_VARS) {
+    for (const [prefix, prop] of BG_PREFIXES) {
+      lines.push(`${scope} [class*="${prefix}-[${value}]"]{${prop}:${palette.paperCard} !important;}`);
+    }
+  }
+
+  for (const value of BG_TINT_RGBA) {
+    lines.push(`${scope} [class*="bg-[${value}]"]{background-color:var(--surface-2) !important;}`);
+  }
+
+  for (const hex of BG_PAPER_HEXES) {
+    for (const [prefix, prop] of BG_PREFIXES) {
+      for (const h of [hex, hex.toUpperCase()]) {
+        lines.push(`${scope} [class*="${prefix}-[${h}]"]{${prop}:${palette.paperCard} !important;}`);
       }
     }
   }
@@ -441,8 +498,8 @@ function buildThemeCss(palette: JathagamPalette, font: TamilFontOption, fontScal
  * id={THEME_SCOPE_ID}.
  */
 export const JathagamThemeStyle: React.FC = () => {
-  const { palette, font, fontScale } = useJathagamTheme();
-  const css = useMemo(() => buildThemeCss(palette, font, fontScale), [palette, font, fontScale]);
+  const { palette, font } = useJathagamTheme();
+  const css = useMemo(() => buildThemeCss(palette, font), [palette, font]);
   return <style id="jathagam-theme-style" dangerouslySetInnerHTML={{ __html: css }} />;
 };
 

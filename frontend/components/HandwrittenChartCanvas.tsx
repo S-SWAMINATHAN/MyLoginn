@@ -63,18 +63,10 @@ export const HandwrittenChartCanvas: React.FC<HandwrittenChartCanvasProps> = ({
     ctx.clearRect(0, 0, width, height);
     const rc = rough.canvas(canvas);
 
-    // 1. Aged paper background, tinted per style
-    ctx.fillStyle = theme.paper;
+    // 1. Plain white background (Bug 3: the tinted paper and the faint
+    //    ruled lines drawn across the chart were removed).
+    ctx.fillStyle = "#ffffff";
     ctx.fillRect(0, 0, width, height);
-
-    ctx.strokeStyle = "rgba(120, 75, 30, 0.08)";
-    ctx.lineWidth = 1;
-    for (let y = 10; y < height; y += 18) {
-      ctx.beginPath();
-      ctx.moveTo(10, y);
-      ctx.lineTo(width - 10, y);
-      ctx.stroke();
-    }
 
     const padding = 16;
 

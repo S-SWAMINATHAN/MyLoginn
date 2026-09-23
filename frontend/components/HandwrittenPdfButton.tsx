@@ -69,7 +69,7 @@ export const HandwrittenPdfButton: React.FC<Props> = ({ chart, lang }) => {
         nodes,
         `${safeFileName(chart.name)}_50_Page_Sampoorana_Jathagam_${chart.date_of_birth}.pdf`,
         {
-          background: "#fdf6e3",
+          background: "#ffffff", // Bug 3: white PDF pages
           scale: 2,
           onProgress: (done, total) => {
             setProgress(
@@ -97,7 +97,7 @@ export const HandwrittenPdfButton: React.FC<Props> = ({ chart, lang }) => {
       type="button"
       onClick={handleDownload}
       disabled={generating}
-      className="px-4 py-2 rounded-xl text-xs font-bold inline-flex items-center gap-2 transition-all disabled:opacity-60 shadow-lg bg-[#1a0f0a] border-2 border-[#ffd700]/70 hover:border-[#ffd700] text-[#ffd700] hover:bg-[#2b170c]"
+      className="jat-chrome btn-primary text-xs disabled:opacity-60"
       title={
         lang === "ta"
           ? "50-பக்க மகா சம்பூர்ண ஜாதக நூல் PDF (பொருளடக்கத்துடன்)"

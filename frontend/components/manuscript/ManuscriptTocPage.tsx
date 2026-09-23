@@ -38,7 +38,7 @@ export const ManuscriptTocPage: React.FC<Props> = ({ lang }) => {
         style={{
           border: "1px solid rgba(170,130,10,0.35)",
           borderRadius: "8px",
-          background: "#fffaf0",
+          background: "#ffffff", // Bug 3
           padding: "5px 7px",
           marginBottom: "6px",
           breakInside: "avoid",
@@ -119,7 +119,7 @@ export const ManuscriptTocPage: React.FC<Props> = ({ lang }) => {
         width: "794px",
         height: "1123px",
         boxSizing: "border-box",
-        background: "#fdf6e3",
+        background: "#ffffff", // Bug 3: white contents page
         padding: "30px 34px",
         display: "flex",
         flexDirection: "column",

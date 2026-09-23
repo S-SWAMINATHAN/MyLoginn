@@ -27,7 +27,12 @@ import { generateChartApi } from "@/lib/api";
 import { SinglePageReport } from "@/components/SinglePageReport";
 import { JathagamThemePanel } from "@/components/JathagamThemePanel";
 import { ManuscriptTocPage } from "@/components/manuscript/ManuscriptTocPage";
-import { JathagamThemeProvider, THEME_SCOPE_ID } from "@/lib/jathagamTheme";
+import { JathagamThemeProvider, THEME_SCOPE_CLASS } from "@/lib/jathagamTheme";
+
+// Bug 2: class for every handwritten "document island" — themed by the ink /
+// typeface panel and rendered with the legacy handwriting styles, while the
+// controls around it use the website's normal UI.
+const DOC = `${THEME_SCOPE_CLASS} jathagam-legacy`;
 import { MANUSCRIPT_CHAPTERS, MANUSCRIPT_PAGES } from "@/lib/manuscriptIndex";
 import { Sparkles, Printer, Share2, Heart, Download, Compass, ShieldCheck, PenLine, ChevronLeft, ChevronRight, BookOpen, Layers, Loader2 } from "lucide-react";
 
@@ -41,6 +46,19 @@ export default function HomePage() {
   const [showIndex, setShowIndex] = useState<boolean>(false);
   const [panchangamTab, setPanchangamTab] = useState<"thirukanitham" | "vakhyam" | "both">("thirukanitham");
   const [printPreparing, setPrintPreparing] = useState(false);
+
+  /**
+   * The name to show above the report.
+   *
+   * A name typed in Thanglish and confirmed as a Tamil suggestion is stored
+   * in Tamil, which is right for the Tamil view and for the handwritten
+   * manuscript — but it left the English view showing a Tamil name with no
+   * way back. The backend now echoes the Latin spelling as `name_en`, so
+   * English readers get that when it exists, and the Tamil stays everywhere
+   * else. A name typed directly is shown exactly as typed, in both.
+   */
+  const displayName =
+    lang === "en" && chartResult?.name_en ? chartResult.name_en : chartResult?.name;
 
   const handleGenerate = async (formData: GenerateChartRequest) => {
     setIsLoading(true);
@@ -225,281 +243,209 @@ export default function HomePage() {
           )}
         </section>
 
-        {/* Computed Jathagam Output Display */}
+        {/* Computed Jathagam Output Display
+            Bug 2: the results now sit directly on the website (no parchment
+            "desk"). Everything that is a CONTROL — summary card, tabs, the
+            50-page viewer toolbar, buttons — uses the website's own classes.
+            Everything that is the handwritten DOCUMENT sits in a "document
+            island" (DOC below) that the ink-colour / typeface panel themes,
+            and that both PDF exporters and Print rasterise. */}
         {chartResult && (
-          <section id="chart-results-section" className="jathagam-desk jathagam-legacy space-y-6">
-            {/* Global ink-colour + Tamil-typeface panel. Sits OUTSIDE the theme
-                scope on purpose, so the controls keep their own fixed colours
-                while everything below them restyles live. */}
+          <section id="chart-results-section" className="space-y-6">
             <JathagamThemePanel lang={lang} />
 
-            {/* Everything inside this element is themed by JathagamThemePanel —
-                and because both PDF exporters rasterise this same DOM, the
-                download always matches what is on screen. */}
-            <div id={THEME_SCOPE_ID} className="space-y-10">
             {chartResult.output_mode === "single_page" ? (
-              /* =====================================================
-                 SINGLE PAGE MODE
-                 Only the one-page manuscript-styled report renders.
-                 It carries its own header, its own PDF/download button,
-                 and its own facts — none of the full-mode sections,
-                 tabs, or the 50-page manuscript viewer are mounted here.
-                 ===================================================== */
-              <SinglePageReport chart={chartResult} lang={lang} />
+              /* SINGLE PAGE MODE — only the one-page sheet (with its own
+                 website-style toolbar + PDF button). */
+              <div className={DOC}>
+                <SinglePageReport chart={chartResult} lang={lang} />
+              </div>
             ) : (
-              /* =====================================================
-                 FULL MODE — everything exactly as before, unchanged.
-                 ===================================================== */
+              /* FULL MODE */
               <>
-              {/* Everything in this wrapper is the light-theme "live" results
-                  view — bio-data, panchangam cards, charts, tables, etc.
-                  It's marked no-print so pressing Print never renders this;
-                  the actual print output is the hidden manuscript/TOC hosts
-                  further down, revealed by the @media print rule in
-                  globals.css so Print matches the 50-page handwritten PDF. */}
-              <div className="no-print space-y-10">
-                {/* Facts Summary Box (design-1.html style) */}
-                <div className="facts text-center">
-                  <p>
-                    <span className="fl">{lang === "ta" ? "பிறப்பு" : "Birth"}</span>{" "}
-                    {chartResult.date_of_birth} · {chartResult.time_of_birth} · {chartResult.place}
-                  </p>
-                  <p>
-                    <span className="fl">{lang === "ta" ? "ராசி" : "Rasi"}</span> {chartResult.basic_details.moon_sign_ta} ({chartResult.basic_details.moon_sign_en}) ·{" "}
-                    <span className="fl">{lang === "ta" ? "நட்சத்திரம்" : "Star"}</span> {chartResult.basic_details.nakshatra_ta} — {chartResult.basic_details.pada}ம் பாதம் ·{" "}
-                    <span className="fl">{lang === "ta" ? "லக்னம்" : "Lagna"}</span> {chartResult.basic_details.ascendant_sign_ta} ({chartResult.basic_details.ascendant_sign_en})
-                  </p>
-                  {chartResult.basic_details.dasha_balance_ta && (
-                    <p>
-                      <span className="fl">{lang === "ta" ? "இருப்பு தசை" : "Dasha Balance"}</span> {chartResult.basic_details.dasha_balance_ta}
-                    </p>
-                  )}
-                </div>
-
-                {/* Header Banner */}
-                <div className="hand-card p-6 sm:p-8 relative overflow-hidden">
-                  <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 border-b border-[#a3917a]/30 pb-6">
-                    <div>
-                      <div className="flex items-center gap-2">
-                        <span className="text-2xl text-[#b03726] font-bold font-script">ஸ்ரீ</span>
-                        <h2 className="text-2xl sm:text-3xl font-bold font-script text-[#2b2117]">
-                          {chartResult.name} {lang === "ta" ? "அவர்களின் ஜாதகம்" : "Horoscope"}
-                        </h2>
-                      </div>
-                      <p className="text-xs text-[#6f6049] font-tamil mt-1">
-                        {chartResult.date_of_birth} | {chartResult.time_of_birth} | {chartResult.place} ({chartResult.timezone})
+              {/* no-print: Print outputs the hidden manuscript hosts below,
+                  exactly like the 50-page PDF (see globals.css @media print). */}
+              <div className="no-print space-y-8">
+                {/* Summary + actions — website card (Bug 2). The facts line
+                    also reads the REAL schema fields now: it used
+                    moon_sign_ta / nakshatra_ta / ascendant_sign_ta, which do
+                    not exist, so it printed "Rasi () · Lagna ()". */}
+                <div className="card p-5 sm:p-7">
+                  <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-5">
+                    <div className="min-w-0">
+                      <p className="story-eyebrow">{lang === "ta" ? "உங்கள் ஜாதகம்" : "Your Jathagam"}</p>
+                      <h2 className="mt-1 text-2xl sm:text-3xl font-bold text-foreground">
+                        {displayName} {lang === "ta" ? "அவர்களின் ஜாதகம்" : "— Horoscope"}
+                      </h2>
+                      <p className="mt-1 text-sm text-muted">
+                        {chartResult.date_of_birth} · {chartResult.time_of_birth} · {chartResult.place} ({chartResult.timezone})
                       </p>
+                      <div className="mt-3 flex flex-wrap gap-2">
+                        <span className="chip-brand">
+                          {lang === "ta" ? "லக்னம்" : "Lagna"}: {lang === "ta" ? chartResult.basic_details.lagnam_ta : chartResult.basic_details.lagnam}
+                        </span>
+                        <span className="chip-brand">
+                          {lang === "ta" ? "ராசி" : "Rasi"}: {lang === "ta" ? chartResult.basic_details.rasi_ta : chartResult.basic_details.rasi}
+                        </span>
+                        <span className="chip-brand">
+                          {lang === "ta" ? "நட்சத்திரம்" : "Star"}: {lang === "ta" ? chartResult.basic_details.nakshatram_ta : chartResult.basic_details.nakshatram}
+                          {" — "}
+                          {lang === "ta" ? `${chartResult.basic_details.pada}-ம் பாதம்` : `Pada ${chartResult.basic_details.pada}`}
+                        </span>
+                        {(lang === "ta" ? chartResult.basic_details.dasha_balance_ta : chartResult.basic_details.dasha_balance_en) && (
+                          <span className="chip">
+                            {lang === "ta" ? "இருப்பு தசை" : "Dasha balance"}:{" "}
+                            {lang === "ta" ? chartResult.basic_details.dasha_balance_ta : chartResult.basic_details.dasha_balance_en}
+                          </span>
+                        )}
+                      </div>
                     </div>
 
-                    {/* Print and Export Buttons */}
-                    <div className="flex items-center gap-2 no-print flex-wrap">
-                      <button
-                        onClick={handlePrint}
-                        disabled={printPreparing}
-                        className="btn-hand text-xs font-semibold py-2 px-3.5 disabled:opacity-60"
-                      >
-                        {printPreparing ? (
-                          <Loader2 className="w-4 h-4 text-[#b03726] animate-spin" />
-                        ) : (
-                          <Printer className="w-4 h-4 text-[#b03726]" />
-                        )}
+                    <div className="flex items-center gap-2 flex-wrap shrink-0">
+                      <button onClick={handlePrint} disabled={printPreparing} className="btn-secondary text-xs">
+                        {printPreparing ? <Loader2 className="w-4 h-4 animate-spin" /> : <Printer className="w-4 h-4" />}
                         <span>
                           {printPreparing
                             ? (lang === "ta" ? "தயாராகிறது..." : "Preparing...")
-                            : (lang === "ta" ? "அச்சிடுக (Print)" : "Print")}
+                            : (lang === "ta" ? "அச்சிடுக" : "Print")}
                         </span>
                       </button>
-
                       <HandwrittenPdfButton chart={chartResult} lang={lang} />
-
-                      <a
-                        href="/porutham"
-                        className="btn-hand text-xs font-semibold py-2 px-3.5"
-                      >
-                        <Heart className="w-4 h-4 text-[#b03726]" />
+                      <a href="/porutham" className="btn-secondary text-xs">
+                        <Heart className="w-4 h-4" />
                         <span>{lang === "ta" ? "பொருத்தம்" : "Match"}</span>
                       </a>
                     </div>
                   </div>
                 </div>
 
-                {/* 1. Parents & Candidate Bio-Data Card */}
-                <BioDataCard chart={chartResult} lang={lang} />
+                {/* 1. Parents & Candidate Bio-Data */}
+                <div className={DOC}>
+                  <BioDataCard chart={chartResult} lang={lang} />
+                </div>
 
-                {/* 2. Traditional Panchangam Master Full-Page Cards (Thirukanitham & Vakhyam) */}
-                <div className="no-print flex items-center justify-between flex-wrap gap-2 bg-[#fffdfa] border-2 border-[#8b5a2b]/30 p-3 rounded-2xl shadow-xs">
-                  <div className="flex items-center gap-2">
-                    <BookOpen className="w-4 h-4 text-[#b03726]" />
-                    <span className="text-xs font-bold text-[#6b1426]">
-                      {lang === "ta"
-                        ? "பாரம்பரிய பஞ்சாங்க முறைத் தெரிவு (முழுப் பக்க கையெழுத்துப் பார்வை):"
-                        : "Traditional Panchangam System View:"}
+                {/* 2. Panchangam system selector — website segmented control */}
+                <div className="card p-3 flex items-center justify-between flex-wrap gap-3">
+                  <div className="flex items-center gap-2 px-1">
+                    <BookOpen className="w-4 h-4 text-brand-fg" />
+                    <span className="text-xs font-semibold text-foreground">
+                      {lang === "ta" ? "பஞ்சாங்க முறை (முழுப் பக்க பார்வை):" : "Panchangam system view:"}
                     </span>
                   </div>
                   <div className="flex items-center gap-1.5 flex-wrap">
-                    <button
-                      type="button"
-                      onClick={() => setPanchangamTab("thirukanitham")}
-                      className={`px-3 py-1.5 rounded-xl text-xs font-bold transition-all flex items-center gap-1.5 ${
-                        panchangamTab === "thirukanitham"
-                          ? "bg-[#8e2b1c] text-white shadow-xs"
-                          : "bg-white text-[#6f6049] border border-[#8b5a2b]/25 hover:bg-[#fffaf0]"
-                      }`}
-                    >
-                      <span>திருக்கணித பஞ்சாங்கம் (Thirukanitham)</span>
-                      {chartResult.panchangam_system !== "vakhyam" && (
-                        <span className="text-[9px] px-1 py-0.2 rounded bg-white/20 text-white font-mono">முதன்மை</span>
-                      )}
-                    </button>
-                    <button
-                      type="button"
-                      onClick={() => setPanchangamTab("vakhyam")}
-                      className={`px-3 py-1.5 rounded-xl text-xs font-bold transition-all flex items-center gap-1.5 ${
-                        panchangamTab === "vakhyam"
-                          ? "bg-[#8e2b1c] text-white shadow-xs"
-                          : "bg-white text-[#6f6049] border border-[#8b5a2b]/25 hover:bg-[#fffaf0]"
-                      }`}
-                    >
-                      <span>வாக்கிய பஞ்சாங்கம் (Vakhyam)</span>
-                      {chartResult.panchangam_system === "vakhyam" && (
-                        <span className="text-[9px] px-1 py-0.2 rounded bg-white/20 text-white font-mono">முதன்மை</span>
-                      )}
-                    </button>
-                    <button
-                      type="button"
-                      onClick={() => setPanchangamTab("both")}
-                      className={`px-3 py-1.5 rounded-xl text-xs font-bold transition-all ${
-                        panchangamTab === "both"
-                          ? "bg-[#8e2b1c] text-white shadow-xs"
-                          : "bg-white text-[#6f6049] border border-[#8b5a2b]/25 hover:bg-[#fffaf0]"
-                      }`}
-                    >
-                      <span>இரண்டும் (Both Systems)</span>
-                    </button>
+                    {(
+                      [
+                        ["thirukanitham", lang === "ta" ? "திருக்கணிதம்" : "Thirukanitham", chartResult.panchangam_system !== "vakhyam"],
+                        ["vakhyam", lang === "ta" ? "வாக்கியம்" : "Vakhyam", chartResult.panchangam_system === "vakhyam"],
+                        ["both", lang === "ta" ? "இரண்டும்" : "Both systems", false],
+                      ] as const
+                    ).map(([key, text, primary]) => (
+                      <button
+                        key={key}
+                        type="button"
+                        onClick={() => setPanchangamTab(key)}
+                        className={`${panchangamTab === key ? "choice choice-active" : "choice"} inline-flex items-center gap-1.5 py-2`}
+                      >
+                        <span>{text}</span>
+                        {primary && (
+                          <span className={`text-[9px] px-1.5 rounded-full ${panchangamTab === key ? "bg-white/25" : "bg-brand-500/10 text-brand-fg"}`}>
+                            {lang === "ta" ? "முதன்மை" : "primary"}
+                          </span>
+                        )}
+                      </button>
+                    ))}
                   </div>
                 </div>
 
-                {/* Thirukanitham Complete Full Page Card (Red & Blue Default Ink) */}
-                {(panchangamTab === "thirukanitham" || panchangamTab === "both") && (
-                  <ThirukanithamCompleteCard chart={chartResult} lang={lang} />
-                )}
+                {/* 3+. The handwritten report sections */}
+                <div className={`${DOC} space-y-10`}>
+                  {(panchangamTab === "thirukanitham" || panchangamTab === "both") && (
+                    <ThirukanithamCompleteCard chart={chartResult} lang={lang} />
+                  )}
+                  {(panchangamTab === "vakhyam" || panchangamTab === "both") && (
+                    <VakhyamCompleteCard chart={chartResult} lang={lang} />
+                  )}
 
-                {/* Traditional Vakhyam Complete System Full Card */}
-                {(panchangamTab === "vakhyam" || panchangamTab === "both") && (
-                  <VakhyamCompleteCard chart={chartResult} lang={lang} />
-                )}
+                  <PanchangamDetailsCard details={chartResult.basic_details} lang={lang} />
 
-                {/* 3. Section 2: Complete Panchangam & Subha Yoga Elements */}
-                <PanchangamDetailsCard
-                  details={chartResult.basic_details}
-                  lang={lang}
-                />
+                  <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
+                    <RasiChart kattamData={chartResult.rasi_kattam} chartStyle={chartResult.chart_style as any} lang={lang} />
+                    <NavamsaChart kattamData={chartResult.navamsa_kattam} chartStyle={chartResult.chart_style as any} lang={lang} />
+                  </div>
 
-                {/* 3. Core Charts Side-by-Side: Rasi (D1) and Navamsa (D9) */}
-                <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
-                  <RasiChart
-                    kattamData={chartResult.rasi_kattam}
-                    chartStyle={chartResult.chart_style as any}
+                  {(chartResult.rasi_nakshatra_predictions || chartResult.detailed_predictions) && (
+                    <RasiNakshatraDetailsCard
+                      predictions={(chartResult.rasi_nakshatra_predictions || chartResult.detailed_predictions)!}
+                      namaAksharas={chartResult.baby_names?.starting_syllables}
+                      lang={lang}
+                    />
+                  )}
+
+                  <PlanetaryTable planets={chartResult.planets} lang={lang} />
+
+                  <DashaTimeline
+                    dashas={chartResult.vimshottari_dasha}
                     lang={lang}
+                    dashaBalanceTa={chartResult.basic_details.dasha_balance_ta || undefined}
+                    dashaBalanceEn={chartResult.basic_details.dasha_balance_en || undefined}
                   />
-                  <NavamsaChart
-                    kattamData={chartResult.navamsa_kattam}
-                    chartStyle={chartResult.chart_style as any}
-                    lang={lang}
-                  />
-                </div>
 
-                {/* 3. Detailed Rasi, Nakshatra & Pada Predictions */}
-                {(chartResult.rasi_nakshatra_predictions || chartResult.detailed_predictions) && (
-                  <RasiNakshatraDetailsCard
-                    predictions={(chartResult.rasi_nakshatra_predictions || chartResult.detailed_predictions)!}
-                    namaAksharas={chartResult.baby_names?.starting_syllables}
-                    lang={lang}
-                  />
-                )}
+                  {chartResult.ayurdaya && <AyurdayaCard ayurdaya={chartResult.ayurdaya} lang={lang} />}
 
-                {/* 4. Planetary Table */}
-                <PlanetaryTable planets={chartResult.planets} lang={lang} />
+                  {chartResult.output_mode === "full" && (
+                    <BhavaPredictions bhavas={chartResult.bhava_predictions} lang={lang} />
+                  )}
 
-                {/* 5. Vimshottari Dasha-Bhukti Timeline */}
-                <DashaTimeline
-                  dashas={chartResult.vimshottari_dasha}
-                  lang={lang}
-                  dashaBalanceTa={chartResult.basic_details.dasha_balance_ta || undefined}
-                  dashaBalanceEn={chartResult.basic_details.dasha_balance_en || undefined}
-                />
+                  <YogaDoshaList yogas={chartResult.yogas} doshas={chartResult.doshas} lang={lang} />
 
-                {/* 6. Ayurdaya (Longevity Analysis) */}
-                {chartResult.ayurdaya && (
-                  <AyurdayaCard ayurdaya={chartResult.ayurdaya} lang={lang} />
-                )}
+                  {chartResult.output_mode === "full" && (
+                    <AshtakavargaTable ashtakavarga={chartResult.ashtakavarga} lang={lang} />
+                  )}
 
-                {/* 7. 12 Bhava Predictions (Full mode only) */}
-                {chartResult.output_mode === "full" && (
-                  <BhavaPredictions bhavas={chartResult.bhava_predictions} lang={lang} />
-                )}
+                  {chartResult.baby_names && <BabyNameSuggestions babyNames={chartResult.baby_names} lang={lang} />}
 
-                {/* 7. Yogas & Doshas */}
-                <YogaDoshaList yogas={chartResult.yogas} doshas={chartResult.doshas} lang={lang} />
+                  <NarrationPanel narration={chartResult.narration || undefined} lang={lang} />
 
-                {/* 8. Ashtakavarga Matrix (Full mode only) */}
-                {chartResult.output_mode === "full" && (
-                  <AshtakavargaTable ashtakavarga={chartResult.ashtakavarga} lang={lang} />
-                )}
-
-                {/* 9. Baby Name Suggestions */}
-                {chartResult.baby_names && (
-                  <BabyNameSuggestions babyNames={chartResult.baby_names} lang={lang} />
-                )}
-
-                {/* 10. AI Narration Panel */}
-                <NarrationPanel narration={chartResult.narration || undefined} lang={lang} />
-
-                {/* 11. Share Card Preview */}
-                <div className="no-print">
                   <ShareCard chart={chartResult} lang={lang} />
                 </div>
 
-                {/* 12. Handwritten Manuscript 50-Page Viewer & PDF */}
-                <div className="no-print bg-[#fcf8ec] border-2 border-[#b03726]/40 rounded-3xl p-4 md:p-6 shadow-2xl space-y-4">
-                  {/* Header */}
-                  <div className="flex flex-col md:flex-row md:items-center justify-between gap-3 border-b border-[#a3917a]/30 pb-4">
-                    <div className="space-y-1">
+                {/* 12. 50-page manuscript viewer — website card chrome around a
+                    document island that holds only the page preview. */}
+                <div className="card p-4 md:p-6 space-y-4">
+                  <div className="flex flex-col md:flex-row md:items-center justify-between gap-3 border-b border-border-soft pb-4">
+                    <div className="space-y-1 min-w-0">
                       <div className="flex items-center gap-2">
-                        <span className="w-7 h-7 rounded-full bg-[#b03726]/10 flex items-center justify-center text-[#b03726]">
-                          <BookOpen className="w-4 h-4" />
+                        <span className="w-8 h-8 shrink-0 rounded-xl brand-gradient-bg flex items-center justify-center shadow-soft">
+                          <BookOpen className="w-4 h-4 text-white" />
                         </span>
-                        <h3 className="text-lg md:text-xl font-bold font-script text-[#2b2117]">
-                          {lang === "ta"
-                            ? "50-பக்க சம்பூர்ண ஜாதக மகா காண்டம் (50-Page Grand Volume)"
-                            : "50-Page Vedic Jathaga Grand Volume & Manuscript"}
+                        <h3 className="text-lg md:text-xl font-bold text-foreground">
+                          {lang === "ta" ? "50-பக்க சம்பூர்ண ஜாதகம்" : "50-Page Complete Jathagam"}
                         </h3>
                       </div>
-                      <p className="text-xs text-[#6f6049] font-tamil">
+                      <p className="text-xs text-muted">
                         {lang === "ta"
                           ? "தமிழ் தாய் வாழ்த்து • கடவுள் வாழ்த்து • குஜ தோஷ 14 சாஸ்திர விதிகள் • 337 அஷ்டகவர்க்கம் • 16 வர்க்கங்கள் • தசா புக்தி"
-                          : "Tamil Thai Vazhthu • Invocations • Kuja Dosha 14 Rules • 337 Sarvashtakavarga • 16 Divisional Charts"}
+                          : "Invocations • Kuja Dosha 14 rules • 337 Sarvashtakavarga • 16 divisional charts • Dasha-Bhukti"}
                       </p>
                     </div>
-
                     <div className="flex items-center gap-2 flex-wrap">
-                      <span className="px-3 py-1 bg-[#d4af37]/20 border border-[#d4af37] rounded-full text-xs font-bold text-[#8e2b1c] flex items-center gap-1">
+                      <span className="chip-brand">
                         <Layers className="w-3.5 h-3.5" />
                         {chartResult.panchangam_system === "vakhyam"
-                          ? (lang === "ta" ? "வாக்கிய பஞ்சாங்கம் (சூரிய சித்தாந்தம்)" : "Vakhyam Panchangam")
-                          : (lang === "ta" ? "திருக்கணித பஞ்சாங்கம் (சித்திரை பக்ஷம்)" : "Thirukanitham Panchangam")}
+                          ? (lang === "ta" ? "வாக்கிய பஞ்சாங்கம்" : "Vakhyam Panchangam")
+                          : (lang === "ta" ? "திருக்கணித பஞ்சாங்கம்" : "Thirukanitham Panchangam")}
                       </span>
                       <HandwrittenPdfButton chart={chartResult} lang={lang} />
                     </div>
                   </div>
 
-                  {/* 14-Chapter Quick Navigation Bar */}
+                  {/* Chapter quick jump */}
                   <div>
-                    <div className="text-[11px] font-bold text-[#8e2b1c] mb-1 flex items-center gap-1 uppercase tracking-wider">
+                    <div className="field-label flex items-center gap-1">
                       <PenLine className="w-3 h-3" />
-                      {lang === "ta" ? "அத்தியாயங்கள் வழிசெலுத்தல் (Chapter Quick Jump):" : "Chapter Quick Jump:"}
+                      {lang === "ta" ? "அத்தியாயங்கள்" : "Chapters"}
                     </div>
-                    <div className="flex items-center gap-1.5 overflow-x-auto pb-2 scrollbar-thin">
+                    <div className="flex items-center gap-1.5 overflow-x-auto pb-2 no-scrollbar">
                       {MANUSCRIPT_CHAPTERS.map((ch) => {
                         const isActive = previewPage >= ch.startPage && previewPage <= ch.endPage;
                         return (
@@ -507,54 +453,41 @@ export default function HomePage() {
                             key={ch.ch}
                             type="button"
                             onClick={() => setPreviewPage(ch.startPage)}
-                            className={`whitespace-nowrap px-2.5 py-1 rounded-lg text-xs font-tamil transition-all border ${
+                            className={`whitespace-nowrap rounded-full px-3 py-1 text-xs border transition-all ${
                               isActive
-                                ? "bg-[#b03726] text-white border-[#8e2b1c] shadow-sm font-bold"
-                                : "bg-[#f4ebd0] text-[#2b2117] border-[#a3917a]/40 hover:bg-[#ebdcb9]"
+                                ? "border-brand-600 text-white font-semibold brand-gradient-bg shadow-soft"
+                                : "border-line bg-surface-2 text-foreground hover:border-brand-400"
                             }`}
                             title={`${ch.titleTa} (${ch.startPage}-${ch.endPage})`}
                           >
-                            Ch.{ch.ch}: {lang === "ta" ? ch.titleTa : ch.titleEn} (பக்.{ch.startPage})
+                            {ch.ch}. {lang === "ta" ? ch.titleTa : ch.titleEn}
+                            <span className="ml-1 opacity-70">({lang === "ta" ? "பக்." : "p."}{ch.startPage})</span>
                           </button>
                         );
                       })}
                     </div>
                   </div>
 
-                  {/* Page Controls Toolbar */}
-                  <div className="flex flex-col sm:flex-row items-center justify-between gap-3 bg-[#ede2c8] p-3 rounded-2xl border border-[#a3917a]/40">
+                  {/* Page controls */}
+                  <div className="well p-3 flex flex-col sm:flex-row items-center justify-between gap-3">
                     <div className="flex items-center gap-2">
-                      <button
-                        type="button"
-                        onClick={() => setPreviewPage((p) => Math.max(1, p - 1))}
-                        disabled={previewPage === 1}
-                        className="flex items-center gap-1 px-3 py-1.5 rounded-lg bg-[#fdf6e3] text-[#2b2117] border border-[#a3917a]/50 text-xs font-bold hover:bg-[#fff] disabled:opacity-40 disabled:cursor-not-allowed shadow-sm transition"
-                      >
+                      <button type="button" onClick={() => setPreviewPage((p) => Math.max(1, p - 1))} disabled={previewPage === 1} className="btn-secondary text-xs py-1.5">
                         <ChevronLeft className="w-4 h-4" />
-                        {lang === "ta" ? "முந்தைய பக்கம்" : "Previous"}
+                        {lang === "ta" ? "முந்தைய" : "Previous"}
                       </button>
-
-                      <button
-                        type="button"
-                        onClick={() => setPreviewPage((p) => Math.min(50, p + 1))}
-                        disabled={previewPage === 50}
-                        className="flex items-center gap-1 px-3 py-1.5 rounded-lg bg-[#fdf6e3] text-[#2b2117] border border-[#a3917a]/50 text-xs font-bold hover:bg-[#fff] disabled:opacity-40 disabled:cursor-not-allowed shadow-sm transition"
-                      >
-                        {lang === "ta" ? "அடுத்த பக்கம்" : "Next"}
+                      <button type="button" onClick={() => setPreviewPage((p) => Math.min(50, p + 1))} disabled={previewPage === 50} className="btn-secondary text-xs py-1.5">
+                        {lang === "ta" ? "அடுத்த" : "Next"}
                         <ChevronRight className="w-4 h-4" />
                       </button>
                     </div>
 
-                    {/* Dropdown Selector */}
                     <div className="flex items-center gap-2 w-full sm:w-auto">
-                      <span className="text-xs font-bold text-[#8e2b1c] whitespace-nowrap">
-                        {lang === "ta" ? "பக்கம்:" : "Page:"}
-                      </span>
+                      <span className="text-xs font-semibold text-muted whitespace-nowrap">{lang === "ta" ? "பக்கம்:" : "Page:"}</span>
                       <select
                         value={previewPage}
                         onChange={(e) => setPreviewPage(Number(e.target.value))}
                         aria-label={lang === "ta" ? "ஜாதகப் பக்கம் தேர்வு செய்க" : "Select manuscript page"}
-                        className="w-full sm:w-[320px] px-2.5 py-1.5 text-xs bg-[#fdf6e3] border border-[#a3917a]/60 rounded-lg text-[#2b2117] font-tamil font-medium shadow-inner focus:outline-none focus:ring-1 focus:ring-[#b03726]"
+                        className="field w-full sm:w-[320px] py-1.5 text-xs"
                       >
                         {MANUSCRIPT_PAGES.map((p) => (
                           <option key={p.page} value={p.page}>
@@ -565,48 +498,37 @@ export default function HomePage() {
                     </div>
 
                     <div className="flex items-center gap-2">
-                      <button
-                        type="button"
-                        onClick={() => setShowIndex(!showIndex)}
-                        className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-[#d4af37]/20 border border-[#d4af37] text-xs font-bold text-[#8e2b1c] hover:bg-[#d4af37]/30 transition shadow-sm"
-                      >
+                      <button type="button" onClick={() => setShowIndex(!showIndex)} className="btn-secondary text-xs py-1.5">
                         <BookOpen className="w-3.5 h-3.5" />
-                        {lang === "ta" ? (showIndex ? "பொருளடக்கம் மூடு" : "பொருளடக்கம் (Index)") : (showIndex ? "Close Index" : "Index of Contents")}
+                        {lang === "ta" ? (showIndex ? "பொருளடக்கம் மூடு" : "பொருளடக்கம்") : (showIndex ? "Close index" : "Contents")}
                       </button>
-                      <div className="text-xs font-mono font-bold text-[#8e2b1c] bg-[#fdf6e3] px-3 py-1 rounded-full border border-[#a3917a]/40 whitespace-nowrap">
+                      <span className="chip-brand whitespace-nowrap">
                         {lang === "ta" ? `பக்கம் ${previewPage} / 50` : `Page ${previewPage} of 50`}
-                      </div>
+                      </span>
                     </div>
                   </div>
 
-                  {/* Expandable Index of Contents */}
+                  {/* Contents */}
                   {showIndex && (
-                    <div className="bg-[#fff8ee] border-2 border-[#aa820a] rounded-2xl p-4 shadow-xl space-y-3">
-                      <div className="flex items-center justify-between border-b border-[#aa820a]/30 pb-2">
-                        <div className="font-bold text-[#8e2b1c] text-sm flex items-center gap-2 font-script">
-                          <BookOpen className="w-4 h-4 text-[#b03726]" />
-                          {lang === "ta" ? "50-பக்க சம்பூர்ண ஜாதக மகா காண்ட பொருளடக்கம் (Table of Contents)" : "Master Table of Contents (Pages 1 to 50)"}
+                    <div className="card p-4 space-y-3">
+                      <div className="flex items-center justify-between border-b border-border-soft pb-2">
+                        <div className="font-semibold text-foreground text-sm flex items-center gap-2">
+                          <BookOpen className="w-4 h-4 text-brand-fg" />
+                          {lang === "ta" ? "50-பக்க ஜாதக பொருளடக்கம்" : "Table of contents (pages 1–50)"}
                         </div>
-                        <button
-                          type="button"
-                          onClick={() => setShowIndex(false)}
-                          className="text-xs text-[#6f6049] hover:text-[#8e2b1c] font-bold px-2 py-0.5 rounded bg-[#f4ebd0]"
-                        >
+                        <button type="button" onClick={() => setShowIndex(false)} className="btn-ghost text-xs py-1">
                           ✕ {lang === "ta" ? "மூடுக" : "Close"}
                         </button>
                       </div>
-
                       <div className="grid grid-cols-1 md:grid-cols-2 gap-3 max-h-[460px] overflow-y-auto pr-1">
                         {MANUSCRIPT_CHAPTERS.map((ch) => {
-                          const chapterPages = MANUSCRIPT_PAGES.filter(
-                            (p) => p.page >= ch.startPage && p.page <= ch.endPage
-                          );
+                          const chapterPages = MANUSCRIPT_PAGES.filter((p) => p.page >= ch.startPage && p.page <= ch.endPage);
                           return (
-                            <div key={ch.ch} className="bg-[#fcf8ec] border border-[#a3917a]/40 rounded-xl p-2.5 space-y-1">
-                              <div className="flex items-center justify-between text-xs font-bold text-[#8e2b1c] border-b border-[#aa820a]/20 pb-1">
-                                <span>Ch.{ch.ch}: {lang === "ta" ? ch.titleTa : ch.titleEn}</span>
-                                <span className="text-[10px] font-mono bg-[#8e2b1c]/10 text-[#8e2b1c] px-1.5 py-0.5 rounded font-bold">
-                                  பக். {ch.startPage}–{ch.endPage}
+                            <div key={ch.ch} className="well p-2.5 space-y-1">
+                              <div className="flex items-center justify-between text-xs font-semibold text-foreground border-b border-border-soft pb-1">
+                                <span>{ch.ch}. {lang === "ta" ? ch.titleTa : ch.titleEn}</span>
+                                <span className="chip-brand text-[10px] py-0">
+                                  {lang === "ta" ? "பக்." : "p."} {ch.startPage}–{ch.endPage}
                                 </span>
                               </div>
                               <div className="space-y-0.5">
@@ -620,18 +542,16 @@ export default function HomePage() {
                                         setPreviewPage(pg.page);
                                         setShowIndex(false);
                                       }}
-                                      className={`w-full text-left px-2 py-1 rounded text-[11px] flex items-center justify-between transition ${
-                                        isCurrent
-                                          ? "bg-[#b03726] text-white font-bold shadow-sm"
-                                          : "hover:bg-[#f4ebd0] text-[#2b2117]"
+                                      className={`w-full text-left px-2 py-1 rounded-lg text-[11px] flex items-center justify-between transition ${
+                                        isCurrent ? "brand-gradient-bg text-white font-semibold" : "hover:bg-brand-500/10 text-foreground"
                                       }`}
                                     >
                                       <span className="truncate pr-2">
-                                        <span className="font-mono font-bold mr-1.5">#{pg.page}</span>
+                                        <span className="font-semibold mr-1.5">#{pg.page}</span>
                                         {lang === "ta" ? pg.titleTa : pg.titleEn}
                                       </span>
-                                      <span className="text-[9px] font-mono opacity-80 shrink-0">
-                                        {isCurrent ? "தற்போது" : "செல் →"}
+                                      <span className="text-[9px] opacity-80 shrink-0">
+                                        {isCurrent ? (lang === "ta" ? "தற்போது" : "current") : "→"}
                                       </span>
                                     </button>
                                   );
@@ -644,82 +564,47 @@ export default function HomePage() {
                     </div>
                   )}
 
-                  {/* Manuscript Page Viewport (Centered, Crisp A4 Preview) */}
-                  <div className="flex justify-center p-2 md:p-6 bg-[#eee4cb] rounded-2xl border-2 border-[#a3917a]/40 shadow-inner overflow-x-auto">
-                    <div className="w-[794px] min-w-[794px] bg-[#fcf8ec] rounded-lg shadow-2xl p-2 border border-[#d4af37]/40 flex justify-center">
+                  {/* Page preview — the only document island in this card */}
+                  <div className="well flex justify-center p-2 md:p-6 overflow-x-auto">
+                    <div className={`${DOC} w-[794px] min-w-[794px] flex justify-center`}>
                       <HandwrittenManuscript chart={chartResult} lang={lang} activePage={previewPage} />
                     </div>
                   </div>
 
-                  {/* Bottom Navigation */}
-                  <div className="flex items-center justify-between gap-3 pt-2">
-                    <button
-                      type="button"
-                      onClick={() => setPreviewPage((p) => Math.max(1, p - 1))}
-                      disabled={previewPage === 1}
-                      className="flex items-center gap-1 px-3 py-1.5 rounded-lg bg-[#f4ebd0] text-[#2b2117] border border-[#a3917a]/50 text-xs font-bold hover:bg-[#ebdcb9] disabled:opacity-40 disabled:cursor-not-allowed transition"
-                    >
+                  <div className="flex items-center justify-between gap-3 pt-1">
+                    <button type="button" onClick={() => setPreviewPage((p) => Math.max(1, p - 1))} disabled={previewPage === 1} className="btn-secondary text-xs py-1.5">
                       <ChevronLeft className="w-4 h-4" />
-                      {lang === "ta" ? "முந்தைய பக்கம்" : "Previous"}
+                      {lang === "ta" ? "முந்தைய" : "Previous"}
                     </button>
-
-                    <div className="text-xs text-[#6f6049] text-center font-tamil">
+                    <div className="text-xs text-muted text-center">
                       {lang === "ta"
-                        ? `தற்போது பார்ப்பது: பக்கம் ${previewPage} — ${MANUSCRIPT_PAGES[previewPage - 1]?.titleTa}`
-                        : `Viewing: Page ${previewPage} — ${MANUSCRIPT_PAGES[previewPage - 1]?.titleEn}`}
+                        ? `பக்கம் ${previewPage} — ${MANUSCRIPT_PAGES[previewPage - 1]?.titleTa}`
+                        : `Page ${previewPage} — ${MANUSCRIPT_PAGES[previewPage - 1]?.titleEn}`}
                     </div>
-
-                    <button
-                      type="button"
-                      onClick={() => setPreviewPage((p) => Math.min(50, p + 1))}
-                      disabled={previewPage === 50}
-                      className="flex items-center gap-1 px-3 py-1.5 rounded-lg bg-[#f4ebd0] text-[#2b2117] border border-[#a3917a]/50 text-xs font-bold hover:bg-[#ebdcb9] disabled:opacity-40 disabled:cursor-not-allowed transition"
-                    >
-                      {lang === "ta" ? "அடுத்த பக்கம்" : "Next"}
+                    <button type="button" onClick={() => setPreviewPage((p) => Math.min(50, p + 1))} disabled={previewPage === 50} className="btn-secondary text-xs py-1.5">
+                      {lang === "ta" ? "அடுத்த" : "Next"}
                       <ChevronRight className="w-4 h-4" />
                     </button>
-                  </div>
-
-                  {/* PDF Info Footer Banner */}
-                  <div className="bg-[#ebdcb9]/60 border border-[#a3917a]/40 rounded-xl p-3 flex flex-col sm:flex-row items-center justify-between gap-3 text-center sm:text-left">
-                    <p className="text-xs text-[#6f6049] font-tamil">
-                      {lang === "ta"
-                        ? "முழுமையான 50 பக்கங்களும் அடங்கிய சம்பூர்ண ஓலைச்சுவடி ஜாதக நூலை உயர்தர A4 PDF வடிவில் பதிவிறக்கம் செய்ய மேலே உள்ள ‘கையெழுத்து PDF’ பொத்தானை அழுத்தவும்."
-                        : "To download the complete 50-page traditional handwritten manuscript as a high-resolution A4 PDF, click the ‘Handwritten PDF’ button."}
-                    </p>
-                    <div className="shrink-0">
-                      <HandwrittenPdfButton chart={chartResult} lang={lang} />
-                    </div>
                   </div>
                 </div>
               </div>
 
-                {/* Hidden full-size manuscript for PDF generation (off-screen, renders all 50 pages) */}
-                {/* Off-screen full-size manuscript used only for PDF capture.
-                    `data-pdf-host` tells lib/pdfExport.ts to move this host back
-                    to the origin inside its clone, otherwise html2canvas
-                    captures blank paper from the -10000px offset. */}
-                <div
-                  id="handwritten-manuscript"
-                  data-pdf-host
-                  className="fixed left-[-10000px] top-0 pointer-events-none"
-                  aria-hidden
-                >
+              {/* Hidden full-size hosts used ONLY by the PDF exporter and Print.
+                  They live inside a document island so the chosen ink/typeface
+                  is applied to them too — the download always matches the screen.
+                  `data-pdf-host` tells lib/pdfExport.ts / the print CSS to bring
+                  them back into place when capturing. */}
+              <div className={DOC}>
+                <div id="handwritten-manuscript" data-pdf-host className="fixed left-[-10000px] top-0 pointer-events-none" aria-hidden>
                   <HandwrittenManuscript chart={chartResult} lang={lang} />
                 </div>
-
-                {/* Printed Table of Contents — inserted by HandwrittenPdfButton
-                    as page 2 of the PDF, between the cover and the manuscript. */}
-                <div
-                  data-pdf-host
-                  className="fixed left-[-10000px] top-0 pointer-events-none"
-                  aria-hidden
-                >
+                {/* Printed contents page — inserted as page 2 of the PDF / print. */}
+                <div data-pdf-host className="fixed left-[-10000px] top-0 pointer-events-none" aria-hidden>
                   <ManuscriptTocPage lang={lang} />
                 </div>
+              </div>
               </>
             )}
-            </div>
           </section>
         )}
       </main>
