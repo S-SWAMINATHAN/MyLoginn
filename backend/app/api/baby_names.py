@@ -39,6 +39,15 @@ from backend.app.services.numerology import (
 router = APIRouter(prefix="/baby-names", tags=["baby-names"])
 
 
+@router.get("/stats")
+def name_bank_stats():
+    """Real, countable coverage of the name bank. Exposed so the UI can show
+    the true number of names available rather than implying a number the
+    data does not actually contain."""
+    from backend.app.services.baby_names import get_name_bank_stats
+    return get_name_bank_stats()
+
+
 def _enrich_with_numerology(result: dict, date_of_birth: str) -> dict:
     """Annotates each suggestion with numerology_* fields and adds the two
     baby-level numbers to the top level.
@@ -116,7 +125,9 @@ def generate_baby_names(req: BabyNameRequest):
             moon["nakshatra"],
             moon["pada"],
             req.gender,
-            moon["nakshatra_ta"]
+            moon["nakshatra_ta"],
+            religion=req.religion,
+            all_padas=True,   # all four pada syllables, birth pada first
         )
 
         result = _enrich_with_numerology(result, req.date_of_birth)

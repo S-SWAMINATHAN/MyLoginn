@@ -259,6 +259,11 @@ export interface BabyNameSuggestionItem {
   meaning: string;
   meaning_ta: string;
   gender: string;
+  religion?: string;
+  syllable?: string;
+  syllable_ta?: string;
+  pada?: number;
+  is_birth_pada?: boolean;
   // Chaldean numerology annotation, added per-name by the backend AFTER
   // Nakshatra-Pada selection. Optional because numerology enrichment is
   // allowed to fail without taking down the classical suggestions.
@@ -273,11 +278,25 @@ export interface BabyNameSuggestionItem {
   numerology_is_favorable?: boolean;
 }
 
+export interface BabyNamePadaGroup {
+  pada: number;
+  syllable: string;
+  syllable_ta: string;
+  is_birth_pada: boolean;
+  count: number;
+  names: BabyNameSuggestionItem[];
+}
+
 export interface BabyNameResult {
   nakshatra: string;
   nakshatra_ta: string;
   pada: number;
   starting_syllables: string[];
+  starting_syllables_ta?: string[];
+  target_syllable_ta?: string | null;
+  religion?: string | null;
+  total_count?: number;
+  pada_groups?: BabyNamePadaGroup[];
   target_syllable?: string | null;
   gender?: string | null;
   suggestions: BabyNameSuggestionItem[];
@@ -939,6 +958,8 @@ export interface GroupedLocations {
 export interface BabyNameRequest {
   name?: string;
   gender?: string;
+  /** "hindu" | "christian" | "muslim"; omitted = every religion. */
+  religion?: string;
   date_of_birth: string; // YYYY-MM-DD
   time_of_birth: string; // HH:MM:SS
   place: string;

@@ -6,6 +6,8 @@ Cites Muhurtha Chintamani & Jataka Parijata for 108 Pada Nama Aksharas (நா�
 
 from typing import List, Dict, Any, Optional
 
+from backend.app.services.baby_name_bank import expand_bank, bank_stats
+
 # Traditional 108 Pada Syllables (27 Nakshatras x 4 Padas)
 # English phonetic + Tamil Nama Akshara
 NAKSHATRA_PADA_SYLLABLES: Dict[str, List[str]] = {
@@ -625,15 +627,80 @@ NAME_DATABASE: Dict[str, List[Dict[str, str]]] = {
 }
 
 
+def _merged_database() -> Dict[str, List[Dict[str, Any]]]:
+    """The original NAME_DATABASE plus the larger baby_name_bank, merged.
+
+    The original entries carry no `religion` key. They are all traditional
+    Tamil/Sanskrit names, so they are tagged "hindu" — that is a statement
+    about the existing data, not a new claim about any name. Duplicates
+    (same name under the same syllable) are collapsed, keeping the first.
+    """
+    merged: Dict[str, List[Dict[str, Any]]] = {}
+
+    for syllable, rows in NAME_DATABASE.items():
+        merged[syllable] = [{**r, "religion": r.get("religion", "hindu")} for r in rows]
+
+    for syllable, rows in expand_bank().items():
+        existing = merged.setdefault(syllable, [])
+        seen = {r["name"].lower() for r in existing}
+        for r in rows:
+            if r["name"].lower() not in seen:
+                existing.append(r)
+                seen.add(r["name"].lower())
+
+    return merged
+
+
+_DB_CACHE: Optional[Dict[str, List[Dict[str, Any]]]] = None
+
+
+def _db() -> Dict[str, List[Dict[str, Any]]]:
+    global _DB_CACHE
+    if _DB_CACHE is None:
+        _DB_CACHE = _merged_database()
+    return _DB_CACHE
+
+
+def get_name_bank_stats() -> Dict[str, Any]:
+    """Real, countable coverage — so the UI can state the true number of
+    names available instead of implying a number the data does not have."""
+    db = _db()
+    total = sum(len(v) for v in db.values())
+    stats = bank_stats()
+    stats["total_names_merged"] = total
+    stats["syllables_in_merged_db"] = len(db)
+    return stats
+
+
 def get_baby_name_suggestions(
     nakshatra_name: str,
     pada: int,
     gender: Optional[str] = None,
-    nakshatra_ta: Optional[str] = None
+    nakshatra_ta: Optional[str] = None,
+    religion: Optional[str] = None,
+    all_padas: bool = True,
 ) -> Dict[str, Any]:
     """
-    Returns the authentic Nakshatra-pada starting syllables (நாம அக்ஷரங்கள்) and shortlisted names.
-    Governed by canonical Vedic astrology tables.
+    Returns the classical Nakshatra-Pada starting syllables and the names
+    that begin with them.
+
+    WHAT CHANGED AND WHY
+    --------------------
+    * `all_padas=True` (the default) now returns names for ALL FOUR of the
+      Nakshatra's pada syllables, not only the syllable of the baby's own
+      pada. The baby's own pada is still identified and marked
+      (`is_birth_pada`), and its names are listed first, so nothing about
+      the classical rule is lost — the other three are offered as the
+      wider, still-auspicious set for the same Nakshatra. This is the main
+      reason a generation now returns tens of names rather than three.
+    * `religion` filters to "hindu" | "christian" | "muslim". Omitted means
+      every religion. Coverage is uneven and honestly so — see the note at
+      the top of baby_name_bank.py.
+    * The old "if this syllable is thin, borrow names from any syllable
+      with the same first letter" fallback is GONE. It silently returned
+      names that do not start with the classically-correct syllable (which
+      is how "Gha" came to show Gandhivel, Gaanamudhan and Geethan). A
+      short, correct list beats a padded, wrong one.
     """
     syllables = NAKSHATRA_PADA_SYLLABLES.get(nakshatra_name, ["A", "S", "K", "M"])
     syllables_ta = NAKSHATRA_PADA_SYLLABLES_TA.get(nakshatra_name, ["அ", "ச", "க", "ம"])
@@ -642,32 +709,56 @@ def get_baby_name_suggestions(
     target_syllable = syllables[target_idx] if target_idx < len(syllables) else syllables[0]
     target_syllable_ta = syllables_ta[target_idx] if target_idx < len(syllables_ta) else syllables_ta[0]
 
-    # Gather matching names
-    raw_names = NAME_DATABASE.get(target_syllable, [])
+    db = _db()
 
-    # If exact syllable has fewer than 2 names, check root match (e.g. 'Paa' -> 'Pu' / 'Pe')
-    if len(raw_names) < 2:
-        root = target_syllable[0]
-        for k, v in NAME_DATABASE.items():
-            if k.startswith(root) and k != target_syllable:
-                raw_names.extend(v)
-                if len(raw_names) >= 4:
-                    break
+    # Which syllables to draw from: the birth pada first, then the rest.
+    order = [target_idx] + [i for i in range(len(syllables)) if i != target_idx]
+    if not all_padas:
+        order = [target_idx]
 
-    # Fallback to classical auspicious names if still empty
-    if not raw_names:
-        raw_names = [
-            {"name": "Aadhavan", "name_ta": "ஆதவன்", "meaning": "Radiant Sun", "meaning_ta": "கதிரவன்", "gender": "boy"},
-            {"name": "Aadhira", "name_ta": "ஆதிரா", "meaning": "Auspicious first star", "meaning_ta": "மங்கல நற்பேறு", "gender": "girl"},
-            {"name": "Karthikeyan", "name_ta": "கார்த்திகேயன்", "meaning": "Lord Murugan", "meaning_ta": "முருகப்பெருமான்", "gender": "boy"},
-            {"name": "Lavanya", "name_ta": "லாவண்யா", "meaning": "Grace and elegance", "meaning_ta": "அழகும் கருணையும்", "gender": "girl"},
-        ]
+    g = (gender or "").strip().lower()
+    want_gender = "boy" if g in ("boy", "male", "m") else "girl" if g in ("girl", "female", "f") else None
+    want_religion = (religion or "").strip().lower() or None
+    if want_religion in ("all", "any", ""):
+        want_religion = None
 
-    filtered = raw_names
-    if gender and gender.lower() in ["boy", "male"]:
-        filtered = [n for n in raw_names if n.get("gender") == "boy"] or raw_names
-    elif gender and gender.lower() in ["girl", "female"]:
-        filtered = [n for n in raw_names if n.get("gender") == "girl"] or raw_names
+    suggestions: List[Dict[str, Any]] = []
+    groups: List[Dict[str, Any]] = []
+    seen: set = set()
+
+    for idx in order:
+        syl = syllables[idx]
+        syl_ta = syllables_ta[idx] if idx < len(syllables_ta) else syl
+        rows = db.get(syl, [])
+
+        picked: List[Dict[str, Any]] = []
+        for r in rows:
+            if want_gender and r.get("gender") != want_gender:
+                continue
+            if want_religion and r.get("religion", "hindu") != want_religion:
+                continue
+            key = r["name"].lower()
+            if key in seen:
+                continue
+            seen.add(key)
+            row = dict(r)
+            row["syllable"] = syl
+            row["syllable_ta"] = syl_ta
+            row["pada"] = idx + 1
+            row["is_birth_pada"] = idx == target_idx
+            picked.append(row)
+
+        suggestions.extend(picked)
+        groups.append({
+            "pada": idx + 1,
+            "syllable": syl,
+            "syllable_ta": syl_ta,
+            "is_birth_pada": idx == target_idx,
+            "count": len(picked),
+            "names": picked,
+        })
+
+    groups.sort(key=lambda gr: gr["pada"])
 
     return {
         "nakshatra": nakshatra_name,
@@ -682,5 +773,8 @@ def get_baby_name_suggestions(
             for i in range(min(len(syllables), len(syllables_ta)))
         ],
         "gender": gender,
-        "suggestions": filtered
+        "religion": religion,
+        "total_count": len(suggestions),
+        "pada_groups": groups,
+        "suggestions": suggestions,
     }

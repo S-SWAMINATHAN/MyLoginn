@@ -1,6 +1,8 @@
 "use client";
 
 import React, { useState } from "react";
+import { TamilNameInput } from "./TamilNameInput";
+import { toTamil } from "@/lib/tamilTransliterate";
 import { BabyNameRequest } from "@/lib/types";
 import { Baby, Calendar, User, Sparkles } from "lucide-react";
 import { TimeInput12h } from "./TimeInput12h";
@@ -35,9 +37,14 @@ interface BabyNameFormProps {
  *    seeded control is the time picker, which needs a value to render (07:00 AM).
  */
 export const BabyNameForm: React.FC<BabyNameFormProps> = ({ onSubmit, isLoading, lang }) => {
+  // Bug 2: the optional parent/child name is held as BOTH spellings so the
+  // field can follow the site language. Neither is prefilled.
+  const [nameEn, setNameEn] = useState("");
+  const [nameTa, setNameTa] = useState("");
   const [formData, setFormData] = useState<BabyNameRequest>({
     name: "",
     gender: "",
+    religion: "",
     date_of_birth: "",
     time_of_birth: "07:00:00",
     place: "",
@@ -55,6 +62,10 @@ export const BabyNameForm: React.FC<BabyNameFormProps> = ({ onSubmit, isLoading,
       ...formData,
       // Send gender only if the parent actually picked one.
       gender: formData.gender || undefined,
+      // Same rule as gender: only sent when actually chosen.
+      religion: formData.religion || undefined,
+      // Send the spelling that matches the language being viewed.
+      name: (lang === "ta" ? nameTa : nameEn) || undefined,
     });
   };
 
@@ -80,16 +91,29 @@ export const BabyNameForm: React.FC<BabyNameFormProps> = ({ onSubmit, isLoading,
           <label className="field-label">
             {lang === "ta" ? "குழந்தை / பெற்றோர் பெயர் (விருப்பம்)" : "Child / Parent Name (Optional)"}
           </label>
-          <div className="flex items-center gap-2 w-full px-3 py-2.5 bg-surface-2 border border-line rounded-xl focus-within:border-brand-500 transition-all">
-            <User className="w-4 h-4 shrink-0 text-muted" />
-            <input
-              type="text"
-              value={formData.name}
-              onChange={(e) => setFormData({ ...formData, name: e.target.value })}
-              className="flex-1 min-w-0 bg-transparent text-foreground placeholder:text-muted outline-none text-sm"
-              placeholder={lang === "ta" ? "எ.கா. ராமநாதன் & மரகதம்" : "e.g. Ramanathan & Maragatham"}
-            />
-          </div>
+          {/* Bug 2: this field now follows the site language.
+              Both spellings are kept as you type — the Latin one and the
+              Tamil one — and the box shows whichever matches the language.
+              Switching language therefore switches the parents' names too,
+              instead of leaving the same text sitting in the other script.
+              Typing in Tamil directly is kept exactly as typed. */}
+          <TamilNameInput
+            value={lang === "ta" ? nameTa : nameEn}
+            lang={lang}
+            onChange={(v, latin) => {
+              if (lang === "ta") {
+                setNameTa(v);
+                // `latin` arrives when a Tamil suggestion was accepted.
+                if (latin) setNameEn(latin);
+              } else {
+                setNameEn(v);
+                // Keep a Tamil spelling ready for the Tamil view.
+                setNameTa(v ? toTamil(v) || v : "");
+              }
+            }}
+            className="w-full pl-10 pr-4 py-2.5 bg-surface-2 border border-line rounded-xl text-foreground placeholder:text-muted outline-none text-sm focus:border-brand-500 transition-all"
+            placeholder={lang === "ta" ? "எ.கா. ராமநாதன் & மரகதம்" : "e.g. Ramanathan & Maragatham"}
+          />
         </div>
 
         {/* Gender — nothing preselected */}
@@ -124,6 +148,40 @@ export const BabyNameForm: React.FC<BabyNameFormProps> = ({ onSubmit, isLoading,
             {lang === "ta"
               ? "தேர்வு செய்யவில்லை எனில் இரு பாலினப் பெயர்களும் காட்டப்படும்."
               : "Leave unselected to see names for both."}
+          </p>
+        </div>
+
+        {/* Religion — nothing preselected, same as gender. */}
+        <div>
+          <label className="field-label">{lang === "ta" ? "மதம்" : "Religion"}</label>
+          <div className="grid grid-cols-3 gap-2">
+            {(
+              [
+                ["hindu", lang === "ta" ? "இந்து" : "Hindu"],
+                ["christian", lang === "ta" ? "கிறிஸ்தவம்" : "Christian"],
+                ["muslim", lang === "ta" ? "இஸ்லாம்" : "Muslim"],
+              ] as const
+            ).map(([key, text]) => (
+              <button
+                key={key}
+                type="button"
+                onClick={() =>
+                  setFormData({ ...formData, religion: formData.religion === key ? "" : key })
+                }
+                className={`py-2.5 px-3 rounded-xl text-xs font-semibold border transition-all ${
+                  formData.religion === key
+                    ? "bg-brand-600 border-brand-500 text-white shadow-sm"
+                    : "bg-surface-2 border-line text-foreground hover:border-brand-500"
+                }`}
+              >
+                {text}
+              </button>
+            ))}
+          </div>
+          <p className="text-[10px] text-muted mt-1">
+            {lang === "ta"
+              ? "தேர்வு செய்யவில்லை எனில் அனைத்து மதப் பெயர்களும் காட்டப்படும். நட்சத்திர எழுத்து இந்து மரபு என்பதால் சில எழுத்துகளுக்கு கிறிஸ்தவ/இஸ்லாமியப் பெயர்கள் குறைவாக இருக்கும்."
+              : "Leave unselected to see every religion. Nakshatra syllables are a Hindu convention, so for some syllables there are few or no established Christian/Muslim names."}
           </p>
         </div>
 

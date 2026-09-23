@@ -403,13 +403,28 @@ class PoruthamMatchResult(BaseModel):
     recommendation: str
     recommendation_ta: str
 
+class BabyNamePadaGroup(BaseModel):
+    """Names for one of the Nakshatra's four pada syllables."""
+    pada: int
+    syllable: str
+    syllable_ta: str
+    is_birth_pada: bool = False
+    count: int = 0
+    names: List[Dict[str, Any]] = []
+
+
 class BabyNameResult(BaseModel):
     nakshatra: str
     nakshatra_ta: str
     pada: int
     starting_syllables: List[str]
+    starting_syllables_ta: List[str] = []
     target_syllable: Optional[str] = None
+    target_syllable_ta: Optional[str] = None
     gender: Optional[str] = None
+    religion: Optional[str] = None
+    total_count: int = 0
+    pada_groups: List[BabyNamePadaGroup] = []
     suggestions: List[Dict[str, Any]] = []  # [{name, name_ta, meaning, meaning_ta, gender, numerology_*}]
     # NEW: baby-level numerology numbers, derived from date_of_birth only.
     numerology_birth_number: Optional[int] = None
@@ -759,6 +774,9 @@ class NarrationRequest(BaseModel):
 class BabyNameRequest(BaseModel):
     name: Optional[str] = None
     gender: Optional[str] = None  # "male"/"boy" or "female"/"girl" — filters suggestions
+    # "hindu" | "christian" | "muslim". Omitted / None means every religion.
+    # Coverage is uneven by design — see backend/app/services/baby_name_bank.py.
+    religion: Optional[str] = None
     date_of_birth: str = Field(..., description="YYYY-MM-DD")
     time_of_birth: str = Field(..., description="HH:MM:SS")
     place: str = Field(..., description="City, State, Country")
