@@ -1,24 +1,23 @@
 "use client";
 
 import Image from "next/image";
-import type { ComponentType } from "react";
-import projectHeaderImage from "@/images/Hero Section images/15.png";
 import { motion } from "framer-motion";
 import { Eyebrow } from "@/components/ui/Section";
-import { Reveal } from "@/components/ui/Reveal";
 import { AnimatedText } from "@/components/ui/AnimatedText";
 import { StatCounter } from "@/components/ui/StatCounter";
+import { Reveal } from "@/components/ui/Reveal";
+import { AnimatedRocket } from "@/components/ui/icons/AnimatedRocket";
 import { AnimatedFolder } from "@/components/ui/icons/AnimatedFolder";
 import { AnimatedUsers } from "@/components/ui/icons/AnimatedUsers";
 import { AnimatedCode } from "@/components/ui/icons/AnimatedCode";
 import { AnimatedStar } from "@/components/ui/icons/AnimatedStar";
-import { AnimatedRocket } from "@/components/ui/icons/AnimatedRocket";
+import projectHeaderImage from "@/images/Project header.png";
 
 type StatTile = {
-  icon: ComponentType<{ className?: string }>;
+  icon: typeof AnimatedFolder;
   value: number | null;
-  suffix?: string;
   display?: string;
+  suffix?: string;
   label: string;
   tone: string;
 };

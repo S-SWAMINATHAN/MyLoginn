@@ -1,16 +1,16 @@
 "use client";
 
 import Image from "next/image";
-import internshipHeader from "@/images/Hero Section images/15.png";
 import { motion } from "framer-motion";
 import { Eyebrow } from "@/components/ui/Section";
-import { Reveal } from "@/components/ui/Reveal";
 import { AnimatedText } from "@/components/ui/AnimatedText";
 import { StatCounter } from "@/components/ui/StatCounter";
+import { Reveal } from "@/components/ui/Reveal";
 import { AnimatedBriefcase } from "@/components/ui/icons/AnimatedBriefcase";
 import { AnimatedRupee } from "@/components/ui/icons/AnimatedRupee";
 import { AnimatedBuilding } from "@/components/ui/icons/AnimatedBuilding";
 import { AnimatedTrending } from "@/components/ui/icons/AnimatedTrending";
+import internshipHeader from "@/images/Internship header.png";
 
 export function InternshipsHero({
   total,

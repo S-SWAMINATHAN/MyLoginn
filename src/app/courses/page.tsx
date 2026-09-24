@@ -5,6 +5,14 @@ import { Section, Container, Eyebrow } from "@/components/ui/Section";
 import { CoursesExplorer } from "@/components/courses/CoursesExplorer";
 import type { CourseCardData } from "@/components/courses/CourseCard";
 
+export const metadata: Metadata = {
+  title: "Courses — MyLoginn",
+  description: "Learn AI, machine learning, digital marketing, and full-stack development with live mentor-led courses.",
+  alternates: { canonical: "/courses" },
+};
+
+export const dynamic = "force-dynamic";
+
 export default async function CoursesPage() {
   const [user, courses] = await Promise.all([
     getCurrentUser(),

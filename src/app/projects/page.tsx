@@ -1,10 +1,18 @@
 import type { Metadata } from "next";
+import { Section, Container } from "@/components/ui/Section";
 import { prisma } from "@/lib/prisma";
 import type { ShowcaseProject } from "@/lib/showcaseProjects";
-import { Section, Container } from "@/components/ui/Section";
 import { ProjectsHero } from "@/components/projects/ProjectsHero";
 import { ProjectsExplorer } from "@/components/projects/ProjectsExplorer";
 import { ProjectsCtaBanner } from "@/components/projects/ProjectsCtaBanner";
+
+export const metadata: Metadata = {
+  title: "Student Projects — MyLoginn",
+  description: "Explore real projects built by MyLoginn students with guidance from experienced mentors.",
+  alternates: { canonical: "/projects" },
+};
+
+export const dynamic = "force-dynamic";
 
 export default async function ProjectsPage() {
   const rows = await prisma.showcaseProject.findMany({ orderBy: { sortOrder: "asc" } });
