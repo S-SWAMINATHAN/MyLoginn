@@ -424,6 +424,11 @@ class BabyNameResult(BaseModel):
     gender: Optional[str] = None
     religion: Optional[str] = None
     total_count: int = 0
+    # How many rows the table actually holds for these syllables/filters, and
+    # what was asked for — so the UI can say "26 of 26 available" instead of
+    # implying the limit was met.
+    available_count: Optional[int] = None
+    requested_limit: Optional[int] = None
     pada_groups: List[BabyNamePadaGroup] = []
     suggestions: List[Dict[str, Any]] = []  # [{name, name_ta, meaning, meaning_ta, gender, numerology_*}]
     # NEW: baby-level numerology numbers, derived from date_of_birth only.
@@ -777,6 +782,9 @@ class BabyNameRequest(BaseModel):
     # "hindu" | "christian" | "muslim". Omitted / None means every religion.
     # Coverage is uneven by design — see backend/app/services/baby_name_bank.py.
     religion: Optional[str] = None
+    # How many rows to fetch. Returns min(limit, matching rows) — it cannot
+    # create rows that are not in the table.
+    limit: Optional[int] = 150
     date_of_birth: str = Field(..., description="YYYY-MM-DD")
     time_of_birth: str = Field(..., description="HH:MM:SS")
     place: str = Field(..., description="City, State, Country")

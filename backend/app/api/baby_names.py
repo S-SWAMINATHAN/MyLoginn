@@ -28,6 +28,11 @@ from backend.app.models.schemas import BabyNameRequest, BabyNameResult
 from backend.app.services.geocode import resolve_place
 from backend.app.services.ephemeris import get_julian_day, compute_planetary_positions
 from backend.app.services.baby_names import get_baby_name_suggestions
+from backend.app.services.baby_names import (
+    NAKSHATRA_PADA_SYLLABLES,
+    NAKSHATRA_PADA_SYLLABLES_TA,
+)
+from backend.app.services import name_db
 from backend.app.services.numerology import (
     compute_name_number,
     compute_birth_number,
@@ -37,6 +42,86 @@ from backend.app.services.numerology import (
 )
 
 router = APIRouter(prefix="/baby-names", tags=["baby-names"])
+
+
+def _db_backed_suggestions(nakshatra: str, pada: int, nakshatra_ta: str,
+                           gender, religion, limit: int) -> dict:
+    """Same response shape as the in-memory path, but every row comes from a
+    real SELECT against the baby_names table.
+
+    The limit is spread across the Nakshatra's four pada syllables, birth
+    pada first, so one syllable cannot swallow the whole quota.
+    """
+    syllables = NAKSHATRA_PADA_SYLLABLES.get(nakshatra, ["A", "S", "K", "M"])
+    syllables_ta = NAKSHATRA_PADA_SYLLABLES_TA.get(nakshatra, ["அ", "ச", "க", "ம"])
+    target_idx = max(0, min(3, pada - 1))
+
+    per_syllable = max(1, int(limit) // max(1, len(syllables)))
+    order = [target_idx] + [i for i in range(len(syllables)) if i != target_idx]
+
+    groups, flat, seen = [], [], set()
+    for idx in order:
+        syl = syllables[idx]
+        syl_ta = syllables_ta[idx] if idx < len(syllables_ta) else syl
+        rows = name_db.fetch_names([syl], gender=gender, religion=religion,
+                                   limit=per_syllable)
+        picked = []
+        for r in rows:
+            key = r["name_english"].lower()
+            if key in seen:
+                continue
+            seen.add(key)
+            picked.append({
+                # Both shapes: the app's existing keys plus the explicit
+                # *_english / *_tamil names the frontend table prints.
+                "name": r["name_english"],
+                "name_ta": r["name_tamil"],
+                "meaning": r["meaning_english"],
+                "meaning_ta": r["meaning_tamil"],
+                "name_english": r["name_english"],
+                "name_tamil": r["name_tamil"],
+                "meaning_english": r["meaning_english"],
+                "meaning_tamil": r["meaning_tamil"],
+                "gender": r["gender"],
+                "religion": r["religion"],
+                "syllable": syl,
+                "syllable_ta": syl_ta,
+                "pada": idx + 1,
+                "is_birth_pada": idx == target_idx,
+            })
+        flat.extend(picked)
+        groups.append({
+            "pada": idx + 1, "syllable": syl, "syllable_ta": syl_ta,
+            "is_birth_pada": idx == target_idx,
+            "count": len(picked), "names": picked,
+        })
+    groups.sort(key=lambda g: g["pada"])
+
+    return {
+        "nakshatra": nakshatra,
+        "nakshatra_ta": nakshatra_ta or nakshatra,
+        "pada": pada,
+        "starting_syllables": syllables,
+        "starting_syllables_ta": syllables_ta,
+        "target_syllable": syllables[target_idx],
+        "target_syllable_ta": syllables_ta[target_idx] if target_idx < len(syllables_ta) else None,
+        "gender": gender,
+        "religion": religion,
+        "total_count": len(flat),
+        # What the table actually holds for these syllables, so the UI can be
+        # honest when it returns fewer than the limit asked for.
+        "available_count": name_db.count_names(syllables, gender=gender, religion=religion),
+        "requested_limit": limit,
+        "pada_groups": groups,
+        "suggestions": flat,
+    }
+
+
+@router.get("/db-stats")
+def baby_name_db_stats():
+    """Real coverage of the baby_names table, including which syllables are
+    thin — those are what keep a generation under the requested limit."""
+    return name_db.db_stats()
 
 
 @router.get("/stats")
@@ -121,14 +206,31 @@ def generate_baby_names(req: BabyNameRequest):
         )
         moon = eph["positions_by_name"]["Moon"]
 
-        result = get_baby_name_suggestions(
-            moon["nakshatra"],
-            moon["pada"],
-            req.gender,
-            moon["nakshatra_ta"],
-            religion=req.religion,
-            all_padas=True,   # all four pada syllables, birth pada first
-        )
+        # Prefer the SQLite table. Fall back to the in-memory banks only if
+        # the table is empty (first boot before seeding), so the feature can
+        # never go dark because of a migration.
+        limit = int(req.limit or 150)
+        try:
+            use_db = name_db.count_names(
+                NAKSHATRA_PADA_SYLLABLES.get(moon["nakshatra"], [])
+            ) > 0
+        except Exception:
+            use_db = False
+
+        if use_db:
+            result = _db_backed_suggestions(
+                moon["nakshatra"], moon["pada"], moon["nakshatra_ta"],
+                req.gender, req.religion, limit,
+            )
+        else:
+            result = get_baby_name_suggestions(
+                moon["nakshatra"],
+                moon["pada"],
+                req.gender,
+                moon["nakshatra_ta"],
+                religion=req.religion,
+                all_padas=True,
+            )
 
         result = _enrich_with_numerology(result, req.date_of_birth)
 

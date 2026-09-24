@@ -1172,3 +1172,165 @@
   color: var(--foreground);
 }
 
+/* ==========================================================================
+ * A4 PRINT SHEET FOR THE BABY-NAME LIST
+ *
+ * window.print() on the names page prints ONLY `.names-print-sheet`, laid out
+ * for A4 portrait and flowing across as many pages as the list needs.
+ *
+ * How it works:
+ *  - Everything on the page is hidden, then the sheet alone is un-hidden.
+ *    Hiding by ancestor (`body *`) rather than by listing every header,
+ *    footer, sidebar and button means nothing new can leak into the print.
+ *  - CSS multi-column gives the compact 2/3-column flow. Unlike grid or
+ *    flex, columns FRAGMENT across pages natively, which is what lets one
+ *    long list spill onto page 2, 3, 4 ... without manual slicing.
+ *  - `break-inside: avoid` on each entry stops a name being split in half
+ *    across a column or page boundary.
+ *  - Tamil needs room: `line-height: 1.75` and no `overflow: hidden` or
+ *    fixed heights anywhere in the sheet, because Tamil vowel signs sit
+ *    above and below the baseline and get sliced by tight boxes. Any
+ *    `truncate` (which is overflow:hidden + nowrap) is undone for print.
+ * ========================================================================== */
+@media screen {
+  .names-print-sheet { display: none; }
+}
+
+@media print {
+  @page {
+    size: A4 portrait;
+    margin: 12mm 10mm;
+  }
+
+  /* 1. Hide the whole app, then reveal just the sheet. */
+  body * { visibility: hidden !important; }
+  .names-print-sheet,
+  .names-print-sheet * { visibility: visible !important; }
+
+  .names-print-sheet {
+    display: block !important;
+    position: absolute !important;
+    left: 0;
+    top: 0;
+    width: 100%;
+    margin: 0;
+    padding: 0;
+    background: #ffffff !important;
+    color: #000000 !important;
+  }
+
+  /* Belt and braces: anything explicitly marked as chrome never prints. */
+  .no-print,
+  header, nav, footer, aside, button { display: none !important; }
+  .names-print-sheet button { display: none !important; }
+
+  /* 2. The flowing columns. 2 columns is the readable default for A4
+        portrait with Tamil + English + meaning; `.cols-3` opts into 3. */
+  .names-print-cols {
+    column-count: 2;
+    column-gap: 8mm;
+    column-fill: auto;      /* fill page 1 fully before starting page 2 */
+    widows: 2;
+    orphans: 2;
+  }
+  .names-print-cols.cols-3 { column-count: 3; column-gap: 6mm; }
+
+  /* 3. One entry = one unbreakable block. */
+  .names-print-entry {
+    break-inside: avoid;
+    page-break-inside: avoid;
+    -webkit-column-break-inside: avoid;
+    display: block;
+    padding: 1.6mm 0;
+    border-bottom: 0.2mm solid #d4d4d4;
+  }
+
+  /* 4. Tamil-safe typography — generous leading, nothing clipped. */
+  .names-print-sheet,
+  .names-print-sheet * {
+    font-family: 'Noto Sans Tamil', 'Latha', 'Inter', sans-serif !important;
+    line-height: 1.75 !important;
+    overflow: visible !important;
+    text-overflow: clip !important;
+    white-space: normal !important;   /* undoes any `truncate` */
+    max-height: none !important;
+    box-shadow: none !important;
+    text-shadow: none !important;
+  }
+  .names-print-sheet .print-name    { font-size: 10.5pt; font-weight: 700; }
+  .names-print-sheet .print-alt     { font-size: 8pt;  color: #555555; }
+  .names-print-sheet .print-meaning { font-size: 8.5pt; color: #222222; }
+
+  /* 5. Section heading per pada syllable — never left stranded at the foot
+        of a column with its list on the next one. */
+  .names-print-section {
+    break-inside: avoid-column;
+    break-after: avoid;
+    page-break-after: avoid;
+    font-size: 10pt;
+    font-weight: 700;
+    margin: 3mm 0 1.5mm;
+    padding: 1mm 2mm;
+    border-left: 1mm solid #000000;
+    background: #f2f2f2 !important;
+    -webkit-print-color-adjust: exact;
+    print-color-adjust: exact;
+  }
+
+  /* 6. The title block spans both columns and only prints on page 1. */
+  .names-print-header {
+    column-span: all;
+    text-align: center;
+    border-bottom: 0.4mm solid #000000;
+    padding-bottom: 2mm;
+    margin-bottom: 3mm;
+  }
+  .names-print-header .t1 { font-size: 15pt; font-weight: 700; }
+  .names-print-header .t2 { font-size: 9pt; color: #444444; }
+}
+
+/* ==========================================================================
+ * PRINT: GENERAL BABY NAME GENERATOR
+ *
+ * `print:hidden` / `print:block` on the component handle what shows. These
+ * rules handle what Tailwind utilities cannot express per-element: the page
+ * box, the site chrome, and the column flow.
+ *
+ * Columns rather than grid, again on purpose — CSS columns fragment across
+ * pages natively, so 200 names spill onto page 2 and 3 by themselves. A grid
+ * would print page one and silently drop the rest.
+ * ========================================================================== */
+@media print {
+  @page { size: A4 portrait; margin: 12mm 10mm; }
+
+  /* Site chrome never prints. */
+  header, nav, footer, aside { display: none !important; }
+
+  /* Everything except the generator section collapses, so the printed sheet
+     is the name list alone — not the birth-details form above it or the
+     numerology panel below. */
+  body > * { visibility: hidden !important; }
+  #general-name-generator,
+  #general-name-generator * { visibility: visible !important; }
+  #general-name-generator {
+    position: absolute !important;
+    left: 0;
+    top: 0;
+    width: 100%;
+  }
+
+  /* Tamil needs vertical room: its vowel signs sit above and below the
+     baseline and get sliced by tight boxes or `truncate`. */
+  #general-name-generator * {
+    font-family: 'Noto Sans Tamil', 'Latha', 'Inter', sans-serif !important;
+    line-height: 1.7 !important;
+    overflow: visible !important;
+    white-space: normal !important;
+    text-overflow: clip !important;
+    max-height: none !important;
+    box-shadow: none !important;
+    color: #000 !important;
+    background: transparent !important;
+  }
+}
+

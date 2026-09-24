@@ -7,6 +7,7 @@ import { PageHero } from "@/components/ui/PageHero";
 import { BabyNameForm } from "@/components/BabyNameForm";
 import { BabyNameResults } from "@/components/BabyNameResults";
 import { NumerologyPanel } from "@/components/NumerologyPanel";
+import { GeneralNameGenerator } from "@/components/GeneralNameGenerator";
 import { generateBabyNamesApi } from "@/lib/api";
 import { BabyNameRequest, BabyNameResult } from "@/lib/types";
 import { Baby } from "lucide-react";
@@ -74,6 +75,13 @@ export default function BabyNamesPage() {
             <BabyNameResults babyNames={result} lang={lang} />
           </section>
         )}
+
+        {/* General A-Z name generator. A separate section from the birth-detail
+            feature above: same database rows, browsed by starting letter
+            instead of by the baby's Nakshatra-Pada syllable. */}
+        <section id="general-name-generator">
+          <GeneralNameGenerator lang={lang} />
+        </section>
 
         {/* NEW: Chaldean numerology panel. Rendered as its own separate
             card below the Nakshatra-Pada results, never merged into them.

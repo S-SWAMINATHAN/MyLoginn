@@ -2,7 +2,7 @@
 
 import React, { useMemo, useRef, useState } from "react";
 import { BabyNameResult, BabyNameSuggestionItem } from "@/lib/types";
-import { Baby, Hash, Loader2, FileDown } from "lucide-react";
+import { Baby, Hash, Loader2, FileDown, Printer } from "lucide-react";
 import jsPDF from "jspdf";
 import { captureNode, addCanvasToPdf, safeFileName } from "@/lib/pdfExport";
 
@@ -34,8 +34,6 @@ export const BabyNameSuggestions: React.FC<BabyNameSuggestionsProps> = ({
   lang,
 }) => {
   const [filterGender, setFilterGender] = useState<"all" | "boy" | "girl">("all");
-  const [filterReligion, setFilterReligion] =
-    useState<"all" | "hindu" | "christian" | "muslim">("all");
   // Numerology must never silently hide a classically-correct name, so this
   // stays OFF unless the user asks for it.
   const [onlyNumFavorable, setOnlyNumFavorable] = useState(false);
@@ -49,7 +47,6 @@ export const BabyNameSuggestions: React.FC<BabyNameSuggestionsProps> = ({
   const groups = useMemo(() => {
     const matches = (s: BabyNameSuggestionItem) => {
       if (filterGender !== "all" && s.gender !== filterGender) return false;
-      if (filterReligion !== "all" && (s.religion || "hindu") !== filterReligion) return false;
       if (onlyNumFavorable && !s.numerology_is_favorable) return false;
       return true;
     };
@@ -74,9 +71,13 @@ export const BabyNameSuggestions: React.FC<BabyNameSuggestionsProps> = ({
           },
         ]
       : [];
-  }, [babyNames, filterGender, filterReligion, onlyNumFavorable]);
+  }, [babyNames, filterGender, onlyNumFavorable]);
 
   const shownCount = groups.reduce((n, g) => n + g.names.length, 0);
+  // Stated plainly rather than implied: how many rows the table actually has
+  // for these syllables, versus how many were asked for.
+  const availableCount = babyNames.available_count ?? undefined;
+  const requestedLimit = babyNames.requested_limit ?? undefined;
   const totalCount = babyNames.total_count ?? babyNames.suggestions?.length ?? 0;
 
   const nameOf = (s: BabyNameSuggestionItem) => (lang === "ta" && s.name_ta ? s.name_ta : s.name);
@@ -130,7 +131,26 @@ export const BabyNameSuggestions: React.FC<BabyNameSuggestionsProps> = ({
             {lang === "ta"
               ? `${shownCount} / ${totalCount} பெயர்கள்`
               : `${shownCount} of ${totalCount} names`}
+            {availableCount !== undefined &&
+              requestedLimit !== undefined &&
+              availableCount < requestedLimit && (
+                <span className="ml-1 opacity-75">
+                  {lang === "ta"
+                    ? `(தரவுத்தளத்தில் உள்ளவை ${availableCount})`
+                    : `(${availableCount} in database)`}
+                </span>
+              )}
           </span>
+          <button
+            type="button"
+            onClick={() => window.print()}
+            disabled={shownCount === 0}
+            className="btn-secondary text-xs disabled:opacity-50"
+            title={lang === "ta" ? "A4 தாளில் அச்சிடுக" : "Print on A4"}
+          >
+            <Printer className="w-4 h-4" />
+            {lang === "ta" ? "அச்சிடுக" : "Print"}
+          </button>
           <button
             type="button"
             onClick={handleDownload}
@@ -221,40 +241,13 @@ export const BabyNameSuggestions: React.FC<BabyNameSuggestionsProps> = ({
           </button>
         ))}
 
-        <span className="text-xs font-semibold text-muted mx-1">
-          {lang === "ta" ? "மதம்:" : "Religion:"}
-        </span>
-        {(["all", "hindu", "christian", "muslim"] as const).map((r) => (
-          <button
-            key={r}
-            type="button"
-            onClick={() => setFilterReligion(r)}
-            className={chip(filterReligion === r)}
-          >
-            {r === "all"
-              ? lang === "ta"
-                ? "அனைத்தும்"
-                : "All"
-              : r === "hindu"
-              ? lang === "ta"
-                ? "இந்து"
-                : "Hindu"
-              : r === "christian"
-              ? lang === "ta"
-                ? "கிறிஸ்தவம்"
-                : "Christian"
-              : lang === "ta"
-              ? "இஸ்லாம்"
-              : "Muslim"}
-          </button>
-        ))}
       </div>
 
       {shownCount === 0 ? (
         <div className="well p-6 text-center text-sm text-muted">
           {lang === "ta"
-            ? "இந்த வடிகட்டலுக்கு பெயர்கள் இல்லை. நட்சத்திர எழுத்து இந்து மரபு என்பதால், சில எழுத்துகளுக்கு நிலைபெற்ற கிறிஸ்தவ/இஸ்லாமியப் பெயர்கள் இல்லை — இல்லாத பெயரை உருவாக்கிக் காட்டுவதில்லை."
-            : "No names match this filter. Nakshatra syllables are a Hindu convention, so some syllables genuinely have no established Christian or Muslim name — none is invented to fill the gap."}
+            ? "இந்த வடிகட்டலுக்குப் பெயர்கள் இல்லை. இந்த எழுத்துகளுக்கு தரவுத்தளத்தில் உள்ள உண்மையான பெயர்கள் மட்டுமே காட்டப்படுகின்றன."
+            : "No names match this filter. Only the real names held for these syllables are shown — none is invented to fill a gap."}
         </div>
       ) : (
         <div className="space-y-6">
@@ -307,6 +300,47 @@ export const BabyNameSuggestions: React.FC<BabyNameSuggestionsProps> = ({
           ))}
         </div>
       )}
+
+      {/* ── A4 print sheet ───────────────────────────────────────────────
+          Hidden on screen, and the only thing window.print() renders (see
+          the @media print block in globals.css). CSS multi-column is used
+          on purpose: columns fragment across pages natively, so 26 names or
+          260 flow onto as many A4 sheets as they need with no slicing here
+          and no page-count assumption. */}
+      <div className="names-print-sheet">
+        <div className="names-print-cols">
+          <div className="names-print-header">
+            <div className="t1">
+              {lang === "ta" ? "குழந்தை பெயர் பரிந்துரைகள்" : "Baby Name Suggestions"}
+            </div>
+            <div className="t2">
+              {lang === "ta"
+                ? `நட்சத்திரம்: ${babyNames.nakshatra_ta} · பாதம்: ${babyNames.pada} · ${shownCount} பெயர்கள்`
+                : `Star: ${babyNames.nakshatra} · Pada: ${babyNames.pada} · ${shownCount} names`}
+            </div>
+          </div>
+
+          {groups.map((g) => (
+            <React.Fragment key={`print-${g.pada}-${g.syllable}`}>
+              <div className="names-print-section">
+                {lang === "ta"
+                  ? `பாதம் ${g.pada} · ${g.syllable_ta || g.syllable}${g.is_birth_pada ? " (ஜென்ம பாதம்)" : ""} — ${g.names.length}`
+                  : `Pada ${g.pada} · ${g.syllable}${g.is_birth_pada ? " (birth pada)" : ""} — ${g.names.length}`}
+              </div>
+              {g.names.map((s, i) => (
+                <div className="names-print-entry" key={`print-row-${s.name}-${i}`}>
+                  <div className="print-name">
+                    {i + 1}. {nameOf(s)}
+                    {altOf(s) ? <span className="print-alt"> ({altOf(s)})</span> : null}
+                    <span className="print-alt"> · {genderLabel(s.gender)}</span>
+                  </div>
+                  <div className="print-meaning">{meaningOf(s)}</div>
+                </div>
+              ))}
+            </React.Fragment>
+          ))}
+        </div>
+      </div>
 
       {/* ── Off-screen A4 sheet, captured for the PDF ───────────────────── */}
       <div className="fixed left-[-10000px] top-0 pointer-events-none" aria-hidden>

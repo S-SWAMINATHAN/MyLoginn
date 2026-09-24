@@ -44,7 +44,6 @@ export const BabyNameForm: React.FC<BabyNameFormProps> = ({ onSubmit, isLoading,
   const [formData, setFormData] = useState<BabyNameRequest>({
     name: "",
     gender: "",
-    religion: "",
     date_of_birth: "",
     time_of_birth: "07:00:00",
     place: "",
@@ -62,8 +61,8 @@ export const BabyNameForm: React.FC<BabyNameFormProps> = ({ onSubmit, isLoading,
       ...formData,
       // Send gender only if the parent actually picked one.
       gender: formData.gender || undefined,
-      // Same rule as gender: only sent when actually chosen.
-      religion: formData.religion || undefined,
+      // Ask for a large batch. The API returns min(limit, matching rows).
+      limit: 150,
       // Send the spelling that matches the language being viewed.
       name: (lang === "ta" ? nameTa : nameEn) || undefined,
     });
@@ -151,39 +150,12 @@ export const BabyNameForm: React.FC<BabyNameFormProps> = ({ onSubmit, isLoading,
           </p>
         </div>
 
-        {/* Religion — nothing preselected, same as gender. */}
-        <div>
-          <label className="field-label">{lang === "ta" ? "மதம்" : "Religion"}</label>
-          <div className="grid grid-cols-3 gap-2">
-            {(
-              [
-                ["hindu", lang === "ta" ? "இந்து" : "Hindu"],
-                ["christian", lang === "ta" ? "கிறிஸ்தவம்" : "Christian"],
-                ["muslim", lang === "ta" ? "இஸ்லாம்" : "Muslim"],
-              ] as const
-            ).map(([key, text]) => (
-              <button
-                key={key}
-                type="button"
-                onClick={() =>
-                  setFormData({ ...formData, religion: formData.religion === key ? "" : key })
-                }
-                className={`py-2.5 px-3 rounded-xl text-xs font-semibold border transition-all ${
-                  formData.religion === key
-                    ? "bg-brand-600 border-brand-500 text-white shadow-sm"
-                    : "bg-surface-2 border-line text-foreground hover:border-brand-500"
-                }`}
-              >
-                {text}
-              </button>
-            ))}
-          </div>
-          <p className="text-[10px] text-muted mt-1">
-            {lang === "ta"
-              ? "தேர்வு செய்யவில்லை எனில் அனைத்து மதப் பெயர்களும் காட்டப்படும். நட்சத்திர எழுத்து இந்து மரபு என்பதால் சில எழுத்துகளுக்கு கிறிஸ்தவ/இஸ்லாமியப் பெயர்கள் குறைவாக இருக்கும்."
-              : "Leave unselected to see every religion. Nakshatra syllables are a Hindu convention, so for some syllables there are few or no established Christian/Muslim names."}
-          </p>
-        </div>
+        {/* Religion selector removed: the Nakshatra syllable is a Hindu
+            naming convention, so for most syllables there is no established
+            Christian or Muslim name that begins with that sound. The filter
+            therefore returned empty lists far more often than useful ones.
+            The column still exists in the database, so the filter can come
+            back the day the data supports it. */}
 
         {/* Date of birth */}
         <div>

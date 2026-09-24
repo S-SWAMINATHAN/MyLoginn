@@ -731,11 +731,29 @@ BANK: Dict[str, List[Entry]] = {
 def _all_entries() -> Dict[str, List[Entry]]:
     """Batch 1 plus batch 2, merged by syllable."""
     from backend.app.services.baby_name_bank2 import BANK2
+    from backend.app.services.baby_name_bank3 import BANK3
+    from backend.app.services.baby_name_bank4 import BANK4
+    from backend.app.services.baby_name_meanings import apply_meaning_fixes
 
     combined: Dict[str, List[Entry]] = {k: list(v) for k, v in BANK.items()}
-    for syllable, entries in BANK2.items():
-        combined.setdefault(syllable, []).extend(entries)
-    return combined
+    for extra in (BANK2, BANK3, BANK4):
+        for syllable, entries in extra.items():
+            combined.setdefault(syllable, []).extend(entries)
+
+    # A name must never appear twice under the same syllable, whichever batch
+    # it came from. First occurrence wins.
+    deduped: Dict[str, List[Entry]] = {}
+    for syllable, entries in combined.items():
+        seen = set()
+        kept = []
+        for e in entries:
+            key = e[0].strip().lower()
+            if key in seen:
+                continue
+            seen.add(key)
+            kept.append(e)
+        deduped[syllable] = apply_meaning_fixes(kept)
+    return deduped
 
 
 def expand_bank() -> Dict[str, List[Dict[str, Any]]]:

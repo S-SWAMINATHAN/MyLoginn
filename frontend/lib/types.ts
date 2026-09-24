@@ -255,6 +255,11 @@ export interface PoruthamMatchResult {
 
 export interface BabyNameSuggestionItem {
   name: string;
+  /** Explicit column names as returned by the SQL query. */
+  name_english?: string;
+  name_tamil?: string;
+  meaning_english?: string;
+  meaning_tamil?: string;
   name_ta: string;
   meaning: string;
   meaning_ta: string;
@@ -296,6 +301,8 @@ export interface BabyNameResult {
   target_syllable_ta?: string | null;
   religion?: string | null;
   total_count?: number;
+  available_count?: number | null;
+  requested_limit?: number | null;
   pada_groups?: BabyNamePadaGroup[];
   target_syllable?: string | null;
   gender?: string | null;
@@ -957,6 +964,8 @@ export interface GroupedLocations {
 // Request shape for the standalone Baby Name page (POST /api/baby-names/generate).
 export interface BabyNameRequest {
   name?: string;
+  /** Rows to fetch; returns min(limit, matching rows). */
+  limit?: number;
   gender?: string;
   /** "hindu" | "christian" | "muslim"; omitted = every religion. */
   religion?: string;
