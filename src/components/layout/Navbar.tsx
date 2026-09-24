@@ -1,6 +1,10 @@
 "use client";
 
 import Link from "next/link";
+<<<<<<< HEAD
+=======
+import Image from "next/image";
+>>>>>>> 9a00051 (Initial commit)
 import { usePathname } from "next/navigation";
 import { useEffect, useState, type ReactNode } from "react";
 import { motion, AnimatePresence, type Variants } from "framer-motion";
@@ -22,6 +26,7 @@ import { AnimatedGraduation } from "@/components/ui/icons/AnimatedGraduation";
 import { AnimatedMegaphone } from "@/components/ui/icons/AnimatedMegaphone";
 import { AnimatedCode } from "@/components/ui/icons/AnimatedCode";
 import { AnimatedMail } from "@/components/ui/icons/AnimatedMail";
+<<<<<<< HEAD
 import { AnimatedUser } from "@/components/ui/icons/AnimatedUser";
 import { AiAssistantButton } from "./AiAssistantButton";
 import { ProfileMenu, type ProfileUser } from "./ProfileMenu";
@@ -29,6 +34,13 @@ import { Button } from "@/components/ui/Button";
 import { LogoLockup } from "@/components/ui/LogoBadge";
 import { cn } from "@/lib/cn";
 import { usePageScrollProgress } from "@/lib/usePageScrollProgress";
+=======
+import { AiAssistantButton } from "./AiAssistantButton";
+import { ProfileMenu, type ProfileUser } from "./ProfileMenu";
+import { Button } from "@/components/ui/Button";
+import { cn } from "@/lib/cn";
+import logo from "@/images/Logos/Logo-trimmed.png";
+>>>>>>> 9a00051 (Initial commit)
 
 type NavUser = ProfileUser | null;
 
@@ -86,8 +98,11 @@ export function Navbar({ user }: { user: NavUser }) {
   const [scrolled, setScrolled] = useState(false);
   const [mobileOpen, setMobileOpen] = useState(false);
   const [servicesOpen, setServicesOpen] = useState(false);
+<<<<<<< HEAD
   const isHome = pathname === "/";
   const storyProgress = usePageScrollProgress();
+=======
+>>>>>>> 9a00051 (Initial commit)
 
   useEffect(() => {
     const onScroll = () => setScrolled(window.scrollY > 12);
@@ -111,12 +126,25 @@ export function Navbar({ user }: { user: NavUser }) {
     <header
       className={cn(
         "sticky top-0 z-50 transition-all duration-300",
+<<<<<<< HEAD
         scrolled || mobileOpen ? "glass-nav border-b border-border-soft shadow-[var(--shadow-soft)]" : "bg-transparent"
+=======
+        scrolled || mobileOpen ? "glass shadow-[var(--shadow-soft)]" : "bg-transparent"
+>>>>>>> 9a00051 (Initial commit)
       )}
     >
       <nav className="mx-auto flex h-16 max-w-7xl items-center justify-between px-5 sm:px-8">
         <Link href="/" className="flex items-center transition-transform duration-300 ease-out hover:scale-[1.04] active:scale-[0.97]">
+<<<<<<< HEAD
           <LogoLockup />
+=======
+          <Image
+            src={logo}
+            alt="MyLoginn"
+            preload
+            className="h-9 w-auto select-none object-contain sm:h-10"
+          />
+>>>>>>> 9a00051 (Initial commit)
         </Link>
 
         <div className="hidden lg:flex items-center gap-1">
@@ -200,7 +228,11 @@ export function Navbar({ user }: { user: NavUser }) {
             <Link
               href="/login"
               aria-label="Log in"
+<<<<<<< HEAD
               className="flex h-10 w-10 items-center justify-center rounded-full border border-border-soft bg-surface transition-all duration-300 hover:border-brand-400 hover:shadow-[0_4px_16px_rgba(31,86,214,0.25)] active:scale-95"
+=======
+              className="flex h-10 w-10 items-center justify-center rounded-full border border-border-soft bg-surface transition-all duration-300 hover:border-brand-400 hover:shadow-[0_4px_16px_rgba(108,77,255,0.25)] active:scale-95"
+>>>>>>> 9a00051 (Initial commit)
             >
               <AnimatedUser className="h-6 w-6" />
             </Link>
@@ -210,6 +242,7 @@ export function Navbar({ user }: { user: NavUser }) {
       </nav>
 
       <MobileMenu open={mobileOpen} pathname={pathname} user={user} onClose={() => setMobileOpen(false)} />
+<<<<<<< HEAD
 
       {isHome && (
         <div className="h-[2.5px] w-full bg-transparent" aria-hidden>
@@ -219,6 +252,8 @@ export function Navbar({ user }: { user: NavUser }) {
           />
         </div>
       )}
+=======
+>>>>>>> 9a00051 (Initial commit)
     </header>
   );
 }
@@ -236,8 +271,13 @@ function HamburgerButton({ open, onToggle }: { open: boolean; onToggle: () => vo
       className={cn(
         "relative flex h-10 w-10 items-center justify-center rounded-2xl cursor-pointer transition-all duration-300",
         open
+<<<<<<< HEAD
           ? "brand-gradient-bg text-white shadow-[0_8px_24px_rgba(31,86,214,0.45)]"
           : "border border-border-soft bg-surface text-foreground hover:border-brand-400 hover:shadow-[0_4px_16px_rgba(31,86,214,0.25)]"
+=======
+          ? "brand-gradient-bg text-white shadow-[0_8px_24px_rgba(108,77,255,0.45)]"
+          : "border border-border-soft bg-surface text-foreground hover:border-brand-400 hover:shadow-[0_4px_16px_rgba(108,77,255,0.25)]"
+>>>>>>> 9a00051 (Initial commit)
       )}
     >
       <span className="relative block h-3.5 w-5">
@@ -310,7 +350,11 @@ function MobileMenu({
             className="fixed inset-x-3 top-[4.75rem] z-50 origin-top overflow-hidden rounded-3xl border border-border-soft bg-surface shadow-[var(--shadow-lift)]"
           >
             {/* ambient gradient glow inside the sheet */}
+<<<<<<< HEAD
             <div className="pointer-events-none absolute -top-24 -right-20 h-56 w-56 rounded-full bg-[radial-gradient(circle,rgba(31,86,214,0.22),transparent_70%)]" />
+=======
+            <div className="pointer-events-none absolute -top-24 -right-20 h-56 w-56 rounded-full bg-[radial-gradient(circle,rgba(108,77,255,0.22),transparent_70%)]" />
+>>>>>>> 9a00051 (Initial commit)
             <div className="pointer-events-none absolute -bottom-24 -left-20 h-56 w-56 rounded-full bg-[radial-gradient(circle,rgba(6,182,212,0.18),transparent_70%)]" />
 
             <motion.div

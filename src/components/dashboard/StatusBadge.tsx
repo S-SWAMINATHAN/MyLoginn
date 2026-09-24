@@ -1,6 +1,7 @@
 const statusStyles: Record<string, string> = {
   active: "bg-brand-100 text-brand-700 dark:bg-brand-900/30 dark:text-brand-300",
   in_progress: "bg-brand-100 text-brand-700 dark:bg-brand-900/30 dark:text-brand-300",
+<<<<<<< HEAD
   new: "bg-brand-100 text-brand-700 dark:bg-brand-900/30 dark:text-brand-300",
   confirmed: "bg-brand-100 text-brand-700 dark:bg-brand-900/30 dark:text-brand-300",
   student: "bg-brand-100 text-brand-700 dark:bg-brand-900/30 dark:text-brand-300",
@@ -19,6 +20,13 @@ const statusStyles: Record<string, string> = {
   rejected: "bg-danger/10 text-danger",
   failed: "bg-danger/10 text-danger",
   cancelled: "bg-danger/10 text-danger",
+=======
+  submitted: "bg-amber-100 text-amber-700 dark:bg-amber-900/30 dark:text-amber-300",
+  pending: "bg-amber-100 text-amber-700 dark:bg-amber-900/30 dark:text-amber-300",
+  accepted: "bg-success/10 text-success",
+  completed: "bg-success/10 text-success",
+  rejected: "bg-danger/10 text-danger",
+>>>>>>> 9a00051 (Initial commit)
 };
 
 export function StatusBadge({ status }: { status: string }) {
