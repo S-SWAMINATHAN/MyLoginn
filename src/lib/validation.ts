@@ -31,10 +31,14 @@ export const signupSchema = z
     path: ["confirmPassword"],
   });
 
+export type SignupInput = z.input<typeof signupSchema>;
+
 export const loginSchema = z.object({
   email: emailSchema,
   password: z.string().min(1, "Password is required"),
 });
+
+export type LoginInput = z.infer<typeof loginSchema>;
 
 export const channelSchema = z.enum(["phone", "email"]);
 
@@ -60,7 +64,8 @@ export const leadSchema = z.object({
   message: z.string().trim().max(1000).optional().or(z.literal("")),
 });
 
-<<<<<<< HEAD
+export type LeadInput = z.input<typeof leadSchema>;
+
 const optionalText = z.string().trim().max(500).optional().or(z.literal(""));
 
 export const projectRequestSchema = z.object({
@@ -85,27 +90,20 @@ export const projectRequestSchema = z.object({
   additionalNotes: z.string().trim().max(3000).optional().or(z.literal("")),
 });
 
-=======
->>>>>>> 9a00051 (Initial commit)
+export type ProjectRequestInput = z.input<typeof projectRequestSchema>;
+
 export const internshipApplicationSchema = z.object({
   internshipId: z.string().min(1),
-  coverNote: z.string().trim().max(1500).optional().or(z.literal("")),
-  resumeName: z.string().trim().optional().or(z.literal("")),
+  coverNote: z.string().trim().max(2000).optional().or(z.literal("")),
+  resumeName: z.string().trim().max(255).optional().or(z.literal("")),
 });
 
 export const tutoringBookingSchema = z.object({
   tutorId: z.string().min(1),
-  subject: z.string().min(1),
-  grade: z.string().min(1),
-  board: z.string().min(1),
-  preferredSlot: z.string().min(1),
-  notes: z.string().trim().max(500).optional().or(z.literal("")),
+  subject: z.string().trim().min(1).max(120),
+  grade: z.string().trim().min(1).max(50),
+  board: z.string().trim().min(1).max(80),
+  preferredSlot: z.string().trim().min(1).max(120),
+  notes: z.string().trim().max(1000).optional().or(z.literal("")),
 });
 
-export type SignupInput = z.input<typeof signupSchema>;
-export type LoginInput = z.infer<typeof loginSchema>;
-export type LeadInput = z.infer<typeof leadSchema>;
-<<<<<<< HEAD
-export type ProjectRequestInput = z.input<typeof projectRequestSchema>;
-=======
->>>>>>> 9a00051 (Initial commit)

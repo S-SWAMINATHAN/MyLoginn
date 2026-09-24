@@ -1,32 +1,15 @@
 import { PrismaClient } from "@prisma/client";
 import bcrypt from "bcryptjs";
-<<<<<<< HEAD
 import { loadEnvConfig } from "@next/env";
 
 loadEnvConfig(process.cwd());
-=======
->>>>>>> 9a00051 (Initial commit)
 
 const prisma = new PrismaClient();
 
 async function main() {
-<<<<<<< HEAD
-  const adminPassword = process.env.SEED_ADMIN_PASSWORD;
-  const mentorPassword = process.env.SEED_MENTOR_PASSWORD;
-  const studentPassword = process.env.SEED_STUDENT_PASSWORD;
-
-  if (!adminPassword || !mentorPassword || !studentPassword) {
-    throw new Error("SEED_ADMIN_PASSWORD, SEED_MENTOR_PASSWORD, and SEED_STUDENT_PASSWORD are required to seed users.");
-  }
-
-  const adminPasswordHash = await bcrypt.hash(adminPassword, 10);
-  const mentorPasswordHash = await bcrypt.hash(mentorPassword, 10);
-  const studentPasswordHash = await bcrypt.hash(studentPassword, 10);
-=======
   const adminPasswordHash = await bcrypt.hash("Admin@123", 10);
   const mentorPasswordHash = await bcrypt.hash("Mentor@123", 10);
   const studentPasswordHash = await bcrypt.hash("Student@123", 10);
->>>>>>> 9a00051 (Initial commit)
 
   const admin = await prisma.user.upsert({
     where: { email: "admin@myloginn.ai" },

@@ -1,24 +1,9 @@
-<<<<<<< HEAD
 import type { Metadata } from "next";
-=======
->>>>>>> 9a00051 (Initial commit)
 import { prisma } from "@/lib/prisma";
 import { getCurrentUser } from "@/lib/auth";
 import { Section, Container, Eyebrow } from "@/components/ui/Section";
 import { CoursesExplorer } from "@/components/courses/CoursesExplorer";
 import type { CourseCardData } from "@/components/courses/CourseCard";
-
-<<<<<<< HEAD
-export const metadata: Metadata = {
-  title: "Courses — MyLoginn",
-  description: "Learn AI, machine learning, digital marketing, and full-stack development with live mentor-led courses.",
-  alternates: { canonical: "/courses" },
-};
-
-export const dynamic = "force-dynamic";
-=======
-export const metadata = { title: "Courses — MyLoginn" };
->>>>>>> 9a00051 (Initial commit)
 
 export default async function CoursesPage() {
   const [user, courses] = await Promise.all([
