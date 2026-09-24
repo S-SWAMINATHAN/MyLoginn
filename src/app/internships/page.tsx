@@ -9,6 +9,14 @@ import { InternshipsHowItWorks } from "@/components/internships/InternshipsHowIt
 import { InternshipsCta } from "@/components/internships/InternshipsCta";
 import type { InternshipCardData } from "@/components/internships/InternshipCard";
 
+export const metadata: Metadata = {
+  title: "Internships — MyLoginn",
+  description: "Find paid and project-based internships with real companies, mentor support, and practical experience.",
+  alternates: { canonical: "/internships" },
+};
+
+export const dynamic = "force-dynamic";
+
 export default async function InternshipsPage() {
   const [user, internships] = await Promise.all([
     getCurrentUser(),

@@ -5,12 +5,29 @@ import { getCurrentUser } from "@/lib/auth";
 import { Section, Container, Eyebrow } from "@/components/ui/Section";
 import { Card } from "@/components/ui/Card";
 import { Button } from "@/components/ui/Button";
-import { CourseIconThumb } from "@/components/courses/CourseIconThumb";
+import { Percent, ListChecks } from "lucide-react";
 import { AnimatedClock } from "@/components/ui/icons/AnimatedClock";
+import { AnimatedSuccess } from "@/components/ui/icons/AnimatedSuccess";
 import { AnimatedStar } from "@/components/ui/icons/AnimatedStar";
 import { AnimatedUsers } from "@/components/ui/icons/AnimatedUsers";
-import { AnimatedSuccess } from "@/components/ui/icons/AnimatedSuccess";
-import { ListChecks, Percent } from "lucide-react";
+import { CourseIconThumb } from "@/components/courses/CourseIconThumb";
+
+export async function generateMetadata({ params }: { params: Promise<{ slug: string }> }): Promise<Metadata> {
+  const { slug } = await params;
+  const course = await prisma.course.findUnique({
+    where: { slug },
+    select: { title: true, description: true, slug: true },
+  });
+
+  if (!course) return {};
+
+  return {
+    title: `${course.title} — MyLoginn`,
+    description: course.description,
+    alternates: { canonical: `/courses/${course.slug}` },
+  };
+}
+
 export default async function CourseDetailPage({
   params,
 }: {

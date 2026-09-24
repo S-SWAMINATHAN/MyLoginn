@@ -7,13 +7,35 @@ import { ContentIcon } from "@/components/ui/ContentIcon";
 import type { CourseIconKey } from "@/lib/courseIcons";
 
 const features: { iconKey: CourseIconKey; title: string; description: string }[] = [
-  { iconKey: "webdev", title: "Production-ready builds", description: "Responsive web and mobile experiences built for speed, reliability, and growth." },
-  { iconKey: "ai", title: "AI-powered workflows", description: "Practical automation and intelligent features that make your product more useful." },
-  { iconKey: "data", title: "Scalable architecture", description: "Clean APIs, secure data flows, and foundations that can grow with your business." },
-  { iconKey: "testing", title: "Quality from day one", description: "Thoughtful testing, accessibility, and performance checks before launch." },
+  {
+    iconKey: "webdev",
+    title: "Full-stack development",
+    description: "Modern, scalable apps and websites built end-to-end by senior engineers.",
+  },
+  {
+    iconKey: "ai",
+    title: "Smooth animations",
+    description: "Premium, cinematic interactions that feel fast on every device.",
+  },
+  {
+    iconKey: "devops",
+    title: "Server maintenance",
+    description: "Ongoing monitoring, patching and scaling so you never worry about uptime.",
+  },
+  {
+    iconKey: "network",
+    title: "Real-time updates",
+    description: "Live data sync across dashboards, apps and admin panels out of the box.",
+  },
 ];
 
-const stack = ["Next.js", "React", "TypeScript", "Node.js", "PostgreSQL", "Prisma"];
+const stack = ["Next.js", "React Native", "Node.js", "PostgreSQL", "Prisma", "Three.js", "Tailwind CSS", "AWS / Vercel"];
+
+export const metadata: Metadata = {
+  title: "App & Website Development — MyLoginn",
+  description: "Build fast, scalable web and mobile products with MyLoginn's full-stack engineering team.",
+  alternates: { canonical: "/services/app-web-development" },
+};
 
 export default function AppWebDevelopmentPage() {
   return (

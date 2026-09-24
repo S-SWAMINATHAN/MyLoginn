@@ -2,8 +2,16 @@ import type { Metadata } from "next";
 import { prisma } from "@/lib/prisma";
 import { getCurrentUser } from "@/lib/auth";
 import { Section, Container } from "@/components/ui/Section";
-import { TutoringHero } from "@/components/tutoring/TutoringHero";
 import { TutoringExplorer, type TutorData } from "@/components/tutoring/TutoringExplorer";
+import { TutoringHero } from "@/components/tutoring/TutoringHero";
+
+export const metadata: Metadata = {
+  title: "1:1 Tutoring — MyLoginn",
+  description: "Book personalized tutoring with experienced mentors in mathematics, physics, English, and computer science.",
+  alternates: { canonical: "/tutoring" },
+};
+
+export const dynamic = "force-dynamic";
 
 export default async function TutoringPage() {
   const [user, tutors] = await Promise.all([

@@ -50,6 +50,7 @@ const contactPoints: { icon: typeof AnimatedMail; title: string; description: st
     actions: [{ label: CONTACT_HOURS }],
   },
 ];
+
 export default function ContactPage() {
   return (
     <Section className="pt-14">
