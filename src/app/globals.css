@@ -4,7 +4,6 @@
 
 :root {
   --background: #ffffff;
-<<<<<<< HEAD
   --foreground: #0b1220;
   --surface: #ffffff;
   --surface-2: #f3f7fd;
@@ -25,7 +24,6 @@
   --brand-700: #1a44ab;
   --brand-800: #16337e;
   --brand-900: #0b1f4d;
-=======
   --foreground: #0b0d17;
   --surface: #ffffff;
   --surface-2: #f5f6fb;
@@ -44,7 +42,6 @@
   --brand-700: #4726c4;
   --brand-800: #391f99;
   --brand-900: #2c1a73;
->>>>>>> 9a00051 (Initial commit)
 
   --accent-400: #22d3ee;
   --accent-500: #06b6d4;
@@ -54,7 +51,6 @@
   --warning: #d97706;
   --danger: #dc2626;
 
-<<<<<<< HEAD
   --shadow-soft: 0 1px 2px rgba(11, 31, 77, 0.05), 0 8px 24px rgba(11, 31, 77, 0.07);
   --shadow-lift: 0 12px 32px rgba(31, 86, 214, 0.18), 0 2px 8px rgba(11, 31, 77, 0.07);
 
@@ -87,7 +83,6 @@
   --link-line: var(--brand-300);
   --story-mist: #0c1630;
   --story-line: rgba(134, 176, 255, 0.14);
-=======
   --shadow-soft: 0 1px 2px rgba(15, 17, 32, 0.04), 0 8px 24px rgba(15, 17, 32, 0.06);
   --shadow-lift: 0 12px 32px rgba(76, 45, 220, 0.16), 0 2px 8px rgba(15, 17, 32, 0.06);
 
@@ -108,12 +103,10 @@
   --shadow-lift: 0 16px 40px rgba(108, 77, 255, 0.28), 0 2px 8px rgba(0, 0, 0, 0.4);
 
   --link-line: var(--brand-300);
->>>>>>> 9a00051 (Initial commit)
 }
 
 @media (prefers-color-scheme: dark) {
   :root:not([data-theme="light"]) {
-<<<<<<< HEAD
     --background: #060912;
     --foreground: #eef3ff;
     --surface: #0c1222;
@@ -127,7 +120,6 @@
     --link-line: var(--brand-300);
     --story-mist: #0c1630;
     --story-line: rgba(134, 176, 255, 0.14);
-=======
     --background: #07080f;
     --foreground: #f2f3fb;
     --surface: #10121f;
@@ -138,7 +130,6 @@
     --muted: #9296b3;
 
     --link-line: var(--brand-300);
->>>>>>> 9a00051 (Initial commit)
   }
 }
 
@@ -169,7 +160,6 @@
   --color-warning: var(--warning);
   --color-danger: var(--danger);
 
-<<<<<<< HEAD
   --color-story-navy: var(--story-navy);
   --color-story-royal: var(--story-royal);
   --color-story-electric: var(--story-electric);
@@ -178,8 +168,6 @@
   --color-story-mist: var(--story-mist);
   --color-story-line: var(--story-line);
 
-=======
->>>>>>> 9a00051 (Initial commit)
   --font-sans: var(--font-geist-sans);
   --font-mono: var(--font-geist-mono);
 }
@@ -195,10 +183,7 @@ html {
 body {
   background: var(--background);
   color: var(--foreground);
-<<<<<<< HEAD
   overflow-x: hidden;
-=======
->>>>>>> 9a00051 (Initial commit)
   transition: background-color 0.6s ease, color 0.6s ease;
 }
 
@@ -206,10 +191,7 @@ body {
    theme toggles, so the whole page reads as one seamless cross-fade. */
 .glass,
 .glass-panel,
-<<<<<<< HEAD
 .glass-nav,
-=======
->>>>>>> 9a00051 (Initial commit)
 [class*="bg-surface"],
 [class*="border-border-soft"] {
   transition: background-color 0.6s ease, border-color 0.6s ease, box-shadow 0.6s ease;
@@ -221,30 +203,21 @@ body {
 }
 
 ::-webkit-scrollbar {
-<<<<<<< HEAD
   width: 6px;
   height: 6px;
-=======
   width: 10px;
   height: 10px;
->>>>>>> 9a00051 (Initial commit)
 }
 ::-webkit-scrollbar-track {
   background: transparent;
 }
 ::-webkit-scrollbar-thumb {
-<<<<<<< HEAD
   background: var(--border-soft);
-  border-radius: 999px;
-}
-=======
-  background: var(--brand-300);
   border-radius: 999px;
 }
 :root[data-theme="dark"] ::-webkit-scrollbar-thumb {
   background: var(--brand-700);
 }
->>>>>>> 9a00051 (Initial commit)
 
 /* Glassmorphism */
 .glass {
@@ -262,7 +235,6 @@ body {
   box-shadow: var(--shadow-soft);
 }
 
-<<<<<<< HEAD
 /* Near-opaque glass for fixed navigation chrome (header, bottom tab bar)
    so page content never reads through it. */
 .glass-nav {
@@ -271,8 +243,6 @@ body {
   -webkit-backdrop-filter: blur(18px) saturate(160%);
 }
 
-=======
->>>>>>> 9a00051 (Initial commit)
 .brand-gradient-text {
   background: linear-gradient(120deg, var(--brand-500), var(--accent-500) 60%, var(--brand-400));
   -webkit-background-clip: text;
@@ -327,12 +297,9 @@ body {
   0%, 100% { opacity: 0.55; transform: scale(1); }
   50% { opacity: 1; transform: scale(1.08); }
 }
-<<<<<<< HEAD
 .animate-pulse-glow {
   animation: pulse-glow 2.6s ease-in-out infinite;
 }
-=======
->>>>>>> 9a00051 (Initial commit)
 
 .animate-fade-up {
   animation: fade-up 0.8s cubic-bezier(0.16, 1, 0.3, 1) both;
@@ -537,7 +504,6 @@ body {
   animation: breathe-ring 3s ease-in-out infinite;
 }
 
-<<<<<<< HEAD
 @keyframes chevron-flow {
   0%, 100% { transform: translateX(0); opacity: 0.5; }
   50% { transform: translateX(3px); opacity: 1; }
@@ -564,8 +530,6 @@ body {
   animation: flow-dot 1.9s ease-in-out infinite;
 }
 
-=======
->>>>>>> 9a00051 (Initial commit)
 /* ── Hero aurora / ambient page glows ───────────────────────────────── */
 @keyframes aurora-drift {
   0%, 100% { transform: translate(0, 0) scale(1); }
@@ -642,7 +606,6 @@ body {
   pointer-events: none;
 }
 
-<<<<<<< HEAD
 /* ── Cinematic story engine (home page) ─────────────────────────────── */
 .story-heading {
   font-weight: 600;
@@ -701,8 +664,6 @@ body {
   display: none;
 }
 
-=======
->>>>>>> 9a00051 (Initial commit)
 @media (prefers-reduced-motion: reduce) {
   * {
     animation-duration: 0.01ms !important;

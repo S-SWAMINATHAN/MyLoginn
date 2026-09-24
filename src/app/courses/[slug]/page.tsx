@@ -1,39 +1,16 @@
 import { notFound } from "next/navigation";
-<<<<<<< HEAD
 import type { Metadata } from "next";
-=======
->>>>>>> 9a00051 (Initial commit)
 import { prisma } from "@/lib/prisma";
 import { getCurrentUser } from "@/lib/auth";
 import { Section, Container, Eyebrow } from "@/components/ui/Section";
 import { Card } from "@/components/ui/Card";
 import { Button } from "@/components/ui/Button";
-import { Percent, ListChecks } from "lucide-react";
+import { CourseIconThumb } from "@/components/courses/CourseIconThumb";
 import { AnimatedClock } from "@/components/ui/icons/AnimatedClock";
-import { AnimatedSuccess } from "@/components/ui/icons/AnimatedSuccess";
 import { AnimatedStar } from "@/components/ui/icons/AnimatedStar";
 import { AnimatedUsers } from "@/components/ui/icons/AnimatedUsers";
-import { CourseIconThumb } from "@/components/courses/CourseIconThumb";
-
-<<<<<<< HEAD
-export async function generateMetadata({ params }: { params: Promise<{ slug: string }> }): Promise<Metadata> {
-  const { slug } = await params;
-  const course = await prisma.course.findUnique({
-    where: { slug },
-    select: { title: true, description: true, slug: true },
-  });
-
-  if (!course) return {};
-
-  return {
-    title: `${course.title} — MyLoginn`,
-    description: course.description,
-    alternates: { canonical: `/courses/${course.slug}` },
-  };
-}
-
-=======
->>>>>>> 9a00051 (Initial commit)
+import { AnimatedSuccess } from "@/components/ui/icons/AnimatedSuccess";
+import { ListChecks, Percent } from "lucide-react";
 export default async function CourseDetailPage({
   params,
 }: {

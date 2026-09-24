@@ -1,30 +1,13 @@
-<<<<<<< HEAD
 import type { Metadata } from "next";
-=======
->>>>>>> 9a00051 (Initial commit)
 import { prisma } from "@/lib/prisma";
 import { getCurrentUser } from "@/lib/auth";
 import { Section, Container } from "@/components/ui/Section";
 import { InternshipsHero } from "@/components/internships/InternshipsHero";
 import { InternshipsExplorer } from "@/components/internships/InternshipsExplorer";
-<<<<<<< HEAD
 import { InternshipsFeatureStrip } from "@/components/internships/InternshipsFeatureStrip";
 import { InternshipsHowItWorks } from "@/components/internships/InternshipsHowItWorks";
 import { InternshipsCta } from "@/components/internships/InternshipsCta";
 import type { InternshipCardData } from "@/components/internships/InternshipCard";
-
-export const metadata: Metadata = {
-  title: "Internships — MyLoginn",
-  description: "Find paid and project-based internships with real companies, mentor support, and practical experience.",
-  alternates: { canonical: "/internships" },
-};
-
-export const dynamic = "force-dynamic";
-=======
-import type { InternshipCardData } from "@/components/internships/InternshipCard";
-
-export const metadata = { title: "Internships — MyLoginn" };
->>>>>>> 9a00051 (Initial commit)
 
 export default async function InternshipsPage() {
   const [user, internships] = await Promise.all([
@@ -70,13 +53,10 @@ export default async function InternshipsPage() {
         <div className="mt-14 sm:mt-16">
           <InternshipsExplorer internships={cards} appliedIds={[...appliedIds]} />
         </div>
-<<<<<<< HEAD
 
         <InternshipsFeatureStrip />
         <InternshipsHowItWorks />
         <InternshipsCta />
-=======
->>>>>>> 9a00051 (Initial commit)
       </Container>
     </Section>
   );
