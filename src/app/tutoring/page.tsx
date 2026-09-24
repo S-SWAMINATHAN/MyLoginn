@@ -1,10 +1,14 @@
+<<<<<<< HEAD
 import type { Metadata } from "next";
+=======
+>>>>>>> 9a00051 (Initial commit)
 import { prisma } from "@/lib/prisma";
 import { getCurrentUser } from "@/lib/auth";
 import { Section, Container } from "@/components/ui/Section";
 import { TutoringExplorer, type TutorData } from "@/components/tutoring/TutoringExplorer";
 import { TutoringHero } from "@/components/tutoring/TutoringHero";
 
+<<<<<<< HEAD
 export const metadata: Metadata = {
   title: "1:1 Tutoring — MyLoginn",
   description: "Book personalized tutoring with experienced mentors in mathematics, physics, English, and computer science.",
@@ -12,6 +16,9 @@ export const metadata: Metadata = {
 };
 
 export const dynamic = "force-dynamic";
+=======
+export const metadata = { title: "Tutoring — MyLoginn" };
+>>>>>>> 9a00051 (Initial commit)
 
 export default async function TutoringPage() {
   const [user, tutors] = await Promise.all([

@@ -1,6 +1,7 @@
 import type { NextConfig } from "next";
 
 const nextConfig: NextConfig = {
+<<<<<<< HEAD
   experimental: {
     // Turbopack's on-disk dev cache has been corrupting itself in this
     // environment (stale cached module-resolution paths surviving a moved/
@@ -25,6 +26,9 @@ const nextConfig: NextConfig = {
       },
     ];
   },
+=======
+  /* config options here */
+>>>>>>> 9a00051 (Initial commit)
 };
 
 export default nextConfig;

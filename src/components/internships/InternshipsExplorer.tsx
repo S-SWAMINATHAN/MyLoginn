@@ -8,6 +8,7 @@ import { InternshipCard, type InternshipCardData } from "./InternshipCard";
 
 type PayFilter = "all" | "paid" | "unpaid";
 
+<<<<<<< HEAD
 function FilterIcon({ className }: { className?: string }) {
   return (
     <svg viewBox="0 0 24 24" fill="none" className={className} aria-hidden>
@@ -21,6 +22,8 @@ function FilterIcon({ className }: { className?: string }) {
   );
 }
 
+=======
+>>>>>>> 9a00051 (Initial commit)
 export function InternshipsExplorer({
   internships,
   appliedIds,
@@ -47,6 +50,7 @@ export function InternshipsExplorer({
 
   const appliedSet = new Set(appliedIds);
 
+<<<<<<< HEAD
   function clearFilters() {
     setType("All");
     setPay("all");
@@ -59,6 +63,36 @@ export function InternshipsExplorer({
 
   return (
     <div>
+=======
+  return (
+    <div>
+      {featured.length > 0 && (
+        <div className="mb-14">
+          <motion.div
+            className="flex items-center gap-2.5"
+            initial={{ opacity: 0, x: -18 }}
+            whileInView={{ opacity: 1, x: 0 }}
+            viewport={{ once: true, margin: "-60px" }}
+            transition={{ duration: 0.55, ease: [0.16, 1, 0.3, 1] }}
+          >
+            <AnimatedCrown className="h-7 w-7" />
+            <h2 className="text-lg font-semibold sm:text-xl">Featured internships</h2>
+            <span className="hidden h-px flex-1 bg-gradient-to-r from-border-soft to-transparent sm:block" />
+          </motion.div>
+          <div className="mt-6 grid grid-cols-1 gap-6 sm:grid-cols-2 sm:gap-7 lg:grid-cols-3">
+            {featured.slice(0, 3).map((internship, i) => (
+              <InternshipCard
+                key={internship.id}
+                internship={internship}
+                applied={appliedSet.has(internship.id)}
+                index={i}
+              />
+            ))}
+          </div>
+        </div>
+      )}
+
+>>>>>>> 9a00051 (Initial commit)
       {/* Sticky glass filter bar */}
       <motion.div
         initial={{ opacity: 0, y: 20 }}
@@ -112,6 +146,7 @@ export function InternshipsExplorer({
             </motion.button>
           ))}
         </div>
+<<<<<<< HEAD
 
         <div className="flex items-center gap-2.5">
           <div className="group relative w-full sm:w-64">
@@ -226,6 +261,75 @@ export function InternshipsExplorer({
           </motion.div>
         )}
       </div>
+=======
+        <div className="group relative w-full sm:w-64">
+          <span className="pointer-events-none absolute left-3 top-1/2 -translate-y-1/2">
+            <AnimatedSearch className="h-5 w-5" />
+          </span>
+          <input
+            value={query}
+            onChange={(e) => setQuery(e.target.value)}
+            placeholder="Search internships…"
+            className="w-full rounded-full border border-border-soft bg-surface py-2.5 pl-10 pr-4 text-sm outline-none transition-shadow duration-300 focus:border-brand-400 focus:ring-4 focus:ring-brand-100 dark:focus:ring-brand-900/30"
+          />
+        </div>
+      </motion.div>
+
+      {/* Animated result count */}
+      <div className="mt-6 flex items-center justify-between text-xs text-muted">
+        <AnimatePresence mode="wait">
+          <motion.span
+            key={filtered.length}
+            initial={{ opacity: 0, y: 6 }}
+            animate={{ opacity: 1, y: 0 }}
+            exit={{ opacity: 0, y: -6 }}
+            transition={{ duration: 0.25 }}
+          >
+            {filtered.length} {filtered.length === 1 ? "internship" : "internships"} found
+          </motion.span>
+        </AnimatePresence>
+      </div>
+
+      <motion.div layout className="mt-4 grid grid-cols-1 gap-6 sm:grid-cols-2 sm:gap-7 lg:grid-cols-3">
+        <AnimatePresence mode="popLayout">
+          {filtered.map((internship, i) => (
+            <InternshipCard
+              key={internship.id}
+              internship={internship}
+              applied={appliedSet.has(internship.id)}
+              index={i}
+            />
+          ))}
+        </AnimatePresence>
+      </motion.div>
+
+      {filtered.length === 0 && (
+        <motion.div
+          initial={{ opacity: 0, scale: 0.92 }}
+          animate={{ opacity: 1, scale: 1 }}
+          transition={{ duration: 0.5, ease: [0.16, 1, 0.3, 1] }}
+          className="mt-16 flex flex-col items-center gap-4 text-center"
+        >
+          <AnimatedSearch className="h-16 w-16 opacity-80" />
+          <div>
+            <p className="text-sm font-medium">No internships match your search</p>
+            <p className="mt-1 text-xs text-muted">Try a different keyword or clear the filters.</p>
+          </div>
+          <motion.button
+            whileHover={{ scale: 1.04 }}
+            whileTap={{ scale: 0.96 }}
+            onClick={() => {
+              setType("All");
+              setPay("all");
+              setQuery("");
+            }}
+            className="cursor-pointer rounded-full brand-gradient-bg px-5 py-2 text-sm font-medium text-white shadow-[var(--shadow-soft)]"
+          >
+            Clear filters
+          </motion.button>
+        </motion.div>
+      )}
+>>>>>>> 9a00051 (Initial commit)
     </div>
   );
 }

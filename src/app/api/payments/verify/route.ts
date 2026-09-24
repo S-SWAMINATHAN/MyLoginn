@@ -3,7 +3,10 @@ import crypto from "crypto";
 import { prisma } from "@/lib/prisma";
 import { getCurrentUser } from "@/lib/auth";
 import { awardPoints } from "@/lib/streak";
+<<<<<<< HEAD
 import { getRequiredServerEnv } from "@/lib/env";
+=======
+>>>>>>> 9a00051 (Initial commit)
 
 export async function POST(req: Request) {
   const user = await getCurrentUser();
@@ -27,7 +30,11 @@ export async function POST(req: Request) {
   }
 
   const expectedSignature = crypto
+<<<<<<< HEAD
     .createHmac("sha256", getRequiredServerEnv("RAZORPAY_KEY_SECRET"))
+=======
+    .createHmac("sha256", process.env.RAZORPAY_KEY_SECRET ?? "")
+>>>>>>> 9a00051 (Initial commit)
     .update(`${razorpay_order_id}|${razorpay_payment_id}`)
     .digest("hex");
 

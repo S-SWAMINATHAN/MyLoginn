@@ -1,5 +1,8 @@
 import { notFound } from "next/navigation";
+<<<<<<< HEAD
 import type { Metadata } from "next";
+=======
+>>>>>>> 9a00051 (Initial commit)
 import { prisma } from "@/lib/prisma";
 import { getCurrentUser } from "@/lib/auth";
 import { Section, Container, Eyebrow } from "@/components/ui/Section";
@@ -12,6 +15,7 @@ import { AnimatedStar } from "@/components/ui/icons/AnimatedStar";
 import { AnimatedUsers } from "@/components/ui/icons/AnimatedUsers";
 import { CourseIconThumb } from "@/components/courses/CourseIconThumb";
 
+<<<<<<< HEAD
 export async function generateMetadata({ params }: { params: Promise<{ slug: string }> }): Promise<Metadata> {
   const { slug } = await params;
   const course = await prisma.course.findUnique({
@@ -28,6 +32,8 @@ export async function generateMetadata({ params }: { params: Promise<{ slug: str
   };
 }
 
+=======
+>>>>>>> 9a00051 (Initial commit)
 export default async function CourseDetailPage({
   params,
 }: {

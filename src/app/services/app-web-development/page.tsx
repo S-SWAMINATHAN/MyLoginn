@@ -1,4 +1,7 @@
+<<<<<<< HEAD
 import type { Metadata } from "next";
+=======
+>>>>>>> 9a00051 (Initial commit)
 import { Section, Container, Eyebrow } from "@/components/ui/Section";
 import { Card } from "@/components/ui/Card";
 import { LeadForm } from "@/components/services/LeadForm";
@@ -31,11 +34,15 @@ const features: { iconKey: CourseIconKey; title: string; description: string }[]
 
 const stack = ["Next.js", "React Native", "Node.js", "PostgreSQL", "Prisma", "Three.js", "Tailwind CSS", "AWS / Vercel"];
 
+<<<<<<< HEAD
 export const metadata: Metadata = {
   title: "App & Website Development — MyLoginn",
   description: "Build fast, scalable web and mobile products with MyLoginn's full-stack engineering team.",
   alternates: { canonical: "/services/app-web-development" },
 };
+=======
+export const metadata = { title: "App & Website Development — MyLoginn" };
+>>>>>>> 9a00051 (Initial commit)
 
 export default function AppWebDevelopmentPage() {
   return (

@@ -3,7 +3,11 @@ generator client {
 }
 
 datasource db {
+<<<<<<< HEAD
   provider = "postgresql"
+=======
+  provider = "sqlite"
+>>>>>>> 9a00051 (Initial commit)
   url      = env("DATABASE_URL")
 }
 
@@ -252,6 +256,7 @@ model Lead {
   createdAt   DateTime @default(now())
 }
 
+<<<<<<< HEAD
 model ProjectRequest {
   id                String   @id @default(cuid())
   requestId         String   @unique
@@ -284,6 +289,8 @@ model ProjectRequest {
   @@index([email, createdAt])
 }
 
+=======
+>>>>>>> 9a00051 (Initial commit)
 model Notification {
   id        String   @id @default(cuid())
   userId    String

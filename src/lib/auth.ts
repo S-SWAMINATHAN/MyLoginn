@@ -2,8 +2,13 @@ import jwt from "jsonwebtoken";
 import bcrypt from "bcryptjs";
 import { cookies } from "next/headers";
 import { prisma } from "./prisma";
+<<<<<<< HEAD
 import { getRequiredServerEnv } from "./env";
 
+=======
+
+const JWT_SECRET = process.env.JWT_SECRET ?? "dev-only-secret";
+>>>>>>> 9a00051 (Initial commit)
 const COOKIE_NAME = "myloginn_session";
 
 export type SessionPayload = {
@@ -20,12 +25,20 @@ export async function verifyPassword(password: string, hash: string) {
 }
 
 export function signSession(payload: SessionPayload) {
+<<<<<<< HEAD
   return jwt.sign(payload, getRequiredServerEnv("JWT_SECRET"), { expiresIn: "30d" });
+=======
+  return jwt.sign(payload, JWT_SECRET, { expiresIn: "30d" });
+>>>>>>> 9a00051 (Initial commit)
 }
 
 export function verifySession(token: string): SessionPayload | null {
   try {
+<<<<<<< HEAD
     return jwt.verify(token, getRequiredServerEnv("JWT_SECRET")) as SessionPayload;
+=======
+    return jwt.verify(token, JWT_SECRET) as SessionPayload;
+>>>>>>> 9a00051 (Initial commit)
   } catch {
     return null;
   }

@@ -60,6 +60,7 @@ export const leadSchema = z.object({
   message: z.string().trim().max(1000).optional().or(z.literal("")),
 });
 
+<<<<<<< HEAD
 const optionalText = z.string().trim().max(500).optional().or(z.literal(""));
 
 export const projectRequestSchema = z.object({
@@ -84,6 +85,8 @@ export const projectRequestSchema = z.object({
   additionalNotes: z.string().trim().max(3000).optional().or(z.literal("")),
 });
 
+=======
+>>>>>>> 9a00051 (Initial commit)
 export const internshipApplicationSchema = z.object({
   internshipId: z.string().min(1),
   coverNote: z.string().trim().max(1500).optional().or(z.literal("")),
@@ -102,4 +105,7 @@ export const tutoringBookingSchema = z.object({
 export type SignupInput = z.input<typeof signupSchema>;
 export type LoginInput = z.infer<typeof loginSchema>;
 export type LeadInput = z.infer<typeof leadSchema>;
+<<<<<<< HEAD
 export type ProjectRequestInput = z.input<typeof projectRequestSchema>;
+=======
+>>>>>>> 9a00051 (Initial commit)

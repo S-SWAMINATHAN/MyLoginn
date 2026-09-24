@@ -1,11 +1,18 @@
 "use client";
 
+<<<<<<< HEAD
 import { useId, useMemo } from "react";
+=======
+>>>>>>> 9a00051 (Initial commit)
 import Link from "next/link";
 import { motion } from "framer-motion";
 import { Card } from "@/components/ui/Card";
 import { ContentIcon } from "@/components/ui/ContentIcon";
+<<<<<<< HEAD
 import { getProjectCardArt } from "@/lib/projectCardArt";
+=======
+import { CourseIconThumb } from "@/components/courses/CourseIconThumb";
+>>>>>>> 9a00051 (Initial commit)
 import { AnimatedArrow } from "@/components/ui/icons/AnimatedArrow";
 import { AnimatedCrown } from "@/components/ui/icons/AnimatedCrown";
 import { AnimatedMapPin } from "@/components/ui/icons/AnimatedMapPin";
@@ -39,12 +46,15 @@ export function InternshipCard({
   applied: boolean;
   index?: number;
 }) {
+<<<<<<< HEAD
   const idSeed = useId();
   const art = useMemo(
     () => getProjectCardArt(`${internship.type} ${internship.title}`, idSeed),
     [internship.type, internship.title, idSeed]
   );
 
+=======
+>>>>>>> 9a00051 (Initial commit)
   const deadline = new Date(internship.applyDeadline);
   const daysLeft = Math.max(0, Math.ceil((deadline.getTime() - Date.now()) / (1000 * 60 * 60 * 24)));
   const urgent = daysLeft > 0 && daysLeft <= 5;
@@ -75,6 +85,7 @@ export function InternshipCard({
               style={{ background: spotlightBg }}
             />
 
+<<<<<<< HEAD
             {/* Illustrated banner header */}
             <div className="relative flex h-28 shrink-0 items-center justify-center overflow-hidden">
               <span
@@ -87,14 +98,38 @@ export function InternshipCard({
                 className="pointer-events-none absolute inset-x-0 top-0 h-12 bg-gradient-to-b from-black/35 to-transparent"
               />
 
+=======
+            <div className="relative h-28 shrink-0 overflow-hidden">
+              <CourseIconThumb
+                category={internship.type}
+                title={internship.title}
+                className="transition-transform duration-500 group-hover:scale-105"
+              />
+              <div className="pointer-events-none absolute inset-x-0 bottom-0 h-14 bg-gradient-to-t from-black/55 to-transparent" />
+>>>>>>> 9a00051 (Initial commit)
               {internship.featured && (
                 <span className="absolute left-3 top-3 z-10 inline-flex items-center gap-1.5 text-[11px] font-semibold text-white [text-shadow:0_1px_3px_rgba(0,0,0,.45)]">
                   <AnimatedCrown className="h-4.5 w-4.5" /> Featured
                 </span>
               )}
+<<<<<<< HEAD
               <span className="absolute right-3 top-3 z-10 rounded-full bg-black/30 px-2.5 py-1 text-[11px] font-semibold uppercase tracking-wide text-white backdrop-blur">
                 {internship.type}
               </span>
+=======
+              <span className="absolute right-3 top-3 z-10 rounded-full bg-black/40 px-2.5 py-1 text-[11px] font-semibold uppercase tracking-wide text-white backdrop-blur">
+                {internship.type}
+              </span>
+              {urgent && (
+                <motion.span
+                  className="absolute bottom-2.5 left-3 z-10 text-[11px] font-semibold text-amber-200 [text-shadow:0_1px_3px_rgba(0,0,0,.5)]"
+                  animate={{ opacity: [1, 0.55, 1] }}
+                  transition={{ duration: 1.6, repeat: Infinity, ease: "easeInOut" }}
+                >
+                  {daysLeft === 1 ? "Closes tomorrow" : `${daysLeft} days left`}
+                </motion.span>
+              )}
+>>>>>>> 9a00051 (Initial commit)
             </div>
 
             <div className="relative z-10 flex flex-1 flex-col p-6">
@@ -122,11 +157,19 @@ export function InternshipCard({
                   <AnimatedMapPin className="h-4.5 w-4.5" /> {internship.location}
                 </span>
                 <span className="flex items-center gap-1.5">
+<<<<<<< HEAD
                   <AnimatedClock className="h-4.5 w-4.5" /> {internship.durationWeeks} weeks
                 </span>
                 <span className="flex items-center gap-1.5">
                   <AnimatedRupee className="h-4.5 w-4.5" />{" "}
                   {internship.paid ? `₹${internship.stipend?.toLocaleString()} / month` : "Unpaid"}
+=======
+                  <AnimatedClock className="h-4.5 w-4.5" /> {internship.durationWeeks}w
+                </span>
+                <span className="flex items-center gap-1.5">
+                  <AnimatedRupee className="h-4.5 w-4.5" />{" "}
+                  {internship.paid ? `${internship.stipend?.toLocaleString()}/mo` : "Unpaid"}
+>>>>>>> 9a00051 (Initial commit)
                 </span>
               </div>
 
@@ -145,9 +188,15 @@ export function InternshipCard({
                   <span className="text-xs text-muted">
                     {daysLeft > 0 ? `${daysLeft} days left to apply` : "Deadline passed"}
                   </span>
+<<<<<<< HEAD
                   <span className="inline-flex items-center gap-1 rounded-full brand-gradient-bg px-3.5 py-1.5 text-xs font-medium text-white shadow-[var(--shadow-soft)] transition-transform duration-300 group-hover:scale-105">
                     View Details
                     <AnimatedArrow className="h-4 w-4" />
+=======
+                  <span className="inline-flex items-center gap-1 text-sm font-medium text-brand-500">
+                    Details
+                    <AnimatedArrow className="h-5 w-5" />
+>>>>>>> 9a00051 (Initial commit)
                   </span>
                 </div>
               </div>
