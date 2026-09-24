@@ -6,13 +6,7 @@ import { WebStory } from "@/components/sections/WebStory";
 import { MobileStory } from "@/components/sections/MobileStory";
 import { DesktopStory } from "@/components/sections/DesktopStory";
 import { AiStory } from "@/components/sections/AiStory";
-import { AgentsStory } from "@/components/sections/AgentsStory";
-import { AutomationStory } from "@/components/sections/AutomationStory";
-import { TestingStory } from "@/components/sections/TestingStory";
 import { HowWeBuild } from "@/components/sections/HowWeBuild";
-import { BusinessSolutions } from "@/components/sections/BusinessSolutions";
-import { Education } from "@/components/sections/Education";
-import { WhyMyLoginn } from "@/components/sections/WhyMyLoginn";
 import { FinalCta } from "@/components/sections/FinalCta";
 import { ProjectShowcase } from "@/components/sections/ProjectShowcase";
 
@@ -27,13 +21,7 @@ export default function Home() {
         <MobileStory />
         <DesktopStory />
         <AiStory />
-        <AgentsStory />
-        <AutomationStory />
-        <TestingStory />
         <HowWeBuild />
-        <BusinessSolutions />
-        <Education />
-        <WhyMyLoginn />
         <ProjectShowcase />
         <FinalCta />
       </StoryStage>
