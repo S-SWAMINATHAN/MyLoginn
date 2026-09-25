@@ -60,33 +60,46 @@ export const JathagamThemePanel: React.FC<Props> = ({ lang }) => {
               <Palette className="w-3.5 h-3.5 text-brand-fg" />
               {lang === "ta" ? "மை வண்ணத் தொகுப்பு" : "Ink palette"}
             </div>
-            <div className="grid grid-cols-2 sm:grid-cols-4 gap-2">
-              {JATHAGAM_PALETTES.map((p) => {
-                const active = p.id === palette.id;
-                return (
-                  <button
-                    key={p.id}
-                    type="button"
-                    onClick={() => setPaletteId(p.id)}
-                    className={`rounded-xl border p-2.5 text-left transition-all ${
-                      active
-                        ? "border-brand-500 ring-2 ring-brand-500/25 bg-brand-500/5"
-                        : "border-line bg-surface hover:border-brand-400"
-                    }`}
-                  >
-                    <span className="flex items-center gap-1 mb-1.5">
-                      {[p.accent, p.ink, p.gold].map((c, i) => (
-                        <span key={i} className="w-4 h-4 rounded-full ring-1 ring-black/10" style={{ background: c }} />
-                      ))}
-                      {active && <Check className="w-3.5 h-3.5 text-brand-fg ml-auto" />}
-                    </span>
-                    <span className="block text-[11px] font-semibold text-foreground leading-tight">
-                      {lang === "ta" ? p.labelTa : p.labelEn}
-                    </span>
-                  </button>
-                );
-              })}
-            </div>
+            {/* Grouped so 20 palettes stay scannable. The original eight are
+                the classic deep inks; tone is only a grouping aid — every
+                palette's body ink is checked to stay readable on white. */}
+            {(
+              [
+                ["dark", lang === "ta" ? "ஆழ்ந்த மை வண்ணங்கள்" : "Deep inks"],
+                ["light", lang === "ta" ? "ஒளிர் வண்ணங்கள்" : "Bright inks"],
+              ] as const
+            ).map(([tone, heading]) => (
+              <div key={tone} className="mb-3 last:mb-0">
+                <div className="text-[11px] font-semibold text-muted mb-1.5">{heading}</div>
+                <div className="grid grid-cols-2 sm:grid-cols-4 lg:grid-cols-5 gap-2">
+                  {JATHAGAM_PALETTES.filter((p) => (p.tone || "dark") === tone).map((p) => {
+                    const active = p.id === palette.id;
+                    return (
+                      <button
+                        key={p.id}
+                        type="button"
+                        onClick={() => setPaletteId(p.id)}
+                        className={`rounded-xl border p-2.5 text-left transition-all ${
+                          active
+                            ? "border-brand-500 ring-2 ring-brand-500/25 bg-brand-500/5"
+                            : "border-line bg-surface hover:border-brand-400"
+                        }`}
+                      >
+                        <span className="flex items-center gap-1 mb-1.5">
+                          {[p.accent, p.ink, p.accentSoft, p.gold].map((c, i) => (
+                            <span key={i} className="w-4 h-4 rounded-full ring-1 ring-black/10" style={{ background: c }} />
+                          ))}
+                          {active && <Check className="w-3.5 h-3.5 text-brand-fg ml-auto" />}
+                        </span>
+                        <span className="block text-[11px] font-semibold text-foreground leading-tight">
+                          {lang === "ta" ? p.labelTa : p.labelEn}
+                        </span>
+                      </button>
+                    );
+                  })}
+                </div>
+              </div>
+            ))}
           </div>
 
           {/* Fonts */}
@@ -95,7 +108,7 @@ export const JathagamThemePanel: React.FC<Props> = ({ lang }) => {
               <Type className="w-3.5 h-3.5 text-brand-fg" />
               {lang === "ta" ? "தமிழ் எழுத்துரு பாணி" : "Tamil typeface"}
             </div>
-            <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-2">
+            <div className="grid grid-cols-2 sm:grid-cols-4 lg:grid-cols-4 gap-2">
               {TAMIL_FONTS.map((f) => {
                 const active = f.id === font.id;
                 return (
@@ -108,7 +121,7 @@ export const JathagamThemePanel: React.FC<Props> = ({ lang }) => {
                         ? "border-brand-500 ring-2 ring-brand-500/25 bg-brand-500/5"
                         : "border-line bg-surface hover:border-brand-400"
                     }`}
-                    style={{ fontFamily: f.stack }}
+                    style={{ fontFamily: f.stack, fontWeight: f.weight }}
                     title={f.noteTa}
                   >
                     <span className="block text-[15px] text-foreground leading-snug">ஜாதகம் 123</span>

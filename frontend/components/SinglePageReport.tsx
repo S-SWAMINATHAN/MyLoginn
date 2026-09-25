@@ -360,6 +360,10 @@ export const SinglePageReport: React.FC<SinglePageReportProps> = ({ chart, lang 
   const st = sps?.saturn_transit;
 
   const lagnaSignNum = findLagnaSignNum(chart.rasi_kattam as any);
+  // A North Indian chart is laid out FROM its own Lagna. The Navamsa was being
+  // drawn from the Rasi Lagna, which rotates every house wrongly whenever the
+  // two differ. It now uses the Navamsa's own.
+  const navamsaLagnaSignNum = findLagnaSignNum(chart.navamsa_kattam as any);
   const rasiPlanetsBySign = toPlanetsBySign(chart.rasi_kattam as any);
   const navamsaPlanetsBySign = toPlanetsBySign(chart.navamsa_kattam as any);
 
@@ -586,7 +590,7 @@ export const SinglePageReport: React.FC<SinglePageReportProps> = ({ chart, lang 
                     title={lang === "ta" ? "நவாம்சம் (D9)" : "Navamsa (D9)"}
                     chartStyle={chart.chart_style}
                     planetsBySign={navamsaPlanetsBySign}
-                    lagnaSignNum={lagnaSignNum}
+                    lagnaSignNum={navamsaLagnaSignNum}
                     palette={palette}
                   />
                 </td>

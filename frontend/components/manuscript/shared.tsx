@@ -1,6 +1,7 @@
 "use client";
 
 import React from "react";
+import { useChartStyle, NorthMiniChart, STYLE_LABEL } from "./StyledMiniChart";
 
 interface PageWrapperProps {
   pageNumber: number;
@@ -98,6 +99,12 @@ export const MiniSouthIndianChart: React.FC<{
   planetsBySign: Record<number, Array<{ name: string; symbol: string }>>;
   highlightLagnaSign?: number;
 }> = ({ title, titleTa, subTitleTa, planetsBySign, highlightLagnaSign }) => {
+  // Follows the chart style chosen on the form (see StyledMiniChart.tsx).
+  // Every one of the 14 varga charts goes through here, so this single branch
+  // is what makes the whole manuscript — and therefore its PDF and print —
+  // honour Kerala / North Indian.
+  const chartStyle = useChartStyle();
+
   // Standard South Indian 4x4 clockwise grid (signs 1-12)
   // Row 0: 12 (Pisces), 1 (Aries), 2 (Taurus), 3 (Gemini)
   // Row 1: 11 (Aquarius), [CENTER 2x2], 4 (Cancer)
@@ -142,6 +149,14 @@ export const MiniSouthIndianChart: React.FC<{
           {subTitleTa}
         </div>
       )}
+      {chartStyle === "north_indian" ? (
+        <NorthMiniChart
+          planetsBySign={planetsBySign}
+          lagnaSign={highlightLagnaSign}
+          centreTitle={titleTa}
+          height={155}
+        />
+      ) : (
       <div className="grid grid-cols-4 grid-rows-4 border border-[#8b5a2b] w-full h-[155px] text-center bg-[#fff8ee]">
         {/* Row 0 */}
         <div className="border border-[#aa820a]/50 p-0.5">{getSignContent(12)}</div>
@@ -171,6 +186,12 @@ export const MiniSouthIndianChart: React.FC<{
         <div className="border border-[#aa820a]/50 p-0.5">{getSignContent(7)}</div>
         <div className="border border-[#aa820a]/50 p-0.5">{getSignContent(6)}</div>
       </div>
+      )}
+      {chartStyle !== "tamil" && (
+        <div className="text-center text-[8px] text-[#6f6049] mt-1 leading-none">
+          {STYLE_LABEL[chartStyle].ta} · {STYLE_LABEL[chartStyle].en}
+        </div>
+      )}
     </div>
   );
 };

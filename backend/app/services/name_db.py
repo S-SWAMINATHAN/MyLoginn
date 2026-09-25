@@ -110,6 +110,7 @@ def fetch_by_letter(
     gender: Optional[str] = None,
     limit: int = 200,
     search: Optional[str] = None,
+    religion: Optional[str] = None,
 ) -> List[Dict[str, Any]]:
     """General Baby Name Generator: every real name starting with `letter`.
 
@@ -138,6 +139,11 @@ def fetch_by_letter(
         params.append("unisex")
 
     # Free-text search within the chosen letter, matched against either script.
+    r = (religion or "").strip().lower()
+    if r and r not in ("all", "any"):
+        where.append("religion = ?")
+        params.append(r)
+
     q = (search or "").strip()
     if q:
         where.append("(name_english LIKE ? OR name_tamil LIKE ?)")
@@ -153,7 +159,9 @@ def fetch_by_letter(
                MIN(starting_letter)  AS starting_letter
         FROM baby_names
         WHERE {' AND '.join(where)}
-        GROUP BY LOWER(TRIM(name_english))
+        -- One row per distinct Tamil name: the same name spelled several
+        -- ways in Latin (Vidya / Vidhya / Vithya) must not repeat in the list.
+        GROUP BY COALESCE(NULLIF(LOWER(TRIM(name_tamil)), ''), LOWER(TRIM(name_english)))
         ORDER BY name_english COLLATE NOCASE ASC
         LIMIT ?
     """
@@ -188,11 +196,16 @@ RASI_NAKSHATRA_PADAS: Dict[int, List[Tuple[str, List[int]]]] = {
     12: [("Purva Bhadrapada", [4]), ("Uttara Bhadrapada", [1, 2, 3, 4]), ("Revati", [1, 2, 3, 4])],
 }
 
-RASI_LABELS: Dict[int, Tuple[str, str]] = {
-    1: ("Mesha", "மேஷம்"), 2: ("Vrishabha", "ரிஷபம்"), 3: ("Mithuna", "மிதுனம்"),
-    4: ("Karkataka", "கடகம்"), 5: ("Simha", "சிம்மம்"), 6: ("Kanya", "கன்னி"),
-    7: ("Tula", "துலாம்"), 8: ("Vrischika", "விருச்சிகம்"), 9: ("Dhanus", "தனுசு"),
-    10: ("Makara", "மகரம்"), 11: ("Kumbha", "கும்பம்"), 12: ("Meena", "மீனம்"),
+# (Western name, Tamil name, Sanskrit name). English readers expect
+# "Gemini", not "Mithuna" — the Sanskrit is kept as a third value for
+# anything that wants it.
+RASI_LABELS: Dict[int, Tuple[str, str, str]] = {
+    1: ("Aries", "மேஷம்", "Mesha"), 2: ("Taurus", "ரிஷபம்", "Vrishabha"),
+    3: ("Gemini", "மிதுனம்", "Mithuna"), 4: ("Cancer", "கடகம்", "Karkataka"),
+    5: ("Leo", "சிம்மம்", "Simha"), 6: ("Virgo", "கன்னி", "Kanya"),
+    7: ("Libra", "துலாம்", "Tula"), 8: ("Scorpio", "விருச்சிகம்", "Vrischika"),
+    9: ("Sagittarius", "தனுசு", "Dhanus"), 10: ("Capricorn", "மகரம்", "Makara"),
+    11: ("Aquarius", "கும்பம்", "Kumbha"), 12: ("Pisces", "மீனம்", "Meena"),
 }
 
 
@@ -221,6 +234,7 @@ def fetch_by_rasi(
     gender: Optional[str] = None,
     search: Optional[str] = None,
     limit: int = 60,
+    religion: Optional[str] = None,
 ) -> Dict[str, Any]:
     """Names belonging to a zodiac sign, grouped by its naming syllables."""
     mapping = syllables_for_rasi(rasi)
@@ -232,13 +246,16 @@ def fetch_by_rasi(
         if m["syllable"] not in seen_syl:
             seen_syl.append(m["syllable"])
 
-    rows = fetch_by_syllables(seen_syl, gender=gender, search=search, limit=limit)
-    en, ta = RASI_LABELS.get(int(rasi), ("", ""))
+    rows = fetch_by_syllables(seen_syl, gender=gender, search=search, limit=limit,
+                              religion=religion)
+    en, ta, sa = RASI_LABELS.get(int(rasi), ("", "", ""))
     return {
-        "rasi": int(rasi), "rasi_en": en, "rasi_ta": ta,
+        "rasi": int(rasi), "rasi_en": en, "rasi_ta": ta, "rasi_sa": sa,
         "syllables": mapping,
         "count": len(rows),
-        "available_count": count_names(seen_syl, gender=gender),
+        "available_count": len(
+            fetch_by_syllables(seen_syl, gender=gender, religion=religion, limit=500)
+        ),
         "names": rows,
     }
 
@@ -247,6 +264,7 @@ def fetch_by_syllables(
     syllables: List[str],
     gender: Optional[str] = None,
     search: Optional[str] = None,
+    religion: Optional[str] = None,
     limit: int = 60,
 ) -> List[Dict[str, Any]]:
     """Distinct names for a set of syllables, optional free-text search."""
@@ -263,6 +281,11 @@ def fetch_by_syllables(
     elif g in ("girl", "female", "f"):
         where.append("gender = ?"); params.append("girl")
 
+    r = (religion or "").strip().lower()
+    if r and r not in ("all", "any"):
+        where.append("religion = ?")
+        params.append(r)
+
     q = (search or "").strip()
     if q:
         where.append("(name_english LIKE ? OR name_tamil LIKE ?)")
@@ -278,7 +301,9 @@ def fetch_by_syllables(
                MIN(syllable)        AS syllable
         FROM baby_names
         WHERE {' AND '.join(where)}
-        GROUP BY LOWER(TRIM(name_english))
+        -- One row per distinct Tamil name: the same name spelled several
+        -- ways in Latin (Vidya / Vidhya / Vithya) must not repeat in the list.
+        GROUP BY COALESCE(NULLIF(LOWER(TRIM(name_tamil)), ''), LOWER(TRIM(name_english)))
         ORDER BY name_english COLLATE NOCASE
         LIMIT ?
     """
@@ -311,7 +336,7 @@ def letter_counts(gender: Optional[str] = None) -> Dict[str, int]:
     con = _connect()
     try:
         sql = f"""SELECT starting_letter AS l,
-                         COUNT(DISTINCT LOWER(TRIM(name_english))) AS c
+                         COUNT(DISTINCT COALESCE(NULLIF(LOWER(TRIM(name_tamil)), ''), LOWER(TRIM(name_english)))) AS c
                   FROM baby_names WHERE {' AND '.join(where)}
                   GROUP BY starting_letter"""
         return {r["l"]: r["c"] for r in con.execute(sql, params) if r["l"]}
@@ -528,5 +553,20 @@ def db_stats() -> Dict[str, Any]:
             # The syllables that keep a generation under 150, named openly.
             "thin_syllables": thin,
         }
+    finally:
+        con.close()
+
+
+def religion_counts() -> Dict[str, int]:
+    """Distinct names per religion, counted the same way the lists are built.
+
+    Exposed so the dropdown can show the real number beside each option
+    instead of offering a choice that silently returns almost nothing.
+    """
+    con = _connect()
+    try:
+        sql = f"""SELECT religion, COUNT(DISTINCT COALESCE(NULLIF(LOWER(TRIM(name_tamil)), ''), LOWER(TRIM(name_english)))) AS c
+                  FROM baby_names GROUP BY religion"""
+        return {r["religion"]: r["c"] for r in con.execute(sql)}
     finally:
         con.close()

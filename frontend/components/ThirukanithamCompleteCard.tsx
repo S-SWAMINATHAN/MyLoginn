@@ -1,5 +1,7 @@
 "use client";
 
+import { NorthMiniChart, normaliseStyle, STYLE_LABEL } from "./manuscript/StyledMiniChart";
+import { findLagnaSignNum } from "@/lib/chartLayouts";
 import React, { useState, useRef, useEffect } from "react";
 import { useJathagamTheme } from "@/lib/jathagamTheme";
 import { ChartResponse } from "@/lib/types";
@@ -163,6 +165,10 @@ export const ThirukanithamCompleteCard: React.FC<ThirukanithamCompleteCardProps>
   // South Indian Rasi & Navamsa Kattam mapping
   const rasiKattam = chart.rasi_kattam || {};
   const navamsaKattam = chart.navamsa_kattam || {};
+  // Chart style chosen on the form. These grids were hard-coded South
+  // Indian, so Kerala / North Indian changed only the live chart above and
+  // never reached this card, its PDF, or its print.
+  const chartStyle = normaliseStyle(chart.chart_style);
 
   // Helper for South Indian 4x4 Grid sign rendering
   const renderSouthIndianSign = (
@@ -623,7 +629,7 @@ export const ThirukanithamCompleteCard: React.FC<ThirukanithamCompleteCardProps>
                   className="text-sm font-bold uppercase tracking-wider"
                   style={{ color: accentColor }}
                 >
-                  3. ராசி சக்கரம் & நவாம்ச சக்கரம் (Traditional South Indian Chakras)
+                  3. ராசி சக்கரம் & நவாம்ச சக்கரம் ({STYLE_LABEL[chartStyle].ta} · {STYLE_LABEL[chartStyle].en})
                 </h2>
               </div>
               <span className="text-[10px] font-mono opacity-70">D1 Rasi & D9 Navamsa</span>
@@ -646,6 +652,11 @@ export const ThirukanithamCompleteCard: React.FC<ThirukanithamCompleteCardProps>
                 </div>
 
                 {/* 4x4 Grid */}
+                {chartStyle === "north_indian" ? (
+                  <div className="w-full rounded-lg border-2 overflow-hidden bg-white">
+                    <NorthMiniChart planetsBySign={rasiKattam as any} lagnaSign={findLagnaSignNum(rasiKattam as any)} height={300} />
+                  </div>
+                ) : (
                 <div
                   className="grid grid-cols-4 grid-rows-4 w-full h-[280px] sm:h-[310px] border-2 rounded-lg bg-white/70 overflow-hidden"
                   style={{ borderColor: accentColor }}
@@ -711,6 +722,7 @@ export const ThirukanithamCompleteCard: React.FC<ThirukanithamCompleteCardProps>
                     {renderSouthIndianSign(6, rasiKattam)}
                   </div>
                 </div>
+                )}
               </div>
 
               {/* CHAKRA 2: NAVAMSA CHAKRA (D9) */}
@@ -729,6 +741,11 @@ export const ThirukanithamCompleteCard: React.FC<ThirukanithamCompleteCardProps>
                 </div>
 
                 {/* 4x4 Grid */}
+                {chartStyle === "north_indian" ? (
+                  <div className="w-full rounded-lg border-2 overflow-hidden bg-white">
+                    <NorthMiniChart planetsBySign={navamsaKattam as any} lagnaSign={findLagnaSignNum(navamsaKattam as any)} height={300} />
+                  </div>
+                ) : (
                 <div
                   className="grid grid-cols-4 grid-rows-4 w-full h-[280px] sm:h-[310px] border-2 rounded-lg bg-white/70 overflow-hidden"
                   style={{ borderColor: accentColor }}
@@ -794,6 +811,7 @@ export const ThirukanithamCompleteCard: React.FC<ThirukanithamCompleteCardProps>
                     {renderSouthIndianSign(6, navamsaKattam)}
                   </div>
                 </div>
+                )}
               </div>
             </div>
           </div>

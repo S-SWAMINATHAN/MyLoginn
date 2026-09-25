@@ -43,7 +43,8 @@ def generate_rasi_horoscope_narration(
             f"{kt.get('net_effect_ta', '')} அமைகிறது."
         )
         slow_lines_en.append(
-            f"{kt.get('planet', '')} transiting {kt.get('transit_rasi_ta', '')} falls in the "
+            f"{kt.get('planet', '')} transiting "
+            f"{kt.get('transit_rasi_en') or kt.get('transit_rasi') or kt.get('transit_rasi_ta', '')} falls in the "
             f"{kt.get('house_from_moon', '')}th house from {rasi_en}, bringing a "
             f"{str(kt.get('net_effect', '')).lower()} phase on this front."
         )

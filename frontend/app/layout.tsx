@@ -41,7 +41,7 @@ export default function RootLayout({
         <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="anonymous" />
         <link
           rel="stylesheet"
-          href="https://fonts.googleapis.com/css2?family=Anek+Tamil:wght@400;500;600;700&family=Arima:wght@400;500;600;700&family=Catamaran:wght@400;500;600;700;800&family=Hind+Madurai:wght@400;500;600;700&family=Meera+Inimai&family=Mukta+Malar:wght@400;500;600;700&family=Pavanam&display=swap"
+          href="https://fonts.googleapis.com/css2?family=Anek+Tamil:wght@400;500;600;700&family=Arima:wght@400;500;600;700&family=Catamaran:wght@400;500;600;700;800&family=Hind+Madurai:wght@400;500;600;700&family=Meera+Inimai&family=Mukta+Malar:wght@400;500;600;700&family=Pavanam&family=Tiro+Tamil:ital@0;1&family=Coiny&display=swap"
         />
       </head>
       <body className="antialiased">

@@ -1,5 +1,6 @@
 "use client";
 
+import { ChartStyleProvider } from "./manuscript/StyledMiniChart";
 import React from "react";
 import { ChartResponse } from "@/lib/types";
 import { Chapter1Invocations } from "./manuscript/Chapter1Invocations";
@@ -24,7 +25,10 @@ interface Props {
 }
 
 export const HandwrittenManuscript: React.FC<Props> = ({ chart, lang, activePage }) => {
+  // Every chart in the manuscript reads the chosen style from here. The PDF
+  // and Print both capture this same DOM, so they follow it too.
   return (
+    <ChartStyleProvider style={chart.chart_style}>
     <div
       id={activePage ? "manuscript-preview-container" : undefined}
       className="manuscript-container flex flex-col items-center gap-8 py-2"
@@ -86,5 +90,6 @@ export const HandwrittenManuscript: React.FC<Props> = ({ chart, lang, activePage
       {/* Part 14: Sacred Remedies & Auspicious Conclusion (Page 50) */}
       <Chapter14RemediesMangalam chart={chart} lang={lang} />
     </div>
+  </ChartStyleProvider>
   );
 };

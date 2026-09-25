@@ -69,6 +69,9 @@ export interface JathagamPalette {
   paper: string;
   /** Inner card / panel background. */
   paperCard: string;
+  /** Panel grouping only: "dark" = deep inks, "light" = brighter accents.
+   *  Body ink stays readable on white in both (checked to WCAG AA). */
+  tone?: "dark" | "light";
 }
 
 /**
@@ -166,7 +169,7 @@ export const JATHAGAM_PALETTES: JathagamPalette[] = [
     labelTa: "ஓலைச்சுவடி பழுப்பு",
     labelEn: "Palm-Leaf Sepia",
     ink: "#4b3621",
-    inkSoft: "#8a755a",
+    inkSoft: "#6e5238",
     accent: "#7a4a1d",
     accentDeep: "#553213",
     accentSoft: "#9c6428",
@@ -189,6 +192,186 @@ export const JATHAGAM_PALETTES: JathagamPalette[] = [
     paper: "#ffffff",
     paperCard: "#ffffff",
   },
+  {
+    id: "deep-navy",
+    labelTa: "ஆழ் நீலம் & பொன்",
+    labelEn: "Deep Navy & Gold",
+    tone: "dark",
+    ink: "#14213d",
+    inkSoft: "#3d4a66",
+    accent: "#1d3c78",
+    accentDeep: "#102652",
+    accentSoft: "#2f5aa8",
+    gold: "#b08d1c",
+    goldDeep: "#7d6414",
+    paper: "#ffffff",
+    paperCard: "#ffffff",
+  },
+  {
+    id: "forest-emerald",
+    labelTa: "காட்டு மரகதம்",
+    labelEn: "Forest Emerald",
+    tone: "dark",
+    ink: "#123524",
+    inkSoft: "#3b5a48",
+    accent: "#0f5a3a",
+    accentDeep: "#0a3d27",
+    accentSoft: "#1d7a52",
+    gold: "#a8862a",
+    goldDeep: "#7a6120",
+    paper: "#ffffff",
+    paperCard: "#ffffff",
+  },
+  {
+    id: "burgundy-wine",
+    labelTa: "செம்பழுப்பு மது",
+    labelEn: "Burgundy Wine",
+    tone: "dark",
+    ink: "#3a0f1a",
+    inkSoft: "#6b3a45",
+    accent: "#7b1830",
+    accentDeep: "#540f20",
+    accentSoft: "#9c2a47",
+    gold: "#b38b2e",
+    goldDeep: "#82651f",
+    paper: "#ffffff",
+    paperCard: "#ffffff",
+  },
+  {
+    id: "midnight-teal",
+    labelTa: "நள்ளிரவு நீலப்பச்சை",
+    labelEn: "Midnight Teal",
+    tone: "dark",
+    ink: "#0f2f33",
+    inkSoft: "#3a5c60",
+    accent: "#0e5e66",
+    accentDeep: "#093f45",
+    accentSoft: "#16808a",
+    gold: "#a88b3a",
+    goldDeep: "#7a6528",
+    paper: "#ffffff",
+    paperCard: "#ffffff",
+  },
+  {
+    id: "chocolate-copper",
+    labelTa: "சாக்லேட் & செம்பு",
+    labelEn: "Chocolate & Copper",
+    tone: "dark",
+    ink: "#3b2314",
+    inkSoft: "#6b4f3d",
+    accent: "#8a4a1c",
+    accentDeep: "#5e3010",
+    accentSoft: "#a8612b",
+    gold: "#b5892c",
+    goldDeep: "#85641f",
+    paper: "#ffffff",
+    paperCard: "#ffffff",
+  },
+  {
+    id: "deep-plum",
+    labelTa: "ஆழ் நாவல்",
+    labelEn: "Deep Plum",
+    tone: "dark",
+    ink: "#2d1233",
+    inkSoft: "#5e4466",
+    accent: "#5b1f6b",
+    accentDeep: "#3d1449",
+    accentSoft: "#7a3490",
+    gold: "#b08d1c",
+    goldDeep: "#836816",
+    paper: "#ffffff",
+    paperCard: "#ffffff",
+  },
+  {
+    id: "rose-blush",
+    labelTa: "ரோஜா இளஞ்சிவப்பு",
+    labelEn: "Rose Blush",
+    tone: "light",
+    ink: "#4a1d32",
+    inkSoft: "#7a4a60",
+    accent: "#b0305f",
+    accentDeep: "#8a2049",
+    accentSoft: "#d0487a",
+    gold: "#d4a24c",
+    goldDeep: "#a67c30",
+    paper: "#ffffff",
+    paperCard: "#ffffff",
+  },
+  {
+    id: "sky-blue",
+    labelTa: "வான் நீலம்",
+    labelEn: "Sky Blue",
+    tone: "light",
+    ink: "#12324d",
+    inkSoft: "#466680",
+    accent: "#1f6fb2",
+    accentDeep: "#15548a",
+    accentSoft: "#3a8fd6",
+    gold: "#c9a44a",
+    goldDeep: "#9a7b33",
+    paper: "#ffffff",
+    paperCard: "#ffffff",
+  },
+  {
+    id: "mint-green",
+    labelTa: "புதினா பச்சை",
+    labelEn: "Mint Green",
+    tone: "light",
+    ink: "#16392c",
+    inkSoft: "#45695a",
+    accent: "#197a51",
+    accentDeep: "#156b46",
+    accentSoft: "#33a874",
+    gold: "#c2a44a",
+    goldDeep: "#94793a",
+    paper: "#ffffff",
+    paperCard: "#ffffff",
+  },
+  {
+    id: "lavender",
+    labelTa: "லாவெண்டர்",
+    labelEn: "Lavender",
+    tone: "light",
+    ink: "#33264d",
+    inkSoft: "#62557d",
+    accent: "#6a4fb0",
+    accentDeep: "#503a8a",
+    accentSoft: "#8a6fd0",
+    gold: "#c9a44a",
+    goldDeep: "#9a7b33",
+    paper: "#ffffff",
+    paperCard: "#ffffff",
+  },
+  {
+    id: "coral-saffron",
+    labelTa: "பவளம் & காவி",
+    labelEn: "Coral Saffron",
+    tone: "light",
+    ink: "#4a2310",
+    inkSoft: "#7a5240",
+    accent: "#c2521f",
+    accentDeep: "#9a3d14",
+    accentSoft: "#e0703a",
+    gold: "#d4a02c",
+    goldDeep: "#a67a1c",
+    paper: "#ffffff",
+    paperCard: "#ffffff",
+  },
+  {
+    id: "peacock-teal",
+    labelTa: "மயில் நீலம்",
+    labelEn: "Peacock Teal",
+    tone: "light",
+    ink: "#0f3a3f",
+    inkSoft: "#3f6a6e",
+    accent: "#0b777b",
+    accentDeep: "#0a6a6e",
+    accentSoft: "#12959a",
+    gold: "#c9a44a",
+    goldDeep: "#9a7b33",
+    paper: "#ffffff",
+    paperCard: "#ffffff",
+  },
 ];
 
 /* ------------------------------- typefaces ------------------------------ */
@@ -201,6 +384,8 @@ export interface TamilFontOption {
   stack: string;
   /** Short note on the feel of the face. */
   noteTa: string;
+  /** Default body weight. Headings that set their own weight keep it. */
+  weight?: number;
 }
 
 /**
@@ -280,6 +465,51 @@ export const TAMIL_FONTS: TamilFontOption[] = [
     stack: "'Noto Serif Tamil', 'Noto Sans Tamil', serif",
     noteTa: "பாரம்பரிய அச்சுத் தோற்றம்",
   },
+  {
+    id: "noto-sans",
+    labelTa: "நோட்டோ தமிழ்",
+    labelEn: "Noto Sans Tamil — clean",
+    stack: "'Noto Sans Tamil', sans-serif",
+    noteTa: "தெளிவான நவீன எழுத்து",
+  },
+  {
+    id: "tiro",
+    labelTa: "டைரோ தமிழ் (நூல்)",
+    labelEn: "Tiro Tamil — classical book",
+    stack: "'Tiro Tamil', 'Noto Serif Tamil', serif",
+    noteTa: "பழைய நூல் அச்சு போன்றது",
+  },
+  {
+    id: "coiny",
+    labelTa: "காய்னி (வட்ட எழுத்து)",
+    labelEn: "Coiny — playful rounded",
+    stack: "'Coiny', 'Baloo Thambi 2', 'Noto Sans Tamil', sans-serif",
+    noteTa: "மகிழ்ச்சியான வட்ட வடிவம்",
+  },
+  {
+    id: "catamaran-heavy",
+    labelTa: "கட்டமரன் (தடித்த)",
+    labelEn: "Catamaran — extra bold",
+    stack: "'Catamaran', 'Noto Sans Tamil', sans-serif",
+    noteTa: "வலுவான தடித்த எழுத்து",
+    weight: 800,
+  },
+  {
+    id: "noto-sans-light",
+    labelTa: "நோட்டோ (மெல்லிய)",
+    labelEn: "Noto Sans Tamil — light",
+    stack: "'Noto Sans Tamil', sans-serif",
+    noteTa: "மெல்லிய நேர்த்தியான எழுத்து",
+    weight: 300,
+  },
+  {
+    id: "noto-serif-bold",
+    labelTa: "நோட்டோ செரிஃப் (தடித்த)",
+    labelEn: "Noto Serif Tamil — bold",
+    stack: "'Noto Serif Tamil', 'Noto Sans Tamil', serif",
+    noteTa: "தடித்த அச்சு எழுத்து",
+    weight: 700,
+  },
 ];
 
 /* ------------------------------- context -------------------------------- */
@@ -342,6 +572,11 @@ const HEX_MAP: Array<[string, keyof JathagamPalette]> = [
   ["#3a1a0f", "ink"],
   ["#1f2937", "ink"],
   ["#6f6049", "inkSoft"],
+  ["#6e4620", "inkSoft"],
+  ["#2b170c", "ink"],
+  ["#1e0f08", "ink"],
+  ["#334155", "ink"],
+  ["#475569", "inkSoft"],
   ["#8e2b1c", "accent"],
   ["#6b1426", "accentDeep"],
   ["#991b1b", "accentDeep"],
@@ -470,6 +705,34 @@ function buildThemeCss(palette: JathagamPalette, font: TamilFontOption): string 
 
   // The legacy cream variables, re-declared inside the scope (see note above).
   lines.push(`${scope}{--paper:${palette.paper};--paper-card:${palette.paperCard};}`);
+
+  // "Colours change but some content stays black" — the root cause.
+  // Text with no colour class of its own inherits `color: var(--ink)` from the
+  // legacy stylesheet, and --ink is a fixed near-black (#2b2117) that the
+  // theme never redeclared. So every plain paragraph, table cell and label
+  // ignored the palette. Pointing the legacy variables at the palette, and
+  // setting the ink on the scope root, makes inherited text follow it too.
+  lines.push(
+    `${scope}{--ink:${palette.ink};--ink-soft:${palette.inkSoft};` +
+      `--ink-faint:${rgba(palette.inkSoft, 0.75)};--red:${palette.accentSoft};` +
+      `--red-deep:${palette.accentDeep};color:${palette.ink};` +
+      (font.weight ? `font-weight:${font.weight};` : "") +
+      `}`
+  );
+
+  // Tailwind's own dark text classes aren't hex, so the hex remap below never
+  // saw them.
+  const TW_TEXT: Array<[string, keyof JathagamPalette]> = [
+    ["text-stone-800", "ink"], ["text-stone-700", "ink"], ["text-stone-900", "ink"],
+    ["text-stone-600", "inkSoft"], ["text-stone-500", "inkSoft"],
+    ["text-gray-800", "ink"], ["text-gray-900", "ink"], ["text-black", "ink"],
+    ["text-gray-600", "inkSoft"], ["text-gray-500", "inkSoft"],
+    ["text-slate-800", "ink"], ["text-slate-700", "ink"],
+    ["text-slate-600", "inkSoft"], ["text-slate-500", "inkSoft"],
+  ];
+  for (const [cls, slot] of TW_TEXT) {
+    lines.push(`${scope} .${cls}{color:${palette[slot]} !important;}`);
+  }
 
   for (const value of LEGACY_PAPER_VARS) {
     for (const [prefix, prop] of BG_PREFIXES) {

@@ -30,8 +30,8 @@ export const RasiLoveHoroscopeCard: React.FC<RasiLoveHoroscopeCardProps> = ({
         <div className="flex items-center justify-center gap-2 mb-1">
           <span className="text-2xl">{isGood ? "💞" : isMixed ? "🤔" : "⚠️"}</span>
           <h3 className="text-lg sm:text-xl font-bold text-brand-fg-strong">
-            {lang === "ta" ? result.rasi1_ta : result.rasi1} +{" "}
-            {lang === "ta" ? result.rasi2_ta : result.rasi2}
+            {lang === "ta" ? result.rasi1_ta : result.rasi1_en || result.rasi1} +{" "}
+            {lang === "ta" ? result.rasi2_ta : result.rasi2_en || result.rasi2}
           </h3>
         </div>
         <p className="text-sm text-lg text-foreground">

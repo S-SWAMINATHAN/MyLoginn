@@ -605,6 +605,7 @@ export interface RasiHoroscopeKeyTransit {
   planet: string;
   planet_ta: string;
   transit_rasi?: string;
+  transit_rasi_en?: string;
   transit_rasi_ta: string;
   house_from_moon: number;
   net_effect: string;
@@ -623,6 +624,10 @@ export interface RasiHoroscopeCategorySection {
 export interface RasiHoroscopeResult {
   rasi_number: number;
   rasi: string;
+  /** Western zodiac name, e.g. "Gemini". Shown in English mode. */
+  rasi_en?: string;
+  /** Sanskrit name, e.g. "Mithuna". */
+  rasi_sa?: string;
   rasi_ta: string;
   period: string;
   period_label: string;
@@ -644,9 +649,11 @@ export interface RasiHoroscopeResult {
 export interface RasiLoveHoroscopeResult {
   rasi1_number: number;
   rasi1: string;
+  rasi1_en?: string;
   rasi1_ta: string;
   rasi2_number: number;
   rasi2: string;
+  rasi2_en?: string;
   rasi2_ta: string;
   rasi_porutham: boolean;
   rasi_porutham_desc: string;

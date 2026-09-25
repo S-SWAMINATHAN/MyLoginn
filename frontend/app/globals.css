@@ -1202,12 +1202,15 @@
     margin: 12mm 10mm;
   }
 
-  /* 1. Hide the whole app, then reveal just the sheet. */
-  body * { visibility: hidden !important; }
-  .names-print-sheet,
-  .names-print-sheet * { visibility: visible !important; }
+  /* 1. Hide the whole app, then reveal just the sheet.
+        Scoped to a tagged print: without the guard, pressing Ctrl+P (rather
+        than a Print button) hid everything and revealed nothing, printing a
+        blank page. Untagged printing now behaves as it did before. */
+  body[data-print-target="nakshatra-names"] * { visibility: hidden !important; }
+  body[data-print-target="nakshatra-names"] .names-print-sheet,
+  body[data-print-target="nakshatra-names"] .names-print-sheet * { visibility: visible !important; }
 
-  .names-print-sheet {
+  body[data-print-target="nakshatra-names"] .names-print-sheet {
     display: block !important;
     position: absolute !important;
     left: 0;
@@ -1309,10 +1312,11 @@
   /* Everything except the generator section collapses, so the printed sheet
      is the name list alone — not the birth-details form above it or the
      numerology panel below. */
-  body > * { visibility: hidden !important; }
-  #general-name-generator,
-  #general-name-generator * { visibility: visible !important; }
-  #general-name-generator {
+  /* Scoped for the same reason as above — see the note there. */
+  body[data-print-target="general-names"] > * { visibility: hidden !important; }
+  body[data-print-target="general-names"] #general-name-generator,
+  body[data-print-target="general-names"] #general-name-generator * { visibility: visible !important; }
+  body[data-print-target="general-names"] #general-name-generator {
     position: absolute !important;
     left: 0;
     top: 0;
@@ -1332,5 +1336,16 @@
     color: #000 !important;
     background: transparent !important;
   }
+}
+
+/* One print target at a time.
+   Both baby-name panels sit on the same page and each defines a print sheet.
+   Without a target, pressing Print on either revealed BOTH — the list came
+   out twice. The button sets data-print-target on <body> for the duration of
+   the print; these rules make the untagged sheet stay hidden. */
+@media print {
+  body[data-print-target] .names-print-sheet { display: none !important; }
+  body[data-print-target="nakshatra-names"] .names-print-sheet { display: block !important; }
+  body[data-print-target="general-names"] #general-name-generator .print\:static { position: static !important; }
 }
 

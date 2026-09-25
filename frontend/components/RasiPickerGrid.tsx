@@ -68,7 +68,7 @@ export const RasiPickerGrid: React.FC<RasiPickerGridProps> = ({
                 {r.symbol}
               </span>
               <span className="text-[11px] font-semibold text-center leading-tight">
-                {lang === "ta" ? r.ta : r.sa}
+                {lang === "ta" ? r.ta : r.en}
               </span>
             </button>
           );

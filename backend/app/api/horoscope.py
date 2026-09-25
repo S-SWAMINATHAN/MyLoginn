@@ -70,7 +70,7 @@ def _build_period_addendum(period: str, rasi_number: int, window_start: str) -> 
         s = SIGN_LABELS[info["moon_sign"]]
         if info["is_chandrashtama"]:
             en = (
-                f"Today the Moon transits {s['sa']}, the 8th house from your Rasi — "
+                f"Today the Moon transits {s['en']}, the 8th house from your Rasi — "
                 f"classically the Chandrashtama period. Handle emotional matters and "
                 f"important decisions with a little extra care today."
             )
@@ -81,7 +81,7 @@ def _build_period_addendum(period: str, rasi_number: int, window_start: str) -> 
             )
         elif info["favorable"]:
             en = (
-                f"Today the Moon transits {s['sa']}, the {info['house_from_moon_rasi']}th "
+                f"Today the Moon transits {s['en']}, the {info['house_from_moon_rasi']}th "
                 f"house from your Rasi — a favorable Chandrabalam position, supporting "
                 f"smooth day-to-day activities."
             )
@@ -92,7 +92,7 @@ def _build_period_addendum(period: str, rasi_number: int, window_start: str) -> 
             )
         else:
             en = (
-                f"Today the Moon transits {s['sa']}, the {info['house_from_moon_rasi']}th "
+                f"Today the Moon transits {s['en']}, the {info['house_from_moon_rasi']}th "
                 f"house from your Rasi — not among the classically favorable Chandrabalam "
                 f"houses, so proceed with a little more patience today."
             )
@@ -109,7 +109,7 @@ def _build_period_addendum(period: str, rasi_number: int, window_start: str) -> 
         for seg in path:
             s = SIGN_LABELS[seg["moon_sign"]]
             segs_en.append(
-                f"{s['sa']} (from {seg['date']}, house {seg['house_from_moon_rasi']}, "
+                f"{s['en']} (from {seg['date']}, house {seg['house_from_moon_rasi']}, "
                 f"{'favorable' if seg['favorable'] else 'neutral/challenging'})"
             )
             segs_ta.append(
@@ -127,7 +127,7 @@ def _build_period_addendum(period: str, rasi_number: int, window_start: str) -> 
             for ing in ingresses:
                 s = SIGN_LABELS[ing["new_sign"]]
                 p_ta = PLANET_LABELS.get(ing["planet"], {}).get("ta", ing["planet"])
-                lines_en.append(f"{ing['planet']} enters {s['sa']} on {ing['date']}")
+                lines_en.append(f"{ing['planet']} enters {s['en']} on {ing['date']}")
                 lines_ta.append(f"{p_ta} {ing['date']} அன்று {s['ta']} ராசியில் பிரவேசிக்கிறார்")
             en = "Key transits this month: " + "; ".join(lines_en) + "."
             ta = "இந்த மாதத்தின் முக்கிய கிரக மாற்றங்கள்: " + "; ".join(lines_ta) + "."
@@ -170,7 +170,9 @@ def get_rasi_horoscope(period: str, rasi_number: int):
     period_en, period_ta = PERIOD_LABELS.get(period, ("Today", "இன்றைய"))
 
     narration_ta, narration_en = generate_rasi_horoscope_narration(
-        sign_info["ta"], sign_info["sa"], period, summary, summary["key_slow_planet_transits"]
+        # The parameter is rasi_en — it was being handed the Sanskrit name,
+        # so every English narration opened with "outlook for Mithuna".
+        sign_info["ta"], sign_info["en"], period, summary, summary["key_slow_planet_transits"]
     )
 
     # NEW: genuinely period-specific fast-mover addendum — this is what
@@ -192,7 +194,13 @@ def get_rasi_horoscope(period: str, rasi_number: int):
 
     return {
         "rasi_number": rasi_number,
+        # English readers expect the Western zodiac name ("Gemini"), not the
+        # Sanskrit one ("Mithuna"). Both are sent: `rasi_en` is what the UI
+        # shows in English, `rasi_sa` keeps the Sanskrit for anything that
+        # wants it, and `rasi` stays as-is so nothing already reading it breaks.
         "rasi": sign_info["sa"],
+        "rasi_sa": sign_info["sa"],
+        "rasi_en": sign_info["en"],
         "rasi_ta": sign_info["ta"],
         "period": period,
         "period_label": period_en,

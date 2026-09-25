@@ -116,9 +116,11 @@ def compute_rasi_love_horoscope(rasi1_num: int, rasi2_num: int) -> Dict[str, Any
     return {
         "rasi1_number": rasi1_num,
         "rasi1": s1["sa"],
+        "rasi1_en": s1["en"],
         "rasi1_ta": s1["ta"],
         "rasi2_number": rasi2_num,
         "rasi2": s2["sa"],
+        "rasi2_en": s2["en"],
         "rasi2_ta": s2["ta"],
         "rasi_porutham": rasi_porutham_ok,
         "rasi_porutham_desc": "Compatible counting distance"

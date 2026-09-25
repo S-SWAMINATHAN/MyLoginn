@@ -87,6 +87,19 @@ export const BabyNameSuggestions: React.FC<BabyNameSuggestionsProps> = ({
   const genderLabel = (g: string) =>
     lang === "ta" ? (g === "boy" ? "ஆண்" : "பெண்") : g === "boy" ? "Boy" : "Girl";
 
+  // See GeneralNameGenerator: two print sheets live on this page, so each
+  // Print tags the body to say which one it wants.
+  const printThisSection = () => {
+    document.body.dataset.printTarget = "nakshatra-names";
+    const clear = () => {
+      delete document.body.dataset.printTarget;
+      window.removeEventListener("afterprint", clear);
+    };
+    window.addEventListener("afterprint", clear);
+    window.print();
+    setTimeout(clear, 1000);
+  };
+
   const handleDownload = async () => {
     const el = sheetRef.current;
     if (!el) return;
@@ -143,7 +156,7 @@ export const BabyNameSuggestions: React.FC<BabyNameSuggestionsProps> = ({
           </span>
           <button
             type="button"
-            onClick={() => window.print()}
+            onClick={printThisSection}
             disabled={shownCount === 0}
             className="btn-secondary text-xs disabled:opacity-50"
             title={lang === "ta" ? "A4 தாளில் அச்சிடுக" : "Print on A4"}

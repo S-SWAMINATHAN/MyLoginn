@@ -280,6 +280,7 @@ def analyze_gochara(
             "planet_ta": p_label.get("ta", planet_name),
             "transit_sign": transit_sign,
             "transit_rasi": sign_info.get("sa", ""),
+            "transit_rasi_en": sign_info.get("en", ""),
             "transit_rasi_ta": sign_info.get("ta", ""),
             "house_from_moon": house_from_moon,
             "degree": p_data["degree"],
@@ -319,6 +320,10 @@ def get_gochara_summary(gochara_results: List[Dict[str, Any]]) -> Dict[str, Any]
                 "planet": r["planet"],
                 "planet_ta": r["planet_ta"],
                 "transit_rasi_ta": r["transit_rasi_ta"],
+                # Carried through so the English UI and narration can show
+                # "Gemini" instead of the Sanskrit or the Tamil name.
+                "transit_rasi": r.get("transit_rasi", ""),
+                "transit_rasi_en": r.get("transit_rasi_en", ""),
                 "house_from_moon": r["house_from_moon"],
                 "net_effect": r["net_effect"],
                 "net_effect_ta": r["net_effect_ta"]

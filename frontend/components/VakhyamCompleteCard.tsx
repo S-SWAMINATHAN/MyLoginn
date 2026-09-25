@@ -1,5 +1,7 @@
 "use client";
 
+import { NorthMiniChart, normaliseStyle, STYLE_LABEL } from "./manuscript/StyledMiniChart";
+import { findLagnaSignNum } from "@/lib/chartLayouts";
 import React, { useState, useRef, useEffect } from "react";
 import { useJathagamTheme } from "@/lib/jathagamTheme";
 import { ChartResponse } from "@/lib/types";
@@ -87,7 +89,11 @@ export const VakhyamCompleteCard: React.FC<VakhyamCompleteCardProps> = ({ chart,
   >("all");
 
   // Chart data shortcuts
-  const d = chart.basic_details || {};
+  const d = chart.basic_details || {};
+  // Chart style chosen on the form. These grids were hard-coded South
+  // Indian, so Kerala / North Indian changed only the live chart above and
+  // never reached this card, its PDF, or its print.
+  const chartStyle = normaliseStyle(chart.chart_style);
   const samp = chart.sampoorana || {};
   const vd = chart.vakhyam_details || samp.vakhyam_details || {};
   const planets = chart.planets || [];
@@ -804,6 +810,11 @@ export const VakhyamCompleteCard: React.FC<VakhyamCompleteCardProps> = ({ chart,
                 <div className="text-xs font-bold mb-1.5 tracking-wider" style={{ color: accentColor }}>
                   ॥ ராசி சக்கரம் (D1) ॥
                 </div>
+                {chartStyle === "north_indian" ? (
+                  <div className="w-full rounded-lg border-2 overflow-hidden bg-white">
+                    <NorthMiniChart planetsBySign={rasiKattam as any} lagnaSign={findLagnaSignNum(rasiKattam as any)} height={220} />
+                  </div>
+                ) : (
                 <div
                   className="grid grid-cols-4 grid-rows-4 w-full h-[220px] border-2 rounded-lg bg-white/80 overflow-hidden"
                   style={{ borderColor: accentColor }}
@@ -825,6 +836,7 @@ export const VakhyamCompleteCard: React.FC<VakhyamCompleteCardProps> = ({ chart,
                   <div className="border p-0.5" style={{ borderColor: `${accentColor}40` }}>{renderSouthIndianSign(7, rasiKattam)}</div>
                   <div className="border p-0.5" style={{ borderColor: `${accentColor}40` }}>{renderSouthIndianSign(6, rasiKattam)}</div>
                 </div>
+                )}
               </div>
 
               {/* Chakra 2: Navamsam (D9) */}
@@ -835,6 +847,11 @@ export const VakhyamCompleteCard: React.FC<VakhyamCompleteCardProps> = ({ chart,
                 <div className="text-xs font-bold mb-1.5 tracking-wider" style={{ color: accentColor }}>
                   ॥ நவாம்சம் (D9) ॥
                 </div>
+                {chartStyle === "north_indian" ? (
+                  <div className="w-full rounded-lg border-2 overflow-hidden bg-white">
+                    <NorthMiniChart planetsBySign={navamsaKattam as any} lagnaSign={findLagnaSignNum(navamsaKattam as any)} height={220} />
+                  </div>
+                ) : (
                 <div
                   className="grid grid-cols-4 grid-rows-4 w-full h-[220px] border-2 rounded-lg bg-white/80 overflow-hidden"
                   style={{ borderColor: accentColor }}
@@ -856,6 +873,7 @@ export const VakhyamCompleteCard: React.FC<VakhyamCompleteCardProps> = ({ chart,
                   <div className="border p-0.5" style={{ borderColor: `${accentColor}40` }}>{renderSouthIndianSign(7, navamsaKattam)}</div>
                   <div className="border p-0.5" style={{ borderColor: `${accentColor}40` }}>{renderSouthIndianSign(6, navamsaKattam)}</div>
                 </div>
+                )}
               </div>
 
               {/* Chakra 3: Drekkana (D3 - Page 8 OCR) */}
@@ -866,6 +884,11 @@ export const VakhyamCompleteCard: React.FC<VakhyamCompleteCardProps> = ({ chart,
                 <div className="text-xs font-bold mb-1.5 tracking-wider" style={{ color: accentColor }}>
                   ॥ 3-திரேக்காணம் (D3) ॥
                 </div>
+                {chartStyle === "north_indian" ? (
+                  <div className="w-full rounded-lg border-2 overflow-hidden bg-white">
+                    <NorthMiniChart planetsBySign={drekkanaKattam as any} lagnaSign={findLagnaSignNum(drekkanaKattam as any)} height={220} />
+                  </div>
+                ) : (
                 <div
                   className="grid grid-cols-4 grid-rows-4 w-full h-[220px] border-2 rounded-lg bg-white/80 overflow-hidden"
                   style={{ borderColor: accentColor }}
@@ -887,6 +910,7 @@ export const VakhyamCompleteCard: React.FC<VakhyamCompleteCardProps> = ({ chart,
                   <div className="border p-0.5" style={{ borderColor: `${accentColor}40` }}>{renderSouthIndianSign(7, drekkanaKattam)}</div>
                   <div className="border p-0.5" style={{ borderColor: `${accentColor}40` }}>{renderSouthIndianSign(6, drekkanaKattam)}</div>
                 </div>
+                )}
               </div>
 
               {/* Chakra 4: Sripati Bhava Chalit (Page 8 OCR) */}
@@ -897,6 +921,11 @@ export const VakhyamCompleteCard: React.FC<VakhyamCompleteCardProps> = ({ chart,
                 <div className="text-xs font-bold mb-1.5 tracking-wider" style={{ color: accentColor }}>
                   ॥ ஸ்ரீபதி-பாவகம் (Chalit) ॥
                 </div>
+                {chartStyle === "north_indian" ? (
+                  <div className="w-full rounded-lg border-2 overflow-hidden bg-white">
+                    <NorthMiniChart planetsBySign={rasiKattam as any} lagnaSign={findLagnaSignNum(rasiKattam as any)} height={220} />
+                  </div>
+                ) : (
                 <div
                   className="grid grid-cols-4 grid-rows-4 w-full h-[220px] border-2 rounded-lg bg-white/80 overflow-hidden"
                   style={{ borderColor: accentColor }}
@@ -918,6 +947,7 @@ export const VakhyamCompleteCard: React.FC<VakhyamCompleteCardProps> = ({ chart,
                   <div className="border p-0.5" style={{ borderColor: `${accentColor}40` }}>{renderSouthIndianSign(7, rasiKattam)}</div>
                   <div className="border p-0.5" style={{ borderColor: `${accentColor}40` }}>{renderSouthIndianSign(6, rasiKattam)}</div>
                 </div>
+                )}
               </div>
             </div>
 

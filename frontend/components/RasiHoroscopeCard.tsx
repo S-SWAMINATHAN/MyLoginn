@@ -34,7 +34,7 @@ export const RasiHoroscopeCard: React.FC<RasiHoroscopeCardProps> = ({ result, la
         <div className="flex items-center justify-center gap-2 mb-1">
           <span className="text-2xl">{isFavorable ? "✨" : isMixed ? "⚖️" : "🔶"}</span>
           <h3 className="text-xl sm:text-2xl font-bold text-brand-fg-strong">
-            {lang === "ta" ? result.rasi_ta : result.rasi}
+            {lang === "ta" ? result.rasi_ta : result.rasi_en || result.rasi}
           </h3>
         </div>
         <p className="text-sm text-lg text-foreground">
@@ -106,7 +106,7 @@ export const RasiHoroscopeCard: React.FC<RasiHoroscopeCardProps> = ({ result, la
               >
                 <div className="font-bold text-brand-fg-strong mb-1">
                   {lang === "ta" ? kt.planet_ta : kt.planet} —{" "}
-                  {lang === "ta" ? kt.transit_rasi_ta : kt.transit_rasi || kt.transit_rasi_ta} (
+                  {lang === "ta" ? kt.transit_rasi_ta : kt.transit_rasi_en || kt.transit_rasi || kt.transit_rasi_ta} (
                   {kt.house_from_moon}
                   {lang === "ta" ? "-ஆம் இடம்" : "th house"})
                 </div>

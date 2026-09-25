@@ -38,7 +38,7 @@ def general_names(
                                   description="boy | girl | unisex; omit for all"),
     limit: int = Query(60, ge=1, le=500,
                        description="Max rows. Returns min(limit, matching rows)."),
-    search: Optional[str] = Query(None, description="Free text, either script"),
+    religion: Optional[str] = Query(None, description="hindu | christian | muslim"),
 ):
     """Up to `limit` real names starting with `letter`.
 
@@ -60,7 +60,7 @@ def general_names(
         )
 
     try:
-        rows = name_db.fetch_by_letter(letter, gender=gender, limit=limit, search=search)
+        rows = name_db.fetch_by_letter(letter, gender=gender, limit=limit, religion=religion)
         counts = name_db.letter_counts(gender=gender)
     except Exception as exc:
         raise HTTPException(
@@ -72,7 +72,7 @@ def general_names(
     return {
         "letter": letter,
         "gender": gender or None,
-        "search": search or None,
+        "religion": religion or None,
         "count": len(rows),
         # What the table actually holds, versus what was asked for — so the UI
         # can say "100 of 100" instead of implying the limit was met.
@@ -108,7 +108,7 @@ def available_letters(gender: Optional[str] = Query(None)):
 def names_by_rasi(
     rasi: int = Query(..., ge=1, le=12, description="1 = Mesha … 12 = Meena"),
     gender: Optional[str] = Query(None),
-    search: Optional[str] = Query(None),
+    religion: Optional[str] = Query(None),
     limit: int = Query(60, ge=1, le=500),
 ):
     """Names for a zodiac sign.
@@ -125,7 +125,7 @@ def names_by_rasi(
             detail=f"`gender` must be one of: boy, girl, unisex. Got '{gender}'.",
         )
     try:
-        return name_db.fetch_by_rasi(rasi, gender=gender, search=search, limit=limit)
+        return name_db.fetch_by_rasi(rasi, gender=gender, religion=religion, limit=limit)
     except Exception as exc:
         raise HTTPException(
             status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
@@ -141,9 +141,35 @@ def rasi_list():
             {
                 "rasi": n,
                 "rasi_en": name_db.RASI_LABELS[n][0],
+                "rasi_sa": name_db.RASI_LABELS[n][2],
                 "rasi_ta": name_db.RASI_LABELS[n][1],
                 "syllables": name_db.syllables_for_rasi(n),
             }
             for n in range(1, 13)
+        ]
+    }
+
+
+@router.get("/religions")
+def religion_options():
+    """Religions with their real name counts.
+
+    The counts are returned so the dropdown can show them. They are very
+    uneven, and deliberately not hidden: Nakshatra-syllable naming is a Hindu
+    convention, so Christian and Muslim coverage is thin. Showing the number
+    beside each option is more honest than letting someone pick one and get
+    an empty page.
+    """
+    counts = name_db.religion_counts()
+    return {
+        "options": [
+            {"value": "", "label_en": "All religions", "label_ta": "அனைத்து மதங்களும்",
+             "count": sum(counts.values())},
+            {"value": "hindu", "label_en": "Hindu", "label_ta": "இந்து",
+             "count": counts.get("hindu", 0)},
+            {"value": "christian", "label_en": "Christian", "label_ta": "கிறிஸ்தவம்",
+             "count": counts.get("christian", 0)},
+            {"value": "muslim", "label_en": "Muslim", "label_ta": "இஸ்லாம்",
+             "count": counts.get("muslim", 0)},
         ]
     }
