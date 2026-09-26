@@ -32,13 +32,13 @@ import { cn } from "@/lib/cn";
 type NavUser = ProfileUser | null;
 
 const primaryLinks = [
-  { href: "/courses", label: "Courses" },
-  { href: "/internships", label: "Internships" },
-  { href: "/projects", label: "Projects" },
+  { href: "/courses", label: "Courses", desc: "Learn job-ready skills" },
+  { href: "/tutoring", label: "Tutoring", desc: "1:1 mentor sessions, live classes" },
 ];
 
 const serviceLinks = [
-  { href: "/tutoring", label: "Tutoring", desc: "1:1 mentor sessions, live classes" },
+  { href: "/internships", label: "Internship", desc: "Get real-world experience" },
+  { href: "/projects", label: "Project", desc: "Build your portfolio" },
   { href: "/services/digital-marketing", label: "Digital Marketing", desc: "AI-driven growth campaigns" },
   { href: "/services/app-web-development", label: "App & Web Development", desc: "Full-stack builds, premium UX" },
 ];
@@ -53,12 +53,12 @@ type MobileLink = {
 const mobileMainLinks: MobileLink[] = [
   { href: "/", label: "Home", desc: "Back to the start", icon: AnimatedHome },
   { href: "/courses", label: "Courses", desc: "Learn job-ready skills", icon: AnimatedBook },
-  { href: "/internships", label: "Internships", desc: "Real-world experience", icon: AnimatedBriefcase },
-  { href: "/projects", label: "Projects", desc: "Build your portfolio", icon: AnimatedFolder },
+  { href: "/tutoring", label: "Tutoring", desc: "1:1 mentor sessions, live classes", icon: AnimatedGraduation },
 ];
 
 const mobileServiceLinks: MobileLink[] = [
-  { href: "/tutoring", label: "Tutoring", desc: "1:1 mentor sessions, live classes", icon: AnimatedGraduation },
+  { href: "/internships", label: "Internship", desc: "Get real-world experience", icon: AnimatedBriefcase },
+  { href: "/projects", label: "Project", desc: "Build your portfolio", icon: AnimatedFolder },
   {
     href: "/services/digital-marketing",
     label: "Digital Marketing",
@@ -75,7 +75,7 @@ const mobileServiceLinks: MobileLink[] = [
 
 const mobileContactLink: MobileLink = {
   href: "/contact",
-  label: "Contact",
+  label: "Contact Us",
   desc: "We reply fast",
   icon: AnimatedMail,
 };
@@ -85,6 +85,7 @@ export function Navbar({ user }: { user: NavUser }) {
   const [scrolled, setScrolled] = useState(false);
   const [mobileOpen, setMobileOpen] = useState(false);
   const [servicesOpen, setServicesOpen] = useState(false);
+  const [learnOpen, setLearnOpen] = useState(false);
   const isHome = pathname === "/";
 
   useEffect(() => {
@@ -122,11 +123,15 @@ export function Navbar({ user }: { user: NavUser }) {
             Home
           </NavHeaderLink>
 
-          {primaryLinks.map((link) => (
-            <NavHeaderLink key={link.href} href={link.href} active={pathname === link.href}>
-              {link.label}
-            </NavHeaderLink>
-          ))}
+          <div className="group relative" onMouseEnter={() => setLearnOpen(true)} onMouseLeave={() => setLearnOpen(false)}>
+            <button aria-expanded={learnOpen} className="relative flex items-center gap-1 rounded-full px-4 py-2 text-sm font-medium text-foreground/80 transition-colors hover:text-foreground cursor-pointer" onClick={() => setLearnOpen((s) => !s)}>
+              Learn <ChevronDown className={cn("h-4 w-4 transition-transform duration-300", learnOpen && "rotate-180")} />
+              <span className={cn("pointer-events-none absolute inset-x-3.5 -bottom-0.5 h-[3px] rounded-full brand-gradient-bg transition-transform duration-300", (learnOpen || primaryLinks.some((l) => pathname === l.href || pathname.startsWith(`${l.href}/`))) ? "scale-x-100" : "scale-x-0 group-hover:scale-x-100")} />
+            </button>
+            <AnimatePresence>{learnOpen && <motion.div initial={{ opacity: 0, y: 8, scale: 0.97 }} animate={{ opacity: 1, y: 0, scale: 1 }} exit={{ opacity: 0, y: 8, scale: 0.97 }} transition={{ duration: 0.18, ease: [0.16, 1, 0.3, 1] }} className="absolute left-0 top-full mt-2 w-72 rounded-2xl border border-border-soft bg-surface p-2 shadow-[var(--shadow-lift)]">
+              {primaryLinks.map((item) => <Link key={item.href} href={item.href} className="block rounded-xl px-3.5 py-2.5 transition-colors hover:bg-surface-2"><p className="text-sm font-medium">{item.label}</p><p className="text-xs text-muted">{item.desc}</p></Link>)}
+            </motion.div>}</AnimatePresence>
+          </div>
 
           <div
             className="group relative"
@@ -171,7 +176,7 @@ export function Navbar({ user }: { user: NavUser }) {
           </div>
 
           <NavHeaderLink href="/contact" active={pathname === "/contact"}>
-            Contact
+              Contact Us
           </NavHeaderLink>
         </div>
 
@@ -348,13 +353,19 @@ function MobileMenu({
               animate="open"
               className="relative max-h-[calc(100dvh-6.5rem)] overflow-y-auto overscroll-contain px-4 pb-5 pt-4"
             >
-              <motion.p variants={itemVariants} className="px-2 pb-2 text-[11px] font-bold uppercase tracking-[0.16em] text-muted">
-                Explore
-              </motion.p>
+              <div className="flex flex-col gap-1">
+                <MobileNavItem link={mobileMainLinks[0]} active={pathname === "/"} />
+              </div>
+
+              <motion.div variants={itemVariants} className="my-3 flex items-center gap-3 px-2">
+                <span className="h-px flex-1 bg-gradient-to-r from-transparent via-border-soft to-transparent" />
+                <span className="text-[11px] font-bold uppercase tracking-[0.16em] brand-gradient-text">Learn</span>
+                <span className="h-px flex-1 bg-gradient-to-r from-transparent via-border-soft to-transparent" />
+              </motion.div>
 
               <div className="flex flex-col gap-1">
-                {mobileMainLinks.map((link) => (
-                  <MobileNavItem key={link.href} link={link} active={pathname === link.href} />
+                {mobileMainLinks.slice(1).map((link) => (
+                  <MobileNavItem key={link.href} link={link} active={pathname === link.href || pathname.startsWith(`${link.href}/`)} />
                 ))}
               </div>
 
@@ -366,9 +377,9 @@ function MobileMenu({
 
               <div className="flex flex-col gap-1">
                 {mobileServiceLinks.map((link) => (
-                  <MobileNavItem key={link.href} link={link} active={pathname === link.href} />
+                  <MobileNavItem key={link.href} link={link} active={pathname === link.href || pathname.startsWith(`${link.href}/`)} />
                 ))}
-                <MobileNavItem link={mobileContactLink} active={pathname === mobileContactLink.href} />
+                <MobileNavItem link={mobileContactLink} active={pathname === mobileContactLink.href || pathname.startsWith(`${mobileContactLink.href}/`)} />
               </div>
 
               <motion.div variants={itemVariants} className="mt-4 flex flex-col gap-2 border-t border-border-soft pt-4">
