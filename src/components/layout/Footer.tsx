@@ -172,14 +172,16 @@ export function Footer() {
           <Link href="/" className="inline-flex items-center transition-transform duration-300 hover:scale-[1.03]">
             <LogoBadge className="h-9 w-auto" />
           </Link>
-          <p className="mt-3 text-sm font-medium text-muted">MyLoginn Tech Private Limited</p>
-          <div className="mt-3 flex flex-wrap gap-x-3 gap-y-1.5">
-            {PILLARS.map((p, i) => (
-              <span key={p} className="inline-flex items-center gap-3 text-[11px] font-bold uppercase tracking-[0.18em] text-brand-500">
-                {p}
-                {i < PILLARS.length - 1 && <span className="text-border-soft">&middot;</span>}
-              </span>
-            ))}
+          <div className="mt-3 w-fit max-w-full">
+            <p className="text-sm font-medium text-muted">MyLoginn Tech Private Limited</p>
+            <div className="mt-3 flex flex-wrap gap-x-1.5 gap-y-1">
+              {PILLARS.map((p, i) => (
+                <span key={p} className="inline-flex items-center gap-1.5 text-[9px] font-bold uppercase tracking-[0.1em] text-brand-500">
+                  {p}
+                  {i < PILLARS.length - 1 && <span className="text-border-soft">&middot;</span>}
+                </span>
+              ))}
+            </div>
           </div>
         </Reveal>
 
