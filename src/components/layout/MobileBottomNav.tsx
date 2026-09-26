@@ -10,8 +10,6 @@ import { AnimatedBook } from "@/components/ui/icons/AnimatedBook";
 import { AnimatedBriefcase } from "@/components/ui/icons/AnimatedBriefcase";
 import { AnimatedFolder } from "@/components/ui/icons/AnimatedFolder";
 import { AnimatedLayers } from "@/components/ui/icons/AnimatedLayers";
-import { AnimatedMail } from "@/components/ui/icons/AnimatedMail";
-import { AnimatedUser } from "@/components/ui/icons/AnimatedUser";
 import { AnimatedGraduation } from "@/components/ui/icons/AnimatedGraduation";
 import { AnimatedMegaphone } from "@/components/ui/icons/AnimatedMegaphone";
 import { AnimatedCode } from "@/components/ui/icons/AnimatedCode";
@@ -33,30 +31,27 @@ const servicesPopupLinks: { href: string; label: string; desc: string; icon: Ico
   { href: "/services/app-web-development", label: "App & Web Development", desc: "Full-stack builds, premium UX", icon: AnimatedCode },
 ];
 
+const learnPopupLinks: { href: string; label: string; desc: string; icon: IconComponent }[] = [
+  { href: "/courses", label: "Courses", desc: "Learn job-ready skills", icon: AnimatedBook },
+  { href: "/internships", label: "Internships", desc: "Get real-world experience", icon: AnimatedBriefcase },
+  { href: "/projects", label: "Projects", desc: "Build your portfolio", icon: AnimatedFolder },
+];
+
+const isLearnPath = (p: string) => p.startsWith("/courses") || p.startsWith("/internships") || p.startsWith("/projects");
 const isServicesPath = (p: string) => p.startsWith("/services") || p === "/tutoring";
 
-export function MobileBottomNav({ loggedIn }: { loggedIn: boolean }) {
+export function MobileBottomNav() {
   const pathname = usePathname();
-  const [servicesOpen, setServicesOpen] = useState(false);
+  const [openMenu, setOpenMenu] = useState<"learn" | "services" | null>(null);
 
   useEffect(() => {
-    setServicesOpen(false);
+    setOpenMenu(null);
   }, [pathname]);
 
   const tabs: TabItem[] = [
     { key: "home", label: "Home", icon: AnimatedHome, href: "/", isActive: (p) => p === "/" },
-    { key: "courses", label: "Courses", icon: AnimatedBook, href: "/courses", isActive: (p) => p.startsWith("/courses") },
-    { key: "internships", label: "Internship", icon: AnimatedBriefcase, href: "/internships", isActive: (p) => p.startsWith("/internships") },
-    { key: "projects", label: "Projects", icon: AnimatedFolder, href: "/projects", isActive: (p) => p.startsWith("/projects") },
+    { key: "learn", label: "Learn", icon: AnimatedBook, isActive: isLearnPath },
     { key: "services", label: "Services", icon: AnimatedLayers, isActive: isServicesPath },
-    { key: "contact", label: "Contact", icon: AnimatedMail, href: "/contact", isActive: (p) => p.startsWith("/contact") },
-    {
-      key: "profile",
-      label: "Profile",
-      icon: AnimatedUser,
-      href: loggedIn ? "/dashboard" : "/login",
-      isActive: (p) => p.startsWith("/dashboard") || p.startsWith("/login") || p.startsWith("/signup"),
-    },
   ];
 
   return (
@@ -64,16 +59,16 @@ export function MobileBottomNav({ loggedIn }: { loggedIn: boolean }) {
       {/* Spacer so page content and footer aren't hidden behind the fixed bar */}
       <div className="h-[4.5rem] lg:hidden" aria-hidden />
 
-      {/* Services popup */}
+      {/* Grouped navigation popup */}
       <AnimatePresence>
-        {servicesOpen && (
+        {openMenu && (
           <div className="lg:hidden">
             <motion.div
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
               exit={{ opacity: 0 }}
               transition={{ duration: 0.2 }}
-              onClick={() => setServicesOpen(false)}
+              onClick={() => setOpenMenu(null)}
               className="fixed inset-0 z-40 bg-black/40 backdrop-blur-sm"
             />
             <motion.div
@@ -86,15 +81,16 @@ export function MobileBottomNav({ loggedIn }: { loggedIn: boolean }) {
             >
               <div className="pointer-events-none absolute -top-20 -right-16 h-44 w-44 rounded-full bg-[radial-gradient(circle,rgba(31,86,214,0.2),transparent_70%)]" />
               <p className="px-3.5 pb-1 pt-2 text-[11px] font-bold uppercase tracking-[0.16em] brand-gradient-text">
-                Services
+                {openMenu === "learn" ? "Learn" : "Services"}
               </p>
-              {servicesPopupLinks.map((s) => {
+              {(openMenu === "learn" ? learnPopupLinks : servicesPopupLinks).map((s) => {
                 const Icon = s.icon;
-                const active = pathname === s.href;
+                const active = pathname === s.href || pathname.startsWith(`${s.href}/`);
                 return (
                   <Link
                     key={s.href}
                     href={s.href}
+                    onClick={() => setOpenMenu(null)}
                     className={cn(
                       "group flex items-center gap-3.5 rounded-2xl px-3 py-2.5 transition-all duration-200 active:scale-[0.98]",
                       active
@@ -123,13 +119,19 @@ export function MobileBottomNav({ loggedIn }: { loggedIn: boolean }) {
         className="glass-nav fixed inset-x-0 bottom-0 z-50 border-t border-border-soft shadow-[0_-8px_30px_rgba(15,15,35,0.08)] lg:hidden"
         style={{ paddingBottom: "env(safe-area-inset-bottom)" }}
       >
-        <div className="mx-auto grid h-[4.5rem] max-w-3xl grid-cols-7 items-stretch px-1">
+        <div className="mx-auto grid h-[4.5rem] max-w-lg grid-cols-3 items-stretch px-3">
           {tabs.map((tab) => {
-            const active = tab.key === "services" ? servicesOpen || isServicesPath(pathname) : tab.isActive(pathname);
+            const active = openMenu === tab.key || tab.isActive(pathname);
             return tab.href ? (
               <TabButton key={tab.key} tab={tab} active={active} href={tab.href} />
             ) : (
-              <TabButton key={tab.key} tab={tab} active={active} onClick={() => setServicesOpen((o) => !o)} />
+              <TabButton
+                key={tab.key}
+                tab={tab}
+                active={active}
+                expanded={openMenu === tab.key}
+                onClick={() => setOpenMenu((menu) => (menu === tab.key ? null : tab.key as "learn" | "services"))}
+              />
             );
           })}
         </div>
@@ -143,11 +145,13 @@ function TabButton({
   active,
   href,
   onClick,
+  expanded = false,
 }: {
   tab: TabItem;
   active: boolean;
   href?: string;
   onClick?: () => void;
+  expanded?: boolean;
 }) {
   const Icon = tab.icon;
   const content = (
@@ -168,7 +172,7 @@ function TabButton({
       </motion.span>
       <span
         className={cn(
-          "relative max-w-full truncate text-[9px] font-semibold leading-none tracking-tight transition-colors duration-200",
+          "relative max-w-full truncate text-[10px] font-semibold leading-none transition-colors duration-200",
           active ? "text-brand-500" : "text-muted"
         )}
       >
@@ -185,7 +189,7 @@ function TabButton({
       {content}
     </Link>
   ) : (
-    <button type="button" onClick={onClick} className={className} aria-expanded={active}>
+    <button type="button" onClick={onClick} className={className} aria-expanded={expanded}>
       {content}
     </button>
   );
