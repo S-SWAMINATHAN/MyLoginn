@@ -147,6 +147,7 @@ export function ProjectsExplorer({ projects }: { projects: ShowcaseProject[] }) 
       const maxScroll = el.scrollWidth - el.clientWidth;
       if (maxScroll <= 0) return;
       if (Math.abs(e.deltaY) <= Math.abs(e.deltaX)) return;
+      if ((e.deltaY < 0 && el.scrollLeft <= 0) || (e.deltaY > 0 && el.scrollLeft >= maxScroll - 1)) return;
       e.preventDefault();
       el.scrollLeft += e.deltaY;
     };

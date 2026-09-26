@@ -45,8 +45,16 @@ export function ProjectRequestModal() {
   useEffect(() => {
     if (!service) return;
     const close = (event: KeyboardEvent) => event.key === "Escape" && setService(null);
-    document.body.style.overflow = "hidden"; window.addEventListener("keydown", close);
-    return () => { document.body.style.overflow = ""; window.removeEventListener("keydown", close); };
+    const previousBodyOverflow = document.body.style.overflow;
+    const previousHtmlOverflow = document.documentElement.style.overflow;
+    document.body.style.overflow = "hidden";
+    document.documentElement.style.overflow = "hidden";
+    window.addEventListener("keydown", close);
+    return () => {
+      document.body.style.overflow = previousBodyOverflow;
+      document.documentElement.style.overflow = previousHtmlOverflow;
+      window.removeEventListener("keydown", close);
+    };
   }, [service]);
 
   const selected = useWatch({ control, name: "requirements" }) ?? [];

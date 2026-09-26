@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { useEffect, useState, type ReactNode } from "react";
+import { useEffect, useRef, useState, type ReactNode } from "react";
 import { motion, AnimatePresence, type Variants } from "framer-motion";
 import {
   ChevronDown,
@@ -28,7 +28,6 @@ import { ProfileMenu, type ProfileUser } from "./ProfileMenu";
 import { Button } from "@/components/ui/Button";
 import { LogoLockup } from "@/components/ui/LogoBadge";
 import { cn } from "@/lib/cn";
-import { usePageScrollProgress } from "@/lib/usePageScrollProgress";
 
 type NavUser = ProfileUser | null;
 
@@ -87,7 +86,6 @@ export function Navbar({ user }: { user: NavUser }) {
   const [mobileOpen, setMobileOpen] = useState(false);
   const [servicesOpen, setServicesOpen] = useState(false);
   const isHome = pathname === "/";
-  const storyProgress = usePageScrollProgress();
 
   useEffect(() => {
     const onScroll = () => setScrolled(window.scrollY > 12);
@@ -212,14 +210,45 @@ export function Navbar({ user }: { user: NavUser }) {
       <MobileMenu open={mobileOpen} pathname={pathname} user={user} onClose={() => setMobileOpen(false)} />
 
       {isHome && (
-        <div className="h-[2.5px] w-full bg-transparent" aria-hidden>
-          <div
-            className="h-full brand-gradient-bg"
-            style={{ width: `${storyProgress * 100}%`, transition: "width 120ms linear" }}
-          />
-        </div>
+        <PageScrollProgress />
       )}
     </header>
+  );
+}
+
+function PageScrollProgress() {
+  const progressRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    let frame = 0;
+    const update = () => {
+      frame = 0;
+      const scrollable = document.documentElement.scrollHeight - window.innerHeight;
+      const progress = scrollable > 0 ? Math.min(1, Math.max(0, window.scrollY / scrollable)) : 0;
+      if (progressRef.current) progressRef.current.style.transform = `scaleX(${progress})`;
+    };
+    const onScroll = () => {
+      if (!frame) frame = window.requestAnimationFrame(update);
+    };
+
+    update();
+    window.addEventListener("scroll", onScroll, { passive: true });
+    window.addEventListener("resize", onScroll);
+    return () => {
+      if (frame) window.cancelAnimationFrame(frame);
+      window.removeEventListener("scroll", onScroll);
+      window.removeEventListener("resize", onScroll);
+    };
+  }, []);
+
+  return (
+    <div className="h-[2.5px] w-full bg-transparent" aria-hidden>
+      <div
+        ref={progressRef}
+        className="h-full origin-left brand-gradient-bg"
+        style={{ transform: "scaleX(0)" }}
+      />
+    </div>
   );
 }
 

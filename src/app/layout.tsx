@@ -59,7 +59,7 @@ export default async function RootLayout({
             </main>
             <HideOnAdmin>
               <Footer />
-              <MobileBottomNav loggedIn={Boolean(user)} />
+              <MobileBottomNav />
               <AiAgentWidget />
               <ProjectRequestModal />
             </HideOnAdmin>

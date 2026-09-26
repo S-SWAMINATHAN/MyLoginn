@@ -1,4 +1,3 @@
-import { Preloader } from "@/components/experience/Preloader";
 import { StoryStage } from "@/components/experience/StoryStage";
 import { Hero } from "@/components/sections/Hero";
 import { Ecosystem } from "@/components/sections/Ecosystem";
@@ -13,7 +12,6 @@ import { ProjectShowcase } from "@/components/sections/ProjectShowcase";
 export default function Home() {
   return (
     <>
-      <Preloader />
       <StoryStage>
         <Hero />
         <Ecosystem />
