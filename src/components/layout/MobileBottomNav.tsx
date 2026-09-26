@@ -13,6 +13,7 @@ import { AnimatedLayers } from "@/components/ui/icons/AnimatedLayers";
 import { AnimatedGraduation } from "@/components/ui/icons/AnimatedGraduation";
 import { AnimatedMegaphone } from "@/components/ui/icons/AnimatedMegaphone";
 import { AnimatedCode } from "@/components/ui/icons/AnimatedCode";
+import { AnimatedMail } from "@/components/ui/icons/AnimatedMail";
 import { cn } from "@/lib/cn";
 
 type IconComponent = ComponentType<{ className?: string; style?: CSSProperties }>;
@@ -26,19 +27,19 @@ type TabItem = {
 };
 
 const servicesPopupLinks: { href: string; label: string; desc: string; icon: IconComponent }[] = [
-  { href: "/tutoring", label: "Tutoring", desc: "1:1 mentor sessions, live classes", icon: AnimatedGraduation },
+  { href: "/internships", label: "Internship", desc: "Get real-world experience", icon: AnimatedBriefcase },
+  { href: "/projects", label: "Project", desc: "Build your portfolio", icon: AnimatedFolder },
   { href: "/services/digital-marketing", label: "Digital Marketing", desc: "AI-driven growth campaigns", icon: AnimatedMegaphone },
   { href: "/services/app-web-development", label: "App & Web Development", desc: "Full-stack builds, premium UX", icon: AnimatedCode },
 ];
 
 const learnPopupLinks: { href: string; label: string; desc: string; icon: IconComponent }[] = [
   { href: "/courses", label: "Courses", desc: "Learn job-ready skills", icon: AnimatedBook },
-  { href: "/internships", label: "Internships", desc: "Get real-world experience", icon: AnimatedBriefcase },
-  { href: "/projects", label: "Projects", desc: "Build your portfolio", icon: AnimatedFolder },
+  { href: "/tutoring", label: "Tutoring", desc: "1:1 mentor sessions, live classes", icon: AnimatedGraduation },
 ];
 
-const isLearnPath = (p: string) => p.startsWith("/courses") || p.startsWith("/internships") || p.startsWith("/projects");
-const isServicesPath = (p: string) => p.startsWith("/services") || p === "/tutoring";
+const isLearnPath = (p: string) => p.startsWith("/courses") || p === "/tutoring";
+const isServicesPath = (p: string) => p.startsWith("/services") || p.startsWith("/internships") || p.startsWith("/projects");
 
 export function MobileBottomNav() {
   const pathname = usePathname();
@@ -52,6 +53,7 @@ export function MobileBottomNav() {
     { key: "home", label: "Home", icon: AnimatedHome, href: "/", isActive: (p) => p === "/" },
     { key: "learn", label: "Learn", icon: AnimatedBook, isActive: isLearnPath },
     { key: "services", label: "Services", icon: AnimatedLayers, isActive: isServicesPath },
+    { key: "contact", label: "Contact Us", icon: AnimatedMail, href: "/contact", isActive: (p) => p === "/contact" },
   ];
 
   return (
@@ -119,7 +121,7 @@ export function MobileBottomNav() {
         className="glass-nav fixed inset-x-0 bottom-0 z-50 border-t border-border-soft shadow-[0_-8px_30px_rgba(15,15,35,0.08)] lg:hidden"
         style={{ paddingBottom: "env(safe-area-inset-bottom)" }}
       >
-        <div className="mx-auto grid h-[4.5rem] max-w-lg grid-cols-3 items-stretch px-3">
+        <div className="mx-auto grid h-[4.5rem] max-w-lg grid-cols-4 items-stretch px-2">
           {tabs.map((tab) => {
             const active = openMenu === tab.key || tab.isActive(pathname);
             return tab.href ? (

@@ -1,10 +1,12 @@
 "use client";
 
 import { useRef, useState, type RefObject } from "react";
-import gsap from "gsap";
+import { gsap } from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
 import { useIsomorphicLayoutEffect } from "./useIsomorphicLayoutEffect";
 import { useReducedMotion } from "./useReducedMotion";
+
+gsap.registerPlugin(ScrollTrigger);
 
 /**
  * Ties a discrete "active step" index to how far a DOM node has scrolled
