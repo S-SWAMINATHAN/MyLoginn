@@ -2,7 +2,7 @@
 
 import React, { useMemo, useState } from "react";
 import { MuhurthaRequest, MuhurthaEventType } from "@/lib/types";
-import { CalendarSearch, Heart, Compass, Sparkles, AlertTriangle } from "lucide-react";
+import { CalendarSearch, Heart, Compass, Sparkles, AlertTriangle, ChevronDown } from "lucide-react";
 import { LocationPicker } from "./LocationPicker";
 import { TimeInput12h } from "./TimeInput12h";
 
@@ -179,27 +179,30 @@ export const MuhurthaForm: React.FC<MuhurthaFormProps> = ({
     onSubmit(payload);
   };
 
-  const tabBtn = (
-    key: MuhurthaEventType,
-    label: string,
-    Icon: React.ComponentType<{ className?: string }>
-  ) => (
-    <button
-      key={key}
-      type="button"
-      onClick={() => setEventType(key)}
-      className={`px-3 py-1.5 rounded-lg font-semibold transition-all inline-flex items-center gap-1.5 ${
-        eventType === key ? "brand-gradient-bg text-white shadow-soft" : "text-muted hover:text-foreground"
-      }`}
-    >
-      <Icon className="w-3.5 h-3.5" />
-      {label}
-    </button>
-  );
+  /**
+   * Event type as a dropdown rather than three side-by-side buttons.
+   *
+   * The icon has to sit inside the control while a native <select> renders the
+   * options, so the select is laid over the box transparently: the icon and
+   * the chosen label are drawn underneath and stay aligned, and the options
+   * list is still the browser's own (correct keyboard and touch behaviour,
+   * and it cannot overflow the card on a narrow screen).
+   */
+  const EVENT_OPTIONS: Array<{
+    key: MuhurthaEventType;
+    label: string;
+    Icon: React.ComponentType<{ className?: string }>;
+  }> = [
+    { key: "general", label: lang === "ta" ? "பொது" : "General", Icon: Sparkles },
+    { key: "marriage", label: lang === "ta" ? "திருமணம்" : "Marriage", Icon: Heart },
+    { key: "travel", label: lang === "ta" ? "பயணம்" : "Travel", Icon: Compass },
+  ];
+  const selectedEvent = EVENT_OPTIONS.find((o) => o.key === eventType) || EVENT_OPTIONS[0];
+  const SelectedIcon = selectedEvent.Icon;
 
   return (
     <form onSubmit={handleSubmit} className="card p-6 sm:p-8">
-      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-6 pb-4 border-b border-border-soft">
+      <div className="flex flex-col sm:flex-row sm:items-end justify-between gap-4 mb-6 pb-4 border-b border-border-soft">
         <div>
           <h2
             className="text-xl sm:text-2xl font-bold flex items-center gap-2"
@@ -215,12 +218,34 @@ export const MuhurthaForm: React.FC<MuhurthaFormProps> = ({
           </p>
         </div>
 
-        <div
-          className="flex items-center rounded-xl border border-line bg-surface-2 p-1 text-xs"
-        >
-          {tabBtn("general", lang === "ta" ? "பொது" : "General", Sparkles)}
-          {tabBtn("marriage", lang === "ta" ? "திருமணம்" : "Marriage", Heart)}
-          {tabBtn("travel", lang === "ta" ? "பயணம்" : "Travel", Compass)}
+        <div className="w-full sm:w-auto shrink-0">
+          <label htmlFor="muhurtha-event-type" className="field-label">
+            {lang === "ta" ? "நிகழ்வு வகை" : "Event type"}
+          </label>
+          <div className="relative w-full sm:w-56">
+            {/* Visible face: icon, label, chevron — all vertically centred. */}
+            <div className="flex items-center gap-2 rounded-xl border border-line bg-surface px-3 py-2.5 text-sm">
+              <SelectedIcon className="h-4 w-4 shrink-0 text-brand-fg" />
+              <span className="flex-1 truncate font-semibold text-foreground">
+                {selectedEvent.label}
+              </span>
+              <ChevronDown className="h-4 w-4 shrink-0 text-muted" />
+            </div>
+            {/* The real control, transparent on top of that face. */}
+            <select
+              id="muhurtha-event-type"
+              value={eventType}
+              onChange={(e) => setEventType(e.target.value as MuhurthaEventType)}
+              aria-label={lang === "ta" ? "நிகழ்வு வகை" : "Event type"}
+              className="absolute inset-0 h-full w-full cursor-pointer opacity-0"
+            >
+              {EVENT_OPTIONS.map((o) => (
+                <option key={o.key} value={o.key}>
+                  {o.label}
+                </option>
+              ))}
+            </select>
+          </div>
         </div>
       </div>
 

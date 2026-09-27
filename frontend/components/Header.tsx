@@ -60,7 +60,7 @@ export const Header: React.FC<HeaderProps> = ({ lang, setLang }) => {
         {/* Bug 2: `min-w-0` + `shrink` let the brand give up width first, so the
             nav keeps its natural width instead of wrapping. */}
         <Link href="/" className="group flex min-w-0 shrink items-center gap-3">
-          <span className="relative h-11 w-11 shrink-0 overflow-hidden rounded-xl bg-brand-900 shadow-soft ring-1 ring-brand-400/30 transition-transform group-hover:scale-105">
+          <span className="relative h-11 w-11 shrink-0 overflow-hidden rounded-xl bg-white shadow-soft ring-1 ring-brand-500/20 transition-transform group-hover:scale-105">
             {/* eslint-disable-next-line @next/next/no-img-element */}
             <img src="/logo-mark.png" alt="MyLoginn Astrology" width={44} height={44} className="h-full w-full object-cover" />
           </span>

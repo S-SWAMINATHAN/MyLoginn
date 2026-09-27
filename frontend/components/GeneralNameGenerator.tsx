@@ -155,6 +155,26 @@ export const GeneralNameGenerator: React.FC<Props> = ({ lang }) => {
     [view, religion]
   );
 
+  /**
+   * Switching browse mode starts that mode from scratch.
+   *
+   * Both modes write into one result list, so without this the letter's names
+   * stayed on screen under the zodiac picker and read as that sign's names.
+   * The selection, syllable line and any error are cleared too, so nothing
+   * from the previous mode survives the switch.
+   */
+  const switchMode = (m: "letter" | "rasi") => {
+    if (m === mode) return;
+    setMode(m);
+    setRows([]);
+    setAvailable(0);
+    setError(null);
+    setLetter(null);
+    setRasi(null);
+    setActiveSyllables("");
+    setRasiLabel("");
+  };
+
   const pickLetter = (l: string) => {
     setMode("letter");
     setLetter(l);
@@ -290,7 +310,7 @@ export const GeneralNameGenerator: React.FC<Props> = ({ lang }) => {
             <button
               key={m}
               type="button"
-              onClick={() => setMode(m as "letter" | "rasi")}
+              onClick={() => switchMode(m as "letter" | "rasi")}
               className={`px-4 py-2 text-xs font-semibold transition-all ${
                 mode === m ? "bg-brand-600 text-white" : "bg-surface text-foreground hover:bg-surface-2"
               }`}
@@ -315,11 +335,13 @@ export const GeneralNameGenerator: React.FC<Props> = ({ lang }) => {
                       : "bg-surface-2 border-line text-foreground hover:border-brand-500"
                   }`}
                 >
+                  {/* One script per language, same rule as the name cards.
+                      The second line used to show `rasi_sa || rasi_ta`, so on
+                      any backend that does not send the Sanskrit name it fell
+                      back to Tamil — putting மிதுனம் under "Gemini". Showing
+                      only the selected language cannot fall back at all. */}
                   <div className="text-sm font-bold">
                     {view === "ta" ? r.rasi_ta : r.rasi_en}
-                  </div>
-                  <div className={`text-[10px] ${rasi === r.rasi ? "text-white/80" : "text-muted"}`}>
-                    {view === "ta" ? r.rasi_en : r.rasi_sa || r.rasi_ta}
                   </div>
                 </button>
               ))}

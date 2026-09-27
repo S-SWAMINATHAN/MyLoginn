@@ -195,7 +195,7 @@ export default function HomePage() {
       <main className="flex-1 max-w-7xl w-full mx-auto px-4 sm:px-6 lg:px-8 py-6 space-y-10">
         {/* Hero — MyLoginn blue system */}
         <section className="no-print relative pt-4 pb-2 text-center">
-          <div className="mx-auto h-24 w-24 overflow-hidden rounded-3xl bg-brand-900 shadow-lift ring-1 ring-brand-400/30 animate-scale-in sm:h-28 sm:w-28">
+          <div className="mx-auto h-24 w-24 overflow-hidden rounded-3xl bg-white shadow-lift ring-1 ring-brand-500/20 animate-scale-in sm:h-28 sm:w-28">
             {/* eslint-disable-next-line @next/next/no-img-element */}
             <img src="/logo-512.png" alt="MyLoginn Astrology" width={112} height={112} className="h-full w-full object-cover" />
           </div>
