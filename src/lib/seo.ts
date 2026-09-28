@@ -3,12 +3,17 @@ import { siteUrl } from "@/lib/site";
 
 const coreKeywords = [
   "MyLoginn",
+  "My Login",
+  "MyLogin",
+  "My Loginn",
   "MyLoginn Tech Private Limited",
   "software development company",
   "web development company",
   "mobile app development",
   "AI solutions",
   "digital marketing services",
+  "AI digital marketing agency",
+  "AI digital marketing services",
   "technology courses",
   "online tutoring",
   "internships",

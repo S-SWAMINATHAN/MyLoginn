@@ -28,7 +28,7 @@ const geistMono = Geist_Mono({
 export const metadata: Metadata = {
   metadataBase: new URL(siteUrl),
   title: {
-    default: "MyLoginn | Software, AI, Marketing & Career Learning",
+    default: "MyLoginn | AI Digital Marketing, Software & Career Learning",
     template: "%s | MyLoginn",
   },
   description:
@@ -39,21 +39,22 @@ export const metadata: Metadata = {
   publisher: "MyLoginn Tech Private Limited",
   category: "Technology and professional education",
   keywords: [
-    "MyLoginn", "MyLoginn Tech Private Limited", "software development company",
+    "MyLoginn", "My Login", "MyLogin", "My Loginn", "MyLoginn Tech Private Limited", "software development company",
     "web development company", "mobile app development", "AI solutions",
-    "digital marketing services", "technology courses", "online tutoring", "technology internships",
+    "digital marketing services", "AI digital marketing agency", "AI digital marketing services",
+    "technology courses", "online tutoring", "technology internships",
   ],
   openGraph: {
     type: "website",
     locale: "en_IN",
     siteName: "MyLoginn",
-    title: "MyLoginn | Software, AI, Marketing & Career Learning",
+    title: "MyLoginn | AI Digital Marketing, Software & Career Learning",
     description:
       "Software development, AI, digital marketing, hands-on technology courses, tutoring, and internships from MyLoginn Tech Private Limited.",
   },
   twitter: {
     card: "summary_large_image",
-    title: "MyLoginn | Software, AI, Marketing & Career Learning",
+    title: "MyLoginn | AI Digital Marketing, Software & Career Learning",
     description:
       "Software development, AI, digital marketing, hands-on technology courses, tutoring, and internships from MyLoginn Tech Private Limited.",
   },
@@ -62,6 +63,9 @@ export const metadata: Metadata = {
     follow: true,
     googleBot: { index: true, follow: true, "max-image-preview": "large", "max-snippet": -1, "max-video-preview": -1 },
   },
+  ...(process.env.GOOGLE_SITE_VERIFICATION
+    ? { verification: { google: process.env.GOOGLE_SITE_VERIFICATION } }
+    : {}),
 };
 
 const organizationSchema = {
@@ -71,6 +75,7 @@ const organizationSchema = {
       "@type": "Organization",
       "@id": `${siteUrl}/#organization`,
       name: "MyLoginn",
+      alternateName: ["My Login", "MyLogin", "My Loginn"],
       legalName: "MyLoginn Tech Private Limited",
       url: siteUrl,
       logo: `${siteUrl}${companyLogo.src}`,
@@ -91,6 +96,7 @@ const organizationSchema = {
       "@id": `${siteUrl}/#website`,
       url: siteUrl,
       name: "MyLoginn",
+      alternateName: ["My Login", "MyLogin", "My Loginn"],
       publisher: { "@id": `${siteUrl}/#organization` },
       inLanguage: "en-IN",
     },

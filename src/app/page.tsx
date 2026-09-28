@@ -11,11 +11,11 @@ import { FinalCta } from "@/components/sections/FinalCta";
 import { ProjectShowcase } from "@/components/sections/ProjectShowcase";
 
 export const metadata = createPageMetadata({
-  title: "Software, AI & Digital Growth Solutions",
+  title: "MyLoginn | AI Digital Marketing & Technology Solutions",
   description:
-    "MyLoginn Tech Private Limited builds web and mobile products, AI solutions, and digital marketing systems, and helps people grow through practical courses and career support.",
+    "MyLoginn (also searched as My Login or MyLogin) is an Indian technology company offering AI-powered digital marketing, web and mobile development, practical courses, and career support.",
   path: "/",
-  keywords: ["custom software company", "AI development", "business digital transformation", "career training"],
+  keywords: ["AI digital marketing company", "AI digital marketing agency", "digital marketing company in India", "custom software company", "AI development", "business digital transformation", "career training"],
 });
 
 export default function Home() {

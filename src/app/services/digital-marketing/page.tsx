@@ -7,10 +7,10 @@ import { HowItWorksTimeline } from "@/components/services/HowItWorksTimeline";
 import { ProjectRequestTrigger } from "@/components/services/ProjectRequestTrigger";
 
 export const metadata = createPageMetadata({
-  title: "Digital Marketing Services",
-  description: "Grow your business with MyLoginn digital marketing services, including SEO, paid campaigns, social media, content, and performance analytics.",
+  title: "AI Digital Marketing Agency & Services",
+  description: "Grow your business with MyLoginn Tech Private Limited, an AI-focused digital marketing company offering SEO, paid campaigns, social media, content, and performance analytics.",
   path: "/services/digital-marketing",
-  keywords: ["digital marketing agency", "SEO services", "PPC advertising", "social media marketing", "content marketing"],
+  keywords: ["AI digital marketing agency", "digital marketing company", "digital marketing services India", "SEO services", "PPC advertising", "social media marketing", "content marketing"],
 });
 
 export default function DigitalMarketingServicesPage() {
