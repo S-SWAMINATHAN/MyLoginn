@@ -1,4 +1,4 @@
-import type { Metadata } from "next";
+﻿import { createPageMetadata } from "@/lib/seo";
 import { prisma } from "@/lib/prisma";
 import { getCurrentUser } from "@/lib/auth";
 import { Section, Container, Eyebrow } from "@/components/ui/Section";
@@ -9,11 +9,12 @@ import courseHeader from "@/images/Course header.png";
 import { ReferenceStatIcon } from "@/components/ui/ReferenceStatIcon";
 import { GraduationCap } from "lucide-react";
 
-export const metadata: Metadata = {
-  title: "Courses — MyLoginn",
-  description: "Learn AI, machine learning, digital marketing, and full-stack development with live mentor-led courses.",
-  alternates: { canonical: "/courses" },
-};
+export const metadata = createPageMetadata({
+  title: "AI, Technology & Full-Stack Courses",
+  description: "Build job-ready skills in artificial intelligence, data, full-stack development, and digital marketing with mentor-led MyLoginn courses.",
+  path: "/courses",
+  keywords: ["AI courses", "full-stack development courses", "digital marketing courses", "online technology learning"],
+});
 
 export const dynamic = "force-dynamic";
 

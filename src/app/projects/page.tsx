@@ -1,4 +1,4 @@
-import type { Metadata } from "next";
+﻿import { createPageMetadata } from "@/lib/seo";
 import { Section, Container } from "@/components/ui/Section";
 import { prisma } from "@/lib/prisma";
 import type { ShowcaseProject } from "@/lib/showcaseProjects";
@@ -6,11 +6,12 @@ import { ProjectsHero } from "@/components/projects/ProjectsHero";
 import { ProjectsExplorer } from "@/components/projects/ProjectsExplorer";
 import { ProjectsCtaBanner } from "@/components/projects/ProjectsCtaBanner";
 
-export const metadata: Metadata = {
-  title: "Student Projects — MyLoginn",
-  description: "Explore real projects built by MyLoginn students with guidance from experienced mentors.",
-  alternates: { canonical: "/projects" },
-};
+export const metadata = createPageMetadata({
+  title: "Student Projects & Portfolio",
+  description: "Explore software and technology projects built by MyLoginn learners with guidance from experienced mentors.",
+  path: "/projects",
+  keywords: ["student software projects", "technology project portfolio", "capstone projects"],
+});
 
 export const dynamic = "force-dynamic";
 

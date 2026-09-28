@@ -1,4 +1,4 @@
-import type { Metadata } from "next";
+﻿import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
 import { MotionConfig } from "framer-motion";
 import "./globals.css";
@@ -12,6 +12,8 @@ import { PageTransition } from "@/components/layout/PageTransition";
 import { HideOnAdmin } from "@/components/layout/HideOnAdmin";
 import { getCurrentUser } from "@/lib/auth";
 import { siteUrl } from "@/lib/site";
+import { CONTACT_EMAIL, CONTACT_PHONES } from "@/lib/contactInfo";
+import companyLogo from "@/images/MyLoginn Logo Icon.png";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -25,10 +27,74 @@ const geistMono = Geist_Mono({
 
 export const metadata: Metadata = {
   metadataBase: new URL(siteUrl),
-  title: "MyLoginn — Web, Mobile, AI & Intelligent Digital Experiences",
+  title: {
+    default: "MyLoginn | Software, AI, Marketing & Career Learning",
+    template: "%s | MyLoginn",
+  },
   description:
-    "MyLoginn Tech Private Limited builds web, mobile and custom software, AI and AI agents, and automation — plus hands-on courses and 1:1 tutoring in AI/ML, full-stack development, data and more.",
-  alternates: { canonical: "/" },
+    "MyLoginn Tech Private Limited builds web and mobile software, AI solutions, and digital marketing campaigns, and offers practical technology courses, tutoring, and internships.",
+  applicationName: "MyLoginn",
+  authors: [{ name: "MyLoginn Tech Private Limited" }],
+  creator: "MyLoginn Tech Private Limited",
+  publisher: "MyLoginn Tech Private Limited",
+  category: "Technology and professional education",
+  keywords: [
+    "MyLoginn", "MyLoginn Tech Private Limited", "software development company",
+    "web development company", "mobile app development", "AI solutions",
+    "digital marketing services", "technology courses", "online tutoring", "technology internships",
+  ],
+  openGraph: {
+    type: "website",
+    locale: "en_IN",
+    siteName: "MyLoginn",
+    title: "MyLoginn | Software, AI, Marketing & Career Learning",
+    description:
+      "Software development, AI, digital marketing, hands-on technology courses, tutoring, and internships from MyLoginn Tech Private Limited.",
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: "MyLoginn | Software, AI, Marketing & Career Learning",
+    description:
+      "Software development, AI, digital marketing, hands-on technology courses, tutoring, and internships from MyLoginn Tech Private Limited.",
+  },
+  robots: {
+    index: true,
+    follow: true,
+    googleBot: { index: true, follow: true, "max-image-preview": "large", "max-snippet": -1, "max-video-preview": -1 },
+  },
+};
+
+const organizationSchema = {
+  "@context": "https://schema.org",
+  "@graph": [
+    {
+      "@type": "Organization",
+      "@id": `${siteUrl}/#organization`,
+      name: "MyLoginn",
+      legalName: "MyLoginn Tech Private Limited",
+      url: siteUrl,
+      logo: `${siteUrl}${companyLogo.src}`,
+      email: CONTACT_EMAIL,
+      contactPoint: CONTACT_PHONES.map((phone) => ({
+        "@type": "ContactPoint",
+        telephone: phone.tel,
+        contactType: "customer support",
+        areaServed: "IN",
+      })),
+      knowsAbout: [
+        "Web development", "Mobile app development", "Artificial intelligence",
+        "Digital marketing", "Technology education", "Online tutoring", "Technology internships",
+      ],
+    },
+    {
+      "@type": "WebSite",
+      "@id": `${siteUrl}/#website`,
+      url: siteUrl,
+      name: "MyLoginn",
+      publisher: { "@id": `${siteUrl}/#organization` },
+      inLanguage: "en-IN",
+    },
+  ],
 };
 
 export default async function RootLayout({
@@ -49,6 +115,12 @@ export default async function RootLayout({
       className={`${geistSans.variable} ${geistMono.variable} min-h-full antialiased`}
     >
       <body className="min-h-screen flex flex-col">
+        <script
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{
+            __html: JSON.stringify(organizationSchema).replace(/</g, "\\u003c"),
+          }}
+        />
         <MotionConfig reducedMotion="user">
           <ThemeProvider>
             <HideOnAdmin>

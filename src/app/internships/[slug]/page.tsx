@@ -1,5 +1,6 @@
-import { notFound } from "next/navigation";
+﻿import { notFound } from "next/navigation";
 import type { Metadata } from "next";
+import { createPageMetadata } from "@/lib/seo";
 import { prisma } from "@/lib/prisma";
 import { getCurrentUser } from "@/lib/auth";
 import { Section, Container, Eyebrow } from "@/components/ui/Section";
@@ -14,16 +15,17 @@ export async function generateMetadata({ params }: { params: Promise<{ slug: str
   const { slug } = await params;
   const internship = await prisma.internship.findUnique({
     where: { slug },
-    select: { title: true, description: true, slug: true },
+    select: { title: true, description: true, slug: true, company: true },
   });
 
   if (!internship) return {};
 
-  return {
-    title: `${internship.title} — MyLoginn Internships`,
+  return createPageMetadata({
+    title: internship.title,
     description: internship.description,
-    alternates: { canonical: `/internships/${internship.slug}` },
-  };
+    path: `/internships/${internship.slug}`,
+    keywords: ["technology internship", internship.title, internship.company, "MyLoginn"],
+  });
 }
 
 export default async function InternshipDetailPage({
@@ -81,7 +83,7 @@ export default async function InternshipDetailPage({
               </span>
               <span className="flex items-center gap-1.5">
                 <AnimatedRupee className="h-5 w-5" />{" "}
-                {internship.paid ? `₹${internship.stipend?.toLocaleString()} / month` : "Unpaid"}
+                {internship.paid ? `â‚¹${internship.stipend?.toLocaleString()} / month` : "Unpaid"}
               </span>
             </div>
 
@@ -118,7 +120,7 @@ export default async function InternshipDetailPage({
             )}
 
             <div className="mt-8 rounded-2xl border border-border-soft bg-surface-2 p-5 text-sm text-muted">
-              Mentor: <span className="font-medium text-foreground">{internship.mentorName}</span> ·{" "}
+              Mentor: <span className="font-medium text-foreground">{internship.mentorName}</span> Â·{" "}
               {internship.mentorEmail}
             </div>
           </div>

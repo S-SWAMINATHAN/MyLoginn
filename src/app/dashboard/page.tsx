@@ -1,4 +1,4 @@
-import { redirect } from "next/navigation";
+﻿import { redirect } from "next/navigation";
 import { getCurrentUser } from "@/lib/auth";
 import { prisma } from "@/lib/prisma";
 import { Section, Container } from "@/components/ui/Section";
@@ -19,13 +19,13 @@ import { AnimatedPhone } from "@/components/ui/icons/AnimatedPhone";
 import type { CourseIconKey } from "@/lib/courseIcons";
 import { recordDailyActivity, getStreakSummary, toDayKey } from "@/lib/streak";
 
-export const metadata = { title: "Dashboard — MyLoginn" };
+export const metadata = { title: "Dashboard", robots: { index: false, follow: false } };
 
 export default async function DashboardPage() {
   const user = await getCurrentUser();
   if (!user) redirect("/login");
 
-  // Visiting the dashboard counts as the day's activity — sessions last 30
+  // Visiting the dashboard counts as the day's activity â€” sessions last 30
   // days, so most days never touch the login route. Idempotent per day.
   await recordDailyActivity(user.id);
 
@@ -67,7 +67,7 @@ export default async function DashboardPage() {
           </div>
           {user.grade && (
             <span className="rounded-full bg-surface-2 px-4 py-2 text-sm font-medium">
-              {user.grade} · {user.board}
+              {user.grade} Â· {user.board}
             </span>
           )}
         </FadeIn>
@@ -267,7 +267,7 @@ export default async function DashboardPage() {
                       <li key={b.id} className="flex items-center justify-between gap-3">
                         <div>
                           <p className="text-sm font-medium">{b.tutor.name}</p>
-                          <p className="text-xs text-muted">{b.subject} · {b.preferredSlot}</p>
+                          <p className="text-xs text-muted">{b.subject} Â· {b.preferredSlot}</p>
                         </div>
                         <StatusBadge status={b.status} />
                       </li>

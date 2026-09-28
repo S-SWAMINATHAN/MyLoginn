@@ -1,4 +1,4 @@
-import type { Metadata } from "next";
+﻿import { createPageMetadata } from "@/lib/seo";
 import { Section, Container, Eyebrow } from "@/components/ui/Section";
 import { Card } from "@/components/ui/Card";
 import { LeadForm } from "@/components/services/LeadForm";
@@ -35,11 +35,12 @@ const features: { iconKey: CourseIconKey; title: string; description: string }[]
 
 const stack = ["Next.js", "React Native", "Node.js", "PostgreSQL", "Prisma", "Three.js", "Tailwind CSS", "AWS / Vercel"];
 
-export const metadata: Metadata = {
-  title: "App & Website Development — MyLoginn",
-  description: "Build fast, scalable web and mobile products with MyLoginn's full-stack engineering team.",
-  alternates: { canonical: "/services/app-web-development" },
-};
+export const metadata = createPageMetadata({
+  title: "App & Web Development Services",
+  description: "Plan and build secure, scalable websites, web applications, and mobile apps with MyLoginn Tech Private Limited.",
+  path: "/services/app-web-development",
+  keywords: ["web development services", "mobile app development company", "custom software development", "full-stack development"],
+});
 
 export default function AppWebDevelopmentPage() {
   return (

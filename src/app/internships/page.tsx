@@ -1,4 +1,4 @@
-import type { Metadata } from "next";
+﻿import { createPageMetadata } from "@/lib/seo";
 import { prisma } from "@/lib/prisma";
 import { getCurrentUser } from "@/lib/auth";
 import { Section, Container } from "@/components/ui/Section";
@@ -9,11 +9,12 @@ import { InternshipsHowItWorks } from "@/components/internships/InternshipsHowIt
 import { InternshipsCta } from "@/components/internships/InternshipsCta";
 import type { InternshipCardData } from "@/components/internships/InternshipCard";
 
-export const metadata: Metadata = {
-  title: "Internships — MyLoginn",
-  description: "Find paid and project-based internships with real companies, mentor support, and practical experience.",
-  alternates: { canonical: "/internships" },
-};
+export const metadata = createPageMetadata({
+  title: "Technology Internships",
+  description: "Explore practical technology internships with real projects, mentor guidance, and career-building experience from MyLoginn.",
+  path: "/internships",
+  keywords: ["technology internships India", "software development internships", "internships with mentorship"],
+});
 
 export const dynamic = "force-dynamic";
 

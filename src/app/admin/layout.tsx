@@ -1,9 +1,9 @@
-import { redirect } from "next/navigation";
+﻿import { redirect } from "next/navigation";
 import { getCurrentUser } from "@/lib/auth";
 import { AdminShell } from "@/components/admin/AdminShell";
 import { ToastProvider } from "@/components/admin/Modal";
 
-export const metadata = { title: "Admin — MyLoginn" };
+export const metadata = { title: "Admin", robots: { index: false, follow: false } };
 
 export default async function AdminLayout({ children }: { children: React.ReactNode }) {
   const user = await getCurrentUser();

@@ -1,5 +1,6 @@
-import { notFound } from "next/navigation";
+﻿import { notFound } from "next/navigation";
 import type { Metadata } from "next";
+import { createPageMetadata } from "@/lib/seo";
 import { prisma } from "@/lib/prisma";
 import { getCurrentUser } from "@/lib/auth";
 import { Section, Container, Eyebrow } from "@/components/ui/Section";
@@ -16,16 +17,17 @@ export async function generateMetadata({ params }: { params: Promise<{ slug: str
   const { slug } = await params;
   const course = await prisma.course.findUnique({
     where: { slug },
-    select: { title: true, description: true, slug: true },
+    select: { title: true, description: true, slug: true, category: true, level: true },
   });
 
   if (!course) return {};
 
-  return {
-    title: `${course.title} — MyLoginn`,
+  return createPageMetadata({
+    title: course.title,
     description: course.description,
-    alternates: { canonical: `/courses/${course.slug}` },
-  };
+    path: `/courses/${course.slug}`,
+    keywords: ["online course", course.title, course.category, course.level, "MyLoginn"],
+  });
 }
 
 export default async function CourseDetailPage({
@@ -66,7 +68,7 @@ export default async function CourseDetailPage({
 
             <p className="mt-4 text-sm text-muted">
               {course.instructor}
-              {course.instructorTitle ? ` · ${course.instructorTitle}` : ""}
+              {course.instructorTitle ? ` Â· ${course.instructorTitle}` : ""}
             </p>
 
             <div className="mt-6 flex flex-wrap gap-4 text-sm text-muted">
@@ -114,9 +116,9 @@ export default async function CourseDetailPage({
             <div className="lg:sticky lg:top-24">
               <Card className="p-6">
                 <div className="flex items-center gap-2">
-                  <span className="text-3xl font-bold">₹{course.price.toLocaleString()}</span>
+                  <span className="text-3xl font-bold">â‚¹{course.price.toLocaleString()}</span>
                   {course.originalPrice && (
-                    <span className="text-sm text-muted line-through">₹{course.originalPrice.toLocaleString()}</span>
+                    <span className="text-sm text-muted line-through">â‚¹{course.originalPrice.toLocaleString()}</span>
                   )}
                 </div>
                 {discountPct && (
@@ -140,12 +142,12 @@ export default async function CourseDetailPage({
                     </div>
                   ) : (
                     <Button href={`/courses/${course.slug}/checkout`} className="w-full" size="lg">
-                      Enroll now — pay ₹{course.price.toLocaleString()}
+                      Enroll now â€” pay â‚¹{course.price.toLocaleString()}
                     </Button>
                   )}
                 </div>
 
-                <p className="mt-4 text-center text-xs text-muted">Lifetime access · Certificate on completion</p>
+                <p className="mt-4 text-center text-xs text-muted">Lifetime access Â· Certificate on completion</p>
               </Card>
             </div>
           </div>

@@ -1,4 +1,4 @@
-import type { Metadata } from "next";
+﻿import { createPageMetadata } from "@/lib/seo";
 import { Section, Container } from "@/components/ui/Section";
 import { LeadForm } from "@/components/services/LeadForm";
 import { DigitalMarketingHero } from "@/components/services/DigitalMarketingHero";
@@ -6,11 +6,12 @@ import { FeatureBentoGrid } from "@/components/services/FeatureBentoGrid";
 import { HowItWorksTimeline } from "@/components/services/HowItWorksTimeline";
 import { ProjectRequestTrigger } from "@/components/services/ProjectRequestTrigger";
 
-export const metadata: Metadata = {
-  title: "Digital Marketing Services — MyLoginn",
-  description: "Grow your business with AI-powered digital marketing, content, campaigns, and measurable performance strategy.",
-  alternates: { canonical: "/services/digital-marketing" },
-};
+export const metadata = createPageMetadata({
+  title: "Digital Marketing Services",
+  description: "Grow your business with MyLoginn digital marketing services, including SEO, paid campaigns, social media, content, and performance analytics.",
+  path: "/services/digital-marketing",
+  keywords: ["digital marketing agency", "SEO services", "PPC advertising", "social media marketing", "content marketing"],
+});
 
 export default function DigitalMarketingServicesPage() {
   return (

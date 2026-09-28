@@ -1,4 +1,4 @@
-import type { Metadata } from "next";
+﻿import { createPageMetadata } from "@/lib/seo";
 import { Section, Container, Eyebrow } from "@/components/ui/Section";
 import { Card } from "@/components/ui/Card";
 import { LeadForm } from "@/components/services/LeadForm";
@@ -12,11 +12,12 @@ import { CONTACT_EMAIL, CONTACT_PHONES, WHATSAPP_PHONE, CONTACT_HOURS } from "@/
 
 type ContactAction = { label: string; href?: string; external?: boolean };
 
-export const metadata: Metadata = {
+export const metadata = createPageMetadata({
   title: "Contact MyLoginn",
-  description: "Contact MyLoginn about software development, digital marketing, courses, tutoring, and internships.",
-  alternates: { canonical: "/contact" },
-};
+  description: "Contact MyLoginn Tech Private Limited about software development, AI, digital marketing, courses, tutoring, and internships.",
+  path: "/contact",
+  keywords: ["contact MyLoginn", "software development enquiry", "digital marketing enquiry"],
+});
 
 const contactPoints: { icon: typeof AnimatedMail; title: string; description: string; actions: ContactAction[] }[] = [
   {
@@ -78,7 +79,7 @@ export default function ContactPage() {
                     <p className="mt-2 flex flex-wrap items-center gap-x-2 gap-y-1 text-sm font-medium">
                       {c.actions.map((a, i) => (
                         <span key={a.label} className="inline-flex items-center gap-2">
-                          {i > 0 && <span className="text-border select-none" aria-hidden>·</span>}
+                          {i > 0 && <span className="text-border select-none" aria-hidden>Â·</span>}
                           {a.href ? (
                             <a
                               href={a.href}
