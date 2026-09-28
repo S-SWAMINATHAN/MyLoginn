@@ -22,7 +22,7 @@ export default async function CheckoutPage({
   if (enrollment) redirect(`/courses/${slug}`);
 
   return (
-    <Section className="pt-14">
+    <Section className="mobile-page-glow pt-14">
       <Container>
         <div className="mx-auto max-w-xl">
           <CheckoutPanel

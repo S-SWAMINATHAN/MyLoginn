@@ -124,6 +124,30 @@
   --font-mono: var(--font-geist-mono);
 }
 
+@media (max-width: 767px) {
+  .mobile-page-glow {
+    isolation: isolate;
+  }
+
+  .mobile-page-glow::before {
+    position: absolute;
+    z-index: -1;
+    inset: 0 0 auto;
+    height: 22rem;
+    content: "";
+    pointer-events: none;
+    background:
+      radial-gradient(65% 60% at 50% 0%, color-mix(in srgb, var(--brand-100) 58%, transparent), transparent 100%),
+      radial-gradient(44% 38% at 92% 12%, color-mix(in srgb, var(--accent-400) 10%, transparent), transparent 100%);
+  }
+
+  :root[data-theme="dark"] .mobile-page-glow::before {
+    background:
+      radial-gradient(65% 60% at 50% 0%, rgba(108, 77, 255, 0.14), transparent 100%),
+      radial-gradient(44% 38% at 92% 12%, rgba(34, 211, 238, 0.07), transparent 100%);
+  }
+}
+
 * {
   border-color: var(--border-soft);
 }

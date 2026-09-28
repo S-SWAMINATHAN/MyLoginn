@@ -49,7 +49,7 @@ export default async function InternshipsPage() {
     : 0;
 
   return (
-    <Section className="pt-14 sm:pt-16">
+    <Section className="mobile-page-glow pt-14 sm:pt-16">
       <Container>
         <InternshipsHero
           total={cards.length}

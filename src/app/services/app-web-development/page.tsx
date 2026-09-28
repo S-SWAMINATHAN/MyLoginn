@@ -39,7 +39,7 @@ export const metadata: Metadata = {
 
 export default function AppWebDevelopmentPage() {
   return (
-    <Section className="pt-14">
+    <Section className="mobile-page-glow pt-14">
       <Container>
         <div className="grid grid-cols-1 gap-12 lg:grid-cols-5">
           <div className="lg:col-span-3">

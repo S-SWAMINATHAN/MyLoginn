@@ -32,7 +32,7 @@ export default async function TutoringPage() {
   }));
 
   return (
-    <Section className="pt-14">
+    <Section className="mobile-page-glow pt-14">
       <Container>
         <TutoringHero />
 

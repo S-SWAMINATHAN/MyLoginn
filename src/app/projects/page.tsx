@@ -30,7 +30,7 @@ export default async function ProjectsPage() {
   const techCount = new Set(showcaseProjects.flatMap((p) => p.tags)).size;
 
   return (
-    <Section className="pt-14 sm:pt-16">
+    <Section className="mobile-page-glow pt-14 sm:pt-16">
       <Container>
         <ProjectsHero
           projectCount={showcaseProjects.length}

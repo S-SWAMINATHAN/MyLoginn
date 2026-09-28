@@ -41,7 +41,7 @@ export function ProjectsHero({
   return (
     <div className="relative">
       {/* Ambient aurora glow */}
-      <div className="pointer-events-none absolute inset-x-0 -top-24 -z-10 h-[30rem] overflow-hidden" aria-hidden>
+      <div className="pointer-events-none absolute inset-x-0 -top-24 -z-10 hidden h-[30rem] overflow-hidden md:block" aria-hidden>
         <span className="aurora-blob left-[8%] top-6 h-64 w-64 bg-accent-400/20 dark:bg-accent-500/15" />
         <span className="aurora-blob aurora-blob-alt right-[6%] top-2 h-80 w-80 bg-brand-400/25 dark:bg-brand-500/20" />
         <span className="aurora-blob left-[42%] top-32 h-52 w-52 bg-emerald-400/15 dark:bg-emerald-500/10" />

@@ -33,7 +33,7 @@ export function InternshipsHero({
   return (
     <div className="relative">
       {/* Ambient aurora glow */}
-      <div className="pointer-events-none absolute inset-x-0 -top-24 -z-10 h-[26rem] overflow-hidden" aria-hidden>
+      <div className="pointer-events-none absolute inset-x-0 -top-24 -z-10 hidden h-[26rem] overflow-hidden md:block" aria-hidden>
         <span className="aurora-blob left-[8%] top-4 h-64 w-64 bg-brand-400/25 dark:bg-brand-500/20" />
         <span className="aurora-blob aurora-blob-alt right-[10%] top-10 h-72 w-72 bg-accent-400/20 dark:bg-accent-500/15" />
         <span className="aurora-blob left-[42%] top-24 h-56 w-56 bg-fuchsia-400/15 dark:bg-fuchsia-500/10" />

@@ -46,7 +46,7 @@ export default async function InternshipDetailPage({
   const responsibilities = internship.responsibilities.split("\n").map((r) => r.trim()).filter(Boolean);
 
   return (
-    <Section className="pt-14">
+    <Section className="mobile-page-glow pt-14">
       <Container>
         <div className="grid grid-cols-1 gap-10 lg:grid-cols-3">
           <div className="lg:col-span-2">

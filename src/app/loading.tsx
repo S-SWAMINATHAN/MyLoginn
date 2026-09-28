@@ -1,7 +1,7 @@
 export default function Loading() {
   return (
     <div
-      className="mx-auto flex min-h-[calc(100svh-4rem)] max-w-7xl items-center justify-center px-5"
+      className="mx-auto hidden min-h-[calc(100svh-4rem)] max-w-7xl items-center justify-center px-5 md:flex"
       role="status"
       aria-live="polite"
     >

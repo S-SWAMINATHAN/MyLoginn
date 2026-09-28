@@ -55,7 +55,7 @@ export default async function CoursesPage() {
     .map((c) => c.id);
 
   return (
-    <Section className="pt-14">
+    <Section className="mobile-page-glow pt-14">
       <Container>
         <div className="mx-auto max-w-2xl text-center">
           <div className="flex justify-center">

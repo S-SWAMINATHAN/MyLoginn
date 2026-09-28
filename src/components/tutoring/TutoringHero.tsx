@@ -20,9 +20,9 @@ const floaters: { key: CourseIconKey; className: string; delay: number; duration
 export function TutoringHero() {
   return (
     <div className="relative mx-auto max-w-2xl text-center">
-      <div className="pointer-events-none absolute inset-x-0 -top-24 -z-10 h-[420px] bg-[radial-gradient(60%_60%_at_50%_20%,var(--brand-100),transparent_70%)] dark:bg-[radial-gradient(60%_60%_at_50%_20%,rgba(108,77,255,0.16),transparent_70%)]" />
+      <div className="pointer-events-none absolute inset-x-0 -top-24 -z-10 hidden h-[420px] bg-[radial-gradient(60%_60%_at_50%_20%,var(--brand-100),transparent_70%)] dark:bg-[radial-gradient(60%_60%_at_50%_20%,rgba(108,77,255,0.16),transparent_70%)] md:block" />
 
-      <div className="pointer-events-none absolute inset-0 -z-10 hidden sm:block">
+      <div className="pointer-events-none absolute inset-0 -z-10 hidden md:block">
         {floaters.map((f) => (
           <motion.div
             key={f.key}
