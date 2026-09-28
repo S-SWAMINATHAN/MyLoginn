@@ -32,11 +32,11 @@ export default async function TutoringPage() {
   }));
 
   return (
-    <Section className="mobile-page-glow pt-14">
-      <Container>
+    <Section className="mobile-page-glow pt-3 sm:pt-5">
+      <Container className="max-w-[1480px]">
         <TutoringHero />
 
-        <div className="mt-14">
+        <div className="mt-8">
           <TutoringExplorer tutors={tutorCards} isLoggedIn={!!user} />
         </div>
       </Container>

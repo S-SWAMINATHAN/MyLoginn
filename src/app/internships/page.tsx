@@ -49,8 +49,8 @@ export default async function InternshipsPage() {
     : 0;
 
   return (
-    <Section className="mobile-page-glow pt-14 sm:pt-16">
-      <Container>
+    <Section className="mobile-page-glow pt-3 sm:pt-5">
+      <Container className="max-w-[1480px]">
         <InternshipsHero
           total={cards.length}
           paidCount={paidCount}
@@ -58,7 +58,7 @@ export default async function InternshipsPage() {
           avgWeeks={avgWeeks}
         />
 
-        <div className="mt-14 sm:mt-16">
+        <div className="mt-8 sm:mt-10">
           <InternshipsExplorer internships={cards} appliedIds={[...appliedIds]} />
         </div>
 

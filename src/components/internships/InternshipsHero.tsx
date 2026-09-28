@@ -39,7 +39,7 @@ export function InternshipsHero({
         <span className="aurora-blob left-[42%] top-24 h-56 w-56 bg-fuchsia-400/15 dark:bg-fuchsia-500/10" />
       </div>
 
-      <div className="grid grid-cols-1 items-center gap-10 lg:grid-cols-[1.15fr_0.85fr] lg:gap-6">
+      <div className="grid grid-cols-1 items-center gap-4 lg:grid-cols-[1.05fr_.95fr] lg:gap-3">
         <div className="text-center lg:text-left">
           <motion.div
             className="flex justify-center lg:justify-start"
@@ -53,7 +53,7 @@ export function InternshipsHero({
             </Eyebrow>
           </motion.div>
 
-          <h1 className="mx-auto mt-6 max-w-xl text-4xl font-semibold tracking-tight sm:text-5xl lg:mx-0">
+          <h1 className="mx-auto mt-5 max-w-2xl text-4xl font-semibold tracking-tight sm:text-5xl lg:mx-0">
             <AnimatedText text="Internships that launch" delay={0.1} />{" "}
             <AnimatedText text="real careers" wordClassName="brand-gradient-text" delay={0.45} />
           </h1>
@@ -66,7 +66,7 @@ export function InternshipsHero({
           </Reveal>
 
           {/* Compact stat row */}
-          <div className="mx-auto mt-10 grid max-w-xl grid-cols-2 gap-3 sm:gap-4 lg:mx-0 lg:grid-cols-4">
+          <div className="mx-auto mt-7 grid max-w-2xl grid-cols-2 gap-3 sm:gap-4 lg:mx-0 lg:grid-cols-4">
             {stats.map((s, i) => (
               <motion.div
                 key={s.label}
@@ -89,7 +89,7 @@ export function InternshipsHero({
         </div>
 
         <motion.div
-          className="hidden lg:block"
+          className="block"
           initial={{ opacity: 0, scale: 0.9, y: 10 }}
           animate={{ opacity: 1, scale: 1, y: 0 }}
           transition={{ duration: 0.8, delay: 0.3, ease: [0.16, 1, 0.3, 1] }}
@@ -103,7 +103,7 @@ export function InternshipsHero({
               alt=""
               preload
               unoptimized
-              className="mx-auto h-auto w-full max-w-md select-none object-contain"
+              className="mx-auto h-auto w-full max-w-xl scale-110 select-none object-contain"
             />
           </motion.div>
         </motion.div>

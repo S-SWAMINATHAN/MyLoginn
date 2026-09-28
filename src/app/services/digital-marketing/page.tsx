@@ -14,12 +14,12 @@ export const metadata: Metadata = {
 
 export default function DigitalMarketingServicesPage() {
   return (
-    <Section className="overflow-hidden pt-14">
-      <Container>
-        <div className="grid grid-cols-1 gap-12 lg:grid-cols-5">
+    <Section className="overflow-hidden pt-3 sm:pt-5">
+      <Container className="max-w-[1480px]">
+        <DigitalMarketingHero />
+        <ProjectRequestTrigger service="marketing" label="Plan your marketing campaign" className="mt-8" />
+        <div className="mt-12 grid grid-cols-1 gap-12 lg:grid-cols-5">
           <div className="lg:col-span-3">
-            <DigitalMarketingHero />
-            <ProjectRequestTrigger service="marketing" label="Plan your marketing campaign" className="mt-8" />
             <FeatureBentoGrid />
             <HowItWorksTimeline />
           </div>

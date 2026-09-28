@@ -47,7 +47,7 @@ export function ProjectsHero({
         <span className="aurora-blob left-[42%] top-32 h-52 w-52 bg-emerald-400/15 dark:bg-emerald-500/10" />
       </div>
 
-      <div className="grid grid-cols-1 items-center gap-12 lg:grid-cols-[1.1fr_0.9fr] lg:gap-10">
+      <div className="grid grid-cols-1 items-center gap-5 lg:grid-cols-[1.05fr_.95fr] lg:gap-4">
         <div className="text-center lg:text-left">
           <motion.div
             className="flex justify-center lg:justify-start"
@@ -61,7 +61,7 @@ export function ProjectsHero({
             </Eyebrow>
           </motion.div>
 
-          <h1 className="mt-6 text-4xl font-semibold tracking-tight sm:text-5xl lg:text-6xl">
+          <h1 className="mt-5 text-4xl font-semibold tracking-tight sm:text-5xl lg:text-6xl">
             <AnimatedText text="Real Projects." as="span" className="block" delay={0.1} />
             <AnimatedText
               text="Real Impact."
@@ -84,7 +84,7 @@ export function ProjectsHero({
       </div>
 
       {/* Stat tiles */}
-      <div className="mx-auto mt-12 grid max-w-4xl grid-cols-2 gap-4 lg:mx-0 lg:max-w-none lg:grid-cols-4 lg:gap-5">
+      <div className="mx-auto mt-7 grid max-w-4xl grid-cols-2 gap-4 lg:mx-0 lg:max-w-none lg:grid-cols-4 lg:gap-5">
         {stats.map((s, i) => (
           <motion.div
             key={s.label}
@@ -120,7 +120,7 @@ export function ProjectsHero({
 function HeroIllustration() {
   return (
     <motion.div
-      className="relative mx-auto hidden w-full max-w-md sm:block"
+      className="relative mx-auto block w-full max-w-xl"
       initial={{ opacity: 0, scale: 0.92 }}
       animate={{ opacity: 1, scale: 1, y: [0, -12, 0] }}
       transition={{
@@ -133,8 +133,8 @@ function HeroIllustration() {
         src={projectHeaderImage}
         alt="An illustration of a browser window orbited by code, chart and AI icons"
         preload
-        sizes="(min-width: 1024px) 480px, 90vw"
-        className="h-auto w-full select-none"
+        sizes="(min-width: 1024px) 620px, 90vw"
+        className="h-auto w-full scale-110 select-none"
       />
     </motion.div>
   );

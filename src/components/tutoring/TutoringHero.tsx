@@ -1,68 +1,24 @@
 "use client";
 
+import Image from "next/image";
+import tutoringHeader from "@/images/Tutoring header.png";
 import { motion } from "framer-motion";
 import { Eyebrow } from "@/components/ui/Section";
-import { ContentIcon } from "@/components/ui/ContentIcon";
-import type { CourseIconKey } from "@/lib/courseIcons";
-
-const settle = {
-  initial: { opacity: 0, y: 22 },
-  animate: { opacity: 1, y: 0 },
-};
-
-const floaters: { key: CourseIconKey; className: string; delay: number; duration: number }[] = [
-  { key: "math", className: "-left-14 top-6 sm:-left-20", delay: 0.2, duration: 5.5 },
-  { key: "physics", className: "-right-10 top-32 sm:-right-16", delay: 0.7, duration: 6.4 },
-  { key: "chemistry", className: "-left-8 bottom-2 sm:-left-14", delay: 1.1, duration: 5.9 },
-  { key: "webdev", className: "-right-14 bottom-16 sm:-right-20", delay: 0.4, duration: 6.1 },
-];
+import { BriefcaseBusiness } from "lucide-react";
+import { ReferenceStatIcon } from "@/components/ui/ReferenceStatIcon";
 
 export function TutoringHero() {
   return (
-    <div className="relative mx-auto max-w-2xl text-center">
-      <div className="pointer-events-none absolute inset-x-0 -top-24 -z-10 hidden h-[420px] bg-[radial-gradient(60%_60%_at_50%_20%,var(--brand-100),transparent_70%)] dark:bg-[radial-gradient(60%_60%_at_50%_20%,rgba(108,77,255,0.16),transparent_70%)] md:block" />
-
-      <div className="pointer-events-none absolute inset-0 -z-10 hidden md:block">
-        {floaters.map((f) => (
-          <motion.div
-            key={f.key}
-            className={`absolute h-12 w-12 ${f.className}`}
-            initial={{ opacity: 0, scale: 0.5, y: 10 }}
-            animate={{ opacity: 0.8, scale: 1, y: [0, -14, 0] }}
-            transition={{
-              opacity: { duration: 0.8, delay: f.delay },
-              scale: { type: "spring", stiffness: 200, damping: 14, delay: f.delay },
-              y: { duration: f.duration, repeat: Infinity, ease: "easeInOut", delay: f.delay },
-            }}
-          >
-            <ContentIcon
-              keyword={f.key}
-              className="h-full w-full drop-shadow-[0_10px_22px_rgba(108,77,255,0.28)]"
-            />
-          </motion.div>
-        ))}
+    <div className="relative grid min-h-[330px] items-center gap-4 rounded-[2rem] bg-[radial-gradient(ellipse_at_72%_45%,rgba(117,177,255,.24),transparent_48%),radial-gradient(ellipse_at_55%_70%,rgba(216,173,255,.2),transparent_45%)] py-5 md:grid-cols-[1.05fr_.95fr]">
+      <div className="relative z-10 max-w-2xl">
+        <motion.div initial={{ opacity: 0, y: 16 }} animate={{ opacity: 1, y: 0 }}><Eyebrow><BriefcaseBusiness className="h-4 w-4" /> Launch your career</Eyebrow></motion.div>
+        <motion.h1 initial={{ opacity: 0, y: 16 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: .08 }} className="mt-5 text-4xl font-bold leading-[1.08] tracking-tight sm:text-5xl">Master any subject with our expert tutoring</motion.h1>
+        <motion.p initial={{ opacity: 0, y: 16 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: .16 }} className="mt-4 max-w-2xl text-base text-muted sm:text-lg">Tailored 1-on-1 guidance and group classes from industry veterans. Enhance your knowledge, build confidence, and achieve your goals.</motion.p>
       </div>
-
-      <motion.div className="flex justify-center" initial={settle.initial} animate={settle.animate} transition={{ type: "spring", damping: 18, delay: 0 }}>
-        <Eyebrow>1:1 Mentorship</Eyebrow>
-      </motion.div>
-      <motion.h1
-        className="mt-5 text-3xl font-semibold tracking-tight sm:text-4xl"
-        initial={settle.initial}
-        animate={settle.animate}
-        transition={{ type: "spring", damping: 18, delay: 0.08 }}
-      >
-        Online Tutoring Program
-      </motion.h1>
-      <motion.p
-        className="mt-4 text-muted"
-        initial={settle.initial}
-        animate={settle.animate}
-        transition={{ type: "spring", damping: 18, delay: 0.16 }}
-      >
-        Personalized tutoring for CBSE &amp; State Board curricula &mdash; live
-        classes, progress dashboards, and mentor feedback from 1st grade onward.
-      </motion.p>
+      <div className="relative mx-auto h-64 w-full max-w-lg md:h-[390px]"><Image src={tutoringHeader} alt="Tutor guiding a student through a lesson" fill priority className="scale-125 object-contain" sizes="(max-width: 768px) 100vw, 45vw" /></div>
+      <div className="relative z-10 grid grid-cols-2 gap-3 md:col-span-2 md:grid-cols-4">
+        {[{ icon: "tutor-verified", value: "250+", label: "Verified tutors" }, { icon: "tutor-subjects", value: "100+", label: "Subjects covered" }, { icon: "tutor-rating", value: "4.9/5", label: "Student rating" }, { icon: "tutor-success", value: "1500+", label: "Student success stories" }].map(({ icon, value, label }) => <div key={label} className="flex min-h-28 items-start justify-between gap-3 rounded-2xl border border-border-soft bg-surface/85 p-4 shadow-[var(--shadow-soft)]"><div><p className="text-xs font-semibold uppercase tracking-wide text-muted">{label}</p><p className="mt-2 text-2xl font-bold sm:text-3xl">{value}</p></div><ReferenceStatIcon name={icon as "tutor-verified" | "tutor-subjects" | "tutor-rating" | "tutor-success"} className="h-20 w-20 sm:h-24 sm:w-24" /></div>)}
+      </div>
     </div>
   );
 }
