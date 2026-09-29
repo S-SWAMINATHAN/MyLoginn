@@ -84,7 +84,7 @@ export function DigitalMarketingHero() {
           >
             <ReferenceStatIcon name={s.icon as "marketing-roas" | "marketing-campaigns" | "marketing-industries" | "marketing-engagement"} className="mx-auto mb-1 h-10 w-10" />
             <p className="text-xl font-semibold text-foreground sm:text-2xl">
-              <StatCounter to={s.to} decimals={s.decimals} suffix={s.suffix} />
+              <StatCounter to={s.to} suffix={s.suffix} />
             </p>
             <p className="mt-1 text-[11px] text-muted sm:text-xs">{s.label}</p>
           </div>
