@@ -104,3 +104,6 @@ Creating turbopack project { dir: 'D:\\GOD\\MyLoginn\\WebApplication', testMode:
 ✓ Compiled in 459ms
  GET /services/app-web-development 200 in 600ms (next.js: 253ms, application-code: 347ms)
  GET /services/app-web-development 200 in 133ms (next.js: 18ms, application-code: 115ms)
+ GET /services/digital-marketing 200 in 100ms (next.js: 40ms, application-code: 60ms)
+○ Compiling /signup ...
+ GET /signup 200 in 6.0s (next.js: 5.8s, application-code: 128ms)
