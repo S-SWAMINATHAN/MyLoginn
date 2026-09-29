@@ -1,4 +1,5 @@
-﻿import { createPageMetadata } from "@/lib/seo";
+﻿import Link from "next/link";
+import { createPageMetadata } from "@/lib/seo";
 import { Section, Container, Eyebrow } from "@/components/ui/Section";
 import { Card } from "@/components/ui/Card";
 import { LeadForm } from "@/components/services/LeadForm";
@@ -8,7 +9,9 @@ import { AnimatedChat } from "@/components/ui/icons/AnimatedChat";
 import { AnimatedClock } from "@/components/ui/icons/AnimatedClock";
 import { AnimatedPhone } from "@/components/ui/icons/AnimatedPhone";
 import { toWhatsAppLink } from "@/lib/whatsapp";
-import { CONTACT_EMAIL, CONTACT_PHONES, WHATSAPP_PHONE, CONTACT_HOURS } from "@/lib/contactInfo";
+import { CONTACT_EMAIL, CONTACT_PHONES, WHATSAPP_PHONE } from "@/lib/contactInfo";
+import { JsonLd } from "@/components/seo/JsonLd";
+import { ProjectRequestTrigger } from "@/components/services/ProjectRequestTrigger";
 
 type ContactAction = { label: string; href?: string; external?: boolean };
 
@@ -39,7 +42,7 @@ const contactPoints: { icon: typeof AnimatedMail; title: string; description: st
   {
     icon: AnimatedChat,
     title: "WhatsApp",
-    description: "Fastest way to reach the team during business hours.",
+    description: "Send a message to the MyLoginn team through WhatsApp.",
     actions: [
       {
         label: "Chat with us on WhatsApp",
@@ -50,10 +53,17 @@ const contactPoints: { icon: typeof AnimatedMail; title: string; description: st
   },
   {
     icon: AnimatedClock,
-    title: "Response time",
-    description: "We typically reply within one business day.",
-    actions: [{ label: CONTACT_HOURS }],
+    title: "Enquiry details",
+    description: "Share the service or program you are asking about and any useful context.",
+    actions: [{ label: "Use the enquiry form" }],
   },
+];
+
+const contactFaqs = [
+  { question: "How do I request app or web development?", answer: "Use the project requirements form on this page or visit the App & Web Development service page to describe your project." },
+  { question: "How do I enquire about digital marketing?", answer: "Visit the Digital Marketing service page and use its marketing enquiry form to share your goals and channels." },
+  { question: "Where can I ask about courses or internships?", answer: "Browse the Courses or Internships pages for current listings and their details, or use the general enquiry form on this page." },
+  { question: "What should I include in a project enquiry?", answer: "Share the goal, expected users, key requirements, relevant links and any timing constraints you already know." },
 ];
 
 export default function ContactPage() {
@@ -67,8 +77,9 @@ export default function ContactPage() {
               <h1 className="mt-5 text-3xl font-semibold tracking-tight sm:text-4xl">Contact MyLoginn</h1>
               <p className="mt-4 max-w-xl text-muted">
                 Questions about a course, internship, or one of our services? Send us a message and a real
-                person will get back to you.
+                team can review your request.
               </p>
+              <ProjectRequestTrigger service="software" label="Open project requirements form" className="mt-5" />
             </Reveal>
 
             <RevealGroup className="mt-10 grid grid-cols-1 gap-5 sm:grid-cols-2">
@@ -112,6 +123,21 @@ export default function ContactPage() {
             </div>
           </div>
         </div>
+      </Container>
+      <Container>
+        <section aria-labelledby="contact-faq" className="mt-16">
+          <JsonLd data={{ "@context": "https://schema.org", "@type": "FAQPage", mainEntity: contactFaqs.map(({ question, answer }) => ({ "@type": "Question", name: question, acceptedAnswer: { "@type": "Answer", text: answer } })) }} />
+          <h2 id="contact-faq" className="text-2xl font-semibold tracking-tight sm:text-3xl">Contact FAQs</h2>
+          <div className="mt-5 divide-y divide-border-soft rounded-2xl border border-border-soft bg-surface px-5 sm:px-7">
+            {contactFaqs.map(({ question, answer }) => <details key={question} className="py-5"><summary className="cursor-pointer font-semibold focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-brand-500">{question}</summary><p className="mt-3 max-w-3xl leading-7 text-muted">{answer}</p></details>)}
+          </div>
+          <nav aria-label="More contact options" className="mt-6 flex flex-wrap gap-x-6 gap-y-3 text-sm font-medium">
+            <Link href="/courses" className="text-brand-600">Explore courses</Link>
+            <Link href="/internships" className="text-brand-600">View internships</Link>
+            <Link href="/services/digital-marketing" className="text-brand-600">Digital marketing enquiries</Link>
+            <Link href="/services/app-web-development" className="text-brand-600">App and web development enquiries</Link>
+          </nav>
+        </section>
       </Container>
     </Section>
   );

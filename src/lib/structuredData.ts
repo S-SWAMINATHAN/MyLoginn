@@ -6,7 +6,7 @@ export const organizationStructuredData = {
   "@type": "Organization",
   "@id": `${siteUrl}/#organization`,
   name: "MyLoginn Tech Private Limited",
-  alternateName: ["MyLoginn", "MyLoginn Tech"],
+  alternateName: ["MyLoginn", "MyLogin", "My Loginn", "MyLoginn Tech"],
   legalName: "MyLoginn Tech Private Limited",
   url: siteUrl,
   logo: `${siteUrl}/myloginn-logo.png`,

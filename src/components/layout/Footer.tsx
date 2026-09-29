@@ -10,6 +10,7 @@ import { AnimatedRocket } from "@/components/ui/icons/AnimatedRocket";
 import { LogoBadge } from "@/components/ui/LogoBadge";
 import { toWhatsAppLink } from "@/lib/whatsapp";
 import { CONTACT_EMAIL, CONTACT_PHONES, WHATSAPP_PHONE } from "@/lib/contactInfo";
+import { openProjectRequest } from "@/components/services/ProjectRequestModal";
 
 const PILLARS = ["Intelligence", "Innovation", "Integrity", "Impact"];
 
@@ -89,12 +90,13 @@ export function Footer() {
                 </div>
               </div>
               <motion.div whileHover={{ scale: 1.04 }} whileTap={{ scale: 0.96 }} className="shrink-0">
-                <Link
-                  href="/contact"
-                  className="inline-flex items-center gap-2 rounded-full bg-white px-6 py-3 text-sm font-semibold text-brand-600 shadow-lg transition-shadow duration-300 hover:shadow-xl"
+                <button
+                  type="button"
+                  onClick={() => openProjectRequest("software")}
+                  className="inline-flex items-center gap-2 rounded-full bg-white px-6 py-3 text-sm font-semibold text-brand-600 shadow-lg transition-shadow duration-300 hover:shadow-xl focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-white"
                 >
                   Start a project
-                </Link>
+                </button>
               </motion.div>
             </div>
           </div>

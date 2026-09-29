@@ -6,10 +6,6 @@ import { Percent } from "lucide-react";
 import { Card } from "@/components/ui/Card";
 import { AnimatedClock } from "@/components/ui/icons/AnimatedClock";
 import { AnimatedSuccess } from "@/components/ui/icons/AnimatedSuccess";
-import { AnimatedAi } from "@/components/ui/icons/AnimatedAi";
-import { AnimatedFlame } from "@/components/ui/icons/AnimatedFlame";
-import { AnimatedStar } from "@/components/ui/icons/AnimatedStar";
-import { AnimatedUsers } from "@/components/ui/icons/AnimatedUsers";
 import { useTiltSpotlight } from "@/hooks/useTiltSpotlight";
 import { CourseIconThumb } from "./CourseIconThumb";
 
@@ -25,8 +21,6 @@ export type CourseCardData = {
   durationWeeks: number;
   price: number;
   originalPrice: number | null;
-  rating: number;
-  studentsCount: number;
   imageColor: string;
   tags: string[];
 };
@@ -35,13 +29,11 @@ export function CourseCard({
   course,
   enrolled,
   recommended,
-  trending,
   index = 0,
 }: {
   course: CourseCardData;
   enrolled: boolean;
   recommended?: boolean;
-  trending?: boolean;
   index?: number;
 }) {
   const discountPct =
@@ -74,18 +66,7 @@ export function CourseCard({
               style={{ background: spotlightBg }}
             />
 
-            <div className="absolute left-4 top-4 z-10 flex gap-2.5">
-              {recommended && (
-                <span className="inline-flex items-center gap-1 text-[11px] font-semibold text-brand-600 dark:text-brand-300">
-                  <AnimatedAi className="h-4.5 w-4.5" /> AI Pick
-                </span>
-              )}
-              {trending && (
-                <span className="inline-flex items-center gap-1 text-[11px] font-semibold text-orange-600 dark:text-orange-300">
-                  <AnimatedFlame className="h-4.5 w-4.5" /> Trending
-                </span>
-              )}
-            </div>
+            {recommended && <span className="absolute left-4 top-4 z-10 text-[11px] font-semibold text-brand-600 dark:text-brand-300">Featured</span>}
             <span className="absolute right-4 top-4 z-10 rounded-full bg-surface-2 px-2.5 py-1 text-[11px] font-semibold uppercase tracking-wide text-foreground/70">
               {course.level}
             </span>
@@ -102,12 +83,6 @@ export function CourseCard({
             <p className="relative z-10 mt-2 line-clamp-2 flex-1 text-sm text-muted">{course.description}</p>
 
             <div className="relative z-10 mt-4 flex items-center justify-center gap-4 text-xs text-muted">
-              <span className="flex items-center gap-1">
-                <AnimatedStar className="h-5 w-5 transition-transform duration-300 group-hover:scale-125" /> {course.rating.toFixed(1)}
-              </span>
-              <span className="flex items-center gap-1">
-                <AnimatedUsers className="h-5 w-5" /> {course.studentsCount.toLocaleString()}
-              </span>
               <span className="flex items-center gap-1">
                 <AnimatedClock className="h-5 w-5 transition-transform duration-300 group-hover:scale-125" /> {course.durationWeeks}w
               </span>

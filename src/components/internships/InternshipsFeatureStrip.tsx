@@ -11,11 +11,11 @@ import { AnimatedTrending } from "@/components/ui/icons/AnimatedTrending";
 type IconType = ComponentType<{ className?: string; style?: CSSProperties }>;
 
 const FEATURES: { icon: IconType; title: string; desc: string }[] = [
-  { icon: AnimatedFolder, title: "Real-world Projects", desc: "Work on live projects used by real users" },
-  { icon: AnimatedUsers, title: "Mentor Support", desc: "1-to-1 guidance from industry experts" },
-  { icon: AnimatedShield, title: "Certification", desc: "Earn certificates to boost your profile" },
-  { icon: AnimatedChat, title: "Interview Prep", desc: "Resume review & mock interviews" },
-  { icon: AnimatedTrending, title: "Career Growth", desc: "Better opportunities for your future" },
+  { icon: AnimatedFolder, title: "Role details", desc: "Review the responsibilities listed for each opening" },
+  { icon: AnimatedUsers, title: "Requirements", desc: "Check the qualifications and expectations for the role" },
+  { icon: AnimatedShield, title: "Program format", desc: "Review the type and duration shown on each listing" },
+  { icon: AnimatedChat, title: "Application", desc: "Use the program page to see how to apply" },
+  { icon: AnimatedTrending, title: "Current openings", desc: "Explore available opportunities and their deadlines" },
 ];
 
 export function InternshipsFeatureStrip() {

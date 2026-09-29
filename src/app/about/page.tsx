@@ -4,7 +4,6 @@ import { JsonLd } from "@/components/seo/JsonLd";
 import { Container, Section } from "@/components/ui/Section";
 import { CONTACT_EMAIL } from "@/lib/contactInfo";
 import { createPageMetadata } from "@/lib/seo";
-import { organizationStructuredData } from "@/lib/structuredData";
 
 export const metadata = createPageMetadata({
   title: "About MyLoginn Tech Private Limited",
@@ -43,10 +42,19 @@ const offerings = [
   },
 ];
 
+const faqs = [
+  { question: "What is MyLoginn Tech Private Limited?", answer: "MyLoginn Tech Private Limited is an Indian technology company. MYLOGINN is the company’s primary brand spelling." },
+  { question: "What services does MyLoginn provide?", answer: "The company offers website and app development, custom software and AI solutions, digital marketing, technology courses, tutoring, and internship programs." },
+  { question: "Does MyLoginn develop websites and mobile applications?", answer: "Yes. The development team works on websites, web applications, mobile applications, and related software. Contact the team to discuss a specific scope." },
+  { question: "Does MyLoginn provide AI solutions and courses?", answer: "MyLoginn works on AI-related software solutions and offers technology learning. Current course availability is listed on the Courses page." },
+  { question: "Does MyLoginn work with businesses outside its local area?", answer: "Enquiries can be made through the Contact page. The team can discuss project requirements and delivery arrangements directly." },
+  { question: "How can I contact MyLoginn?", answer: "Use the Contact page to send a project, service, course, tutoring, internship, or general enquiry." },
+  { question: "Is the company called MyLogin or MyLoginn?", answer: "The official company name is MyLoginn Tech Private Limited, with two n characters in MyLoginn. MyLogin is a search variation, not the company’s official name." },
+];
+
 export default function AboutPage() {
   return (
     <>
-      <JsonLd data={organizationStructuredData} />
       <Section className="py-14 sm:py-20">
         <Container className="max-w-5xl">
           <div className="grid items-center gap-8 rounded-[2rem] border border-border-soft bg-surface p-6 shadow-[var(--shadow-soft)] sm:p-10 md:grid-cols-[1fr_auto] md:gap-12">
@@ -61,13 +69,7 @@ export default function AboutPage() {
                 MyLoginn is the technology brand of MyLoginn Tech Private Limited, an Indian technology company. The company builds web and mobile products, custom software, and AI solutions, and provides digital marketing, practical technology learning, tutoring, and internships.
               </p>
             </div>
-            <Image
-              src="/myloginn-logo.png"
-              alt="MyLoginn logo"
-              width={160}
-              height={160}
-              className="mx-auto h-32 w-32 rounded-2xl border border-border-soft bg-white p-2 md:h-36 md:w-36"
-            />
+            <Image src="/myloginn-logo.png" alt="MyLoginn brand mark" width={160} height={160} className="mx-auto h-32 w-32 object-contain md:h-36 md:w-36" />
           </div>
 
           <section aria-labelledby="what-we-do" className="mt-14 sm:mt-16">
@@ -90,21 +92,35 @@ export default function AboutPage() {
             </div>
           </section>
 
-          <section aria-labelledby="how-we-work" className="mt-14 rounded-3xl bg-surface-2 p-6 sm:mt-16 sm:p-9">
-            <h2 id="how-we-work" className="text-2xl font-semibold tracking-tight sm:text-3xl">
-              From idea to delivery
-            </h2>
-            <p className="mt-3 max-w-3xl leading-7 text-muted">
-              The company’s published delivery process covers discovery, planning, design, development, integration, testing, deployment, and ongoing improvement. The exact scope depends on each project.
-            </p>
-            <div className="mt-6 flex flex-wrap gap-2">
-              {[
-                "Discover", "Plan", "Design", "Develop", "Integrate", "Test", "Deploy", "Evolve",
-              ].map((step) => (
-                <span key={step} className="rounded-full border border-border-soft bg-surface px-4 py-2 text-sm font-medium">
-                  {step}
-                </span>
-              ))}
+          <section aria-labelledby="company-purpose" className="mt-14 grid gap-4 sm:mt-16 md:grid-cols-2">
+            <article className="rounded-3xl border border-border-soft bg-surface p-6 sm:p-8">
+              <h2 id="company-purpose" className="text-2xl font-semibold tracking-tight">Our mission</h2>
+              <p className="mt-3 leading-7 text-muted">To make useful technology, practical learning, and digital services accessible to the people and organizations that need them.</p>
+            </article>
+            <article className="rounded-3xl border border-border-soft bg-surface p-6 sm:p-8">
+              <h2 className="text-2xl font-semibold tracking-tight">Our vision</h2>
+              <p className="mt-3 leading-7 text-muted">To build a connected technology practice where thoughtful software, responsible AI, digital growth, and hands-on education support lasting progress.</p>
+            </article>
+          </section>
+
+          <section aria-labelledby="our-approach" className="mt-14 rounded-3xl bg-surface-2 p-6 sm:mt-16 sm:p-9">
+            <h2 id="our-approach" className="text-2xl font-semibold tracking-tight sm:text-3xl">How we work</h2>
+            <p className="mt-3 max-w-3xl leading-7 text-muted">We begin by understanding the goal, then agree on scope and priorities before design and development. Testing and feedback help shape the delivery, with the exact process tailored to each engagement.</p>
+            <ul className="mt-6 grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
+              {["Discover", "Plan", "Design", "Develop", "Integrate", "Test", "Deploy", "Evolve"].map((step) => <li key={step} className="rounded-xl border border-border-soft bg-surface px-4 py-3 text-sm font-medium">{step}</li>)}
+            </ul>
+          </section>
+
+          <section aria-labelledby="brand-name" className="mt-14 sm:mt-16">
+            <h2 id="brand-name" className="text-2xl font-semibold tracking-tight sm:text-3xl">Our name and brand</h2>
+            <p className="mt-3 max-w-3xl leading-7 text-muted">The official company name is <strong className="font-semibold text-foreground">MyLoginn Tech Private Limited</strong>, and the brand is written <strong className="font-semibold text-foreground">MYLOGINN</strong>. People may search for the company as “MyLogin” or “My Loginn”; those spellings are search variations and do not change the official name.</p>
+          </section>
+
+          <section aria-labelledby="about-faq" className="mt-14 sm:mt-16">
+            <JsonLd data={{ "@context": "https://schema.org", "@type": "FAQPage", mainEntity: faqs.map(({ question, answer }) => ({ "@type": "Question", name: question, acceptedAnswer: { "@type": "Answer", text: answer } })) }} />
+            <h2 id="about-faq" className="text-2xl font-semibold tracking-tight sm:text-3xl">Frequently asked questions</h2>
+            <div className="mt-6 divide-y divide-border-soft rounded-2xl border border-border-soft bg-surface px-5 sm:px-7">
+              {faqs.map(({ question, answer }) => <details key={question} className="group py-5"><summary className="cursor-pointer list-none pr-8 font-semibold marker:hidden focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-brand-500">{question}</summary><p className="mt-3 max-w-3xl leading-7 text-muted">{answer}</p></details>)}
             </div>
           </section>
 

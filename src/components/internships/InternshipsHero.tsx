@@ -26,7 +26,7 @@ export function InternshipsHero({
   const stats = [
     { icon: AnimatedBriefcase, label: "Open internships", value: total },
     { icon: AnimatedRupee, label: "Paid programs", value: paidCount },
-    { icon: AnimatedBuilding, label: "Partner companies", value: companyCount },
+    { icon: AnimatedBuilding, label: "Organizations listed", value: companyCount },
     { icon: AnimatedTrending, label: "Avg. duration (weeks)", value: avgWeeks },
   ];
 
@@ -39,8 +39,24 @@ export function InternshipsHero({
         <span className="aurora-blob left-[42%] top-24 h-56 w-56 bg-fuchsia-400/15 dark:bg-fuchsia-500/10" />
       </div>
 
-      <div className="grid grid-cols-1 items-center gap-4 lg:grid-cols-[1.05fr_.95fr] lg:gap-3">
-        <div className="text-center lg:text-left">
+      <div className="relative block items-center gap-4 lg:grid lg:grid-cols-[1.05fr_.95fr] lg:gap-3">
+        <motion.div
+          className="relative float-right ml-3 mb-2 block h-24 w-32 lg:order-2 lg:float-none lg:ml-auto lg:mb-0 lg:h-auto lg:w-auto"
+          initial={{ opacity: 0, scale: 0.9, y: 10 }}
+          animate={{ opacity: 1, scale: 1, y: 0 }}
+          transition={{ duration: 0.8, delay: 0.3, ease: [0.16, 1, 0.3, 1] }}
+        >
+          <motion.div animate={{ y: [0, -12, 0] }} transition={{ duration: 5, repeat: Infinity, ease: "easeInOut" }}>
+            <Image
+              src={internshipHeader}
+              alt=""
+              preload
+              unoptimized
+              className="mx-0 h-full w-full max-w-none scale-100 select-none object-contain object-right lg:mx-auto lg:h-auto lg:max-w-xl lg:scale-110 lg:object-center"
+            />
+          </motion.div>
+        </motion.div>
+        <div className="text-center lg:order-1 lg:text-left">
           <motion.div
             className="flex justify-center lg:justify-start"
             initial={{ opacity: 0, y: -14, scale: 0.9 }}
@@ -54,19 +70,18 @@ export function InternshipsHero({
           </motion.div>
 
           <h1 className="mx-auto mt-5 max-w-2xl text-4xl font-semibold tracking-tight sm:text-5xl lg:mx-0">
-            <AnimatedText text="Internships that launch" delay={0.1} />{" "}
-            <AnimatedText text="real careers" wordClassName="brand-gradient-text" delay={0.45} />
+            <AnimatedText text="Explore current" delay={0.1} />{" "}
+            <AnimatedText text="internship opportunities" wordClassName="brand-gradient-text" delay={0.45} />
           </h1>
 
           <Reveal delay={0.55} distance={18}>
             <p className="mx-auto mt-5 max-w-xl text-base text-muted sm:text-lg lg:mx-0">
-              Industry-relevant internships with hands-on projects, mentor guidance,
-              certifications and interview prep.
+              Review the current openings, program requirements, responsibilities and application details below.
             </p>
           </Reveal>
 
           {/* Compact stat row */}
-          <div className="mx-auto mt-7 grid max-w-2xl grid-cols-2 gap-3 sm:gap-4 lg:mx-0 lg:grid-cols-4">
+          <div className="mx-auto mt-7 clear-both grid max-w-2xl grid-cols-2 gap-3 sm:gap-4 lg:mx-0 lg:grid-cols-4">
             {stats.map((s, i) => (
               <motion.div
                 key={s.label}
@@ -76,37 +91,18 @@ export function InternshipsHero({
                 whileHover={{ y: -4, transition: { duration: 0.25 } }}
                 className="glass-panel card-shine relative flex flex-col items-start gap-2.5 overflow-hidden rounded-2xl p-4"
               >
-                <s.icon className="h-8 w-8 shrink-0" />
+                <s.icon className="h-10 w-10 shrink-0 lg:h-8 lg:w-8" />
                 <div className="min-w-0">
-                  <p className="text-xl font-semibold leading-tight">
+                  <p className="text-2xl font-semibold leading-tight lg:text-xl">
                     <StatCounter to={s.value} duration={1.4} />
                   </p>
-                  <p className="truncate text-[11px] text-muted">{s.label}</p>
+                  <p className="text-sm leading-5 text-muted lg:truncate lg:text-[11px]">{s.label}</p>
                 </div>
               </motion.div>
             ))}
           </div>
         </div>
 
-        <motion.div
-          className="block"
-          initial={{ opacity: 0, scale: 0.9, y: 10 }}
-          animate={{ opacity: 1, scale: 1, y: 0 }}
-          transition={{ duration: 0.8, delay: 0.3, ease: [0.16, 1, 0.3, 1] }}
-        >
-          <motion.div
-            animate={{ y: [0, -12, 0] }}
-            transition={{ duration: 5, repeat: Infinity, ease: "easeInOut" }}
-          >
-            <Image
-              src={internshipHeader}
-              alt=""
-              preload
-              unoptimized
-              className="mx-auto h-auto w-full max-w-xl scale-110 select-none object-contain"
-            />
-          </motion.div>
-        </motion.div>
       </div>
     </div>
   );

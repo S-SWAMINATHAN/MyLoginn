@@ -10,14 +10,11 @@ import { AnimatedRocket } from "@/components/ui/icons/AnimatedRocket";
 import { AnimatedFolder } from "@/components/ui/icons/AnimatedFolder";
 import { AnimatedUsers } from "@/components/ui/icons/AnimatedUsers";
 import { AnimatedCode } from "@/components/ui/icons/AnimatedCode";
-import { AnimatedStar } from "@/components/ui/icons/AnimatedStar";
 import projectHeaderImage from "@/images/Project header.png";
 
 type StatTile = {
   icon: typeof AnimatedFolder;
-  value: number | null;
-  display?: string;
-  suffix?: string;
+  value: number;
   label: string;
   tone: string;
 };
@@ -32,10 +29,9 @@ export function ProjectsHero({
   techCount: number;
 }) {
   const stats: StatTile[] = [
-    { icon: AnimatedFolder, value: projectCount, suffix: "+", label: "Projects Built", tone: "bg-brand-500/10 text-brand-600" },
-    { icon: AnimatedUsers, value: mentorCount, suffix: "+", label: "Mentors Involved", tone: "bg-emerald-500/10 text-emerald-600" },
-    { icon: AnimatedCode, value: techCount, suffix: "", label: "Technologies", tone: "bg-rose-500/10 text-rose-600" },
-    { icon: AnimatedStar, value: null, display: "Real", label: "Industry Outcomes", tone: "bg-amber-500/10 text-amber-600" },
+    { icon: AnimatedFolder, value: projectCount, label: "Projects", tone: "bg-brand-500/10 text-brand-600" },
+    { icon: AnimatedUsers, value: mentorCount, label: "Mentors involved", tone: "bg-emerald-500/10 text-emerald-600" },
+    { icon: AnimatedCode, value: techCount, label: "Technologies", tone: "bg-rose-500/10 text-rose-600" },
   ];
 
   return (
@@ -47,8 +43,9 @@ export function ProjectsHero({
         <span className="aurora-blob left-[42%] top-32 h-52 w-52 bg-emerald-400/15 dark:bg-emerald-500/10" />
       </div>
 
-      <div className="grid grid-cols-1 items-center gap-5 lg:grid-cols-[1.05fr_.95fr] lg:gap-4">
-        <div className="text-center lg:text-left">
+      <div className="relative block items-center gap-5 lg:grid lg:grid-cols-[1.05fr_.95fr] lg:gap-4">
+        <HeroIllustration />
+        <div className="text-center lg:order-1 lg:text-left">
           <motion.div
             className="flex justify-center lg:justify-start"
             initial={{ opacity: 0, y: -14, scale: 0.9 }}
@@ -62,11 +59,11 @@ export function ProjectsHero({
           </motion.div>
 
           <h1 className="mt-5 text-4xl font-semibold tracking-tight sm:text-5xl lg:text-6xl">
-            <AnimatedText text="Real Projects." as="span" className="block" delay={0.1} />
+            <AnimatedText text="Real Projects." as="span" className="flex w-full justify-center lg:justify-start" delay={0.1} />
             <AnimatedText
               text="Real Impact."
               as="span"
-              className="block"
+              className="flex w-full justify-center lg:justify-start"
               wordClassName="brand-gradient-text"
               delay={0.4}
             />
@@ -80,11 +77,10 @@ export function ProjectsHero({
           </Reveal>
         </div>
 
-        <HeroIllustration />
       </div>
 
       {/* Stat tiles */}
-      <div className="mx-auto mt-7 grid max-w-4xl grid-cols-2 gap-4 lg:mx-0 lg:max-w-none lg:grid-cols-4 lg:gap-5">
+      <div className="mx-auto mt-7 clear-both grid max-w-4xl grid-cols-2 gap-4 lg:mx-0 lg:max-w-4xl lg:grid-cols-3 lg:gap-5">
         {stats.map((s, i) => (
           <motion.div
             key={s.label}
@@ -92,23 +88,16 @@ export function ProjectsHero({
             animate={{ opacity: 1, y: 0, scale: 1 }}
             transition={{ duration: 0.65, delay: 0.6 + i * 0.1, ease: [0.16, 1, 0.3, 1] }}
             whileHover={{ y: -5, transition: { duration: 0.25 } }}
-            className="glass-panel card-shine relative flex items-center gap-3.5 overflow-hidden rounded-2xl p-4 sm:p-5"
+            className="glass-panel card-shine relative flex items-center gap-3 overflow-hidden rounded-2xl p-3 sm:gap-3.5 sm:p-5"
           >
-            <span className={`flex h-11 w-11 shrink-0 items-center justify-center rounded-xl ${s.tone}`}>
-              <s.icon className="h-6 w-6" />
+            <span className={`flex h-12 w-12 shrink-0 items-center justify-center rounded-xl sm:h-11 sm:w-11 ${s.tone}`}>
+              <s.icon className="h-7 w-7 sm:h-6 sm:w-6" />
             </span>
             <div className="min-w-0">
-              <p className="text-xl font-semibold leading-tight sm:text-2xl">
-                {s.value !== null ? (
-                  <>
-                    <StatCounter to={s.value} duration={1.4} />
-                    {s.suffix}
-                  </>
-                ) : (
-                  s.display
-                )}
+              <p className="text-2xl font-semibold leading-tight">
+                <StatCounter to={s.value} duration={1.4} />
               </p>
-              <p className="truncate text-xs text-muted">{s.label}</p>
+              <p className="text-sm leading-5 text-muted sm:truncate sm:text-xs">{s.label}</p>
             </div>
           </motion.div>
         ))}
@@ -120,7 +109,7 @@ export function ProjectsHero({
 function HeroIllustration() {
   return (
     <motion.div
-      className="relative mx-auto block w-full max-w-xl"
+      className="relative float-right ml-3 mb-2 block h-24 w-32 max-w-none lg:order-2 lg:float-none lg:mx-auto lg:mb-0 lg:h-auto lg:w-full lg:max-w-xl"
       initial={{ opacity: 0, scale: 0.92 }}
       animate={{ opacity: 1, scale: 1, y: [0, -12, 0] }}
       transition={{
@@ -134,7 +123,7 @@ function HeroIllustration() {
         alt="An illustration of a browser window orbited by code, chart and AI icons"
         preload
         sizes="(min-width: 1024px) 620px, 90vw"
-        className="h-auto w-full scale-110 select-none"
+        className="h-full w-full scale-100 object-contain object-right select-none lg:h-auto lg:scale-110 lg:object-center"
       />
     </motion.div>
   );

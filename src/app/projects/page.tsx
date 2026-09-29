@@ -20,7 +20,12 @@ export const metadata = createPageMetadata({
 export const dynamic = "force-dynamic";
 
 export default async function ProjectsPage() {
-  const rows = await prisma.showcaseProject.findMany({ orderBy: { sortOrder: "asc" } });
+  // Keep the public Projects route useful when the database is temporarily
+  // unavailable; the explorer and enquiry CTA still render without records.
+  const result = await Promise.allSettled([
+    prisma.showcaseProject.findMany({ orderBy: { sortOrder: "asc" } }),
+  ]);
+  const rows = result[0].status === "fulfilled" ? result[0].value : [];
   const showcaseProjects: ShowcaseProject[] = rows.map((p) => ({
     id: p.slug,
     title: p.title,

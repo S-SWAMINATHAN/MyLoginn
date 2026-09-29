@@ -9,8 +9,6 @@ import { Button } from "@/components/ui/Button";
 import { Percent, ListChecks } from "lucide-react";
 import { AnimatedClock } from "@/components/ui/icons/AnimatedClock";
 import { AnimatedSuccess } from "@/components/ui/icons/AnimatedSuccess";
-import { AnimatedStar } from "@/components/ui/icons/AnimatedStar";
-import { AnimatedUsers } from "@/components/ui/icons/AnimatedUsers";
 import { CourseIconThumb } from "@/components/courses/CourseIconThumb";
 
 export async function generateMetadata({ params }: { params: Promise<{ slug: string }> }): Promise<Metadata> {
@@ -77,12 +75,6 @@ export default async function CourseDetailPage({
             </p>
 
             <div className="mt-6 flex flex-wrap gap-4 text-sm text-muted">
-              <span className="flex items-center gap-1.5">
-                <AnimatedStar className="h-5 w-5" /> {course.rating.toFixed(1)} rating
-              </span>
-              <span className="flex items-center gap-1.5">
-                <AnimatedUsers className="h-5 w-5" /> {course.studentsCount.toLocaleString()} students
-              </span>
               <span className="group flex items-center gap-1.5">
                 <AnimatedClock className="h-5 w-5 transition-transform duration-300 group-hover:scale-125" /> {course.durationWeeks} weeks
               </span>

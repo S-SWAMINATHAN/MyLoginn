@@ -3,10 +3,10 @@
 import { motion } from "framer-motion";
 
 const steps = [
-  { title: "Discovery call", description: "We learn your goals, audience and budget." },
-  { title: "AI campaign design", description: "Creative, targeting and channel mix are planned." },
-  { title: "Launch & optimize", description: "Campaigns go live with continuous AI tuning." },
-  { title: "Transparent reporting", description: "A live dashboard shows exactly what's working." },
+  { title: "Discovery", description: "Clarify your goals, audience, current channels and budget." },
+  { title: "Plan", description: "Agree on the channel mix, creative needs, targeting and measures." },
+  { title: "Launch", description: "Set up and publish the approved campaigns." },
+  { title: "Review", description: "Assess available performance data and discuss next steps." },
 ];
 
 export function HowItWorksTimeline() {

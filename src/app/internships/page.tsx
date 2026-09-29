@@ -8,6 +8,14 @@ import { InternshipsFeatureStrip } from "@/components/internships/InternshipsFea
 import { InternshipsHowItWorks } from "@/components/internships/InternshipsHowItWorks";
 import { InternshipsCta } from "@/components/internships/InternshipsCta";
 import type { InternshipCardData } from "@/components/internships/InternshipCard";
+import { JsonLd } from "@/components/seo/JsonLd";
+
+const internshipFaqs = [
+  { question: "How do I apply for an internship?", answer: "Open an internship listing to review its requirements, responsibilities and deadline, then follow the application steps on that page." },
+  { question: "What information is available before I apply?", answer: "Each listing provides the role title, type, location, duration, deadline and program details available for that opportunity." },
+  { question: "Are internship roles paid?", answer: "Payment details are shown on each listing. Check the specific opportunity for its paid status and any stipend information." },
+  { question: "Does an internship guarantee a job or placement?", answer: "No. An internship is a learning and work experience opportunity and does not guarantee employment or placement." },
+];
 
 export const metadata = createPageMetadata({
   title: "Technology Internships",
@@ -69,6 +77,13 @@ export default async function InternshipsPage() {
         <InternshipsFeatureStrip />
         <InternshipsHowItWorks />
         <InternshipsCta />
+        <section aria-labelledby="internship-faq" className="mt-16">
+          <JsonLd data={{ "@context": "https://schema.org", "@type": "FAQPage", mainEntity: internshipFaqs.map(({ question, answer }) => ({ "@type": "Question", name: question, acceptedAnswer: { "@type": "Answer", text: answer } })) }} />
+          <h2 id="internship-faq" className="text-2xl font-semibold tracking-tight sm:text-3xl">Internship FAQs</h2>
+          <div className="mt-5 divide-y divide-border-soft rounded-2xl border border-border-soft bg-surface px-5 sm:px-7">
+            {internshipFaqs.map(({ question, answer }) => <details key={question} className="py-5"><summary className="cursor-pointer font-semibold focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-brand-500">{question}</summary><p className="mt-3 max-w-3xl leading-7 text-muted">{answer}</p></details>)}
+          </div>
+        </section>
       </Container>
     </Section>
   );

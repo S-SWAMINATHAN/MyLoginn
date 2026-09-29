@@ -37,8 +37,21 @@ export function Hero() {
       <div className="relative overflow-hidden bg-background">
         <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(60%_50%_at_50%_0%,var(--brand-100),transparent_70%)]" />
 
-        <div className="mx-auto grid max-w-[85rem] grid-cols-1 items-center gap-12 px-5 pt-14 pb-10 sm:px-8 sm:pt-20 lg:grid-cols-[1fr_1.5fr] lg:gap-8 lg:pt-24">
-          <div className="relative z-10 text-center lg:text-left">
+        <div className="relative mx-auto block max-w-[85rem] items-center gap-5 px-5 pt-14 pb-10 sm:px-8 sm:pt-20 lg:grid lg:grid-cols-[1fr_1.5fr] lg:gap-8 lg:pt-24">
+          <motion.div
+            initial={{ opacity: 0, scale: 0.92, y: 0 }}
+            animate={{ opacity: 1, scale: 1, y: [0, -14, 0] }}
+            transition={{
+              opacity: { duration: 1, delay: 0.3, ease: [0.16, 1, 0.3, 1] },
+              scale: { duration: 1, delay: 0.3, ease: [0.16, 1, 0.3, 1] },
+              y: { duration: 6, delay: 1.3, repeat: Infinity, ease: "easeInOut" },
+            }}
+            className="relative hidden lg:order-2 lg:float-none lg:mb-0 lg:block lg:h-auto lg:w-[118%] lg:max-w-none"
+          >
+            <Image src={heroImage} alt="An AI agent holding a connected digital globe" preload sizes="(min-width: 1024px) 720px, 128px" className="relative z-10 h-full w-full object-contain object-right select-none lg:h-auto" />
+            <HeroOrbitIcons />
+          </motion.div>
+          <div className="relative z-10 text-center lg:order-1 lg:text-left">
             <motion.div
               initial={{ opacity: 0, y: 12 }}
               animate={{ opacity: 1, y: 0 }}
@@ -82,25 +95,6 @@ export function Hero() {
 
           </div>
 
-          <motion.div
-            initial={{ opacity: 0, scale: 0.92, y: 0 }}
-            animate={{ opacity: 1, scale: 1, y: [0, -14, 0] }}
-            transition={{
-              opacity: { duration: 1, delay: 0.3, ease: [0.16, 1, 0.3, 1] },
-              scale: { duration: 1, delay: 0.3, ease: [0.16, 1, 0.3, 1] },
-              y: { duration: 6, delay: 1.3, repeat: Infinity, ease: "easeInOut" },
-            }}
-            className="relative -mx-5 hidden w-[calc(100%+2.5rem)] max-w-none lg:mx-0 lg:block lg:w-[118%] lg:max-w-none"
-          >
-            <Image
-              src={heroImage}
-              alt="An AI agent holding a connected digital globe"
-              preload
-              sizes="(min-width: 1024px) 720px, 100vw"
-              className="relative z-10 h-auto w-full select-none"
-            />
-            <HeroOrbitIcons />
-          </motion.div>
         </div>
       </div>
     </Chapter>

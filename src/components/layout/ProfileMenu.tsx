@@ -60,7 +60,7 @@ export function ProfileMenu({ user, onOpen }: { user: ProfileUser; onOpen?: () =
             transition={{ duration: 0.18, ease: [0.16, 1, 0.3, 1] }}
             className="absolute right-0 top-full mt-2 w-56 rounded-2xl border border-border-soft bg-surface p-1.5 shadow-[var(--shadow-lift)]"
           >
-            <MenuLink href="/dashboard#profile" icon={<AnimatedUser className="h-5 w-5 transition-transform duration-300 group-hover:scale-110" />} label="My Profile" onClick={() => setOpen(false)} />
+            <MenuLink href="/profile" icon={<AnimatedUser className="h-5 w-5 transition-transform duration-300 group-hover:scale-110" />} label="My Profile" onClick={() => setOpen(false)} />
             <MenuLink href="/dashboard" icon={<LayoutDashboard className="h-5 w-5 transition-transform duration-300 group-hover:scale-110" />} label="Dashboard" onClick={() => setOpen(false)} />
             <MenuLink
               href="/dashboard#settings"

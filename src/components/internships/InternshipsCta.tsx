@@ -33,7 +33,7 @@ export function InternshipsCta() {
               Ready to start <span className="brand-gradient-text">your journey?</span>
             </h2>
             <p className="mt-1.5 max-w-md text-sm text-muted">
-              Find the right internship, gain real experience and build your future.
+              Review current roles and apply for opportunities that fit your interests.
             </p>
           </div>
         </div>

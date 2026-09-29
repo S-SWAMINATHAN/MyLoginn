@@ -2,6 +2,7 @@ import { NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
 import { leadSchema } from "@/lib/validation";
 import { toWhatsAppLink } from "@/lib/whatsapp";
+import { WHATSAPP_PHONE } from "@/lib/contactInfo";
 
 export async function POST(req: Request) {
   const body = await req.json();
@@ -24,8 +25,8 @@ export async function POST(req: Request) {
   });
 
   const whatsappLink = toWhatsAppLink(
-    phone,
-    `Hi ${name}, thanks for your interest in ${service} — this is MyLoginn. Let's get started!`
+    WHATSAPP_PHONE,
+    `Hi MyLoginn team, I’m ${name}. I’m interested in ${service}.`
   );
 
   return NextResponse.json({ lead, whatsappLink });

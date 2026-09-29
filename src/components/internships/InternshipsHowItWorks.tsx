@@ -12,8 +12,8 @@ type IconType = ComponentType<{ className?: string; style?: CSSProperties }>;
 
 const STEPS: { icon: IconType; title: string; desc: string }[] = [
   { icon: AnimatedEdit, title: "Apply", desc: "Browse internships and submit your application" },
-  { icon: AnimatedUser, title: "Selection", desc: "Shortlisted candidates get an interview call" },
-  { icon: AnimatedRocket, title: "Start Learning", desc: "Join, learn and build your career" },
+  { icon: AnimatedUser, title: "Application review", desc: "The team reviews applications and contacts candidates about next steps" },
+  { icon: AnimatedRocket, title: "Program details", desc: "Follow the information provided for the selected opportunity" },
 ];
 
 export function InternshipsHowItWorks() {
@@ -33,7 +33,7 @@ export function InternshipsHowItWorks() {
           </Eyebrow>
         </motion.div>
         <h2 className="mt-4 text-2xl font-semibold tracking-tight sm:text-3xl">How it works</h2>
-        <p className="mt-2 text-sm text-muted sm:text-base">Get started in 3 easy steps</p>
+        <p className="mt-2 text-sm text-muted sm:text-base">A simple overview of the application flow</p>
       </div>
 
       <div className="mt-10 flex flex-col items-stretch gap-4 sm:flex-row sm:items-center sm:gap-3">

@@ -1,10 +1,10 @@
 "use client";
 
-import Link from "next/link";
 import { motion } from "framer-motion";
 import { Reveal } from "@/components/ui/Reveal";
 import { AnimatedAgent } from "@/components/ui/icons/AnimatedAgent";
 import { AnimatedArrow } from "@/components/ui/icons/AnimatedArrow";
+import { openProjectRequest } from "@/components/services/ProjectRequestModal";
 
 export function ProjectsCtaBanner() {
   return (
@@ -24,20 +24,19 @@ export function ProjectsCtaBanner() {
             </motion.span>
             <div>
               <p className="text-lg font-semibold sm:text-xl">Have an idea? Let&apos;s build it together.</p>
-              <p className="mt-1 text-sm text-white/80">
-                Our learners and mentors are ready to turn your idea into a real-world solution.
-              </p>
+              <p className="mt-1 text-sm text-white/80">Discuss a software or product requirement with the MyLoginn team.</p>
             </div>
           </div>
 
           <motion.div whileHover={{ scale: 1.04 }} whileTap={{ scale: 0.96 }} className="shrink-0">
-            <Link
-              href="/contact"
+            <button
+              type="button"
+              onClick={() => openProjectRequest("software")}
               className="group inline-flex items-center gap-2 rounded-full bg-white px-6 py-3 text-sm font-semibold text-brand-600 shadow-lg transition-shadow duration-300 hover:shadow-xl"
             >
               Start a Project
               <AnimatedArrow className="h-4.5 w-4.5 transition-transform duration-300 group-hover:translate-x-1" />
-            </Link>
+            </button>
           </motion.div>
         </div>
       </div>

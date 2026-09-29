@@ -2,7 +2,6 @@
 
 import { useMemo, useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { AnimatedAi } from "@/components/ui/icons/AnimatedAi";
 import { AnimatedSearch } from "@/components/ui/icons/AnimatedSearch";
 import { CourseCard, type CourseCardData } from "./CourseCard";
 
@@ -10,13 +9,11 @@ export function CoursesExplorer({
   courses,
   enrolledIds,
   recommendedIds,
-  trendingIds,
   isLoggedIn,
 }: {
   courses: CourseCardData[];
   enrolledIds: string[];
   recommendedIds: string[];
-  trendingIds: string[];
   isLoggedIn: boolean;
 }) {
   const [category, setCategory] = useState("All");
@@ -39,8 +36,7 @@ export function CoursesExplorer({
       {isLoggedIn && recommended.length > 0 && (
         <div className="mb-14">
           <div className="flex items-center gap-2">
-            <AnimatedAi className="h-7 w-7" />
-            <h2 className="text-lg font-semibold">AI-recommended for you</h2>
+            <h2 className="text-lg font-semibold">Featured courses</h2>
           </div>
           <div className="mt-5 grid grid-cols-1 gap-6 sm:grid-cols-2 sm:gap-7 lg:grid-cols-3">
             {recommended.slice(0, 3).map((course, i) => (
@@ -48,7 +44,6 @@ export function CoursesExplorer({
                 key={course.id}
                 course={course}
                 enrolled={enrolledIds.includes(course.id)}
-                trending={trendingIds.includes(course.id)}
                 recommended
                 index={i}
               />
@@ -100,7 +95,6 @@ export function CoursesExplorer({
               key={course.id}
               course={course}
               enrolled={enrolledIds.includes(course.id)}
-              trending={trendingIds.includes(course.id)}
               index={i}
             />
           ))}

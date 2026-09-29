@@ -23,6 +23,7 @@ import { AnimatedMegaphone } from "@/components/ui/icons/AnimatedMegaphone";
 import { AnimatedCode } from "@/components/ui/icons/AnimatedCode";
 import { AnimatedMail } from "@/components/ui/icons/AnimatedMail";
 import { AnimatedUser } from "@/components/ui/icons/AnimatedUser";
+import { AnimatedBuilding } from "@/components/ui/icons/AnimatedBuilding";
 import { AiAssistantButton } from "./AiAssistantButton";
 import { ProfileMenu, type ProfileUser } from "./ProfileMenu";
 import { Button } from "@/components/ui/Button";
@@ -31,14 +32,8 @@ import { cn } from "@/lib/cn";
 
 type NavUser = ProfileUser | null;
 
-const primaryLinks = [
-  { href: "/courses", label: "Courses", desc: "Learn job-ready skills" },
-  { href: "/tutoring", label: "Tutoring", desc: "1:1 mentor sessions, live classes" },
-];
-
 const serviceLinks = [
-  { href: "/internships", label: "Internship", desc: "Get real-world experience" },
-  { href: "/projects", label: "Project", desc: "Build your portfolio" },
+  { href: "/services", label: "All Services", desc: "Explore our service areas" },
   { href: "/services/digital-marketing", label: "Digital Marketing", desc: "AI-driven growth campaigns" },
   { href: "/services/app-web-development", label: "App & Web Development", desc: "Full-stack builds, premium UX" },
 ];
@@ -57,8 +52,7 @@ const mobileMainLinks: MobileLink[] = [
 ];
 
 const mobileServiceLinks: MobileLink[] = [
-  { href: "/internships", label: "Internship", desc: "Get real-world experience", icon: AnimatedBriefcase },
-  { href: "/projects", label: "Project", desc: "Build your portfolio", icon: AnimatedFolder },
+  { href: "/services", label: "All Services", desc: "Explore our service areas", icon: AnimatedCode },
   {
     href: "/services/digital-marketing",
     label: "Digital Marketing",
@@ -73,6 +67,12 @@ const mobileServiceLinks: MobileLink[] = [
   },
 ];
 
+const mobileAfterServices: MobileLink[] = [
+  { href: "/internships", label: "Internship", desc: "Explore practical experience", icon: AnimatedBriefcase },
+  { href: "/projects", label: "Projects", desc: "Explore project work", icon: AnimatedFolder },
+  { href: "/about", label: "About", desc: "About MyLoginn", icon: AnimatedBuilding },
+];
+
 const mobileContactLink: MobileLink = {
   href: "/contact",
   label: "Contact Us",
@@ -85,7 +85,6 @@ export function Navbar({ user }: { user: NavUser }) {
   const [scrolled, setScrolled] = useState(false);
   const [mobileOpen, setMobileOpen] = useState(false);
   const [servicesOpen, setServicesOpen] = useState(false);
-  const [learnOpen, setLearnOpen] = useState(false);
   const isHome = pathname === "/";
 
   useEffect(() => {
@@ -96,7 +95,8 @@ export function Navbar({ user }: { user: NavUser }) {
   }, []);
 
   useEffect(() => {
-    setMobileOpen(false);
+    const frame = window.requestAnimationFrame(() => setMobileOpen(false));
+    return () => window.cancelAnimationFrame(frame);
   }, [pathname]);
 
   useEffect(() => {
@@ -123,19 +123,8 @@ export function Navbar({ user }: { user: NavUser }) {
             Home
           </NavHeaderLink>
 
-          <NavHeaderLink href="/about" active={pathname === "/about"}>
-            About
-          </NavHeaderLink>
-
-          <div className="group relative" onMouseEnter={() => setLearnOpen(true)} onMouseLeave={() => setLearnOpen(false)}>
-            <button aria-expanded={learnOpen} className="relative flex items-center gap-1 rounded-full px-4 py-2 text-sm font-medium text-foreground/80 transition-colors hover:text-foreground cursor-pointer" onClick={() => setLearnOpen((s) => !s)}>
-              Learn <ChevronDown className={cn("h-4 w-4 transition-transform duration-300", learnOpen && "rotate-180")} />
-              <span className={cn("pointer-events-none absolute inset-x-3.5 -bottom-0.5 h-[3px] rounded-full brand-gradient-bg transition-transform duration-300", (learnOpen || primaryLinks.some((l) => pathname === l.href || pathname.startsWith(`${l.href}/`))) ? "scale-x-100" : "scale-x-0 group-hover:scale-x-100")} />
-            </button>
-            <AnimatePresence>{learnOpen && <motion.div initial={{ opacity: 0, y: 8, scale: 0.97 }} animate={{ opacity: 1, y: 0, scale: 1 }} exit={{ opacity: 0, y: 8, scale: 0.97 }} transition={{ duration: 0.18, ease: [0.16, 1, 0.3, 1] }} className="absolute left-0 top-full mt-2 w-72 rounded-2xl border border-border-soft bg-surface p-2 shadow-[var(--shadow-lift)]">
-              {primaryLinks.map((item) => <Link key={item.href} href={item.href} className="block rounded-xl px-3.5 py-2.5 transition-colors hover:bg-surface-2"><p className="text-sm font-medium">{item.label}</p><p className="text-xs text-muted">{item.desc}</p></Link>)}
-            </motion.div>}</AnimatePresence>
-          </div>
+          <NavHeaderLink href="/courses" active={pathname === "/courses" || pathname.startsWith("/courses/")}>Courses</NavHeaderLink>
+          <NavHeaderLink href="/tutoring" active={pathname === "/tutoring"}>Tutoring</NavHeaderLink>
 
           <div
             className="group relative"
@@ -178,6 +167,10 @@ export function Navbar({ user }: { user: NavUser }) {
               )}
             </AnimatePresence>
           </div>
+
+          <NavHeaderLink href="/internships" active={pathname === "/internships" || pathname.startsWith("/internships/")}>Internship</NavHeaderLink>
+          <NavHeaderLink href="/projects" active={pathname === "/projects"}>Projects</NavHeaderLink>
+          <NavHeaderLink href="/about" active={pathname === "/about"}>About</NavHeaderLink>
 
           <NavHeaderLink href="/contact" active={pathname === "/contact"}>
               Contact Us
@@ -381,6 +374,12 @@ function MobileMenu({
 
               <div className="flex flex-col gap-1">
                 {mobileServiceLinks.map((link) => (
+                  <MobileNavItem key={link.href} link={link} active={pathname === link.href || pathname.startsWith(`${link.href}/`)} />
+                ))}
+              </div>
+
+              <div className="my-3 flex flex-col gap-1">
+                {mobileAfterServices.map((link) => (
                   <MobileNavItem key={link.href} link={link} active={pathname === link.href || pathname.startsWith(`${link.href}/`)} />
                 ))}
                 <MobileNavItem link={mobileContactLink} active={pathname === mobileContactLink.href || pathname.startsWith(`${mobileContactLink.href}/`)} />

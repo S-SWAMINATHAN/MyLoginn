@@ -8,6 +8,7 @@ import { Reveal } from "@/components/ui/Reveal";
 import { Button } from "@/components/ui/Button";
 import { toWhatsAppLink } from "@/lib/whatsapp";
 import { WHATSAPP_PHONE } from "@/lib/contactInfo";
+import { openProjectRequest } from "@/components/services/ProjectRequestModal";
 
 export function FinalCta() {
   const whatsapp = toWhatsAppLink(WHATSAPP_PHONE, "Hi MyLoginn team! I'd like to talk about a project.") ?? "/contact";
@@ -36,7 +37,7 @@ export function FinalCta() {
         <Reveal direction="up" delay={0.3} className="mt-9 flex flex-col items-center gap-3 sm:flex-row sm:justify-center">
           <div className="flex flex-col items-center gap-3 sm:flex-row">
             <MagneticButton>
-              <Button href="/contact" size="lg">
+              <Button type="button" onClick={() => openProjectRequest("software")} size="lg">
                 Start a project
               </Button>
             </MagneticButton>

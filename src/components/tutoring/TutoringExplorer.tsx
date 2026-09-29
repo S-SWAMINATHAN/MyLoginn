@@ -13,7 +13,6 @@ import { Textarea } from "@/components/ui/Input";
 import { ContentIcon } from "@/components/ui/ContentIcon";
 import { CourseIconThumb } from "@/components/courses/CourseIconThumb";
 import { AnimatedSuccess } from "@/components/ui/icons/AnimatedSuccess";
-import { AnimatedStar } from "@/components/ui/icons/AnimatedStar";
 import { useTiltSpotlight } from "@/hooks/useTiltSpotlight";
 import { tutoringBookingSchema } from "@/lib/validation";
 import { z } from "zod";
@@ -25,7 +24,6 @@ export type TutorData = {
   bio: string;
   qualification: string;
   experienceYears: number;
-  rating: number;
   avatarColor: string;
   boards: string[];
 };
@@ -139,12 +137,7 @@ function TutorCard({ tutor, index, onBook }: { tutor: TutorData; index: number; 
           </div>
 
           <p className="relative z-10 mt-4 flex-1 text-sm text-muted">{tutor.bio}</p>
-          <div className="relative z-10 mt-4 flex items-center justify-between text-xs text-muted">
-            <span>{tutor.qualification}</span>
-            <span className="flex items-center gap-1">
-              <AnimatedStar className="h-5 w-5 transition-transform duration-300 group-hover:scale-125" /> {tutor.rating.toFixed(1)}
-            </span>
-          </div>
+          <p className="relative z-10 mt-4 text-xs text-muted">{tutor.qualification}</p>
           <div className="relative z-10 mt-3 flex flex-wrap gap-1.5">
             {tutor.boards.map((b) => (
               <span
