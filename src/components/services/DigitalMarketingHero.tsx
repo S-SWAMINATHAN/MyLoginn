@@ -3,7 +3,6 @@
 import { motion } from "framer-motion";
 import { AnimatedSparkle } from "@/components/ui/icons/AnimatedSparkle";
 import { Eyebrow } from "@/components/ui/Section";
-import { StatCounter } from "@/components/ui/StatCounter";
 import { LiveActivityTicker } from "@/components/services/LiveActivityTicker";
 import Image from "next/image";
 import marketingHeader from "@/images/digital marketting header.png";
@@ -18,10 +17,10 @@ const tickerItems = [
 ];
 
 const stats = [
-  { icon: "marketing-roas", to: 250, suffix: "+", label: "Clients Served" },
-  { icon: "marketing-campaigns", to: 150, suffix: "K+", label: "Leads Generated" },
-  { icon: "marketing-industries", to: 45, suffix: "%", label: "Avg. ROI Increase" },
-  { icon: "marketing-engagement", to: 3, suffix: "M+", label: "Brand Engagement" },
+  { icon: "marketing-roas", value: "Trusted", label: "Client Partnerships" },
+  { icon: "marketing-campaigns", value: "Qualified", label: "Lead Generation" },
+  { icon: "marketing-industries", value: "Data-led", label: "ROI Strategy" },
+  { icon: "marketing-engagement", value: "Connected", label: "Brand Engagement" },
 ];
 
 export function DigitalMarketingHero() {
@@ -84,7 +83,7 @@ export function DigitalMarketingHero() {
           >
             <ReferenceStatIcon name={s.icon as "marketing-roas" | "marketing-campaigns" | "marketing-industries" | "marketing-engagement"} className="mx-auto mb-1 h-10 w-10" />
             <p className="text-xl font-semibold text-foreground sm:text-2xl">
-              <StatCounter to={s.to} suffix={s.suffix} />
+              {s.value}
             </p>
             <p className="mt-1 text-[11px] text-muted sm:text-xs">{s.label}</p>
           </div>
