@@ -107,3 +107,27 @@ Creating turbopack project { dir: 'D:\\GOD\\MyLoginn\\WebApplication', testMode:
  GET /services/digital-marketing 200 in 100ms (next.js: 40ms, application-code: 60ms)
 ○ Compiling /signup ...
  GET /signup 200 in 6.0s (next.js: 5.8s, application-code: 128ms)
+✓ Compiled in 2.3s
+ GET /signup 404 in 4.2s (next.js: 2.7s, application-code: 1498ms)
+ GET /signup 404 in 6.2s (next.js: 4.2s, application-code: 1999ms)
+ GET /signup 404 in 825ms (next.js: 654ms, application-code: 171ms)
+ GET /signup 404 in 1445ms (next.js: 81ms, application-code: 1363ms)
+ GET /signup 404 in 1662ms (next.js: 166ms, application-code: 1495ms)
+ GET /services/digital-marketing 200 in 727ms (next.js: 475ms, application-code: 251ms)
+✓ Compiled in 1234ms
+ GET /services/digital-marketing 200 in 4.4s (next.js: 1555ms, application-code: 2.9s)
+ GET /services/digital-marketing 200 in 2.0s (next.js: 257ms, application-code: 1749ms)
+ GET /services/digital-marketing 200 in 118ms (next.js: 16ms, application-code: 102ms)
+ GET /services/digital-marketing 200 in 1597ms (next.js: 188ms, application-code: 1410ms)
+ GET /services/digital-marketing 200 in 1596ms (next.js: 719ms, application-code: 877ms)
+ GET /services/digital-marketing 200 in 1602ms (next.js: 272ms, application-code: 1329ms)
+ GET /services/digital-marketing 200 in 1637ms (next.js: 15ms, application-code: 1622ms)
+ GET /signup 200 in 3.5s (next.js: 2.9s, application-code: 652ms)
+ GET /signup 200 in 181ms (next.js: 16ms, application-code: 165ms)
+✓ Compiled in 1572ms
+ GET /signup 200 in 1152ms (next.js: 795ms, application-code: 357ms)
+○ Compiling /login ...
+ GET /login 200 in 6.8s (next.js: 6.6s, application-code: 159ms)
+ GET /login 200 in 123ms (next.js: 25ms, application-code: 98ms)
+ GET /login 200 in 103ms (next.js: 29ms, application-code: 74ms)
+ GET /signup 200 in 101ms (next.js: 27ms, application-code: 74ms)

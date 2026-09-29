@@ -33,9 +33,13 @@ import { cn } from "@/lib/cn";
 type NavUser = ProfileUser | null;
 
 const serviceLinks = [
-  { href: "/services", label: "All Services", desc: "Explore our service areas" },
   { href: "/services/digital-marketing", label: "Digital Marketing", desc: "AI-driven growth campaigns" },
   { href: "/services/app-web-development", label: "App & Web Development", desc: "Full-stack builds, premium UX" },
+];
+
+const learnLinks = [
+  { href: "/courses", label: "Courses", desc: "Learn job-ready skills", icon: AnimatedBook },
+  { href: "/tutoring", label: "Tutoring", desc: "1:1 mentor sessions, live classes", icon: AnimatedGraduation },
 ];
 
 type MobileLink = {
@@ -52,7 +56,6 @@ const mobileMainLinks: MobileLink[] = [
 ];
 
 const mobileServiceLinks: MobileLink[] = [
-  { href: "/services", label: "All Services", desc: "Explore our service areas", icon: AnimatedCode },
   {
     href: "/services/digital-marketing",
     label: "Digital Marketing",
@@ -85,6 +88,7 @@ export function Navbar({ user }: { user: NavUser }) {
   const [scrolled, setScrolled] = useState(false);
   const [mobileOpen, setMobileOpen] = useState(false);
   const [servicesOpen, setServicesOpen] = useState(false);
+  const [learnOpen, setLearnOpen] = useState(false);
   const isHome = pathname === "/";
 
   useEffect(() => {
@@ -123,8 +127,41 @@ export function Navbar({ user }: { user: NavUser }) {
             Home
           </NavHeaderLink>
 
-          <NavHeaderLink href="/courses" active={pathname === "/courses" || pathname.startsWith("/courses/")}>Courses</NavHeaderLink>
-          <NavHeaderLink href="/tutoring" active={pathname === "/tutoring"}>Tutoring</NavHeaderLink>
+          <div
+            className="group relative"
+            onMouseEnter={() => setLearnOpen(true)}
+            onMouseLeave={() => setLearnOpen(false)}
+          >
+            <button
+              className="relative flex items-center gap-1 rounded-full px-4 py-2 text-sm font-medium text-foreground/80 transition-colors duration-200 hover:text-foreground cursor-pointer"
+              onClick={() => setLearnOpen((open) => !open)}
+              aria-expanded={learnOpen}
+            >
+              Learn
+              <ChevronDown className={cn("h-4 w-4 transition-transform duration-300", learnOpen && "rotate-180")} />
+              <span className={cn("pointer-events-none absolute inset-x-3.5 -bottom-0.5 h-[3px] origin-center rounded-full brand-gradient-bg transition-transform duration-300 ease-out", learnOpen ? "scale-x-100" : "scale-x-0 group-hover:scale-x-100")} />
+            </button>
+            <AnimatePresence>
+              {learnOpen && (
+                <motion.div
+                  initial={{ opacity: 0, y: 8, scale: 0.97 }}
+                  animate={{ opacity: 1, y: 0, scale: 1 }}
+                  exit={{ opacity: 0, y: 8, scale: 0.97 }}
+                  transition={{ duration: 0.18, ease: [0.16, 1, 0.3, 1] }}
+                  className="absolute left-0 top-full mt-2 w-72 rounded-2xl border border-border-soft bg-surface p-2 shadow-[var(--shadow-lift)]"
+                >
+                  {learnLinks.map((item) => {
+                    const Icon = item.icon;
+                    const active = pathname === item.href || pathname.startsWith(`${item.href}/`);
+                    return <Link key={item.href} href={item.href} className={cn("flex items-center gap-3 rounded-xl px-3.5 py-3 transition-colors hover:bg-surface-2", active && "bg-brand-50 dark:bg-brand-900/20")}>
+                      <Icon className="h-7 w-7 shrink-0 text-brand-500" />
+                      <span><span className="block text-sm font-medium">{item.label}</span><span className="block text-xs text-muted">{item.desc}</span></span>
+                    </Link>;
+                  })}
+                </motion.div>
+              )}
+            </AnimatePresence>
+          </div>
 
           <div
             className="group relative"

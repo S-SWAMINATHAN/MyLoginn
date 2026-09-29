@@ -228,6 +228,15 @@ body {
   background: linear-gradient(135deg, var(--brand-600), var(--brand-500) 45%, var(--accent-500));
 }
 
+/* Keep auth forms compact vertically while preserving their normal responsive width. */
+.auth-stage input:not([type="checkbox"]),
+.auth-stage select {
+  padding-block: 0.5rem;
+}
+.auth-stage button {
+  padding-block: 0.65rem;
+}
+
 /* Cinematic entrance animations */
 @keyframes fade-up {
   from {

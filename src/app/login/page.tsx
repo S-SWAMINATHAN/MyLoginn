@@ -5,15 +5,13 @@ import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useRouter } from "next/navigation";
 import { motion, AnimatePresence } from "framer-motion";
-import Link from "next/link";
 import { ArrowRight, KeyRound, LogIn, Mail, Smartphone } from "lucide-react";
 import { loginSchema, type LoginInput } from "@/lib/validation";
 import { formatPhoneDisplay } from "@/lib/whatsapp";
 import { cn } from "@/lib/cn";
 import { Input } from "@/components/ui/Input";
 import { Button } from "@/components/ui/Button";
-import { GlassCard } from "@/components/ui/Card";
-import { IconBadge } from "@/components/ui/IconBadge";
+import { AuthShell } from "@/components/auth/AuthShell";
 import { PhoneInput } from "@/components/ui/PhoneInput";
 import { OtpInput } from "@/components/ui/OtpInput";
 import { PasswordInput } from "@/components/ui/PasswordInput";
@@ -139,39 +137,31 @@ export default function LoginPage() {
   }
 
   return (
-    <div className="relative flex min-h-[calc(100vh-4rem)] items-center justify-center overflow-hidden px-5 py-16">
-      <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(50%_50%_at_50%_0%,var(--brand-100),transparent_70%)] dark:bg-[radial-gradient(50%_50%_at_50%_0%,rgba(108,77,255,0.14),transparent_70%)]" />
-
-      <motion.div
-        initial={{ opacity: 0, y: 20 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{ duration: 0.6, ease: [0.16, 1, 0.3, 1] }}
-        className="relative z-10 w-full max-w-md"
-      >
-        <GlassCard className="p-6 sm:p-8">
-          <div className="flex items-center gap-2">
-            <IconBadge size="sm" className="text-brand-500 dark:text-brand-400">
-              {mode === "password" ? <LogIn className="h-6.5 w-6.5" /> : <KeyRound className="h-6.5 w-6.5" />}
-            </IconBadge>
-            <h1 className="text-xl font-semibold">Welcome back</h1>
+    <AuthShell mode="login">
+          <div className="mb-5">
+            <span className="mb-3 flex h-10 w-10 items-center justify-center rounded-xl bg-brand-50 text-brand-600 ring-1 ring-brand-100 dark:bg-brand-900/30 dark:text-brand-300 dark:ring-brand-700/40">
+              {mode === "password" ? <LogIn className="h-6 w-6" /> : <KeyRound className="h-6 w-6" />}
+            </span>
+            <p className="text-xs font-semibold uppercase tracking-[.16em] text-brand-600 dark:text-brand-300">MyLoginn account</p>
+            <h1 className="mt-1 text-2xl font-bold tracking-tight sm:text-3xl">Welcome back</h1>
+            <p className="mt-1.5 text-sm leading-5 text-muted">Sign in to continue your learning and pick up where you left off.</p>
           </div>
-          <p className="mt-2 text-sm text-muted">Log in to continue your progress.</p>
 
-          <div className="mt-6 flex gap-1 rounded-full bg-surface-2 p-1">
+          <div className="flex gap-1 rounded-xl border border-border-soft bg-surface-2 p-1.5">
             {(["password", "otp"] as Mode[]).map((m) => (
               <button
                 key={m}
                 type="button"
                 onClick={() => switchMode(m)}
                 className={cn(
-                  "relative flex-1 cursor-pointer rounded-full px-3 py-2 text-sm font-medium transition-colors duration-200",
+                  "relative flex-1 cursor-pointer rounded-lg px-3 py-2.5 text-sm font-semibold transition-colors duration-200",
                   mode === m ? "text-white" : "text-muted hover:text-foreground"
                 )}
               >
                 {mode === m && (
                   <motion.span
                     layoutId="login-mode-pill"
-                    className="brand-gradient-bg absolute inset-0 rounded-full"
+                    className="brand-gradient-bg absolute inset-0 rounded-lg shadow-sm"
                     transition={{ type: "spring", stiffness: 350, damping: 28 }}
                   />
                 )}
@@ -190,7 +180,7 @@ export default function LoginPage() {
                 exit="exit"
                 transition={{ duration: 0.3, ease: [0.16, 1, 0.3, 1] }}
               >
-                <form onSubmit={handleSubmit(onPasswordSubmit)} className="mt-6 flex flex-col gap-4">
+                  <form onSubmit={handleSubmit(onPasswordSubmit)} className="mt-4 flex flex-col gap-3">
                   <Input label="Email address" type="email" placeholder="you@example.com" {...register("email")} error={errors.email?.message} />
                   <PasswordInput label="Password" placeholder="••••••••" {...register("password")} error={errors.password?.message} />
 
@@ -335,14 +325,6 @@ export default function LoginPage() {
             )}
           </AnimatePresence>
 
-          <p className="mt-6 text-center text-sm text-muted">
-            Don&apos;t have an account?{" "}
-            <Link href="/signup" className="font-medium text-brand-500">
-              Create one
-            </Link>
-          </p>
-        </GlassCard>
-      </motion.div>
-    </div>
+    </AuthShell>
   );
 }
