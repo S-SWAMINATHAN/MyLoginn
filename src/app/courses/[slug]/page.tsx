@@ -26,7 +26,12 @@ export async function generateMetadata({ params }: { params: Promise<{ slug: str
     title: course.title,
     description: course.description,
     path: `/courses/${course.slug}`,
-    keywords: ["online course", course.title, course.category, course.level, "MyLoginn"],
+    keywords: [
+      course.title,
+      `${course.category} course`,
+      `${course.level} ${course.category} course`,
+      "online course",
+    ],
   });
 }
 

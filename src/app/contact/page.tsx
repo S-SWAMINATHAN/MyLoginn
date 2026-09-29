@@ -16,7 +16,11 @@ export const metadata = createPageMetadata({
   title: "Contact MyLoginn",
   description: "Contact MyLoginn Tech Private Limited about software development, AI, digital marketing, courses, tutoring, and internships.",
   path: "/contact",
-  keywords: ["contact MyLoginn", "software development enquiry", "digital marketing enquiry"],
+  keywords: [
+    "contact MyLoginn", "MyLoginn contact", "MyLoginn Tech contact",
+    "contact MyLoginn Tech Private Limited", "IT company contact",
+    "software development enquiry", "digital marketing enquiry",
+  ],
 });
 
 const contactPoints: { icon: typeof AnimatedMail; title: string; description: string; actions: ContactAction[] }[] = [

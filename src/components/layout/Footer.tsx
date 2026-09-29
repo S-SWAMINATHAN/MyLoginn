@@ -20,6 +20,7 @@ const columns = [
     title: "Explore",
     links: [
       { href: "/", label: "Home" },
+      { href: "/about", label: "About MyLoginn" },
       { href: "/#ecosystem", label: "What we build" },
       { href: "/projects", label: "Projects" },
       { href: "/contact", label: "Contact us" },

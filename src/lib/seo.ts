@@ -1,22 +1,10 @@
 import type { Metadata } from "next";
 import { siteUrl } from "@/lib/site";
 
-const coreKeywords = [
+const brandKeywords = [
   "MyLoginn",
-  "My Login",
-  "MyLogin",
-  "My Loginn",
+  "MyLoginn Tech",
   "MyLoginn Tech Private Limited",
-  "software development company",
-  "web development company",
-  "mobile app development",
-  "AI solutions",
-  "digital marketing services",
-  "AI digital marketing agency",
-  "AI digital marketing services",
-  "technology courses",
-  "online tutoring",
-  "internships",
 ];
 
 export function createPageMetadata({
@@ -35,7 +23,9 @@ export function createPageMetadata({
   return {
     title,
     description,
-    keywords: [...coreKeywords, ...keywords],
+    // Keep only brand identity terms global; service/course intent belongs to
+    // the page where that content is actually covered.
+    keywords: [...brandKeywords, ...keywords],
     alternates: { canonical: path },
     openGraph: {
       type: "website",

@@ -123,6 +123,10 @@ export function Navbar({ user }: { user: NavUser }) {
             Home
           </NavHeaderLink>
 
+          <NavHeaderLink href="/about" active={pathname === "/about"}>
+            About
+          </NavHeaderLink>
+
           <div className="group relative" onMouseEnter={() => setLearnOpen(true)} onMouseLeave={() => setLearnOpen(false)}>
             <button aria-expanded={learnOpen} className="relative flex items-center gap-1 rounded-full px-4 py-2 text-sm font-medium text-foreground/80 transition-colors hover:text-foreground cursor-pointer" onClick={() => setLearnOpen((s) => !s)}>
               Learn <ChevronDown className={cn("h-4 w-4 transition-transform duration-300", learnOpen && "rotate-180")} />

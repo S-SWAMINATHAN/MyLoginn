@@ -13,6 +13,7 @@ import { RotatingHeadline } from "@/components/ui/RotatingHeadline";
 import heroImage from "@/images/Hero Section images/15.png";
 
 const heroPhrases = [
+  "AI-Driven IT Solutions for Modern Businesses",
   "Where Potential Meets Opportunity",
   "Elevating Learning, Empowering Careers",
   "Learning with Direction. Careers with Impact.",

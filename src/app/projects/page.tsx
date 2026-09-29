@@ -10,7 +10,11 @@ export const metadata = createPageMetadata({
   title: "Student Projects & Portfolio",
   description: "Explore software and technology projects built by MyLoginn learners with guidance from experienced mentors.",
   path: "/projects",
-  keywords: ["student software projects", "technology project portfolio", "capstone projects"],
+  keywords: [
+    "MyLoginn projects", "software projects", "website projects", "app projects",
+    "custom software projects", "technology project portfolio", "student software projects",
+    "capstone projects",
+  ],
 });
 
 export const dynamic = "force-dynamic";

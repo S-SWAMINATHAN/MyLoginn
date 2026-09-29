@@ -13,7 +13,13 @@ export const metadata = createPageMetadata({
   title: "AI, Technology & Full-Stack Courses",
   description: "Build job-ready skills in artificial intelligence, data, full-stack development, and digital marketing with mentor-led MyLoginn courses.",
   path: "/courses",
-  keywords: ["AI courses", "full-stack development courses", "digital marketing courses", "online technology learning"],
+  keywords: [
+    "MyLoginn courses", "AI courses", "Generative AI courses", "Agentic AI courses",
+    "Data Analytics courses", "Full-Stack Development courses", "Testing with AI",
+    "Automation Testing courses", "Python courses", "Cloud Engineering courses",
+    "Data Science courses", "Prompt Engineering courses", "digital marketing courses",
+    "online technology learning",
+  ],
 });
 
 export const dynamic = "force-dynamic";

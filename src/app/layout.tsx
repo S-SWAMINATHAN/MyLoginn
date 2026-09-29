@@ -12,8 +12,6 @@ import { PageTransition } from "@/components/layout/PageTransition";
 import { HideOnAdmin } from "@/components/layout/HideOnAdmin";
 import { getCurrentUser } from "@/lib/auth";
 import { siteUrl } from "@/lib/site";
-import { CONTACT_EMAIL, CONTACT_PHONES } from "@/lib/contactInfo";
-import companyLogo from "@/images/MyLoginn Logo Icon.png";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -27,8 +25,15 @@ const geistMono = Geist_Mono({
 
 export const metadata: Metadata = {
   metadataBase: new URL(siteUrl),
+  icons: {
+    icon: [
+      { url: "/favicon.ico", type: "image/x-icon", sizes: "48x48" },
+      { url: "/icon.png", type: "image/png", sizes: "512x512" },
+    ],
+    apple: [{ url: "/apple-icon.png", type: "image/png", sizes: "180x180" }],
+  },
   title: {
-    default: "MyLoginn | AI Digital Marketing, Software & Career Learning",
+    default: "MyLoginn | AI-Driven IT Company for Web, App & Digital Solutions",
     template: "%s | MyLoginn",
   },
   description:
@@ -39,24 +44,21 @@ export const metadata: Metadata = {
   publisher: "MyLoginn Tech Private Limited",
   category: "Technology and professional education",
   keywords: [
-    "MyLoginn", "My Login", "MyLogin", "My Loginn", "MyLoginn Tech Private Limited", "software development company",
-    "web development company", "mobile app development", "AI solutions",
-    "digital marketing services", "AI digital marketing agency", "AI digital marketing services",
-    "technology courses", "online tutoring", "technology internships",
+    "MyLoginn", "MyLoginn Tech", "MyLoginn Tech Private Limited",
   ],
   openGraph: {
     type: "website",
     locale: "en_IN",
     siteName: "MyLoginn",
-    title: "MyLoginn | AI Digital Marketing, Software & Career Learning",
+    title: "MyLoginn | AI-Driven IT Company for Web, App & Digital Solutions",
     description:
-      "Software development, AI, digital marketing, hands-on technology courses, tutoring, and internships from MyLoginn Tech Private Limited.",
+      "MyLoginn Tech Private Limited provides website and app development, digital marketing, custom software, AI solutions, courses and internships.",
   },
   twitter: {
     card: "summary_large_image",
-    title: "MyLoginn | AI Digital Marketing, Software & Career Learning",
+    title: "MyLoginn | AI-Driven IT Company for Web, App & Digital Solutions",
     description:
-      "Software development, AI, digital marketing, hands-on technology courses, tutoring, and internships from MyLoginn Tech Private Limited.",
+      "MyLoginn Tech Private Limited provides website and app development, digital marketing, custom software, AI solutions, courses and internships.",
   },
   robots: {
     index: true,
@@ -66,41 +68,6 @@ export const metadata: Metadata = {
   ...(process.env.GOOGLE_SITE_VERIFICATION
     ? { verification: { google: process.env.GOOGLE_SITE_VERIFICATION } }
     : {}),
-};
-
-const organizationSchema = {
-  "@context": "https://schema.org",
-  "@graph": [
-    {
-      "@type": "Organization",
-      "@id": `${siteUrl}/#organization`,
-      name: "MyLoginn",
-      alternateName: ["My Login", "MyLogin", "My Loginn"],
-      legalName: "MyLoginn Tech Private Limited",
-      url: siteUrl,
-      logo: `${siteUrl}${companyLogo.src}`,
-      email: CONTACT_EMAIL,
-      contactPoint: CONTACT_PHONES.map((phone) => ({
-        "@type": "ContactPoint",
-        telephone: phone.tel,
-        contactType: "customer support",
-        areaServed: "IN",
-      })),
-      knowsAbout: [
-        "Web development", "Mobile app development", "Artificial intelligence",
-        "Digital marketing", "Technology education", "Online tutoring", "Technology internships",
-      ],
-    },
-    {
-      "@type": "WebSite",
-      "@id": `${siteUrl}/#website`,
-      url: siteUrl,
-      name: "MyLoginn",
-      alternateName: ["My Login", "MyLogin", "My Loginn"],
-      publisher: { "@id": `${siteUrl}/#organization` },
-      inLanguage: "en-IN",
-    },
-  ],
 };
 
 export default async function RootLayout({
@@ -121,12 +88,6 @@ export default async function RootLayout({
       className={`${geistSans.variable} ${geistMono.variable} min-h-full antialiased`}
     >
       <body className="min-h-screen flex flex-col">
-        <script
-          type="application/ld+json"
-          dangerouslySetInnerHTML={{
-            __html: JSON.stringify(organizationSchema).replace(/</g, "\\u003c"),
-          }}
-        />
         <MotionConfig reducedMotion="user">
           <ThemeProvider>
             <HideOnAdmin>

@@ -9,7 +9,10 @@ export const metadata = createPageMetadata({
   title: "Online Tutoring & Mentor Support",
   description: "Book personalized online tutoring and mentor sessions in programming, data science, mathematics, and more with MyLoginn.",
   path: "/tutoring",
-  keywords: ["online tutoring", "programming tutor", "data science tutor", "one to one tutoring"],
+  keywords: [
+    "MyLoginn tutoring", "online tutoring", "programming tutor",
+    "data science tutor", "one-to-one tutoring", "personalized tutoring",
+  ],
 });
 
 export const dynamic = "force-dynamic";

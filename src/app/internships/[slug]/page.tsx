@@ -24,7 +24,12 @@ export async function generateMetadata({ params }: { params: Promise<{ slug: str
     title: internship.title,
     description: internship.description,
     path: `/internships/${internship.slug}`,
-    keywords: ["technology internship", internship.title, internship.company, "MyLoginn"],
+    keywords: [
+      internship.title,
+      `${internship.company} internship`,
+      "software development internship",
+      "technology internship",
+    ],
   });
 }
 

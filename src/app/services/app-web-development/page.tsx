@@ -39,7 +39,12 @@ export const metadata = createPageMetadata({
   title: "App & Web Development Services",
   description: "Plan and build secure, scalable websites, web applications, and mobile apps with MyLoginn Tech Private Limited.",
   path: "/services/app-web-development",
-  keywords: ["web development services", "mobile app development company", "custom software development", "full-stack development"],
+  keywords: [
+    "MyLoginn website development", "web development company",
+    "website development services", "web application development",
+    "mobile app development company", "app development company",
+    "custom software development", "full-stack development",
+  ],
 });
 
 export default function AppWebDevelopmentPage() {

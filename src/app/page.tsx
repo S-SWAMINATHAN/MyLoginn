@@ -9,18 +9,30 @@ import { AiStory } from "@/components/sections/AiStory";
 import { HowWeBuild } from "@/components/sections/HowWeBuild";
 import { FinalCta } from "@/components/sections/FinalCta";
 import { ProjectShowcase } from "@/components/sections/ProjectShowcase";
+import { JsonLd } from "@/components/seo/JsonLd";
+import { organizationStructuredData, websiteStructuredData } from "@/lib/structuredData";
 
 export const metadata = createPageMetadata({
-  title: "MyLoginn | AI Digital Marketing & Technology Solutions",
+  title: "AI-Driven IT Company for Web, App & Digital Solutions",
   description:
-    "MyLoginn (also searched as My Login or MyLogin) is an Indian technology company offering AI-powered digital marketing, web and mobile development, practical courses, and career support.",
+    "MyLoginn Tech Private Limited is an AI-driven IT company providing website development, app development, digital marketing, custom software, UI/UX and technology solutions.",
   path: "/",
-  keywords: ["AI digital marketing company", "AI digital marketing agency", "digital marketing company in India", "custom software company", "AI development", "business digital transformation", "career training"],
+  keywords: [
+    "MyLoginn company", "MyLoginn IT company", "MyLoginn software company",
+    "MyLoginn technology company", "MyLoginn official website", "myloginn.com",
+    "AI-driven IT company", "technology solutions", "website development",
+    "web development", "app development", "mobile app development",
+    "digital marketing", "custom software solutions", "UI/UX design", "AI solutions",
+  ],
 });
 
 export default function Home() {
   return (
     <>
+      <JsonLd data={{
+        "@context": "https://schema.org",
+        "@graph": [organizationStructuredData, websiteStructuredData],
+      }} />
       <StoryStage>
         <Hero />
         <Ecosystem />

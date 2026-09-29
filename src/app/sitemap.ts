@@ -4,6 +4,8 @@ import { siteUrl } from "@/lib/site";
 
 const publicRoutes = [
   { path: "", priority: 1, changeFrequency: "weekly" as const },
+  { path: "/about", priority: 0.8, changeFrequency: "monthly" as const },
+  { path: "/services", priority: 0.9, changeFrequency: "monthly" as const },
   { path: "/courses", priority: 0.9, changeFrequency: "weekly" as const },
   { path: "/internships", priority: 0.9, changeFrequency: "daily" as const },
   { path: "/projects", priority: 0.8, changeFrequency: "weekly" as const },

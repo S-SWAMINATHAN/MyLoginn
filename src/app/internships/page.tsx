@@ -13,7 +13,10 @@ export const metadata = createPageMetadata({
   title: "Technology Internships",
   description: "Explore practical technology internships with real projects, mentor guidance, and career-building experience from MyLoginn.",
   path: "/internships",
-  keywords: ["technology internships India", "software development internships", "internships with mentorship"],
+  keywords: [
+    "MyLoginn internships", "AI internships", "software development internships",
+    "technology internships", "internship programs", "internships with mentorship",
+  ],
 });
 
 export const dynamic = "force-dynamic";

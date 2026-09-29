@@ -10,7 +10,13 @@ export const metadata = createPageMetadata({
   title: "AI Digital Marketing Agency & Services",
   description: "Grow your business with MyLoginn Tech Private Limited, an AI-focused digital marketing company offering SEO, paid campaigns, social media, content, and performance analytics.",
   path: "/services/digital-marketing",
-  keywords: ["AI digital marketing agency", "digital marketing company", "digital marketing services India", "SEO services", "PPC advertising", "social media marketing", "content marketing"],
+  keywords: [
+    "MyLoginn digital marketing", "digital marketing company",
+    "digital marketing services", "AI digital marketing solutions",
+    "SEO services", "social media marketing", "Google Ads management",
+    "Meta Ads management", "paid advertising", "content marketing",
+    "marketing analytics",
+  ],
 });
 
 export default function DigitalMarketingServicesPage() {
