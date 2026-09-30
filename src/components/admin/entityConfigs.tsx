@@ -88,7 +88,7 @@ export const courseConfig: EntityConfig = {
     { name: "level", label: "Level", type: "select", options: LEVEL_OPTIONS },
     { name: "durationWeeks", label: "Duration (weeks)", type: "number", min: 1, max: 52, required: true },
     { name: "price", label: "Price (₹)", type: "number", min: 0, required: true },
-    { name: "originalPrice", label: "Original price (₹)", type: "number", min: 0 },
+    { name: "originalPrice", label: "Original price / MRP (₹)", type: "number", min: 1, required: true, hint: "Must be higher than the final course price to show a genuine discount." },
     { name: "featured", label: "Featured on home page", type: "checkbox" },
     { name: "description", label: "Description", type: "textarea", required: true, full: true },
   ],

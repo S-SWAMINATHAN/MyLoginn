@@ -56,7 +56,7 @@ const userUpdate = userCreate.partial().omit({ password: true }).extend({
   points: z.coerce.number().int().min(0).optional(),
 });
 
-const courseCreate = z.object({
+const courseShape = z.object({
   title: z.string().trim().min(3),
   category: z.string().trim().min(2).max(40),
   level: z.enum(["Beginner", "Intermediate", "Advanced"]),
@@ -64,10 +64,17 @@ const courseCreate = z.object({
   instructor: z.string().trim().min(2),
   durationWeeks: z.coerce.number().int().min(1).max(52),
   price: z.coerce.number().int().min(0),
-  originalPrice: z.coerce.number().int().min(0).optional().nullable(),
+  originalPrice: z.coerce.number().int().min(1),
   featured: z.coerce.boolean().default(false),
 });
-const courseUpdate = courseCreate.partial();
+const courseCreate = courseShape.refine((course) => course.originalPrice > course.price, {
+  message: "Original price must be greater than the final course price",
+  path: ["originalPrice"],
+});
+const courseUpdate = courseShape.partial().refine(
+  (course) => course.originalPrice === undefined || course.price === undefined || course.originalPrice > course.price,
+  { message: "Original price must be greater than the final course price", path: ["originalPrice"] }
+);
 
 const mentorCreate = z.object({
   name: z.string().trim().min(2),

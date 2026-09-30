@@ -82,20 +82,26 @@ export function CourseCard({
             <h3 className="relative z-10 mt-1.5 line-clamp-2 text-base font-semibold leading-snug">{course.title}</h3>
             <p className="relative z-10 mt-2 line-clamp-2 flex-1 text-sm text-muted">{course.description}</p>
 
-            <div className="relative z-10 mt-4 flex items-center justify-center gap-4 text-xs text-muted">
+            <div className="relative z-10 mt-4 flex flex-wrap items-center justify-center gap-x-4 gap-y-2 text-xs text-muted">
               <span className="flex items-center gap-1">
-                <AnimatedClock className="h-5 w-5 transition-transform duration-300 group-hover:scale-125" /> {course.durationWeeks}w
+                <AnimatedClock className="h-5 w-5 transition-transform duration-300 group-hover:scale-125" /> {course.durationWeeks} {course.durationWeeks === 1 ? "week" : "weeks"}
               </span>
+              <span className="truncate">Instructor: {course.instructor}</span>
             </div>
 
-            <div className="relative z-10 mt-5 flex w-full items-center justify-center gap-2 border-t border-border-soft pt-5">
-              <span className="text-2xl font-bold sm:text-3xl">₹{course.price.toLocaleString()}</span>
-              {course.originalPrice && (
-                <span className="text-xs text-muted line-through">₹{course.originalPrice.toLocaleString()}</span>
-              )}
+            <div className="relative z-10 mt-5 flex w-full flex-col items-center border-t border-border-soft pt-4">
+              <span className="text-[11px] font-medium uppercase tracking-wider text-muted">Course fee</span>
+              <div className="mt-1 flex flex-wrap items-baseline justify-center gap-x-2 gap-y-1">
+                <span className="text-2xl font-bold sm:text-3xl">₹{course.price.toLocaleString("en-IN")}</span>
+                {course.originalPrice && course.originalPrice > course.price && (
+                  <span className="text-sm text-muted line-through" aria-label={`Original price ₹${course.originalPrice.toLocaleString("en-IN")}`}>
+                    ₹{course.originalPrice.toLocaleString("en-IN")}
+                  </span>
+                )}
+              </div>
               {discountPct && (
-                <span className="inline-flex items-center gap-0.5 rounded-full bg-success/10 px-2 py-0.5 text-[11px] font-semibold text-success">
-                  <Percent className="h-4 w-4 transition-transform duration-300 group-hover:scale-125" /> {discountPct}% off
+                <span className="mt-1 inline-flex items-center gap-0.5 rounded-full bg-success/10 px-2 py-0.5 text-[11px] font-semibold text-success">
+                  <Percent className="h-3.5 w-3.5" /> Save {discountPct}%
                 </span>
               )}
             </div>

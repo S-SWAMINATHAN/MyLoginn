@@ -114,8 +114,8 @@ export default async function CourseDetailPage({
               <Card className="p-6">
                 <div className="flex items-center gap-2">
                   <span className="text-3xl font-bold">â‚¹{course.price.toLocaleString()}</span>
-                  {course.originalPrice && (
-                    <span className="text-sm text-muted line-through">â‚¹{course.originalPrice.toLocaleString()}</span>
+                  {course.originalPrice && course.originalPrice > course.price && (
+                    <span className="text-sm text-muted line-through">â‚¹{course.originalPrice.toLocaleString("en-IN")}</span>
                   )}
                 </div>
                 {discountPct && (
