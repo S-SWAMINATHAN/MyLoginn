@@ -73,6 +73,8 @@ export default function LoginPage() {
       }
       router.push(json.user.role === "ADMIN" ? "/admin" : "/dashboard");
       router.refresh();
+    } catch {
+      setServerError("We couldn't complete sign in. Please try again.");
     } finally {
       setSubmitting(false);
     }
