@@ -50,7 +50,7 @@ export function LeadForm({
   variant = "default",
 }: {
   service: string;
-  variant?: "default" | "dynamic";
+  variant?: "default" | "dynamic" | "contact";
 }) {
   const [submitted, setSubmitted] = useState(false);
   const [whatsappLink, setWhatsappLink] = useState<string | null>(null);
@@ -58,6 +58,7 @@ export function LeadForm({
   const [loading, setLoading] = useState(false);
 
   const isDynamic = variant === "dynamic";
+  const isContact = variant === "contact";
 
   const {
     register,
@@ -92,13 +93,18 @@ export function LeadForm({
       }
       setWhatsappLink(json.whatsappLink);
       setSubmitted(true);
+    } catch {
+      setServerError("We couldn't send your enquiry. Please try again in a moment.");
     } finally {
       setLoading(false);
     }
   }
 
   return (
-    <GlassCard className="relative overflow-hidden p-7 sm:p-8">
+    <GlassCard className={cn(
+      "relative overflow-hidden p-7 sm:p-8",
+      isContact && "!rounded-none !border-0 !bg-transparent !p-0 !shadow-none !backdrop-blur-none"
+    )}>
       {isDynamic && (
         <div className="pointer-events-none absolute -right-16 -top-16 h-40 w-40 rounded-full bg-[radial-gradient(circle,var(--brand-300),transparent_70%)] opacity-25 blur-2xl" />
       )}
@@ -117,13 +123,25 @@ export function LeadForm({
         </motion.div>
       ) : (
         <form onSubmit={handleSubmit(onSubmit)} className="relative flex flex-col gap-4">
-          <div className="flex items-center justify-between gap-3">
-            <h3 className="text-lg font-semibold">Tell us about your project or enquiry</h3>
+          <div className="flex flex-col gap-1">
+            <h3 className="text-xl font-semibold tracking-tight">{isContact ? "Send Us a Message" : "Tell us about your project or enquiry"}</h3>
+            {isContact && <p className="text-sm text-muted">Fill in the form and our team will get back to you shortly.</p>}
           </div>
 
           <input type="hidden" {...register("service")} />
 
-          {isDynamic ? (
+          {isContact ? (
+            <>
+              <div className="grid gap-4 sm:grid-cols-2">
+                <Input label="Full Name" placeholder="Your full name" {...register("name")} error={errors.name?.message} />
+                <Input label="Work Email" type="email" placeholder="you@company.com" {...register("email")} error={errors.email?.message} />
+              </div>
+              <Input label="Phone (WhatsApp)" placeholder="+91 98765 43210" hint="Add a WhatsApp number if you would like to continue the enquiry there." {...register("phone")} error={errors.phone?.message} />
+              <Input label="Company (optional)" placeholder="Your company name" {...register("company")} />
+              <Textarea label="Tell us about your goals" rows={2} placeholder="What are you hoping to achieve?" {...register("goals")} />
+              <Textarea label="Tell us about your project / enquiry" rows={3} placeholder="Share details about your project or enquiry..." {...register("message")} />
+            </>
+          ) : isDynamic ? (
             <>
               <FieldRow label="Full name" valid={fieldValid.name}>
                 <Input placeholder="Your name" {...register("name")} error={errors.name?.message} />
@@ -165,7 +183,7 @@ export function LeadForm({
             className={cn("w-full", isDynamic && "bg-size-200")}
             disabled={loading}
           >
-            {loading ? "Sending…" : "Request consultation"}
+            {loading ? "Sending…" : isContact ? "Send Message" : "Request consultation"}
           </Button>
         </form>
       )}

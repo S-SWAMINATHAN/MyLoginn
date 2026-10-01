@@ -130,9 +130,9 @@ export function CheckoutPanel({ course }: { course: CheckoutCourse }) {
         <div className="mt-6 flex items-center justify-between">
           <span className="text-sm text-muted">Course price</span>
           <div className="flex items-center gap-2">
-            <span className="text-2xl font-bold">₹{course.price.toLocaleString()}</span>
+            <span className="text-2xl font-bold">₹{course.price.toLocaleString("en-IN")}</span>
             {course.originalPrice && (
-              <span className="text-xs text-muted line-through">₹{course.originalPrice.toLocaleString()}</span>
+              <span className="text-xs text-muted line-through">₹{course.originalPrice.toLocaleString("en-IN")}</span>
             )}
           </div>
         </div>
@@ -140,7 +140,7 @@ export function CheckoutPanel({ course }: { course: CheckoutCourse }) {
         {error && <p className="mt-4 rounded-lg bg-danger/10 px-3 py-2 text-sm text-danger">{error}</p>}
 
         <Button className="mt-8 w-full" size="lg" onClick={handlePay} disabled={loading}>
-          {loading ? "Opening payment…" : `Pay ₹${course.price.toLocaleString()} with Razorpay`}
+          {loading ? "Opening payment…" : `Pay ₹${course.price.toLocaleString("en-IN")} with Razorpay`}
         </Button>
 
         <p className="group mt-4 flex items-center justify-center gap-1.5 text-xs text-muted">

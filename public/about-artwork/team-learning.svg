@@ -1,0 +1,56 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 900 560" fill="none">
+ <defs>
+  <linearGradient id="bg" x1="106" y1="61" x2="782" y2="507" gradientUnits="userSpaceOnUse"><stop stop-color="#EAF3FF"/><stop offset=".52" stop-color="#D8E9FF"/><stop offset="1" stop-color="#BDD6F8"/></linearGradient>
+  <linearGradient id="wall" x1="169" y1="73" x2="760" y2="409" gradientUnits="userSpaceOnUse"><stop stop-color="#F6FAFF"/><stop offset="1" stop-color="#D7E7FA"/></linearGradient>
+  <linearGradient id="shirt1" x1="203" y1="252" x2="375" y2="485" gradientUnits="userSpaceOnUse"><stop stop-color="#2D75E9"/><stop offset="1" stop-color="#1749B8"/></linearGradient>
+  <linearGradient id="shirt2" x1="423" y1="274" x2="557" y2="481" gradientUnits="userSpaceOnUse"><stop stop-color="#31B8AE"/><stop offset="1" stop-color="#168578"/></linearGradient>
+  <linearGradient id="shirt3" x1="573" y1="273" x2="716" y2="477" gradientUnits="userSpaceOnUse"><stop stop-color="#8870E7"/><stop offset="1" stop-color="#5945B9"/></linearGradient>
+  <linearGradient id="skin1" x1="255" y1="117" x2="342" y2="234" gradientUnits="userSpaceOnUse"><stop stop-color="#EBC4A8"/><stop offset="1" stop-color="#C98A67"/></linearGradient>
+  <linearGradient id="skin2" x1="449" y1="128" x2="519" y2="227" gradientUnits="userSpaceOnUse"><stop stop-color="#F4D5BE"/><stop offset="1" stop-color="#D9A787"/></linearGradient>
+  <linearGradient id="skin3" x1="614" y1="133" x2="683" y2="226" gradientUnits="userSpaceOnUse"><stop stop-color="#D8A781"/><stop offset="1" stop-color="#AD6E4E"/></linearGradient>
+  <linearGradient id="desk" x1="104" y1="400" x2="795" y2="513" gradientUnits="userSpaceOnUse"><stop stop-color="#FDFEFF"/><stop offset="1" stop-color="#D3E3F6"/></linearGradient>
+  <filter id="shadow" x="71" y="390" width="768" height="130" color-interpolation-filters="sRGB"><feGaussianBlur stdDeviation="15"/></filter>
+ </defs>
+ <ellipse cx="459" cy="473" rx="354" ry="46" fill="#436DAE" opacity=".16" filter="url(#shadow)"/>
+ <rect x="78" y="45" width="744" height="417" rx="30" fill="url(#bg)"/>
+ <path d="M112 84c0-14 11-25 25-25h620c14 0 25 11 25 25v272H112V84Z" fill="url(#wall)"/>
+ <path d="M145 90h610v239H145z" fill="#EAF3FC"/>
+ <path d="M164 107h167v202H164z" fill="#DCEAFF"/><path d="M344 107h168v202H344z" fill="#EEF6FF"/><path d="M525 107h211v202H525z" fill="#DCEAFF"/>
+ <path d="M245 108v200m181-200v200m202-200v200" stroke="#FFF" stroke-width="9" opacity=".8"/>
+ <path d="M164 205h572M344 107v202" stroke="#FFF" stroke-width="4" opacity=".6"/>
+ <rect x="244" y="79" width="410" height="17" rx="8.5" fill="#FFF" opacity=".78"/>
+ <circle cx="269" cy="87" r="4" fill="#85A9DD"/><circle cx="287" cy="87" r="4" fill="#85A9DD"/><circle cx="305" cy="87" r="4" fill="#85A9DD"/>
+ <!-- left teammate -->
+ <path d="M173 435c5-79 38-129 105-138 66-8 109 33 122 111l8 57H176l-3-30Z" fill="url(#shirt1)"/>
+ <path d="M264 124c7-35 55-45 79-18 17 20 12 60 1 84-11 25-35 42-57 29-29-17-31-64-23-95Z" fill="url(#skin1)"/>
+ <path d="M259 160c-19-54 2-94 43-99 31-4 55 13 58 46-12-8-23-16-31-27-9 19-34 29-66 30l-4 50Z" fill="#24354B"/>
+ <path d="M263 156c-8 10-11 25-6 38 4 14 16 20 23 13l-2-29-15-22Z" fill="url(#skin1)"/>
+ <path d="M231 287c25 14 55 20 88 16" stroke="#F4F8FF" stroke-width="8" stroke-linecap="round" opacity=".82"/>
+ <path d="m369 346 43 46" stroke="#C98A67" stroke-width="18" stroke-linecap="round"/>
+ <!-- center teammate -->
+ <path d="M365 449c4-78 32-130 92-138 62-9 99 31 109 110l4 37H365v-9Z" fill="url(#shirt2)"/>
+ <path d="M441 134c5-32 47-43 70-21 18 18 15 55 5 77-9 21-30 35-50 26-26-12-30-55-25-82Z" fill="url(#skin2)"/>
+ <path d="M438 159c-15-37-1-74 30-82 29-7 55 10 58 40-18-5-38-14-48-30-7 17-22 28-40 33v39Z" fill="#302641"/>
+ <path d="M442 163c-10 5-13 19-8 31 3 10 12 16 19 11l1-23-12-19Z" fill="url(#skin2)"/>
+ <path d="M397 308c18-16 34-26 56-30m79 29c-16-15-30-23-51-29" stroke="#D8FFF3" stroke-width="8" stroke-linecap="round" opacity=".85"/>
+ <path d="M427 348c-19 23-35 42-56 54m132-51 28 53" stroke="#D9A787" stroke-width="17" stroke-linecap="round"/>
+ <!-- right teammate -->
+ <path d="M555 452c5-80 40-136 101-142 65-6 102 38 109 113l2 29H555Z" fill="url(#shirt3)"/>
+ <path d="M617 136c4-33 44-46 68-24 19 18 18 56 8 78-9 21-29 36-49 27-25-12-31-54-27-81Z" fill="url(#skin3)"/>
+ <path d="M613 159c-14-46 8-81 41-83 31-2 52 19 49 48-20-6-40-18-49-35-7 22-19 34-41 40v30Z" fill="#1D2C46"/>
+ <path d="M617 163c-10 7-12 20-6 31 5 10 14 14 20 8l-2-21-12-18Z" fill="url(#skin3)"/>
+ <path d="M573 315c18-18 40-31 66-35m81 33c-16-16-36-26-57-32" stroke="#EEE9FF" stroke-width="8" stroke-linecap="round" opacity=".86"/>
+ <path d="m589 358-38 43m130-45 35 43" stroke="#AD6E4E" stroke-width="17" stroke-linecap="round"/>
+ <!-- desk and laptop -->
+ <path d="M102 406h696v44c0 15-12 27-27 27H129c-15 0-27-12-27-27v-44Z" fill="url(#desk)" stroke="#E5EEF9" stroke-width="3"/>
+ <path d="m360 309 180 1c12 0 22 9 23 21l8 84H349l7-84c1-12 3-21 4-22Z" fill="#234F9E" stroke="#FFF" stroke-width="5"/>
+ <path d="M371 326h158v65H365l6-65Z" fill="#D9E9FF"/>
+ <rect x="384" y="339" width="49" height="38" rx="10" fill="#EEF5FF"/><path d="m396 359 9-8 8 8 11-12" stroke="#3A74DC" stroke-width="4" stroke-linecap="round" stroke-linejoin="round"/>
+ <rect x="443" y="341" width="72" height="8" rx="4" fill="#A9C2E8"/><rect x="443" y="356" width="56" height="6" rx="3" fill="#BBD0EF"/><rect x="443" y="369" width="64" height="6" rx="3" fill="#BBD0EF"/>
+ <path d="m332 408 235 0 28 14H304l28-14Z" fill="#AFC8EA"/>
+ <!-- small plant -->
+ <path d="M741 405c-1-29 3-50 18-69m-14 37c-20-3-31-16-34-33 21-2 34 7 41 25m8-7c2-19 13-32 31-38 1 20-8 35-27 43" stroke="#35A878" stroke-width="6" stroke-linecap="round"/>
+ <path d="m731 400 50 1-6 34h-38l-6-35Z" fill="#6F9DE8" stroke="#D8E8FC" stroke-width="3"/>
+ <path d="M92 462h716" stroke="#B8CDE8" stroke-width="4" stroke-linecap="round" opacity=".75"/>
+ <circle cx="772" cy="75" r="18" fill="#FFF" opacity=".48"/><circle cx="155" cy="347" r="10" fill="#FFF" opacity=".62"/>
+</svg>

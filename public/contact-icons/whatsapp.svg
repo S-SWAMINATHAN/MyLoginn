@@ -1,0 +1,12 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 160 160" fill="none">
+  <defs>
+    <linearGradient id="a" x1="43" y1="38" x2="119" y2="124" gradientUnits="userSpaceOnUse"><stop stop-color="#8CFFE3"/><stop offset=".48" stop-color="#27E5A6"/><stop offset="1" stop-color="#00B982"/></linearGradient>
+    <linearGradient id="b" x1="52" y1="46" x2="111" y2="111" gradientUnits="userSpaceOnUse"><stop stop-color="#FFF"/><stop offset="1" stop-color="#E3FFF6"/></linearGradient>
+    <filter id="s" x="13" y="14" width="134" height="138" color-interpolation-filters="sRGB"><feGaussianBlur stdDeviation="8"/></filter>
+  </defs>
+  <ellipse cx="80" cy="124" fill="#11C99A" opacity=".2" rx="46" ry="9" filter="url(#s)"/>
+  <path d="M80 34c-27 0-49 21-49 48 0 9 3 18 8 26l-7 21 22-7c8 5 17 7 26 7 27 0 49-21 49-47S107 34 80 34Z" fill="url(#a)" stroke="#C8FFF0" stroke-width="3"/>
+  <path d="M80 43c-22 0-39 17-39 39 0 8 3 16 8 22l-4 13 14-4c6 4 13 6 21 6 21 0 39-17 39-38S101 43 80 43Z" fill="url(#b)"/>
+  <path d="M67 59c-2-4-5-3-7-1-5 5-5 11-2 17 6 13 16 22 29 27 6 2 12 0 15-5 2-3 2-6-1-8l-11-5c-2-1-4 0-5 2l-3 4c-7-3-12-8-15-15l4-3c2-1 2-3 1-5l-5-13Z" fill="#1CC895"/>
+  <path d="M100 56c5 3 9 7 12 13" stroke="#C7FFED" stroke-linecap="round" stroke-width="3"/>
+</svg>

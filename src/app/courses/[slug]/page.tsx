@@ -113,9 +113,9 @@ export default async function CourseDetailPage({
             <div className="lg:sticky lg:top-24">
               <Card className="p-6">
                 <div className="flex items-center gap-2">
-                  <span className="text-3xl font-bold">â‚¹{course.price.toLocaleString()}</span>
+                  <span className="text-3xl font-bold">₹{course.price.toLocaleString("en-IN")}</span>
                   {course.originalPrice && course.originalPrice > course.price && (
-                    <span className="text-sm text-muted line-through">â‚¹{course.originalPrice.toLocaleString("en-IN")}</span>
+                    <span className="text-sm text-muted line-through">₹{course.originalPrice.toLocaleString("en-IN")}</span>
                   )}
                 </div>
                 {discountPct && (
@@ -139,7 +139,7 @@ export default async function CourseDetailPage({
                     </div>
                   ) : (
                     <Button href={`/courses/${course.slug}/checkout`} className="w-full" size="lg">
-                      Enroll now â€” pay â‚¹{course.price.toLocaleString()}
+                      Enroll now — pay ₹{course.price.toLocaleString("en-IN")}
                     </Button>
                   )}
                 </div>

@@ -1,0 +1,15 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 160 160" fill="none">
+  <defs>
+    <linearGradient id="a" x1="42" y1="50" x2="123" y2="125" gradientUnits="userSpaceOnUse"><stop stop-color="#F7FCFF"/><stop offset="1" stop-color="#9ABEFF"/></linearGradient>
+    <linearGradient id="b" x1="47" y1="57" x2="116" y2="119" gradientUnits="userSpaceOnUse"><stop stop-color="#77DFFF"/><stop offset=".52" stop-color="#3982FF"/><stop offset="1" stop-color="#174BE2"/></linearGradient>
+    <linearGradient id="c" x1="77" y1="55" x2="84" y2="105" gradientUnits="userSpaceOnUse"><stop stop-color="#FFF"/><stop offset="1" stop-color="#DCE9FF"/></linearGradient>
+    <filter id="s" x="14" y="17" width="132" height="132" color-interpolation-filters="sRGB"><feGaussianBlur stdDeviation="8"/></filter>
+  </defs>
+  <ellipse cx="81" cy="120" fill="#397AFF" opacity=".2" rx="48" ry="10" filter="url(#s)"/>
+  <rect x="35" y="44" width="90" height="70" rx="17" fill="url(#a)" stroke="#EAF5FF" stroke-width="3"/>
+  <path d="M40 57c0-6.6 5.4-12 12-12h56c6.6 0 12 5.4 12 12v5L83 87 40 62v-5Z" fill="url(#c)"/>
+  <path d="M39 60 80 88a8 8 0 0 0 9 0l32-22v35c0 7.2-5.8 13-13 13H52c-7.2 0-13-5.8-13-13V60Z" fill="url(#b)" stroke="#6BA5FF" stroke-width="2"/>
+  <path d="m41 63 36 27a5 5 0 0 0 6 0l35-25" stroke="#DDF8FF" stroke-linecap="round" stroke-width="4"/>
+  <path d="m47 68 30 22a5 5 0 0 0 6 0l29-21" stroke="#FFF" stroke-linecap="round" stroke-width="2" opacity=".75"/>
+  <path d="M53 51h54" stroke="#FFF" stroke-linecap="round" stroke-width="2" opacity=".8"/>
+</svg>

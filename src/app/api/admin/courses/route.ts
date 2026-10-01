@@ -11,6 +11,11 @@ const courseInputSchema = z.object({
   instructor: z.string().trim().min(2),
   durationWeeks: z.coerce.number().int().min(1).max(52),
   price: z.coerce.number().int().min(0),
+  originalPrice: z.coerce.number().int().min(1).optional(),
+  featured: z.coerce.boolean().default(false),
+}).refine((course) => course.originalPrice === undefined || course.originalPrice > course.price, {
+  message: "Original price must be greater than the final course price",
+  path: ["originalPrice"],
 });
 
 function slugify(title: string) {
@@ -23,8 +28,15 @@ function slugify(title: string) {
 export async function GET() {
   const admin = await requireAdmin();
   if (!admin) return NextResponse.json({ error: "Forbidden" }, { status: 403 });
-  const courses = await prisma.course.findMany({ orderBy: { createdAt: "desc" } });
-  return NextResponse.json({ courses });
+  const courses = await prisma.course.findMany({
+    orderBy: { createdAt: "desc" },
+    include: { _count: { select: { enrollments: true } } },
+  });
+  const rows = courses.map((course) => ({
+    ...course,
+    students: course._count.enrollments,
+  }));
+  return NextResponse.json({ courses, rows });
 }
 
 export async function POST(req: Request) {

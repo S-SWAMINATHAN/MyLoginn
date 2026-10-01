@@ -56,6 +56,7 @@ export const leadSchema = z.object({
   email: emailSchema,
   phone: phoneSchema,
   company: z.string().trim().optional().or(z.literal("")),
+  goals: z.string().trim().max(1000).optional().or(z.literal("")),
   service: z.string().min(1, "Select a service"),
   message: z.string().trim().max(1000).optional().or(z.literal("")),
 });
