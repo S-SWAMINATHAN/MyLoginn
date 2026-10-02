@@ -19,6 +19,7 @@ export type FieldDef = {
   label: string;
   type: "text" | "email" | "password" | "number" | "textarea" | "select" | "checkbox" | "date" | "category";
   options?: { label: string; value: string }[];
+  prefixFor?: string;
   required?: boolean;
   placeholder?: string;
   hint?: string;
@@ -232,10 +233,18 @@ export function EntityManager({ config }: { config: EntityConfig }) {
       onConfirm: async () => {
         try {
           const payload: FormValues = {};
+          const prefixes: Record<string, string> = {};
           for (const f of activeFields) {
             const v = values[f.name];
+            if (f.prefixFor) {
+              prefixes[f.prefixFor] = String(v ?? "").trim();
+              continue;
+            }
             if (f.type === "password" && String(v ?? "") === "") continue;
             payload[f.name] = f.type === "number" ? Number(v ?? 0) : v;
+          }
+          for (const [name, prefix] of Object.entries(prefixes)) {
+            if (prefix && payload[name]) payload[name] = `${prefix} ${String(payload[name]).trim()}`;
           }
           await send(mode === "create" ? "POST" : "PATCH", mode === "edit" ? String(row?.id) : null, payload);
           toast("success", mode === "create" ? `${titleSingular} added` : `${titleSingular} updated`);

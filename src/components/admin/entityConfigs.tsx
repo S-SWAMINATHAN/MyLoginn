@@ -231,6 +231,16 @@ export const mentorConfig: EntityConfig = {
     { key: "bookings", label: "Bookings", align: "right" },
   ] as Column[],
   createFields: [
+    {
+      name: "namePrefix",
+      label: "Title",
+      type: "select",
+      options: [
+        { label: "Mr.", value: "Mr." },
+        { label: "Mrs.", value: "Mrs." },
+      ],
+      prefixFor: "name",
+    },
     { name: "name", label: "Full name", type: "text", required: true },
     { name: "subject", label: "Subject", type: "text", required: true },
     { name: "qualification", label: "Qualification", type: "text", required: true },
@@ -248,7 +258,7 @@ export const mentorConfig: EntityConfig = {
     { name: "boards", label: "Boards", type: "text", hint: "Comma separated, e.g. CBSE, State Board, ICSE" },
     { name: "bio", label: "Bio", type: "textarea", full: true },
   ],
-  createDefaults: { rating: 4.9, boards: "CBSE" },
+  createDefaults: { namePrefix: "Mr.", rating: 4.9, boards: "CBSE" },
 };
 
 export const enrollmentConfig: EntityConfig = {
@@ -389,7 +399,7 @@ export const projectConfig: EntityConfig = {
   entity: "projects",
   titleSingular: "Project",
   titlePlural: "Projects",
-  description: "Student projects — update progress and leave mentor feedback.",
+  description: "Create student projects, update progress and leave mentor feedback.",
   nameKey: "title",
   columns: [
     { key: "title", label: "Title", className: "font-medium" },
@@ -399,6 +409,15 @@ export const projectConfig: EntityConfig = {
     { key: "status", label: "Status", render: statusCell("status") },
     { key: "updatedAt", label: "Updated", hideBelow: "lg", render: dateCell("updatedAt") },
   ] as Column[],
+  createFields: [
+    { name: "title", label: "Title", type: "text", required: true },
+    { name: "studentEmail", label: "Student email", type: "email", required: true },
+    { name: "mentorEmail", label: "Mentor email", type: "email", hint: "Optional. Use a mentor account email." },
+    { name: "status", label: "Status", type: "select", options: [{ label: "In progress", value: "in_progress" }, { label: "Completed", value: "completed" }, { label: "On hold", value: "on_hold" }] },
+    { name: "progress", label: "Progress (%)", type: "number", min: 0, max: 100 },
+    { name: "description", label: "Description", type: "textarea", required: true, full: true },
+    { name: "feedback", label: "Mentor feedback", type: "textarea", full: true },
+  ],
   editFields: [
     { name: "title", label: "Title", type: "text", required: true },
     {
@@ -432,7 +451,7 @@ export const tutoringConfig: EntityConfig = {
   entity: "tutoring",
   titleSingular: "Booking",
   titlePlural: "Tutoring bookings",
-  description: "Tutoring session requests — confirm, complete or cancel them.",
+  description: "Create tutoring session requests and confirm, complete or cancel them.",
   nameKey: "student",
   columns: [
     { key: "student", label: "Student", className: "font-medium" },
@@ -444,6 +463,16 @@ export const tutoringConfig: EntityConfig = {
     { key: "status", label: "Status", render: statusCell("status") },
     { key: "createdAt", label: "Requested", hideBelow: "lg", render: dateCell("createdAt") },
   ] as Column[],
+  createFields: [
+    { name: "studentEmail", label: "Student email", type: "email", required: true },
+    { name: "tutorName", label: "Tutor name", type: "text", required: true, hint: "Enter the tutor name as shown in Mentors." },
+    { name: "subject", label: "Subject", type: "text", required: true },
+    { name: "grade", label: "Grade", type: "text", required: true },
+    { name: "board", label: "Board", type: "text", required: true },
+    { name: "preferredSlot", label: "Preferred slot", type: "text", required: true },
+    { name: "status", label: "Status", type: "select", options: [{ label: "Pending", value: "pending" }, { label: "Confirmed", value: "confirmed" }, { label: "Completed", value: "completed" }, { label: "Cancelled", value: "cancelled" }] },
+    { name: "notes", label: "Notes", type: "textarea", full: true },
+  ],
   editFields: [
     {
       name: "status",
@@ -471,6 +500,7 @@ export const tutoringConfig: EntityConfig = {
       ],
     },
   ],
+  createDefaults: { status: "pending" },
 };
 
 export const leadConfig: EntityConfig = {

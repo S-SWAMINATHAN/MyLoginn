@@ -120,11 +120,34 @@ const projectUpdate = z.object({
   progress: z.coerce.number().int().min(0).max(100).optional(),
   feedback: z.string().trim().optional().nullable(),
 });
+const projectCreate = z.object({
+  title: z.string().trim().min(3),
+  studentEmail: z.string().trim().email().transform((email) => email.toLowerCase()),
+  mentorEmail: z.union([z.string().trim().email().transform((email) => email.toLowerCase()), z.literal("")]).default(""),
+  description: z.string().trim().min(10),
+  status: z.enum(["in_progress", "completed", "on_hold"]).default("in_progress"),
+  progress: z.coerce.number().int().min(0).max(100).default(0),
+  feedback: z.string().trim().optional().nullable(),
+});
 
 const bookingUpdate = z.object({
   status: z.enum(["pending", "confirmed", "completed", "cancelled"]),
   notes: z.string().trim().optional().nullable(),
 });
+const bookingCreate = z.object({
+  studentEmail: z.string().trim().email().transform((email) => email.toLowerCase()),
+  tutorName: z.string().trim().min(2),
+  subject: z.string().trim().min(2),
+  grade: z.string().trim().min(1),
+  board: z.string().trim().min(2),
+  preferredSlot: z.string().trim().min(2),
+  status: z.enum(["pending", "confirmed", "completed", "cancelled"]).default("pending"),
+  notes: z.string().trim().optional().nullable(),
+});
+
+function invalidEntityInput(field: string, message: string): never {
+  throw new z.ZodError([{ code: "custom", path: [field], message }]);
+}
 
 const leadUpdate = z.object({
   status: z.enum(["new", "contacted", "closed"]),
@@ -433,6 +456,20 @@ export const adminEntities: Record<string, EntityDef> = {
         updatedAt: iso(p.updatedAt),
       }));
     },
+    create: async (body) => {
+      const { studentEmail, mentorEmail, ...data } = projectCreate.parse(body);
+      const student = await prisma.user.findUnique({ where: { email: studentEmail }, select: { id: true, role: true } });
+      if (!student || student.role !== "STUDENT") invalidEntityInput("studentEmail", "Student account not found");
+
+      let mentorId: string | null = null;
+      if (mentorEmail) {
+        const mentor = await prisma.user.findUnique({ where: { email: mentorEmail }, select: { id: true, role: true } });
+        if (!mentor || mentor.role !== "MENTOR") invalidEntityInput("mentorEmail", "Mentor account not found");
+        mentorId = mentor.id;
+      }
+
+      return prisma.project.create({ data: { ...data, userId: student.id, mentorId }, select: { id: true } });
+    },
     update: async (id, body) => {
       const data = projectUpdate.parse(body);
       return prisma.project.update({ where: { id }, data, select: { id: true } });
@@ -461,6 +498,18 @@ export const adminEntities: Record<string, EntityDef> = {
         notes: b.notes,
         createdAt: iso(b.createdAt),
       }));
+    },
+    create: async (body) => {
+      const { studentEmail, tutorName, ...data } = bookingCreate.parse(body);
+      const student = await prisma.user.findUnique({ where: { email: studentEmail }, select: { id: true, role: true } });
+      if (!student || student.role !== "STUDENT") invalidEntityInput("studentEmail", "Student account not found");
+      const tutor = await prisma.tutor.findFirst({ where: { name: tutorName }, select: { id: true } });
+      if (!tutor) invalidEntityInput("tutorName", "Tutor not found; check the Mentors list");
+
+      return prisma.tutoringBooking.create({
+        data: { ...data, userId: student.id, tutorId: tutor.id },
+        select: { id: true },
+      });
     },
     update: async (id, body) => {
       const data = bookingUpdate.parse(body);
