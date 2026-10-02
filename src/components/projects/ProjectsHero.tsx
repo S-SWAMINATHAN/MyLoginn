@@ -45,9 +45,9 @@ export function ProjectsHero({
 
       <div className="relative block items-center gap-5 lg:grid lg:grid-cols-[1.05fr_.95fr] lg:gap-4">
         <HeroIllustration />
-        <div className="text-center lg:order-1 lg:text-left">
+        <div className="text-center max-md:text-left lg:order-1 lg:text-left">
           <motion.div
-            className="flex justify-center lg:justify-start"
+            className="flex justify-center max-md:justify-start lg:justify-start"
             initial={{ opacity: 0, y: -14, scale: 0.9 }}
             animate={{ opacity: 1, y: 0, scale: 1 }}
             transition={{ duration: 0.6, ease: [0.16, 1, 0.3, 1] }}
@@ -59,18 +59,18 @@ export function ProjectsHero({
           </motion.div>
 
           <h1 className="mt-5 text-4xl font-semibold tracking-tight sm:text-5xl lg:text-6xl">
-            <AnimatedText text="Real Projects." as="span" className="flex w-full justify-center lg:justify-start" delay={0.1} />
+            <AnimatedText text="Real Projects." as="span" className="flex w-full justify-center max-md:justify-start lg:justify-start" delay={0.1} />
             <AnimatedText
               text="Real Impact."
               as="span"
-              className="flex w-full justify-center lg:justify-start"
+              className="flex w-full justify-center max-md:justify-start lg:justify-start"
               wordClassName="brand-gradient-text"
               delay={0.4}
             />
           </h1>
 
           <Reveal delay={0.5} distance={18}>
-            <p className="mx-auto mt-5 max-w-xl text-base text-muted sm:text-lg lg:mx-0">
+            <p className="mx-auto mt-5 max-w-xl text-base text-muted sm:text-lg max-md:mx-0 lg:mx-0">
               Explore capstone projects built by MyLoginn learners with guidance from
               industry mentors.
             </p>

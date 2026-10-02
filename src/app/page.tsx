@@ -13,9 +13,9 @@ import { JsonLd } from "@/components/seo/JsonLd";
 import { organizationStructuredData, websiteStructuredData } from "@/lib/structuredData";
 
 export const metadata = createPageMetadata({
-  title: "AI-Driven IT Company for Web, App & Digital Solutions",
+  title: "MyLoginn | Web, App & AI Development in Coimbatore",
   description:
-    "MyLoginn Tech Private Limited is an AI-driven IT company providing website development, app development, digital marketing, custom software, UI/UX and technology solutions.",
+    "MyLoginn Tech Private Limited provides web and mobile app development, AI solutions, custom software, UI/UX and digital marketing for businesses in Coimbatore, Pollachi and Erode.",
   path: "/",
   keywords: [
     "MyLoginn company", "MyLoginn IT company", "MyLoginn software company",

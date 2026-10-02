@@ -23,6 +23,10 @@ export const organizationStructuredData = {
     contactType: "customer support",
     areaServed: "IN",
   })),
+  areaServed: ["Coimbatore", "Pollachi", "Erode"].map((name) => ({
+    "@type": "City",
+    name,
+  })),
   knowsAbout: [
     "Website development",
     "Web application development",

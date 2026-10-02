@@ -40,12 +40,12 @@ export default function ContactPage() {
         <div className="relative z-10 grid items-start gap-8 lg:grid-cols-[.9fr_1fr] lg:gap-[5.2rem]">
           <div className="min-w-0">
             <div className="relative min-h-[225px] sm:min-h-[245px]">
+              <Image src={ContactArtwork} alt="3D blue envelope with a message, paper plane and communication symbols" priority className="pointer-events-none relative float-right z-0 ml-3 mb-2 h-24 w-32 object-contain mix-blend-screen md:absolute md:-right-12 md:top-9 md:float-none md:ml-0 md:mb-0 md:h-[190px] md:w-[190px] lg:-right-16" />
               <div className="relative z-10 max-w-[400px] pt-3">
                 <span className="inline-flex items-center gap-2 rounded-full bg-[#eff5ff] px-3.5 py-2 text-[11px] font-semibold tracking-wide text-[#145bea]"><span className="h-2 w-2 rounded-full bg-[#2164f5]" /> GET IN TOUCH</span>
                 <h1 className="mt-5 max-w-[400px] text-[2.15rem] font-semibold leading-[1.16] tracking-[-.045em] sm:text-[2.55rem]">Let’s Build Something Amazing <span className="text-[#2164f5]">Together</span></h1>
                 <p className="mt-4 max-w-[410px] text-[13px] leading-[1.8] text-[#62708d] sm:text-sm">Have a project idea, need guidance, or want to collaborate? We&apos;d love to hear from you!</p>
               </div>
-              <Image src={ContactArtwork} alt="3D blue envelope with a message, paper plane and communication symbols" priority className="pointer-events-none absolute -right-10 top-12 z-0 h-[165px] w-[165px] object-contain mix-blend-screen sm:-right-12 sm:top-9 sm:h-[190px] sm:w-[190px] lg:-right-16" />
             </div>
 
             <a href="#contact-form" className="group mb-6 flex items-center justify-between gap-4 rounded-xl border border-[#dfe8fb] bg-[#f9fbff] px-5 py-4 transition hover:border-[#a9c4ff] hover:shadow-[0_8px_26px_rgba(50,100,210,.08)] sm:px-6">

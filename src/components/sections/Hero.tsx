@@ -76,7 +76,8 @@ export function Hero() {
             >
               Advanced AI/ML &amp; digital marketing courses, personalized CBSE/State
               Board tutoring, real internships, and AI-driven growth services &mdash;
-              all on one premium platform.
+              all on one premium platform. Supporting businesses and learners across
+              Coimbatore, Pollachi, and Erode.
             </motion.p>
 
             <motion.div

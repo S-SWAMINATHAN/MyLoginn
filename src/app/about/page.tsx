@@ -70,14 +70,14 @@ export default function AboutPage() {
       `}</style>
 
       <section className="about-hero relative isolate overflow-hidden bg-[radial-gradient(ellipse_at_78%_46%,rgba(133,181,255,.13),transparent_38%),linear-gradient(180deg,#fff_0%,#f7fbff_100%)]">
-        <Container className="about-hero-inner grid items-center gap-1 px-5 pt-0 pb-6 sm:px-8 sm:pt-0 sm:pb-8 lg:min-h-[340px] lg:max-w-[1440px] lg:grid-cols-[.9fr_1.1fr] lg:gap-8 lg:py-8">
-          <div className="about-hero-copy relative z-10 max-w-[480px] py-0">
+        <Container className="about-hero-inner block items-center gap-1 px-5 pt-0 pb-6 sm:px-8 sm:pt-0 sm:pb-8 md:grid lg:min-h-[340px] lg:max-w-[1440px] lg:grid-cols-[.9fr_1.1fr] lg:gap-8 lg:py-8">
+          <div className="about-hero-visual relative float-right ml-3 mb-2 block h-24 w-32 max-w-none md:order-2 md:clear-both md:float-none md:mx-auto md:mb-0 md:flex md:min-h-[245px] md:h-auto md:w-full md:max-w-[660px] md:items-center md:justify-center lg:min-h-[300px]"><Image src={aboutHeader} alt="A bright illustration representing ideas becoming digital products and growth" preload sizes="(max-width: 767px) 128px, 58vw" className="h-full max-h-[5rem] w-full object-contain md:h-auto md:max-h-[250px] lg:max-h-[300px]" /></div>
+          <div className="about-hero-copy relative z-10 max-w-[480px] py-0 md:order-1">
             <span className="inline-flex items-center gap-2 rounded-full border border-[#cfe0ff] bg-white/90 px-2.5 py-1 text-[10px] font-semibold text-[#1558d5]"><span className="h-1.5 w-1.5 rounded-full bg-[#1e65ee]" /> About MYLOGINN</span>
             <h1 className="mt-3 text-[2.25rem] font-bold leading-[1.02] sm:text-[2.55rem] lg:text-[2.45rem]">Turning Ideas Into <span className="block bg-gradient-to-r from-[#1559dc] via-[#247cf3] to-[#08a9c4] bg-clip-text text-transparent">Digital Success</span></h1>
             <p className="mt-3 max-w-[365px] text-[11px] leading-[1.6] text-[#536b91] sm:text-xs"><strong className="font-semibold text-[#17376d]">MYLOGINN TECH</strong> is a next-generation digital platform focused on learning, innovation and real-world growth. We help individuals and businesses build skills, create opportunities and achieve more through technology, creativity and practical experience.</p>
             <div className="mt-4 flex flex-wrap gap-2.5"><a href="#who-we-are" className="group inline-flex min-h-8 items-center gap-2.5 rounded-full bg-[#1763e9] px-4 text-[10px] font-semibold text-white shadow-[0_8px_18px_rgba(30,100,233,.2)] transition hover:-translate-y-0.5 hover:bg-[#104fcb]">Our Mission <ArrowRight className="h-3.5 w-3.5 transition group-hover:translate-x-1" /></a><Link href="/services" className="inline-flex min-h-8 items-center gap-1.5 rounded-full border border-[#a9c5f2] bg-white/90 px-3.5 text-[10px] font-semibold text-[#184b9c] transition hover:bg-white"><CirclePlay className="h-3.5 w-3.5" /> Explore Services</Link></div>
           </div>
-          <div className="about-hero-visual relative mx-auto flex min-h-[200px] w-full max-w-[660px] items-center justify-center sm:min-h-[245px] lg:min-h-[300px]"><Image src={aboutHeader} alt="A bright illustration representing ideas becoming digital products and growth" preload sizes="(max-width: 1024px) 100vw, 58vw" className="h-auto max-h-[250px] w-full object-contain lg:max-h-[300px]" /></div>
         </Container>
       </section>
 

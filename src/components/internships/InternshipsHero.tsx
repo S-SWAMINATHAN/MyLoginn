@@ -56,9 +56,9 @@ export function InternshipsHero({
             />
           </motion.div>
         </motion.div>
-        <div className="text-center lg:order-1 lg:text-left">
+        <div className="text-center max-md:text-left lg:order-1 lg:text-left">
           <motion.div
-            className="flex justify-center lg:justify-start"
+            className="flex justify-center max-md:justify-start lg:justify-start"
             initial={{ opacity: 0, y: -14, scale: 0.9 }}
             animate={{ opacity: 1, y: 0, scale: 1 }}
             transition={{ duration: 0.6, ease: [0.16, 1, 0.3, 1] }}
@@ -69,13 +69,13 @@ export function InternshipsHero({
             </Eyebrow>
           </motion.div>
 
-          <h1 className="mx-auto mt-5 max-w-2xl text-4xl font-semibold tracking-tight sm:text-5xl lg:mx-0">
+          <h1 className="mx-auto mt-5 max-w-2xl text-4xl font-semibold tracking-tight sm:text-5xl max-md:mx-0 lg:mx-0">
             <AnimatedText text="Explore current" delay={0.1} />{" "}
             <AnimatedText text="internship opportunities" wordClassName="brand-gradient-text" delay={0.45} />
           </h1>
 
           <Reveal delay={0.55} distance={18}>
-            <p className="mx-auto mt-5 max-w-xl text-base text-muted sm:text-lg lg:mx-0">
+            <p className="mx-auto mt-5 max-w-xl text-base text-muted sm:text-lg max-md:mx-0 lg:mx-0">
               Review the current openings, program requirements, responsibilities and application details below.
             </p>
           </Reveal>
