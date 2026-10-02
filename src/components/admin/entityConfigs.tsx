@@ -142,6 +142,8 @@ export const userConfig: EntityConfig = {
   columns: [
     { key: "name", label: "Name", className: "font-medium" },
     { key: "email", label: "Email", className: "text-muted" },
+    { key: "phone", label: "Phone", hideBelow: "lg" },
+    { key: "country", label: "Country", hideBelow: "xl" },
     { key: "role", label: "Role", render: (r) => <StatusBadge status={String(r.role).toLowerCase()} /> },
     { key: "emailVerified", label: "Verified", hideBelow: "sm", render: boolCell("emailVerified") },
     { key: "points", label: "Points", align: "right", hideBelow: "md" },
@@ -473,15 +475,25 @@ export const tutoringConfig: EntityConfig = {
 
 export const leadConfig: EntityConfig = {
   entity: "leads",
-  titleSingular: "Client request",
-  titlePlural: "Client requests",
-  description: "Service inquiries from the contact form — keep their status current.",
+  titleSingular: "Contact submission",
+  titlePlural: "Contact submissions",
+  description: "Enquiries, course payment questions and feedback submitted from the contact page.",
   nameKey: "name",
   columns: [
     { key: "name", label: "Name", className: "font-medium" },
     { key: "email", label: "Email", hideBelow: "md", className: "text-muted" },
     { key: "phone", label: "Phone", hideBelow: "lg" },
-    { key: "service", label: "Service" },
+    { key: "company", label: "Company", hideBelow: "lg" },
+    { key: "service", label: "Form type" },
+    {
+      key: "message",
+      label: "Details",
+      sortable: false,
+      render: (row) => {
+        const message = String(row.message ?? "");
+        return message ? <span title={message} className="block max-w-56 truncate text-muted">{message}</span> : "—";
+      },
+    },
     { key: "status", label: "Status", render: statusCell("status") },
     { key: "createdAt", label: "Received", hideBelow: "lg", render: dateCell("createdAt") },
   ] as Column[],

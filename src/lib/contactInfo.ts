@@ -5,7 +5,6 @@ export const CONTACT_EMAIL = "mailloginn@gmail.com";
 export const CONTACT_PHONES = [
   { display: "96555 60555", tel: "+919655560555" },
   { display: "8489 202020", tel: "+918489202020" },
-  { display: "63817 21061", tel: "+916381721061" },
 ] as const;
 
 /** Primary line, also used for WhatsApp. */

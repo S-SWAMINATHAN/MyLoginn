@@ -41,6 +41,28 @@ export default function AboutPage() {
     <main className="about-page overflow-hidden bg-white text-[#102858]">
       <JsonLd data={{ "@context": "https://schema.org", "@type": "FAQPage", mainEntity: faqs.map(({ question, answer }) => ({ "@type": "Question", name: question, acceptedAnswer: { "@type": "Answer", text: answer } })) }} />
       <style>{`
+        @media (min-width: 768px) {
+          .about-page .about-hero-visual { height: 260px; min-height: 230px; }
+          .about-page .about-hero-visual img { max-height: 260px; }
+        }
+
+        @media (min-width: 1024px) {
+          .about-page .about-hero-inner { min-height: 290px; padding-block: 1.25rem; gap: 1rem; grid-template-columns: .95fr 1.05fr; }
+          .about-page .about-hero-visual { height: 260px; min-height: 250px; }
+          .about-page .about-hero-visual img { max-height: 260px; }
+          .about-page .about-who-section { padding-block: 0.75rem; }
+          .about-page .about-who-panel { gap: 1rem; padding: 1rem; }
+          .about-page .about-proof-card { min-height: 76px; }
+          .about-page .about-values-section { padding-block: 1.25rem; }
+          .about-page .about-values-grid { margin-top: 1rem; }
+        }
+
+        .about-page section[aria-labelledby="about-faq"] { padding-block: 2.25rem; }
+
+        @media (min-width: 640px) {
+          .about-page section[aria-labelledby="about-faq"] { padding-block: 2.75rem; }
+        }
+
         @media (min-width: 1024px) and (max-height: 700px) {
           .about-page .about-hero-inner { min-height: 285px; }
           .about-page .about-hero-copy h1 { margin-top: 0.75rem; font-size: 2.35rem; }

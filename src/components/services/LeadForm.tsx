@@ -1,17 +1,47 @@
 "use client";
 
 import { useState } from "react";
-import { useForm, useWatch } from "react-hook-form";
+import { Controller, useForm, useWatch, type Control } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { AnimatePresence, motion } from "framer-motion";
 import { CheckCircle2 } from "lucide-react";
 import { AnimatedChat } from "@/components/ui/icons/AnimatedChat";
 import { leadSchema, type LeadInput } from "@/lib/validation";
 import { Input, Textarea } from "@/components/ui/Input";
+import { PhoneInput } from "@/components/ui/PhoneInput";
 import { Button } from "@/components/ui/Button";
 import { GlassCard } from "@/components/ui/Card";
 import { AnimatedSuccess } from "@/components/ui/icons/AnimatedSuccess";
 import { cn } from "@/lib/cn";
+
+function LeadPhoneField({
+  control,
+  label,
+  hint,
+  error,
+}: {
+  control: Control<LeadInput>;
+  label?: string;
+  hint?: string;
+  error?: string;
+}) {
+  return (
+    <Controller
+      control={control}
+      name="phone"
+      render={({ field }) => (
+        <PhoneInput
+          label={label}
+          hint={hint}
+          error={error}
+          value={field.value ?? ""}
+          onChange={field.onChange}
+          onBlur={field.onBlur}
+        />
+      )}
+    />
+  );
+}
 
 function FieldRow({
   label,
@@ -48,9 +78,11 @@ function FieldRow({
 export function LeadForm({
   service,
   variant = "default",
+  contactMode = "enquiry",
 }: {
   service: string;
   variant?: "default" | "dynamic" | "contact";
+  contactMode?: "enquiry" | "payment" | "feedback";
 }) {
   const [submitted, setSubmitted] = useState(false);
   const [whatsappLink, setWhatsappLink] = useState<string | null>(null);
@@ -59,6 +91,19 @@ export function LeadForm({
 
   const isDynamic = variant === "dynamic";
   const isContact = variant === "contact";
+  const contactTitle = contactMode === "feedback"
+    ? "Share your feedback"
+    : contactMode === "payment"
+      ? "Ask about course payment options"
+      : "Send Us a Message";
+  const contactDescription = contactMode === "feedback"
+    ? "Tell us about your experience with MyLoginn."
+    : contactMode === "payment"
+      ? "Share the course you are interested in and ask us about available payment options."
+      : "Fill in the form and our team will get back to you shortly.";
+  const contactPhoneHint = contactMode === "enquiry"
+    ? "Add a WhatsApp number if you would like to continue the enquiry there."
+    : "Add a phone number if you would like our team to follow up.";
 
   const {
     register,
@@ -124,8 +169,8 @@ export function LeadForm({
       ) : (
         <form onSubmit={handleSubmit(onSubmit)} className="relative flex flex-col gap-4">
           <div className="flex flex-col gap-1">
-            <h3 className="text-xl font-semibold tracking-tight">{isContact ? "Send Us a Message" : "Tell us about your project or enquiry"}</h3>
-            {isContact && <p className="text-sm text-muted">Fill in the form and our team will get back to you shortly.</p>}
+            <h3 className="text-xl font-semibold tracking-tight">{isContact ? contactTitle : "Tell us about your project or enquiry"}</h3>
+            {isContact && <p className="text-sm text-muted">{contactDescription}</p>}
           </div>
 
           <input type="hidden" {...register("service")} />
@@ -136,10 +181,21 @@ export function LeadForm({
                 <Input label="Full Name" placeholder="Your full name" {...register("name")} error={errors.name?.message} />
                 <Input label="Work Email" type="email" placeholder="you@company.com" {...register("email")} error={errors.email?.message} />
               </div>
-              <Input label="Phone (WhatsApp)" placeholder="+91 98765 43210" hint="Add a WhatsApp number if you would like to continue the enquiry there." {...register("phone")} error={errors.phone?.message} />
-              <Input label="Company (optional)" placeholder="Your company name" {...register("company")} />
-              <Textarea label="Tell us about your goals" rows={2} placeholder="What are you hoping to achieve?" {...register("goals")} />
-              <Textarea label="Tell us about your project / enquiry" rows={3} placeholder="Share details about your project or enquiry..." {...register("message")} />
+              <LeadPhoneField control={control} label="Phone (WhatsApp)" hint={contactPhoneHint} error={errors.phone?.message} />
+              {contactMode === "enquiry" ? (
+                <>
+                  <Input label="Company (optional)" placeholder="Your company name" {...register("company")} />
+                  <Textarea label="Tell us about your goals" rows={2} placeholder="What are you hoping to achieve?" {...register("goals")} />
+                  <Textarea label="Tell us about your project / enquiry" rows={3} placeholder="Share details about your project or enquiry..." {...register("message")} />
+                </>
+              ) : (
+                <Textarea
+                  label={contactMode === "feedback" ? "Your feedback" : "Course and payment question"}
+                  rows={4}
+                  placeholder={contactMode === "feedback" ? "Share your feedback..." : "Which course are you interested in, and what would you like to know?"}
+                  {...register("message")}
+                />
+              )}
             </>
           ) : isDynamic ? (
             <>
@@ -150,10 +206,9 @@ export function LeadForm({
                 <Input type="email" placeholder="you@company.com" {...register("email")} error={errors.email?.message} />
               </FieldRow>
               <FieldRow label="Phone (WhatsApp)" valid={fieldValid.phone}>
-                <Input
-                  placeholder="+91 98765 43210"
+                <LeadPhoneField
                   hint="Add a WhatsApp number if you would like to continue the enquiry there."
-                  {...register("phone")}
+                  control={control}
                   error={errors.phone?.message}
                 />
               </FieldRow>
@@ -164,11 +219,10 @@ export function LeadForm({
             <>
               <Input label="Full name" placeholder="Your name" {...register("name")} error={errors.name?.message} />
               <Input label="Work email" type="email" placeholder="you@company.com" {...register("email")} error={errors.email?.message} />
-              <Input
+              <LeadPhoneField
+                control={control}
                 label="Phone (WhatsApp)"
-                placeholder="+91 98765 43210"
                 hint="Add a WhatsApp number if you would like to continue the enquiry there."
-                {...register("phone")}
                 error={errors.phone?.message}
               />
               <Input label="Company (optional)" placeholder="Company name" {...register("company")} />
@@ -183,7 +237,15 @@ export function LeadForm({
             className={cn("w-full", isDynamic && "bg-size-200")}
             disabled={loading}
           >
-            {loading ? "Sending…" : isContact ? "Send Message" : "Request consultation"}
+            {loading
+              ? "Sending…"
+              : isContact && contactMode === "feedback"
+                ? "Send Feedback"
+                : isContact && contactMode === "payment"
+                  ? "Ask about payment options"
+                  : isContact
+                    ? "Send Message"
+                    : "Request consultation"}
           </Button>
         </form>
       )}

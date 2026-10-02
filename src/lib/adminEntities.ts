@@ -157,6 +157,7 @@ export const adminEntities: Record<string, EntityDef> = {
         name: u.name,
         email: u.email,
         phone: u.phone ?? "—",
+        country: u.country ?? "—",
         role: u.role,
         emailVerified: u.emailVerified,
         points: u.points,

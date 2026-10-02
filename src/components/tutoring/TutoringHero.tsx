@@ -16,7 +16,7 @@ export function TutoringHero() {
         <motion.h1 initial={{ opacity: 0, y: 16 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: .08 }} className="mt-3 text-4xl font-bold leading-[1.08] tracking-tight max-md:mt-2 max-md:text-[1.875rem] max-[380px]:text-[1.75rem] sm:text-5xl">Find tutoring support for your learning goals</motion.h1>
         <motion.p initial={{ opacity: 0, y: 16 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: .16 }} className="mt-3 max-w-2xl text-base text-muted max-md:mt-2 max-md:text-sm sm:text-lg">Browse available tutor profiles by subject, review their background and boards, then send a session request to discuss fit and availability.</motion.p>
       </div>
-      <div className="relative z-10 clear-both grid grid-cols-2 gap-3 max-md:mt-2 md:col-span-2 md:grid-cols-4">
+      <div className="relative z-10 clear-both order-3 grid grid-cols-2 gap-3 max-md:mt-2 md:col-span-2 md:grid-cols-4">
         {[
           { icon: "tutor-verified", value: "Available", label: "Tutor profiles" },
           { icon: "tutor-subjects", value: "By subject", label: "Browse options" },
