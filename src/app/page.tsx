@@ -1,16 +1,36 @@
+import dynamic from "next/dynamic";
 import { createPageMetadata } from "@/lib/seo";
 import { StoryStage } from "@/components/experience/StoryStage";
-import { Hero } from "@/components/sections/Hero";
-import { Ecosystem } from "@/components/sections/Ecosystem";
-import { WebStory } from "@/components/sections/WebStory";
-import { MobileStory } from "@/components/sections/MobileStory";
-import { DesktopStory } from "@/components/sections/DesktopStory";
-import { AiStory } from "@/components/sections/AiStory";
-import { HowWeBuild } from "@/components/sections/HowWeBuild";
-import { FinalCta } from "@/components/sections/FinalCta";
-import { ProjectShowcase } from "@/components/sections/ProjectShowcase";
 import { JsonLd } from "@/components/seo/JsonLd";
 import { organizationStructuredData, websiteStructuredData } from "@/lib/structuredData";
+
+const Hero = dynamic(() => import("@/components/sections/Hero").then((mod) => mod.Hero), {
+  loading: () => <div className="min-h-[440px] w-full bg-slate-50" aria-busy="true" aria-live="polite" />,
+});
+const Ecosystem = dynamic(() => import("@/components/sections/Ecosystem").then((mod) => mod.Ecosystem), {
+  loading: () => <div className="min-h-[420px] w-full bg-slate-50" aria-busy="true" aria-live="polite" />,
+});
+const WebStory = dynamic(() => import("@/components/sections/WebStory").then((mod) => mod.WebStory), {
+  loading: () => <div className="min-h-[420px] w-full bg-slate-50" aria-busy="true" aria-live="polite" />,
+});
+const MobileStory = dynamic(() => import("@/components/sections/MobileStory").then((mod) => mod.MobileStory), {
+  loading: () => <div className="min-h-[420px] w-full bg-slate-50" aria-busy="true" aria-live="polite" />,
+});
+const DesktopStory = dynamic(() => import("@/components/sections/DesktopStory").then((mod) => mod.DesktopStory), {
+  loading: () => <div className="min-h-[420px] w-full bg-slate-50" aria-busy="true" aria-live="polite" />,
+});
+const AiStory = dynamic(() => import("@/components/sections/AiStory").then((mod) => mod.AiStory), {
+  loading: () => <div className="min-h-[420px] w-full bg-slate-50" aria-busy="true" aria-live="polite" />,
+});
+const HowWeBuild = dynamic(() => import("@/components/sections/HowWeBuild").then((mod) => mod.HowWeBuild), {
+  loading: () => <div className="min-h-[420px] w-full bg-slate-50" aria-busy="true" aria-live="polite" />,
+});
+const ProjectShowcase = dynamic(() => import("@/components/sections/ProjectShowcase").then((mod) => mod.ProjectShowcase), {
+  loading: () => <div className="min-h-[420px] w-full bg-slate-50" aria-busy="true" aria-live="polite" />,
+});
+const FinalCta = dynamic(() => import("@/components/sections/FinalCta").then((mod) => mod.FinalCta), {
+  loading: () => <div className="min-h-[220px] w-full bg-slate-50" aria-busy="true" aria-live="polite" />,
+});
 
 export const metadata = createPageMetadata({
   title: "MyLoginn | Web, App & AI Development in Coimbatore",

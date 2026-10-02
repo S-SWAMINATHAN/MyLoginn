@@ -41,7 +41,7 @@ export function InternshipsHero({
 
       <div className="relative block items-center gap-4 lg:grid lg:grid-cols-[1.05fr_.95fr] lg:gap-3">
         <motion.div
-          className="relative float-right ml-3 mb-2 block h-24 w-32 lg:order-2 lg:float-none lg:ml-auto lg:mb-0 lg:h-auto lg:w-auto"
+          className="relative float-right ml-3 mb-1 block h-24 w-32 max-w-none lg:order-2 lg:float-none lg:ml-auto lg:mb-0 lg:h-auto lg:w-auto"
           initial={{ opacity: 0, scale: 0.9, y: 10 }}
           animate={{ opacity: 1, scale: 1, y: 0 }}
           transition={{ duration: 0.8, delay: 0.3, ease: [0.16, 1, 0.3, 1] }}
@@ -69,19 +69,19 @@ export function InternshipsHero({
             </Eyebrow>
           </motion.div>
 
-          <h1 className="mx-auto mt-5 max-w-2xl text-4xl font-semibold tracking-tight sm:text-5xl max-md:mx-0 lg:mx-0">
-            <AnimatedText text="Explore current" delay={0.1} />{" "}
-            <AnimatedText text="internship opportunities" wordClassName="brand-gradient-text" delay={0.45} />
+          <h1 className="mx-auto mt-3 max-w-2xl text-4xl font-semibold leading-[1.08] tracking-tight max-md:mt-2 max-md:mx-0 max-md:text-[1.75rem] sm:text-5xl lg:mx-0">
+            <AnimatedText text="Explore current" className="max-md:inline" delay={0.1} />{" "}
+            <AnimatedText text="internship opportunities" className="max-md:inline" wordClassName="brand-gradient-text" delay={0.45} />
           </h1>
 
           <Reveal delay={0.55} distance={18}>
-            <p className="mx-auto mt-5 max-w-xl text-base text-muted sm:text-lg max-md:mx-0 lg:mx-0">
+            <p className="mx-auto mt-3 max-w-xl text-base text-muted max-md:mt-2 max-md:mx-0 max-md:text-sm sm:text-lg lg:mx-0">
               Review the current openings, program requirements, responsibilities and application details below.
             </p>
           </Reveal>
 
           {/* Compact stat row */}
-          <div className="mx-auto mt-7 clear-both grid max-w-2xl grid-cols-2 gap-3 sm:gap-4 lg:mx-0 lg:grid-cols-4">
+          <div className="mx-auto mt-7 clear-both grid max-w-2xl grid-cols-2 gap-3 max-md:mt-3 sm:gap-4 lg:mx-0 lg:grid-cols-4">
             {stats.map((s, i) => (
               <motion.div
                 key={s.label}

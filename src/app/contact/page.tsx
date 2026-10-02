@@ -35,16 +35,16 @@ export default function ContactPage() {
     <div className="overflow-hidden bg-white text-[#17233e]">
       <JsonLd data={{ "@context": "https://schema.org", "@type": "FAQPage", mainEntity: contactFaqs.map(({ question, answer }) => ({ "@type": "Question", name: question, acceptedAnswer: { "@type": "Answer", text: answer } })) }} />
 
-      <div className="relative mx-auto w-full max-w-[1160px] px-5 py-8 sm:px-8 sm:py-11 lg:px-0">
+      <div className="relative mx-auto w-full max-w-[1160px] px-5 py-4 sm:px-8 sm:py-11 lg:px-0">
         <div aria-hidden="true" className="pointer-events-none absolute -right-40 top-10 -z-0 h-[36rem] w-[36rem] rounded-full bg-[radial-gradient(circle,rgba(91,157,255,.11),rgba(255,255,255,0)_70%)]" />
         <div className="relative z-10 grid items-start gap-8 lg:grid-cols-[.9fr_1fr] lg:gap-[5.2rem]">
           <div className="min-w-0">
-            <div className="relative min-h-[225px] sm:min-h-[245px]">
-              <Image src={ContactArtwork} alt="3D blue envelope with a message, paper plane and communication symbols" priority className="pointer-events-none relative float-right z-0 ml-3 mb-2 h-24 w-32 object-contain mix-blend-screen md:absolute md:-right-12 md:top-9 md:float-none md:ml-0 md:mb-0 md:h-[190px] md:w-[190px] lg:-right-16" />
-              <div className="relative z-10 max-w-[400px] pt-3">
+            <div className="relative min-h-0 md:block md:min-h-[245px]">
+              <Image src={ContactArtwork} alt="3D blue envelope with a message, paper plane and communication symbols" priority className="pointer-events-none relative z-0 float-right ml-3 mb-1 h-24 w-32 object-contain mix-blend-screen md:absolute md:-right-12 md:top-9 md:float-none md:ml-0 md:mb-0 md:h-[190px] md:w-[190px] lg:-right-16" />
+              <div className="relative z-10 max-w-[400px] pt-0">
                 <span className="inline-flex items-center gap-2 rounded-full bg-[#eff5ff] px-3.5 py-2 text-[11px] font-semibold tracking-wide text-[#145bea]"><span className="h-2 w-2 rounded-full bg-[#2164f5]" /> GET IN TOUCH</span>
-                <h1 className="mt-5 max-w-[400px] text-[2.15rem] font-semibold leading-[1.16] tracking-[-.045em] sm:text-[2.55rem]">Let’s Build Something Amazing <span className="text-[#2164f5]">Together</span></h1>
-                <p className="mt-4 max-w-[410px] text-[13px] leading-[1.8] text-[#62708d] sm:text-sm">Have a project idea, need guidance, or want to collaborate? We&apos;d love to hear from you!</p>
+                <h1 className="mt-5 max-w-[400px] text-[1.75rem] font-semibold leading-[1.12] tracking-[-.045em] max-md:mt-2 sm:text-[2.55rem]">Let’s Build Something Amazing <span className="text-[#2164f5]">Together</span></h1>
+                <p className="mt-4 max-w-[410px] text-[13px] leading-[1.6] text-[#62708d] max-md:mt-2 sm:text-sm">Have a project idea, need guidance, or want to collaborate? We&apos;d love to hear from you!</p>
               </div>
             </div>
 

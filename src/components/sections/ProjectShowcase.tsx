@@ -52,7 +52,7 @@ export function ProjectShowcase() {
           {websites.map((project) => (
             <article key={project.name} className="group overflow-hidden rounded-2xl border border-border-soft bg-surface shadow-[var(--shadow-soft)] transition-transform duration-300 hover:-translate-y-1">
               <button type="button" onClick={() => setSelectedProject(project)} aria-label={`Preview ${project.name}`} className="relative block aspect-[16/10] w-full overflow-hidden bg-slate-100 text-left focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-400 focus-visible:ring-inset">
-                {project.fallbackPreview ? <OotyPreview /> : <iframe src={project.url} title={`${project.name} live preview`} loading="lazy" className="pointer-events-none h-[220%] w-[220%] origin-top-left scale-[0.4545] border-0" />}
+                <ProjectThumbnail name={project.name} />
                 <div className="absolute inset-0 bg-gradient-to-t from-slate-950/35 to-transparent" />
               </button>
               <div className="p-5">
@@ -85,6 +85,34 @@ export function ProjectShowcase() {
       </div>
       {selectedProject && <ProjectPreviewModal project={selectedProject} onClose={() => setSelectedProject(null)} />}
     </section>
+  );
+}
+
+function ProjectThumbnail({ name }: { name: string }) {
+  return (
+    <div className="flex h-full w-full flex-col bg-slate-950 p-3 text-left text-white sm:p-5">
+      <div className="flex items-center gap-1.5 border-b border-white/15 pb-2">
+        <span className="h-1.5 w-1.5 rounded-full bg-rose-400" />
+        <span className="h-1.5 w-1.5 rounded-full bg-amber-300" />
+        <span className="h-1.5 w-1.5 rounded-full bg-emerald-400" />
+        <span className="ml-2 truncate text-[8px] text-white/60 sm:text-[10px]">{name}</span>
+      </div>
+      <div className="flex flex-1 items-center justify-between gap-3 py-3 sm:py-5">
+        <div className="min-w-0 flex-1">
+          <span className="text-[7px] font-semibold uppercase text-cyan-300 sm:text-[9px]">Live project</span>
+          <p className="mt-1 truncate text-sm font-semibold sm:text-lg">{name}</p>
+          <div className="mt-2 h-1 w-2/3 rounded-full bg-white/30" />
+          <div className="mt-1.5 h-1 w-1/2 rounded-full bg-white/15" />
+        </div>
+        <div aria-hidden className="grid aspect-square w-[30%] shrink-0 grid-cols-2 gap-1.5 rounded-lg border border-white/15 bg-white/5 p-1.5 sm:gap-2 sm:rounded-xl sm:p-2">
+          <span className="rounded bg-cyan-300/70" />
+          <span className="rounded bg-white/15" />
+          <span className="rounded bg-white/15" />
+          <span className="rounded bg-blue-400/60" />
+        </div>
+      </div>
+      <div className="h-1 rounded-full bg-gradient-to-r from-cyan-300 via-blue-400 to-emerald-300" />
+    </div>
   );
 }
 

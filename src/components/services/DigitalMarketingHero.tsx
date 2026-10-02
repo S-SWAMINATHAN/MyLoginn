@@ -20,8 +20,8 @@ export function DigitalMarketingHero() {
       <div className="pointer-events-none absolute -inset-x-10 -top-20 -z-10 h-72 bg-[radial-gradient(60%_60%_at_30%_0%,var(--brand-100),transparent_70%)] dark:bg-[radial-gradient(60%_60%_at_30%_0%,rgba(108,77,255,0.16),transparent_70%)]" />
       <div className="animate-float pointer-events-none absolute -right-10 top-6 -z-10 h-40 w-40 rounded-full bg-[radial-gradient(circle,var(--accent-400),transparent_70%)] opacity-30 blur-2xl" />
 
-      <div className="relative float-right ml-3 mb-2 h-24 w-32 max-w-none md:order-2 md:float-none md:ml-auto md:mb-0 md:h-[430px] md:w-full md:max-w-xl">
-        <Image src={marketingHeader} alt="Digital marketing analytics, campaigns and growth" fill priority className="object-contain object-right md:scale-110 md:object-center" sizes="(max-width: 768px) 128px, 48vw" />
+      <div className="relative float-right ml-3 mb-2 h-24 w-32 max-w-none max-md:mb-0 max-md:h-auto max-md:aspect-[4/3] max-md:w-[clamp(8rem,36vw,9rem)] md:order-2 md:float-none md:ml-auto md:mb-0 md:h-[430px] md:w-full md:max-w-xl">
+        <Image src={marketingHeader} alt="Digital marketing analytics, campaigns and growth" fill priority className="object-contain object-right md:scale-110 md:object-center" sizes="(max-width: 767px) 9rem, 48vw" />
       </div>
       <div className="relative z-10 md:order-1">
       <motion.div
@@ -29,7 +29,7 @@ export function DigitalMarketingHero() {
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.6 }}
       >
-        <Eyebrow>
+        <Eyebrow className="max-md:gap-1.5 max-md:px-2 max-md:text-[10px] max-md:tracking-normal">
           <AnimatedSparkle className="h-4.5 w-4.5" />
           Growth Marketing
         </Eyebrow>
@@ -39,7 +39,7 @@ export function DigitalMarketingHero() {
         initial={{ opacity: 0, y: 16 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.7, delay: 0.15 }}
-        className="mt-5 text-4xl font-bold leading-[1.08] tracking-tight sm:text-5xl"
+        className="mt-5 text-4xl font-bold leading-[1.08] tracking-tight max-md:mt-1 max-md:text-[1.625rem] sm:text-5xl"
       >
         Scale your business with <span className="brand-gradient-text bg-size-200">data-driven</span> digital marketing
       </motion.h1>
@@ -48,7 +48,7 @@ export function DigitalMarketingHero() {
         initial={{ opacity: 0, y: 16 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.7, delay: 0.3 }}
-        className="mt-4 max-w-xl text-base text-muted sm:text-lg"
+        className="mt-4 max-w-xl text-base text-muted max-md:mt-1 max-md:text-sm max-md:leading-[1.35] sm:text-lg"
       >
         For SMEs, startups and established businesses looking to scale online
         &mdash; we run performance marketing powered by AI, with WhatsApp built
@@ -59,7 +59,7 @@ export function DigitalMarketingHero() {
         initial={{ opacity: 0, y: 16 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.7, delay: 0.42 }}
-        className="mt-8 grid grid-cols-2 gap-3 clear-both sm:grid-cols-4"
+        className="mt-8 grid grid-cols-2 gap-3 clear-both max-md:mt-2 sm:grid-cols-4"
       >
         {stats.map((s) => (
           <div

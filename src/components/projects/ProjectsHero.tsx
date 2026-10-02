@@ -43,7 +43,7 @@ export function ProjectsHero({
         <span className="aurora-blob left-[42%] top-32 h-52 w-52 bg-emerald-400/15 dark:bg-emerald-500/10" />
       </div>
 
-      <div className="relative block items-center gap-5 lg:grid lg:grid-cols-[1.05fr_.95fr] lg:gap-4">
+      <div className="relative block items-center gap-4 lg:grid lg:grid-cols-[1.05fr_.95fr] lg:gap-4">
         <HeroIllustration />
         <div className="text-center max-md:text-left lg:order-1 lg:text-left">
           <motion.div
@@ -58,19 +58,19 @@ export function ProjectsHero({
             </Eyebrow>
           </motion.div>
 
-          <h1 className="mt-5 text-4xl font-semibold tracking-tight sm:text-5xl lg:text-6xl">
-            <AnimatedText text="Real Projects." as="span" className="flex w-full justify-center max-md:justify-start lg:justify-start" delay={0.1} />
+          <h1 className="mt-3 text-4xl font-semibold leading-[1.08] tracking-tight max-md:mt-2 max-md:text-[1.75rem] sm:text-5xl lg:text-6xl">
+            <AnimatedText text="Real Projects." as="span" className="flex w-full justify-center max-md:inline max-md:w-auto max-md:justify-start lg:justify-start" delay={0.1} />
             <AnimatedText
               text="Real Impact."
               as="span"
-              className="flex w-full justify-center max-md:justify-start lg:justify-start"
+              className="flex w-full justify-center max-md:inline max-md:w-auto max-md:justify-start lg:justify-start"
               wordClassName="brand-gradient-text"
               delay={0.4}
             />
           </h1>
 
           <Reveal delay={0.5} distance={18}>
-            <p className="mx-auto mt-5 max-w-xl text-base text-muted sm:text-lg max-md:mx-0 lg:mx-0">
+            <p className="mx-auto mt-3 max-w-xl text-base text-muted max-md:mt-2 max-md:mx-0 max-md:text-sm sm:text-lg lg:mx-0">
               Explore capstone projects built by MyLoginn learners with guidance from
               industry mentors.
             </p>
@@ -80,7 +80,7 @@ export function ProjectsHero({
       </div>
 
       {/* Stat tiles */}
-      <div className="mx-auto mt-7 clear-both grid max-w-4xl grid-cols-2 gap-4 lg:mx-0 lg:max-w-4xl lg:grid-cols-3 lg:gap-5">
+      <div className="mx-auto mt-7 clear-both grid max-w-4xl grid-cols-2 gap-4 max-md:mt-3 lg:mx-0 lg:max-w-4xl lg:grid-cols-3 lg:gap-5">
         {stats.map((s, i) => (
           <motion.div
             key={s.label}
@@ -109,7 +109,7 @@ export function ProjectsHero({
 function HeroIllustration() {
   return (
     <motion.div
-      className="relative float-right ml-3 mb-2 block h-24 w-32 max-w-none lg:order-2 lg:float-none lg:mx-auto lg:mb-0 lg:h-auto lg:w-full lg:max-w-xl"
+      className="relative float-right ml-3 mb-1 block h-24 w-32 max-w-none lg:order-2 lg:float-none lg:mx-auto lg:mb-0 lg:h-auto lg:w-full lg:max-w-xl"
       initial={{ opacity: 0, scale: 0.92 }}
       animate={{ opacity: 1, scale: 1, y: [0, -12, 0] }}
       transition={{
