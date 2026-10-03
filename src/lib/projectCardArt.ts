@@ -10,6 +10,9 @@ import { getCourseIconKey, type CourseIconKey } from "./courseIcons";
 
 export type CardArtKey = "ml" | "cyber" | "testing" | "marketing" | "cloud" | "webdev";
 
+export const FREE_WEB_DEVELOPMENT_PREVIEW_URL =
+  "https://cdnl.iconscout.com/lottie/free/preview/free-designer-building-website-animation-gif-download-5967182.mp4";
+
 function toArtKey(key: CourseIconKey): CardArtKey {
   switch (key) {
     case "ai":
@@ -343,7 +346,7 @@ function artCloud(p: string) {
   );
 }
 
-/* ── Development — code window buddy ────────────────────────────────────── */
+/* ── AI analysis — floating data panels around a neural core ────────────── */
 function artWebdev(p: string) {
   return wrap(
     p,
@@ -351,40 +354,78 @@ function artWebdev(p: string) {
     `${p}glow`,
     `<defs>
       <linearGradient id="${p}bg" x1="0" y1="0" x2="1" y2="1">
-        <stop offset="0%" stop-color="#0d0a2e"/>
-        <stop offset="55%" stop-color="#3730a3"/>
-        <stop offset="100%" stop-color="#6366f1"/>
+        <stop offset="0%" stop-color="#103C56"/>
+        <stop offset="55%" stop-color="#167B88"/>
+        <stop offset="100%" stop-color="#43A88F"/>
       </linearGradient>
       <radialGradient id="${p}glow" cx="74%" cy="40%" r="60%">
-        <stop offset="0%" stop-color="#c7d2fe" stop-opacity=".4"/>
-        <stop offset="100%" stop-color="#c7d2fe" stop-opacity="0"/>
+        <stop offset="0%" stop-color="#B5F2E2" stop-opacity=".5"/>
+        <stop offset="100%" stop-color="#B5F2E2" stop-opacity="0"/>
       </radialGradient>
-      <linearGradient id="${p}win" x1="0" y1="0" x2="1" y2="1">
-        <stop offset="0%" stop-color="#ffffff"/>
-        <stop offset="100%" stop-color="#e0e7ff"/>
+      <linearGradient id="${p}robot" x1="0" y1="0" x2="1" y2="1">
+        <stop offset="0%" stop-color="#D8F7F5"/>
+        <stop offset="100%" stop-color="#69C7D9"/>
+      </linearGradient>
+      <linearGradient id="${p}panel" x1="0" y1="0" x2="1" y2="1">
+        <stop offset="0%" stop-color="#FFFFFF"/>
+        <stop offset="100%" stop-color="#E4F6F3"/>
+      </linearGradient>
+      <linearGradient id="${p}coral" x1="0" y1="0" x2="1" y2="1">
+        <stop offset="0%" stop-color="#FF9A73"/>
+        <stop offset="100%" stop-color="#EF5F57"/>
       </linearGradient>
       <filter id="${p}shadow" x="-50%" y="-50%" width="200%" height="200%">
         <feGaussianBlur stdDeviation="5"/>
       </filter>
     </defs>
-    ${sparkles(p, "#c7d2fe")}
-    <ellipse cx="300" cy="132" rx="56" ry="8" fill="#0d0a2e" opacity=".4" filter="url(#${p}shadow)"/>
-    <g transform="translate(240,32)">
-      <rect x="0" y="0" width="120" height="90" rx="14" fill="url(#${p}win)"/>
-      <rect x="0" y="0" width="120" height="22" rx="14" fill="#312e81"/>
-      <rect x="0" y="11" width="120" height="11" fill="#312e81"/>
-      <circle cx="14" cy="11" r="3.4" fill="#f87171"/>
-      <circle cx="25" cy="11" r="3.4" fill="#fbbf24"/>
-      <circle cx="36" cy="11" r="3.4" fill="#4ade80"/>
-      <g fill="#312e81">
-        <circle cx="42" cy="56" r="7"/>
-        <circle cx="78" cy="56" r="7"/>
+    ${sparkles(p, "#C9FFF1")}
+    <ellipse cx="260" cy="137" rx="102" ry="10" fill="#103C56" opacity=".38" filter="url(#${p}shadow)"/>
+    <g stroke="#B8F5E8" stroke-width="1.5" opacity=".55">
+      <path d="M163 86 214 70 250 94 307 57 350 82"/>
+      <path d="M196 119 231 97 278 115 330 105" stroke-dasharray="3 5"/>
+    </g>
+    <g>
+      <rect x="48" y="42" width="116" height="78" rx="10" fill="url(#${p}panel)" transform="rotate(-8 48 42)"/>
+      <g transform="rotate(-8 48 42)">
+        <rect x="62" y="52" width="5" height="5" rx="2.5" fill="#3A91A0"/>
+        <rect x="71" y="53" width="30" height="3" rx="1.5" fill="#A7CFD0"/>
+        <path d="M64 107V71m17 36V81m17 26V66m17 41V76m17 31V61" stroke="#D2E9E6" stroke-width="8" stroke-linecap="round"/>
+        <path d="M64 107V89m17 18V92m17 15V80m17 27V87m17 20V73" stroke="#52B69E" stroke-width="8" stroke-linecap="round">
+          <animate attributeName="stroke-dasharray" values="0 80;30 80;30 80" dur="2.8s" repeatCount="indefinite"/>
+        </path>
       </g>
-      <g fill="#e0e7ff">
-        <circle cx="43.5" cy="54.5" r="2.4"/>
-        <circle cx="79.5" cy="54.5" r="2.4"/>
-      </g>
-      <path d="M38 72 Q60 82 82 72" stroke="#312e81" stroke-width="4" stroke-linecap="round" fill="none"/>
+    </g>
+    <g transform="translate(324,48)">
+      <ellipse cx="24" cy="52" rx="30" ry="7" fill="#103C56" opacity=".28" filter="url(#${p}shadow)"/>
+      <path d="M24 6a23 23 0 0 1 20 35L24 29Z" fill="url(#${p}coral)"/>
+      <path d="M24 6v23L4 40A23 23 0 0 1 24 6Z" fill="#F6C86E"/>
+      <path d="M4 40a23 23 0 0 0 40 1L24 29Z" fill="#EC7664"/>
+      <animateTransform attributeName="transform" type="translate" values="324 48;324 43;324 48" dur="3.6s" repeatCount="indefinite"/>
+    </g>
+    <g>
+      <path d="M229 62 242 42m45 22 18-17m-18 72 24 12m-67-13-20 15" stroke="#B8F5E8" stroke-width="2" stroke-linecap="round"/>
+      <circle cx="242" cy="42" r="4" fill="#F8CB74"/>
+      <circle cx="305" cy="47" r="4" fill="#72D6C0"/>
+      <circle cx="320" cy="131" r="4" fill="#F18772"/>
+      <circle cx="209" cy="133" r="4" fill="#7AD4E1"/>
+    </g>
+    <g>
+      <ellipse cx="263" cy="91" rx="43" ry="39" fill="#0B3348" opacity=".18"/>
+      <path d="M228 65c0-17 14-30 32-30h8c18 0 32 13 32 30v27c0 19-15 34-34 34h-4c-19 0-34-15-34-34V65Z" fill="url(#${p}robot)" stroke="#D9FFFA" stroke-width="2"/>
+      <path d="M239 69c0-10 8-18 18-18h15c10 0 18 8 18 18v21c0 10-8 18-18 18h-15c-10 0-18-8-18-18V69Z" fill="#164D64"/>
+      <circle cx="255" cy="79" r="4" fill="#F5FFFE">
+        <animate attributeName="opacity" values="1;.45;1" dur="2.2s" repeatCount="indefinite"/>
+      </circle>
+      <circle cx="275" cy="79" r="4" fill="#F5FFFE">
+        <animate attributeName="opacity" values=".45;1;.45" dur="2.2s" repeatCount="indefinite"/>
+      </circle>
+      <path d="M256 94h18" stroke="#72D6C0" stroke-width="3" stroke-linecap="round"/>
+      <path d="M263 35V24" stroke="#D9FFFA" stroke-width="3" stroke-linecap="round"/>
+      <circle cx="263" cy="21" r="5" fill="#F18772">
+        <animate attributeName="r" values="4;6;4" dur="2.6s" repeatCount="indefinite"/>
+      </circle>
+      <path d="M223 75h7m69 0h7" stroke="#D9FFFA" stroke-width="4" stroke-linecap="round"/>
+      <animateTransform attributeName="transform" type="translate" values="0 0;0 -4;0 0" dur="4s" repeatCount="indefinite"/>
     </g>`
   );
 }
@@ -399,9 +440,16 @@ const ART: Record<CardArtKey, (p: string) => string> = {
 };
 
 /** idSeed must be stable across server/client render (e.g. React's useId()). */
-export function getProjectCardArt(titleOrKey: string, idSeed: string): { key: CardArtKey; svg: string } {
+export function getProjectCardArt(
+  titleOrKey: string,
+  idSeed: string
+): { key: CardArtKey; svg: string; animationUrl?: string } {
   const courseKey = getCourseIconKey(titleOrKey);
   const key = toArtKey(courseKey);
   const id = "pca" + idSeed.replace(/[^a-zA-Z0-9]/g, "");
-  return { key, svg: ART[key](id) };
+  return {
+    key,
+    svg: ART[key](id),
+    animationUrl: key === "webdev" ? FREE_WEB_DEVELOPMENT_PREVIEW_URL : undefined,
+  };
 }

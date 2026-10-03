@@ -38,13 +38,15 @@ export default function ContactPage() {
 
       <div className="relative mx-auto w-full max-w-[1160px] px-5 py-4 sm:px-8 sm:py-11 lg:px-0">
         <div aria-hidden="true" className="pointer-events-none absolute -right-40 top-10 -z-0 h-[36rem] w-[36rem] rounded-full bg-[radial-gradient(circle,rgba(91,157,255,.11),rgba(255,255,255,0)_70%)]" />
-        <header className="relative z-10 grid items-center gap-5 sm:grid-cols-[1fr_auto] sm:gap-8">
+        <header className="relative z-10 block items-center gap-5 md:grid md:grid-cols-[1fr_auto] md:gap-8">
+          <div className="relative float-right ml-3 mb-2 block h-24 w-32 max-w-none max-md:mb-0 max-md:h-auto max-md:aspect-[4/3] max-md:w-[clamp(8.5rem,40vw,9.5rem)] md:order-2 md:float-none md:ml-0 md:mb-0 md:h-36 md:w-40 lg:h-44 lg:w-48">
+            <Image src={ContactArtwork} alt="Message envelope and paper plane" fill preload className="object-contain object-right md:object-center" sizes="(max-width: 767px) 152px, 12rem" />
+          </div>
           <div className="max-w-2xl">
-            <span className="inline-flex items-center gap-2 rounded-full bg-[#eff5ff] px-3.5 py-2 text-[11px] font-semibold uppercase tracking-wide text-[#145bea]"><span className="h-2 w-2 rounded-full bg-[#2164f5]" /> Contact &amp; Support</span>
-            <h1 className="mt-4 text-[2rem] font-semibold leading-[1.08] sm:text-[2.8rem]">We&apos;re here to <span className="text-[#2164f5]">help you</span></h1>
+            <span className="inline-flex items-center gap-2 rounded-full bg-[#eff5ff] px-3.5 py-2 text-[11px] font-semibold uppercase tracking-wide text-[#145bea] max-md:gap-1 max-md:px-1.5 max-md:text-[9px] max-md:tracking-normal"><span className="h-2 w-2 rounded-full bg-[#2164f5]" /> Contact &amp; Support</span>
+            <h1 className="mt-4 text-[2rem] font-semibold leading-[1.08] max-md:mt-1 max-md:text-[1.625rem] sm:text-[2.8rem]">We&apos;re here to <span className="text-[#2164f5]">help you</span></h1>
             <p className="mt-3 max-w-xl text-sm leading-6 text-[#62708d] sm:text-base">Course questions, project ideas, tutoring, or internships — tell us what you need and we&apos;ll point you in the right direction.</p>
           </div>
-          <Image src={ContactArtwork} alt="Message envelope and paper plane" priority className="hidden h-36 w-40 object-contain sm:block lg:h-44 lg:w-48" />
         </header>
 
         <section aria-label="MyLoginn support" className="relative z-10 mt-7 grid grid-cols-2 overflow-hidden rounded-xl border border-[#e5ebf6] bg-white sm:grid-cols-4">

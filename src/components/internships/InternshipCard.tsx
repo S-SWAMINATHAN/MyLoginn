@@ -6,6 +6,7 @@ import { motion } from "framer-motion";
 import { Card } from "@/components/ui/Card";
 import { ContentIcon } from "@/components/ui/ContentIcon";
 import { getProjectCardArt } from "@/lib/projectCardArt";
+import { CardArtAnimation } from "@/components/projects/CardArtAnimation";
 import { AnimatedArrow } from "@/components/ui/icons/AnimatedArrow";
 import { AnimatedCrown } from "@/components/ui/icons/AnimatedCrown";
 import { AnimatedMapPin } from "@/components/ui/icons/AnimatedMapPin";
@@ -80,8 +81,9 @@ export function InternshipCard({
               <span
                 aria-hidden
                 className="absolute inset-0 transition-transform duration-500 group-hover:scale-105 [&>svg]:h-full [&>svg]:w-full"
-                dangerouslySetInnerHTML={{ __html: art.svg }}
-              />
+              >
+                <CardArtAnimation svg={art.svg} animationUrl={art.animationUrl} />
+              </span>
               <span
                 aria-hidden
                 className="pointer-events-none absolute inset-x-0 top-0 h-12 bg-gradient-to-b from-black/35 to-transparent"
@@ -126,7 +128,7 @@ export function InternshipCard({
                 </span>
                 <span className="flex items-center gap-1.5">
                   <AnimatedRupee className="h-4.5 w-4.5" />{" "}
-                  {internship.paid ? `₹${internship.stipend?.toLocaleString()} / month` : "Unpaid"}
+                  {internship.paid ? `${internship.stipend?.toLocaleString()} / month` : "Unpaid"}
                 </span>
               </div>
 

@@ -10,6 +10,7 @@ import { AnimatedMapPin } from "@/components/ui/icons/AnimatedMapPin";
 import { AnimatedClock } from "@/components/ui/icons/AnimatedClock";
 import { AnimatedRupee } from "@/components/ui/icons/AnimatedRupee";
 import { AnimatedCrown } from "@/components/ui/icons/AnimatedCrown";
+import { AnimatedMail } from "@/components/ui/icons/AnimatedMail";
 
 export async function generateMetadata({ params }: { params: Promise<{ slug: string }> }): Promise<Metadata> {
   const { slug } = await params;
@@ -88,7 +89,7 @@ export default async function InternshipDetailPage({
               </span>
               <span className="flex items-center gap-1.5">
                 <AnimatedRupee className="h-5 w-5" />{" "}
-                {internship.paid ? `â‚¹${internship.stipend?.toLocaleString()} / month` : "Unpaid"}
+                {internship.paid ? `${internship.stipend?.toLocaleString()} / month` : "Unpaid"}
               </span>
             </div>
 
@@ -124,9 +125,12 @@ export default async function InternshipDetailPage({
               </div>
             )}
 
-            <div className="mt-8 rounded-2xl border border-border-soft bg-surface-2 p-5 text-sm text-muted">
-              Mentor: <span className="font-medium text-foreground">{internship.mentorName}</span> Â·{" "}
-              {internship.mentorEmail}
+            <div className="mt-8 flex flex-wrap items-center gap-x-2 gap-y-1 rounded-2xl border border-border-soft bg-surface-2 p-5 text-sm text-muted">
+              <span>Mentor: <span className="font-medium text-foreground">{internship.mentorName}</span></span>
+              <a href={`mailto:${internship.mentorEmail}`} className="inline-flex items-center gap-1.5 font-medium text-brand-600 hover:underline dark:text-brand-300">
+                <AnimatedMail className="h-5 w-5" />
+                {internship.mentorEmail}
+              </a>
             </div>
           </div>
 

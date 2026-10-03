@@ -70,12 +70,12 @@ export default async function CoursesPage() {
     <Section className="mobile-page-glow overflow-hidden pt-3 sm:pt-5">
       <Container className="max-w-[1480px]">
         <div className="relative block min-h-0 items-center gap-5 rounded-[2rem] bg-[radial-gradient(ellipse_at_75%_45%,rgba(117,177,255,.25),transparent_45%),radial-gradient(ellipse_at_58%_65%,rgba(221,174,255,.2),transparent_42%)] py-3 md:min-h-[340px] md:grid md:grid-cols-[1.1fr_.9fr] md:py-5">
-          <div className="relative float-right ml-3 mb-2 block h-24 w-32 md:order-2 md:float-none md:ml-auto md:mb-0 md:h-[390px] md:w-full md:max-w-lg">
-            <Image src={courseHeader} alt="Illustration for online technology courses" fill priority className="object-contain object-right md:scale-110 md:object-center" sizes="(max-width: 768px) 128px, 45vw" />
+          <div className="relative float-right ml-3 mb-2 block h-24 w-32 max-w-none max-md:mb-0 max-md:h-auto max-md:aspect-[4/3] max-md:w-[clamp(8rem,40vw,9.5rem)] md:order-2 md:float-none md:ml-auto md:mb-0 md:h-[390px] md:w-full md:max-w-lg">
+            <Image src={courseHeader} alt="Illustration for online technology courses" fill preload className="object-contain object-right md:scale-110 md:object-center" sizes="(max-width: 767px) 152px, 45vw" />
           </div>
           <div className="relative z-10 max-w-2xl md:order-1">
-            <Eyebrow><GraduationCap className="h-4 w-4" /> Upgrade your skills</Eyebrow>
-            <h1 className="mt-5 text-4xl font-bold leading-[1.08] tracking-tight max-md:mt-2 sm:text-5xl">Master skills for <span className="brand-gradient-text">your future</span></h1>
+            <Eyebrow className="max-md:gap-1 max-md:px-1 max-md:text-[9px] max-md:tracking-normal"><GraduationCap className="h-4 w-4" /> Upgrade your skills</Eyebrow>
+            <h1 className="mt-5 text-4xl font-bold leading-[1.08] tracking-tight max-md:mt-1 max-md:text-[1.625rem] sm:text-5xl">Master skills for <span className="brand-gradient-text">your future</span></h1>
             <p className="mt-4 max-w-xl text-base text-muted max-md:mt-2 max-md:text-sm sm:text-lg">Explore current course topics, levels, duration, fees, and enrolment details in the listings below.</p>
             <div className="mt-7 clear-both grid max-w-2xl grid-cols-2 gap-3 max-md:mt-3 sm:grid-cols-4">
               {[

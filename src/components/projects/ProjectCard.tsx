@@ -9,6 +9,7 @@ import { AnimatedTrending } from "@/components/ui/icons/AnimatedTrending";
 import { AnimatedUsers } from "@/components/ui/icons/AnimatedUsers";
 import { getCourseIconInfo } from "@/lib/courseIcons";
 import { getProjectCardArt } from "@/lib/projectCardArt";
+import { CardArtAnimation } from "@/components/projects/CardArtAnimation";
 import { useReducedMotion } from "@/lib/useReducedMotion";
 import type { ShowcaseProject } from "@/lib/showcaseProjects";
 
@@ -93,8 +94,9 @@ export function ProjectCard({ project: p, className }: { project: ShowcaseProjec
             <span
               aria-hidden
               className="absolute inset-0 transition-transform duration-500 group-hover:scale-105 [&>svg]:h-full [&>svg]:w-full"
-              dangerouslySetInnerHTML={{ __html: art.svg }}
-            />
+            >
+              <CardArtAnimation svg={art.svg} animationUrl={art.animationUrl} />
+            </span>
             <span
               aria-hidden
               className="pointer-events-none absolute inset-x-0 bottom-0 h-24 bg-gradient-to-t from-black/60 via-black/10 to-transparent"
