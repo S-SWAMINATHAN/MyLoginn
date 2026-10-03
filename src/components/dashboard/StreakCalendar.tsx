@@ -53,7 +53,7 @@ export function StreakCalendar({ activeDays, todayKey, currentStreak, longestStr
   ];
 
   return (
-    <div>
+    <div className="mx-auto max-w-[260px]">
       <div className="mb-3 flex items-center justify-between">
         <p className="text-sm font-semibold">
           {MONTHS[view.month - 1]} {view.year}
@@ -68,7 +68,7 @@ export function StreakCalendar({ activeDays, todayKey, currentStreak, longestStr
         </div>
       </div>
 
-      <div className="grid grid-cols-7 gap-1 text-center">
+      <div className="grid grid-cols-7 gap-0.5 text-center">
         {WEEKDAYS.map((d) => (
           <span key={d} className="pb-1 text-[10px] font-medium uppercase tracking-wide text-muted">
             {d}
@@ -83,7 +83,7 @@ export function StreakCalendar({ activeDays, todayKey, currentStreak, longestStr
           animate={{ opacity: 1, x: 0 }}
           exit={{ opacity: 0, x: direction * -24 }}
           transition={{ duration: 0.18, ease: "easeOut" }}
-          className="grid grid-cols-7 gap-1"
+          className="grid grid-cols-7 gap-0.5"
         >
           {cells.map((day, i) => {
             if (day === null) return <span key={`pad-${i}`} />;
@@ -96,7 +96,7 @@ export function StreakCalendar({ activeDays, todayKey, currentStreak, longestStr
                 key={key}
                 title={isActive ? `Active on ${day} ${MONTHS[view.month - 1].slice(0, 3)}` : undefined}
                 className={cn(
-                  "flex aspect-square items-center justify-center rounded-lg text-xs transition-colors",
+                  "mx-auto flex h-7 w-7 items-center justify-center rounded-lg text-[11px] transition-colors",
                   isActive
                     ? "bg-brand-500 font-semibold text-white"
                     : isFuture
@@ -119,6 +119,7 @@ export function StreakCalendar({ activeDays, todayKey, currentStreak, longestStr
         </span>
         <span className="text-muted">Best: {longestStreak} day{longestStreak === 1 ? "" : "s"}</span>
       </div>
+      <p className="mt-2 text-center text-[11px] text-muted">Marked days show your dashboard activity.</p>
     </div>
   );
 }

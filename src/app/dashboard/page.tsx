@@ -16,6 +16,8 @@ import { AnimatedSparkle } from "@/components/ui/icons/AnimatedSparkle";
 import { AnimatedCalendar } from "@/components/ui/icons/AnimatedCalendar";
 import { AnimatedMail } from "@/components/ui/icons/AnimatedMail";
 import { AnimatedPhone } from "@/components/ui/icons/AnimatedPhone";
+import Link from "next/link";
+import { ArrowRight } from "lucide-react";
 import type { CourseIconKey } from "@/lib/courseIcons";
 import { recordDailyActivity, getStreakSummary, toDayKey } from "@/lib/streak";
 
@@ -31,16 +33,13 @@ export default async function DashboardPage() {
 
   const streak = await getStreakSummary(user.id);
   const [enrollments, applications, projects, bookings] = await Promise.all([
-    prisma.enrollment.findMany({ where: { userId: user.id }, include: { course: true }, orderBy: { enrolledAt: "desc" } }),
-    prisma.internshipApplication.findMany({ where: { userId: user.id }, include: { internship: true }, orderBy: { appliedAt: "desc" } }),
+    prisma.enrollment.findMany({ where: { userId: user.id, status: { not: "cancelled" } }, include: { course: true }, orderBy: { enrolledAt: "desc" } }),
+    prisma.internshipApplication.findMany({ where: { userId: user.id, status: "accepted" }, include: { internship: true }, orderBy: { appliedAt: "desc" } }),
     prisma.project.findMany({ where: { userId: user.id }, include: { mentor: true }, orderBy: { updatedAt: "desc" } }),
     prisma.tutoringBooking.findMany({ where: { userId: user.id }, include: { tutor: true }, orderBy: { createdAt: "desc" } }),
   ]);
 
   const deadlines = [
-    ...applications
-      .filter((a) => a.status !== "rejected")
-      .map((a) => ({ label: `Internship: ${a.internship.title}`, date: a.internship.applyDeadline })),
     ...projects
       .filter((p) => p.dueDate)
       .map((p) => ({ label: `Project: ${p.title}`, date: p.dueDate as Date })),
@@ -48,10 +47,11 @@ export default async function DashboardPage() {
     .sort((a, b) => a.date.getTime() - b.date.getTime())
     .slice(0, 5);
 
+  const activitiesExist = enrollments.length + applications.length + projects.length > 0;
   const stats: { iconKey: CourseIconKey; label: string; value: number }[] = [
-    { iconKey: "student", label: "Courses enrolled", value: enrollments.length },
-    { iconKey: "career", label: "Internship applications", value: applications.length },
-    { iconKey: "webdev", label: "Active projects", value: projects.filter((p) => p.status !== "completed").length },
+    ...(enrollments.length ? [{ iconKey: "student" as const, label: "Courses enrolled", value: enrollments.length }] : []),
+    ...(applications.length ? [{ iconKey: "career" as const, label: "Internships joined", value: applications.length }] : []),
+    ...(projects.length ? [{ iconKey: "webdev" as const, label: "Projects", value: projects.length }] : []),
   ];
 
   return (
@@ -79,7 +79,7 @@ export default async function DashboardPage() {
           </FadeIn>
         )}
 
-        <div className="mt-8 grid grid-cols-2 gap-5 sm:grid-cols-3 lg:grid-cols-5">
+        <div className={`mt-8 grid grid-cols-2 gap-5 sm:grid-cols-3 ${stats.length === 3 ? "lg:grid-cols-5" : stats.length === 2 ? "lg:grid-cols-4" : stats.length === 1 ? "lg:grid-cols-3" : "lg:grid-cols-2"}`}>
           {stats.map((s, i) => (
             <FadeIn key={s.label} delay={0.1 + i * 0.06}>
               <Card className="flex items-center gap-4 p-5 transition-all duration-300 hover:-translate-y-1 hover:shadow-[var(--shadow-lift)]">
@@ -117,40 +117,49 @@ export default async function DashboardPage() {
           </FadeIn>
         </div>
 
+        {!activitiesExist && (
+          <FadeIn delay={0.15} className="mt-10">
+            <Card className="p-7 sm:p-9">
+              <h2 className="text-lg font-semibold">Your learning and work activities will appear here.</h2>
+              <p className="mt-2 text-sm text-muted">Explore an opportunity to get started.</p>
+              <div className="mt-5 flex flex-wrap gap-3">
+                <Button href="/courses" variant="secondary" size="sm">Explore courses</Button>
+                <Button href="/internships" variant="secondary" size="sm">Explore internships</Button>
+                <Button href="/projects" variant="secondary" size="sm">Explore projects</Button>
+              </div>
+            </Card>
+          </FadeIn>
+        )}
+
         <div className="mt-10 grid grid-cols-1 gap-8 lg:grid-cols-3">
           <div className="flex flex-col gap-8 lg:col-span-2">
-            <FadeIn delay={0.15}>
+            {enrollments.length > 0 && <FadeIn delay={0.15}>
               <h2 className="mb-4 font-semibold">My courses</h2>
-              {enrollments.length === 0 ? (
-                <EmptyState label="No courses yet." href="/courses" cta="Browse courses" />
-              ) : (
-                <div className="flex flex-col gap-3">
+              <div className="flex flex-col gap-3">
                   {enrollments.map((e) => (
-                    <Card key={e.id} className="p-5">
+                    <Link key={e.id} href={`/courses/${e.course.slug}`} aria-label={`Continue ${e.course.title}`} className="block rounded-2xl focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-400">
+                    <Card className="p-5 hover:-translate-y-0.5 hover:shadow-[var(--shadow-lift)]">
                       <div className="flex items-center justify-between gap-4">
                         <div>
                           <p className="font-medium">{e.course.title}</p>
-                          <p className="text-xs text-muted">{e.course.category}</p>
+                          <p className="text-xs text-muted">{e.course.category} · {e.progress >= 100 ? "Completed" : e.progress > 0 ? "In progress" : "Registered"}</p>
                         </div>
-                        <span className="text-sm font-semibold text-brand-500">{e.progress}%</span>
+                        <span className="inline-flex items-center gap-2 text-sm font-semibold text-brand-500">{e.progress}% <ArrowRight className="h-4 w-4" /></span>
                       </div>
                       <div className="mt-3">
                         <ProgressBar value={e.progress} />
                       </div>
                     </Card>
+                    </Link>
                   ))}
-                </div>
-              )}
-            </FadeIn>
+              </div>
+            </FadeIn>}
 
-            <FadeIn delay={0.2}>
-              <h2 className="mb-4 font-semibold">My projects &amp; mentor feedback</h2>
-              {projects.length === 0 ? (
-                <EmptyState label="No active projects yet." href="/internships" cta="Explore internships" />
-              ) : (
+            {projects.length > 0 && <FadeIn delay={0.2}>
+              <h2 className="mb-4 font-semibold">My projects</h2>
                 <div className="flex flex-col gap-3">
                   {projects.map((p) => (
-                    <Card key={p.id} className="p-5">
+                    <Link key={p.id} href={`/dashboard/projects/${p.id}`} aria-label={`View project ${p.title}`} className="block rounded-2xl focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-400"><Card className="p-5 hover:-translate-y-0.5 hover:shadow-[var(--shadow-lift)]">
                       <div className="flex items-center justify-between gap-4">
                         <div>
                           <p className="font-medium">{p.title}</p>
@@ -166,30 +175,26 @@ export default async function DashboardPage() {
                           &ldquo;{p.feedback}&rdquo;
                         </p>
                       )}
-                    </Card>
+                      <span className="mt-3 inline-flex items-center gap-1 text-sm font-medium text-brand-600">View project <ArrowRight className="h-4 w-4" /></span>
+                    </Card></Link>
                   ))}
                 </div>
-              )}
-            </FadeIn>
+            </FadeIn>}
 
-            <FadeIn delay={0.25}>
-              <h2 className="mb-4 font-semibold">Internship applications</h2>
-              {applications.length === 0 ? (
-                <EmptyState label="No applications yet." href="/internships" cta="View internships" />
-              ) : (
+            {applications.length > 0 && <FadeIn delay={0.25}>
+              <h2 className="mb-4 font-semibold">My internships</h2>
                 <div className="flex flex-col gap-3">
                   {applications.map((a) => (
-                    <Card key={a.id} className="flex items-center justify-between gap-4 p-5">
+                    <Link key={a.id} href={`/internships/${a.internship.slug}`} aria-label={`View internship ${a.internship.title}`} className="block rounded-2xl focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-400"><Card className="flex items-center justify-between gap-4 p-5 hover:-translate-y-0.5 hover:shadow-[var(--shadow-lift)]">
                       <div>
                         <p className="font-medium">{a.internship.title}</p>
                         <p className="text-xs text-muted">{a.internship.company}</p>
                       </div>
-                      <StatusBadge status={a.status} />
-                    </Card>
+                      <span className="inline-flex items-center gap-2"><StatusBadge status={a.status} /><ArrowRight className="h-4 w-4 text-brand-500" /></span>
+                    </Card></Link>
                   ))}
                 </div>
-              )}
-            </FadeIn>
+            </FadeIn>}
           </div>
 
           <div className="flex flex-col gap-8">

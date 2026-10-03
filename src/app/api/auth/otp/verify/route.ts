@@ -34,7 +34,12 @@ export async function POST(req: Request) {
       return NextResponse.json({ error: "No account found for that contact." }, { status: 404 });
     }
     await setSessionCookie({ userId: user.id, role: user.role });
-    await recordDailyActivity(user.id);
+    try {
+      await recordDailyActivity(user.id);
+    } catch (error) {
+      // Activity tracking is ancillary; a valid OTP must still complete sign-in.
+      console.error("Could not record OTP login activity:", error);
+    }
     return NextResponse.json({
       user: { id: user.id, name: user.name, email: user.email, role: user.role },
     });

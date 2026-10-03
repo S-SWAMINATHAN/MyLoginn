@@ -23,6 +23,7 @@ import { AnimatedSearch } from "@/components/ui/icons/AnimatedSearch";
 import { AnimatedArrow } from "@/components/ui/icons/AnimatedArrow";
 import { AnimatedLogout } from "@/components/ui/icons/AnimatedLogout";
 import { AnimatedClose } from "@/components/ui/icons/AnimatedClose";
+import { Sparkles } from "lucide-react";
 
 export type AdminNavUser = { name: string; email: string; avatarColor: string; avatarUrl: string | null };
 
@@ -35,6 +36,7 @@ const NAV_GROUPS: { label: string; items: { href: string; label: string; icon: R
     label: "Management",
     items: [
       { href: "/admin/courses", label: "Courses", icon: AnimatedGraduation },
+      { href: "/admin/visual-explanations", label: "Visual Explanations", icon: Sparkles },
       { href: "/admin/categories", label: "Categories", icon: AnimatedLayers },
       { href: "/admin/users", label: "Users", icon: AnimatedUsers },
       { href: "/admin/mentors", label: "Mentors", icon: AnimatedUser },

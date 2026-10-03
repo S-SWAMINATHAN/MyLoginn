@@ -1,6 +1,6 @@
 "use client";
 
-import { useRef, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import { useRouter } from "next/navigation";
 import { AnimatePresence, motion } from "framer-motion";
 import { Camera, Upload, X, RotateCcw, Check } from "lucide-react";
@@ -20,23 +20,33 @@ export function AvatarUploadModal({ open, onClose }: { open: boolean; onClose: (
   const streamRef = useRef<MediaStream | null>(null);
   const fileInputRef = useRef<HTMLInputElement>(null);
 
-  function reset() {
+  const stopCamera = useCallback(() => {
+    streamRef.current?.getTracks().forEach((t) => t.stop());
+    streamRef.current = null;
+  }, []);
+
+  const reset = useCallback(() => {
     stopCamera();
+    if (preview?.startsWith("blob:")) URL.revokeObjectURL(preview);
     setMode("choose");
     setPreview(null);
     setFile(null);
     setError(null);
-  }
+  }, [preview, stopCamera]);
 
-  function handleClose() {
+  const handleClose = useCallback(() => {
     reset();
     onClose();
-  }
+  }, [onClose, reset]);
 
-  function stopCamera() {
-    streamRef.current?.getTracks().forEach((t) => t.stop());
-    streamRef.current = null;
-  }
+  useEffect(() => {
+    if (!open) return;
+    const closeOnEscape = (event: KeyboardEvent) => {
+      if (event.key === "Escape") handleClose();
+    };
+    window.addEventListener("keydown", closeOnEscape);
+    return () => window.removeEventListener("keydown", closeOnEscape);
+  }, [open, handleClose]);
 
   async function startCamera() {
     setError(null);
@@ -112,6 +122,8 @@ export function AvatarUploadModal({ open, onClose }: { open: boolean; onClose: (
       }
       handleClose();
       router.refresh();
+    } catch {
+      setError("Couldn't update your photo. Check your connection and try again.");
     } finally {
       setSaving(false);
     }
@@ -134,9 +146,12 @@ export function AvatarUploadModal({ open, onClose }: { open: boolean; onClose: (
             transition={{ duration: 0.22, ease: [0.16, 1, 0.3, 1] }}
             onClick={(e) => e.stopPropagation()}
             className="glass-panel w-full max-w-sm rounded-2xl p-6"
+          role="dialog"
+          aria-modal="true"
+          aria-labelledby="avatar-dialog-title"
           >
             <div className="flex items-center justify-between">
-              <h2 className="text-lg font-semibold">Update profile photo</h2>
+              <h2 id="avatar-dialog-title" className="text-lg font-semibold">Update profile photo</h2>
               <button onClick={handleClose} className="group cursor-pointer rounded-full p-1.5 hover:bg-surface-2" aria-label="Close">
                 <X className="h-5.5 w-5.5 transition-transform duration-300 group-hover:rotate-90" />
               </button>
@@ -182,13 +197,15 @@ export function AvatarUploadModal({ open, onClose }: { open: boolean; onClose: (
                   {error && <p className="text-sm text-danger">{error}</p>}
                   <button
                     onClick={() => fileInputRef.current?.click()}
-                    className="group flex cursor-pointer items-center gap-3 rounded-xl border border-border-soft px-4 py-3.5 text-left text-sm font-medium transition-colors duration-150 hover:bg-surface-2"
+                    className="group flex cursor-pointer items-center gap-3 rounded-xl border border-border-soft px-4 py-3.5 text-left text-sm font-medium transition-colors duration-150 hover:bg-surface-2 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-400"
+                    aria-label="Choose a profile photo from your files"
                   >
                     <Upload className="h-5.5 w-5.5 text-brand-500 transition-transform duration-300 group-hover:scale-110 group-hover:-translate-y-0.5" /> Upload a photo
                   </button>
                   <button
                     onClick={startCamera}
-                    className="group flex cursor-pointer items-center gap-3 rounded-xl border border-border-soft px-4 py-3.5 text-left text-sm font-medium transition-colors duration-150 hover:bg-surface-2"
+                    className="group flex cursor-pointer items-center gap-3 rounded-xl border border-border-soft px-4 py-3.5 text-left text-sm font-medium transition-colors duration-150 hover:bg-surface-2 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-400"
+                    aria-label="Take a profile photo with your camera"
                   >
                     <Camera className="h-5.5 w-5.5 text-brand-500 transition-transform duration-300 group-hover:scale-110" /> Use camera
                   </button>

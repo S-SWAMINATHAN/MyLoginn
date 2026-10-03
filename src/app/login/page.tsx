@@ -193,6 +193,7 @@ export default function LoginPage() {
                   <Button type="submit" size="lg" className="mt-1 w-full" disabled={submitting} icon={<ArrowRight className="h-5.5 w-5.5" />}>
                     {submitting ? "Logging in…" : "Log in"}
                   </Button>
+                  <a href="/reset-password" className="self-end text-sm font-medium text-brand-600 hover:underline">Forgot password?</a>
                 </form>
 
               </motion.div>

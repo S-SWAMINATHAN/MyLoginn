@@ -1,5 +1,5 @@
 import { randomUUID } from "crypto";
-import { unlink, writeFile } from "fs/promises";
+import { mkdir, unlink, writeFile } from "fs/promises";
 import path from "path";
 import { NextResponse } from "next/server";
 import { getCurrentUser } from "@/lib/auth";
@@ -26,6 +26,9 @@ export async function POST(req: Request) {
     return NextResponse.json({ error: "No photo provided" }, { status: 400 });
   }
 
+  if (photo.size === 0) {
+    return NextResponse.json({ error: "The selected image is empty" }, { status: 400 });
+  }
   const extension = ALLOWED_TYPES[photo.type];
   if (!extension) {
     return NextResponse.json({ error: "Use a JPG, PNG, or WEBP image" }, { status: 400 });
@@ -36,11 +39,17 @@ export async function POST(req: Request) {
 
   const filename = `${randomUUID()}${extension}`;
   const buffer = Buffer.from(await photo.arrayBuffer());
-  await writeFile(path.join(UPLOAD_DIR, filename), buffer);
+  await mkdir(UPLOAD_DIR, { recursive: true });
+  await writeFile(path.join(UPLOAD_DIR, filename), buffer, { flag: "wx" });
 
   const previousUrl = user.avatarUrl;
   const avatarUrl = `/uploads/avatars/${filename}`;
-  await prisma.user.update({ where: { id: user.id }, data: { avatarUrl } });
+  try {
+    await prisma.user.update({ where: { id: user.id }, data: { avatarUrl } });
+  } catch {
+    await unlink(path.join(UPLOAD_DIR, filename)).catch(() => {});
+    return NextResponse.json({ error: "Couldn't save your profile photo. Please try again." }, { status: 500 });
+  }
 
   if (previousUrl?.startsWith("/uploads/avatars/")) {
     await unlink(path.join(process.cwd(), "public", previousUrl)).catch(() => {});
