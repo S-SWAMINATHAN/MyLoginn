@@ -92,7 +92,7 @@ export function CourseCard({
             <div className="relative z-10 mt-5 flex w-full flex-col items-center border-t border-border-soft pt-4">
               <span className="text-[11px] font-medium uppercase tracking-wider text-muted">{course.price === 0 ? "Course access" : "Course fee"}</span>
               <div className="mt-1 flex flex-wrap items-baseline justify-center gap-x-2 gap-y-1">
-                <span className={`text-2xl font-bold sm:text-3xl ${course.price === 0 ? "text-success" : ""}`}>{course.price === 0 ? "FREE" : `₹${course.price.toLocaleString("en-IN")}`}</span>
+                <span className={`font-bold ${course.price === 0 ? "text-lg text-success sm:text-xl" : "text-2xl sm:text-3xl"}`}>{course.price === 0 ? "FREE" : `₹${course.price.toLocaleString("en-IN")}`}</span>
                 {course.originalPrice && course.originalPrice > course.price && (
                   <span className="text-sm text-muted line-through" aria-label={`Original price ₹${course.originalPrice.toLocaleString("en-IN")}`}>
                     ₹{course.originalPrice.toLocaleString("en-IN")}

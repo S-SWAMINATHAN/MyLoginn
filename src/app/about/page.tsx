@@ -41,15 +41,7 @@ export default function AboutPage() {
     <main className="about-page overflow-hidden bg-white text-[#102858]">
       <JsonLd data={{ "@context": "https://schema.org", "@type": "FAQPage", mainEntity: faqs.map(({ question, answer }) => ({ "@type": "Question", name: question, acceptedAnswer: { "@type": "Answer", text: answer } })) }} />
       <style>{`
-        @media (min-width: 768px) {
-          .about-page .about-hero-visual { height: 260px; min-height: 230px; }
-          .about-page .about-hero-visual img { max-height: 260px; }
-        }
-
         @media (min-width: 1024px) {
-          .about-page .about-hero-inner { min-height: 290px; padding-block: 1.25rem; gap: 1rem; grid-template-columns: .95fr 1.05fr; }
-          .about-page .about-hero-visual { height: 260px; min-height: 250px; }
-          .about-page .about-hero-visual img { max-height: 260px; }
           .about-page .about-who-section { padding-block: 0.75rem; }
           .about-page .about-who-panel { gap: 1rem; padding: 1rem; }
           .about-page .about-proof-card { min-height: 76px; }
@@ -64,12 +56,6 @@ export default function AboutPage() {
         }
 
         @media (min-width: 1024px) and (max-height: 700px) {
-          .about-page .about-hero-inner { min-height: 285px; }
-          .about-page .about-hero-copy h1 { margin-top: 0.75rem; font-size: 2.35rem; }
-          .about-page .about-hero-copy > p { margin-top: 0.8rem; font-size: 0.7rem; line-height: 1.55; }
-          .about-page .about-hero-copy > div { margin-top: 1rem; }
-          .about-page .about-hero-visual { min-height: 255px; }
-          .about-page .about-hero-visual img { max-height: 250px; }
           .about-page .about-who-section { padding-block: 1rem; }
           .about-page .about-who-panel { padding: 1rem; }
           .about-page .about-who-panel > div:first-child h2 { margin-top: 0.75rem; font-size: 1.3rem; }
@@ -92,14 +78,15 @@ export default function AboutPage() {
       `}</style>
 
       <section className="about-hero relative isolate overflow-hidden bg-[radial-gradient(ellipse_at_78%_46%,rgba(133,181,255,.13),transparent_38%),linear-gradient(180deg,#fff_0%,#f7fbff_100%)]">
-        <Container className="about-hero-inner block items-center gap-1 px-5 pb-3 pt-2 sm:px-8 sm:pt-0 sm:pb-8 md:grid lg:min-h-[340px] lg:max-w-[1440px] lg:grid-cols-[.9fr_1.1fr] lg:gap-8 lg:py-8">
-          <div className="about-hero-visual relative z-0 float-right ml-3 mb-1 block h-24 w-32 max-w-none overflow-hidden max-md:h-auto max-md:aspect-[4/3] max-md:w-[clamp(8rem,36vw,9rem)] md:order-2 md:float-none md:mx-auto md:mb-0 md:flex md:min-h-[245px] md:h-auto md:w-full md:max-w-[660px] md:items-center md:justify-center lg:min-h-[300px]"><Image src={aboutHeader} alt="A bright illustration representing ideas becoming digital products and growth" preload sizes="(max-width: 767px) 9rem, 58vw" className="h-full w-full object-contain md:h-auto md:max-h-[250px] lg:max-h-[300px]" /></div>
-          <div className="about-hero-copy relative z-10 max-w-[480px] pt-0 md:order-1">
-            <span className="inline-flex items-center gap-2 rounded-full border border-[#cfe0ff] bg-white/90 px-2.5 py-1 text-[10px] font-semibold text-[#1558d5]"><span className="h-1.5 w-1.5 rounded-full bg-[#1e65ee]" /> About MYLOGINN</span>
-            <h1 className="mt-3 text-[2.25rem] font-bold leading-[1.02] max-md:mt-2 max-md:text-[1.75rem] sm:text-[2.55rem] lg:text-[2.45rem]">Turning Ideas Into <span className="block bg-gradient-to-r from-[#1559dc] via-[#247cf3] to-[#08a9c4] bg-clip-text text-transparent">Digital Success</span></h1>
-            <p className="mt-3 max-w-[365px] text-[11px] leading-[1.6] text-[#536b91] max-md:mt-2 sm:text-xs"><strong className="font-semibold text-[#17376d]">MYLOGINN TECH</strong> is a next-generation digital platform focused on learning, innovation and real-world growth. We help individuals and businesses build skills, create opportunities and achieve more through technology, creativity and practical experience.</p>
-            <div className="mt-4 flex flex-wrap gap-2.5"><a href="#who-we-are" className="group inline-flex min-h-8 items-center gap-2.5 rounded-full bg-[#1763e9] px-4 text-[10px] font-semibold text-white shadow-[0_8px_18px_rgba(30,100,233,.2)] transition hover:-translate-y-0.5 hover:bg-[#104fcb]">Our Mission <ArrowRight className="h-3.5 w-3.5 transition group-hover:translate-x-1" /></a><Link href="/services" className="inline-flex min-h-8 items-center gap-1.5 rounded-full border border-[#a9c5f2] bg-white/90 px-3.5 text-[10px] font-semibold text-[#184b9c] transition hover:bg-white"><CirclePlay className="h-3.5 w-3.5" /> Explore Services</Link></div>
+        <Container className="about-hero-inner relative grid items-center gap-5 px-5 py-4 sm:px-8 sm:py-8 md:grid-cols-[.9fr_1.1fr] md:gap-8 lg:min-h-[390px] lg:max-w-[1440px] lg:grid-cols-[.8fr_1.2fr] lg:gap-10 lg:py-8">
+          <div className="about-hero-copy relative z-10 max-w-[480px] md:order-1">
+            <span className="flex w-fit items-center gap-2 rounded-full border border-[#cfe0ff] bg-white/90 px-2.5 py-1 text-[10px] font-semibold text-[#1558d5]"><span className="h-1.5 w-1.5 rounded-full bg-[#1e65ee]" /> About MYLOGINN</span>
+            <div className="about-hero-mobile-visual float-right ml-2 mt-1 mb-1 flex aspect-[2/1] w-[46%] max-w-[145px] items-center justify-center md:hidden"><Image src={aboutHeader} alt="" sizes="46vw" className="h-full w-full object-contain" /></div>
+            <h1 className="mt-4 text-[1.6rem] font-bold leading-[1.02] sm:text-[2.75rem] lg:text-[3.25rem]">Turning Ideas Into <span className="block bg-gradient-to-r from-[#1559dc] via-[#247cf3] to-[#08a9c4] bg-clip-text text-transparent">Digital Success</span></h1>
+            <p className="mt-4 max-w-[420px] text-xs leading-[1.7] text-[#536b91] sm:text-sm"><strong className="font-semibold text-[#17376d]">MYLOGINN TECH</strong> is a next-generation digital platform focused on learning, innovation and real-world growth. We help individuals and businesses build skills, create opportunities and achieve more through technology, creativity and practical experience.</p>
+            <div className="mt-5 flex flex-wrap gap-2.5"><a href="#who-we-are" className="group inline-flex min-h-10 items-center gap-2.5 rounded-full bg-[#1763e9] px-5 text-xs font-semibold text-white shadow-[0_8px_18px_rgba(30,100,233,.2)] transition hover:-translate-y-0.5 hover:bg-[#104fcb]">Our Mission <ArrowRight className="h-4 w-4 transition group-hover:translate-x-1" /></a><Link href="/services" className="inline-flex min-h-10 items-center gap-2 rounded-full border border-[#a9c5f2] bg-white/90 px-4 text-xs font-semibold text-[#184b9c] transition hover:bg-white"><CirclePlay className="h-4 w-4" /> Explore Services</Link></div>
           </div>
+          <div className="about-hero-visual relative order-2 mx-auto hidden aspect-[2/1] w-full max-w-[760px] items-center justify-center md:mx-0 md:flex"><Image src={aboutHeader} alt="A bright illustration representing ideas becoming digital products and growth" preload sizes="(max-width: 1023px) 55vw, 60vw" className="h-full w-full object-contain" /></div>
         </Container>
       </section>
 

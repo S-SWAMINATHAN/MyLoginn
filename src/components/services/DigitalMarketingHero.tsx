@@ -10,7 +10,7 @@ import { ReferenceStatIcon } from "@/components/ui/ReferenceStatIcon";
 const stats = [
   { icon: "marketing-roas", value: "Trusted", label: "Client Partnerships" },
   { icon: "marketing-campaigns", value: "Qualified", label: "Lead Generation" },
-  { icon: "marketing-industries", value: "Data-led", label: "ROI Strategy" },
+  { icon: "marketing-industries", value: "Data-lead", label: "ROI Strategy" },
   { icon: "marketing-engagement", value: "Connected", label: "Brand Engagement" },
 ];
 
