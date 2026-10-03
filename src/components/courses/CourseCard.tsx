@@ -68,7 +68,7 @@ export function CourseCard({
 
             {recommended && <span className="absolute left-4 top-4 z-10 text-[11px] font-semibold text-brand-600 dark:text-brand-300">Featured</span>}
             <span className="absolute right-4 top-4 z-10 rounded-full bg-surface-2 px-2.5 py-1 text-[11px] font-semibold uppercase tracking-wide text-foreground/70">
-              {course.level}
+              {course.price === 0 ? "FREE · FUNDAMENTALS" : course.level}
             </span>
 
             <CourseIconThumb
@@ -90,9 +90,9 @@ export function CourseCard({
             </div>
 
             <div className="relative z-10 mt-5 flex w-full flex-col items-center border-t border-border-soft pt-4">
-              <span className="text-[11px] font-medium uppercase tracking-wider text-muted">Course fee</span>
+              <span className="text-[11px] font-medium uppercase tracking-wider text-muted">{course.price === 0 ? "Course access" : "Course fee"}</span>
               <div className="mt-1 flex flex-wrap items-baseline justify-center gap-x-2 gap-y-1">
-                <span className="text-2xl font-bold sm:text-3xl">₹{course.price.toLocaleString("en-IN")}</span>
+                <span className={`text-2xl font-bold sm:text-3xl ${course.price === 0 ? "text-success" : ""}`}>{course.price === 0 ? "FREE" : `₹${course.price.toLocaleString("en-IN")}`}</span>
                 {course.originalPrice && course.originalPrice > course.price && (
                   <span className="text-sm text-muted line-through" aria-label={`Original price ₹${course.originalPrice.toLocaleString("en-IN")}`}>
                     ₹{course.originalPrice.toLocaleString("en-IN")}

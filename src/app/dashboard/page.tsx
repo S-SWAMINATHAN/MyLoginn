@@ -55,7 +55,7 @@ export default async function DashboardPage() {
   ];
 
   return (
-    <Section className="pt-12">
+    <Section className="py-10 sm:py-12">
       <Container>
         <FadeIn id="profile" className="scroll-mt-24 flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
           <div className="flex items-center gap-4">
@@ -79,7 +79,7 @@ export default async function DashboardPage() {
           </FadeIn>
         )}
 
-        <div className={`mt-8 grid grid-cols-2 gap-5 sm:grid-cols-3 ${stats.length === 3 ? "lg:grid-cols-5" : stats.length === 2 ? "lg:grid-cols-4" : stats.length === 1 ? "lg:grid-cols-3" : "lg:grid-cols-2"}`}>
+        <div className="mt-8 grid grid-cols-[repeat(auto-fit,minmax(min(100%,13rem),1fr))] gap-4 sm:gap-5">
           {stats.map((s, i) => (
             <FadeIn key={s.label} delay={0.1 + i * 0.06}>
               <Card className="flex items-center gap-4 p-5 transition-all duration-300 hover:-translate-y-1 hover:shadow-[var(--shadow-lift)]">
@@ -131,9 +131,9 @@ export default async function DashboardPage() {
           </FadeIn>
         )}
 
-        <div className="mt-10 grid grid-cols-1 gap-8 lg:grid-cols-3">
-          <div className="flex flex-col gap-8 lg:col-span-2">
-            {enrollments.length > 0 && <FadeIn delay={0.15}>
+        <div className="mt-10 grid grid-cols-1 gap-5 sm:grid-cols-2 xl:grid-cols-3 sm:gap-6">
+          <div className="contents">
+            {enrollments.length > 0 && <FadeIn delay={0.15} className="sm:col-span-2">
               <h2 className="mb-4 font-semibold">My courses</h2>
               <div className="flex flex-col gap-3">
                   {enrollments.map((e) => (
@@ -197,7 +197,7 @@ export default async function DashboardPage() {
             </FadeIn>}
           </div>
 
-          <div className="flex flex-col gap-8">
+          <div className="contents">
             <FadeIn delay={0.12}>
               <h2 className="mb-4 flex items-center gap-2 font-semibold">
                 <AnimatedFlame className="h-5.5 w-5.5" /> Login streak

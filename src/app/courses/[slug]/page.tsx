@@ -10,6 +10,7 @@ import { Percent, ListChecks } from "lucide-react";
 import { AnimatedClock } from "@/components/ui/icons/AnimatedClock";
 import { AnimatedSuccess } from "@/components/ui/icons/AnimatedSuccess";
 import { CourseIconThumb } from "@/components/courses/CourseIconThumb";
+import { FreeEnrollButton } from "@/components/courses/FreeEnrollButton";
 
 export async function generateMetadata({ params }: { params: Promise<{ slug: string }> }): Promise<Metadata> {
   const { slug } = await params;
@@ -113,7 +114,7 @@ export default async function CourseDetailPage({
             <div className="lg:sticky lg:top-24">
               <Card className="p-6">
                 <div className="flex items-center gap-2">
-                  <span className="text-3xl font-bold">₹{course.price.toLocaleString("en-IN")}</span>
+                  <span className={`text-3xl font-bold ${course.price === 0 ? "text-success" : ""}`}>{course.price === 0 ? "FREE" : `₹${course.price.toLocaleString("en-IN")}`}</span>
                   {course.originalPrice && course.originalPrice > course.price && (
                     <span className="text-sm text-muted line-through">₹{course.originalPrice.toLocaleString("en-IN")}</span>
                   )}
@@ -125,7 +126,9 @@ export default async function CourseDetailPage({
                 )}
 
                 <div className="mt-5">
-                  {!user ? (
+                  {course.price === 0 ? (
+                    <FreeEnrollButton slug={course.slug} loggedIn={!!user} enrolled={!!enrollment} />
+                  ) : !user ? (
                     <Button href="/login" className="w-full" size="lg">
                       Log in to enroll
                     </Button>

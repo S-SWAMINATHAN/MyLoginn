@@ -16,6 +16,8 @@ export function AvatarUploadModal({ open, onClose }: { open: boolean; onClose: (
   const [file, setFile] = useState<File | Blob | null>(null);
   const [error, setError] = useState<string | null>(null);
   const [saving, setSaving] = useState(false);
+  const [cameraReady, setCameraReady] = useState(false);
+  const dialogRef = useRef<HTMLDivElement>(null);
   const videoRef = useRef<HTMLVideoElement>(null);
   const streamRef = useRef<MediaStream | null>(null);
   const fileInputRef = useRef<HTMLInputElement>(null);
@@ -27,11 +29,17 @@ export function AvatarUploadModal({ open, onClose }: { open: boolean; onClose: (
 
   const reset = useCallback(() => {
     stopCamera();
+    setCameraReady(false);
     if (preview?.startsWith("blob:")) URL.revokeObjectURL(preview);
     setMode("choose");
     setPreview(null);
     setFile(null);
     setError(null);
+  }, [preview, stopCamera]);
+
+  useEffect(() => () => {
+    stopCamera();
+    if (preview?.startsWith("blob:")) URL.revokeObjectURL(preview);
   }, [preview, stopCamera]);
 
   const handleClose = useCallback(() => {
@@ -43,7 +51,20 @@ export function AvatarUploadModal({ open, onClose }: { open: boolean; onClose: (
     if (!open) return;
     const closeOnEscape = (event: KeyboardEvent) => {
       if (event.key === "Escape") handleClose();
+      if (event.key !== "Tab") return;
+      const items = dialogRef.current?.querySelectorAll<HTMLElement>("button:not(:disabled), input:not(:disabled):not([type='file'])");
+      if (!items?.length) return;
+      const first = items[0];
+      const last = items[items.length - 1];
+      if (event.shiftKey && document.activeElement === first) {
+        event.preventDefault();
+        last.focus();
+      } else if (!event.shiftKey && document.activeElement === last) {
+        event.preventDefault();
+        first.focus();
+      }
     };
+    requestAnimationFrame(() => dialogRef.current?.querySelector<HTMLElement>("button")?.focus());
     window.addEventListener("keydown", closeOnEscape);
     return () => window.removeEventListener("keydown", closeOnEscape);
   }, [open, handleClose]);
@@ -53,9 +74,13 @@ export function AvatarUploadModal({ open, onClose }: { open: boolean; onClose: (
     try {
       const stream = await navigator.mediaDevices.getUserMedia({ video: { facingMode: "user" } });
       streamRef.current = stream;
+      setCameraReady(false);
       setMode("camera");
       requestAnimationFrame(() => {
-        if (videoRef.current) videoRef.current.srcObject = stream;
+        if (videoRef.current) {
+          videoRef.current.srcObject = stream;
+          void videoRef.current.play().catch(() => setError("Couldn't start the camera preview. Please try again."));
+        }
       });
     } catch {
       setError("Couldn't access your camera. Check your browser permissions.");
@@ -66,8 +91,13 @@ export function AvatarUploadModal({ open, onClose }: { open: boolean; onClose: (
     const video = videoRef.current;
     if (!video) return;
     const canvas = document.createElement("canvas");
-    canvas.width = video.videoWidth;
-    canvas.height = video.videoHeight;
+    if (!video.videoWidth || !video.videoHeight) {
+      setError("The camera is still starting. Try again in a moment.");
+      return;
+    }
+    const scale = Math.min(1, 1024 / Math.max(video.videoWidth, video.videoHeight));
+    canvas.width = Math.round(video.videoWidth * scale);
+    canvas.height = Math.round(video.videoHeight * scale);
     const ctx = canvas.getContext("2d");
     if (!ctx) return;
     ctx.translate(canvas.width, 0);
@@ -75,7 +105,10 @@ export function AvatarUploadModal({ open, onClose }: { open: boolean; onClose: (
     ctx.drawImage(video, 0, 0);
     canvas.toBlob(
       (blob) => {
-        if (!blob) return;
+        if (!blob) {
+          setError("Couldn't capture the photo. Please try again.");
+          return;
+        }
         setFile(blob);
         setPreview(URL.createObjectURL(blob));
         stopCamera();
@@ -90,10 +123,12 @@ export function AvatarUploadModal({ open, onClose }: { open: boolean; onClose: (
     if (!f) return;
     if (!ACCEPTED.includes(f.type)) {
       setError("Use a JPG, PNG, or WEBP image.");
+      e.currentTarget.value = "";
       return;
     }
     if (f.size > MAX_SIZE) {
       setError("Image must be under 4MB.");
+      e.currentTarget.value = "";
       return;
     }
     setError(null);
@@ -102,6 +137,7 @@ export function AvatarUploadModal({ open, onClose }: { open: boolean; onClose: (
   }
 
   function retake() {
+    if (preview?.startsWith("blob:")) URL.revokeObjectURL(preview);
     setPreview(null);
     setFile(null);
     setMode("choose");
@@ -145,6 +181,7 @@ export function AvatarUploadModal({ open, onClose }: { open: boolean; onClose: (
             exit={{ opacity: 0, y: 16, scale: 0.96 }}
             transition={{ duration: 0.22, ease: [0.16, 1, 0.3, 1] }}
             onClick={(e) => e.stopPropagation()}
+            ref={dialogRef}
             className="glass-panel w-full max-w-sm rounded-2xl p-6"
           role="dialog"
           aria-modal="true"
@@ -174,7 +211,7 @@ export function AvatarUploadModal({ open, onClose }: { open: boolean; onClose: (
                 </div>
               ) : mode === "camera" ? (
                 <div className="flex flex-col items-center gap-4">
-                  <video ref={videoRef} autoPlay playsInline muted className="h-56 w-full scale-x-[-1] rounded-xl bg-black object-cover" />
+                  <video ref={videoRef} autoPlay playsInline muted onLoadedData={() => setCameraReady(true)} className="h-56 w-full scale-x-[-1] rounded-xl bg-black object-cover" />
                   {error && <p className="text-sm text-danger">{error}</p>}
                   <div className="flex w-full gap-3">
                     <Button
@@ -182,12 +219,13 @@ export function AvatarUploadModal({ open, onClose }: { open: boolean; onClose: (
                       className="flex-1"
                       onClick={() => {
                         stopCamera();
+                        setCameraReady(false);
                         setMode("choose");
                       }}
                     >
                       Cancel
                     </Button>
-                    <Button className="flex-1" onClick={capture} icon={<Camera className="h-4.5 w-4.5" />}>
+                    <Button className="flex-1" onClick={capture} disabled={!cameraReady} icon={<Camera className="h-4.5 w-4.5" />}>
                       Capture
                     </Button>
                   </div>

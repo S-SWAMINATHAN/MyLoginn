@@ -5,6 +5,8 @@ import { motion, AnimatePresence } from "framer-motion";
 import { AnimatedSearch } from "@/components/ui/icons/AnimatedSearch";
 import { CourseCard, type CourseCardData } from "./CourseCard";
 
+type CourseType = "All courses" | "Free courses" | "Paid courses";
+
 export function CoursesExplorer({
   courses,
   enrolledIds,
@@ -17,6 +19,7 @@ export function CoursesExplorer({
   isLoggedIn: boolean;
 }) {
   const [category, setCategory] = useState("All");
+  const [courseType, setCourseType] = useState<CourseType>("All courses");
   const [query, setQuery] = useState("");
 
   const categories = useMemo(() => ["All", ...new Set(courses.map((c) => c.category))], [courses]);
@@ -24,10 +27,12 @@ export function CoursesExplorer({
   const filtered = useMemo(() => {
     return courses.filter((c) => {
       const matchesCategory = category === "All" || c.category === category;
-      const matchesQuery = c.title.toLowerCase().includes(query.toLowerCase());
-      return matchesCategory && matchesQuery;
+      const matchesType = courseType === "All courses" || (courseType === "Free courses" ? c.price === 0 : c.price > 0);
+      const normalizedQuery = query.trim().toLowerCase();
+      const matchesQuery = !normalizedQuery || `${c.title} ${c.category} ${c.description}`.toLowerCase().includes(normalizedQuery);
+      return matchesCategory && matchesType && matchesQuery;
     });
-  }, [courses, category, query]);
+  }, [courses, category, courseType, query]);
 
   const recommended = courses.filter((c) => recommendedIds.includes(c.id));
 
@@ -86,6 +91,21 @@ export function CoursesExplorer({
             className="w-full rounded-full border border-border-soft bg-surface py-2.5 pl-10 pr-4 text-sm outline-none focus:border-brand-400 focus:ring-4 focus:ring-brand-100 dark:focus:ring-brand-900/30"
           />
         </div>
+      </div>
+
+      <div className="mt-4 flex flex-wrap items-center gap-2" aria-label="Filter by course access">
+        <span className="mr-1 text-xs font-semibold uppercase tracking-wide text-muted">Access</span>
+        {(["All courses", "Free courses", "Paid courses"] as CourseType[]).map((type) => (
+          <button
+            key={type}
+            type="button"
+            aria-pressed={courseType === type}
+            onClick={() => setCourseType(type)}
+            className={`rounded-full px-3.5 py-2 text-xs font-semibold transition-colors ${courseType === type ? "brand-gradient-bg text-white shadow-[var(--shadow-soft)]" : "bg-surface-2 text-foreground/80 hover:text-foreground"}`}
+          >
+            {type}
+          </button>
+        ))}
       </div>
 
       <motion.div layout className="mt-8 grid grid-cols-1 gap-6 sm:grid-cols-2 sm:gap-7 lg:grid-cols-3">

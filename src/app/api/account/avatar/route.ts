@@ -16,6 +16,13 @@ const ALLOWED_TYPES: Record<string, string> = {
 
 const UPLOAD_DIR = path.join(process.cwd(), "public", "uploads", "avatars");
 
+function matchesImageType(type: string, buffer: Buffer) {
+  if (type === "image/png") return buffer.length >= 8 && buffer.subarray(0, 8).equals(Buffer.from([137, 80, 78, 71, 13, 10, 26, 10]));
+  if (type === "image/jpeg") return buffer.length >= 3 && buffer[0] === 0xff && buffer[1] === 0xd8 && buffer[2] === 0xff;
+  if (type === "image/webp") return buffer.length >= 12 && buffer.toString("ascii", 0, 4) === "RIFF" && buffer.toString("ascii", 8, 12) === "WEBP";
+  return false;
+}
+
 export async function POST(req: Request) {
   const user = await getCurrentUser();
   if (!user) return NextResponse.json({ error: "You must be logged in" }, { status: 401 });
@@ -39,6 +46,9 @@ export async function POST(req: Request) {
 
   const filename = `${randomUUID()}${extension}`;
   const buffer = Buffer.from(await photo.arrayBuffer());
+  if (!matchesImageType(photo.type, buffer)) {
+    return NextResponse.json({ error: "The selected file is not a valid JPG, PNG, or WEBP image" }, { status: 400 });
+  }
   await mkdir(UPLOAD_DIR, { recursive: true });
   await writeFile(path.join(UPLOAD_DIR, filename), buffer, { flag: "wx" });
 
