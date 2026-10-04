@@ -2,11 +2,12 @@ import type { Metadata } from "next";
 import type { ReactNode } from "react";
 import Link from "next/link";
 import { redirect } from "next/navigation";
-import { ArrowLeft, BadgeCheck, GraduationCap, Mail, MapPin, Phone, ShieldCheck, UserRound } from "lucide-react";
+import { ArrowLeft, BadgeCheck, GraduationCap, MapPin, ShieldCheck, UserRound } from "lucide-react";
 import { Avatar } from "@/components/ui/Avatar";
 import { Card } from "@/components/ui/Card";
 import { Container, Section } from "@/components/ui/Section";
 import { ProfilePhotoButton } from "@/components/layout/ProfilePhotoButton";
+import { AccountSettings } from "@/components/profile/AccountSettings";
 import { getCurrentUser } from "@/lib/auth";
 
 export const metadata: Metadata = {
@@ -81,8 +82,6 @@ export default async function ProfilePage() {
               </h3>
               <dl className="space-y-4">
                 <Detail icon={<UserRound className="h-4 w-4" />} label="Full name" value={user.name} />
-                <Detail icon={<Mail className="h-4 w-4" />} label="Email address" value={user.email} />
-                <Detail icon={<Phone className="h-4 w-4" />} label="Phone" value={user.phone || "Not added"} />
                 <Detail icon={<MapPin className="h-4 w-4" />} label="Country" value={user.country || "Not added"} />
               </dl>
             </section>
@@ -100,6 +99,8 @@ export default async function ProfilePage() {
             </section>
           </div>
         </Card>
+
+        <AccountSettings email={user.email} emailVerified={user.emailVerified} phone={user.phone} phoneVerified={user.phoneVerified} />
 
         <div className="mt-6 flex flex-col justify-between gap-4 rounded-2xl border border-border-soft bg-surface-2/60 p-5 sm:flex-row sm:items-center sm:px-6">
           <div>

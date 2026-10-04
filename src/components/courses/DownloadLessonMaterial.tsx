@@ -42,7 +42,11 @@ export function DownloadLessonMaterial({ courseTitle, title, lesson }: Props) {
       const visualSteps = lesson.steps.map((step, index) => `<li><strong>Step ${index + 1}</strong><pre><code>${escapeHtml(step.code)}</code></pre><p>${escapeHtml(step.explanation)}</p></li>`).join("");
       const takeaways = lesson.takeaways.map((item) => `<li>${escapeHtml(item)}</li>`).join("");
       const keyPoints = lesson.keyPoints.map((item) => `<li><strong>${escapeHtml(item.title)}:</strong> ${escapeHtml(item.detail)}</li>`).join("");
-      const quizOptions = lesson.quiz.options.map((option) => `<li><strong>${escapeHtml(option.id)}.</strong> ${escapeHtml(option.text)}</li>`).join("");
+      const quizQuestions = lesson.quiz.map((question, questionIndex) => {
+        const quizOptions = question.options.map((option, optionIndex) => `<li><strong>${String.fromCharCode(65 + optionIndex)}.</strong> ${escapeHtml(option.text)}</li>`).join("");
+        const answerIndex = question.options.findIndex((option) => option.id === question.answer);
+        return `<section><h3>Question ${questionIndex + 1}: ${escapeHtml(question.question)}</h3><ul>${quizOptions}</ul><p><strong>Answer: ${String.fromCharCode(65 + answerIndex)}.</strong> ${escapeHtml(question.explanation)}</p></section>`;
+      }).join("");
       const articleSections = lesson.articleSections.map((item) => `<section><h2>${escapeHtml(item.title)}</h2>${item.paragraphs.map((paragraph) => `<p>${escapeHtml(paragraph)}</p>`).join("")}${item.bullets ? `<ul>${item.bullets.map((bullet) => `<li>${escapeHtml(bullet)}</li>`).join("")}</ul>` : ""}${item.code ? `<pre><code>${escapeHtml(item.code)}</code></pre>` : ""}${item.links ? `<ul>${item.links.map((link) => `<li><a href="${escapeHtml(link.href)}" target="_blank" rel="noreferrer">${escapeHtml(link.label)}</a> — ${escapeHtml(link.detail)}</li>`).join("")}</ul>` : ""}</section>`).join("");
       const visualChart = `<section><h2>${escapeHtml(lesson.visual.caption)}</h2><ol>${lesson.visual.nodes.map((node) => `<li><strong>${escapeHtml(node.label)}: ${escapeHtml(node.value)}</strong>${node.detail ? `<p>${escapeHtml(node.detail)}</p>` : ""}</li>`).join("")}</ol><p>${escapeHtml(lesson.visual.summary)}</p></section>`;
       const html = `<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width"><title>${escapeHtml(title)} | MyLoginn Learning</title><style>
@@ -51,7 +55,7 @@ export function DownloadLessonMaterial({ courseTitle, title, lesson }: Props) {
         ${articleSections || `${section("Lesson overview", lesson.overview)}${section("Definition", lesson.definition)}<section><h2>Key features and ideas</h2><ul>${keyPoints}</ul></section>`}${visualChart}${section("Key words", lesson.keywords.join(" · "))}${section("How it works", lesson.explanation)}${section("Why it matters", lesson.realWorld)}
         ${isPythonInstallation ? "" : `<section><h2>${escapeHtml(lesson.exampleTitle)}</h2><p>${escapeHtml(lesson.exampleIntroduction)}</p><pre><code>${escapeHtml(lesson.code)}</code></pre><h3>Expected output</h3><div class="output">${escapeHtml(lesson.output)}</div></section>
         <section><h2>Step-by-step code walkthrough</h2><ol>${visualSteps}</ol></section>`}
-        <section><h2>Suggested quiz</h2><p>${escapeHtml(lesson.quiz.question)}</p><ul>${quizOptions}</ul><p><strong>Answer: ${escapeHtml(lesson.quiz.answer)}.</strong> ${escapeHtml(lesson.quiz.explanation)}</p></section>
+        <section><h2>Lesson quiz</h2>${quizQuestions}</section>
         ${section("Common mistake", lesson.mistake)}${section("Best practice", lesson.bestPractice)}${isPythonInstallation ? section("Practice", lesson.practice) : lesson.requiresCodeChallenge ? `${section("Practice", lesson.practice)}${section("Code challenge", lesson.challenge)}` : ""}
         <section><h2>Key takeaways</h2><ul>${takeaways}</ul></section><footer>MyLoginn Learning · Free study material · For personal learning</footer></body></html>`;
       const blob = new Blob([html], { type: "text/html;charset=utf-8" });

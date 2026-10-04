@@ -4,7 +4,6 @@ import { useCallback, useEffect, useRef, useState } from "react";
 import { AnimatePresence, motion } from "framer-motion";
 import { Send, X } from "lucide-react";
 import { AnimatedAgent } from "@/components/ui/icons/AnimatedAgent";
-import { AnimatedSparkle } from "@/components/ui/icons/AnimatedSparkle";
 import { cn } from "@/lib/cn";
 
 /** Dispatched by the navbar button (and anywhere else) to open the agent. */
@@ -20,7 +19,7 @@ const SUGGESTIONS = [
 ];
 
 const GREETING =
-  "Hi! I'm the MyLoginn AI agent. Ask me anything about our courses, internships, tutoring, or services — I'm happy to help!";
+  "Hi! I'm the MyLoginn AI agent. Ask me anything about our courses, internships, tutoring, or services â€” I'm happy to help!";
 
 export function AiAgentWidget() {
   const [open, setOpen] = useState(false);
@@ -113,7 +112,7 @@ export function AiAgentWidget() {
 
   return (
     <>
-      {/* Chat panel — anchored to the bottom-right corner on every breakpoint */}
+      {/* Chat panel â€” anchored to the bottom-right corner on every breakpoint */}
       <AnimatePresence>
         {open && (
           <motion.div
@@ -136,7 +135,6 @@ export function AiAgentWidget() {
             {/* Header */}
             <div className="relative flex items-center gap-3 border-b border-border-soft px-4 py-3">
               <span className="relative flex h-10 w-10 items-center justify-center">
-                <span className="pointer-events-none absolute inset-0 rounded-full brand-gradient-bg opacity-20 blur-md animate-pulse" />
                 <AnimatedAgent className="h-8 w-8" />
               </span>
               <div className="min-w-0 flex-1">
@@ -146,7 +144,7 @@ export function AiAgentWidget() {
                     <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-emerald-400 opacity-75" />
                     <span className="relative inline-flex h-1.5 w-1.5 rounded-full bg-emerald-500" />
                   </span>
-                  Online — ask anything about MyLoginn
+                  Online â€” ask anything about MyLoginn
                 </p>
               </div>
               <button
@@ -207,7 +205,7 @@ export function AiAgentWidget() {
                   value={input}
                   onChange={(e) => setInput(e.target.value)}
                   maxLength={2000}
-                  placeholder="Ask about courses, internships…"
+                  placeholder="Ask about courses, internshipsâ€¦"
                   className="h-9 min-w-0 flex-1 bg-transparent text-sm outline-none placeholder:text-muted"
                 />
                 <button
@@ -224,28 +222,17 @@ export function AiAgentWidget() {
         )}
       </AnimatePresence>
 
-      {/* Floating launcher — bottom-right end corner; lifted above the mobile bottom nav */}
+      {/* Floating launcher â€” bottom-right end corner; lifted above the mobile bottom nav */}
       <motion.button
         onClick={() => setOpen((o) => !o)}
         aria-label={open ? "Close AI agent chat" : "Open AI agent chat"}
         aria-expanded={open}
         whileTap={{ scale: 0.9 }}
         className={cn(
-          "group fixed z-[70] flex h-14 w-14 cursor-pointer items-center justify-center rounded-full border border-border-soft bg-surface shadow-[var(--shadow-lift)] transition-colors duration-300 hover:border-brand-400",
+          "group fixed z-[70] flex h-14 w-14 cursor-pointer items-center justify-center bg-transparent transition-transform duration-300",
           "right-3 bottom-[calc(5.25rem+env(safe-area-inset-bottom))] lg:right-6 lg:bottom-6"
         )}
       >
-        <span
-          className={cn(
-            "pointer-events-none absolute inset-0 rounded-full brand-gradient-bg blur-md transition-opacity duration-300",
-            open ? "opacity-10" : "opacity-30 animate-pulse"
-          )}
-        />
-        {!open && (
-          <span className="pointer-events-none absolute -right-0.5 -top-0.5">
-            <AnimatedSparkle className="h-4 w-4" />
-          </span>
-        )}
         <AnimatePresence mode="wait" initial={false}>
           {open ? (
             <motion.span
@@ -267,7 +254,7 @@ export function AiAgentWidget() {
               transition={{ duration: 0.2 }}
               className="relative transition-transform duration-300 group-hover:scale-110"
             >
-              <AnimatedAgent className="h-9 w-9" />
+              <AnimatedAgent className="h-11 w-11" />
             </motion.span>
           )}
         </AnimatePresence>
@@ -301,3 +288,4 @@ function AgentBubble({ text, typing }: { text: string; typing?: boolean }) {
     </div>
   );
 }
+

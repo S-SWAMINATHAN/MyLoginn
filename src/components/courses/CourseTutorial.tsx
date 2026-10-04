@@ -5,6 +5,7 @@ import { buildTutorialLesson, toTopicSlug } from "@/lib/freeCourseTutorial";
 import { DownloadLessonMaterial } from "@/components/courses/DownloadLessonMaterial";
 import { getCourseModules } from "@/lib/freeCourseCurriculum";
 import { CodeIDE } from "@/components/courses/CodeIDE";
+import { SqlExampleResult } from "@/components/courses/SqlExampleResult";
 import { TopicProgressControl } from "@/components/courses/TopicProgressControl";
 import { LessonNextLink } from "@/components/courses/LessonNextLink";
 import { AnimatedLessonWalkthrough } from "@/components/courses/AnimatedLessonWalkthrough";
@@ -64,7 +65,8 @@ export function CourseTutorial({ courseTitle, courseSlug, learnerName = "MyLogin
   let unlockedIndex = 0;
   while (unlockedIndex < topics.length && (completedSet.has(toTopicSlug(topics[unlockedIndex])) || !buildTutorialLesson(courseSlug, topics[unlockedIndex], unlockedIndex).requiresCodeChallenge)) unlockedIndex += 1;
   const currentCompleted = completedSet.has(toTopicSlug(title));
-  const canRunPython = courseSlug === "python-fundamentals" && lesson.kind !== "packages" && lesson.kind !== "file" && !lesson.output.startsWith("The example demonstrates");
+  const canRunPython = courseSlug === "python-fundamentals" && lesson.kind !== "packages" && lesson.kind !== "file";
+  const canRunSql = courseSlug === "sql-fundamentals" || courseSlug === "mysql-fundamentals";
 
   const topicList = <nav aria-label={`${courseTitle} topics`} className="max-h-[calc(100vh-12rem)] space-y-4 overflow-y-auto pr-1">
     {moduleNavigation.map((module, moduleIndex) => <section key={`${module.title}-${moduleIndex}`}>
@@ -154,7 +156,7 @@ export function CourseTutorial({ courseTitle, courseSlug, learnerName = "MyLogin
             <summary className="flex cursor-pointer list-none items-center justify-between gap-4 rounded-2xl px-5 py-4 font-semibold hover:bg-surface-2 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-500 [&::-webkit-details-marker]:hidden">
               <span><span className="block">Animated lesson walkthrough</span><span className="mt-1 block text-xs font-normal text-muted">Expand to step through the code and use playback controls.</span></span><span aria-hidden="true" className="shrink-0 text-base text-muted transition-transform group-open:rotate-180">⌄</span>
             </summary>
-            <div className="border-t border-border-soft p-2 sm:p-3"><AnimatedLessonWalkthrough title={title} steps={lesson.steps} output={lesson.output} /></div>
+            <div className="border-t border-border-soft p-2 sm:p-3"><AnimatedLessonWalkthrough title={title} steps={lesson.steps} output={lesson.output} sqlQuery={canRunSql ? lesson.code : undefined} /></div>
           </details>}
 
           <section className="mt-8 max-w-3xl">
@@ -174,7 +176,7 @@ export function CourseTutorial({ courseTitle, courseSlug, learnerName = "MyLogin
             <div className="flex items-center justify-between border-b border-white/10 px-4 py-3"><h2 className="text-sm font-semibold">{lesson.exampleTitle}</h2><span className="rounded-full bg-white/10 px-2.5 py-1 text-[10px] font-semibold uppercase tracking-wider text-slate-300">{courseTitle.replace(/ Fundamentals$/i, "")}</span></div>
             <div className="border-b border-white/10 bg-white/5 px-4 py-3 sm:px-6"><p className="text-[10px] font-bold uppercase tracking-wider text-slate-400">Syntax pattern</p><code className="mt-1 block font-mono text-sm text-amber-200">{lesson.syntax}</code></div>
             <pre className="max-h-[480px] overflow-x-auto p-4 text-sm leading-6 sm:p-6"><code>{lesson.code}</code></pre>
-            <div className="border-t border-white/10 bg-white/5 px-4 py-4 sm:px-6"><p className="text-[10px] font-bold uppercase tracking-wider text-slate-400">Expected result</p><pre className="mt-2 whitespace-pre-wrap font-mono text-sm leading-6 text-emerald-300">{lesson.output}</pre></div>
+            <div className="border-t border-white/10 bg-white/5 px-4 py-4 sm:px-6"><p className="text-[10px] font-bold uppercase tracking-wider text-slate-400">{canRunSql ? "Query result · practice database" : "Expected result"}</p>{canRunSql ? <SqlExampleResult query={lesson.code} fallback={lesson.output} /> : <pre className="mt-2 whitespace-pre-wrap font-mono text-sm leading-6 text-emerald-300">{lesson.output}</pre>}</div>
           </section>
 
           <section className="mt-6 max-w-4xl" aria-labelledby="code-explanation"><h2 id="code-explanation" className="text-lg font-bold">How does this work?</h2><ol className="mt-3 space-y-3">{lesson.steps.map((step, stepIndex) => <li key={`${step.code}-${stepIndex}`} className="rounded-xl border border-border-soft bg-background p-4"><code className="block overflow-x-auto font-mono text-sm font-semibold text-brand-700 dark:text-brand-200">{step.code}</code><p className="mt-2 text-sm leading-6 text-foreground/75">{step.explanation}</p></li>)}</ol>{courseSlug === "python-fundamentals" && lesson.kind === "intro" && <ul className="mt-4 list-disc space-y-2 pl-5 text-sm leading-6 text-foreground/80"><li><code>print()</code> is a built-in Python function that displays text.</li><li><code>&quot;Hello, World!&quot;</code> is a string enclosed in quotation marks.</li><li><code>#</code> begins a comment; Python ignores it when running the program.</li><li>Python uses indentation to mark code blocks instead of braces.</li></ul>}</section>
@@ -194,7 +196,7 @@ export function CourseTutorial({ courseTitle, courseSlug, learnerName = "MyLogin
           </section>}
 
           {lesson.requiresCodeChallenge && <>
-            <CodeIDE courseSlug={courseSlug} courseTitle={courseTitle} topicSlug={toTopicSlug(title)} moduleTitle={currentModule?.title ?? courseTitle} isLastTopicInModule={currentModule?.topics.at(-1) === title} nextHref={next} starterCode={lesson.challengeStarter} solutionCode={lesson.code} expectedOutput={lesson.output} canRunPython={canRunPython} needsInput={/\binput\s*\(/i.test(lesson.code)} hints={lesson.challengeHints} />
+            <CodeIDE courseSlug={courseSlug} courseTitle={courseTitle} topicSlug={toTopicSlug(title)} moduleTitle={currentModule?.title ?? courseTitle} isLastTopicInModule={currentModule?.topics.at(-1) === title} nextHref={next} starterCode={lesson.challengeStarter} solutionCode={lesson.challengeCode} expectedOutput={lesson.challengeOutput} canRunPython={canRunPython} canRunSql={canRunSql} needsInput={/\binput\s*\(/i.test(lesson.challengeCode)} hints={lesson.challengeHints} />
             <ChallengeCelebration topicSlug={toTopicSlug(title)} />
           </>}
 

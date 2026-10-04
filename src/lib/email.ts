@@ -4,6 +4,7 @@ const FROM = process.env.EMAIL_FROM ?? "MyLoginn <onboarding@resend.dev>";
 
 const purposeCopy: Record<string, { subject: string; intro: string }> = {
   signup: { subject: "Verify your MyLoginn email", intro: "Use this code to finish creating your account." },
+  "change-email": { subject: "Verify your new MyLoginn email", intro: "Use this code to verify the email address for your MyLoginn account." },
   login: { subject: "Your MyLoginn sign-in code", intro: "Use this code to sign in." },
   reset: { subject: "Reset your MyLoginn password", intro: "Use this code to reset your password." },
 };

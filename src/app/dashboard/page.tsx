@@ -10,12 +10,11 @@ import { StreakCalendar } from "@/components/dashboard/StreakCalendar";
 import { IconBadge } from "@/components/ui/IconBadge";
 import { ContentIcon } from "@/components/ui/ContentIcon";
 import { Avatar } from "@/components/ui/Avatar";
-import { ShieldAlert, Settings as SettingsIcon } from "lucide-react";
+import { EmailVerificationNotice } from "@/components/dashboard/EmailVerificationNotice";
 import { AnimatedFlame } from "@/components/ui/icons/AnimatedFlame";
+import { AnimatedReward } from "@/components/ui/icons/AnimatedReward";
 import { AnimatedSparkle } from "@/components/ui/icons/AnimatedSparkle";
 import { AnimatedCalendar } from "@/components/ui/icons/AnimatedCalendar";
-import { AnimatedMail } from "@/components/ui/icons/AnimatedMail";
-import { AnimatedPhone } from "@/components/ui/icons/AnimatedPhone";
 import Link from "next/link";
 import { ArrowRight } from "lucide-react";
 import type { CourseIconKey } from "@/lib/courseIcons";
@@ -39,9 +38,11 @@ export default async function DashboardPage() {
     prisma.tutoringBooking.findMany({ where: { userId: user.id }, include: { tutor: true }, orderBy: { createdAt: "desc" } }),
   ]);
 
+  const today = new Date();
+  today.setHours(0, 0, 0, 0);
   const deadlines = [
     ...projects
-      .filter((p) => p.dueDate)
+      .filter((p) => p.dueDate && p.dueDate >= today)
       .map((p) => ({ label: `Project: ${p.title}`, date: p.dueDate as Date })),
   ]
     .sort((a, b) => a.date.getTime() - b.date.getTime())
@@ -72,12 +73,7 @@ export default async function DashboardPage() {
           )}
         </FadeIn>
 
-        {!user.emailVerified && (
-          <FadeIn delay={0.05} className="mt-6 flex items-center gap-3 rounded-2xl border border-amber-300/40 bg-amber-500/10 px-5 py-4 text-sm text-amber-700 dark:text-amber-300">
-            <ShieldAlert className="h-6.5 w-6.5 shrink-0 animate-pulse" />
-            Your email isn&apos;t verified yet. Check your signup verification step to unlock certificates.
-          </FadeIn>
-        )}
+        {!user.emailVerified && <FadeIn delay={0.05}><EmailVerificationNotice email={user.email} /></FadeIn>}
 
         <div className="mt-8 grid grid-cols-[repeat(auto-fit,minmax(min(100%,13rem),1fr))] gap-4 sm:gap-5">
           {stats.map((s, i) => (
@@ -107,7 +103,7 @@ export default async function DashboardPage() {
           <FadeIn delay={0.34}>
             <Card className="flex items-center gap-4 p-5 transition-all duration-300 hover:-translate-y-1 hover:shadow-[var(--shadow-lift)]">
               <IconBadge size="lg">
-                <AnimatedSparkle className="h-9.5 w-9.5" />
+                <AnimatedReward className="h-9.5 w-9.5" />
               </IconBadge>
               <div>
                 <p className="text-2xl font-semibold">{streak.points.toLocaleString("en-IN")}</p>
@@ -131,23 +127,29 @@ export default async function DashboardPage() {
           </FadeIn>
         )}
 
-        <div className="mt-10 grid grid-cols-1 gap-5 sm:grid-cols-2 xl:grid-cols-3 sm:gap-6">
-          <div className="contents">
-            {enrollments.length > 0 && <FadeIn delay={0.15} className="sm:col-span-2">
+        <div className="mt-10 grid grid-cols-1 items-start gap-6 lg:grid-cols-[minmax(0,1.5fr)_minmax(18rem,1fr)]">
+          <div className="flex min-w-0 flex-col gap-6">
+            {enrollments.length > 0 && <FadeIn delay={0.15}>
               <h2 className="mb-4 font-semibold">My courses</h2>
               <div className="flex flex-col gap-3">
                   {enrollments.map((e) => (
                     <Link key={e.id} href={`/courses/${e.course.slug}`} aria-label={`Continue ${e.course.title}`} className="block rounded-2xl focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-400">
-                    <Card className="p-5 hover:-translate-y-0.5 hover:shadow-[var(--shadow-lift)]">
+                    <Card className="p-5 transition hover:-translate-y-0.5 hover:shadow-[var(--shadow-lift)]">
                       <div className="flex items-center justify-between gap-4">
-                        <div>
-                          <p className="font-medium">{e.course.title}</p>
-                          <p className="text-xs text-muted">{e.course.category} · {e.progress >= 100 ? "Completed" : e.progress > 0 ? "In progress" : "Registered"}</p>
+                        <div className="min-w-0">
+                          <p className="truncate font-medium">{e.course.title}</p>
+                          <p className="truncate text-xs text-muted">{e.course.category} · {e.progress >= 100 ? "Completed" : e.progress > 0 ? "In progress" : "Registered"}</p>
                         </div>
-                        <span className="inline-flex items-center gap-2 text-sm font-semibold text-brand-500">{e.progress}% <ArrowRight className="h-4 w-4" /></span>
-                      </div>
-                      <div className="mt-3">
-                        <ProgressBar value={e.progress} />
+                        <div className="flex shrink-0 items-center gap-3">
+                          <div className="relative grid h-12 w-12 place-items-center sm:h-14 sm:w-14" role="img" aria-label={`${e.course.title}: ${Math.min(100, Math.max(0, e.progress))}% complete`}>
+                            <svg viewBox="0 0 48 48" className="absolute inset-0 h-full w-full -rotate-90" aria-hidden="true">
+                              <circle cx="24" cy="24" r="20" fill="none" stroke="currentColor" strokeWidth="2.5" className="text-surface-2" />
+                              <circle cx="24" cy="24" r="20" fill="none" stroke={`hsl(${Math.round(120 * Math.min(100, Math.max(0, e.progress)) / 100)} 72% 42%)`} strokeWidth="2.5" strokeLinecap="round" strokeDasharray={`${2 * Math.PI * 20}`} strokeDashoffset={`${2 * Math.PI * 20 * (1 - Math.min(100, Math.max(0, e.progress)) / 100)}`} className="transition-[stroke-dashoffset] duration-700" />
+                            </svg>
+                            <span className="text-[11px] font-bold tabular-nums">{Math.min(100, Math.max(0, e.progress))}%</span>
+                          </div>
+                          <ArrowRight className="h-4 w-4 text-brand-500" aria-hidden="true" />
+                        </div>
                       </div>
                     </Card>
                     </Link>
@@ -197,7 +199,7 @@ export default async function DashboardPage() {
             </FadeIn>}
           </div>
 
-          <div className="contents">
+          <div className="flex min-w-0 flex-col gap-6">
             <FadeIn delay={0.12}>
               <h2 className="mb-4 flex items-center gap-2 font-semibold">
                 <AnimatedFlame className="h-5.5 w-5.5" /> Login streak
@@ -213,41 +215,41 @@ export default async function DashboardPage() {
             </FadeIn>
 
             <FadeIn delay={0.16}>
-              <h2 className="mb-4 flex items-center gap-2 font-semibold">
-                <AnimatedSparkle className="h-5.5 w-5.5" /> Recent rewards
-              </h2>
-              <Card className="p-5">
-                {streak.transactions.length === 0 ? (
-                  <p className="text-sm text-muted">Log in daily and enroll in courses to earn points.</p>
-                ) : (
-                  <ul aria-label="Recent reward history" tabIndex={0} className="max-h-72 space-y-3 overflow-y-auto overscroll-contain pr-2 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-400">
-                    {streak.transactions.map((t) => (
-                      <li key={t.id} className="flex items-center justify-between gap-3 text-sm">
-                        <div>
-                          <p className="font-medium">{t.label}</p>
-                          <p className="text-xs text-muted">
-                            {new Date(t.createdAt).toLocaleDateString("en-IN", { day: "numeric", month: "short" })}
-                          </p>
-                        </div>
-                        <span className="shrink-0 rounded-full bg-brand-500/10 px-2.5 py-1 text-xs font-semibold text-brand-600 dark:text-brand-300">
-                          +{t.amount}
-                        </span>
-                      </li>
-                    ))}
-                  </ul>
-                )}
-              </Card>
+              <details className="group">
+                <summary className="flex cursor-pointer list-none items-center gap-2 rounded-xl px-1 py-1 font-semibold focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-400 [&::-webkit-details-marker]:hidden">
+                  <span className="grid h-8 w-8 place-items-center rounded-full bg-brand-500/10 text-brand-600 dark:text-brand-300"><AnimatedReward className="h-5 w-5" /></span>
+                  <span>Recent rewards</span>
+                  <span className="rounded-full bg-surface-2 px-2 py-0.5 text-[11px] font-medium text-muted">{streak.transactions.length}</span>
+                  <span className="ml-auto text-xs font-medium text-brand-600 group-open:hidden dark:text-brand-300">View rewards</span>
+                  <span className="ml-auto hidden text-xs font-medium text-muted group-open:inline">Hide rewards</span>
+                </summary>
+                <Card className="mt-3 overflow-hidden border-brand-500/10 bg-gradient-to-br from-brand-500/[0.06] via-surface to-surface p-0">
+                  {streak.transactions.length === 0 ? (
+                    <p className="p-4 text-sm text-muted">Your points and course rewards will appear here.</p>
+                  ) : (
+                    <ul aria-label="Recent reward history" tabIndex={0} className="max-h-[10.5rem] divide-y divide-border-soft overflow-y-auto overscroll-contain px-4 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-brand-400">
+                      {streak.transactions.map((t) => (
+                        <li key={t.id} className="flex items-center justify-between gap-3 py-3 text-sm">
+                          <div className="min-w-0">
+                            <p className="truncate font-medium">{t.label}</p>
+                            <p className="mt-0.5 text-xs text-muted">{new Date(t.createdAt).toLocaleDateString("en-IN", { day: "numeric", month: "short" })}</p>
+                          </div>
+                          <span className="shrink-0 rounded-full bg-brand-500/10 px-2.5 py-1 text-xs font-bold text-brand-600 dark:text-brand-300">+{t.amount} pts</span>
+                        </li>
+                      ))}
+                    </ul>
+                  )}
+                </Card>
+              </details>
             </FadeIn>
 
-            <FadeIn delay={0.15}>
+
+            {deadlines.length > 0 && <FadeIn delay={0.15}>
               <h2 className="mb-4 flex items-center gap-2 font-semibold">
                 <AnimatedCalendar className="h-5.5 w-5.5 transition-transform duration-300 hover:scale-110" /> Upcoming deadlines
               </h2>
               <Card className="p-5">
-                {deadlines.length === 0 ? (
-                  <p className="text-sm text-muted">Nothing due right now.</p>
-                ) : (
-                  <ul className="flex flex-col gap-3.5">
+                <ul className="flex flex-col gap-3.5">
                     {deadlines.map((d, i) => (
                       <li key={i} className="flex items-center justify-between gap-3 text-sm">
                         <span className="text-muted">{d.label}</span>
@@ -256,18 +258,14 @@ export default async function DashboardPage() {
                         </span>
                       </li>
                     ))}
-                  </ul>
-                )}
+                </ul>
               </Card>
-            </FadeIn>
+            </FadeIn>}
 
-            <FadeIn delay={0.2}>
+            {bookings.length > 0 && <FadeIn delay={0.2}>
               <h2 className="mb-4 font-semibold">Tutoring bookings</h2>
               <Card className="p-5">
-                {bookings.length === 0 ? (
-                  <EmptyState label="No bookings yet." href="/tutoring" cta="Find a tutor" />
-                ) : (
-                  <ul className="flex flex-col gap-4">
+                <ul className="flex flex-col gap-4">
                     {bookings.map((b) => (
                       <li key={b.id} className="flex items-center justify-between gap-3">
                         <div>
@@ -277,46 +275,14 @@ export default async function DashboardPage() {
                         <StatusBadge status={b.status} />
                       </li>
                     ))}
-                  </ul>
-                )}
+                </ul>
               </Card>
-            </FadeIn>
+            </FadeIn>}
           </div>
         </div>
 
-        <FadeIn id="settings" delay={0.3} className="scroll-mt-24 mt-10">
-          <h2 className="mb-4 flex items-center gap-2 font-semibold">
-            <SettingsIcon className="h-5.5 w-5.5 transition-transform duration-300 hover:scale-110 hover:rotate-45" /> Account settings
-          </h2>
-          <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
-            <Card className="flex items-center gap-3.5 p-5 transition-all duration-300 hover:-translate-y-1 hover:shadow-[var(--shadow-lift)]">
-              <AnimatedMail className="h-8 w-8 shrink-0" />
-              <div>
-                <p className="text-xs text-muted">Email</p>
-                <p className="text-sm font-medium">{user.email}</p>
-              </div>
-            </Card>
-            <Card className="flex items-center gap-3.5 p-5 transition-all duration-300 hover:-translate-y-1 hover:shadow-[var(--shadow-lift)]">
-              <AnimatedPhone className="h-8 w-8 shrink-0" />
-              <div>
-                <p className="text-xs text-muted">Phone</p>
-                <p className="text-sm font-medium">{user.phone ?? "Not added"}</p>
-              </div>
-            </Card>
-          </div>
-        </FadeIn>
       </Container>
     </Section>
   );
 }
 
-function EmptyState({ label, href, cta }: { label: string; href: string; cta: string }) {
-  return (
-    <Card className="flex flex-col items-start gap-3 p-5">
-      <p className="text-sm text-muted">{label}</p>
-      <Button size="sm" variant="secondary" href={href}>
-        {cta}
-      </Button>
-    </Card>
-  );
-}

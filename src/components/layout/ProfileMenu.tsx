@@ -63,7 +63,7 @@ export function ProfileMenu({ user, onOpen }: { user: ProfileUser; onOpen?: () =
             <MenuLink href="/profile" icon={<AnimatedUser className="h-5 w-5 transition-transform duration-300 group-hover:scale-110" />} label="My Profile" onClick={() => setOpen(false)} />
             <MenuLink href="/dashboard" icon={<LayoutDashboard className="h-5 w-5 transition-transform duration-300 group-hover:scale-110" />} label="Dashboard" onClick={() => setOpen(false)} />
             <MenuLink
-              href="/dashboard#settings"
+              href="/profile#account-settings-title"
               icon={<Settings className="h-5 w-5 transition-transform duration-500 ease-out group-hover:rotate-180" />}
               label="Settings"
               onClick={() => setOpen(false)}

@@ -48,21 +48,28 @@ export async function downloadLessonPdf({ courseTitle, title, lesson, logoData }
     for (let offset = 0; offset < wrapped.length; offset += maxLinesPerPage) {
       const pageLines = wrapped.slice(offset, offset + maxLinesPerPage);
       const boxHeight = pageLines.length * lineHeight + 8;
-      nextPageIfNeeded(boxHeight + 2);
+      // jsPDF text y-coordinates are baselines. Leave enough space after the
+      // code box for the next paragraph's glyphs to sit fully below its border.
+      nextPageIfNeeded(boxHeight + 6);
       pdf.setFillColor(15, 23, 42);
       pdf.roundedRect(margin, y, contentWidth, boxHeight, 2, 2, "F");
       pdf.setTextColor(226, 232, 240);
       pdf.text(pageLines, margin + 5, y + 6);
-      y += boxHeight + 2;
+      y += boxHeight + 6;
     }
   };
 
   if (logoData) {
-    pdf.addImage(logoData, "PNG", margin, y, 12, 12);
+    pdf.setFont("helvetica", "bold");
+    pdf.setFontSize(10);
+    const brandNameWidth = pdf.getTextWidth("MyLoginn Learning");
+    const brandWidth = 12 + 4 + brandNameWidth;
+    const brandX = (pageWidth - brandWidth) / 2;
+    pdf.addImage(logoData, "PNG", brandX, y, 12, 12);
     pdf.setFont("helvetica", "bold");
     pdf.setFontSize(10);
     pdf.setTextColor(37, 87, 189);
-    pdf.text("MyLoginn Learning", margin + 16, y + 8);
+    pdf.text("MyLoginn Learning", brandX + 16, y + 8);
     y += 18;
   } else {
     writeParagraph("MyLoginn Learning", { size: 10, bold: true, color: [37, 87, 189], gap: 5 });
@@ -138,9 +145,12 @@ export async function downloadLessonPdf({ courseTitle, title, lesson, logoData }
   }
 
   writeHeading("Knowledge check");
-  writeParagraph(lesson.quiz.question, { bold: true });
-  for (const option of lesson.quiz.options) writeParagraph(`${option.id}. ${option.text}`);
-  writeParagraph(`Answer: ${lesson.quiz.answer}. ${lesson.quiz.explanation}`, { color: [22, 101, 52] });
+  for (const [questionIndex, question] of lesson.quiz.entries()) {
+    writeParagraph(`${questionIndex + 1}. ${question.question}`, { bold: true });
+    question.options.forEach((option, optionIndex) => writeParagraph(`${String.fromCharCode(65 + optionIndex)}. ${option.text}`));
+    const answerIndex = question.options.findIndex((option) => option.id === question.answer);
+    writeParagraph(`Answer: ${String.fromCharCode(65 + answerIndex)}. ${question.explanation}`, { color: [22, 101, 52] });
+  }
   writeHeading("Best practice");
   writeParagraph(lesson.bestPractice);
   writeHeading("Key takeaways");

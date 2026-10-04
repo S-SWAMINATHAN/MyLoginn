@@ -7,6 +7,7 @@ import { Card } from "@/components/ui/Card";
 import { AnimatedClock } from "@/components/ui/icons/AnimatedClock";
 import { AnimatedSuccess } from "@/components/ui/icons/AnimatedSuccess";
 import { useTiltSpotlight } from "@/hooks/useTiltSpotlight";
+import { getCourseDisplayTitle } from "@/lib/freeCourseTitles";
 import { CourseIconThumb } from "./CourseIconThumb";
 import { FreeEnrollButton } from "./FreeEnrollButton";
 
@@ -44,6 +45,10 @@ export function CourseCard({
     course.originalPrice && course.originalPrice > course.price
       ? Math.round((1 - course.price / course.originalPrice) * 100)
       : null;
+  const courseKeyword = course.tags.find(
+    (tag) => !["free", "fundamentals", "beginner"].includes(tag.toLowerCase()),
+  ) ?? course.category;
+  const displayTitle = getCourseDisplayTitle(course.slug, course.title);
   const { rotateX, rotateY, spotlightBg, onMouseMove, onMouseLeave } = useTiltSpotlight();
 
   return (
@@ -71,18 +76,18 @@ export function CourseCard({
 
             {recommended && <span className="absolute left-4 top-4 z-10 text-[11px] font-semibold text-brand-600 dark:text-brand-300">Featured</span>}
             <span className="absolute right-4 top-4 z-10 rounded-full bg-surface-2 px-2.5 py-1 text-[11px] font-semibold uppercase tracking-wide text-foreground/70">
-              {course.price === 0 ? "FREE · FUNDAMENTALS" : course.level}
+              {course.price === 0 ? `FREE · ${courseKeyword}` : course.level}
             </span>
 
             <CourseIconThumb
               category={course.category}
-              title={course.title}
+              title={displayTitle}
               variant="round"
               className="relative z-10 mt-4 h-20 w-20 shrink-0 transition-transform duration-300 group-hover:scale-105 sm:h-24 sm:w-24"
             />
 
             <p className="relative z-10 mt-4 text-xs font-semibold uppercase tracking-wide text-brand-500">{course.category}</p>
-            <h3 className="relative z-10 mt-1.5 line-clamp-2 text-base font-semibold leading-snug"><Link href={`/courses/${course.slug}`} className="rounded-sm hover:text-brand-600 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-400">{course.title}</Link></h3>
+            <h3 className="relative z-10 mt-1.5 line-clamp-2 text-base font-semibold leading-snug"><Link href={`/courses/${course.slug}`} className="rounded-sm hover:text-brand-600 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-400">{displayTitle}</Link></h3>
             <p className="relative z-10 mt-2 line-clamp-2 flex-1 text-sm text-muted">{course.description}</p>
 
             <div className="relative z-10 mt-4 flex flex-wrap items-center justify-center gap-x-4 gap-y-2 text-xs text-muted">

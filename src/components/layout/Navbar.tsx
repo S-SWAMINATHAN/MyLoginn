@@ -38,8 +38,8 @@ const serviceLinks = [
 ];
 
 const learnLinks = [
-  { href: "/courses", label: "Courses", desc: "Learn job-ready skills", icon: AnimatedBook },
-  { href: "/tutoring", label: "Tutoring", desc: "1:1 mentor sessions, live classes", icon: AnimatedGraduation },
+  { href: "/courses", label: "Courses", desc: "Learn job-ready skills" },
+  { href: "/tutoring", label: "Tutoring", desc: "1:1 mentor sessions, live classes" },
 ];
 
 type MobileLink = {
@@ -151,11 +151,10 @@ export function Navbar({ user }: { user: NavUser }) {
                   className="absolute left-0 top-full mt-2 w-72 rounded-2xl border border-border-soft bg-surface p-2 shadow-[var(--shadow-lift)]"
                 >
                   {learnLinks.map((item) => {
-                    const Icon = item.icon;
                     const active = pathname === item.href || pathname.startsWith(`${item.href}/`);
-                    return <Link key={item.href} href={item.href} className={cn("flex items-center gap-3 rounded-xl px-3.5 py-3 transition-colors hover:bg-surface-2", active && "bg-brand-50 dark:bg-brand-900/20")}>
-                      <Icon className="h-7 w-7 shrink-0 text-brand-500" />
-                      <span><span className="block text-sm font-medium">{item.label}</span><span className="block text-xs text-muted">{item.desc}</span></span>
+                    return <Link key={item.href} href={item.href} className={cn("block rounded-xl px-3.5 py-3 transition-colors hover:bg-surface-2", active && "bg-brand-50 dark:bg-brand-900/20")}>
+                      <span className="block text-sm font-medium">{item.label}</span>
+                      <span className="block text-xs text-muted">{item.desc}</span>
                     </Link>;
                   })}
                 </motion.div>

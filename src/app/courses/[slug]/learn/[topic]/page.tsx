@@ -5,6 +5,7 @@ import { getCurrentUser } from "@/lib/auth";
 import { buildTutorialLesson, toTopicSlug } from "@/lib/freeCourseTutorial";
 import { CourseTutorial } from "@/components/courses/CourseTutorial";
 import { flattenCourseModules, getCourseModules } from "@/lib/freeCourseCurriculum";
+import { getCourseDisplayTitle } from "@/lib/freeCourseTitles";
 
 export const metadata: Metadata = { robots: { index: false, follow: false } };
 
@@ -31,5 +32,5 @@ export default async function CourseTopicPage({ params }: { params: Promise<{ sl
   if (index > unlockedIndex) redirect(`/courses/${slug}/learn/${toTopicSlug(syllabus[unlockedIndex])}`);
   const progress = syllabus.length ? Math.round((completedTopicSlugs.length / syllabus.length) * 100) : 0;
 
-  return <CourseTutorial courseTitle={course.title} courseSlug={course.slug} learnerName={user.name.trim() || "MyLoginn"} topics={syllabus} index={index} completedTopicSlugs={completedTopicSlugs} courseProgress={progress} />;
+  return <CourseTutorial courseTitle={getCourseDisplayTitle(course.slug, course.title)} courseSlug={course.slug} learnerName={user.name.trim() || "MyLoginn"} topics={syllabus} index={index} completedTopicSlugs={completedTopicSlugs} courseProgress={progress} />;
 }

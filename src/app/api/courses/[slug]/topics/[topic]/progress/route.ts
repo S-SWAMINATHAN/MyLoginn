@@ -3,6 +3,7 @@ import { getCurrentUser } from "@/lib/auth";
 import { prisma } from "@/lib/prisma";
 import { buildTutorialLesson, toTopicSlug } from "@/lib/freeCourseTutorial";
 import { flattenCourseModules, getCourseModules } from "@/lib/freeCourseCurriculum";
+import { comparePracticeSql } from "@/lib/freeCoursePracticeDb";
 
 type RouteContext = { params: Promise<{ slug: string; topic: string }> };
 
@@ -24,10 +25,25 @@ async function updateTopicProgress(request: Request, { params }: RouteContext) {
       return NextResponse.json({ error: "Run the lesson challenge before continuing." }, { status: 400 });
     }
     const normalizedSource = (value: string) => value.replace(/\r\n/g, "\n").trim();
-    const outputMatches = body.output.trim() === lesson.output.trim();
-    const sourceMatches = normalizedSource(body.source) === normalizedSource(lesson.code);
-    const pythonRunnable = slug === "python-fundamentals" && lesson.kind !== "packages" && lesson.kind !== "file" && !lesson.output.startsWith("The example demonstrates");
-    const acceptedSource = pythonRunnable ? normalizedSource(body.source) !== normalizedSource(lesson.challengeStarter) : sourceMatches;
+    const codeWithoutStarter = (value: string) => {
+      const submitted = normalizedSource(value);
+      const starter = normalizedSource(lesson.challengeStarter);
+      return starter && submitted.startsWith(starter) ? submitted.slice(starter.length).trim() : submitted;
+    };
+    let outputMatches = body.output.trim() === lesson.challengeOutput.trim();
+    const sourceMatches = codeWithoutStarter(body.source) === normalizedSource(lesson.challengeCode);
+    const pythonRunnable = slug === "python-fundamentals" && lesson.kind !== "packages" && lesson.kind !== "file";
+    let acceptedSource = pythonRunnable ? normalizedSource(body.source) !== normalizedSource(lesson.challengeStarter) : sourceMatches;
+    if (slug === "sql-fundamentals" || slug === "mysql-fundamentals") {
+      try {
+        const result = await comparePracticeSql(body.source, lesson.challengeCode);
+        outputMatches = result.output === body.output.trim();
+        acceptedSource = result.passed;
+      } catch {
+        outputMatches = false;
+        acceptedSource = false;
+      }
+    }
     if (!outputMatches || !acceptedSource) {
       return NextResponse.json({ error: "Challenge not passed yet. Check your code and its result, then try again." }, { status: 422 });
     }

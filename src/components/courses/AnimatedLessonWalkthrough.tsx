@@ -62,12 +62,14 @@ function traceAt(steps: Step[], active: number, visibleOutputLines: string[]) {
   return { memory: [...memory.entries()].map(([name, value]) => ({ name, value })), operation, result, resultLabel, currentKind };
 }
 
-export function AnimatedLessonWalkthrough({ title, steps, output }: { title: string; steps: Step[]; output: string }) {
+export function AnimatedLessonWalkthrough({ title, steps, output, sqlQuery }: { title: string; steps: Step[]; output: string; sqlQuery?: string }) {
   const [active, setActive] = useState(0);
   const [playing, setPlaying] = useState(false);
+  const [queriedOutput, setQueriedOutput] = useState<string | null>(null);
   const codeLineRefs = useRef<(HTMLButtonElement | null)[]>([]);
   const step = steps[active];
-  const outputLines = output.split("\n");
+  const visibleOutput = queriedOutput ?? output;
+  const outputLines = visibleOutput.split("\n");
   const executedPrints = steps.slice(0, active + 1).filter((item) => /\bprint\s*\(|console\.log\s*\(|System\.out\.print|printf\s*\(/i.test(item.code)).length;
   const visibleOutputLines = active === steps.length - 1
     ? outputLines
@@ -83,6 +85,23 @@ export function AnimatedLessonWalkthrough({ title, steps, output }: { title: str
     }, 4200);
     return () => window.clearTimeout(timer);
   }, [playing, active, steps.length]);
+
+  useEffect(() => {
+    if (!sqlQuery) return;
+    let activeRequest = true;
+    fetch("/api/courses/sql-practice", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ query: sqlQuery }),
+    }).then(async (response) => {
+      const result = await response.json();
+      if (!response.ok) throw new Error(result.error || "Could not run the SQL example.");
+      if (activeRequest) setQueriedOutput(result.output);
+    }).catch((error: unknown) => {
+      if (activeRequest) setQueriedOutput(error instanceof Error ? error.message : "Could not run the SQL example.");
+    });
+    return () => { activeRequest = false; };
+  }, [sqlQuery]);
 
   useEffect(() => {
     codeLineRefs.current[active]?.scrollIntoView({ behavior: "smooth", block: "nearest" });

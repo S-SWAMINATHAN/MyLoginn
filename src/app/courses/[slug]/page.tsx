@@ -1,4 +1,4 @@
-﻿import { notFound } from "next/navigation";
+import { notFound } from "next/navigation";
 import type { Metadata } from "next";
 import { createPageMetadata } from "@/lib/seo";
 import { prisma } from "@/lib/prisma";
@@ -12,6 +12,7 @@ import { AnimatedSuccess } from "@/components/ui/icons/AnimatedSuccess";
 import { CourseIconThumb } from "@/components/courses/CourseIconThumb";
 import { FreeEnrollButton } from "@/components/courses/FreeEnrollButton";
 import { getCourseModules } from "@/lib/freeCourseCurriculum";
+import { getCourseDisplayTitle, getFreeCourseTerm } from "@/lib/freeCourseTitles";
 import Link from "next/link";
 
 export async function generateMetadata({ params }: { params: Promise<{ slug: string }> }): Promise<Metadata> {
@@ -23,12 +24,14 @@ export async function generateMetadata({ params }: { params: Promise<{ slug: str
 
   if (!course) return {};
 
+  const displayTitle = getCourseDisplayTitle(course.slug, course.title);
+
   return createPageMetadata({
-    title: course.title,
+    title: displayTitle,
     description: course.description,
     path: `/courses/${course.slug}`,
     keywords: [
-      course.title,
+      displayTitle,
       `${course.category} course`,
       `${course.level} ${course.category} course`,
       "online course",
@@ -53,6 +56,9 @@ export default async function CourseDetailPage({
     : null;
 
   const tags = JSON.parse(course.tags) as string[];
+  const displayTitle = getCourseDisplayTitle(course.slug, course.title);
+  const courseTerm = getFreeCourseTerm(course.slug);
+  const displayTags = tags.map((tag) => tag.toLowerCase() === "fundamentals" && courseTerm ? courseTerm : tag);
   const syllabus = JSON.parse(course.syllabus) as string[];
   const modules = course.price === 0 ? getCourseModules(course.slug, syllabus) : [{ title: "Course syllabus", topics: syllabus }];
   const topicCount = modules.reduce((count, module) => count + module.topics.length, 0);
@@ -71,10 +77,10 @@ export default async function CourseDetailPage({
         <div className="grid grid-cols-1 gap-10 lg:grid-cols-3">
           <div className="lg:col-span-2">
             <div className="flex items-center gap-4">
-              <CourseIconThumb category={course.category} title={course.title} variant="round" className="h-16 w-16 shrink-0" />
+              <CourseIconThumb category={course.category} title={displayTitle} variant="round" className="h-16 w-16 shrink-0" />
               <div>
                 <Eyebrow>{course.category}</Eyebrow>
-                <h1 className="mt-2 text-2xl font-semibold tracking-tight sm:text-3xl">{course.title}</h1>
+                <h1 className="mt-2 text-2xl font-semibold tracking-tight sm:text-3xl">{displayTitle}</h1>
               </div>
             </div>
 
@@ -91,7 +97,7 @@ export default async function CourseDetailPage({
             </div>
 
             <div className="mt-5 flex flex-wrap gap-2">
-              {tags.map((t) => (
+              {displayTags.map((t) => (
                 <span key={t} className="rounded-full bg-surface-2 px-3 py-1 text-xs font-medium">
                   {t}
                 </span>
@@ -104,10 +110,10 @@ export default async function CourseDetailPage({
 
             {course.price === 0 && <section className="mt-8 rounded-2xl border border-brand-200 bg-brand-50/50 p-5 dark:bg-brand-900/10 sm:p-6" aria-labelledby="course-overview">
               <p className="text-xs font-bold uppercase tracking-wider text-brand-700 dark:text-brand-200">Your learning path</p>
-              <h2 id="course-overview" className="mt-2 text-xl font-bold">{course.title}</h2>
+              <h2 id="course-overview" className="mt-2 text-xl font-bold">{displayTitle}</h2>
               <p className="mt-2 text-sm leading-6 text-muted">Build your understanding one focused lesson at a time, from core ideas to practical programming.</p>
               <div className="mt-5 grid grid-cols-2 gap-3 sm:grid-cols-4">
-                {[["Level", course.level], ["Modules", String(modules.length)], ["Topics", String(topicCount)], ["Completed", `${completedTopicSlugs.size} / ${topicCount}`]].map(([label, value]) => <div key={label} className="rounded-xl border border-border-soft bg-surface p-3"><p className="text-[10px] font-bold uppercase tracking-wider text-muted">{label}</p><p className="mt-1 text-sm font-bold">{value}</p></div>)}
+                {[["Level", courseTerm ?? course.level], ["Modules", String(modules.length)], ["Topics", String(topicCount)], ["Completed", `${completedTopicSlugs.size} / ${topicCount}`]].map(([label, value]) => <div key={label} className="rounded-xl border border-border-soft bg-surface p-3"><p className="text-[10px] font-bold uppercase tracking-wider text-muted">{label}</p><p className="mt-1 text-sm font-bold">{value}</p></div>)}
               </div>
             </section>}
 

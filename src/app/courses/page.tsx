@@ -86,10 +86,10 @@ export default async function CoursesPage() {
             <p className="mt-3 max-w-xl text-sm leading-6 text-muted">MyLoginn offers mentor-led AI and technology learning for students in Coimbatore, Pollachi, Udumalpet, Erode, and across Tamil Nadu. Browse current courses and contact us to ask about coaching options.</p>
             <div className="mt-7 clear-both grid max-w-2xl grid-cols-2 gap-3 max-md:mt-3 sm:grid-cols-4">
               {[
-                { icon: "course-total", value: "Available", label: "Course listings" },
-                { icon: "course-certified", value: "Clear", label: "Program details" },
-                { icon: "course-mentors", value: "By course", label: "Instructor information" },
-                { icon: "course-hours", value: "Direct", label: "Enquiry options" },
+                { icon: "course-total", value: "Explore All", label: "View full selection" },
+                { icon: "course-certified", value: "Top Rated", label: "Highest scoring courses" },
+                { icon: "course-mentors", value: "Expert-Lead", label: "Industry specialist mentors" },
+                { icon: "course-hours", value: "Fast Enquiry", label: "Quick contact details" },
               ].map(({ icon, value, label }) => (
                 <div
                   key={label}

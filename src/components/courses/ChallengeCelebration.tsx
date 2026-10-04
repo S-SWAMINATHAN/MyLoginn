@@ -3,6 +3,7 @@
 import { useEffect, useState } from "react";
 import Image from "next/image";
 import Link from "next/link";
+import { useRouter } from "next/navigation";
 import { ArrowRight, X } from "lucide-react";
 
 type CelebrationType = "topic" | "module" | "course";
@@ -40,6 +41,7 @@ function CelebrationArt({ type }: { type: CelebrationType }) {
 
 export function ChallengeCelebration({ topicSlug }: { topicSlug: string }) {
   const [celebration, setCelebration] = useState<CelebrationDetail | null>(null);
+  const router = useRouter();
 
   useEffect(() => {
     function onCelebrate(event: Event) {
@@ -49,6 +51,12 @@ export function ChallengeCelebration({ topicSlug }: { topicSlug: string }) {
     window.addEventListener("myloginn:challenge-celebrated", onCelebrate);
     return () => window.removeEventListener("myloginn:challenge-celebrated", onCelebrate);
   }, [topicSlug]);
+
+  useEffect(() => {
+    if (!celebration || celebration.completionType === "course" || !celebration.nextHref) return;
+    const timer = window.setTimeout(() => router.push(celebration.nextHref!), 2500);
+    return () => window.clearTimeout(timer);
+  }, [celebration, router]);
 
   if (!celebration) return null;
   const type = celebration.completionType ?? "topic";
@@ -69,6 +77,7 @@ export function ChallengeCelebration({ topicSlug }: { topicSlug: string }) {
       <h2 id="challenge-celebration-title" className="mt-3 text-2xl font-bold">{title}</h2>
       <p className="mt-2 text-sm leading-6 text-muted">{message}</p>
       {(celebration.pointsEarned ?? 0) > 0 && <p className="mt-3 inline-flex rounded-full bg-amber-100 px-3 py-1 text-sm font-bold text-amber-900">+{celebration.pointsEarned} points earned</p>}
+      {type !== "course" && <p className="mt-3 text-xs text-muted">Opening the next lesson in 2.5 seconds. Continue now or close to stay here.</p>}
       <Link href={href} onClick={() => setCelebration(null)} className="mt-5 inline-flex items-center gap-2 rounded-full brand-gradient-bg px-5 py-3 text-sm font-semibold text-white shadow-[var(--shadow-soft)]">{buttonText}<ArrowRight className="h-4 w-4" /></Link>
     </section>
   </div>;
