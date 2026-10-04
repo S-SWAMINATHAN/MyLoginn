@@ -25,8 +25,8 @@ const marketingFaqs = [
 ];
 
 export const metadata = createPageMetadata({
-  title: "AI Digital Marketing Agency & Services",
-  description: "Grow your business with MyLoginn Tech Private Limited, an AI-focused digital marketing company offering SEO, paid campaigns, social media, content, and performance analytics.",
+  title: "AI Digital Marketing Agency & Services in Tamil Nadu",
+  description: "AI-focused digital marketing, SEO, paid campaigns, social media, content and analytics for businesses in Coimbatore, Pollachi, Udumalpet and Tamil Nadu.",
   path: "/services/digital-marketing",
   keywords: [
     "MyLoginn digital marketing", "digital marketing company",
@@ -34,6 +34,10 @@ export const metadata = createPageMetadata({
     "SEO services", "social media marketing", "Google Ads management",
     "Meta Ads management", "paid advertising", "content marketing",
     "marketing analytics",
+    "digital marketing services Coimbatore", "digital marketing company Pollachi",
+    "digital marketing agency Udumalpet", "SEO services Coimbatore",
+    "social media marketing Tamil Nadu", "Google Ads agency Coimbatore",
+    "digital marketing for businesses Tamil Nadu",
   ],
 });
 
@@ -45,7 +49,7 @@ export default function DigitalMarketingServicesPage() {
         <ProjectRequestTrigger service="marketing" label="Plan your marketing campaign" className="mt-8" />
         <section aria-labelledby="marketing-services" className="mt-12">
           <h2 id="marketing-services" className="text-2xl font-semibold tracking-tight sm:text-3xl">Digital marketing services</h2>
-          <p className="mt-3 max-w-3xl leading-7 text-muted">Choose a focused set of activities based on your audience, goals and budget. The team agrees on deliverables and measurement before campaign work begins.</p>
+          <p className="mt-3 max-w-3xl leading-7 text-muted">Choose a focused set of activities based on your audience, goals and budget. MyLoginn supports businesses in Coimbatore, Pollachi, Udumalpet, Erode, and across Tamil Nadu. The team agrees on deliverables and measurement before campaign work begins.</p>
           <div className="mt-6 grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
             {marketingAreas.map((area) => <article key={area.title} className="rounded-2xl border border-border-soft bg-surface p-5"><h3 className="font-semibold">{area.title}</h3><p className="mt-2 text-sm leading-6 text-muted">{area.description}</p></article>)}
           </div>

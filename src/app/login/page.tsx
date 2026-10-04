@@ -26,6 +26,12 @@ const panelVariants = {
   exit: { opacity: 0, x: -16 },
 };
 
+function postLoginPath(role: string) {
+  if (role === "ADMIN") return "/admin";
+  const requested = new URLSearchParams(window.location.search).get("next");
+  return requested?.startsWith("/") && !requested.startsWith("//") ? requested : "/dashboard";
+}
+
 export default function LoginPage() {
   const router = useRouter();
   const [mode, setMode] = useState<Mode>("password");
@@ -71,7 +77,7 @@ export default function LoginPage() {
         setServerError(json.error ?? "Something went wrong");
         return;
       }
-      router.push(json.user.role === "ADMIN" ? "/admin" : "/dashboard");
+      router.push(postLoginPath(json.user.role));
       router.refresh();
     } catch {
       setServerError("We couldn't complete sign in. Please try again.");
@@ -123,7 +129,7 @@ export default function LoginPage() {
         setOtpError(json.error ?? "Invalid code");
         return;
       }
-      router.push(json.user.role === "ADMIN" ? "/admin" : "/dashboard");
+      router.push(postLoginPath(json.user.role));
       router.refresh();
     } finally {
       setVerifying(false);

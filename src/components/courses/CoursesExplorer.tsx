@@ -50,6 +50,7 @@ export function CoursesExplorer({
                 course={course}
                 enrolled={enrolledIds.includes(course.id)}
                 recommended
+                loggedIn={isLoggedIn}
                 index={i}
               />
             ))}
@@ -115,6 +116,7 @@ export function CoursesExplorer({
               key={course.id}
               course={course}
               enrolled={enrolledIds.includes(course.id)}
+              loggedIn={isLoggedIn}
               index={i}
             />
           ))}

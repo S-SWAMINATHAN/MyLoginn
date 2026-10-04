@@ -33,9 +33,9 @@ const FinalCta = dynamic(() => import("@/components/sections/FinalCta").then((mo
 });
 
 export const metadata = createPageMetadata({
-  title: "MyLoginn | Web, App & AI Development in Coimbatore",
+  title: "Web, App & AI Development in Coimbatore",
   description:
-    "MyLoginn Tech Private Limited provides web and mobile app development, AI solutions, custom software, UI/UX and digital marketing for businesses in Coimbatore, Pollachi and Erode.",
+    "MyLoginn builds websites, mobile apps, AI software and digital marketing campaigns for businesses in Coimbatore, Pollachi and Erode.",
   path: "/",
   keywords: [
     "MyLoginn company", "MyLoginn IT company", "MyLoginn software company",
@@ -43,6 +43,9 @@ export const metadata = createPageMetadata({
     "AI-driven IT company", "technology solutions", "website development",
     "web development", "app development", "mobile app development",
     "digital marketing", "custom software solutions", "UI/UX design", "AI solutions",
+    "MyLoginn Coimbatore", "web development company Coimbatore",
+    "app development company Tamil Nadu", "software development Tamil Nadu",
+    "AI solutions Coimbatore", "digital solutions Pollachi", "technology company Udumalpet",
   ],
 });
 

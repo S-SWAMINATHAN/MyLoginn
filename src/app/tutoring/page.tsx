@@ -14,12 +14,15 @@ const tutoringFaqs = [
 ];
 
 export const metadata = createPageMetadata({
-  title: "Online Tutoring & Mentor Support",
-  description: "Book personalized online tutoring and mentor sessions in programming, data science, mathematics, and more with MyLoginn.",
+  title: "Online Tutoring & Mentor Support in Tamil Nadu",
+  description: "Personalized online tutoring and mentor sessions in programming, data science and mathematics for learners in Coimbatore, Pollachi and Udumalpet.",
   path: "/tutoring",
   keywords: [
     "MyLoginn tutoring", "online tutoring", "programming tutor",
     "data science tutor", "one-to-one tutoring", "personalized tutoring",
+    "online tutor Coimbatore", "online tutoring Pollachi", "online tutoring Udumalpet",
+    "programming coaching Tamil Nadu", "maths tutor Coimbatore",
+    "technology coaching Pollachi", "data science tutor Tamil Nadu",
   ],
 });
 
@@ -46,6 +49,8 @@ export default async function TutoringPage() {
     <Section className="mobile-page-glow pt-0 sm:pt-5">
       <Container className="max-w-[1480px]">
         <TutoringHero />
+
+        <p className="mt-4 max-w-3xl text-sm leading-6 text-muted">Learners in Coimbatore, Pollachi, Udumalpet, Erode, and across Tamil Nadu can explore online tutoring and mentor support. Available subjects, tutor profiles, and booking details appear in the current listings.</p>
 
         <div className="mt-4 sm:mt-8">
           <TutoringExplorer tutors={tutorCards} isLoggedIn={!!user} />

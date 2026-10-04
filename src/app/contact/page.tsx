@@ -9,7 +9,7 @@ import { toWhatsAppLink } from "@/lib/whatsapp";
 import { CONTACT_EMAIL, CONTACT_PHONES, WHATSAPP_PHONE } from "@/lib/contactInfo";
 
 export const metadata = createPageMetadata({
-  title: "Contact MyLoginn",
+  title: "Contact",
   description: "Contact MyLoginn Tech Private Limited about software development, AI, digital marketing, courses, tutoring, and internships.",
   path: "/contact",
   keywords: ["contact MyLoginn", "MyLoginn contact", "software development enquiry", "digital marketing enquiry"],

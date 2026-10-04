@@ -18,8 +18,8 @@ const courseFaqs = [
 ];
 
 export const metadata = createPageMetadata({
-  title: "AI, Technology & Full-Stack Courses",
-  description: "Build job-ready skills in artificial intelligence, data, full-stack development, and digital marketing with mentor-led MyLoginn courses.",
+  title: "AI, Technology & Full-Stack Courses in Tamil Nadu",
+  description: "Explore mentor-led artificial intelligence, data, full-stack and digital marketing courses for learners in Coimbatore, Pollachi, Udumalpet and Tamil Nadu.",
   path: "/courses",
   keywords: [
     "MyLoginn courses", "AI courses", "Generative AI courses", "Agentic AI courses",
@@ -27,6 +27,10 @@ export const metadata = createPageMetadata({
     "Automation Testing courses", "Python courses", "Cloud Engineering courses",
     "Data Science courses", "Prompt Engineering courses", "digital marketing courses",
     "online technology learning",
+    "AI course Coimbatore", "AI course Pollachi", "AI course Udumalpet",
+    "AI coaching Coimbatore", "AI coaching Pollachi", "AI coaching Udumalpet",
+    "artificial intelligence classes Tamil Nadu", "technology courses Coimbatore",
+    "technology courses Pollachi", "technology courses Udumalpet", "technology coaching Tamil Nadu",
   ],
 });
 
@@ -42,6 +46,7 @@ export default async function CoursesPage() {
     ? await prisma.enrollment.findMany({ where: { userId: user.id } })
     : [];
   const enrolledIds = enrollments.map((e) => e.courseId);
+  const progressByCourse = new Map(enrollments.map((enrollment) => [enrollment.courseId, enrollment.progress]));
 
   const cards: CourseCardData[] = courses.map((c) => ({
     id: c.id,
@@ -57,6 +62,7 @@ export default async function CoursesPage() {
     originalPrice: c.originalPrice,
     imageColor: c.imageColor,
     tags: JSON.parse(c.tags) as string[],
+    progress: progressByCourse.get(c.id) ?? 0,
   }));
 
   const recommendedIds = user
@@ -77,6 +83,7 @@ export default async function CoursesPage() {
             <Eyebrow className="max-md:gap-1 max-md:px-1 max-md:text-[9px] max-md:tracking-normal"><GraduationCap className="h-4 w-4" /> Upgrade your skills</Eyebrow>
             <h1 className="mt-5 text-4xl font-bold leading-[1.08] tracking-tight max-md:mt-1 max-md:text-[1.625rem] sm:text-5xl">Master skills for <span className="brand-gradient-text">your future</span></h1>
             <p className="mt-4 max-w-xl text-base text-muted max-md:mt-2 max-md:text-sm sm:text-lg">Explore current course topics, levels, duration, fees, and enrolment details in the listings below.</p>
+            <p className="mt-3 max-w-xl text-sm leading-6 text-muted">MyLoginn offers mentor-led AI and technology learning for students in Coimbatore, Pollachi, Udumalpet, Erode, and across Tamil Nadu. Browse current courses and contact us to ask about coaching options.</p>
             <div className="mt-7 clear-both grid max-w-2xl grid-cols-2 gap-3 max-md:mt-3 sm:grid-cols-4">
               {[
                 { icon: "course-total", value: "Available", label: "Course listings" },

@@ -34,7 +34,7 @@ export const metadata: Metadata = {
     template: "%s | MyLoginn",
   },
   description:
-    "MyLoginn Tech Private Limited builds web and mobile software, AI solutions, and digital marketing campaigns, and offers practical technology courses, tutoring, and internships.",
+    "MyLoginn Tech builds web and mobile software, AI solutions, and digital marketing campaigns, and offers practical technology courses, tutoring, and internships.",
   applicationName: "MyLoginn",
   authors: [{ name: "MyLoginn Tech Private Limited" }],
   creator: "MyLoginn Tech Private Limited",
@@ -49,13 +49,13 @@ export const metadata: Metadata = {
     siteName: "MyLoginn",
     title: "MyLoginn | AI-Driven IT Company for Web, App & Digital Solutions",
     description:
-      "MyLoginn Tech Private Limited provides website and app development, digital marketing, custom software, AI solutions, courses and internships.",
+      "MyLoginn provides website and app development, AI solutions, digital marketing, technology courses, tutoring, and internships.",
   },
   twitter: {
     card: "summary_large_image",
     title: "MyLoginn | AI-Driven IT Company for Web, App & Digital Solutions",
     description:
-      "MyLoginn Tech Private Limited provides website and app development, digital marketing, custom software, AI solutions, courses and internships.",
+      "MyLoginn provides website and app development, AI solutions, digital marketing, technology courses, tutoring, and internships.",
   },
   robots: {
     index: true,

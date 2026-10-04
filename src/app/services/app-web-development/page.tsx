@@ -56,14 +56,18 @@ const features: { iconKey: CourseIconKey; title: string; description: string }[]
 const stack = ["Next.js", "React Native", "Node.js", "PostgreSQL", "Prisma", "Three.js", "Tailwind CSS", "AWS / Vercel"];
 
 export const metadata = createPageMetadata({
-  title: "App & Web Development Services",
-  description: "Plan and build secure, scalable websites, web applications, and mobile apps with MyLoginn Tech Private Limited.",
+  title: "App & Web Development Services in Tamil Nadu",
+  description: "Plan secure, scalable websites, mobile apps and custom software with MyLoginn for businesses in Coimbatore, Pollachi, Udumalpet and Tamil Nadu.",
   path: "/services/app-web-development",
   keywords: [
     "MyLoginn website development", "web development company",
     "website development services", "web application development",
     "mobile app development company", "app development company",
     "custom software development", "full-stack development",
+    "app development company Coimbatore", "app development company Pollachi",
+    "app development company Udumalpet", "mobile app development Tamil Nadu",
+    "web development company Coimbatore", "website developers Pollachi",
+    "software development company Udumalpet", "custom app development Tamil Nadu",
   ],
 });
 
@@ -79,6 +83,7 @@ export default function AppWebDevelopmentPage() {
             <Eyebrow className="max-md:gap-1.5 max-md:px-2 max-md:text-[10px] max-md:tracking-normal"><Smartphone className="h-4 w-4 shrink-0" /> Full-stack development</Eyebrow>
             <h1 className="mt-5 text-4xl font-bold leading-[1.08] tracking-tight max-md:mt-1 max-md:text-[1.625rem] max-[380px]:text-2xl sm:text-5xl">Development that builds <span className="brand-gradient-text">scalable platforms</span></h1>
             <p className="mt-4 max-w-2xl text-base text-muted max-md:mt-1 max-md:text-sm max-md:leading-[1.35] sm:text-lg">Custom end-to-end app and web development, leveraging modern technology stacks for robust, high-performance, and secure user experiences.</p>
+            <p className="mt-3 max-w-2xl text-sm leading-6 text-muted">We work with businesses in Coimbatore, Pollachi, Udumalpet, Erode, and throughout Tamil Nadu on website development, mobile app development, and custom software projects.</p>
             <div className="mt-7 clear-both grid w-full grid-cols-2 gap-3 max-md:mt-2 sm:grid-cols-4">{[{ icon: "development-projects", value: "Complete", label: "Project delivery" }, { icon: "development-clients", value: "Teamwork", label: "Client approach" }, { icon: "development-stacks", value: "Modern", label: "Technology stacks" }, { icon: "development-rating", value: "Reliable", label: "Development" }].map(({ icon, value, label }) => <div key={label} className="flex min-h-36 min-w-0 flex-col justify-between rounded-2xl border border-border-soft bg-surface/85 p-3 shadow-[var(--shadow-soft)] sm:p-4"><ReferenceStatIcon name={icon as "development-projects" | "development-clients" | "development-stacks" | "development-rating"} className="h-11 w-11 shrink-0 sm:h-10 sm:w-10" /><div className="mt-4 min-w-0"><p className="whitespace-nowrap text-xl font-semibold leading-6 sm:text-lg">{value}</p><p className="mt-1 min-h-8 text-xs uppercase leading-4 text-muted sm:text-[11px]">{label}</p></div></div>)}</div>
           </div>
         </div>

@@ -220,7 +220,7 @@ export default async function DashboardPage() {
                 {streak.transactions.length === 0 ? (
                   <p className="text-sm text-muted">Log in daily and enroll in courses to earn points.</p>
                 ) : (
-                  <ul className="flex flex-col gap-3">
+                  <ul aria-label="Recent reward history" tabIndex={0} className="max-h-72 space-y-3 overflow-y-auto overscroll-contain pr-2 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-400">
                     {streak.transactions.map((t) => (
                       <li key={t.id} className="flex items-center justify-between gap-3 text-sm">
                         <div>

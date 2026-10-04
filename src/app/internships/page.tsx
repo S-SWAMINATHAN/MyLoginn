@@ -18,12 +18,15 @@ const internshipFaqs = [
 ];
 
 export const metadata = createPageMetadata({
-  title: "Technology Internships",
-  description: "Explore practical technology internships with real projects, mentor guidance, and career-building experience from MyLoginn.",
+  title: "Technology Internships across Tamil Nadu",
+  description: "Explore practical MyLoginn technology internships with real projects and mentor guidance for students in Coimbatore, Pollachi, Udumalpet and Tamil Nadu.",
   path: "/internships",
   keywords: [
     "MyLoginn internships", "AI internships", "software development internships",
     "technology internships", "internship programs", "internships with mentorship",
+    "technology internship Coimbatore", "technology internship Pollachi",
+    "technology internship Udumalpet", "internships in Tamil Nadu",
+    "AI internship Tamil Nadu", "software internship Coimbatore",
   ],
 });
 
@@ -69,6 +72,8 @@ export default async function InternshipsPage() {
           companyCount={companyCount}
           avgWeeks={avgWeeks}
         />
+
+        <p className="mt-5 max-w-3xl text-sm leading-6 text-muted">Students in Coimbatore, Pollachi, Udumalpet, Erode, and across Tamil Nadu can explore current technology internship listings. Check each role for its location, format, eligibility, and application details.</p>
 
         <div className="mt-8 sm:mt-10">
           <InternshipsExplorer internships={cards} appliedIds={[...appliedIds]} />

@@ -20,7 +20,7 @@ export const dynamic = "force-dynamic";
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   const [courseResult, internshipResult] = await Promise.allSettled([
     prisma.course.findMany({ select: { slug: true, updatedAt: true } }),
-    prisma.internship.findMany({ select: { slug: true, createdAt: true } }),
+    prisma.internship.findMany({ select: { slug: true } }),
   ]);
   // Keep the main sitemap available even when the content database is offline.
   const courses = courseResult.status === "fulfilled" ? courseResult.value : [];
@@ -40,7 +40,6 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     })),
     ...internships.map((internship) => ({
       url: `${siteUrl}/internships/${internship.slug}`,
-      lastModified: internship.createdAt,
       changeFrequency: "daily" as const,
       priority: 0.8,
     })),

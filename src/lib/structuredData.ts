@@ -23,10 +23,13 @@ export const organizationStructuredData = {
     contactType: "customer support",
     areaServed: "IN",
   })),
-  areaServed: ["Coimbatore", "Pollachi", "Erode"].map((name) => ({
-    "@type": "City",
-    name,
-  })),
+  areaServed: [
+    ...["Coimbatore", "Pollachi", "Udumalpet", "Erode"].map((name) => ({
+      "@type": "City",
+      name,
+    })),
+    { "@type": "AdministrativeArea", name: "Tamil Nadu" },
+  ],
   knowsAbout: [
     "Website development",
     "Web application development",
@@ -45,7 +48,13 @@ export const websiteStructuredData = {
   "@type": "WebSite",
   "@id": `${siteUrl}/#website`,
   name: "MyLoginn",
-  alternateName: ["MyLoginn Tech", "MyLoginn Tech Private Limited", "myloginn.com"],
+  alternateName: [
+    "My Loginn",
+    "MyLogin",
+    "MyLoginn Tech",
+    "MyLoginn Tech Private Limited",
+    "myloginn.com",
+  ],
   url: `${siteUrl}/`,
   publisher: { "@id": `${siteUrl}/#organization` },
   inLanguage: "en-IN",

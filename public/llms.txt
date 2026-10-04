@@ -1,0 +1,23 @@
+# MyLoginn
+
+> MyLoginn Tech Private Limited provides web and mobile app development, AI solutions, digital marketing, technology courses, tutoring, and internships.
+
+MyLoginn serves businesses and learners in Coimbatore, Pollachi, Erode, and across India.
+
+## Main pages
+
+- [Home](https://www.myloginn.com/): Overview of MyLoginn services and learning platform.
+- [About](https://www.myloginn.com/about): Company information and values.
+- [Services](https://www.myloginn.com/services): Web and app development, software, AI, and digital marketing.
+- [Digital marketing](https://www.myloginn.com/services/digital-marketing): SEO, campaign, social media, and content services.
+- [Courses](https://www.myloginn.com/courses): Technology courses and learning paths.
+- [Tutoring](https://www.myloginn.com/tutoring): Personalized tutoring options.
+- [Internships](https://www.myloginn.com/internships): Current internship opportunities.
+- [Projects](https://www.myloginn.com/projects): Selected project work.
+- [Contact](https://www.myloginn.com/contact): Enquiries and published contact information.
+
+## Contact
+
+- Email: mailloginn@gmail.com
+- Phone: +91 96555 60555
+- Phone: +91 8489 202020

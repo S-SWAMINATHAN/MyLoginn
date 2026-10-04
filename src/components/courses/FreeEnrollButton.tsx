@@ -11,7 +11,8 @@ export function FreeEnrollButton({ slug, loggedIn, enrolled }: { slug: string; l
 
   async function enroll() {
     if (!loggedIn) {
-      router.push("/login");
+      const returnPath = `/courses/${encodeURIComponent(slug)}`;
+      router.push(`/login?next=${encodeURIComponent(returnPath)}`);
       return;
     }
     setBusy(true); setError("");
