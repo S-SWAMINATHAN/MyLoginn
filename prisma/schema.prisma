@@ -147,6 +147,7 @@ model Enrollment {
   progress   Int      @default(0)
   status     String   @default("active")
   enrolledAt DateTime @default(now())
+  completedAt DateTime?
 
   user   User   @relation(fields: [userId], references: [id])
   course Course @relation(fields: [courseId], references: [id])

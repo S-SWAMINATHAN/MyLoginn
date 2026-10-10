@@ -19,6 +19,7 @@ import Link from "next/link";
 import { ArrowRight } from "lucide-react";
 import type { CourseIconKey } from "@/lib/courseIcons";
 import { recordDailyActivity, getStreakSummary, toDayKey } from "@/lib/streak";
+import { DownloadCertificate } from "@/components/courses/DownloadCertificate";
 
 export const metadata = { title: "Dashboard", robots: { index: false, follow: false } };
 
@@ -133,8 +134,8 @@ export default async function DashboardPage() {
               <h2 className="mb-4 font-semibold">My courses</h2>
               <div className="flex flex-col gap-3">
                   {enrollments.map((e) => (
-                    <Link key={e.id} href={`/courses/${e.course.slug}`} aria-label={`Continue ${e.course.title}`} className="block rounded-2xl focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-400">
-                    <Card className="p-5 transition hover:-translate-y-0.5 hover:shadow-[var(--shadow-lift)]">
+                    <Card key={e.id} className="p-5 transition hover:-translate-y-0.5 hover:shadow-[var(--shadow-lift)]">
+                      <Link href={`/courses/${e.course.slug}`} aria-label={`Continue ${e.course.title}`} className="block rounded-lg focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-400">
                       <div className="flex items-center justify-between gap-4">
                         <div className="min-w-0">
                           <p className="truncate font-medium">{e.course.title}</p>
@@ -151,8 +152,9 @@ export default async function DashboardPage() {
                           <ArrowRight className="h-4 w-4 text-brand-500" aria-hidden="true" />
                         </div>
                       </div>
+                      </Link>
+                      {e.course.price === 0 && e.progress >= 100 && <DownloadCertificate courseSlug={e.course.slug} courseTitle={e.course.title} />}
                     </Card>
-                    </Link>
                   ))}
               </div>
             </FadeIn>}

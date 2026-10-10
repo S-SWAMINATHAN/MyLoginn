@@ -61,7 +61,7 @@ async function updateTopicProgress(request: Request, { params }: RouteContext) {
     return NextResponse.json({ error: "Pass the earlier required code challenges before continuing." }, { status: 403 });
   }
 
-  const enrollment = await prisma.enrollment.findUnique({ where: { userId_courseId: { userId: user.id, courseId: course.id } }, select: { id: true } });
+  const enrollment = await prisma.enrollment.findUnique({ where: { userId_courseId: { userId: user.id, courseId: course.id } }, select: { id: true, completedAt: true } });
   if (!enrollment) return NextResponse.json({ error: "Enroll in this course to update progress." }, { status: 403 });
 
   const result = await prisma.$transaction(async (tx) => {
@@ -82,7 +82,7 @@ async function updateTopicProgress(request: Request, { params }: RouteContext) {
     const activeTopicSlugs = topics.map(toTopicSlug);
     const completedTopics = await tx.courseTopicProgress.count({ where: { userId: user.id, courseId: course.id, challengePassed: true, topicSlug: { in: activeTopicSlugs } } });
     const progress = topics.length ? Math.round((completedTopics / topics.length) * 100) : 0;
-    await tx.enrollment.update({ where: { id: enrollment.id }, data: { progress, status: progress === 100 ? "completed" : "active" } });
+    await tx.enrollment.update({ where: { id: enrollment.id }, data: { progress, status: progress === 100 ? "completed" : "active", ...(progress === 100 && !enrollment.completedAt ? { completedAt: new Date() } : {}) } });
     return { completedTopics, totalTopics: topics.length, progress, pointsEarned };
   });
 

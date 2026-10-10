@@ -11,6 +11,7 @@ import { AnimatedClock } from "@/components/ui/icons/AnimatedClock";
 import { AnimatedSuccess } from "@/components/ui/icons/AnimatedSuccess";
 import { CourseIconThumb } from "@/components/courses/CourseIconThumb";
 import { FreeEnrollButton } from "@/components/courses/FreeEnrollButton";
+import { DownloadCertificate } from "@/components/courses/DownloadCertificate";
 import { getCourseModules } from "@/lib/freeCourseCurriculum";
 import { getCourseDisplayTitle, getFreeCourseTerm } from "@/lib/freeCourseTitles";
 import Link from "next/link";
@@ -63,9 +64,10 @@ export default async function CourseDetailPage({
   const modules = course.price === 0 ? getCourseModules(course.slug, syllabus) : [{ title: "Course syllabus", topics: syllabus }];
   const topicCount = modules.reduce((count, module) => count + module.topics.length, 0);
   const completedTopics = enrollment && course.price === 0
-    ? await prisma.courseTopicProgress.findMany({ where: { userId: user!.id, courseId: course.id }, select: { topicSlug: true } })
+    ? await prisma.courseTopicProgress.findMany({ where: { userId: user!.id, courseId: course.id, challengePassed: true }, select: { topicSlug: true } })
     : [];
-  const completedTopicSlugs = new Set(completedTopics.map((item) => item.topicSlug));
+  const activeTopicSlugs = new Set(modules.flatMap((module) => module.topics).map((topic) => topic.toLowerCase().trim().replace(/[^a-z0-9]+/g, "-").replace(/^-|-$/g, "")));
+  const completedTopicSlugs = new Set(completedTopics.map((item) => item.topicSlug).filter((topicSlug) => activeTopicSlugs.has(topicSlug)));
   const discountPct =
     course.originalPrice && course.originalPrice > course.price
       ? Math.round((1 - course.price / course.originalPrice) * 100)
@@ -170,6 +172,14 @@ export default async function CourseDetailPage({
                 )}
 
                 {course.price === 0 && enrollment && <div className="mt-4" aria-label={`Course progress ${enrollment.progress}%`}><div className="mb-1 flex justify-between text-xs"><span className="text-muted">Your progress</span><span className="font-semibold text-brand-700">{enrollment.progress}%</span></div><div className="h-2 overflow-hidden rounded-full bg-surface-2"><div className="h-full rounded-full bg-brand-500" style={{ width: `${enrollment.progress}%` }} /></div></div>}
+
+                {course.price === 0 && enrollment && topicCount > 0 && completedTopicSlugs.size >= topicCount && (
+                  <div className="mt-5 rounded-xl border border-brand-200 bg-brand-50/50 p-4 dark:bg-brand-900/10">
+                    <p className="mb-1 text-sm font-semibold">Course completed</p>
+                    <p className="text-xs text-muted">Add the name you want printed on your certificate.</p>
+                    <DownloadCertificate courseSlug={course.slug} courseTitle={displayTitle} />
+                  </div>
+                )}
 
                 <div className="mt-5">
                   {course.price === 0 ? (

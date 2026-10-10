@@ -163,5 +163,6 @@ export function getFreeCourseChallengePrompt(courseSlug: string, title: string, 
   if (!challenges[courseSlug]?.[kind]) {
     return `Write a separate ${languageName} challenge for ${title.toLowerCase()} using new data and a result different from the lesson example. Use the challenge solution only to check your work.`;
   }
-  return `${prompts[kind] ?? `Create a new ${title.toLowerCase()} example using different data from the lesson example.`} Use ${languageName} syntax and submit the challenge result.`;
+  const task = prompts[kind] ?? `Create a new example that demonstrates ${title.toLowerCase()} using different data from the lesson example.`;
+  return `Topic challenge — ${title}: ${task} Keep the solution focused on ${title.toLowerCase()}, use fresh values rather than copying the worked example, and submit the result shown by your program in ${languageName}.`;
 }

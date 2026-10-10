@@ -1328,7 +1328,9 @@ export function buildTutorialLesson(courseSlug: string, title: string, index: nu
     ),
   ];
   const challengeSolution = getFreeCourseChallenge(courseSlug, kind);
-  const challenge = getFreeCourseChallengePrompt(courseSlug, title, kind, languageName);
+  // Prefer a lesson's authored challenge when we have one. The category-level
+  // fallback intentionally only serves topics without their own exercise.
+  const challenge = specific?.challenge ?? getFreeCourseChallengePrompt(courseSlug, title, kind, languageName);
   return {
     kind,
     requiresCodeChallenge,
