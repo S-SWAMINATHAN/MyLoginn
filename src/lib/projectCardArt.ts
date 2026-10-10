@@ -16,6 +16,7 @@ export type CardArtKey =
   | "marketing"
   | "cloud"
   | "webdev"
+  | "mobile"
   | "ecommerce"
   | "travel"
   | "platform";
@@ -397,7 +398,7 @@ function artCloud(p: string) {
   );
 }
 
-/* ── AI analysis — floating data panels around a neural core ────────────── */
+/* ── Web / app development — browser window + phone + code badge ────────── */
 function artWebdev(p: string) {
   return wrap(
     p,
@@ -405,79 +406,160 @@ function artWebdev(p: string) {
     `${p}glow`,
     `<defs>
       <linearGradient id="${p}bg" x1="0" y1="0" x2="1" y2="1">
-        <stop offset="0%" stop-color="#103C56"/>
-        <stop offset="55%" stop-color="#167B88"/>
-        <stop offset="100%" stop-color="#43A88F"/>
+        <stop offset="0%" stop-color="#0b1f4d"/>
+        <stop offset="55%" stop-color="#1f56d6"/>
+        <stop offset="100%" stop-color="#22a6d3"/>
       </linearGradient>
       <radialGradient id="${p}glow" cx="74%" cy="40%" r="60%">
-        <stop offset="0%" stop-color="#B5F2E2" stop-opacity=".5"/>
-        <stop offset="100%" stop-color="#B5F2E2" stop-opacity="0"/>
+        <stop offset="0%" stop-color="#bfe3ff" stop-opacity=".45"/>
+        <stop offset="100%" stop-color="#bfe3ff" stop-opacity="0"/>
       </radialGradient>
-      <linearGradient id="${p}robot" x1="0" y1="0" x2="1" y2="1">
-        <stop offset="0%" stop-color="#D8F7F5"/>
-        <stop offset="100%" stop-color="#69C7D9"/>
-      </linearGradient>
       <linearGradient id="${p}panel" x1="0" y1="0" x2="1" y2="1">
         <stop offset="0%" stop-color="#FFFFFF"/>
-        <stop offset="100%" stop-color="#E4F6F3"/>
+        <stop offset="100%" stop-color="#E8F1FF"/>
       </linearGradient>
-      <linearGradient id="${p}coral" x1="0" y1="0" x2="1" y2="1">
-        <stop offset="0%" stop-color="#FF9A73"/>
-        <stop offset="100%" stop-color="#EF5F57"/>
+      <linearGradient id="${p}accent" x1="0" y1="0" x2="1" y2="1">
+        <stop offset="0%" stop-color="#5590ff"/>
+        <stop offset="100%" stop-color="#22d3ee"/>
       </linearGradient>
       <filter id="${p}shadow" x="-50%" y="-50%" width="200%" height="200%">
         <feGaussianBlur stdDeviation="5"/>
       </filter>
     </defs>
-    ${sparkles(p, "#C9FFF1")}
-    <ellipse cx="260" cy="137" rx="102" ry="10" fill="#103C56" opacity=".38" filter="url(#${p}shadow)"/>
-    <g stroke="#B8F5E8" stroke-width="1.5" opacity=".55">
-      <path d="M163 86 214 70 250 94 307 57 350 82"/>
-      <path d="M196 119 231 97 278 115 330 105" stroke-dasharray="3 5"/>
-    </g>
-    <g>
-      <rect x="48" y="42" width="116" height="78" rx="10" fill="url(#${p}panel)" transform="rotate(-8 48 42)"/>
-      <g transform="rotate(-8 48 42)">
-        <rect x="62" y="52" width="5" height="5" rx="2.5" fill="#3A91A0"/>
-        <rect x="71" y="53" width="30" height="3" rx="1.5" fill="#A7CFD0"/>
-        <path d="M64 107V71m17 36V81m17 26V66m17 41V76m17 31V61" stroke="#D2E9E6" stroke-width="8" stroke-linecap="round"/>
-        <path d="M64 107V89m17 18V92m17 15V80m17 27V87m17 20V73" stroke="#52B69E" stroke-width="8" stroke-linecap="round">
-          <animate attributeName="stroke-dasharray" values="0 80;30 80;30 80" dur="2.8s" repeatCount="indefinite"/>
-        </path>
+    ${sparkles(p, "#d6ecff")}
+    ${shadow(p, 262, 144, 104, 10, "#0b1f4d", 0.4)}
+    ${link(330, 52, 290, 70, "#bfe3ff")}
+    ${floatPanel(
+      p,
+      182,
+      30,
+      150,
+      98,
+      -4,
+      `<path d="M0 10a10 10 0 0 1 10-10h130a10 10 0 0 1 10 10v10H0Z" fill="#DCE9FF"/>
+      <circle cx="12" cy="10" r="2.6" fill="#F28B82"/>
+      <circle cx="21" cy="10" r="2.6" fill="#F6C86E"/>
+      <circle cx="30" cy="10" r="2.6" fill="#72D6C0"/>
+      <rect x="44" y="6" width="90" height="8" rx="4" fill="#FFFFFF"/>
+      <rect x="12" y="30" width="62" height="7" rx="3.5" fill="#1f56d6"/>
+      <rect x="12" y="43" width="86" height="4" rx="2" fill="#B7CCF0"/>
+      <rect x="12" y="51" width="70" height="4" rx="2" fill="#CFDDF5"/>
+      <rect x="12" y="62" width="30" height="11" rx="5.5" fill="url(#${p}accent)"/>
+      <rect x="104" y="30" width="34" height="43" rx="6" fill="#DCE9FF"/>
+      <path d="M110 66V54m8 12V46m8 20V58m8 8V50" stroke="#5590ff" stroke-width="4" stroke-linecap="round">
+        <animate attributeName="stroke-dasharray" values="0 30;20 30;20 30" dur="2.8s" repeatCount="indefinite"/>
+      </path>
+      <rect x="12" y="80" width="38" height="10" rx="4" fill="#E8F1FF"/>
+      <rect x="54" y="80" width="38" height="10" rx="4" fill="#E8F1FF"/>
+      <rect x="96" y="80" width="42" height="10" rx="4" fill="#E8F1FF"/>`
+    )}
+    ${floatBadge(
+      p,
+      318,
+      72,
+      `<g transform="translate(0,0)">
+        <rect width="44" height="76" rx="9" fill="#0b1f4d" stroke="#d6ecff" stroke-width="2"/>
+        <rect x="5" y="9" width="34" height="58" rx="4" fill="url(#${p}panel)"/>
+        <rect x="9" y="14" width="26" height="14" rx="3" fill="url(#${p}accent)"/>
+        <rect x="9" y="33" width="26" height="4" rx="2" fill="#B7CCF0"/>
+        <rect x="9" y="41" width="18" height="4" rx="2" fill="#CFDDF5"/>
+        <rect x="9" y="51" width="26" height="9" rx="4.5" fill="#1f56d6"/>
+        <rect x="16" y="3" width="12" height="2.5" rx="1.25" fill="#5b7bb8"/>
+      </g>`,
+      3.8,
+      ".2s"
+    )}
+    ${floatBadge(
+      p,
+      196,
+      112,
+      `<g transform="translate(-4,-4)">
+        <rect width="46" height="30" rx="9" fill="#0b1f4d" stroke="#bfe3ff" stroke-width="1.5"/>
+        <path d="m15 9-6 6 6 6m16-12 6 6-6 6M26 7l-6 16" stroke="#22d3ee" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" fill="none"/>
+      </g>`,
+      3.4,
+      ".5s"
+    )}`
+  );
+}
+
+/* ── Mobile app — two app screens + location/pin badge ──────────────────── */
+function artMobile(p: string) {
+  const screen = (x: number, y: number, rot: number, dur: number, delay: string, body: string) => `<g transform="rotate(${rot} ${x + 36} ${y + 62})">
+      <g transform="translate(${x},${y})">
+        <animateTransform attributeName="transform" type="translate" values="${x},${y}; ${x},${y - 5}; ${x},${y}" dur="${dur}s" begin="${delay}" repeatCount="indefinite"/>
+        <rect width="72" height="124" rx="13" fill="#0b1f4d" stroke="#d6ecff" stroke-width="2"/>
+        <rect x="5" y="5" width="62" height="114" rx="9" fill="url(#${p}panel)"/>
+        <rect x="26" y="8" width="20" height="4" rx="2" fill="#0b1f4d" opacity=".85"/>
+        ${body}
       </g>
-    </g>
-    <g transform="translate(324,48)">
-      <ellipse cx="24" cy="52" rx="30" ry="7" fill="#103C56" opacity=".28" filter="url(#${p}shadow)"/>
-      <path d="M24 6a23 23 0 0 1 20 35L24 29Z" fill="url(#${p}coral)"/>
-      <path d="M24 6v23L4 40A23 23 0 0 1 24 6Z" fill="#F6C86E"/>
-      <path d="M4 40a23 23 0 0 0 40 1L24 29Z" fill="#EC7664"/>
-      <animateTransform attributeName="transform" type="translate" values="324 48;324 43;324 48" dur="3.6s" repeatCount="indefinite"/>
-    </g>
-    <g>
-      <path d="M229 62 242 42m45 22 18-17m-18 72 24 12m-67-13-20 15" stroke="#B8F5E8" stroke-width="2" stroke-linecap="round"/>
-      <circle cx="242" cy="42" r="4" fill="#F8CB74"/>
-      <circle cx="305" cy="47" r="4" fill="#72D6C0"/>
-      <circle cx="320" cy="131" r="4" fill="#F18772"/>
-      <circle cx="209" cy="133" r="4" fill="#7AD4E1"/>
-    </g>
-    <g>
-      <ellipse cx="263" cy="91" rx="43" ry="39" fill="#0B3348" opacity=".18"/>
-      <path d="M228 65c0-17 14-30 32-30h8c18 0 32 13 32 30v27c0 19-15 34-34 34h-4c-19 0-34-15-34-34V65Z" fill="url(#${p}robot)" stroke="#D9FFFA" stroke-width="2"/>
-      <path d="M239 69c0-10 8-18 18-18h15c10 0 18 8 18 18v21c0 10-8 18-18 18h-15c-10 0-18-8-18-18V69Z" fill="#164D64"/>
-      <circle cx="255" cy="79" r="4" fill="#F5FFFE">
-        <animate attributeName="opacity" values="1;.45;1" dur="2.2s" repeatCount="indefinite"/>
-      </circle>
-      <circle cx="275" cy="79" r="4" fill="#F5FFFE">
-        <animate attributeName="opacity" values=".45;1;.45" dur="2.2s" repeatCount="indefinite"/>
-      </circle>
-      <path d="M256 94h18" stroke="#72D6C0" stroke-width="3" stroke-linecap="round"/>
-      <path d="M263 35V24" stroke="#D9FFFA" stroke-width="3" stroke-linecap="round"/>
-      <circle cx="263" cy="21" r="5" fill="#F18772">
-        <animate attributeName="r" values="4;6;4" dur="2.6s" repeatCount="indefinite"/>
-      </circle>
-      <path d="M223 75h7m69 0h7" stroke="#D9FFFA" stroke-width="4" stroke-linecap="round"/>
-      <animateTransform attributeName="transform" type="translate" values="0 0;0 -4;0 0" dur="4s" repeatCount="indefinite"/>
-    </g>`
+    </g>`;
+  return wrap(
+    p,
+    `${p}bg`,
+    `${p}glow`,
+    `<defs>
+      <linearGradient id="${p}bg" x1="0" y1="0" x2="1" y2="1">
+        <stop offset="0%" stop-color="#0b1f4d"/>
+        <stop offset="55%" stop-color="#0f766e"/>
+        <stop offset="100%" stop-color="#2dd4bf"/>
+      </linearGradient>
+      <radialGradient id="${p}glow" cx="74%" cy="40%" r="60%">
+        <stop offset="0%" stop-color="#b5f2e2" stop-opacity=".45"/>
+        <stop offset="100%" stop-color="#b5f2e2" stop-opacity="0"/>
+      </radialGradient>
+      <linearGradient id="${p}panel" x1="0" y1="0" x2="1" y2="1">
+        <stop offset="0%" stop-color="#FFFFFF"/>
+        <stop offset="100%" stop-color="#E6F7F4"/>
+      </linearGradient>
+      <linearGradient id="${p}accent" x1="0" y1="0" x2="1" y2="1">
+        <stop offset="0%" stop-color="#14b8a6"/>
+        <stop offset="100%" stop-color="#0369a1"/>
+      </linearGradient>
+      <filter id="${p}shadow" x="-50%" y="-50%" width="200%" height="200%">
+        <feGaussianBlur stdDeviation="5"/>
+      </filter>
+    </defs>
+    ${sparkles(p, "#d6fff6")}
+    ${shadow(p, 268, 150, 96, 9, "#0b1f4d", 0.4)}
+    ${screen(
+      206,
+      26,
+      -6,
+      4,
+      "0s",
+      `<rect x="11" y="20" width="50" height="30" rx="6" fill="url(#${p}accent)"/>
+      <rect x="11" y="56" width="34" height="4" rx="2" fill="#9fd8d0"/>
+      <rect x="11" y="64" width="24" height="4" rx="2" fill="#c6e8e3"/>
+      <rect x="11" y="76" width="50" height="14" rx="5" fill="#E6F7F4"/>
+      <rect x="11" y="94" width="50" height="14" rx="5" fill="#E6F7F4"/>
+      <circle cx="19" cy="83" r="3.5" fill="#14b8a6"/>
+      <circle cx="19" cy="101" r="3.5" fill="#0369a1"/>`
+    )}
+    ${screen(
+      282,
+      40,
+      5,
+      4.6,
+      ".4s",
+      `<rect x="11" y="20" width="50" height="6" rx="3" fill="#0f766e"/>
+      <rect x="11" y="32" width="50" height="34" rx="6" fill="#d6f2ee"/>
+      <path d="M11 58 24 46l10 8 12-14 15 12" stroke="#14b8a6" stroke-width="2.4" fill="none" stroke-linecap="round" stroke-linejoin="round"/>
+      <rect x="11" y="72" width="50" height="14" rx="5" fill="#E6F7F4"/>
+      <rect x="11" y="92" width="50" height="14" rx="7" fill="url(#${p}accent)"/>`
+    )}
+    ${floatBadge(
+      p,
+      196,
+      112,
+      `<g transform="translate(-4,-4)">
+        <path d="M14 0C6 0 0 6 0 14c0 10 14 24 14 24s14-14 14-24C28 6 22 0 14 0Z" fill="#FFFFFF"/>
+        <circle cx="14" cy="14" r="6" fill="#0f766e"/>
+        <circle cx="14" cy="14" r="2.5" fill="#FFFFFF"/>
+      </g>`,
+      3.4,
+      ".3s"
+    )}`
   );
 }
 
@@ -668,6 +750,7 @@ const ART: Record<CardArtKey, (p: string) => string> = {
   marketing: artMarketing,
   cloud: artCloud,
   webdev: artWebdev,
+  mobile: artMobile,
   ecommerce: artEcommerce,
   travel: artTravel,
   platform: artPlatform,

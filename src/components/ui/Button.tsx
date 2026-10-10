@@ -2,7 +2,7 @@ import { cn } from "@/lib/cn";
 import Link from "next/link";
 import type { ButtonHTMLAttributes, ReactNode } from "react";
 
-type Variant = "primary" | "secondary" | "ghost" | "outline" | "danger";
+type Variant = "primary" | "secondary" | "ghost" | "outline" | "danger" | "cancel";
 type Size = "sm" | "md" | "lg";
 
 const variantClasses: Record<Variant, string> = {
@@ -14,6 +14,7 @@ const variantClasses: Record<Variant, string> = {
   outline:
     "card-shine bg-surface/60 backdrop-blur-sm border border-brand-400/60 text-brand-500 hover:bg-brand-50 hover:-translate-y-1 hover:border-brand-400 hover:shadow-[var(--shadow-soft)] dark:hover:bg-brand-900/20",
   danger: "card-shine bg-danger text-white hover:brightness-110 hover:-translate-y-1",
+  cancel: "bg-danger/10 text-danger border border-danger/30 hover:bg-danger hover:text-white hover:border-danger hover:-translate-y-0.5",
 };
 
 const sizeClasses: Record<Size, string> = {

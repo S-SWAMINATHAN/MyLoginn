@@ -12,7 +12,6 @@ import { AnimatedLessonWalkthrough } from "@/components/courses/AnimatedLessonWa
 import { LessonQuiz } from "@/components/courses/LessonQuiz";
 import { ScrollActiveIntoView } from "@/components/courses/ScrollActiveIntoView";
 import { ChallengeBrief } from "@/components/courses/ChallengeBrief";
-import { LessonVisualScene } from "@/components/courses/LessonVisualScene";
 import { LessonVideo } from "@/components/courses/LessonVideo";
 import { ChallengeCelebration } from "@/components/courses/ChallengeCelebration";
 
@@ -145,17 +144,6 @@ export function CourseTutorial({ courseTitle, courseSlug, learnerName = "MyLogin
           {/* Every topic gets an animated video built from its own lesson data, so new courses need no extra work. */}
           {!video && <LessonVideo data={{ courseTitle, title, lessonNumber: index + 1, lessonCount: topics.length, plain: lesson.plain, visualNodes: lesson.visual.nodes, visualSummary: lesson.visual.summary, steps: lesson.steps, output: lesson.output, takeaways: lesson.takeaways, mistake: lesson.mistake }} />}
 
-          <section className="mt-8 rounded-2xl border border-border-soft bg-background p-4 sm:p-6">
-            <h2 className="mb-4 flex items-center gap-2 text-lg font-bold"><Lightbulb className="h-5 w-5 text-amber-500" /> Visual explanation</h2>
-            <div className="relative pb-8">
-              <LessonVisualScene visual={lesson.visual} courseSlug={courseSlug} title={title} code={lesson.code} output={lesson.output} syntax={lesson.syntax} />
-              <div className="pointer-events-none absolute bottom-0 right-0 flex items-center gap-1.5 opacity-45" aria-label="MyLoginn visual">
-                <Image src="/myloginn-logo.png" alt="" width={20} height={20} className="h-5 w-5 object-contain" />
-                <span className="text-[10px] font-semibold text-muted">MyLoginn Learning</span>
-              </div>
-            </div>
-          </section>
-
           {!isPythonInstallation && <details className="group mt-8 rounded-2xl border border-border-soft bg-background">
             <summary className="flex cursor-pointer list-none items-center justify-between gap-4 rounded-2xl px-5 py-4 font-semibold hover:bg-surface-2 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-500 [&::-webkit-details-marker]:hidden">
               <span><span className="block">Animated lesson walkthrough</span><span className="mt-1 block text-xs font-normal text-muted">Expand to step through the code and use playback controls.</span></span><span aria-hidden="true" className="shrink-0 text-base text-muted transition-transform group-open:rotate-180">⌄</span>
@@ -183,7 +171,7 @@ export function CourseTutorial({ courseTitle, courseSlug, learnerName = "MyLogin
             <div className="border-t border-white/10 bg-white/5 px-4 py-4 sm:px-6"><p className="text-[10px] font-bold uppercase tracking-wider text-slate-400">{canRunSql ? "Query result · practice database" : "Expected result"}</p>{canRunSql ? <SqlExampleResult query={lesson.code} fallback={lesson.output} /> : <pre className="mt-2 whitespace-pre-wrap font-mono text-sm leading-6 text-emerald-300">{lesson.output}</pre>}</div>
           </section>
 
-          <section className="mt-6 max-w-4xl" aria-labelledby="code-explanation"><h2 id="code-explanation" className="text-lg font-bold">How does this work?</h2><ol className="mt-3 space-y-3">{lesson.steps.map((step, stepIndex) => <li key={`${step.code}-${stepIndex}`} className="rounded-xl border border-border-soft bg-background p-4"><code className="block overflow-x-auto font-mono text-sm font-semibold text-brand-700 dark:text-brand-200">{step.code}</code><p className="mt-2 text-sm leading-6 text-foreground/75">{step.explanation}</p></li>)}</ol>{courseSlug === "python-fundamentals" && lesson.kind === "intro" && <ul className="mt-4 list-disc space-y-2 pl-5 text-sm leading-6 text-foreground/80"><li><code>print()</code> is a built-in Python function that displays text.</li><li><code>&quot;Hello, World!&quot;</code> is a string enclosed in quotation marks.</li><li><code>#</code> begins a comment; Python ignores it when running the program.</li><li>Python uses indentation to mark code blocks instead of braces.</li></ul>}</section>
+          {courseSlug === "python-fundamentals" && lesson.kind === "intro" && <ul className="mt-6 max-w-4xl list-disc space-y-2 pl-5 text-sm leading-6 text-foreground/80"><li><code>print()</code> is a built-in Python function that displays text.</li><li><code>&quot;Hello, World!&quot;</code> is a string enclosed in quotation marks.</li><li><code>#</code> begins a comment; Python ignores it when running the program.</li><li>Python uses indentation to mark code blocks instead of braces.</li></ul>}
           </>}
 
           <LessonQuiz quiz={lesson.quiz} />

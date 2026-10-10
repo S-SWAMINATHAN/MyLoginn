@@ -150,7 +150,7 @@ export function AiAgentWidget() {
               <button
                 onClick={() => setOpen(false)}
                 aria-label="Close chat"
-                className="group cursor-pointer rounded-full p-1.5 transition-colors hover:bg-surface-2"
+                className="group cursor-pointer rounded-full p-1.5 text-danger transition-colors hover:bg-danger/10"
               >
                 <X className="h-4 w-4 transition-transform duration-300 group-hover:rotate-90" />
               </button>

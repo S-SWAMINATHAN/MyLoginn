@@ -71,7 +71,7 @@ export function ChallengeCelebration({ topicSlug }: { topicSlug: string }) {
 
   return <div className="fixed inset-0 z-[100] grid place-items-center overflow-y-auto bg-slate-950/60 p-4 backdrop-blur-sm" role="presentation">
     <section role="dialog" aria-modal="true" aria-labelledby="challenge-celebration-title" className="relative w-full max-w-md overflow-hidden rounded-3xl border border-white/70 bg-white px-6 pb-6 pt-5 text-center shadow-2xl dark:border-slate-700 dark:bg-slate-900">
-      <button type="button" onClick={() => setCelebration(null)} aria-label="Close completion message" className="absolute right-3 top-3 grid h-9 w-9 place-items-center rounded-full text-muted transition hover:bg-surface-2"><X className="h-4 w-4" /></button>
+      <button type="button" onClick={() => setCelebration(null)} aria-label="Close completion message" className="absolute right-3 top-3 grid h-9 w-9 place-items-center rounded-full text-danger transition hover:bg-danger/10"><X className="h-4 w-4" /></button>
       <div className="mx-auto flex h-36 items-center justify-center"><CelebrationArt type={type} /></div>
       <div className="mx-auto mt-1 flex items-center justify-center gap-1.5 opacity-65"><Image src="/myloginn-logo.png" alt="" width={18} height={18} className="h-4 w-4 object-contain"/><span className="text-[10px] font-bold">MyLoginn Learning</span></div>
       <h2 id="challenge-celebration-title" className="mt-3 text-2xl font-bold">{title}</h2>

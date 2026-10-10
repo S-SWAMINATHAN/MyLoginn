@@ -1,6 +1,6 @@
 import type { ReactNode } from "react";
 import Link from "next/link";
-import { ArrowUpRight, BookOpen, BriefcaseBusiness, Check, Sparkles } from "lucide-react";
+import { ArrowUpRight, BookOpen, BriefcaseBusiness, Check, Hammer } from "lucide-react";
 
 export function AuthShell({ mode, children }: { mode: "login" | "signup"; children: ReactNode }) {
   const signup = mode === "signup";
@@ -21,7 +21,7 @@ export function AuthShell({ mode, children }: { mode: "login" | "signup"; childr
 
           <div className="relative z-10">
             <span className="inline-flex items-center gap-2 rounded-full border border-white/15 bg-white/[.08] px-3.5 py-2 text-[10px] font-bold uppercase tracking-[.17em] text-cyan-100 sm:text-xs">
-              <Sparkles className="h-4 w-4" /> Your next chapter
+              Your next chapter
             </span>
             <h2 className="mt-3 max-w-xl text-[1.7rem] font-semibold leading-[1.03] tracking-[-.045em] sm:mt-5 sm:text-3xl lg:mt-7 lg:text-[2.5rem]">
               {signup ? <>Make room for <span className="text-cyan-200">what&apos;s next.</span></> : <>Good to have you <span className="text-cyan-200">back.</span></>}
@@ -37,11 +37,10 @@ export function AuthShell({ mode, children }: { mode: "login" | "signup"; childr
             <div className="rounded-2xl border border-white/15 bg-white/[.08] p-4 backdrop-blur-md">
               <div className="flex items-center justify-between">
                 <p className="text-sm font-semibold text-white/90">A path that moves with you</p>
-                <span className={`grid h-9 w-9 place-items-center rounded-xl ${signup ? "bg-cyan-300/15 text-cyan-200" : "bg-emerald-300/15 text-emerald-200"}`}><Sparkles className="h-4 w-4" /></span>
               </div>
               <div className="mt-3 grid grid-cols-3 gap-2">
                 <JourneyTile icon={<BookOpen className="h-4 w-4" />} label="Learn" />
-                <JourneyTile icon={<Sparkles className="h-4 w-4" />} label="Build" />
+                <JourneyTile icon={<Hammer className="h-4 w-4" />} label="Build" />
                 <JourneyTile icon={<BriefcaseBusiness className="h-4 w-4" />} label="Grow" />
               </div>
               <p className="mt-3 text-xs leading-5 text-indigo-100/65">Small steps. Real progress. New possibilities.</p>

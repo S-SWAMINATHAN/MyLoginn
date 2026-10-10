@@ -9,7 +9,7 @@ import {
   type CountryCode,
 } from "libphonenumber-js";
 import { AnimatePresence, motion } from "framer-motion";
-import { ChevronDown, Search } from "lucide-react";
+import { AlertCircle, CheckCircle2, ChevronDown, Search } from "lucide-react";
 import { useEffect, useMemo, useRef, useState } from "react";
 
 function flagEmoji(iso2: string) {
@@ -52,6 +52,7 @@ function toSignificantDigits(country: CountryCode, rawDigits: string): string {
 type PhoneInputProps = {
   label?: string;
   hint?: string;
+  valid?: boolean;
   error?: string;
   value: string;
   onChange: (e164: string) => void;
@@ -59,7 +60,7 @@ type PhoneInputProps = {
   onBlur?: () => void;
 };
 
-export function PhoneInput({ label, hint, error, value, onChange, onCountryChange, onBlur }: PhoneInputProps) {
+export function PhoneInput({ label, hint, error, valid, value, onChange, onCountryChange, onBlur }: PhoneInputProps) {
   const [country, setCountryState] = useState<CountryCode>(DEFAULT_COUNTRY);
   const [national, setNational] = useState("");
   const [open, setOpen] = useState(false);
@@ -102,10 +103,20 @@ export function PhoneInput({ label, hint, error, value, onChange, onCountryChang
 
   const filtered = useMemo(() => {
     if (!query.trim()) return ALL_COUNTRIES;
-    const q = query.trim().toLowerCase();
-    return ALL_COUNTRIES.filter(
-      (c) => c.name.toLowerCase().includes(q) || c.calling.includes(q) || c.code.toLowerCase().includes(q)
-    );
+    const q = query.trim().toLowerCase().replace(/^\+/, "");
+    // Rank by how well the query matches: ISO code, name start, any word start, then calling code.
+    // Matching in the middle of a word ("in" inside "Argentina") is only a last resort.
+    const score = (c: (typeof ALL_COUNTRIES)[number]) => {
+      const name = c.name.toLowerCase();
+      if (c.code.toLowerCase() === q) return 0;
+      if (name.startsWith(q)) return 1;
+      if (name.split(/[\s(),-]+/).some((word) => word.startsWith(q))) return 2;
+      if (/^\d+$/.test(q) && c.calling.startsWith(q)) return 3;
+      return name.includes(q) ? 4 : -1;
+    };
+    const ranked = ALL_COUNTRIES.map((c) => ({ c, s: score(c) })).filter((item) => item.s >= 0);
+    const strong = ranked.filter((item) => item.s <= 3);
+    return (strong.length ? strong : ranked).sort((a, b) => a.s - b.s || a.c.name.localeCompare(b.c.name)).map((item) => item.c);
   }, [query]);
 
   const formatted = useMemo(() => {
@@ -119,19 +130,19 @@ export function PhoneInput({ label, hint, error, value, onChange, onCountryChang
   }
 
   return (
-    <div className="flex flex-col gap-1.5" ref={rootRef}>
-      {label && <label className="text-sm font-medium text-foreground">{label}</label>}
+    <div className="group flex flex-col gap-1.5" ref={rootRef}>
+      {label && <label className="field-label">{label}</label>}
       <div
         className={cn(
-          "flex items-stretch rounded-xl border border-border-soft bg-surface transition-all duration-200",
-          "focus-within:border-brand-400 focus-within:ring-4 focus-within:ring-brand-100 dark:focus-within:ring-brand-900/30",
-          error && "border-danger focus-within:border-danger focus-within:ring-danger/10"
+          "field-shell flex min-h-12 items-stretch"
         )}
+        data-invalid={error ? "true" : undefined}
+        data-valid={valid && !error ? "true" : undefined}
       >
         <button
           type="button"
           onClick={() => setOpen((o) => !o)}
-          className="flex shrink-0 cursor-pointer items-center gap-1.5 rounded-l-xl border-r border-border-soft px-3 py-2.5 text-sm transition-colors hover:bg-surface-2"
+          className="flex shrink-0 cursor-pointer items-center gap-1.5 rounded-l-[0.8rem] border-r border-border-soft px-3.5 text-sm font-medium transition-colors hover:bg-brand-50 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-brand-500"
         >
           <span className="text-base leading-none">{flagEmoji(country)}</span>
           <span className="text-muted">+{getCountryCallingCode(country)}</span>
@@ -149,8 +160,9 @@ export function PhoneInput({ label, hint, error, value, onChange, onCountryChang
             emit(country, digits);
           }}
           onBlur={onBlur}
-          className="w-full min-w-0 rounded-r-xl bg-transparent px-4 py-2.5 text-sm text-foreground placeholder:text-muted outline-none"
+          className="w-full min-w-0 rounded-r-[0.8rem] bg-transparent px-4 py-2.5 text-[0.9375rem] text-foreground placeholder:text-muted/70 outline-none"
         />
+        {valid && !error && <CheckCircle2 aria-hidden="true" className="mr-3.5 h-4 w-4 shrink-0 self-center text-success" />}
       </div>
 
       <AnimatePresence>
@@ -204,9 +216,9 @@ export function PhoneInput({ label, hint, error, value, onChange, onCountryChang
       </AnimatePresence>
 
       {error ? (
-        <span className="text-xs font-medium text-danger">{error}</span>
+        <span role="alert" className="field-message font-medium text-danger"><AlertCircle className="h-3.5 w-3.5 shrink-0" aria-hidden="true" />{error}</span>
       ) : hint ? (
-        <span className="text-xs text-muted">{hint}</span>
+        <span className="field-message text-muted">{hint}</span>
       ) : null}
     </div>
   );

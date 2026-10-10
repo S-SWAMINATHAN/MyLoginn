@@ -1,6 +1,6 @@
 /** Single source of truth for MyLoginn contact details (used by the contact page and footer). */
 
-export const CONTACT_EMAIL = "mailloginn@gmail.com";
+export const CONTACT_EMAIL = "contact@myloginn.com";
 
 export const CONTACT_PHONES = [
   { display: "96555 60555", tel: "+919655560555" },

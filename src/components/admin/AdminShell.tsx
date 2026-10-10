@@ -297,7 +297,7 @@ export function AdminShell({ user, children }: { user: AdminNavUser; children: R
               <button
                 onClick={() => setDrawerOpen(false)}
                 aria-label="Close menu"
-                className="absolute right-3 top-4 cursor-pointer rounded-full p-1.5 transition-transform duration-200 hover:scale-110 active:scale-90"
+                className="absolute right-3 top-4 cursor-pointer rounded-full p-1.5 text-danger transition-transform duration-200 hover:scale-110 hover:bg-danger/10 active:scale-90"
               >
                 <AnimatedClose className="h-5 w-5" />
               </button>

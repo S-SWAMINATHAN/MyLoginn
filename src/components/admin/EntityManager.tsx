@@ -413,7 +413,7 @@ export function EntityManager({ config }: { config: EntityConfig }) {
           </div>
           {formError && <p className="mt-4 rounded-xl bg-danger/10 px-3.5 py-2.5 text-sm text-danger">{formError}</p>}
           <div className="mt-6 flex flex-wrap justify-end gap-3">
-            <Button size="sm" variant="ghost" onClick={closeForm}>
+            <Button size="sm" variant="cancel" onClick={closeForm}>
               Cancel
             </Button>
             <Button size="sm" type="submit">
@@ -482,7 +482,7 @@ export function EntityManager({ config }: { config: EntityConfig }) {
             ))}
           </div>
           <div className="mt-6 flex flex-wrap justify-end gap-3">
-            <Button size="sm" variant="ghost" onClick={() => setBulkOpen(false)}>
+            <Button size="sm" variant="cancel" onClick={() => setBulkOpen(false)}>
               Cancel
             </Button>
             <Button size="sm" type="submit" disabled={!(bulkFields ?? []).some((f) => String(bulkValues[f.name] ?? "").trim() !== "")}>

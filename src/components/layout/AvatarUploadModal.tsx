@@ -189,7 +189,7 @@ export function AvatarUploadModal({ open, onClose }: { open: boolean; onClose: (
           >
             <div className="flex items-center justify-between">
               <h2 id="avatar-dialog-title" className="text-lg font-semibold">Update profile photo</h2>
-              <button onClick={handleClose} className="group cursor-pointer rounded-full p-1.5 hover:bg-surface-2" aria-label="Close">
+              <button onClick={handleClose} className="group cursor-pointer rounded-full p-1.5 text-danger hover:bg-danger/10" aria-label="Close">
                 <X className="h-5.5 w-5.5 transition-transform duration-300 group-hover:rotate-90" />
               </button>
             </div>
@@ -215,7 +215,7 @@ export function AvatarUploadModal({ open, onClose }: { open: boolean; onClose: (
                   {error && <p className="text-sm text-danger">{error}</p>}
                   <div className="flex w-full gap-3">
                     <Button
-                      variant="secondary"
+                      variant="cancel"
                       className="flex-1"
                       onClick={() => {
                         stopCamera();

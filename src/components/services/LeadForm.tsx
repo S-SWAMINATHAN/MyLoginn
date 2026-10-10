@@ -13,17 +13,20 @@ import { Button } from "@/components/ui/Button";
 import { GlassCard } from "@/components/ui/Card";
 import { AnimatedSuccess } from "@/components/ui/icons/AnimatedSuccess";
 import { cn } from "@/lib/cn";
+import { suggestEmail } from "@/lib/emailCheck";
 
 function LeadPhoneField({
   control,
   label,
   hint,
   error,
+  valid,
 }: {
   control: Control<LeadInput>;
   label?: string;
   hint?: string;
   error?: string;
+  valid?: boolean;
 }) {
   return (
     <Controller
@@ -34,6 +37,7 @@ function LeadPhoneField({
           label={label}
           hint={hint}
           error={error}
+          valid={valid}
           value={field.value ?? ""}
           onChange={field.onChange}
           onBlur={field.onBlur}
@@ -55,7 +59,7 @@ function FieldRow({
   return (
     <div className="flex flex-col gap-1.5">
       <div className="flex items-center justify-between">
-        <span className="text-sm font-medium text-foreground">{label}</span>
+        <span className="field-label">{label}</span>
         <AnimatePresence>
           {valid && (
             <motion.span
@@ -88,6 +92,7 @@ export function LeadForm({
   const [whatsappLink, setWhatsappLink] = useState<string | null>(null);
   const [serverError, setServerError] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
+  const [openedAt] = useState(() => Date.now());
 
   const isDynamic = variant === "dynamic";
   const isContact = variant === "contact";
@@ -109,14 +114,20 @@ export function LeadForm({
     register,
     handleSubmit,
     control,
+    setValue,
     formState: { errors },
   } = useForm<LeadInput>({
     resolver: zodResolver(leadSchema),
-    mode: isDynamic ? "onChange" : "onSubmit",
+    mode: isDynamic ? "onChange" : "onTouched",
     defaultValues: { service },
   });
 
   const values = useWatch({ control });
+  const ok = (key: "name" | "email" | "phone" | "company") => Boolean(values[key]) && !errors[key] && leadSchema.shape[key].safeParse(values[key]).success;
+  const emailSuggestion = values.email && ok("email") ? suggestEmail(values.email) : null;
+  const emailHint = emailSuggestion
+    ? <>Did you mean <button type="button" onClick={() => setValue("email", emailSuggestion, { shouldValidate: true })} className="font-semibold text-brand-700 underline underline-offset-2 hover:text-brand-600">{emailSuggestion}</button>?</>
+    : undefined;
   const fieldValid = {
     name: Boolean(values.name) && !errors.name,
     email: Boolean(values.email) && !errors.email,
@@ -129,7 +140,7 @@ export function LeadForm({
       const res = await fetch("/api/leads", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(data),
+        body: JSON.stringify({ ...data, startedAt: openedAt }),
       });
       const json = await res.json();
       if (!res.ok) {
@@ -167,43 +178,46 @@ export function LeadForm({
           )}
         </motion.div>
       ) : (
-        <form onSubmit={handleSubmit(onSubmit)} className="relative flex flex-col gap-4">
+        <form onSubmit={handleSubmit(onSubmit)} className="relative flex flex-col gap-5">
           <div className="flex flex-col gap-1">
-            <h3 className="text-xl font-semibold tracking-tight">{isContact ? contactTitle : "Tell us about your project or enquiry"}</h3>
+            <span aria-hidden="true" className="mb-2 flex h-1 w-16 gap-0.5 overflow-hidden rounded-full"><i className="flex-1 bg-[#2563eb]" /><i className="flex-1 bg-[#7c3aed]" /><i className="flex-1 bg-[#059669]" /><i className="flex-1 bg-[#d97706]" /><i className="flex-1 bg-[#e11d48]" /></span><h3 className="text-xl font-semibold tracking-tight sm:text-2xl">{isContact ? contactTitle : "Tell us about your project or enquiry"}</h3>
             {isContact && <p className="text-sm text-muted">{contactDescription}</p>}
           </div>
 
           <input type="hidden" {...register("service")} />
+          <div aria-hidden="true" className="absolute -left-[9999px] h-0 w-0 overflow-hidden"><label>Leave this field empty<input type="text" tabIndex={-1} autoComplete="off" {...register("website")} /></label></div>
 
           {isContact ? (
             <>
               <div className="grid gap-4 sm:grid-cols-2">
-                <Input label="Full Name" placeholder="Your full name" {...register("name")} error={errors.name?.message} />
-                <Input label="Work Email" type="email" placeholder="you@company.com" {...register("email")} error={errors.email?.message} />
+                <Input label="Full Name" placeholder="Your full name" autoComplete="name" maxLength={80} valid={ok("name")} {...register("name")} error={errors.name?.message} />
+                <Input label="Work Email" type="email" placeholder="you@company.com" autoComplete="email" inputMode="email" valid={ok("email")} hint={emailHint} {...register("email")} error={errors.email?.message} />
               </div>
-              <LeadPhoneField control={control} label="Phone (WhatsApp)" hint={contactPhoneHint} error={errors.phone?.message} />
+              <LeadPhoneField control={control} label="Phone (WhatsApp)" hint={contactPhoneHint} valid={ok("phone")} error={errors.phone?.message} />
               {contactMode === "enquiry" ? (
                 <>
-                  <Input label="Company (optional)" placeholder="Your company name" {...register("company")} />
-                  <Textarea label="Tell us about your goals" rows={2} placeholder="What are you hoping to achieve?" {...register("goals")} />
-                  <Textarea label="Tell us about your project / enquiry" rows={3} placeholder="Share details about your project or enquiry..." {...register("message")} />
+                  <Input label="Company (optional)" placeholder="Your company name" autoComplete="organization" maxLength={100} {...register("company")} error={errors.company?.message} />
+                  <Textarea label="Tell us about your goals" rows={2} maxLength={1000} placeholder="What are you hoping to achieve?" {...register("goals")} error={errors.goals?.message} />
+                  <Textarea label="Tell us about your project / enquiry" rows={3} maxLength={1000} placeholder="Share details about your project or enquiry..." {...register("message")} error={errors.message?.message} />
                 </>
               ) : (
                 <Textarea
                   label={contactMode === "feedback" ? "Your feedback" : "Course and payment question"}
                   rows={4}
+                  maxLength={1000}
                   placeholder={contactMode === "feedback" ? "Share your feedback..." : "Which course are you interested in, and what would you like to know?"}
                   {...register("message")}
+                  error={errors.message?.message}
                 />
               )}
             </>
           ) : isDynamic ? (
             <>
               <FieldRow label="Full name" valid={fieldValid.name}>
-                <Input placeholder="Your name" {...register("name")} error={errors.name?.message} />
+                <Input placeholder="Your name" autoComplete="name" maxLength={80} {...register("name")} error={errors.name?.message} />
               </FieldRow>
               <FieldRow label="Work email" valid={fieldValid.email}>
-                <Input type="email" placeholder="you@company.com" {...register("email")} error={errors.email?.message} />
+                <Input type="email" placeholder="you@company.com" autoComplete="email" inputMode="email" hint={emailHint} {...register("email")} error={errors.email?.message} />
               </FieldRow>
               <FieldRow label="Phone (WhatsApp)" valid={fieldValid.phone}>
                 <LeadPhoneField
@@ -212,21 +226,22 @@ export function LeadForm({
                   error={errors.phone?.message}
                 />
               </FieldRow>
-              <Input label="Company (optional)" placeholder="Company name" {...register("company")} />
-              <Textarea label="Tell us about your goals (optional)" rows={3} placeholder="What are you hoping to achieve?" {...register("message")} />
+              <Input label="Company (optional)" placeholder="Company name" autoComplete="organization" maxLength={100} {...register("company")} error={errors.company?.message} />
+              <Textarea label="Tell us about your goals (optional)" rows={3} maxLength={1000} placeholder="What are you hoping to achieve?" {...register("message")} error={errors.message?.message} />
             </>
           ) : (
             <>
-              <Input label="Full name" placeholder="Your name" {...register("name")} error={errors.name?.message} />
-              <Input label="Work email" type="email" placeholder="you@company.com" {...register("email")} error={errors.email?.message} />
+              <Input label="Full name" placeholder="Your name" autoComplete="name" maxLength={80} valid={ok("name")} {...register("name")} error={errors.name?.message} />
+              <Input label="Work email" type="email" placeholder="you@company.com" autoComplete="email" inputMode="email" valid={ok("email")} hint={emailHint} {...register("email")} error={errors.email?.message} />
               <LeadPhoneField
                 control={control}
                 label="Phone (WhatsApp)"
                 hint="Add a WhatsApp number if you would like to continue the enquiry there."
+                valid={ok("phone")}
                 error={errors.phone?.message}
               />
-              <Input label="Company (optional)" placeholder="Company name" {...register("company")} />
-              <Textarea label="Tell us about your goals (optional)" rows={3} placeholder="What are you hoping to achieve?" {...register("message")} />
+              <Input label="Company (optional)" placeholder="Company name" autoComplete="organization" maxLength={100} {...register("company")} error={errors.company?.message} />
+              <Textarea label="Tell us about your goals (optional)" rows={3} maxLength={1000} placeholder="What are you hoping to achieve?" {...register("message")} error={errors.message?.message} />
             </>
           )}
 

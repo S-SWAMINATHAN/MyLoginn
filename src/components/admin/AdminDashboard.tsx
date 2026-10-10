@@ -276,7 +276,7 @@ function CoursesTab({ courses }: { courses: AdminCourse[] }) {
             <Button size="sm" onClick={handleCreate} disabled={saving}>
               {saving ? "Saving…" : "Create course"}
             </Button>
-            <Button size="sm" variant="ghost" onClick={() => setShowForm(false)}>
+            <Button size="sm" variant="cancel" onClick={() => setShowForm(false)}>
               Cancel
             </Button>
           </div>
@@ -440,7 +440,7 @@ function ProjectsTab({ projects }: { projects: AdminProject[] }) {
                   <Button size="sm" onClick={() => saveFeedback(p.id)}>
                     Save
                   </Button>
-                  <Button size="sm" variant="ghost" onClick={() => setEditing(null)}>
+                  <Button size="sm" variant="cancel" onClick={() => setEditing(null)}>
                     Cancel
                   </Button>
                 </div>

@@ -1,5 +1,5 @@
 ﻿import type { Metadata } from "next";
-import localFont from "next/font/local";
+import { JetBrains_Mono, Plus_Jakarta_Sans, Sora } from "next/font/google";
 import { MotionConfig } from "framer-motion";
 import "./globals.css";
 import { ThemeProvider } from "@/components/layout/ThemeProvider";
@@ -10,21 +10,26 @@ import { ProjectRequestModal } from "@/components/services/ProjectRequestModal";
 import { Footer } from "@/components/layout/Footer";
 import { PageTransition } from "@/components/layout/PageTransition";
 import { HideOnAdmin } from "@/components/layout/HideOnAdmin";
+import { Breadcrumbs } from "@/components/layout/Breadcrumbs";
 import { getCurrentUser } from "@/lib/auth";
 import { siteUrl } from "@/lib/site";
 
-const geistSans = localFont({
-  src: "./fonts/geist-latin.woff2",
-  variable: "--font-geist-sans",
+const fontSans = Plus_Jakarta_Sans({
+  subsets: ["latin"],
+  variable: "--font-sans-body",
   display: "swap",
-  weight: "100 900",
 });
 
-const geistMono = localFont({
-  src: "./fonts/geist-mono-latin.woff2",
-  variable: "--font-geist-mono",
+const fontDisplay = Sora({
+  subsets: ["latin"],
+  variable: "--font-display-face",
   display: "swap",
-  weight: "100 900",
+});
+
+const fontMono = JetBrains_Mono({
+  subsets: ["latin"],
+  variable: "--font-mono-code",
+  display: "swap",
 });
 
 export const metadata: Metadata = {
@@ -82,13 +87,16 @@ export default async function RootLayout({
       lang="en"
       suppressHydrationWarning
       data-scroll-behavior="smooth"
-      className={`${geistSans.variable} ${geistMono.variable} min-h-full antialiased`}
+      className={`${fontSans.variable} ${fontDisplay.variable} ${fontMono.variable} min-h-full antialiased`}
     >
       <body className="min-h-screen flex flex-col">
         <MotionConfig reducedMotion="user">
           <ThemeProvider>
             <HideOnAdmin>
               <Navbar user={navUser} />
+            </HideOnAdmin>
+            <HideOnAdmin>
+              <Breadcrumbs />
             </HideOnAdmin>
             <main className="flex-1">
               <PageTransition>{children}</PageTransition>

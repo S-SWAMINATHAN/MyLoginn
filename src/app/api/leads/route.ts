@@ -7,6 +7,11 @@ import { WHATSAPP_PHONE } from "@/lib/contactInfo";
 export async function POST(req: Request) {
   try {
     const body = await req.json();
+    // Spam traps: bots fill the hidden field or submit within moments of the form loading.
+    if (typeof body?.website === "string" && body.website.length > 0) return NextResponse.json({ lead: null, whatsappLink: null });
+    if (typeof body?.startedAt === "number" && Date.now() - body.startedAt < 2500) {
+      return NextResponse.json({ error: "Please take a moment to review your details, then send again." }, { status: 429 });
+    }
     const parsed = leadSchema.safeParse(body);
     if (!parsed.success) {
       return NextResponse.json({ error: parsed.error.issues[0]?.message ?? "Invalid input" }, { status: 400 });

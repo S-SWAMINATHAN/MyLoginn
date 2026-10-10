@@ -137,7 +137,7 @@ export function AccountSettings({ email: initialEmail, emailVerified: initialEma
             {busy ? <LoaderCircle className="h-4 w-4 animate-spin" /> : <ShieldCheck className="h-4 w-4" />}
             {busy ? "Sending code…" : "Save and verify"}
           </Button>
-          <Button size="sm" variant="ghost" onClick={() => { setEditing(null); setError(null); }} disabled={busy}><X className="h-4 w-4" /> Cancel</Button>
+          <Button size="sm" variant="cancel" onClick={() => { setEditing(null); setError(null); }} disabled={busy}><X className="h-4 w-4" /> Cancel</Button>
         </div>
         {error && <p role="alert" className="text-xs font-medium text-danger">{error}</p>}
       </div>}
@@ -152,7 +152,7 @@ export function AccountSettings({ email: initialEmail, emailVerified: initialEma
             {busy ? "Verifying…" : "Verify code"}
           </Button>
           <Button size="sm" variant="secondary" onClick={() => requestCode(field, pending.value)} disabled={busy}>Send another code</Button>
-          <Button size="sm" variant="ghost" onClick={cancelPending} disabled={busy}><X className="h-4 w-4" /> Cancel</Button>
+          <Button size="sm" variant="cancel" onClick={cancelPending} disabled={busy}><X className="h-4 w-4" /> Cancel</Button>
         </div>
       </div>}
 

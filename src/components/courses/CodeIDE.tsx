@@ -1,7 +1,7 @@
 "use client";
 
 import Image from "next/image";
-import { Check, CircleDashed, Copy, FileCode2, Keyboard, Lightbulb, ListChecks, Moon, Play, RotateCcw, Send, Sun, Terminal, X, BookOpenCheck, Eye } from "lucide-react";
+import { Check, CircleDashed, Gift, Lock, LockOpen, Copy, FileCode2, Keyboard, Lightbulb, ListChecks, Moon, Play, RotateCcw, Send, Sun, Terminal, X, BookOpenCheck, Eye } from "lucide-react";
 import { useEffect, useMemo, useRef, useState } from "react";
 import { deriveChecks, evaluateChecks } from "@/lib/challengeChecks";
 
@@ -64,6 +64,7 @@ export function CodeIDE({ courseSlug, courseTitle, topicSlug, moduleTitle, isLas
   const [cursor, setCursor] = useState({ line: 1, col: 1 });
   const [revealedHints, setRevealedHints] = useState(1);
   const [submitted, setSubmitted] = useState(false);
+  const [unlock, setUnlock] = useState<{ loggedIn: boolean; unlocked: boolean; cost: number; points: number; busy: boolean; error: string }>({ loggedIn: true, unlocked: false, cost: 8, points: 0, busy: false, error: "" });
   const editorRef = useRef<HTMLTextAreaElement>(null);
   const runtimeRef = useRef<PythonRuntime | null>(null);
   const runtimePromiseRef = useRef<Promise<PythonRuntime> | null>(null);
@@ -74,6 +75,33 @@ export function CodeIDE({ courseSlug, courseTitle, topicSlug, moduleTitle, isLas
   const checks = useMemo(() => deriveChecks(courseSlug, solutionCode, kind), [courseSlug, solutionCode, kind]);
   const evaluation = useMemo(() => evaluateChecks(courseSlug, checks, source), [courseSlug, checks, source]);
   const metCount = evaluation.results.filter((result) => result.passed).length;
+
+  const solutionApi = `/api/courses/${courseSlug}/topics/${topicSlug}/solution`;
+
+  // Learn whether this solution was already unlocked, so it is never charged twice.
+  useEffect(() => {
+    let cancelled = false;
+    fetch(solutionApi).then((response) => response.ok ? response.json() : null).then((data) => {
+      if (cancelled || !data) return;
+      setUnlock((current) => ({ ...current, loggedIn: data.loggedIn, unlocked: data.unlocked, cost: data.cost, points: data.points }));
+    }).catch(() => { /* The lock panel still works; it re-checks on unlock. */ });
+    return () => { cancelled = true; };
+  }, [solutionApi]);
+
+  async function unlockSolution() {
+    setUnlock((current) => ({ ...current, busy: true, error: "" }));
+    try {
+      const response = await fetch(solutionApi, { method: "POST" });
+      const data = await response.json().catch(() => ({}));
+      if (!response.ok) {
+        setUnlock((current) => ({ ...current, busy: false, error: data.error || "Could not unlock the solution.", points: typeof data.points === "number" ? data.points : current.points }));
+        return;
+      }
+      setUnlock((current) => ({ ...current, busy: false, unlocked: true, points: data.points, cost: data.cost }));
+    } catch {
+      setUnlock((current) => ({ ...current, busy: false, error: "Could not unlock the solution. Check your connection and try again." }));
+    }
+  }
 
   function clearResult(message: string) {
     setChallengePassed(false);
@@ -358,7 +386,7 @@ export function CodeIDE({ courseSlug, courseTitle, topicSlug, moduleTitle, isLas
 
   const consolePanel = consoleTab === "output"
     ? previewDocument ? <div><div className="flex items-center gap-2 border-b border-slate-200 bg-slate-100 px-3 py-2"><span className="flex gap-1.5" aria-hidden="true"><i className="h-2.5 w-2.5 rounded-full bg-red-400" /><i className="h-2.5 w-2.5 rounded-full bg-amber-400" /><i className="h-2.5 w-2.5 rounded-full bg-emerald-400" /></span><span className="flex-1 truncate rounded-md bg-white px-3 py-1 text-[11px] text-slate-500">localhost:3000/preview · {htmlCourse ? "HTML" : "CSS"}</span></div><iframe title={`${htmlCourse ? "HTML" : "CSS"} challenge preview`} sandbox="" srcDoc={previewDocument} className="h-64 w-full bg-white" /></div>
-      : showDiff ? <ol className="py-3 font-mono text-[13px] leading-6" aria-live="polite">{outputLines.map((line, index) => { const ok = line === (expectedLines[index] ?? null); return <li key={index} className={`grid grid-cols-[2.75rem_1.25rem_1fr] pr-4 ${ok ? light ? "text-emerald-800" : "text-emerald-200" : light ? "bg-rose-50 text-rose-800" : "bg-rose-500/10 text-rose-200"}`}><span aria-hidden="true" className={`select-none pr-3 text-right ${mutedText}`}>{index + 1}</span><span aria-hidden="true">{ok ? <Check className="mt-1 h-3.5 w-3.5" /> : <X className="mt-1 h-3.5 w-3.5" />}</span><span className="whitespace-pre-wrap break-words">{line || " "}</span></li>; })}</ol>
+      : showDiff ? <ol className="py-3 font-mono text-[13px] leading-6" aria-live="polite">{outputLines.map((line, index) => { const ok = line === (expectedLines[index] ?? null); return <li key={index} className={`grid grid-cols-[2.75rem_1.25rem_1fr] pr-4 ${ok ? light ? "text-emerald-800" : "text-emerald-200" : light ? "bg-rose-50 text-rose-800" : "bg-rose-500/10 text-rose-200"}`}><span aria-hidden="true" className={`select-none pr-3 text-right ${mutedText}`}>{index + 1}</span><span aria-hidden="true">{!ok && <X className="mt-1 h-3.5 w-3.5" />}</span><span className="whitespace-pre-wrap break-words">{line || " "}</span></li>; })}</ol>
       : <pre className={`min-h-24 overflow-auto whitespace-pre-wrap p-4 font-mono text-[13px] leading-6 ${hasError ? light ? "text-rose-900" : "text-rose-100" : challengePassed ? light ? "text-emerald-900" : "text-emerald-100" : mutedText}`} aria-live="polite">{output || (challengePassed ? "Correct output" : "Run your code to see its output here.")}</pre>
     : consoleTab === "expected" ? <div className={light ? "text-emerald-900" : "text-emerald-200"}><CodeListing code={expectedOutput} light={light} /></div>
     : needsInput ? <div className="p-3"><label htmlFor="lesson-stdin" className={`mb-1.5 block text-[11px] ${mutedText}`}>The program reads these lines from input. Edit them to test your own values.</label><textarea id="lesson-stdin" rows={Math.max(stdin.split("\n").length, 2)} value={stdin} onChange={(event) => { setStdin(event.target.value); clearResult("Input changed · ready to run"); }} placeholder="Type the input your program asks for" className={`w-full resize-none rounded-lg border px-3 py-2 font-mono text-xs leading-5 ${editorTheme} ${light ? "placeholder:text-slate-400" : "placeholder:text-slate-500"}`} /></div>
@@ -420,7 +448,7 @@ export function CodeIDE({ courseSlug, courseTitle, topicSlug, moduleTitle, isLas
                 <svg width="64" height="64" viewBox="0 0 64 64" className="shrink-0 -rotate-90" role="img" aria-label={`${percent}% of requirements met`}>
                   <circle cx="32" cy="32" r={ringRadius} fill="none" strokeWidth="6" className={light ? "stroke-slate-200" : "stroke-slate-700"} />
                   <circle cx="32" cy="32" r={ringRadius} fill="none" strokeWidth="6" strokeLinecap="round" stroke="var(--brand-600)" strokeDasharray={ringLength} strokeDashoffset={ringLength * (1 - percent / 100)} className="transition-all duration-700" />
-                  
+                  <path d="M21.5 33l7.5 7.5L43 25" transform="rotate(90 32 32)" fill="none" strokeWidth="5" strokeLinecap="round" strokeLinejoin="round" stroke={percent === 100 ? "var(--brand-600)" : light ? "#cbd5e1" : "#475569"} className="transition-colors duration-500" />
                 </svg>
                 <div><p className="inline-flex items-center gap-1.5 text-[11px] font-bold uppercase tracking-wider"><ListChecks className="h-3.5 w-3.5" aria-hidden="true" />Requirements</p><p className="mt-1 text-2xl font-bold tabular-nums">{metCount}<span className={`text-sm font-semibold ${mutedText}`}>/{checks.length} met</span></p></div>
               </div>
@@ -436,6 +464,21 @@ export function CodeIDE({ courseSlug, courseTitle, topicSlug, moduleTitle, isLas
           {revealedHints < hints.length && <button type="button" onClick={() => setRevealedHints((count) => count + 1)} className={`mt-4 inline-flex items-center gap-2 rounded-full border px-4 py-2 text-xs font-bold transition ${ghostButton}`}><Lightbulb className="h-3.5 w-3.5 text-amber-400" aria-hidden="true" />Reveal next hint</button>}
         </div>
 
+        : !unlock.unlocked ? <div className={`mx-auto max-w-xl p-4 sm:p-8 ${light ? "text-slate-700" : "text-slate-300"}`}>
+          <div className={`rounded-2xl border p-6 text-center sm:p-8 ${cardTheme}`}>
+            <span className={`mx-auto grid h-14 w-14 place-items-center rounded-2xl ${light ? "bg-amber-100 text-amber-700" : "bg-amber-400/15 text-amber-300"}`}><Lock className="h-7 w-7" aria-hidden="true" /></span>
+            <h3 className={`mt-4 text-lg font-bold ${light ? "text-slate-900" : "text-white"}`}>Solution locked</h3>
+            <p className={`mt-2 text-sm leading-6 ${mutedText}`}>Try the challenge and the hints first. If you are still stuck, unlock the reference solution with reward points. You only pay once for this challenge.</p>
+            <div className={`mt-5 inline-flex items-center gap-2 rounded-full border px-4 py-2 text-sm font-semibold ${light ? "border-amber-200 bg-amber-50 text-amber-800" : "border-amber-400/25 bg-amber-400/10 text-amber-200"}`}><Gift className="h-4 w-4" aria-hidden="true" />Costs {unlock.cost} reward points{unlock.loggedIn ? ` · You have ${unlock.points}` : ""}</div>
+            <div className="mt-5">
+              {unlock.loggedIn
+                ? <button type="button" onClick={unlockSolution} disabled={unlock.busy || unlock.points < unlock.cost} className="inline-flex items-center gap-2 rounded-full bg-brand-600 px-6 py-2.5 text-sm font-bold text-white shadow-lg transition hover:bg-brand-700 disabled:cursor-not-allowed disabled:opacity-50"><LockOpen className="h-4 w-4" aria-hidden="true" />{unlock.busy ? "Unlocking…" : `Unlock for ${unlock.cost} points`}</button>
+                : <a href="/login" className="inline-flex items-center gap-2 rounded-full bg-brand-600 px-6 py-2.5 text-sm font-bold text-white shadow-lg transition hover:bg-brand-700">Log in to unlock</a>}
+            </div>
+            {unlock.loggedIn && unlock.points < unlock.cost && !unlock.busy && <p className={`mt-3 text-xs ${mutedText}`}>You need {unlock.cost - unlock.points} more points. Passing challenges earns 10 points each.</p>}
+            {unlock.error && <p role="alert" className="mt-3 text-xs font-semibold text-rose-400">{unlock.error}</p>}
+          </div>
+        </div>
         : <div className={`grid gap-4 p-3 sm:p-4 xl:grid-cols-[minmax(0,1.6fr)_minmax(0,1fr)] ${light ? "text-slate-700" : "text-slate-300"}`}>
           <div className={`min-w-0 overflow-hidden rounded-2xl border ${cardTheme}`}>
             <div className={`flex items-center justify-between gap-3 border-b px-3 py-2 ${cardHead}`}><div className="flex items-center gap-2"><span className="flex gap-1" aria-hidden="true"><i className="h-2.5 w-2.5 rounded-full bg-rose-400" /><i className="h-2.5 w-2.5 rounded-full bg-amber-400" /><i className="h-2.5 w-2.5 rounded-full bg-emerald-400" /></span><span className="font-mono text-[11px] font-semibold">solution · {filename}</span></div><button type="button" onClick={copySolution} className={`inline-flex items-center gap-1.5 rounded-full border px-2.5 py-1 text-[11px] font-semibold transition ${ghostButton}`}>{copied ? <Check className="h-3 w-3" /> : <Copy className="h-3 w-3" />}{copied ? "Copied" : "Copy"}</button></div>

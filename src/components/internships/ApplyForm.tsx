@@ -56,7 +56,7 @@ export function ApplyForm({ internshipId }: { internshipId: string }) {
   return (
     <form onSubmit={handleSubmit} className="flex flex-col gap-3.5">
       <div>
-        <label htmlFor="resumeName" className="text-xs font-medium text-foreground/80">
+        <label htmlFor="resumeName" className="field-label">
           Resume file name (optional)
         </label>
         <input
@@ -64,12 +64,12 @@ export function ApplyForm({ internshipId }: { internshipId: string }) {
           value={resumeName}
           onChange={(e) => setResumeName(e.target.value)}
           placeholder="resume.pdf"
-          className="mt-1.5 w-full rounded-xl border border-border-soft bg-surface px-3.5 py-2.5 text-sm outline-none transition-shadow duration-300 focus:border-brand-400 focus:ring-4 focus:ring-brand-100 dark:focus:ring-brand-900/30"
+          className="field-control mt-1.5"
         />
       </div>
 
       <div>
-        <label htmlFor="coverNote" className="text-xs font-medium text-foreground/80">
+        <label htmlFor="coverNote" className="field-label">
           Why you&apos;re a good fit (optional)
         </label>
         <textarea
@@ -79,7 +79,7 @@ export function ApplyForm({ internshipId }: { internshipId: string }) {
           rows={4}
           maxLength={1500}
           placeholder="A few lines about relevant projects or skills…"
-          className="mt-1.5 w-full resize-none rounded-xl border border-border-soft bg-surface px-3.5 py-2.5 text-sm outline-none transition-shadow duration-300 focus:border-brand-400 focus:ring-4 focus:ring-brand-100 dark:focus:ring-brand-900/30"
+          className="field-control mt-1.5"
         />
       </div>
 

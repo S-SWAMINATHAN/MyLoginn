@@ -1,5 +1,6 @@
 import { z } from "zod";
 import { isValidPhoneNumber } from "libphonenumber-js";
+import { isDisposableEmail } from "@/lib/emailCheck";
 
 export const phoneSchema = z
   .string()
@@ -10,6 +11,13 @@ export const phoneSchema = z
 
 export const emailSchema = z.string().trim().toLowerCase().email("Enter a valid email address");
 
+// Used wherever we need a real inbox to reply to: rejects throwaway-mail domains.
+export const contactEmailSchema = emailSchema.refine((value) => !isDisposableEmail(value), { message: "Please use a permanent email address, not a temporary inbox" });
+
+export const personNameSchema = z.string().trim().min(2, "Enter your full name").max(80, "Name is too long").regex(/^[p{L}][p{L}s.'-]*$/u, "Use letters only (spaces, dots and hyphens are fine)");
+
+const detailsSchema = z.string().trim().max(1000, "Keep this under 1000 characters").refine((value) => value === "" || value.length >= 10, { message: "Add a few more details (at least 10 characters)" }).optional().or(z.literal(""));
+
 export const passwordSchema = z
   .string()
   .min(8, "Password must be at least 8 characters")
@@ -18,8 +26,8 @@ export const passwordSchema = z
 
 export const signupSchema = z
   .object({
-    name: z.string().trim().min(2, "Enter your full name"),
-    email: emailSchema,
+    name: personNameSchema,
+    email: contactEmailSchema,
     phone: phoneSchema,
     country: z.string().trim().length(2).optional(),
     password: passwordSchema,
@@ -52,22 +60,25 @@ export const otpVerifySchema = z.object({
 });
 
 export const leadSchema = z.object({
-  name: z.string().trim().min(2, "Enter your full name"),
-  email: emailSchema,
+  name: personNameSchema,
+  email: contactEmailSchema,
   phone: phoneSchema,
-  company: z.string().trim().optional().or(z.literal("")),
-  goals: z.string().trim().max(1000).optional().or(z.literal("")),
+  company: z.string().trim().max(100, "Company name is too long").optional().or(z.literal("")),
+  goals: detailsSchema,
   service: z.string().min(1, "Select a service"),
-  message: z.string().trim().max(1000).optional().or(z.literal("")),
+  message: detailsSchema,
+  // Spam trap: real visitors never see or fill this field, and fast submissions are treated as bots.
+  website: z.string().max(0).optional(),
+  startedAt: z.number().optional(),
 });
 
 const optionalText = z.string().trim().max(500).optional().or(z.literal(""));
 
 export const projectRequestSchema = z.object({
   service: z.enum(["web", "mobile", "software", "marketing"]),
-  name: z.string().trim().min(2, "Enter your full name").max(100),
+  name: personNameSchema,
   company: optionalText,
-  email: emailSchema,
+  email: contactEmailSchema,
   phone: phoneSchema,
   whatsapp: optionalText,
   preferredContact: z.enum(["Phone", "WhatsApp", "Email"]).optional(),

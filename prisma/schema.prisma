@@ -44,6 +44,7 @@ model User {
   payments               Payment[]
   dailyActivities        DailyActivity[]
   pointsTransactions     PointsTransaction[]
+  solutionUnlocks        SolutionUnlock[]
   courseTopicProgress    CourseTopicProgress[]
 }
 
@@ -70,6 +71,23 @@ model PointsTransaction {
   user User @relation(fields: [userId], references: [id])
 
   @@index([userId, createdAt])
+}
+
+/// A learner spent reward points to reveal a challenge's reference solution.
+/// One row per topic, so the solution stays unlocked without charging again.
+model SolutionUnlock {
+  id        String   @id @default(cuid())
+  userId    String
+  courseId  String
+  topicSlug String
+  cost      Int
+  createdAt DateTime @default(now())
+
+  user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
+  course Course @relation(fields: [courseId], references: [id], onDelete: Cascade)
+
+  @@unique([userId, courseId, topicSlug])
+  @@index([userId])
 }
 
 model ShowcaseProject {
@@ -124,6 +142,7 @@ model Course {
   payments           Payment[]
   visualExplanations VisualExplanation[]
   topicProgress      CourseTopicProgress[]
+  solutionUnlocks    SolutionUnlock[]
 }
 
 model VisualExplanation {

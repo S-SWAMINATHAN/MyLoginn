@@ -67,7 +67,7 @@ export function Modal({
               <button
                 onClick={onClose}
                 aria-label="Close"
-                className="ml-auto shrink-0 cursor-pointer rounded-full p-1.5 transition-transform duration-200 hover:scale-110 hover:bg-surface-2 active:scale-90"
+                className="ml-auto shrink-0 cursor-pointer rounded-full p-1.5 text-danger transition-transform duration-200 hover:scale-110 hover:bg-danger/10 active:scale-90"
               >
                 <AnimatedClose className="h-5 w-5" />
               </button>
@@ -140,7 +140,7 @@ export function ConfirmDialog({ state, onClose }: { state: ConfirmState; onClose
             <h3 className="mt-4 text-base font-semibold">{state.title}</h3>
             <div className="mt-1.5 text-sm text-muted">{state.message}</div>
             <div className="mt-6 flex justify-center gap-3">
-              <Button size="sm" variant="secondary" onClick={onClose} disabled={busy}>
+              <Button size="sm" variant="cancel" onClick={onClose} disabled={busy}>
                 Cancel
               </Button>
               <Button size="sm" variant={state.tone === "danger" ? "danger" : "primary"} onClick={run} disabled={busy}>

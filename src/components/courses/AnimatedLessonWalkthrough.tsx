@@ -1,7 +1,7 @@
 "use client";
 
 import Image from "next/image";
-import { Boxes, Braces, Check, ChevronRight, Cpu, GitBranch, Pause, Play, Repeat, RotateCcw, SkipBack, SkipForward, StickyNote, Terminal, Variable } from "lucide-react";
+import { Boxes, Braces, Check, ChevronRight, Cpu, GitBranch, Pause, Play, Repeat, RotateCcw, SkipBack, SkipForward, StickyNote, Terminal } from "lucide-react";
 import { useEffect, useRef, useState } from "react";
 
 type Step = { code: string; explanation: string };
@@ -96,7 +96,7 @@ function ArrayStage({ name, items, pointers }: { name: string; items: string[]; 
         const hue = here[0]?.hue;
         const height = numeric ? 28 + (Math.abs(Number(item)) / max) * 62 : 44;
         return <div key={index} className="flex min-w-0 flex-1 flex-col items-center" style={{ maxWidth: 64 }}>
-          <div key={`${index}-${here.map((p) => p.name).join()}`} className={`wt-cell flex w-full items-end justify-center rounded-lg border pb-1.5 font-mono text-sm font-bold ${hue ? "wt-cell-hot" : ""}`} style={{ height, ["--hue" as string]: hue ?? "#94a3b8", borderColor: hue ?? "rgba(148,163,184,.25)", background: hue ? `linear-gradient(180deg, ${hue}33, ${hue}0d)` : "rgba(148,163,184,.08)", color: hue ? "#0f172a" : "#475569" }}>{item}</div>
+          <div key={`${index}-${here.map((p) => p.name).join()}`} className={`wt-cell flex w-full items-end justify-center rounded-lg border pb-1.5 font-mono text-sm font-bold ${hue ? "wt-cell-hot" : ""}`} style={{ height, ["--hue" as string]: hue ?? "#94a3b8", borderColor: hue ?? "rgba(148,163,184,.25)", background: hue ? `${hue}26` : "rgba(148,163,184,.08)", color: hue ? "#0f172a" : "#475569" }}>{item}</div>
           <span className="mt-1.5 font-mono text-[10px] text-slate-500">{index}</span>
           <div className="flex min-h-5 flex-col items-center">{here.map((pointer) => <span key={pointer.name} className="wt-drop mt-0.5 rounded-md px-1.5 py-0.5 font-mono text-[10px] font-bold text-white" style={{ background: pointer.hue }}>▲ {pointer.name}</span>)}</div>
         </div>;
@@ -216,7 +216,7 @@ export function AnimatedLessonWalkthrough({ courseSlug = "", title, steps, outpu
   const kind = KIND_META[trace.currentKind];
   const KindIcon = kind.Icon;
   const stepMs = STEP_MS / speed;
-  const btn = "grid h-10 w-10 shrink-0 place-items-center rounded-full border border-slate-200 bg-white text-slate-700 transition hover:border-slate-300 hover:bg-slate-100 hover:text-slate-900 active:scale-95 disabled:cursor-not-allowed disabled:opacity-30 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-cyan-300";
+  const btn = "grid h-10 w-10 shrink-0 place-items-center rounded-full border border-slate-200 bg-white text-slate-700 transition hover:border-slate-300 hover:bg-slate-100 hover:text-slate-900 active:scale-95 disabled:cursor-not-allowed disabled:opacity-30 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-500";
 
   function handleKeyDown(event: React.KeyboardEvent<HTMLElement>) {
     if (event.target !== event.currentTarget) return;
@@ -227,62 +227,62 @@ export function AnimatedLessonWalkthrough({ courseSlug = "", title, steps, outpu
     else if (event.key === "End") { event.preventDefault(); goTo(steps.length - 1); }
   }
 
-  return <section tabIndex={0} onKeyDown={handleKeyDown} style={{ ["--accent" as string]: kind.color }} className="wt-root @container relative mt-4 overflow-hidden rounded-[1.75rem] border border-slate-200 text-slate-900 shadow-[0_24px_60px_-34px_rgba(31,86,214,0.35)] outline-none focus-visible:ring-2 focus-visible:ring-cyan-300/70" aria-label={`Animated step-by-step lesson for ${title}. Use arrow keys to move between steps and space to play or pause.`}>
-    <div aria-hidden="true" className="wt-aurora pointer-events-none absolute inset-0" />
-
-    <header className="relative flex flex-wrap items-center justify-between gap-3 px-4 pb-3 pt-4 @xl:px-6">
-      <div className="flex min-w-0 items-center gap-3">
-        <div className="min-w-0"><h3 className="truncate text-sm font-semibold tracking-tight">Visual walkthrough</h3><p className="truncate text-xs text-slate-500">{title}</p></div>
-      </div>
-      <div className="flex items-center gap-2">
+  return <section tabIndex={0} onKeyDown={handleKeyDown} style={{ ["--accent" as string]: kind.color }} className="wt-root @container relative mt-4 w-full overflow-hidden rounded-3xl border border-brand-200 bg-white text-slate-900 outline-none focus-visible:ring-2 focus-visible:ring-brand-500" aria-label={`Animated step-by-step lesson for ${title}. Use arrow keys to move between steps and space to play or pause.`}>
+    <header className="flex flex-wrap items-center justify-between gap-2 px-3 pb-3 pt-3 @xl:px-6 @xl:pt-4">
+      <div className="min-w-0"><h3 className="truncate text-sm font-semibold tracking-tight">Visual walkthrough</h3><p className="truncate text-xs text-slate-500">{title}</p></div>
+      <div className="flex shrink-0 items-center gap-2">
         <div role="group" aria-label="Playback speed" className="flex rounded-full border border-slate-200 bg-white p-0.5">
-          {SPEEDS.map((value) => <button key={value} type="button" onClick={() => setSpeed(value)} aria-pressed={speed === value} className={`rounded-full px-2.5 py-1 font-mono text-[11px] font-semibold transition ${speed === value ? "bg-brand-600 text-white" : "text-slate-500 hover:text-slate-900"}`}>{value}×</button>)}
+          {SPEEDS.map((value) => <button key={value} type="button" onClick={() => setSpeed(value)} aria-pressed={speed === value} className={`rounded-full px-2.5 py-1 text-[11px] font-semibold tabular-nums transition ${speed === value ? "bg-brand-600 text-white" : "text-slate-500 hover:text-slate-900"}`}>{value}×</button>)}
         </div>
-        <span className="rounded-full border border-slate-200 bg-white px-3 py-1 font-mono text-xs font-semibold tabular-nums text-slate-800">{String(active + 1).padStart(2, "0")}<span className="text-slate-500"> / {String(steps.length).padStart(2, "0")}</span></span>
+        <span className="rounded-full border border-slate-200 bg-white px-3 py-1 text-xs font-semibold tabular-nums text-slate-800">{String(active + 1).padStart(2, "0")}<span className="text-slate-500"> / {String(steps.length).padStart(2, "0")}</span></span>
       </div>
     </header>
 
-    <div className="relative mx-4 @xl:mx-6">
-      <div className="relative h-1.5 overflow-hidden rounded-full bg-slate-200" role="progressbar" aria-label="Walkthrough progress" aria-valuemin={0} aria-valuemax={steps.length} aria-valuenow={active + 1}>
-        <div className="absolute inset-y-0 left-0 rounded-full bg-gradient-to-r from-cyan-300 via-sky-400 to-violet-400 transition-[width] duration-500" style={{ width: `${progress}%` }} />
+    <div className="relative mx-3 @xl:mx-6">
+      <div className="relative h-1.5 overflow-hidden rounded-full bg-brand-100" role="progressbar" aria-label="Walkthrough progress" aria-valuemin={0} aria-valuemax={steps.length} aria-valuenow={active + 1}>
+        <div className="absolute inset-y-0 left-0 rounded-full bg-brand-600 transition-[width] duration-500" style={{ width: `${progress}%` }} />
         {playing && active < steps.length - 1 && <div key={`fill-${active}-${speed}`} className="wt-step-fill absolute inset-y-0 rounded-full bg-white/40" style={{ left: `${progress}%`, width: `${100 / steps.length}%`, animationDuration: `${stepMs}ms` }} />}
       </div>
       {steps.length > 1 && <input type="range" min={0} max={steps.length - 1} value={active} onChange={(event) => goTo(Number(event.target.value))} aria-label="Scrub through walkthrough steps" className="absolute -top-2 left-0 h-6 w-full cursor-pointer opacity-0" />}
     </div>
 
-    <div className="relative grid gap-4 p-4 @xl:p-5 @3xl:grid-cols-[minmax(0,1.05fr)_minmax(0,1fr)] @3xl:items-start">
-      <div className="flex min-w-0 flex-col gap-4">
-        <div key={`now-${active}`} className="wt-panel wt-pop wt-accent p-4 @xl:p-5" aria-live="polite">
+    <div className="grid gap-3 p-3 @xl:gap-4 @xl:p-5 @3xl:grid-cols-2 @3xl:items-stretch">
+      <div className="flex min-w-0 flex-col gap-3 @xl:gap-4">
+        <div key={`now-${active}`} className="wt-panel wt-pop wt-accent flex flex-1 flex-col gap-3 p-4 @xl:p-5" aria-live="polite">
           <div className="flex flex-wrap items-center justify-between gap-2">
-            <span className="rounded-full px-3 py-1 text-xs font-semibold" style={{ background: "color-mix(in srgb, var(--accent) 14%, white)", color: "var(--accent)" }}>{trace.operation}</span>
-            <span className="font-mono text-xs font-medium text-slate-500">Line {active + 1} of {steps.length}</span>
+            <span className="inline-flex items-center gap-1.5 rounded-full px-3 py-1 text-xs font-semibold" style={{ background: "color-mix(in srgb, var(--accent) 14%, white)", color: "var(--accent)" }}><KindIcon className="h-3.5 w-3.5" aria-hidden="true" />{trace.operation}</span>
+            <span className="text-xs font-medium tabular-nums text-slate-500">Line {active + 1} of {steps.length}</span>
           </div>
-          <div className="mt-3 rounded-2xl border border-slate-200 bg-slate-50 px-4 py-3">
+          <div className="rounded-2xl border border-slate-200 bg-slate-50 px-4 py-3">
             <p className="wt-label">Reading</p>
             <code className="mt-1 block whitespace-pre-wrap break-words font-mono text-[15px] font-semibold text-slate-900 @xl:text-base">{step.code.trim() || "(blank line)"}</code>
           </div>
-          <div aria-hidden="true" className="wt-drop grid h-6 place-items-center text-slate-400">↓</div>
+          <div aria-hidden="true" className="wt-drop -my-1 grid h-5 place-items-center text-slate-400">↓</div>
           <div className="rounded-2xl border px-4 py-3" style={{ borderColor: "color-mix(in srgb, var(--accent) 45%, white)", background: "color-mix(in srgb, var(--accent) 7%, white)" }}>
             <p className="wt-label" style={{ color: "var(--accent)" }}>{trace.resultLabel}</p>
             <code className="mt-1 block whitespace-pre-wrap break-words font-mono text-[15px] font-semibold text-slate-900 @xl:text-base">{trace.result}</code>
           </div>
+          {step.explanation && <div className="mt-auto border-t border-slate-200 pt-3">
+            <p className="wt-label">What is happening</p>
+            <p className="mt-1 text-sm leading-6 text-slate-700 @xl:text-base @xl:leading-7">{step.explanation}</p>
+          </div>}
         </div>
 
         {arrayVar && arrayItems && <ArrayStage name={arrayVar.name} items={arrayItems} pointers={pointers} />}
         {isWeb && <WebStage courseSlug={courseSlug} steps={steps} active={active} />}
       </div>
 
-      <div className="flex min-w-0 flex-col gap-4">
+      <div className="flex min-w-0 flex-col gap-3 @xl:gap-4">
         <div className="wt-panel overflow-hidden">
           <div className="flex items-center justify-between gap-2 border-b border-slate-200 bg-slate-50 px-3 py-2">
             <span className="flex gap-1.5" aria-hidden="true"><i className="h-2.5 w-2.5 rounded-full bg-rose-400/90" /><i className="h-2.5 w-2.5 rounded-full bg-amber-300/90" /><i className="h-2.5 w-2.5 rounded-full bg-emerald-400/90" /></span>
-            <span className="min-w-0 truncate font-mono text-xs font-medium text-slate-500">{title}</span>
+            <span className="min-w-0 truncate text-xs font-medium text-slate-500">{title}</span>
             <Image src="/myloginn-logo.png" alt="" width={16} height={16} className="h-4 w-4 shrink-0 object-contain opacity-70" />
           </div>
-          <div className="max-h-[min(20rem,42dvh)] overflow-y-auto px-1.5 py-2">
-            <ol className="space-y-0.5 font-mono text-sm leading-6">
+          <div className="max-h-[min(18rem,36dvh)] overflow-y-auto px-1.5 py-2">
+            <ol className="space-y-0.5 font-mono text-[13px] leading-6 @xl:text-sm">
               {steps.map((line, index) => <li key={`${line.code}-${index}`}>
-                <button ref={(element) => { codeLineRefs.current[index] = element; }} type="button" onClick={() => goTo(index)} aria-current={index === active ? "step" : undefined} aria-label={`Go to line ${index + 1}: ${line.code}`} className={`relative flex w-full items-start gap-2.5 rounded-lg px-2 py-1 text-left transition-all duration-300 ${index === active ? "wt-line-active font-semibold text-slate-900" : index < active ? "text-slate-600 hover:bg-slate-100" : "text-slate-500 hover:bg-slate-100 hover:text-slate-800"}`}>
+                <button ref={(element) => { codeLineRefs.current[index] = element; }} type="button" onClick={() => goTo(index)} aria-current={index === active ? "step" : undefined} aria-label={`Go to line ${index + 1}: ${line.code}`} className={`relative flex w-full items-start gap-2.5 rounded-lg px-2 py-1 text-left transition-colors duration-300 ${index === active ? "wt-line-active font-semibold text-slate-900" : index < active ? "text-slate-600 hover:bg-slate-100" : "text-slate-500 hover:bg-slate-100 hover:text-slate-800"}`}>
                   <span className={`grid w-5 shrink-0 select-none place-items-center text-xs leading-6 ${index === active ? "font-bold text-[color:var(--accent)]" : "text-slate-400"}`}>{index === active ? <ChevronRight className="wt-nudge h-4 w-4" aria-hidden="true" /> : index < active ? <Check className="h-3.5 w-3.5 text-emerald-500" aria-hidden="true" /> : index + 1}</span>
                   <code className="min-w-0 whitespace-pre-wrap break-words">{line.code || " "}</code>
                 </button>
@@ -291,39 +291,39 @@ export function AnimatedLessonWalkthrough({ courseSlug = "", title, steps, outpu
           </div>
         </div>
 
-        {!isWeb && <div className="grid gap-4 @md:grid-cols-2 @3xl:grid-cols-1 @4xl:grid-cols-2">
+        {!isWeb && <div className="grid flex-1 gap-3 @xl:gap-4 @md:grid-cols-2 @3xl:grid-cols-1 @5xl:grid-cols-2">
           <div className="wt-panel p-4">
             <p className="wt-label">Memory</p>
             {trace.memory.length
               ? <ul className="mt-3 space-y-2">{trace.memory.slice(-6).map((item) => {
                 const before = previous?.memory.find((old) => old.name === item.name)?.value;
                 return <li key={`${item.name}-${item.value}`} className={`flex max-w-full flex-wrap items-center gap-x-2 gap-y-0.5 rounded-xl border px-3 py-2 font-mono text-sm ${changed.has(item.name) ? "wt-flash border-emerald-300 bg-emerald-50 text-emerald-900" : "border-slate-200 bg-slate-50 text-slate-700"}`}>
-                  <strong className="text-violet-600">{item.name}</strong>
+                  <strong className="text-brand-700">{item.name}</strong>
                   {changed.has(item.name) && before !== undefined && <><span className="break-all text-slate-400 line-through">{before}</span><span className="text-slate-400" aria-hidden="true">→</span></>}
                   <span className="break-all font-semibold">{item.value}</span>
                 </li>;
               })}</ul>
               : <p className="mt-3 text-sm leading-6 text-slate-500">Empty. Variables appear here as lines run.</p>}
           </div>
-          <div className="wt-panel overflow-hidden">
-            <div className="flex items-center justify-between border-b border-slate-200 bg-slate-50 px-4 py-2.5"><p className="wt-label">Output</p><span className="font-mono text-xs tabular-nums text-slate-500">{visibleOutputLines.length}/{outputLines.length}</span></div>
-            <pre aria-live="polite" className="max-h-40 min-h-16 overflow-y-auto whitespace-pre-wrap break-words px-4 py-3 font-mono text-sm leading-6 text-emerald-700"><span className="select-none text-slate-400">$ </span>{visibleOutputLines.length ? visibleOutputLines.map((line, i) => <span key={`${i}-${line}`} className={i === visibleOutputLines.length - 1 ? "wt-type block" : "block"}>{line}</span>) : <span className="text-slate-500">waiting…</span>}</pre>
+          <div className="wt-panel flex flex-col overflow-hidden">
+            <div className="flex items-center justify-between border-b border-slate-200 bg-slate-50 px-4 py-2.5"><p className="wt-label">Output</p><span className="text-xs tabular-nums text-slate-500">{visibleOutputLines.length}/{outputLines.length}</span></div>
+            <pre aria-live="polite" className="max-h-40 min-h-16 flex-1 overflow-y-auto whitespace-pre-wrap break-words px-4 py-3 font-mono text-sm leading-6 text-emerald-700"><span className="select-none text-slate-400">$ </span>{visibleOutputLines.length ? visibleOutputLines.map((line, i) => <span key={`${i}-${line}`} className={i === visibleOutputLines.length - 1 ? "wt-type block" : "block"}>{line}</span>) : <span className="text-slate-500">waiting…</span>}</pre>
           </div>
         </div>}
       </div>
     </div>
 
-    <div className="relative flex flex-wrap items-center gap-3 border-t border-slate-200 bg-slate-50 px-4 py-3 @xl:px-6">
+    <div className="flex flex-wrap items-center gap-x-4 gap-y-3 border-t border-brand-100 bg-brand-50 px-3 py-3 @xl:px-6">
       <div className="flex w-full items-center gap-2 @2xl:w-auto @2xl:flex-1">
         <button type="button" onClick={() => goTo(0)} aria-label="Restart walkthrough" title="Restart" className={btn}><RotateCcw className="h-4 w-4" /></button>
         <button type="button" onClick={() => goTo(active - 1)} disabled={active === 0} aria-label="Previous walkthrough step" title="Previous step (←)" className={btn}><SkipBack className="h-4 w-4" /></button>
-        <button type="button" onClick={togglePlayback} className="inline-flex h-11 min-w-0 flex-1 items-center justify-center gap-2 rounded-full bg-gradient-to-r from-brand-600 to-violet-500 px-5 text-sm font-semibold text-white shadow-[0_10px_26px_-10px_rgba(79,70,229,0.7)] transition hover:brightness-110 active:scale-[0.98] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-cyan-300">{playing ? <Pause className="h-4 w-4 fill-current" /> : <Play className="h-4 w-4 fill-current" />}{playing ? "Pause" : active === steps.length - 1 ? "Replay" : "Play"}</button>
+        <button type="button" onClick={togglePlayback} className="inline-flex h-11 min-w-0 flex-1 items-center justify-center gap-2 rounded-full bg-brand-600 px-5 text-sm font-semibold text-white transition hover:bg-brand-700 active:scale-[0.98] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-500 focus-visible:ring-offset-2">{playing ? <Pause className="h-4 w-4 fill-current" /> : <Play className="h-4 w-4 fill-current" />}{playing ? "Pause" : active === steps.length - 1 ? "Replay" : "Play"}</button>
         <button type="button" onClick={() => goTo(active + 1)} disabled={active === steps.length - 1} aria-label="Next walkthrough step" title="Next step (→)" className={btn}><SkipForward className="h-4 w-4" /></button>
       </div>
       {steps.length > 1 && <nav aria-label="Walkthrough steps" className="no-scrollbar flex w-full max-w-full gap-1.5 overflow-x-auto pb-1 @2xl:w-auto @2xl:max-w-[45%]">
-        {steps.map((item, index) => <button key={`${item.code}-${index}`} type="button" onClick={() => goTo(index)} aria-label={`Go to step ${index + 1}`} aria-current={index === active ? "step" : undefined} className={`grid h-7 min-w-7 shrink-0 place-items-center rounded-full px-1.5 font-mono text-[11px] font-semibold transition ${index === active ? "bg-brand-600 text-white shadow-[0_6px_14px_-4px_rgba(31,86,214,0.6)]" : index < active ? "bg-emerald-100 text-emerald-700 hover:bg-emerald-200" : "bg-slate-100 text-slate-500 hover:bg-slate-100"}`}>{index < active ? <Check className="h-3 w-3" /> : index + 1}</button>)}
+        {steps.map((item, index) => <button key={`${item.code}-${index}`} type="button" onClick={() => goTo(index)} aria-label={`Go to step ${index + 1}`} aria-current={index === active ? "step" : undefined} className={`grid h-7 min-w-7 shrink-0 place-items-center rounded-full px-1.5 text-[11px] font-semibold tabular-nums transition ${index === active ? "bg-brand-600 text-white" : index < active ? "bg-emerald-100 text-emerald-700 hover:bg-emerald-200" : "bg-white text-slate-500 hover:bg-slate-100"}`}>{index < active ? <Check className="h-3 w-3" /> : index + 1}</button>)}
       </nav>}
-      <p className="hidden w-full text-center text-[11px] text-slate-500 @3xl:block">Tip: click any code line, drag the progress bar, or use <kbd className="rounded bg-slate-200 px-1.5 py-0.5 font-mono text-slate-700">←</kbd> <kbd className="rounded bg-slate-200 px-1.5 py-0.5 font-mono text-slate-700">→</kbd> and <kbd className="rounded bg-slate-200 px-1.5 py-0.5 font-mono text-slate-700">Space</kbd> after focusing the player.</p>
+      <p className="hidden w-full text-center text-[11px] text-slate-500 @3xl:block">Tip: click any code line, drag the progress bar, or focus the player and use <kbd className="rounded bg-white px-1.5 py-0.5 font-mono text-slate-700 ring-1 ring-slate-200">←</kbd> <kbd className="rounded bg-white px-1.5 py-0.5 font-mono text-slate-700 ring-1 ring-slate-200">→</kbd> <kbd className="rounded bg-white px-1.5 py-0.5 font-mono text-slate-700 ring-1 ring-slate-200">Space</kbd>.</p>
     </div>
   </section>;
 }
