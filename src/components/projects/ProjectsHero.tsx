@@ -7,13 +7,11 @@ import { AnimatedText } from "@/components/ui/AnimatedText";
 import { StatCounter } from "@/components/ui/StatCounter";
 import { Reveal } from "@/components/ui/Reveal";
 import { AnimatedRocket } from "@/components/ui/icons/AnimatedRocket";
-import { AnimatedFolder } from "@/components/ui/icons/AnimatedFolder";
-import { AnimatedUsers } from "@/components/ui/icons/AnimatedUsers";
-import { AnimatedCode } from "@/components/ui/icons/AnimatedCode";
+import { FolderKanban, Globe2, Layers3, type LucideIcon } from "lucide-react";
 import projectHeaderImage from "@/images/Project header.png";
 
 type StatTile = {
-  icon: typeof AnimatedFolder;
+  icon: LucideIcon;
   value: number;
   label: string;
   tone: string;
@@ -21,17 +19,17 @@ type StatTile = {
 
 export function ProjectsHero({
   projectCount,
-  mentorCount,
-  techCount,
+  liveCount,
+  industryCount,
 }: {
   projectCount: number;
-  mentorCount: number;
-  techCount: number;
+  liveCount: number;
+  industryCount: number;
 }) {
   const stats: StatTile[] = [
-    { icon: AnimatedFolder, value: projectCount, label: "Projects", tone: "bg-brand-500/10 text-brand-600" },
-    { icon: AnimatedUsers, value: mentorCount, label: "Mentors involved", tone: "bg-emerald-500/10 text-emerald-600" },
-    { icon: AnimatedCode, value: techCount, label: "Technologies", tone: "bg-rose-500/10 text-rose-600" },
+    { icon: FolderKanban, value: projectCount, label: "Projects delivered", tone: "from-sky-500 to-indigo-600 shadow-indigo-500/30" },
+    { icon: Globe2, value: liveCount, label: "Live products", tone: "from-emerald-500 to-teal-600 shadow-emerald-500/30" },
+    { icon: Layers3, value: industryCount, label: "Industries served", tone: "from-violet-500 to-fuchsia-600 shadow-fuchsia-500/30" },
   ];
 
   return (
@@ -90,8 +88,8 @@ export function ProjectsHero({
             whileHover={{ y: -5, transition: { duration: 0.25 } }}
             className="glass-panel card-shine relative flex items-center gap-3 overflow-hidden rounded-2xl p-3 sm:gap-3.5 sm:p-5"
           >
-            <span className={`flex h-12 w-12 shrink-0 items-center justify-center rounded-xl sm:h-11 sm:w-11 ${s.tone}`}>
-              <s.icon className="h-7 w-7 sm:h-6 sm:w-6" />
+            <span className={`flex h-12 w-12 shrink-0 items-center justify-center rounded-2xl bg-gradient-to-br text-white shadow-lg ring-1 ring-white/30 ${s.tone}`}>
+              <s.icon className="h-6 w-6" strokeWidth={1.75} aria-hidden="true" />
             </span>
             <div className="min-w-0">
               <p className="text-2xl font-semibold leading-tight">

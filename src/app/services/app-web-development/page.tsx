@@ -10,6 +10,7 @@ import developmentHeader from "@/images/App & Web Development header.png";
 import { ReferenceStatIcon } from "@/components/ui/ReferenceStatIcon";
 import { Smartphone } from "lucide-react";
 import { JsonLd } from "@/components/seo/JsonLd";
+import { FaqAccordion } from "@/components/ui/FaqAccordion";
 
 const developmentAreas = [
   "Business websites and landing pages",
@@ -141,9 +142,7 @@ export default function AppWebDevelopmentPage() {
             <section aria-labelledby="development-faq" className="mt-12">
               <JsonLd data={{ "@context": "https://schema.org", "@type": "FAQPage", mainEntity: developmentFaqs.map(({ question, answer }) => ({ "@type": "Question", name: question, acceptedAnswer: { "@type": "Answer", text: answer } })) }} />
               <h2 id="development-faq" className="text-2xl font-semibold tracking-tight">App and web development FAQs</h2>
-              <div className="mt-5 divide-y divide-border-soft rounded-2xl border border-border-soft bg-surface px-5 sm:px-7">
-                {developmentFaqs.map(({ question, answer }) => <details key={question} className="py-5"><summary className="cursor-pointer font-semibold focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-brand-500">{question}</summary><p className="mt-3 max-w-3xl leading-7 text-muted">{answer}</p></details>)}
-              </div>
+              <FaqAccordion items={developmentFaqs} className="mt-5" />
             </section>
           </div>
 

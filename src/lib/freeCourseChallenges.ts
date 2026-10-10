@@ -1,6 +1,10 @@
 import type { LessonKind } from "@/lib/freeCourseTutorial";
+import { authoredChallenges, type AuthoredChallenge } from "@/lib/challengeData";
 
-export type FreeCourseChallenge = { code: string; output: string };
+/** `task` is the learner-facing brief; `given` lists sample input (or program stdin) shown beside the editor. */
+export type FreeCourseChallenge = { code: string; output: string; task?: string; given?: string[]; stdin?: string };
+
+const topicKey = (title: string) => title.toLowerCase().trim().replace(/[^a-z0-9]+/g, "-").replace(/^-|-$/g, "");
 
 const challenges: Record<string, Partial<Record<LessonKind, FreeCourseChallenge>>> = {
   "python-fundamentals": {
@@ -118,7 +122,13 @@ const challenges: Record<string, Partial<Record<LessonKind, FreeCourseChallenge>
   },
 };
 
-export function getFreeCourseChallenge(courseSlug: string, kind: LessonKind): FreeCourseChallenge {
+export function getAuthoredChallenge(courseSlug: string, title: string): AuthoredChallenge | undefined {
+  return authoredChallenges[courseSlug]?.[topicKey(title)];
+}
+
+export function getFreeCourseChallenge(courseSlug: string, kind: LessonKind, title = ""): FreeCourseChallenge {
+  const authored = title ? getAuthoredChallenge(courseSlug, title) : undefined;
+  if (authored) return authored;
   const courseChallenges = challenges[courseSlug];
   return courseChallenges?.[kind] ?? courseChallenges?.practice ?? {
     code: "// Create a small example for this topic and show its result.",

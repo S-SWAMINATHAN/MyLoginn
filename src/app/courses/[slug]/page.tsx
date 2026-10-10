@@ -181,6 +181,10 @@ export default async function CourseDetailPage({
                   </div>
                 )}
 
+                {course.price === 0 && enrollment && !(topicCount > 0 && completedTopicSlugs.size >= topicCount) && (
+                  <p className="mt-4 rounded-lg bg-surface-2 px-3 py-2 text-xs text-muted">Complete every topic to earn a verified certificate with a unique certificate ID. Choose from three designs.</p>
+                )}
+
                 <div className="mt-5">
                   {course.price === 0 ? (
                     <FreeEnrollButton slug={course.slug} loggedIn={!!user} enrolled={!!enrollment} />

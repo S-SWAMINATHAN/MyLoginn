@@ -10,6 +10,10 @@ import { TopicProgressControl } from "@/components/courses/TopicProgressControl"
 import { LessonNextLink } from "@/components/courses/LessonNextLink";
 import { AnimatedLessonWalkthrough } from "@/components/courses/AnimatedLessonWalkthrough";
 import { LessonQuiz } from "@/components/courses/LessonQuiz";
+import { ScrollActiveIntoView } from "@/components/courses/ScrollActiveIntoView";
+import { ChallengeBrief } from "@/components/courses/ChallengeBrief";
+import { LessonVisualScene } from "@/components/courses/LessonVisualScene";
+import { LessonVideo } from "@/components/courses/LessonVideo";
 import { ChallengeCelebration } from "@/components/courses/ChallengeCelebration";
 
 type Props = { courseTitle: string; courseSlug: string; learnerName?: string; topics: string[]; index: number; completedTopicSlugs: string[]; courseProgress: number };
@@ -38,14 +42,6 @@ function getWalkthroughVideo(courseSlug: string, title: string) {
   return null;
 }
 
-function LessonVisual({ visual }: { visual: { caption: string; nodes: { label: string; value: string; detail?: string }[]; summary: string } }) {
-  return <div aria-label={`${visual.caption} chart`} className="rounded-2xl border border-border-soft bg-gradient-to-br from-brand-50/70 via-background to-cyan-50/60 p-5 dark:from-brand-950/30 dark:to-cyan-950/20">
-    <p className="mb-4 text-center text-xs font-bold uppercase tracking-wider text-muted">{visual.caption}</p>
-    <ol className="grid gap-3 sm:grid-cols-3">{visual.nodes.map((node, index) => <li key={`${node.label}-${index}`} className={`relative flex min-h-28 flex-col justify-center rounded-2xl border p-4 text-center shadow-sm ${index === 0 ? "border-brand-300 bg-brand-50 text-brand-900 dark:bg-brand-900/30 dark:text-brand-100" : index === 1 ? "border-cyan-300 bg-cyan-50 text-cyan-950 dark:bg-cyan-900/25 dark:text-cyan-100" : "border-emerald-300 bg-emerald-50 text-emerald-950 dark:bg-emerald-900/25 dark:text-emerald-100"}`}><span className="text-[9px] font-bold uppercase tracking-widest opacity-60">{node.label}</span><span className="mt-2 break-words font-mono text-sm font-bold">{node.value}</span>{node.detail && <span className="mt-2 text-xs leading-5 opacity-80">{node.detail}</span>}{index < visual.nodes.length - 1 && <span aria-hidden="true" className="absolute -right-3 top-1/2 z-10 hidden -translate-y-1/2 text-lg font-bold text-brand-500 sm:block">→</span>}</li>)}</ol>
-    <p className="mt-4 text-center text-sm leading-6 text-muted">{visual.summary}</p>
-  </div>;
-}
-
 export function CourseTutorial({ courseTitle, courseSlug, learnerName = "MyLoginn", topics, index, completedTopicSlugs, courseProgress }: Props) {
   const title = topics[index];
   const lesson = buildTutorialLesson(courseSlug, title, index);
@@ -65,7 +61,7 @@ export function CourseTutorial({ courseTitle, courseSlug, learnerName = "MyLogin
   let unlockedIndex = 0;
   while (unlockedIndex < topics.length && (completedSet.has(toTopicSlug(topics[unlockedIndex])) || !buildTutorialLesson(courseSlug, topics[unlockedIndex], unlockedIndex).requiresCodeChallenge)) unlockedIndex += 1;
   const currentCompleted = completedSet.has(toTopicSlug(title));
-  const canRunPython = courseSlug === "python-fundamentals" && lesson.kind !== "packages" && lesson.kind !== "file";
+  const canRunPython = courseSlug === "python-fundamentals" && lesson.kind !== "packages";
   const canRunSql = courseSlug === "sql-fundamentals" || courseSlug === "mysql-fundamentals";
 
   const topicList = <nav aria-label={`${courseTitle} topics`} className="max-h-[calc(100vh-12rem)] space-y-4 overflow-y-auto pr-1">
@@ -78,6 +74,7 @@ export function CourseTutorial({ courseTitle, courseSlug, learnerName = "MyLogin
       return <Link key={`${topic}-${topicIndex}`} href={`/courses/${courseSlug}/learn/${toTopicSlug(topic)}`} aria-current={active ? "page" : undefined} className={`flex items-start gap-3 rounded-xl px-3 py-2.5 text-sm transition-colors ${active ? "bg-brand-50 font-semibold text-brand-700 dark:bg-brand-900/25 dark:text-brand-200" : "text-foreground/75 hover:bg-surface-2 hover:text-foreground"}`}><span className={`mt-0.5 grid h-5 w-5 shrink-0 place-items-center rounded-full text-[10px] ${completed ? "bg-emerald-100 text-emerald-700" : active ? "bg-brand-600 text-white" : "bg-surface-2 text-muted"}`}>{completed ? "✓" : topicIndex + 1}</span><span>{topic}</span></Link>;
     })}</div>
     </section>)}
+    <ScrollActiveIntoView />
   </nav>;
 
   return (
@@ -114,7 +111,13 @@ export function CourseTutorial({ courseTitle, courseSlug, learnerName = "MyLogin
           <p className="mt-2 max-w-3xl text-sm leading-6 text-muted">{lesson.introduction}</p>
           {lesson.articleSections.length > 0 ? <div className="mt-7 max-w-4xl space-y-7">{lesson.articleSections.map((section) => <section key={section.title} className="rounded-2xl border border-border-soft bg-background p-5 sm:p-6"><h2 className="text-xl font-bold">{section.title}</h2>{section.paragraphs.map((paragraph) => <p key={paragraph} className="mt-3 text-base leading-7 text-foreground/85"><HighlightText text={paragraph} terms={lesson.keywords} /></p>)}{section.bullets && <ul className="mt-3 list-disc space-y-2 pl-6 text-base leading-7 text-foreground/85">{section.bullets.map((bullet) => <li key={bullet}><HighlightText text={bullet} terms={lesson.keywords} /></li>)}</ul>}{section.code && <pre className="mt-4 overflow-x-auto rounded-xl bg-slate-950 p-4 text-sm leading-6 text-slate-100"><code>{section.code}</code></pre>}{section.links && <ul className="mt-4 grid gap-3 sm:grid-cols-2">{section.links.map((link) => <li key={link.href} className="rounded-xl border border-brand-200 bg-brand-50/50 p-4 dark:bg-brand-950/20"><a href={link.href} target="_blank" rel="noreferrer" className="font-semibold text-brand-700 underline underline-offset-4 dark:text-brand-200">{link.label}</a><p className="mt-1 text-sm leading-6 text-foreground/75">{link.detail}</p></li>)}</ul>}</section>)}</div> : <>
             <section className="mt-6 max-w-4xl" aria-labelledby="lesson-overview"><h2 id="lesson-overview" className="text-xl font-bold">{title}: Overview</h2><p className="mt-3 text-base leading-7 text-foreground/85"><HighlightText text={lesson.overview} terms={lesson.keywords} /></p></section>
-            <section className="mt-5 rounded-2xl border border-brand-200 bg-brand-50/60 p-5 dark:bg-brand-900/15" aria-labelledby="lesson-definition"><h2 id="lesson-definition" className="text-xs font-bold uppercase tracking-wider text-brand-700 dark:text-brand-200">Clear definition</h2><p className="mt-2 text-lg font-semibold leading-8 text-foreground"><HighlightText text={lesson.definition} terms={lesson.keywords} /></p></section>
+            <section className="relative mt-5 overflow-hidden rounded-3xl border border-brand-200 bg-gradient-to-br from-brand-50 via-background to-cyan-50 p-5 shadow-sm dark:border-brand-400/30 dark:from-brand-950/40 dark:to-cyan-950/20 sm:p-7" aria-labelledby="lesson-definition">
+              <div aria-hidden="true" className="pointer-events-none absolute -right-12 -top-12 h-40 w-40 rounded-full bg-brand-400/20 blur-3xl" />
+              <h2 id="lesson-definition" className="relative text-[11px] font-extrabold uppercase tracking-[.2em] text-brand-700 dark:text-brand-200">In plain words</h2>
+              <p className="relative mt-2 text-xl font-bold leading-8 tracking-tight text-foreground sm:text-2xl sm:leading-9">{lesson.plain.simple}</p>
+              <div className="relative mt-4 flex gap-3 rounded-2xl border border-amber-200/70 bg-amber-50/70 p-3.5 dark:border-amber-400/20 dark:bg-amber-400/10"><Lightbulb aria-hidden="true" className="mt-0.5 h-5 w-5 shrink-0 text-amber-500" /><p className="text-sm leading-6 text-foreground/85"><strong className="font-semibold">Think of it like this: </strong>{lesson.plain.analogy}</p></div>
+              <div className="relative mt-4 border-t border-border-soft pt-4"><p className="text-[10px] font-bold uppercase tracking-wider text-muted">Formal definition</p><p className="mt-1 text-sm leading-6 text-foreground/80"><HighlightText text={lesson.definition} terms={lesson.keywords} /></p>{lesson.keywords.length > 0 && <div className="mt-3 flex flex-wrap gap-1.5">{lesson.keywords.slice(0, 5).map((word) => <span key={word} className="rounded-full border border-brand-200 bg-background px-2.5 py-0.5 text-xs font-semibold text-brand-700 dark:border-brand-400/30 dark:text-brand-200">{word}</span>)}</div>}</div>
+            </section>
             <details className="group mt-6 rounded-2xl border border-border-soft bg-background">
               <summary className="flex cursor-pointer list-none items-center justify-between gap-4 rounded-2xl px-5 py-4 font-semibold hover:bg-surface-2 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-500 [&::-webkit-details-marker]:hidden">
                 <span className="text-lg">Key Ideas</span><span className="flex items-center gap-3 text-xs font-medium text-muted"><span>{lesson.keyPoints.length} ideas · click to explore</span><span aria-hidden="true" className="text-base transition-transform group-open:rotate-180">⌄</span></span>
@@ -122,17 +125,6 @@ export function CourseTutorial({ courseTitle, courseSlug, learnerName = "MyLogin
               <ul className="grid gap-3 border-t border-border-soft p-4 sm:grid-cols-2">{lesson.keyPoints.map((point) => <li key={point.title} className="rounded-xl border border-border-soft bg-surface p-4"><h3 className="font-semibold">{point.title}</h3><p className="mt-1 text-sm leading-6 text-foreground/75"><HighlightText text={point.detail} terms={lesson.keywords} /></p></li>)}</ul>
             </details>
           </>}
-          <section className="mt-8 rounded-2xl border border-border-soft bg-background p-4 sm:p-6">
-            <h2 className="mb-4 flex items-center gap-2 text-lg font-bold"><Lightbulb className="h-5 w-5 text-amber-500" /> Visual explanation</h2>
-            <div className="relative pb-8">
-              <LessonVisual visual={lesson.visual} />
-              <div className="pointer-events-none absolute bottom-0 right-0 flex items-center gap-1.5 opacity-45" aria-label="MyLoginn visual">
-                <Image src="/myloginn-logo.png" alt="" width={20} height={20} className="h-5 w-5 object-contain" />
-                <span className="text-[10px] font-semibold text-muted">MyLoginn Learning</span>
-              </div>
-            </div>
-          </section>
-
           {video && <section className="mt-8 overflow-hidden rounded-2xl border border-border-soft bg-background" aria-label={video.title}>
             <div className="flex items-center gap-2 border-b border-border-soft px-4 py-3 sm:px-5">
               <Play className="h-4 w-4 text-brand-600" aria-hidden="true" />
@@ -150,13 +142,25 @@ export function CourseTutorial({ courseTitle, courseSlug, learnerName = "MyLogin
             </div>
             <p className="px-4 py-3 text-xs leading-5 text-muted sm:px-5">Watch how the example changes step by step, then use the visual explanation and code below to review the idea.</p>
           </section>}
-          {!video && !isPythonInstallation && <section className="mt-8 rounded-2xl border border-border-soft bg-background p-4 sm:p-5" aria-label="Video lesson availability"><p className="text-sm font-semibold">Video lesson coming soon</p><p className="mt-1 text-sm leading-6 text-muted">You can continue learning with the visual explanation, walkthrough, and interactive code below.</p></section>}
+          {/* Every topic gets an animated video built from its own lesson data, so new courses need no extra work. */}
+          {!video && <LessonVideo data={{ courseTitle, title, lessonNumber: index + 1, lessonCount: topics.length, plain: lesson.plain, visualNodes: lesson.visual.nodes, visualSummary: lesson.visual.summary, steps: lesson.steps, output: lesson.output, takeaways: lesson.takeaways, mistake: lesson.mistake }} />}
+
+          <section className="mt-8 rounded-2xl border border-border-soft bg-background p-4 sm:p-6">
+            <h2 className="mb-4 flex items-center gap-2 text-lg font-bold"><Lightbulb className="h-5 w-5 text-amber-500" /> Visual explanation</h2>
+            <div className="relative pb-8">
+              <LessonVisualScene visual={lesson.visual} courseSlug={courseSlug} title={title} code={lesson.code} output={lesson.output} syntax={lesson.syntax} />
+              <div className="pointer-events-none absolute bottom-0 right-0 flex items-center gap-1.5 opacity-45" aria-label="MyLoginn visual">
+                <Image src="/myloginn-logo.png" alt="" width={20} height={20} className="h-5 w-5 object-contain" />
+                <span className="text-[10px] font-semibold text-muted">MyLoginn Learning</span>
+              </div>
+            </div>
+          </section>
 
           {!isPythonInstallation && <details className="group mt-8 rounded-2xl border border-border-soft bg-background">
             <summary className="flex cursor-pointer list-none items-center justify-between gap-4 rounded-2xl px-5 py-4 font-semibold hover:bg-surface-2 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-500 [&::-webkit-details-marker]:hidden">
               <span><span className="block">Animated lesson walkthrough</span><span className="mt-1 block text-xs font-normal text-muted">Expand to step through the code and use playback controls.</span></span><span aria-hidden="true" className="shrink-0 text-base text-muted transition-transform group-open:rotate-180">⌄</span>
             </summary>
-            <div className="border-t border-border-soft p-2 sm:p-3"><AnimatedLessonWalkthrough title={title} steps={lesson.steps} output={lesson.output} sqlQuery={canRunSql ? lesson.code : undefined} /></div>
+            <div className="border-t border-border-soft p-2 sm:p-3"><AnimatedLessonWalkthrough courseSlug={courseSlug} title={title} steps={lesson.steps} output={lesson.output} sqlQuery={canRunSql ? lesson.code : undefined} /></div>
           </details>}
 
           <section className="mt-8 max-w-3xl">
@@ -189,14 +193,14 @@ export function CourseTutorial({ courseTitle, courseSlug, learnerName = "MyLogin
             <section className="rounded-2xl border border-amber-200 bg-amber-50/70 p-5 dark:bg-amber-950/15"><h2 className="font-bold text-amber-900 dark:text-amber-200">Common mistake</h2><p className="mt-3 text-sm leading-6 text-foreground/80">{lesson.mistake}</p></section>
           </div>
 
-          {lesson.requiresCodeChallenge && <section className="mt-8 grid gap-4 md:grid-cols-2">
-            <div className="rounded-2xl border border-border-soft bg-background p-5"><h2 className="font-bold">Try it yourself</h2><p className="mt-2 text-sm leading-6 text-foreground/80">{lesson.practice}</p></div>
-            <div className="rounded-2xl border border-brand-200 bg-brand-50/50 p-5 dark:bg-brand-900/10"><h2 className="font-bold">Code challenge</h2><p className="mt-2 text-sm leading-6 text-foreground/80">{lesson.challenge}</p><p className="mt-3 text-xs leading-5 text-muted">Use the hints or reveal the solution beside the editor. Passing the checks records your topic progress and unlocks the next lesson.</p>
-            </div>
+          {lesson.requiresCodeChallenge && <section className="mt-8 rounded-3xl border border-border-soft bg-background p-5 shadow-sm sm:p-6" aria-label="Try it yourself">
+            <div className="flex items-center gap-3"><span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-amber-100 text-amber-700 dark:bg-amber-400/15 dark:text-amber-300"><Lightbulb className="h-5 w-5" aria-hidden="true" /></span><div><p className="text-[11px] font-semibold uppercase tracking-wider text-muted">Step 1 of 2 · Warm up</p><h2 className="font-bold leading-tight">Try it yourself</h2></div></div>
+            <p className="mt-3 text-sm leading-6 text-foreground/80">{lesson.practice}</p>
           </section>}
 
           {lesson.requiresCodeChallenge && <>
-            <CodeIDE courseSlug={courseSlug} courseTitle={courseTitle} topicSlug={toTopicSlug(title)} moduleTitle={currentModule?.title ?? courseTitle} isLastTopicInModule={currentModule?.topics.at(-1) === title} nextHref={next} starterCode={lesson.challengeStarter} solutionCode={lesson.challengeCode} expectedOutput={lesson.challengeOutput} canRunPython={canRunPython} canRunSql={canRunSql} needsInput={/\binput\s*\(/i.test(lesson.challengeCode)} hints={lesson.challengeHints} />
+            <ChallengeBrief title={title} task={lesson.challenge} given={lesson.challengeGiven} expectedOutput={lesson.challengeOutput} hintCount={lesson.challengeHints.length} needsInput={/\binput\s*\(/i.test(lesson.challengeCode)} />
+            <CodeIDE courseSlug={courseSlug} courseTitle={courseTitle} topicSlug={toTopicSlug(title)} moduleTitle={currentModule?.title ?? courseTitle} isLastTopicInModule={currentModule?.topics.at(-1) === title} nextHref={next} starterCode={lesson.challengeStarter} solutionCode={lesson.challengeCode} expectedOutput={lesson.challengeOutput} canRunPython={canRunPython} canRunSql={canRunSql} needsInput={/\binput\s*\(/i.test(lesson.challengeCode)} hints={lesson.challengeHints} kind={lesson.kind} challengeTitle={title} sampleInput={lesson.challengeGiven} stdinDefault={lesson.challengeStdin} />
             <ChallengeCelebration topicSlug={toTopicSlug(title)} />
           </>}
 

@@ -2,6 +2,7 @@
 
 import { useRef } from "react";
 import type { PointerEvent } from "react";
+import Link from "next/link";
 import { gsap } from "gsap";
 import { Card } from "@/components/ui/Card";
 import { ContentIcon } from "@/components/ui/ContentIcon";
@@ -79,6 +80,7 @@ export function ProjectCard({ project: p, className }: { project: ShowcaseProjec
         className="group h-full"
         style={{ transformStyle: "preserve-3d" }}
       >
+        <Link href={`/projects/${p.id}`} className="block h-full">
         <Card className="card-shine relative flex h-full flex-col overflow-hidden transition-shadow duration-300 group-hover:shadow-[var(--shadow-lift)]">
           <span
             aria-hidden
@@ -95,7 +97,7 @@ export function ProjectCard({ project: p, className }: { project: ShowcaseProjec
               aria-hidden
               className="absolute inset-0 transition-transform duration-500 group-hover:scale-105 [&>svg]:h-full [&>svg]:w-full"
             >
-              <CardArtAnimation svg={art.svg} animationUrl={art.animationUrl} />
+              <CardArtAnimation svg={art.svg} />
             </span>
             <span
               aria-hidden
@@ -147,6 +149,7 @@ export function ProjectCard({ project: p, className }: { project: ShowcaseProjec
             </div>
           </div>
         </Card>
+        </Link>
       </div>
     </div>
   );

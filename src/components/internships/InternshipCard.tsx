@@ -45,7 +45,6 @@ export function InternshipCard({
     () => getProjectCardArt(`${internship.type} ${internship.title}`, idSeed),
     [internship.type, internship.title, idSeed]
   );
-
   const deadline = new Date(internship.applyDeadline);
   const daysLeft = Math.max(0, Math.ceil((deadline.getTime() - Date.now()) / (1000 * 60 * 60 * 24)));
   const urgent = daysLeft > 0 && daysLeft <= 5;
@@ -77,17 +76,14 @@ export function InternshipCard({
             />
 
             {/* Illustrated banner header */}
-            <div className="relative flex h-28 shrink-0 items-center justify-center overflow-hidden">
+            <div className="relative h-28 shrink-0 overflow-hidden">
               <span
                 aria-hidden
                 className="absolute inset-0 transition-transform duration-500 group-hover:scale-105 [&>svg]:h-full [&>svg]:w-full"
               >
-                <CardArtAnimation svg={art.svg} animationUrl={art.animationUrl} />
+                <CardArtAnimation svg={art.svg} />
               </span>
-              <span
-                aria-hidden
-                className="pointer-events-none absolute inset-x-0 top-0 h-12 bg-gradient-to-b from-black/35 to-transparent"
-              />
+              <div className="pointer-events-none absolute inset-x-0 bottom-0 h-14 bg-gradient-to-t from-black/55 to-transparent" />
 
               {internship.featured && (
                 <span className="absolute left-3 top-3 z-10 inline-flex items-center gap-1.5 text-[11px] font-semibold text-white [text-shadow:0_1px_3px_rgba(0,0,0,.45)]">

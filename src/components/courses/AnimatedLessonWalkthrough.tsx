@@ -1,10 +1,22 @@
 "use client";
 
 import Image from "next/image";
-import { ArrowRight, Check, Code2, GitBranch, Lightbulb, Pause, Play, RotateCcw, SkipBack, SkipForward, Sparkles, Variable } from "lucide-react";
+import { Boxes, Braces, Check, ChevronRight, Cpu, GitBranch, Pause, Play, Repeat, RotateCcw, SkipBack, SkipForward, StickyNote, Terminal, Variable } from "lucide-react";
 import { useEffect, useRef, useState } from "react";
 
 type Step = { code: string; explanation: string };
+
+const STEP_MS = 3200;
+const SPEEDS = [0.5, 1, 2];
+const KIND_META = {
+  value: { Icon: Braces, color: "#7c3aed" },
+  output: { Icon: Terminal, color: "#059669" },
+  decision: { Icon: GitBranch, color: "#d97706" },
+  loop: { Icon: Repeat, color: "#0284c7" },
+  function: { Icon: Boxes, color: "#db2777" },
+  comment: { Icon: StickyNote, color: "#64748b" },
+  instruction: { Icon: Cpu, color: "#0891b2" },
+} as const;
 function unquote(value: string) {
   const trimmed = value.trim().replace(/;$/, "");
   const formatted = trimmed.match(/^f(["'])(.*)\1$/i) ?? trimmed.match(/^(["'`])(.*)\1$/);
@@ -62,9 +74,83 @@ function traceAt(steps: Step[], active: number, visibleOutputLines: string[]) {
   return { memory: [...memory.entries()].map(([name, value]) => ({ name, value })), operation, result, resultLabel, currentKind };
 }
 
-export function AnimatedLessonWalkthrough({ title, steps, output, sqlQuery }: { title: string; steps: Step[]; output: string; sqlQuery?: string }) {
+
+const POINTER_NAME = /^(i|j|k|idx|index|low|high|mid|left|right|lo|hi|l|r|start|end|pos|cur|current|min|max)$/i;
+const POINTER_HUES = ["#0891b2", "#65a30d", "#db2777", "#d97706", "#7c3aed"];
+
+function parseArray(value: string) {
+  const match = value.trim().match(/^[[{(]\s*(.*?)\s*[\]})]$/);
+  if (!match || !match[1]) return null;
+  const items = match[1].split(",").map((item) => unquote(item.trim())).filter((item) => item !== "");
+  return items.length > 1 ? items.slice(0, 12) : null;
+}
+
+function ArrayStage({ name, items, pointers }: { name: string; items: string[]; pointers: { name: string; index: number; hue: string }[] }) {
+  const numeric = items.every((item) => /^-?\d+(\.\d+)?$/.test(item));
+  const max = numeric ? Math.max(...items.map((item) => Math.abs(Number(item))), 1) : 1;
+  return <div className="wt-panel p-4 sm:p-5">
+    <p className="wt-label">Array · <span className="font-mono normal-case tracking-normal text-cyan-700">{name}</span></p>
+    <div className="mt-4 flex items-end justify-center gap-1.5 sm:gap-2.5">
+      {items.map((item, index) => {
+        const here = pointers.filter((pointer) => pointer.index === index);
+        const hue = here[0]?.hue;
+        const height = numeric ? 28 + (Math.abs(Number(item)) / max) * 62 : 44;
+        return <div key={index} className="flex min-w-0 flex-1 flex-col items-center" style={{ maxWidth: 64 }}>
+          <div key={`${index}-${here.map((p) => p.name).join()}`} className={`wt-cell flex w-full items-end justify-center rounded-lg border pb-1.5 font-mono text-sm font-bold ${hue ? "wt-cell-hot" : ""}`} style={{ height, ["--hue" as string]: hue ?? "#94a3b8", borderColor: hue ?? "rgba(148,163,184,.25)", background: hue ? `linear-gradient(180deg, ${hue}33, ${hue}0d)` : "rgba(148,163,184,.08)", color: hue ? "#0f172a" : "#475569" }}>{item}</div>
+          <span className="mt-1.5 font-mono text-[10px] text-slate-500">{index}</span>
+          <div className="flex min-h-5 flex-col items-center">{here.map((pointer) => <span key={pointer.name} className="wt-drop mt-0.5 rounded-md px-1.5 py-0.5 font-mono text-[10px] font-bold text-white" style={{ background: pointer.hue }}>▲ {pointer.name}</span>)}</div>
+        </div>;
+      })}
+    </div>
+  </div>;
+}
+
+const VOID_TAGS = new Set(["meta", "link", "img", "br", "hr", "input", "source"]);
+const TAG_HUES = ["#0891b2", "#65a30d", "#db2777", "#d97706", "#7c3aed"];
+
+// Builds the element tree from the markup typed so far; unclosed tags stay open like a browser would treat them.
+function domNodes(markup: string) {
+  const nodes: { tag: string; depth: number; text: string }[] = [];
+  const stack: string[] = [];
+  for (const match of markup.matchAll(/<(\/?)([a-zA-Z][\w-]*)[^>]*?(\/?)>([^<]*)/g)) {
+    const tag = match[2].toLowerCase();
+    if (match[1]) { const at = stack.lastIndexOf(tag); if (at >= 0) stack.length = at; continue; }
+    nodes.push({ tag, depth: stack.length, text: match[4].trim() });
+    if (!match[3] && !VOID_TAGS.has(tag)) stack.push(tag);
+  }
+  return nodes;
+}
+
+function WebStage({ courseSlug, steps, active }: { courseSlug: string; steps: Step[]; active: number }) {
+  const typed = steps.slice(0, active + 1).map((item) => item.code).join("\n");
+  const isCss = courseSlug === "css-fundamentals" && !/<\w+/.test(typed);
+  const demo = '<h1>Hello, web!</h1><p>A paragraph of body text.</p><div class="card">Card</div>';
+  const doc = `<!doctype html><meta charset="utf-8"><style>body{font-family:system-ui,sans-serif;margin:14px;color:#0f172a}${isCss ? typed : ""}</style>${isCss ? demo : typed.replace(/<link[^>]*>/gi, "")}`;
+  const nodes = domNodes(isCss ? demo : typed);
+  return <div className="grid gap-3">
+    <div className="wt-panel overflow-hidden">
+      <div className="flex items-center gap-2 border-b border-slate-200 px-3 py-2"><span className="flex gap-1"><i className="h-2 w-2 rounded-full bg-rose-400"/><i className="h-2 w-2 rounded-full bg-amber-300"/><i className="h-2 w-2 rounded-full bg-emerald-400"/></span><span className="flex-1 truncate rounded-md bg-slate-100 px-2.5 py-1 font-mono text-[10px] text-slate-500">localhost:3000</span><span className="wt-live font-mono text-[9px] font-bold uppercase text-emerald-700">● live</span></div>
+      <iframe key={active} title="Live page preview" sandbox="" srcDoc={doc} className="wt-pop h-32 w-full bg-white @3xl:h-40" />
+    </div>
+    <div className="wt-panel p-3">
+      <p className="wt-label">Page structure</p>
+      <ul className="mt-2 max-h-28 space-y-1 overflow-y-auto font-mono text-xs">
+        {nodes.length ? nodes.map((node, index) => {
+          const hue = TAG_HUES[node.depth % TAG_HUES.length];
+          const fresh = index === nodes.length - 1;
+          return <li key={`${index}-${node.tag}-${fresh}`} className={fresh ? "wt-pop" : ""} style={{ paddingLeft: node.depth * 16 }}>
+            <span className="inline-flex items-center gap-1.5 rounded-md border px-2 py-0.5" style={{ borderColor: `${hue}${fresh ? "" : "55"}`, background: fresh ? `${hue}26` : "transparent", color: hue, boxShadow: fresh ? `0 0 14px -2px ${hue}` : "none" }}>&lt;{node.tag}&gt;{node.text && <span className="max-w-[9rem] truncate text-slate-700">{node.text}</span>}</span>
+          </li>;
+        }) : <li className="text-slate-500">Tags appear here as you read the code.</li>}
+      </ul>
+    </div>
+  </div>;
+}
+
+export function AnimatedLessonWalkthrough({ courseSlug = "", title, steps, output, sqlQuery }: { courseSlug?: string; title: string; steps: Step[]; output: string; sqlQuery?: string }) {
   const [active, setActive] = useState(0);
   const [playing, setPlaying] = useState(false);
+  const [speed, setSpeed] = useState(1);
   const [queriedOutput, setQueriedOutput] = useState<string | null>(null);
   const codeLineRefs = useRef<(HTMLButtonElement | null)[]>([]);
   const step = steps[active];
@@ -75,6 +161,14 @@ export function AnimatedLessonWalkthrough({ title, steps, output, sqlQuery }: { 
     ? outputLines
     : outputLines.slice(0, Math.min(outputLines.length, executedPrints));
   const trace = traceAt(steps, active, visibleOutputLines);
+  const previous = active > 0 ? traceAt(steps, active - 1, []) : null;
+  const changed = new Set(trace.memory.filter((item) => previous?.memory.find((old) => old.name === item.name)?.value !== item.value).map((item) => item.name));
+  const arrayVar = trace.memory.map((item) => ({ name: item.name, items: parseArray(item.value) })).find((item) => item.items);
+  const arrayItems = arrayVar?.items ?? null;
+  const pointers = arrayItems ? trace.memory
+    .filter((item) => POINTER_NAME.test(item.name) && /^\d+$/.test(item.value) && Number(item.value) < arrayItems.length)
+    .map((item, index) => ({ name: item.name, index: Number(item.value), hue: POINTER_HUES[index % POINTER_HUES.length] })) : [];
+  const isWeb = courseSlug === "html-fundamentals" || (courseSlug === "css-fundamentals" && steps.some((item) => /[{<]/.test(item.code)));
   const progress = steps.length ? ((active + 1) / steps.length) * 100 : 0;
 
   useEffect(() => {
@@ -82,9 +176,9 @@ export function AnimatedLessonWalkthrough({ title, steps, output, sqlQuery }: { 
     const timer = window.setTimeout(() => {
       if (active >= steps.length - 1) setPlaying(false);
       else setActive((current) => current + 1);
-    }, 4200);
+    }, STEP_MS / speed);
     return () => window.clearTimeout(timer);
-  }, [playing, active, steps.length]);
+  }, [playing, active, steps.length, speed]);
 
   useEffect(() => {
     if (!sqlQuery) return;
@@ -119,83 +213,117 @@ export function AnimatedLessonWalkthrough({ title, steps, output, sqlQuery }: { 
     setPlaying((current) => !current);
   }
 
-  return <section className="mt-8 overflow-hidden rounded-[1.75rem] border border-slate-200 bg-gradient-to-br from-sky-50 via-white to-indigo-50 shadow-[0_20px_60px_-38px_rgba(30,64,175,0.45)]" aria-label={`Animated step-by-step lesson for ${title}`}>
-    <header className="relative overflow-hidden border-b border-indigo-100 bg-white/80 px-5 py-5 sm:px-7">
-      <div className="pointer-events-none absolute -right-10 -top-16 h-48 w-48 rounded-full bg-cyan-100/70 blur-3xl" />
-      <div className="relative flex flex-wrap items-center justify-between gap-4">
-        <div className="flex items-start gap-3">
-          <span className="mt-0.5 grid h-11 w-11 shrink-0 place-items-center rounded-2xl bg-gradient-to-br from-cyan-500 to-blue-600 text-white shadow-lg shadow-blue-500/20"><Code2 className="h-5 w-5" /></span>
-          <div>
-            <p className="flex items-center gap-1.5 text-[10px] font-extrabold uppercase tracking-[.19em] text-blue-700"><Sparkles className="h-3.5 w-3.5" /> Interactive code guide</p>
-            <h2 className="mt-1 text-lg font-bold tracking-tight text-slate-950 sm:text-xl">Animated lesson walkthrough</h2>
-            <p className="mt-1 text-sm text-slate-600">Watch each instruction and understand what it changes.</p>
-          </div>
-        </div>
-        <span className="inline-flex items-center gap-2 rounded-full border border-blue-100 bg-blue-50 px-3.5 py-2 text-xs font-bold text-blue-800"><span className="h-2 w-2 rounded-full bg-blue-500" />Step {active + 1}<span className="font-medium text-blue-500">of {steps.length}</span></span>
+  const kind = KIND_META[trace.currentKind];
+  const KindIcon = kind.Icon;
+  const stepMs = STEP_MS / speed;
+  const btn = "grid h-10 w-10 shrink-0 place-items-center rounded-full border border-slate-200 bg-white text-slate-700 transition hover:border-slate-300 hover:bg-slate-100 hover:text-slate-900 active:scale-95 disabled:cursor-not-allowed disabled:opacity-30 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-cyan-300";
+
+  function handleKeyDown(event: React.KeyboardEvent<HTMLElement>) {
+    if (event.target !== event.currentTarget) return;
+    if (event.key === "ArrowRight") { event.preventDefault(); goTo(active + 1); }
+    else if (event.key === "ArrowLeft") { event.preventDefault(); goTo(active - 1); }
+    else if (event.key === " ") { event.preventDefault(); togglePlayback(); }
+    else if (event.key === "Home") { event.preventDefault(); goTo(0); }
+    else if (event.key === "End") { event.preventDefault(); goTo(steps.length - 1); }
+  }
+
+  return <section tabIndex={0} onKeyDown={handleKeyDown} style={{ ["--accent" as string]: kind.color }} className="wt-root @container relative mt-4 overflow-hidden rounded-[1.75rem] border border-slate-200 text-slate-900 shadow-[0_24px_60px_-34px_rgba(31,86,214,0.35)] outline-none focus-visible:ring-2 focus-visible:ring-cyan-300/70" aria-label={`Animated step-by-step lesson for ${title}. Use arrow keys to move between steps and space to play or pause.`}>
+    <div aria-hidden="true" className="wt-aurora pointer-events-none absolute inset-0" />
+
+    <header className="relative flex flex-wrap items-center justify-between gap-3 px-4 pb-3 pt-4 @xl:px-6">
+      <div className="flex min-w-0 items-center gap-3">
+        <div className="min-w-0"><h3 className="truncate text-sm font-semibold tracking-tight">Visual walkthrough</h3><p className="truncate text-xs text-slate-500">{title}</p></div>
       </div>
-      <div className="relative mt-5 h-1.5 overflow-hidden rounded-full bg-slate-100" role="progressbar" aria-label="Walkthrough progress" aria-valuemin={0} aria-valuemax={steps.length} aria-valuenow={active + 1}>
-        <div className="h-full rounded-full bg-gradient-to-r from-cyan-400 via-blue-500 to-indigo-500 transition-[width] duration-500" style={{ width: `${progress}%` }} />
+      <div className="flex items-center gap-2">
+        <div role="group" aria-label="Playback speed" className="flex rounded-full border border-slate-200 bg-white p-0.5">
+          {SPEEDS.map((value) => <button key={value} type="button" onClick={() => setSpeed(value)} aria-pressed={speed === value} className={`rounded-full px-2.5 py-1 font-mono text-[11px] font-semibold transition ${speed === value ? "bg-brand-600 text-white" : "text-slate-500 hover:text-slate-900"}`}>{value}×</button>)}
+        </div>
+        <span className="rounded-full border border-slate-200 bg-white px-3 py-1 font-mono text-xs font-semibold tabular-nums text-slate-800">{String(active + 1).padStart(2, "0")}<span className="text-slate-500"> / {String(steps.length).padStart(2, "0")}</span></span>
       </div>
     </header>
 
-    <div className="grid items-start gap-4 p-4 sm:p-6 lg:gap-5">
-      <div className="relative overflow-hidden rounded-2xl border border-slate-800 bg-[#080d18] text-white shadow-xl shadow-slate-900/10">
-        <div className="flex items-center justify-between border-b border-white/10 bg-white/[.03] px-4 py-3 sm:px-5">
-          <div className="flex items-center gap-2.5"><span className="flex gap-1"><i className="h-2 w-2 rounded-full bg-rose-400"/><i className="h-2 w-2 rounded-full bg-amber-300"/><i className="h-2 w-2 rounded-full bg-emerald-400"/></span><span className="text-[10px] font-bold uppercase tracking-[.16em] text-slate-400">Code focus</span></div>
-          <span className="rounded-md border border-white/10 px-2 py-1 font-mono text-[10px] font-semibold text-slate-400">{title}</span>
+    <div className="relative mx-4 @xl:mx-6">
+      <div className="relative h-1.5 overflow-hidden rounded-full bg-slate-200" role="progressbar" aria-label="Walkthrough progress" aria-valuemin={0} aria-valuemax={steps.length} aria-valuenow={active + 1}>
+        <div className="absolute inset-y-0 left-0 rounded-full bg-gradient-to-r from-cyan-300 via-sky-400 to-violet-400 transition-[width] duration-500" style={{ width: `${progress}%` }} />
+        {playing && active < steps.length - 1 && <div key={`fill-${active}-${speed}`} className="wt-step-fill absolute inset-y-0 rounded-full bg-white/40" style={{ left: `${progress}%`, width: `${100 / steps.length}%`, animationDuration: `${stepMs}ms` }} />}
+      </div>
+      {steps.length > 1 && <input type="range" min={0} max={steps.length - 1} value={active} onChange={(event) => goTo(Number(event.target.value))} aria-label="Scrub through walkthrough steps" className="absolute -top-2 left-0 h-6 w-full cursor-pointer opacity-0" />}
+    </div>
+
+    <div className="relative grid gap-4 p-4 @xl:p-5 @3xl:grid-cols-[minmax(0,1.05fr)_minmax(0,1fr)] @3xl:items-start">
+      <div className="flex min-w-0 flex-col gap-4">
+        <div key={`now-${active}`} className="wt-panel wt-pop wt-accent p-4 @xl:p-5" aria-live="polite">
+          <div className="flex flex-wrap items-center justify-between gap-2">
+            <span className="rounded-full px-3 py-1 text-xs font-semibold" style={{ background: "color-mix(in srgb, var(--accent) 14%, white)", color: "var(--accent)" }}>{trace.operation}</span>
+            <span className="font-mono text-xs font-medium text-slate-500">Line {active + 1} of {steps.length}</span>
+          </div>
+          <div className="mt-3 rounded-2xl border border-slate-200 bg-slate-50 px-4 py-3">
+            <p className="wt-label">Reading</p>
+            <code className="mt-1 block whitespace-pre-wrap break-words font-mono text-[15px] font-semibold text-slate-900 @xl:text-base">{step.code.trim() || "(blank line)"}</code>
+          </div>
+          <div aria-hidden="true" className="wt-drop grid h-6 place-items-center text-slate-400">↓</div>
+          <div className="rounded-2xl border px-4 py-3" style={{ borderColor: "color-mix(in srgb, var(--accent) 45%, white)", background: "color-mix(in srgb, var(--accent) 7%, white)" }}>
+            <p className="wt-label" style={{ color: "var(--accent)" }}>{trace.resultLabel}</p>
+            <code className="mt-1 block whitespace-pre-wrap break-words font-mono text-[15px] font-semibold text-slate-900 @xl:text-base">{trace.result}</code>
+          </div>
         </div>
-        <div className="max-h-56 overflow-y-auto px-2 py-3 sm:px-3">
-          <p className="mb-3 px-2 text-[10px] font-bold uppercase tracking-[.2em] text-cyan-300">Live code · line {active + 1} of {steps.length}</p>
-          <ol className="space-y-1 font-mono text-sm leading-6 sm:text-base">
-            {steps.map((line, index) => <li key={`${line.code}-${index}`}>
-              <button ref={(element) => { codeLineRefs.current[index] = element; }} type="button" onClick={() => goTo(index)} aria-current={index === active ? "step" : undefined} aria-label={`Play from line ${index + 1}: ${line.code}`} className={`group flex w-full items-start gap-3 rounded-lg px-2 py-1.5 text-left transition-colors ${index === active ? "bg-cyan-300/15 text-emerald-200 ring-1 ring-inset ring-cyan-300/35" : index < active ? "text-slate-400 hover:bg-white/5 hover:text-slate-200" : "text-slate-500 hover:bg-white/5 hover:text-slate-300"}`}>
-                <span className={`w-6 shrink-0 select-none text-right text-xs ${index === active ? "font-bold text-cyan-300" : "text-slate-600"}`}>{index + 1}</span><code className="min-w-0 whitespace-pre-wrap break-words">{line.code}</code>
-              </button>
-            </li>)}
-          </ol>
-        </div>
-        <div className="flex items-center justify-between border-t border-white/10 bg-white/[.025] px-4 py-3 sm:px-5">
-          <p className="flex items-center gap-2 text-xs font-medium text-slate-300"><span className="grid h-5 w-5 place-items-center rounded-full bg-cyan-400/15 text-cyan-300"><Check className="h-3 w-3" /></span>Follow the highlighted instruction</p>
-          <div className="flex items-center gap-1.5 opacity-70"><Image src="/myloginn-logo.png" alt="" width={17} height={17} className="h-4 w-4 object-contain"/><span className="text-[9px] font-bold text-slate-300">MyLoginn</span></div>
-        </div>
+
+        {arrayVar && arrayItems && <ArrayStage name={arrayVar.name} items={arrayItems} pointers={pointers} />}
+        {isWeb && <WebStage courseSlug={courseSlug} steps={steps} active={active} />}
       </div>
 
-      <div className="flex flex-col rounded-2xl border border-blue-100 bg-white p-5 shadow-sm sm:p-6">
-        <div className="flex items-center gap-2 text-[10px] font-extrabold uppercase tracking-[.18em] text-blue-700"><span className="grid h-7 w-7 place-items-center rounded-lg bg-blue-50"><Lightbulb className="h-4 w-4" /></span>What happens now</div>
-        <div key={`explanation-${active}`} className="lesson-frame-enter mt-4 flex-1">
-          <p className="text-base leading-7 text-slate-700 sm:text-[17px] sm:leading-8" aria-live="polite">{step.explanation}</p>
-        </div>
-        <section className="mt-4 rounded-xl border border-indigo-100 bg-gradient-to-br from-indigo-50 to-sky-50 p-3.5" aria-label="Live code execution visualization" aria-live="polite">
-          <div className="flex items-center justify-between gap-2">
-            <h3 className="flex items-center gap-2 text-[10px] font-extrabold uppercase tracking-[.15em] text-indigo-800"><GitBranch className="h-3.5 w-3.5" />Live execution map</h3>
-            <span className="rounded-full bg-white px-2.5 py-1 text-[10px] font-bold text-indigo-700 shadow-sm">{trace.operation}</span>
+      <div className="flex min-w-0 flex-col gap-4">
+        <div className="wt-panel overflow-hidden">
+          <div className="flex items-center justify-between gap-2 border-b border-slate-200 bg-slate-50 px-3 py-2">
+            <span className="flex gap-1.5" aria-hidden="true"><i className="h-2.5 w-2.5 rounded-full bg-rose-400/90" /><i className="h-2.5 w-2.5 rounded-full bg-amber-300/90" /><i className="h-2.5 w-2.5 rounded-full bg-emerald-400/90" /></span>
+            <span className="min-w-0 truncate font-mono text-xs font-medium text-slate-500">{title}</span>
+            <Image src="/myloginn-logo.png" alt="" width={16} height={16} className="h-4 w-4 shrink-0 object-contain opacity-70" />
           </div>
-          <div className="mt-3 grid grid-cols-[minmax(0,1fr)_auto_minmax(0,1fr)] items-center gap-2">
-            <div className="min-w-0 rounded-lg border border-indigo-100 bg-white p-2.5"><p className="text-[9px] font-bold uppercase tracking-wider text-slate-500">Line {active + 1}</p><code className="mt-1 block overflow-hidden text-ellipsis whitespace-nowrap font-mono text-xs font-semibold text-slate-800">{step.code.trim() || "(blank line)"}</code></div>
-            <ArrowRight className="h-4 w-4 text-indigo-400" aria-hidden="true" />
-            <div className="min-w-0 rounded-lg border border-cyan-200 bg-white p-2.5"><p className="text-[9px] font-bold uppercase tracking-wider text-cyan-800">{trace.resultLabel}</p><code className="mt-1 block overflow-hidden text-ellipsis whitespace-nowrap font-mono text-xs font-semibold text-slate-800">{trace.result}</code></div>
+          <div className="max-h-[min(20rem,42dvh)] overflow-y-auto px-1.5 py-2">
+            <ol className="space-y-0.5 font-mono text-sm leading-6">
+              {steps.map((line, index) => <li key={`${line.code}-${index}`}>
+                <button ref={(element) => { codeLineRefs.current[index] = element; }} type="button" onClick={() => goTo(index)} aria-current={index === active ? "step" : undefined} aria-label={`Go to line ${index + 1}: ${line.code}`} className={`relative flex w-full items-start gap-2.5 rounded-lg px-2 py-1 text-left transition-all duration-300 ${index === active ? "wt-line-active font-semibold text-slate-900" : index < active ? "text-slate-600 hover:bg-slate-100" : "text-slate-500 hover:bg-slate-100 hover:text-slate-800"}`}>
+                  <span className={`grid w-5 shrink-0 select-none place-items-center text-xs leading-6 ${index === active ? "font-bold text-[color:var(--accent)]" : "text-slate-400"}`}>{index === active ? <ChevronRight className="wt-nudge h-4 w-4" aria-hidden="true" /> : index < active ? <Check className="h-3.5 w-3.5 text-emerald-500" aria-hidden="true" /> : index + 1}</span>
+                  <code className="min-w-0 whitespace-pre-wrap break-words">{line.code || " "}</code>
+                </button>
+              </li>)}
+            </ol>
           </div>
-          <div className="mt-3 border-t border-indigo-100 pt-2.5">
-            <p className="flex items-center gap-1.5 text-[9px] font-extrabold uppercase tracking-wider text-slate-500"><Variable className="h-3.5 w-3.5" />Program memory</p>
-            {trace.memory.length ? <div className="mt-2 flex flex-wrap gap-1.5">{trace.memory.slice(-5).map((item) => <span key={item.name} className="max-w-full rounded-lg border border-white bg-white px-2.5 py-1.5 font-mono text-[10px] shadow-sm"><strong className="text-indigo-700">{item.name}</strong><span className="px-1 text-slate-400">=</span><span className="text-slate-700">{item.value}</span></span>)}</div> : <p className="mt-1 text-xs text-slate-500">No values stored yet. The current line’s effect will appear here as code runs.</p>}
+        </div>
+
+        {!isWeb && <div className="grid gap-4 @md:grid-cols-2 @3xl:grid-cols-1 @4xl:grid-cols-2">
+          <div className="wt-panel p-4">
+            <p className="wt-label">Memory</p>
+            {trace.memory.length
+              ? <ul className="mt-3 space-y-2">{trace.memory.slice(-6).map((item) => {
+                const before = previous?.memory.find((old) => old.name === item.name)?.value;
+                return <li key={`${item.name}-${item.value}`} className={`flex max-w-full flex-wrap items-center gap-x-2 gap-y-0.5 rounded-xl border px-3 py-2 font-mono text-sm ${changed.has(item.name) ? "wt-flash border-emerald-300 bg-emerald-50 text-emerald-900" : "border-slate-200 bg-slate-50 text-slate-700"}`}>
+                  <strong className="text-violet-600">{item.name}</strong>
+                  {changed.has(item.name) && before !== undefined && <><span className="break-all text-slate-400 line-through">{before}</span><span className="text-slate-400" aria-hidden="true">→</span></>}
+                  <span className="break-all font-semibold">{item.value}</span>
+                </li>;
+              })}</ul>
+              : <p className="mt-3 text-sm leading-6 text-slate-500">Empty. Variables appear here as lines run.</p>}
           </div>
-        </section>
-        <div className="mt-4 rounded-xl border border-slate-200 bg-slate-950 p-3.5 text-white shadow-inner">
-          <div className="flex items-center justify-between"><h3 className="text-[10px] font-bold uppercase tracking-[.16em] text-slate-400">Program output</h3><span className="text-[10px] font-medium text-slate-500">{visibleOutputLines.length} / {outputLines.length} lines</span></div>
-          <pre aria-live="polite" className="mt-2 min-h-8 whitespace-pre-wrap break-words font-mono text-sm leading-6 text-emerald-300">{visibleOutputLines.length ? visibleOutputLines.join("\n") : <span className="text-slate-600">Waiting for output…</span>}</pre>
-        </div>
-        <div className="mt-6 flex items-center gap-2 border-t border-slate-100 pt-4">
-          <button type="button" onClick={() => goTo(0)} aria-label="Restart walkthrough" title="Restart walkthrough" className="grid h-10 w-10 shrink-0 place-items-center rounded-xl border border-slate-200 text-slate-600 transition hover:border-blue-200 hover:bg-blue-50 hover:text-blue-700 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-500"><RotateCcw className="h-4 w-4" /></button>
-          <button type="button" onClick={() => goTo(active - 1)} disabled={active === 0} aria-label="Previous walkthrough step" title="Previous step" className="grid h-10 w-10 shrink-0 place-items-center rounded-xl border border-slate-200 text-slate-600 transition hover:border-blue-200 hover:bg-blue-50 hover:text-blue-700 disabled:cursor-not-allowed disabled:opacity-35 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-500"><SkipBack className="h-4 w-4" /></button>
-          <button type="button" onClick={togglePlayback} className="inline-flex h-11 flex-1 items-center justify-center gap-2 rounded-xl bg-gradient-to-r from-cyan-500 to-blue-600 px-3 text-sm font-bold text-white shadow-lg shadow-blue-500/20 transition hover:brightness-105 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-500 focus-visible:ring-offset-2">{playing ? <Pause className="h-4 w-4" /> : <Play className="h-4 w-4" />}{playing ? "Pause steps" : active === steps.length - 1 ? "Replay walkthrough" : "Play walkthrough"}</button>
-          <button type="button" onClick={() => goTo(active + 1)} disabled={active === steps.length - 1} aria-label="Next walkthrough step" title="Next step" className="grid h-10 w-10 shrink-0 place-items-center rounded-xl border border-slate-200 text-slate-600 transition hover:border-blue-200 hover:bg-blue-50 hover:text-blue-700 disabled:cursor-not-allowed disabled:opacity-35 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-500"><SkipForward className="h-4 w-4" /></button>
-        </div>
+          <div className="wt-panel overflow-hidden">
+            <div className="flex items-center justify-between border-b border-slate-200 bg-slate-50 px-4 py-2.5"><p className="wt-label">Output</p><span className="font-mono text-xs tabular-nums text-slate-500">{visibleOutputLines.length}/{outputLines.length}</span></div>
+            <pre aria-live="polite" className="max-h-40 min-h-16 overflow-y-auto whitespace-pre-wrap break-words px-4 py-3 font-mono text-sm leading-6 text-emerald-700"><span className="select-none text-slate-400">$ </span>{visibleOutputLines.length ? visibleOutputLines.map((line, i) => <span key={`${i}-${line}`} className={i === visibleOutputLines.length - 1 ? "wt-type block" : "block"}>{line}</span>) : <span className="text-slate-500">waiting…</span>}</pre>
+          </div>
+        </div>}
       </div>
     </div>
 
-    {steps.length > 1 && <nav aria-label="Walkthrough steps" className="flex flex-wrap items-center gap-2 border-t border-indigo-100 bg-white/70 px-4 py-3 sm:px-6">
-      <span className="mr-1 text-[10px] font-bold uppercase tracking-wider text-slate-500">Jump to</span>
-      {steps.map((item, index) => <button key={`${item.code}-${index}`} type="button" onClick={() => goTo(index)} aria-label={`Go to step ${index + 1}`} aria-current={index === active ? "step" : undefined} className={`grid h-8 min-w-8 place-items-center rounded-lg px-2 text-xs font-bold transition ${index === active ? "bg-blue-600 text-white shadow-md shadow-blue-600/20" : index < active ? "bg-emerald-50 text-emerald-700 hover:bg-emerald-100" : "bg-slate-100 text-slate-600 hover:bg-slate-200"}`}>{index < active ? <Check className="h-3.5 w-3.5" /> : index + 1}</button>)}
-    </nav>}
+    <div className="relative flex flex-wrap items-center gap-3 border-t border-slate-200 bg-slate-50 px-4 py-3 @xl:px-6">
+      <div className="flex w-full items-center gap-2 @2xl:w-auto @2xl:flex-1">
+        <button type="button" onClick={() => goTo(0)} aria-label="Restart walkthrough" title="Restart" className={btn}><RotateCcw className="h-4 w-4" /></button>
+        <button type="button" onClick={() => goTo(active - 1)} disabled={active === 0} aria-label="Previous walkthrough step" title="Previous step (←)" className={btn}><SkipBack className="h-4 w-4" /></button>
+        <button type="button" onClick={togglePlayback} className="inline-flex h-11 min-w-0 flex-1 items-center justify-center gap-2 rounded-full bg-gradient-to-r from-brand-600 to-violet-500 px-5 text-sm font-semibold text-white shadow-[0_10px_26px_-10px_rgba(79,70,229,0.7)] transition hover:brightness-110 active:scale-[0.98] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-cyan-300">{playing ? <Pause className="h-4 w-4 fill-current" /> : <Play className="h-4 w-4 fill-current" />}{playing ? "Pause" : active === steps.length - 1 ? "Replay" : "Play"}</button>
+        <button type="button" onClick={() => goTo(active + 1)} disabled={active === steps.length - 1} aria-label="Next walkthrough step" title="Next step (→)" className={btn}><SkipForward className="h-4 w-4" /></button>
+      </div>
+      {steps.length > 1 && <nav aria-label="Walkthrough steps" className="no-scrollbar flex w-full max-w-full gap-1.5 overflow-x-auto pb-1 @2xl:w-auto @2xl:max-w-[45%]">
+        {steps.map((item, index) => <button key={`${item.code}-${index}`} type="button" onClick={() => goTo(index)} aria-label={`Go to step ${index + 1}`} aria-current={index === active ? "step" : undefined} className={`grid h-7 min-w-7 shrink-0 place-items-center rounded-full px-1.5 font-mono text-[11px] font-semibold transition ${index === active ? "bg-brand-600 text-white shadow-[0_6px_14px_-4px_rgba(31,86,214,0.6)]" : index < active ? "bg-emerald-100 text-emerald-700 hover:bg-emerald-200" : "bg-slate-100 text-slate-500 hover:bg-slate-100"}`}>{index < active ? <Check className="h-3 w-3" /> : index + 1}</button>)}
+      </nav>}
+      <p className="hidden w-full text-center text-[11px] text-slate-500 @3xl:block">Tip: click any code line, drag the progress bar, or use <kbd className="rounded bg-slate-200 px-1.5 py-0.5 font-mono text-slate-700">←</kbd> <kbd className="rounded bg-slate-200 px-1.5 py-0.5 font-mono text-slate-700">→</kbd> and <kbd className="rounded bg-slate-200 px-1.5 py-0.5 font-mono text-slate-700">Space</kbd> after focusing the player.</p>
+    </div>
   </section>;
 }

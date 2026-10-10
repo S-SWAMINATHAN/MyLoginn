@@ -1,6 +1,7 @@
 "use client";
 
 import Link from "next/link";
+import { usePathname } from "next/navigation";
 import { motion } from "framer-motion";
 import { Reveal, RevealGroup, RevealItem } from "@/components/ui/Reveal";
 import { AnimatedMail } from "@/components/ui/icons/AnimatedMail";
@@ -53,6 +54,10 @@ const columns = [
   },
 ];
 
+/** Routes that already end in their own page-specific CTA banner —
+ * showing the generic one again here would just duplicate it. */
+const ROUTES_WITH_OWN_CTA = ["/", "/projects", "/internships"];
+
 const contactLinks = [
   { label: CONTACT_EMAIL, href: `mailto:${CONTACT_EMAIL}`, Icon: AnimatedMail },
   { label: `+91 ${CONTACT_PHONES[0].display}`, href: `tel:${CONTACT_PHONES[0].tel}`, Icon: AnimatedPhone },
@@ -67,6 +72,9 @@ const contactLinks = [
 /* ── Footer ─────────────────────────────────────────────────────────── */
 
 export function Footer() {
+  const pathname = usePathname();
+  const showCta = !ROUTES_WITH_OWN_CTA.includes(pathname);
+
   return (
     <footer className="relative mt-20 overflow-hidden">
       {/* Gradient hairline */}
@@ -77,33 +85,35 @@ export function Footer() {
       <div className="pointer-events-none absolute -bottom-40 -right-24 h-80 w-80 rounded-full bg-[radial-gradient(circle,rgba(34,211,238,0.12),transparent_70%)]" />
 
       <div className="relative mx-auto max-w-7xl px-5 sm:px-8">
-        {/* CTA band */}
-        <Reveal scale className="pt-14">
-          <div className="card-shine relative overflow-hidden rounded-3xl brand-gradient-bg px-6 py-8 text-white shadow-[0_16px_48px_rgba(31,86,214,0.32)] sm:px-10">
-            <div className="pointer-events-none absolute -top-16 -right-10 h-48 w-48 rounded-full bg-white/10 blur-2xl" />
-            <div className="flex flex-col items-start gap-5 sm:flex-row sm:items-center sm:justify-between">
-              <div className="flex items-center gap-4">
-                <AnimatedRocket className="h-11 w-11 shrink-0" />
-                <div>
-                  <p className="text-lg font-semibold sm:text-xl">What will you build next?</p>
-                  <p className="mt-1 text-sm text-white/80">Have an idea or a business challenge? Let&apos;s talk.</p>
+        {/* CTA band — skipped on pages that already end in their own CTA */}
+        {showCta && (
+          <Reveal scale className="pt-14">
+            <div className="card-shine relative overflow-hidden rounded-3xl brand-gradient-bg px-6 py-8 text-white shadow-[0_16px_48px_rgba(31,86,214,0.32)] sm:px-10">
+              <div className="pointer-events-none absolute -top-16 -right-10 h-48 w-48 rounded-full bg-white/10 blur-2xl" />
+              <div className="flex flex-col items-start gap-5 sm:flex-row sm:items-center sm:justify-between">
+                <div className="flex items-center gap-4">
+                  <AnimatedRocket className="h-11 w-11 shrink-0" />
+                  <div>
+                    <p className="text-lg font-semibold sm:text-xl">What will you build next?</p>
+                    <p className="mt-1 text-sm text-white/80">Have an idea or a business challenge? Let&apos;s talk.</p>
+                  </div>
                 </div>
+                <motion.div whileHover={{ scale: 1.04 }} whileTap={{ scale: 0.96 }} className="shrink-0">
+                  <button
+                    type="button"
+                    onClick={() => openProjectRequest("software")}
+                    className="inline-flex items-center gap-2 rounded-full bg-white px-6 py-3 text-sm font-semibold text-brand-600 shadow-lg transition-shadow duration-300 hover:shadow-xl focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-white"
+                  >
+                    Start a project
+                  </button>
+                </motion.div>
               </div>
-              <motion.div whileHover={{ scale: 1.04 }} whileTap={{ scale: 0.96 }} className="shrink-0">
-                <button
-                  type="button"
-                  onClick={() => openProjectRequest("software")}
-                  className="inline-flex items-center gap-2 rounded-full bg-white px-6 py-3 text-sm font-semibold text-brand-600 shadow-lg transition-shadow duration-300 hover:shadow-xl focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-white"
-                >
-                  Start a project
-                </button>
-              </motion.div>
             </div>
-          </div>
-        </Reveal>
+          </Reveal>
+        )}
 
         {/* Brand strip */}
-        <Reveal direction="up" className="mt-12">
+        <Reveal direction="up" className={showCta ? "mt-12" : "mt-14"}>
           <div className="flex w-fit max-w-full items-center gap-3">
             <Link href="/" className="inline-flex shrink-0 items-center transition-transform duration-300 hover:scale-[1.03]">
               <LogoBadge className="h-9 w-auto" />

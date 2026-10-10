@@ -9,6 +9,7 @@ import courseHeader from "@/images/Course header.png";
 import { ReferenceStatIcon } from "@/components/ui/ReferenceStatIcon";
 import { GraduationCap } from "lucide-react";
 import { JsonLd } from "@/components/seo/JsonLd";
+import { FaqAccordion } from "@/components/ui/FaqAccordion";
 
 const courseFaqs = [
   { question: "Which courses are available?", answer: "The course listings on this page show the current topics and levels. Open a course to review its description and outline." },
@@ -114,9 +115,7 @@ export default async function CoursesPage() {
         <section aria-labelledby="courses-faq" className="mt-16">
           <JsonLd data={{ "@context": "https://schema.org", "@type": "FAQPage", mainEntity: courseFaqs.map(({ question, answer }) => ({ "@type": "Question", name: question, acceptedAnswer: { "@type": "Answer", text: answer } })) }} />
           <h2 id="courses-faq" className="text-2xl font-semibold tracking-tight sm:text-3xl">Course FAQs</h2>
-          <div className="mt-5 divide-y divide-border-soft rounded-2xl border border-border-soft bg-surface px-5 sm:px-7">
-            {courseFaqs.map(({ question, answer }) => <details key={question} className="py-5"><summary className="cursor-pointer font-semibold focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-brand-500">{question}</summary><p className="mt-3 max-w-3xl leading-7 text-muted">{answer}</p></details>)}
-          </div>
+          <FaqAccordion items={courseFaqs} className="mt-5" />
         </section>
       </Container>
     </Section>

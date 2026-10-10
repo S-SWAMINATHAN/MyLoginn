@@ -5,6 +5,7 @@ import ContactArtwork from "@/images/Contact us header.png";
 import { createPageMetadata } from "@/lib/seo";
 import { ContactEnquiryTabs } from "@/components/services/ContactEnquiryTabs";
 import { JsonLd } from "@/components/seo/JsonLd";
+import { FaqAccordion } from "@/components/ui/FaqAccordion";
 import { toWhatsAppLink } from "@/lib/whatsapp";
 import { CONTACT_EMAIL, CONTACT_PHONES, WHATSAPP_PHONE } from "@/lib/contactInfo";
 
@@ -104,9 +105,7 @@ export default function ContactPage() {
             <section aria-labelledby="contact-faq" className="rounded-[1.1rem] border border-[#e8ecf3] bg-[#f9fbff] p-5 sm:p-6">
               <p className="text-[11px] font-semibold uppercase tracking-wide text-[#3569df]">Quick answers</p>
               <h2 id="contact-faq" className="mt-1 text-lg font-semibold">Before you get in touch</h2>
-              <div className="mt-3 divide-y divide-[#e4eaf4]">
-                {contactFaqs.map(({ question, answer }) => <details key={question} className="group py-3"><summary className="flex cursor-pointer list-none items-start justify-between gap-4 text-sm font-semibold text-[#23304a] focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-[#3569df]"><span>{question}</span><span aria-hidden="true" className="text-lg leading-4 text-[#3569df] transition group-open:rotate-45">+</span></summary><p className="mt-2 text-sm leading-6 text-[#707d93]">{answer}</p></details>)}
-              </div>
+              <FaqAccordion items={contactFaqs} className="mt-3" />
             </section>
           </aside>
         </section>

@@ -1,17 +1,24 @@
 /**
  * Illustrated "mascot scene" artwork for project/internship card banners.
  * Unlike the small keyword glyphs in courseIcons.ts, these are wide,
- * full-bleed banner illustrations (a character + floating props) so a card
- * banner reads as a little scene instead of a flat gradient with an icon in
- * the corner. Same hand-authored inline-SVG approach as the rest of the
- * animated icon system — no external image assets.
+ * full-bleed banner illustrations — a rotated floating UI panel + a small
+ * orbiting accent badge, connected by a faint line, over a layered gradient
+ * — so a card banner reads as a little product-illustration scene instead of
+ * a flat gradient with an icon in the corner. Same hand-authored inline-SVG
+ * approach as the rest of the animated icon system — no external assets.
  */
 import { getCourseIconKey, type CourseIconKey } from "./courseIcons";
 
-export type CardArtKey = "ml" | "cyber" | "testing" | "marketing" | "cloud" | "webdev";
-
-export const FREE_WEB_DEVELOPMENT_PREVIEW_URL =
-  "https://cdnl.iconscout.com/lottie/free/preview/free-designer-building-website-animation-gif-download-5967182.mp4";
+export type CardArtKey =
+  | "ml"
+  | "cyber"
+  | "testing"
+  | "marketing"
+  | "cloud"
+  | "webdev"
+  | "ecommerce"
+  | "travel"
+  | "platform";
 
 function toArtKey(key: CourseIconKey): CardArtKey {
   switch (key) {
@@ -58,7 +65,38 @@ function wrap(p: string, bgId: string, glowId: string, body: string) {
   </svg>`;
 }
 
-/* ── AI & ML / Data — friendly robot with floating chat bubbles ────────── */
+/** Soft ground shadow beneath the floating panel, for depth. */
+function shadow(p: string, cx: number, cy: number, rx: number, ry: number, color: string, opacity = 0.4) {
+  return `<ellipse cx="${cx}" cy="${cy}" rx="${rx}" ry="${ry}" fill="${color}" opacity="${opacity}" filter="url(#${p}shadow)"/>`;
+}
+
+/** Faint dashed line connecting the hero panel to its satellite badge. */
+function link(x1: number, y1: number, x2: number, y2: number, color: string) {
+  return `<path d="M${x1} ${y1} L${x2} ${y2}" stroke="${color}" stroke-width="1.4" stroke-dasharray="3 5" opacity=".45"/>`;
+}
+
+/** A rotated, gently-bobbing "floating panel" — the hero mockup per scene. */
+function floatPanel(p: string, x: number, y: number, w: number, h: number, rotate: number, content: string, dur = 4, delay = "0s") {
+  const cx = x + w / 2;
+  const cy = y + h / 2;
+  return `<g transform="rotate(${rotate} ${cx} ${cy})">
+    <g transform="translate(${x},${y})">
+      <animateTransform attributeName="transform" type="translate" values="${x},${y}; ${x},${y - 4}; ${x},${y}" dur="${dur}s" begin="${delay}" repeatCount="indefinite"/>
+      <rect width="${w}" height="${h}" rx="10" fill="url(#${p}panel)"/>
+      ${content}
+    </g>
+  </g>`;
+}
+
+/** A small bobbing satellite badge/icon orbiting near the panel. */
+function floatBadge(p: string, x: number, y: number, content: string, dur = 3.4, delay = "0s") {
+  return `<g transform="translate(${x},${y})">
+    <animateTransform attributeName="transform" type="translate" values="${x},${y}; ${x},${y - 6}; ${x},${y}" dur="${dur}s" begin="${delay}" repeatCount="indefinite"/>
+    ${content}
+  </g>`;
+}
+
+/* ── AI & ML / Data — neural-node panel + pulsing core badge ────────────── */
 function artML(p: string) {
   return wrap(
     p,
@@ -70,54 +108,56 @@ function artML(p: string) {
         <stop offset="55%" stop-color="#4c1d95"/>
         <stop offset="100%" stop-color="#7c3aed"/>
       </linearGradient>
-      <radialGradient id="${p}glow" cx="74%" cy="40%" r="60%">
+      <radialGradient id="${p}glow" cx="74%" cy="38%" r="60%">
         <stop offset="0%" stop-color="#c4b5fd" stop-opacity=".4"/>
         <stop offset="100%" stop-color="#c4b5fd" stop-opacity="0"/>
       </radialGradient>
-      <linearGradient id="${p}head" x1="0" y1="0" x2="1" y2="1">
+      <linearGradient id="${p}panel" x1="0" y1="0" x2="1" y2="1">
         <stop offset="0%" stop-color="#ffffff"/>
-        <stop offset="100%" stop-color="#ddd6fe"/>
+        <stop offset="100%" stop-color="#f3eeff"/>
       </linearGradient>
-      <filter id="${p}shadow" x="-50%" y="-50%" width="200%" height="200%">
-        <feGaussianBlur stdDeviation="5"/>
-      </filter>
+      <radialGradient id="${p}core" cx="35%" cy="35%" r="70%">
+        <stop offset="0%" stop-color="#f3e8ff"/>
+        <stop offset="100%" stop-color="#a855f7"/>
+      </radialGradient>
+      <filter id="${p}shadow" x="-50%" y="-50%" width="200%" height="200%"><feGaussianBlur stdDeviation="5"/></filter>
     </defs>
     ${sparkles(p, "#e9d5ff")}
-    <ellipse cx="295" cy="128" rx="46" ry="9" fill="#1b0a45" opacity=".4" filter="url(#${p}shadow)"/>
-    <g opacity=".9">
-      <rect x="248" y="18" width="48" height="27" rx="10" fill="#ffffff" opacity=".14">
-        <animateTransform attributeName="transform" type="translate" values="0,0; 0,-5; 0,0" dur="3.4s" repeatCount="indefinite"/>
-      </rect>
-      <circle cx="258" cy="31" r="2.4" fill="#fff" opacity=".7"/>
-      <circle cx="268" cy="31" r="2.4" fill="#fff" opacity=".7"/>
-      <circle cx="278" cy="31" r="2.4" fill="#fff" opacity=".7"/>
-      <rect x="308" y="58" width="36" height="22" rx="8" fill="#ffffff" opacity=".12">
-        <animateTransform attributeName="transform" type="translate" values="0,0; 0,-4; 0,0" dur="3.8s" begin=".5s" repeatCount="indefinite"/>
-      </rect>
-    </g>
-    <g transform="translate(250,44)">
-      <line x1="45" y1="-2" x2="45" y2="-19" stroke="url(#${p}head)" stroke-width="4" stroke-linecap="round"/>
-      <circle cx="45" cy="-23" r="6" fill="#67e8f9">
-        <animate attributeName="opacity" values=".5;1;.5" dur="1.6s" repeatCount="indefinite"/>
+    ${shadow(p, 258, 140, 96, 10, "#1b0a45", 0.38)}
+    ${link(330, 56, 262, 70, "#c4b5fd")}
+    ${floatPanel(
+      p,
+      206,
+      36,
+      112,
+      72,
+      -7,
+      `<circle cx="20" cy="18" r="3" fill="#7c3aed"/>
+      <circle cx="48" cy="30" r="3" fill="#a855f7"/>
+      <circle cx="78" cy="16" r="3" fill="#7c3aed"/>
+      <circle cx="60" cy="48" r="3" fill="#a855f7"/>
+      <circle cx="30" cy="50" r="3" fill="#7c3aed"/>
+      <path d="M20 18 48 30M48 30 78 16M48 30 60 48M60 48 30 50M20 18 30 50" stroke="#c4b5fd" stroke-width="1.3" opacity=".7" fill="none"/>
+      <rect x="14" y="60" width="50" height="4" rx="2" fill="#ddd6fe"/>
+      <rect x="14" y="60" width="0" height="4" rx="2" fill="#7c3aed"><animate attributeName="width" values="0;34;0" dur="2.6s" repeatCount="indefinite"/></rect>`
+    )}
+    ${floatBadge(
+      p,
+      330,
+      56,
+      `<circle r="22" fill="url(#${p}core)"/>
+      <circle r="22" fill="none" stroke="#e9d5ff" stroke-width="2" opacity=".6">
+        <animate attributeName="r" values="16;26;16" dur="2.4s" repeatCount="indefinite"/>
+        <animate attributeName="opacity" values=".7;0;.7" dur="2.4s" repeatCount="indefinite"/>
       </circle>
-      <rect x="-9" y="21" width="11" height="27" rx="5.5" fill="url(#${p}head)"/>
-      <rect x="88" y="21" width="11" height="27" rx="5.5" fill="url(#${p}head)"/>
-      <rect x="0" y="0" width="90" height="78" rx="27" fill="url(#${p}head)"/>
-      <rect x="13" y="13" width="64" height="48" rx="16" fill="#1b0a45" opacity=".3"/>
-      <g fill="#f5f3ff">
-        <ellipse cx="30" cy="37" rx="7" ry="9">
-          <animate attributeName="ry" values="9;9;1;9;9" keyTimes="0;.42;.5;.58;1" dur="3.4s" repeatCount="indefinite"/>
-        </ellipse>
-        <ellipse cx="60" cy="37" rx="7" ry="9">
-          <animate attributeName="ry" values="9;9;1;9;9" keyTimes="0;.42;.5;.58;1" dur="3.4s" repeatCount="indefinite"/>
-        </ellipse>
-      </g>
-      <path d="M28 54 Q45 64 62 54" stroke="#f5f3ff" stroke-width="4.5" stroke-linecap="round" fill="none"/>
-    </g>`
+      <circle r="7" fill="#fff"/>`,
+      3.6,
+      ".2s"
+    )}`
   );
 }
 
-/* ── Cybersecurity — shield guardian with a scan sweep ──────────────────── */
+/* ── Cybersecurity — scan-readout panel + shield badge ──────────────────── */
 function artCyber(p: string) {
   return wrap(
     p,
@@ -129,46 +169,57 @@ function artCyber(p: string) {
         <stop offset="55%" stop-color="#7f1d1d"/>
         <stop offset="100%" stop-color="#dc2626"/>
       </linearGradient>
-      <radialGradient id="${p}glow" cx="74%" cy="40%" r="60%">
+      <radialGradient id="${p}glow" cx="74%" cy="38%" r="60%">
         <stop offset="0%" stop-color="#fca5a5" stop-opacity=".35"/>
         <stop offset="100%" stop-color="#fca5a5" stop-opacity="0"/>
       </radialGradient>
+      <linearGradient id="${p}panel" x1="0" y1="0" x2="1" y2="1">
+        <stop offset="0%" stop-color="#ffffff"/>
+        <stop offset="100%" stop-color="#fff1f1"/>
+      </linearGradient>
       <linearGradient id="${p}shield" x1="0" y1="0" x2="1" y2="1">
         <stop offset="0%" stop-color="#ffffff"/>
         <stop offset="100%" stop-color="#fecaca"/>
       </linearGradient>
-      <clipPath id="${p}clip">
-        <path d="M45 0 L88 17 L88 50 C88 80 70 98 45 108 C20 98 2 80 2 50 L2 17 Z"/>
-      </clipPath>
-      <filter id="${p}shadow" x="-50%" y="-50%" width="200%" height="200%">
-        <feGaussianBlur stdDeviation="5"/>
-      </filter>
+      <clipPath id="${p}clip"><path d="M18 0 L35 7 L35 20 C35 32 28 39 18 43 C8 39 1 32 1 20 L1 7Z"/></clipPath>
+      <filter id="${p}shadow" x="-50%" y="-50%" width="200%" height="200%"><feGaussianBlur stdDeviation="5"/></filter>
     </defs>
     ${sparkles(p, "#fecaca")}
-    <ellipse cx="300" cy="148" rx="42" ry="8" fill="#1a0000" opacity=".4" filter="url(#${p}shadow)"/>
-    <g transform="translate(255,30)">
-      <path d="M45 0 L88 17 L88 50 C88 80 70 98 45 108 C20 98 2 80 2 50 L2 17 Z" fill="url(#${p}shield)"/>
-      <rect x="2" y="0" width="86" height="18" fill="#fff" opacity=".18" clip-path="url(#${p}clip)">
-        <animate attributeName="y" values="-10;98;-10" dur="2.8s" repeatCount="indefinite" calcMode="spline" keySplines=".4 0 .6 1;.4 0 .6 1"/>
-      </rect>
-      <g fill="#7f1d1d">
-        <circle cx="30" cy="44" r="6"/>
-        <circle cx="60" cy="44" r="6"/>
-      </g>
-      <g fill="#fecaca">
-        <circle cx="31.5" cy="43" r="2.2"/>
-        <circle cx="61.5" cy="43" r="2.2"/>
-      </g>
-      <path d="M28 56 Q45 66 62 56" stroke="#7f1d1d" stroke-width="4" stroke-linecap="round" fill="none"/>
-    </g>
-    <g transform="translate(330,88)">
-      <rect x="-9" y="0" width="18" height="15" rx="3" fill="#fecaca" opacity=".9"/>
-      <path d="M-6 0 L-6 -6 C-6 -11 6 -11 6 -6 L6 0" stroke="#fecaca" stroke-width="3" fill="none" opacity=".9"/>
-    </g>`
+    ${shadow(p, 258, 140, 96, 10, "#1a0000", 0.4)}
+    ${link(332, 54, 264, 70, "#fca5a5")}
+    ${floatPanel(
+      p,
+      206,
+      36,
+      112,
+      72,
+      -6,
+      `<rect x="14" y="16" width="14" height="14" rx="4" fill="#fee2e2"/>
+      <path d="M18 23v-4a3 3 0 0 1 6 0v4" stroke="#dc2626" stroke-width="1.6" fill="none"/>
+      <rect x="34" y="18" width="52" height="4" rx="2" fill="#fecaca"/>
+      <rect x="34" y="26" width="36" height="4" rx="2" fill="#fee2e2"/>
+      <rect x="14" y="44" width="72" height="18" rx="6" fill="#fef2f2"/>
+      <path d="M22 53 27 58 36 48" stroke="#16a34a" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" fill="none"/>
+      <rect x="44" y="51" width="34" height="4" rx="2" fill="#fca5a5"/>`
+    )}
+    ${floatBadge(
+      p,
+      332,
+      54,
+      `<g transform="translate(-18,-22)">
+        <path d="M18 0 L35 7 L35 20 C35 32 28 39 18 43 C8 39 1 32 1 20 L1 7Z" fill="url(#${p}shield)"/>
+        <rect x="1" y="2" width="34" height="8" fill="#fff" opacity=".25" clip-path="url(#${p}clip)">
+          <animate attributeName="y" values="-4;40;-4" dur="2.6s" repeatCount="indefinite"/>
+        </rect>
+        <path d="M11 20 16 25 25 14" stroke="#dc2626" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round" fill="none"/>
+      </g>`,
+      3.4,
+      ".3s"
+    )}`
   );
 }
 
-/* ── Testing / QA — magnifying glass with a caught bug ──────────────────── */
+/* ── Testing / QA — checklist panel + magnifier badge ───────────────────── */
 function artTesting(p: string) {
   return wrap(
     p,
@@ -180,50 +231,55 @@ function artTesting(p: string) {
         <stop offset="55%" stop-color="#92400e"/>
         <stop offset="100%" stop-color="#d97706"/>
       </linearGradient>
-      <radialGradient id="${p}glow" cx="74%" cy="40%" r="60%">
+      <radialGradient id="${p}glow" cx="74%" cy="38%" r="60%">
         <stop offset="0%" stop-color="#fde68a" stop-opacity=".4"/>
         <stop offset="100%" stop-color="#fde68a" stop-opacity="0"/>
       </radialGradient>
+      <linearGradient id="${p}panel" x1="0" y1="0" x2="1" y2="1">
+        <stop offset="0%" stop-color="#ffffff"/>
+        <stop offset="100%" stop-color="#fffbea"/>
+      </linearGradient>
       <linearGradient id="${p}ring" x1="0" y1="0" x2="1" y2="1">
         <stop offset="0%" stop-color="#ffffff"/>
         <stop offset="100%" stop-color="#fde68a"/>
       </linearGradient>
-      <filter id="${p}shadow" x="-50%" y="-50%" width="200%" height="200%">
-        <feGaussianBlur stdDeviation="5"/>
-      </filter>
+      <filter id="${p}shadow" x="-50%" y="-50%" width="200%" height="200%"><feGaussianBlur stdDeviation="5"/></filter>
     </defs>
     ${sparkles(p, "#fde68a")}
-    <ellipse cx="300" cy="148" rx="44" ry="8" fill="#1a0f00" opacity=".35" filter="url(#${p}shadow)"/>
-    <g transform="translate(300,80)">
-      <line x1="30" y1="30" x2="55" y2="55" stroke="url(#${p}ring)" stroke-width="9" stroke-linecap="round"/>
-      <circle cx="0" cy="0" r="40" fill="rgba(255,255,255,.14)" stroke="url(#${p}ring)" stroke-width="6">
-        <animate attributeName="r" values="38;41;38" dur="2.6s" repeatCount="indefinite"/>
-      </circle>
-      <g>
-        <ellipse cx="-4" cy="2" rx="12" ry="9" fill="#b45309"/>
-        <path d="M-16 2 A12 9 0 0 1 8 2" fill="#7c2d12"/>
-        <circle cx="-9" cy="-1" r="2" fill="#fef3c7"/>
-        <circle cx="0" cy="-1" r="2" fill="#fef3c7"/>
-        <circle cx="-14" cy="6" r="1.6" fill="#fde68a"/>
-        <circle cx="-4" cy="8" r="1.6" fill="#fde68a"/>
-        <circle cx="4" cy="4" r="1.6" fill="#fde68a"/>
+    ${shadow(p, 258, 140, 96, 10, "#1a0f00", 0.38)}
+    ${link(334, 60, 264, 70, "#fde68a")}
+    ${floatPanel(
+      p,
+      206,
+      34,
+      116,
+      76,
+      -5,
+      `<g fill="none" stroke-linecap="round" stroke-linejoin="round">
+        <path d="M14 18 19 23 28 12" stroke="#16a34a" stroke-width="2.4"><animate attributeName="opacity" values="0;1;1;0" dur="3s" repeatCount="indefinite" keyTimes="0;.3;.8;1"/></path>
+        <path d="M14 34 19 39 28 28" stroke="#16a34a" stroke-width="2.4"><animate attributeName="opacity" values="0;1;1;0" dur="3s" begin=".3s" repeatCount="indefinite" keyTimes="0;.3;.8;1"/></path>
+        <path d="M14 50 19 55 28 44" stroke="#d97706" stroke-width="2.4"><animate attributeName="opacity" values="0;1;1;0" dur="3s" begin=".6s" repeatCount="indefinite" keyTimes="0;.3;.8;1"/></path>
       </g>
-    </g>
-    <g transform="translate(232,26)" opacity=".92">
-      <rect width="58" height="46" rx="8" fill="#fff" opacity=".14"/>
-      <polyline points="10,16 16,22 27,10" stroke="#4ade80" stroke-width="3.2" stroke-linecap="round" stroke-linejoin="round" fill="none">
-        <animate attributeName="opacity" values="0;1;1;0" dur="3s" repeatCount="indefinite" keyTimes="0;.4;.8;1"/>
-      </polyline>
-      <polyline points="10,32 16,38 27,26" stroke="#4ade80" stroke-width="3.2" stroke-linecap="round" stroke-linejoin="round" fill="none">
-        <animate attributeName="opacity" values="0;1;1;0" dur="3s" begin=".4s" repeatCount="indefinite" keyTimes="0;.4;.8;1"/>
-      </polyline>
-      <line x1="34" y1="17" x2="48" y2="17" stroke="#fef3c7" stroke-width="3" stroke-linecap="round" opacity=".7"/>
-      <line x1="34" y1="33" x2="46" y2="33" stroke="#fef3c7" stroke-width="3" stroke-linecap="round" opacity=".7"/>
-    </g>`
+      <rect x="36" y="15" width="64" height="4" rx="2" fill="#fde68a"/>
+      <rect x="36" y="31" width="48" height="4" rx="2" fill="#fef3c7"/>
+      <rect x="36" y="47" width="56" height="4" rx="2" fill="#fde68a"/>`
+    )}
+    ${floatBadge(
+      p,
+      334,
+      60,
+      `<g transform="translate(-20,-20)">
+        <circle cx="16" cy="16" r="14" fill="none" stroke="url(#${p}ring)" stroke-width="5"><animate attributeName="r" values="13;15;13" dur="2.4s" repeatCount="indefinite"/></circle>
+        <circle cx="16" cy="16" r="14" fill="#fff" opacity=".12"/>
+        <line x1="26" y1="26" x2="36" y2="36" stroke="url(#${p}ring)" stroke-width="5" stroke-linecap="round"/>
+      </g>`,
+      3.2,
+      ".1s"
+    )}`
   );
 }
 
-/* ── Digital Marketing — megaphone with sound rings & growth arrow ─────── */
+/* ── Digital Marketing — growth-chart panel + megaphone badge ──────────── */
 function artMarketing(p: string) {
   return wrap(
     p,
@@ -235,50 +291,52 @@ function artMarketing(p: string) {
         <stop offset="55%" stop-color="#9f1239"/>
         <stop offset="100%" stop-color="#e11d48"/>
       </linearGradient>
-      <radialGradient id="${p}glow" cx="74%" cy="40%" r="60%">
+      <radialGradient id="${p}glow" cx="74%" cy="38%" r="60%">
         <stop offset="0%" stop-color="#fecdd3" stop-opacity=".4"/>
         <stop offset="100%" stop-color="#fecdd3" stop-opacity="0"/>
       </radialGradient>
+      <linearGradient id="${p}panel" x1="0" y1="0" x2="1" y2="1">
+        <stop offset="0%" stop-color="#ffffff"/>
+        <stop offset="100%" stop-color="#fff1f3"/>
+      </linearGradient>
       <linearGradient id="${p}horn" x1="0" y1="0" x2="1" y2="1">
         <stop offset="0%" stop-color="#ffffff"/>
         <stop offset="100%" stop-color="#fecdd3"/>
       </linearGradient>
-      <filter id="${p}shadow" x="-50%" y="-50%" width="200%" height="200%">
-        <feGaussianBlur stdDeviation="5"/>
-      </filter>
+      <filter id="${p}shadow" x="-50%" y="-50%" width="200%" height="200%"><feGaussianBlur stdDeviation="5"/></filter>
     </defs>
     ${sparkles(p, "#fecdd3")}
-    <ellipse cx="300" cy="128" rx="48" ry="8" fill="#1a0510" opacity=".4" filter="url(#${p}shadow)"/>
-    <g transform="translate(255,42)">
-      <path d="M0 30 L32 8 L32 66 L0 44 Z" fill="url(#${p}horn)"/>
-      <rect x="-14" y="24" width="16" height="22" rx="5" fill="url(#${p}horn)"/>
-      <path d="M32 8 C64 -8 92 14 92 37 C92 60 64 82 32 66 Z" fill="url(#${p}horn)"/>
-      <g fill="#9f1239">
-        <circle cx="56" cy="30" r="6"/>
-        <circle cx="72" cy="42" r="6"/>
-      </g>
-      <g fill="#fecdd3">
-        <circle cx="57.3" cy="29" r="2.2"/>
-        <circle cx="73.3" cy="41" r="2.2"/>
-      </g>
-      <path d="M50 48 Q62 56 74 52" stroke="#9f1239" stroke-width="3.6" stroke-linecap="round" fill="none"/>
-      <g stroke="#fecdd3" fill="none" stroke-linecap="round">
-        <path d="M100 20 Q112 37 100 54" stroke-width="3" opacity=".7">
-          <animate attributeName="opacity" values=".8;.2;.8" dur="2s" repeatCount="indefinite"/>
-        </path>
-        <path d="M110 10 Q128 37 110 64" stroke-width="3" opacity=".5">
-          <animate attributeName="opacity" values=".6;.1;.6" dur="2.4s" repeatCount="indefinite"/>
-        </path>
-      </g>
-    </g>
-    <g transform="translate(70,110)" opacity=".9">
-      <polyline points="0,26 16,12 28,20 46,0" stroke="#fecdd3" stroke-width="3.4" stroke-linecap="round" stroke-linejoin="round" fill="none"/>
-      <path d="M38 0 L46 0 L46 8" stroke="#fecdd3" stroke-width="3.4" stroke-linecap="round" stroke-linejoin="round" fill="none"/>
-    </g>`
+    ${shadow(p, 258, 140, 96, 10, "#1a0510", 0.4)}
+    ${link(336, 58, 266, 68, "#fecdd3")}
+    ${floatPanel(
+      p,
+      206,
+      36,
+      116,
+      72,
+      -6,
+      `<polyline points="12,52 32,38 50,44 70,20 100,14" stroke="#e11d48" stroke-width="2.6" fill="none" stroke-linecap="round" stroke-linejoin="round"/>
+      <circle cx="100" cy="14" r="3.4" fill="#e11d48"/>
+      <rect x="14" y="56" width="10" height="0" fill="#fda4af"><animate attributeName="height" values="0;10;0" dur="2.4s" repeatCount="indefinite"/><animate attributeName="y" values="62;52;62" dur="2.4s" repeatCount="indefinite"/></rect>
+      <rect x="30" y="56" width="10" height="0" fill="#fb7185"><animate attributeName="height" values="0;16;0" dur="2.4s" begin=".2s" repeatCount="indefinite"/><animate attributeName="y" values="62;46;62" dur="2.4s" begin=".2s" repeatCount="indefinite"/></rect>
+      <rect x="46" y="56" width="10" height="0" fill="#e11d48"><animate attributeName="height" values="0;22;0" dur="2.4s" begin=".4s" repeatCount="indefinite"/><animate attributeName="y" values="62;40;62" dur="2.4s" begin=".4s" repeatCount="indefinite"/></rect>`
+    )}
+    ${floatBadge(
+      p,
+      336,
+      58,
+      `<g transform="translate(-20,-16)">
+        <path d="M0 10 L14 3 L14 27 L0 20Z" fill="url(#${p}horn)"/>
+        <path d="M14 3 C28 -4 40 6 40 15 C40 24 28 34 14 27Z" fill="url(#${p}horn)"/>
+        <path d="M44 8 Q52 15 44 22" stroke="#fecdd3" stroke-width="2" fill="none" opacity=".7"><animate attributeName="opacity" values=".8;.1;.8" dur="1.8s" repeatCount="indefinite"/></path>
+      </g>`,
+      3.4,
+      ".2s"
+    )}`
   );
 }
 
-/* ── Cloud Computing — happy cloud with sync arrows ─────────────────────── */
+/* ── Cloud Computing — sync panel + cloud badge ──────────────────────────── */
 function artCloud(p: string) {
   return wrap(
     p,
@@ -290,59 +348,52 @@ function artCloud(p: string) {
         <stop offset="55%" stop-color="#075985"/>
         <stop offset="100%" stop-color="#0ea5e9"/>
       </linearGradient>
-      <radialGradient id="${p}glow" cx="74%" cy="40%" r="60%">
+      <radialGradient id="${p}glow" cx="74%" cy="38%" r="60%">
         <stop offset="0%" stop-color="#bae6fd" stop-opacity=".4"/>
         <stop offset="100%" stop-color="#bae6fd" stop-opacity="0"/>
       </radialGradient>
+      <linearGradient id="${p}panel" x1="0" y1="0" x2="1" y2="1">
+        <stop offset="0%" stop-color="#ffffff"/>
+        <stop offset="100%" stop-color="#eef9ff"/>
+      </linearGradient>
       <linearGradient id="${p}puff" x1="0" y1="0" x2="0" y2="1">
         <stop offset="0%" stop-color="#ffffff"/>
         <stop offset="100%" stop-color="#dbeefe"/>
       </linearGradient>
-      <filter id="${p}shadow" x="-50%" y="-50%" width="200%" height="200%">
-        <feGaussianBlur stdDeviation="5"/>
-      </filter>
+      <filter id="${p}shadow" x="-50%" y="-50%" width="200%" height="200%"><feGaussianBlur stdDeviation="5"/></filter>
     </defs>
     ${sparkles(p, "#bae6fd")}
-    <ellipse cx="300" cy="132" rx="52" ry="8" fill="#02101f" opacity=".35" filter="url(#${p}shadow)"/>
-    <g transform="translate(238,50)">
-      <ellipse cx="30" cy="46" rx="30" ry="22" fill="url(#${p}puff)"/>
-      <ellipse cx="66" cy="34" rx="36" ry="28" fill="url(#${p}puff)"/>
-      <ellipse cx="102" cy="48" rx="26" ry="19" fill="url(#${p}puff)"/>
-      <rect x="14" y="46" width="118" height="26" rx="13" fill="url(#${p}puff)"/>
-      <g fill="#0369a1">
-        <circle cx="54" cy="36" r="6"/>
-        <circle cx="80" cy="36" r="6"/>
-      </g>
-      <g fill="#f0f9ff">
-        <circle cx="55.3" cy="35" r="2.2"/>
-        <circle cx="81.3" cy="35" r="2.2"/>
-      </g>
-      <path d="M52 50 Q67 58 82 50" stroke="#0369a1" stroke-width="3.6" stroke-linecap="round" fill="none"/>
-    </g>
-    <g stroke="#e0f2fe" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" fill="none">
-      <g>
-        <line x1="270" y1="128" x2="270" y2="112">
-          <animate attributeName="y1" values="132;118" dur="1.8s" repeatCount="indefinite"/>
-          <animate attributeName="y2" values="118;104" dur="1.8s" repeatCount="indefinite"/>
-          <animate attributeName="opacity" values="1;0" dur="1.8s" repeatCount="indefinite"/>
-        </line>
-        <polyline points="264,116 270,110 276,116">
-          <animate attributeName="points" values="264,120 270,114 276,120; 264,106 270,100 276,106" dur="1.8s" repeatCount="indefinite"/>
-          <animate attributeName="opacity" values="1;0" dur="1.8s" repeatCount="indefinite"/>
-        </polyline>
-      </g>
-      <g>
-        <line x1="312" y1="132" x2="312" y2="116">
-          <animate attributeName="y1" values="136;122" dur="1.8s" begin=".6s" repeatCount="indefinite"/>
-          <animate attributeName="y2" values="122;108" dur="1.8s" begin=".6s" repeatCount="indefinite"/>
-          <animate attributeName="opacity" values="1;0" dur="1.8s" begin=".6s" repeatCount="indefinite"/>
-        </line>
-        <polyline points="306,120 312,114 318,120">
-          <animate attributeName="points" values="306,124 312,118 318,124; 306,110 312,104 318,110" dur="1.8s" begin=".6s" repeatCount="indefinite"/>
-          <animate attributeName="opacity" values="1;0" dur="1.8s" begin=".6s" repeatCount="indefinite"/>
-        </polyline>
-      </g>
-    </g>`
+    ${shadow(p, 258, 140, 96, 10, "#02101f", 0.36)}
+    ${link(332, 56, 264, 68, "#bae6fd")}
+    ${floatPanel(
+      p,
+      206,
+      36,
+      116,
+      72,
+      -6,
+      `<rect x="12" y="14" width="92" height="14" rx="4" fill="#e0f2fe"/>
+      <circle cx="20" cy="21" r="3" fill="#0ea5e9"/>
+      <rect x="12" y="34" width="92" height="14" rx="4" fill="#f0f9ff"/>
+      <circle cx="20" cy="41" r="3" fill="#38bdf8"/>
+      <g stroke="#0ea5e9" stroke-width="2" stroke-linecap="round">
+        <line x1="90" y1="58" x2="90" y2="48"><animate attributeName="opacity" values="1;0" dur="1.6s" repeatCount="indefinite"/></line>
+        <polyline points="85,52 90,47 95,52" fill="none"><animate attributeName="opacity" values="1;0" dur="1.6s" repeatCount="indefinite"/></polyline>
+      </g>`
+    )}
+    ${floatBadge(
+      p,
+      332,
+      56,
+      `<g transform="translate(-26,-18)">
+        <ellipse cx="10" cy="22" rx="10" ry="9" fill="url(#${p}puff)"/>
+        <ellipse cx="24" cy="15" rx="14" ry="13" fill="url(#${p}puff)"/>
+        <ellipse cx="38" cy="22" rx="9" ry="8" fill="url(#${p}puff)"/>
+        <rect x="4" y="20" width="42" height="12" rx="6" fill="url(#${p}puff)"/>
+      </g>`,
+      3.6,
+      ".15s"
+    )}`
   );
 }
 
@@ -430,6 +481,186 @@ function artWebdev(p: string) {
   );
 }
 
+/* ── E-commerce — storefront/product-grid panel + bag badge ─────────────── */
+function artEcommerce(p: string) {
+  return wrap(
+    p,
+    `${p}bg`,
+    `${p}glow`,
+    `<defs>
+      <linearGradient id="${p}bg" x1="0" y1="0" x2="1" y2="1">
+        <stop offset="0%" stop-color="#2d0a1f"/>
+        <stop offset="55%" stop-color="#86198f"/>
+        <stop offset="100%" stop-color="#d946ef"/>
+      </linearGradient>
+      <radialGradient id="${p}glow" cx="74%" cy="38%" r="60%">
+        <stop offset="0%" stop-color="#f5d0fe" stop-opacity=".4"/>
+        <stop offset="100%" stop-color="#f5d0fe" stop-opacity="0"/>
+      </radialGradient>
+      <linearGradient id="${p}panel" x1="0" y1="0" x2="1" y2="1">
+        <stop offset="0%" stop-color="#ffffff"/>
+        <stop offset="100%" stop-color="#fdf2ff"/>
+      </linearGradient>
+      <linearGradient id="${p}bag" x1="0" y1="0" x2="1" y2="1">
+        <stop offset="0%" stop-color="#ffffff"/>
+        <stop offset="100%" stop-color="#fae8ff"/>
+      </linearGradient>
+      <filter id="${p}shadow" x="-50%" y="-50%" width="200%" height="200%"><feGaussianBlur stdDeviation="5"/></filter>
+    </defs>
+    ${sparkles(p, "#fae8ff")}
+    ${shadow(p, 258, 140, 96, 10, "#2d0a1f", 0.4)}
+    ${link(334, 58, 266, 70, "#f5d0fe")}
+    ${floatPanel(
+      p,
+      206,
+      34,
+      116,
+      76,
+      -6,
+      `<rect x="12" y="12" width="26" height="26" rx="6" fill="#fae8ff"/>
+      <rect x="44" y="12" width="26" height="26" rx="6" fill="#f5d0fe"/>
+      <rect x="76" y="12" width="26" height="26" rx="6" fill="#fae8ff"/>
+      <rect x="12" y="46" width="90" height="5" rx="2.5" fill="#f5d0fe"/>
+      <rect x="12" y="56" width="50" height="5" rx="2.5" fill="#fae8ff"/>
+      <rect x="70" y="54" width="32" height="12" rx="6" fill="#d946ef" opacity=".85"/>`
+    )}
+    ${floatBadge(
+      p,
+      334,
+      58,
+      `<g transform="translate(-16,-19)">
+        <path d="M10 8 C10 1 20 1 20 8" stroke="url(#${p}bag)" stroke-width="3.6" fill="none" stroke-linecap="round"/>
+        <rect y="8" width="32" height="34" rx="7" fill="url(#${p}bag)"/>
+        <circle cx="11" cy="24" r="2.6" fill="#86198f"/>
+        <circle cx="21" cy="24" r="2.6" fill="#86198f"/>
+        <path d="M9 31 Q16 35 23 31" stroke="#86198f" stroke-width="2" stroke-linecap="round" fill="none"/>
+      </g>`,
+      3.4,
+      ".25s"
+    )}`
+  );
+}
+
+/* ── Travel — route/map panel + hill-station pin badge ──────────────────── */
+function artTravel(p: string) {
+  return wrap(
+    p,
+    `${p}bg`,
+    `${p}glow`,
+    `<defs>
+      <linearGradient id="${p}bg" x1="0" y1="0" x2="1" y2="1">
+        <stop offset="0%" stop-color="#0c2b24"/>
+        <stop offset="55%" stop-color="#0f766e"/>
+        <stop offset="100%" stop-color="#f59e0b"/>
+      </linearGradient>
+      <radialGradient id="${p}glow" cx="74%" cy="36%" r="60%">
+        <stop offset="0%" stop-color="#fde68a" stop-opacity=".45"/>
+        <stop offset="100%" stop-color="#fde68a" stop-opacity="0"/>
+      </radialGradient>
+      <linearGradient id="${p}panel" x1="0" y1="0" x2="1" y2="1">
+        <stop offset="0%" stop-color="#ffffff"/>
+        <stop offset="100%" stop-color="#ecfdf5"/>
+      </linearGradient>
+      <linearGradient id="${p}pin" x1="0" y1="0" x2="1" y2="1">
+        <stop offset="0%" stop-color="#ffffff"/>
+        <stop offset="100%" stop-color="#d1fae5"/>
+      </linearGradient>
+      <filter id="${p}shadow" x="-50%" y="-50%" width="200%" height="200%"><feGaussianBlur stdDeviation="5"/></filter>
+    </defs>
+    ${sparkles(p, "#fde68a")}
+    <circle cx="340" cy="34" r="14" fill="#fde68a" opacity=".85"><animate attributeName="opacity" values=".6;1;.6" dur="3s" repeatCount="indefinite"/></circle>
+    ${shadow(p, 258, 140, 96, 10, "#0c2b24", 0.38)}
+    ${link(330, 58, 264, 68, "#fde68a")}
+    ${floatPanel(
+      p,
+      206,
+      36,
+      116,
+      72,
+      -6,
+      `<polyline points="12,50 32,30 54,38 76,16 102,24" stroke="#0f766e" stroke-width="2.4" fill="none" stroke-linecap="round" stroke-linejoin="round" stroke-dasharray="4 4"/>
+      <circle cx="12" cy="50" r="3.4" fill="#0f766e"/>
+      <circle cx="54" cy="38" r="3.4" fill="#f59e0b"/>
+      <circle cx="102" cy="24" r="3.4" fill="#0f766e"/>
+      <rect x="12" y="58" width="48" height="5" rx="2.5" fill="#d1fae5"/>`
+    )}
+    ${floatBadge(
+      p,
+      330,
+      58,
+      `<g transform="translate(-16,-32)">
+        <path d="M16 0C7 0 0 7 0 16c0 12 16 28 16 28s16-16 16-28C32 7 25 0 16 0Z" fill="url(#${p}pin)"/>
+        <circle cx="16" cy="16" r="7" fill="#0f766e"/>
+        <circle cx="16" cy="16" r="3" fill="#fff"/>
+      </g>`,
+      3.2,
+      ".3s"
+    )}`
+  );
+}
+
+/* ── Platform / admin dashboard — chart panel + check badge ──────────────── */
+function artPlatform(p: string) {
+  return wrap(
+    p,
+    `${p}bg`,
+    `${p}glow`,
+    `<defs>
+      <linearGradient id="${p}bg" x1="0" y1="0" x2="1" y2="1">
+        <stop offset="0%" stop-color="#1e1b4b"/>
+        <stop offset="55%" stop-color="#4338ca"/>
+        <stop offset="100%" stop-color="#818cf8"/>
+      </linearGradient>
+      <radialGradient id="${p}glow" cx="74%" cy="38%" r="60%">
+        <stop offset="0%" stop-color="#c7d2fe" stop-opacity=".4"/>
+        <stop offset="100%" stop-color="#c7d2fe" stop-opacity="0"/>
+      </radialGradient>
+      <linearGradient id="${p}panel" x1="0" y1="0" x2="1" y2="1">
+        <stop offset="0%" stop-color="#ffffff"/>
+        <stop offset="100%" stop-color="#eef0ff"/>
+      </linearGradient>
+      <filter id="${p}shadow" x="-50%" y="-50%" width="200%" height="200%"><feGaussianBlur stdDeviation="5"/></filter>
+    </defs>
+    ${sparkles(p, "#c7d2fe")}
+    ${shadow(p, 258, 142, 100, 10, "#1e1b4b", 0.4)}
+    ${link(336, 60, 266, 72, "#c7d2fe")}
+    ${floatPanel(
+      p,
+      204,
+      34,
+      120,
+      78,
+      -5,
+      `<rect x="12" y="12" width="60" height="5" rx="2.5" fill="#c7d2fe"/>
+      <rect x="12" y="22" width="40" height="4" rx="2" fill="#e0e7ff"/>
+      <g opacity=".85">
+        <rect x="14" y="48" width="9" height="16" rx="2" fill="#a5b4fc"/>
+        <rect x="27" y="38" width="9" height="26" rx="2" fill="#818cf8"/>
+        <rect x="40" y="30" width="9" height="34" rx="2" fill="#4338ca">
+          <animate attributeName="height" values="34;40;34" dur="2.4s" repeatCount="indefinite"/>
+          <animate attributeName="y" values="30;24;30" dur="2.4s" repeatCount="indefinite"/>
+        </rect>
+      </g>
+      <circle cx="92" cy="44" r="18" fill="none" stroke="#e0e7ff" stroke-width="4"/>
+      <circle cx="92" cy="44" r="18" fill="none" stroke="#4338ca" stroke-width="4" stroke-linecap="round" stroke-dasharray="76 113" transform="rotate(-90 92 44)">
+        <animate attributeName="stroke-dasharray" values="0 113;60 113;60 113" dur="2.6s" repeatCount="indefinite"/>
+      </circle>`
+    )}
+    ${floatBadge(
+      p,
+      336,
+      60,
+      `<g transform="translate(-18,-18)">
+        <circle cx="18" cy="18" r="18" fill="#fff" opacity=".16"/>
+        <circle cx="18" cy="18" r="13" fill="#fff"/>
+        <path d="M11 18 16 23 25 12" stroke="#4338ca" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" fill="none"/>
+      </g>`,
+      3.4,
+      ".1s"
+    )}`
+  );
+}
+
 const ART: Record<CardArtKey, (p: string) => string> = {
   ml: artML,
   cyber: artCyber,
@@ -437,19 +668,22 @@ const ART: Record<CardArtKey, (p: string) => string> = {
   marketing: artMarketing,
   cloud: artCloud,
   webdev: artWebdev,
+  ecommerce: artEcommerce,
+  travel: artTravel,
+  platform: artPlatform,
 };
 
+/** Look up art by an explicit key (e.g. for data that already knows its own
+ * category) rather than inferring one from a free-text title/keyword. */
+export function getCardArtByKey(key: CardArtKey, idSeed: string): { key: CardArtKey; svg: string } {
+  const id = "pca" + idSeed.replace(/[^a-zA-Z0-9]/g, "");
+  return { key, svg: ART[key](id) };
+}
+
 /** idSeed must be stable across server/client render (e.g. React's useId()). */
-export function getProjectCardArt(
-  titleOrKey: string,
-  idSeed: string
-): { key: CardArtKey; svg: string; animationUrl?: string } {
+export function getProjectCardArt(titleOrKey: string, idSeed: string): { key: CardArtKey; svg: string } {
   const courseKey = getCourseIconKey(titleOrKey);
   const key = toArtKey(courseKey);
   const id = "pca" + idSeed.replace(/[^a-zA-Z0-9]/g, "");
-  return {
-    key,
-    svg: ART[key](id),
-    animationUrl: key === "webdev" ? FREE_WEB_DEVELOPMENT_PREVIEW_URL : undefined,
-  };
+  return { key, svg: ART[key](id) };
 }

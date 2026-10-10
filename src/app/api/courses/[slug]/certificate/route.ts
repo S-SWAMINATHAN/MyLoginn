@@ -6,7 +6,7 @@ import { prisma } from "@/lib/prisma";
 import { flattenCourseModules, getCourseModules } from "@/lib/freeCourseCurriculum";
 import { toTopicSlug } from "@/lib/freeCourseTutorial";
 import { getCourseDisplayTitle } from "@/lib/freeCourseTitles";
-import { createCourseCertificatePdf, type CertificateStyle } from "@/lib/createCourseCertificatePdf";
+import { createCertificateId, createCourseCertificatePdf, type CertificateStyle } from "@/lib/createCourseCertificatePdf";
 
 type RouteContext = { params: Promise<{ slug: string }> };
 
@@ -51,6 +51,10 @@ export async function POST(request: Request, { params }: RouteContext) {
   } catch { /* Fall back to the compact logo and text if the wordmark is unavailable. */ }
 
   const filename = `${safeFilename(getCourseDisplayTitle(course.slug, course.title))}_${safeFilename(`${firstName}_${lastName}`)}.pdf`;
-  const buffer = await createCourseCertificatePdf({ learnerName: `${firstName} ${lastName}`, courseTitle: getCourseDisplayTitle(course.slug, course.title), completedAt, logoData, wordmarkData, style: style as CertificateStyle });
+  const buffer = await createCourseCertificatePdf({
+    learnerName: `${firstName} ${lastName}`, courseTitle: getCourseDisplayTitle(course.slug, course.title),
+    completedAt, enrolledAt: enrollment.enrolledAt, issuedAt: new Date(), credits: topics.length,
+    certificateId: createCertificateId(user.id, course.id, completedAt), logoData, wordmarkData, style: style as CertificateStyle,
+  });
   return new Response(buffer, { headers: { "Content-Type": "application/pdf", "Content-Disposition": `attachment; filename="${filename}"`, "Cache-Control": "private, no-store", "Content-Length": String(buffer.byteLength) } });
 }

@@ -1,4 +1,6 @@
 import { getFreeCourseChallenge, getFreeCourseChallengePrompt } from "@/lib/freeCourseChallenges";
+import { deriveChecks } from "@/lib/challengeChecks";
+import { plainDefinitions, type PlainDefinition } from "@/lib/lessonPlainDefinitions";
 export type LessonKind =
   | "intro" | "setup" | "hello" | "structure" | "output" | "comments" | "variables" | "types"
   | "numbers" | "strings" | "operators" | "condition" | "loop" | "function" | "collection"
@@ -26,6 +28,7 @@ export type TutorialLesson = {
   exampleIntroduction: string;
   quiz: LessonQuizQuestion[];
   definition: string;
+  plain: PlainDefinition;
   introduction: string;
   explanation: string;
   code: string;
@@ -40,6 +43,8 @@ export type TutorialLesson = {
   challengeStarter: string;
   challengeCode: string;
   challengeOutput: string;
+  challengeGiven: string[];
+  challengeStdin?: string;
   challengeHints: string[];
   keywords: string[];
   steps: { code: string; explanation: string }[];
@@ -1173,21 +1178,24 @@ function getTopicCopy(courseSlug: string, title: string, kind: LessonKind, langu
   };
 }
 
+/** A minimal scaffold: the task and requirements are shown beside the editor, so only a two-line comment header is added. */
 function starterForLanguage(courseSlug: string, title: string) {
-  const comment = ({
-    "python-fundamentals": `# Challenge: ${title}\n# Write your solution below`,
-    "java-fundamentals": `// Challenge: ${title}\n// Write your solution below`,
-    "javascript-fundamentals": `// Challenge: ${title}\n// Write your solution below`,
-    "c-fundamentals": `// Challenge: ${title}\n// Write your solution below`,
-    "cpp-fundamentals": `// Challenge: ${title}\n// Write your solution below`,
-    "php-fundamentals": `// Challenge: ${title}\n// Write your solution below`,
-    "react-fundamentals": `// Challenge: ${title}\n// Write your solution below`,
-    "mysql-fundamentals": `-- Challenge: ${title}\n-- Write your solution below`,
-    "html-fundamentals": `<!-- Challenge: ${title} -->\n<!-- Write your solution below -->`,
-    "css-fundamentals": `/* Challenge: ${title} */\n/* Write your solution below */`,
-    "sql-fundamentals": `-- Challenge: ${title}\n-- Write your solution below`,
-  } as Record<string, string>)[courseSlug];
-  return comment ?? `// Challenge: ${title}\n// Write your solution below`;
+  const body = [`Challenge: ${title}`, "Write your solution below."];
+  // Keep requirement text from closing the comment early (for example a literal --> or */ inside a task).
+  const safe = (line: string) => courseSlug === "html-fundamentals" ? line.replace(/</g, "‹").replace(/>/g, "›") : courseSlug === "css-fundamentals" ? line.replace(/\*\//g, "* /") : line;
+  if (courseSlug === "html-fundamentals") return `<!--\n${body.map((line) => `  ${safe(line)}`.trimEnd()).join("\n")}\n-->\n`;
+  if (courseSlug === "css-fundamentals") return `/*\n${body.map((line) => ` * ${safe(line)}`.trimEnd()).join("\n")}\n */\n`;
+  const marker = courseSlug === "python-fundamentals" ? "#" : courseSlug === "sql-fundamentals" || courseSlug === "mysql-fundamentals" ? "--" : "//";
+  return `${body.map((line) => `${marker} ${line}`.trimEnd()).join("\n")}\n\n`;
+}
+
+/** "Try it yourself" asks for a small change to the worked example, so it differs from the graded challenge. */
+function modifyExampleTask(courseSlug: string, title: string, code: string) {
+  const text = courseSlug === "html-fundamentals" ? code.match(/>([^<>\n]{3,40})</)?.[1]?.trim() : undefined;
+  const quoted = code.match(/"([^"\n]{2,30})"|'([^'\n]{2,30})'/);
+  const number = code.match(/(?<![\w.])\d+(?:\.\d+)?(?![\w.])/)?.[0];
+  const target = text ? `the text "${text}"` : quoted ? `the text "${quoted[1] ?? quoted[2]}"` : number ? `the value ${number}` : "one value";
+  return `In the ${title.toLowerCase()} example above, change ${target} to something of your own. Predict how the result will change, then run it to check your prediction.`;
 }
 
 export function buildTutorialLesson(courseSlug: string, title: string, index: number): TutorialLesson {
@@ -1327,10 +1335,11 @@ export function buildTutorialLesson(courseSlug: string, title: string, index: nu
       lessonMistake,
     ),
   ];
-  const challengeSolution = getFreeCourseChallenge(courseSlug, kind);
+  const challengeSolution = getFreeCourseChallenge(courseSlug, kind, title);
+  const requirements = deriveChecks(courseSlug, challengeSolution.code, kind).map((check) => check.label);
   // Prefer a lesson's authored challenge when we have one. The category-level
   // fallback intentionally only serves topics without their own exercise.
-  const challenge = specific?.challenge ?? getFreeCourseChallengePrompt(courseSlug, title, kind, languageName);
+  const challenge = challengeSolution.task ?? getFreeCourseChallengePrompt(courseSlug, title, kind, languageName);
   return {
     kind,
     requiresCodeChallenge,
@@ -1341,6 +1350,7 @@ export function buildTutorialLesson(courseSlug: string, title: string, index: nu
     exampleTitle: specific?.exampleTitle ?? (pythonIntro ? "Hello World Program" : `${title} Example`),
     exampleIntroduction: specific ? `${specific.explanation} Read the markup, then match it to the browser result.` : pythonIntro ? "The Hello World program demonstrates the basic structure of a Python program and shows how to display text." : `This small example demonstrates ${title.toLowerCase()} in ${languageName}. Read the code, predict its result, then compare your prediction with the output.`,
     quiz,
+    plain: pythonInstallation ? { simple: "Installing Python puts the translator on your computer that understands Python code.", analogy: "Like installing a language pack so your computer can read a new language." } : pythonIntro ? { simple: "Python is a beginner-friendly language that reads almost like English.", analogy: "Like a friendly translator between you and the computer." } : plainDefinitions[kind],
     definition: pythonIntro ? "Python is a high-level, general-purpose programming language with readable syntax. A Python interpreter executes Python code, and the language provides features for procedural, object-oriented, and functional programming." : topicCopy.definition,
     introduction: pythonInstallation ? "Choose an installation route for Windows, macOS, or Linux. Follow its steps, verify that Python 3 runs, and optionally set up an editor and isolated project environment." : pythonIntro ? "Learn where Python came from, what it is used for, and how its readable syntax works." : isWhyPython ? "Explore the qualities that make Python a useful choice for many kinds of software." : `Learn how ${title.toLowerCase()} works in ${languageName}, then trace the example to its result.`,
     explanation: pythonInstallation ? "An installer or package manager places the Python interpreter on your system. A terminal version check confirms it is available; a virtual environment then isolates packages for a project. Editors such as VS Code are installed separately." : pythonIntro ? "Python reads the source file and executes its instructions through the Python interpreter. In this first example, print() writes a string to the output. A comment beginning with # is ignored by the interpreter." : topicCopy.explanation,
@@ -1356,15 +1366,17 @@ export function buildTutorialLesson(courseSlug: string, title: string, index: nu
       kind === "function" ? "Functions package steps that an application needs to reuse with different inputs." :
       `The ${title.toLowerCase()} concept appears in everyday ${languageName} programs to make code clearer and easier to maintain.`,
     bestPractice: specific ? specific.takeaways[0] : pythonInstallation ? "Use the official installer or your operating system's trusted package manager. Keep the system-provided Python intact and create a virtual environment for each project." : pythonIntro ? "Use Python 3, choose descriptive names, and keep indentation consistent so the structure is clear." : takeaways[kind]?.[0] ?? "Use names and structure that make the purpose clear to another person reading your code.",
-    practice: specific ? `Modify the ${title.toLowerCase()} example: ${specific.challenge}` : pythonInstallation ? "Follow the steps for your system, run its version command, then create and activate a .venv in a practice project folder." : pythonIntro ? "Change the text inside print(), predict what will appear, then run the code to check your prediction." : `Change one part of the ${title.toLowerCase()} example, predict the result, then compare your prediction with the displayed output.`,
+    practice: pythonInstallation ? "Follow the steps for your system, run its version command, then create and activate a .venv in a practice project folder." : pythonIntro ? "Change the text inside print(), predict what will appear, then run the code to check your prediction." : modifyExampleTask(courseSlug, title, code),
     challenge,
     challengeStarter: starterForLanguage(courseSlug, title),
     challengeCode: challengeSolution.code,
     challengeOutput: challengeSolution.output,
+    challengeGiven: challengeSolution.given ?? [],
+    challengeStdin: challengeSolution.stdin,
     challengeHints: [
-      `This challenge uses a new ${languageName} scenario for ${title.toLowerCase()}, with values that differ from the worked example.`,
-      `Apply the topic syntax to the challenge scenario instead of copying the lesson example.`,
-      `Run your solution and compare its result with the challenge target before submitting.`,
+      `Split the task into ${requirements.length || "a few"} small steps and tick them off in the requirements checklist beside the editor.`,
+      requirements.length ? `Start with: ${requirements[0]}${requirements[1] ? `, then: ${requirements[1]}` : ""}.` : `Apply the ${title.toLowerCase()} syntax to the scenario in the task instead of copying the lesson example.`,
+      `Run it and compare your result with the expected output: ${challengeSolution.output.split("\n")[0].slice(0, 80)}${challengeSolution.output.includes("\n") ? " …" : ""}`,
     ],
     keywords: specific ? [title.toLowerCase(), "HTML", "element", "attribute", "browser"] : pythonIntro ? ["high-level", "interpreter", "syntax", "indentation"] : keywordsByKind[kind] ?? [title.toLowerCase(), "syntax", "example"],
     steps: code.split("\n").filter((line) => line.trim()).map((line) => ({ code: line, explanation: explainCodeLine(line) })),

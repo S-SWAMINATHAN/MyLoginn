@@ -2,32 +2,15 @@
 
 import { useEffect, useState } from "react";
 import { createPortal } from "react-dom";
-import { ArrowUpRight, Construction, ExternalLink, X } from "lucide-react";
+import Link from "next/link";
+import { ArrowUpRight, Construction, ExternalLink, Info, X } from "lucide-react";
+import { clientProjects, type ClientProject } from "@/lib/clientProjects";
 
-const websites = [
-  {
-    name: "ZiyaKart",
-    url: "https://www.ziyakart.com/",
-    category: "E-commerce website",
-    description: "A live commerce experience built for browsing and buying.",
-  },
-  {
-    name: "Ooty Nigel Travels",
-    url: "https://www.ootynigeltravels.com/",
-    category: "Travel website",
-    description: "A focused digital home for discovering Ooty travel experiences.",
-    fallbackPreview: true,
-  },
-  {
-    name: "Skill Up Now",
-    url: "https://skillupnowadmin.org",
-    category: "Admin platform",
-    description: "A structured platform for managing learning operations.",
-  },
-];
+const websites = clientProjects.filter((p) => p.status === "live");
+const comingSoon = clientProjects.filter((p) => p.status === "in-development");
 
 export function ProjectShowcase() {
-  const [selectedProject, setSelectedProject] = useState<(typeof websites)[number] | null>(null);
+  const [selectedProject, setSelectedProject] = useState<ClientProject | null>(null);
 
   useEffect(() => {
     const close = (event: KeyboardEvent) => event.key === "Escape" && setSelectedProject(null);
@@ -50,37 +33,47 @@ export function ProjectShowcase() {
 
         <div className="mt-10 grid gap-5 sm:grid-cols-2 xl:grid-cols-4">
           {websites.map((project) => (
-            <article key={project.name} className="group overflow-hidden rounded-2xl border border-border-soft bg-surface shadow-[var(--shadow-soft)] transition-transform duration-300 hover:-translate-y-1">
+            <article key={project.slug} className="group overflow-hidden rounded-2xl border border-border-soft bg-surface shadow-[var(--shadow-soft)] transition-transform duration-300 hover:-translate-y-1">
               <button type="button" onClick={() => setSelectedProject(project)} aria-label={`Preview ${project.name}`} className="relative block aspect-[16/10] w-full overflow-hidden bg-slate-100 text-left focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-400 focus-visible:ring-inset">
                 <ProjectThumbnail name={project.name} />
                 <div className="absolute inset-0 bg-gradient-to-t from-slate-950/35 to-transparent" />
               </button>
               <div className="p-5">
                 <p className="text-[10px] font-semibold uppercase tracking-[0.16em] text-brand-500">{project.category}</p>
-                <h3 className="mt-2 text-lg font-semibold text-foreground">{project.name}</h3>
+                <Link href={`/projects/${project.slug}`} className="mt-2 block text-lg font-semibold text-foreground transition-colors hover:text-brand-600">
+                  {project.name}
+                </Link>
                 <p className="mt-2 text-sm leading-relaxed text-muted">{project.description}</p>
-                <button type="button" onClick={() => setSelectedProject(project)} className="mt-4 inline-flex cursor-pointer items-center gap-1.5 text-sm font-semibold text-brand-600 transition-colors hover:text-brand-500">View project <ArrowUpRight className="h-4 w-4" /></button>
+                <div className="mt-4 flex items-center gap-4">
+                  <button type="button" onClick={() => setSelectedProject(project)} className="inline-flex cursor-pointer items-center gap-1.5 text-sm font-semibold text-brand-600 transition-colors hover:text-brand-500">Quick preview <ArrowUpRight className="h-4 w-4" /></button>
+                  <Link href={`/projects/${project.slug}`} className="inline-flex items-center gap-1.5 text-sm font-medium text-muted transition-colors hover:text-foreground">More info <Info className="h-4 w-4" /></Link>
+                </div>
               </div>
             </article>
           ))}
 
-          <article className="overflow-hidden rounded-2xl border border-slate-700 bg-slate-950 text-white shadow-[var(--shadow-soft)]">
-            <div className="relative aspect-[16/10] overflow-hidden bg-[radial-gradient(circle_at_30%_20%,#3b82f6,transparent_38%),linear-gradient(145deg,#111827,#020617)] p-5 blur-[1px]">
-              <div className="h-3 w-24 rounded-full bg-white/70" />
-              <div className="mt-5 grid grid-cols-[0.7fr_1fr] gap-3">
-                <div className="space-y-3"><div className="h-20 rounded-xl bg-white/10" /><div className="h-8 rounded-lg bg-cyan-300/50" /></div>
-                <div className="space-y-3"><div className="h-8 rounded-lg bg-white/15" /><div className="h-24 rounded-xl bg-white/10" /></div>
+          {comingSoon.map((project) => (
+            <article key={project.slug} className="overflow-hidden rounded-2xl border border-slate-700 bg-slate-950 text-white shadow-[var(--shadow-soft)]">
+              <Link href={`/projects/${project.slug}`} className="relative block aspect-[16/10] overflow-hidden bg-[radial-gradient(circle_at_30%_20%,#3b82f6,transparent_38%),linear-gradient(145deg,#111827,#020617)] p-5 blur-[1px]">
+                <div className="h-3 w-24 rounded-full bg-white/70" />
+                <div className="mt-5 grid grid-cols-[0.7fr_1fr] gap-3">
+                  <div className="space-y-3"><div className="h-20 rounded-xl bg-white/10" /><div className="h-8 rounded-lg bg-cyan-300/50" /></div>
+                  <div className="space-y-3"><div className="h-8 rounded-lg bg-white/15" /><div className="h-24 rounded-xl bg-white/10" /></div>
+                </div>
+                <div className="absolute inset-0 flex items-center justify-center bg-slate-950/35 blur-0">
+                  <span className="inline-flex items-center gap-2 rounded-full border border-white/25 bg-white/10 px-4 py-2 text-sm font-semibold backdrop-blur-sm"><Construction className="h-4 w-4" /> Coming Soon</span>
+                </div>
+              </Link>
+              <div className="p-5">
+                <p className="text-[10px] font-semibold uppercase tracking-[0.16em] text-cyan-300">{project.category}</p>
+                <Link href={`/projects/${project.slug}`} className="mt-2 block text-lg font-semibold transition-colors hover:text-cyan-300">
+                  {project.name}
+                </Link>
+                <p className="mt-2 text-sm leading-relaxed text-slate-300">{project.description}</p>
+                <Link href={`/projects/${project.slug}`} className="mt-4 inline-flex items-center gap-1.5 text-sm font-medium text-slate-300 transition-colors hover:text-white">More info <Info className="h-4 w-4" /></Link>
               </div>
-              <div className="absolute inset-0 flex items-center justify-center bg-slate-950/35 blur-0">
-                <span className="inline-flex items-center gap-2 rounded-full border border-white/25 bg-white/10 px-4 py-2 text-sm font-semibold backdrop-blur-sm"><Construction className="h-4 w-4" /> Coming Soon</span>
-              </div>
-            </div>
-            <div className="p-5">
-              <p className="text-[10px] font-semibold uppercase tracking-[0.16em] text-cyan-300">Application in development</p>
-              <h3 className="mt-2 text-lg font-semibold">RentMitra.app</h3>
-              <p className="mt-2 text-sm leading-relaxed text-slate-300">A work in progress. The public product preview will arrive when it is ready to share.</p>
-            </div>
-          </article>
+            </article>
+          ))}
         </div>
       </div>
       {selectedProject && <ProjectPreviewModal project={selectedProject} onClose={() => setSelectedProject(null)} />}
@@ -88,7 +81,7 @@ export function ProjectShowcase() {
   );
 }
 
-function ProjectThumbnail({ name }: { name: string }) {
+export function ProjectThumbnail({ name }: { name: string }) {
   return (
     <div className="flex h-full w-full flex-col bg-slate-950 p-3 text-left text-white sm:p-5">
       <div className="flex items-center gap-1.5 border-b border-white/15 pb-2">
@@ -141,7 +134,7 @@ function ProjectPreviewModal({ project, onClose }: { project: (typeof websites)[
   );
 }
 
-function OotyPreview({ large = false }: { large?: boolean }) {
+export function OotyPreview({ large = false }: { large?: boolean }) {
   return (
     <div className={`relative h-full w-full overflow-hidden bg-[linear-gradient(145deg,#082d46_0%,#0d6079_43%,#a3d8d4_44%,#d8e7c8_100%)] text-white ${large ? "p-8 sm:p-12" : "p-3"}`}>
       <div className={`relative z-10 flex items-center justify-between font-semibold uppercase tracking-[0.14em] text-white/80 ${large ? "text-xs sm:text-sm" : "text-[7px]"}`}><span>Ooty Nigel Travels</span><span>Explore Ooty</span></div>

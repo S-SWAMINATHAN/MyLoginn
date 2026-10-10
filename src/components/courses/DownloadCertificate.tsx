@@ -36,9 +36,9 @@ export function DownloadCertificate({ courseSlug, courseTitle }: { courseSlug: s
   return <form onSubmit={download} className="mt-4 border-t border-border-soft pt-4" aria-label={`Download ${courseTitle} certificate`}>
     <label className="mb-3 block text-xs font-semibold">Choose a certificate style
       <select value={style} onChange={(event) => setStyle(event.target.value as CertificateStyle)} className="mt-1.5 block w-full rounded-lg border border-border-soft bg-surface px-3 py-2.5 text-sm font-medium outline-none focus:border-brand-500">
-        <option value="classic-seal">Classic academic seal</option>
-        <option value="navy-ribbon">Navy verified ribbon</option>
-        <option value="lavender-modern">Modern lavender frame</option>
+        <option value="classic-seal">Classic verified seal</option>
+        <option value="navy-ribbon">Navy band with QR code</option>
+        <option value="lavender-modern">Modern lavender</option>
       </select>
     </label>
     <p className="mb-2 text-xs font-semibold">Certificate name</p>
