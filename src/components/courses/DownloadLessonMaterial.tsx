@@ -96,8 +96,8 @@ export function DownloadLessonMaterial({ courseTitle, title, lesson }: Props) {
     }
   }
 
-  return <div className="flex flex-col items-start gap-1.5">
-    <div className="flex flex-wrap gap-2">
+  return <div className="flex flex-col items-stretch gap-1.5 sm:items-start">
+    <div className="grid gap-2 min-[480px]:grid-cols-2 sm:flex sm:flex-wrap [&>button]:justify-center">
       <button type="button" onClick={downloadPdf} disabled={busy} className="inline-flex items-center gap-2 rounded-full border border-brand-200 bg-brand-50 px-4 py-2 text-sm font-semibold text-brand-800 transition hover:border-brand-300 hover:bg-brand-100 disabled:cursor-wait disabled:opacity-60">
         <FileDown className="h-4 w-4" aria-hidden="true" />{busy ? "Preparing PDF…" : "Download PDF"}
       </button>

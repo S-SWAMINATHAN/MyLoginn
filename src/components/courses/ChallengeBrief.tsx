@@ -23,7 +23,7 @@ export function ChallengeBrief({ title, task, given, expectedOutput, hintCount, 
           <span className="grid h-12 w-12 shrink-0 place-items-center rounded-2xl bg-white/15 ring-1 ring-white/30 backdrop-blur"><Target className="h-6 w-6" aria-hidden="true" /></span>
           <div className="min-w-0">
             <p className="text-[11px] font-semibold uppercase tracking-[0.18em] text-cyan-200">Step 2 of 2 · Graded challenge</p>
-            <h2 className="mt-0.5 truncate text-xl font-bold tracking-tight sm:text-2xl">{title}</h2>
+            <h2 className="mt-0.5 text-lg leading-snug sm:truncate sm:text-2xl font-bold tracking-tight sm:text-2xl">{title}</h2>
           </div>
         </div>
         <ul className="flex flex-wrap gap-2 text-xs font-semibold">
@@ -34,7 +34,7 @@ export function ChallengeBrief({ title, task, given, expectedOutput, hintCount, 
       </div>
     </div>
 
-    <div className="p-5 sm:p-7">
+    <div className="p-4 sm:p-7">
       <div className="rounded-2xl border border-brand-200 bg-brand-50/70 p-4 sm:p-5 dark:border-brand-400/25 dark:bg-brand-900/15">
         <p className="text-[11px] font-bold uppercase tracking-[0.16em] text-brand-700 dark:text-brand-200">Your mission</p>
         <p className="mt-2 text-lg font-semibold leading-8 text-foreground sm:text-xl">{task}</p>
@@ -60,10 +60,10 @@ export function ChallengeBrief({ title, task, given, expectedOutput, hintCount, 
         </div>
       </div>
 
-      <ol className="mt-6 grid grid-cols-2 gap-3 sm:grid-cols-4" aria-label="How to complete this challenge">
-        {PATH.map((item, index) => <li key={item.label} className="relative flex items-center gap-3 rounded-2xl border border-border-soft bg-surface px-3 py-3">
+      <ol className="mt-6 grid grid-cols-4 gap-1.5 sm:gap-3" aria-label="How to complete this challenge">
+        {PATH.map((item, index) => <li key={item.label} className="relative flex min-w-0 flex-col items-center gap-1.5 rounded-2xl border border-border-soft bg-surface px-1.5 py-3 text-center sm:flex-row sm:gap-3 sm:px-3 sm:text-left">
           <span className="grid h-9 w-9 shrink-0 place-items-center rounded-xl bg-gradient-to-br from-story-royal to-story-electric text-white shadow-md shadow-brand-600/25"><item.icon className="h-4 w-4" aria-hidden="true" /></span>
-          <div className="min-w-0"><p className="text-[10px] font-bold uppercase tracking-wider text-muted">Step {index + 1}</p><p className="truncate text-sm font-semibold">{item.label}</p></div>
+          <div className="min-w-0"><p className="text-[9px] font-bold uppercase tracking-wider text-muted sm:text-[10px]">Step {index + 1}</p><p className="text-[11px] font-semibold leading-4 sm:truncate sm:text-sm">{item.label}</p></div>
           {index < PATH.length - 1 && <span aria-hidden="true" className="absolute -right-2.5 top-1/2 z-10 hidden h-5 w-5 -translate-y-1/2 place-items-center rounded-full bg-background text-brand-500 shadow sm:grid">›</span>}
         </li>)}
       </ol>

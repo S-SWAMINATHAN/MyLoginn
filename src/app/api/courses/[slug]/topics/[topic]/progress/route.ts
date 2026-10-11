@@ -87,5 +87,10 @@ async function updateTopicProgress(request: Request, { params }: RouteContext) {
 }
 
 export async function POST(_request: Request, context: RouteContext) {
-  return updateTopicProgress(_request, context);
+  try {
+    return await updateTopicProgress(_request, context);
+  } catch (error) {
+    console.error("Topic progress update failed", error);
+    return NextResponse.json({ error: "Could not save progress right now. Please try again." }, { status: 500 });
+  }
 }

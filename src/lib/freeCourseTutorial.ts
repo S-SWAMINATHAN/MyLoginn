@@ -1,6 +1,7 @@
 import { getFreeCourseChallenge, getFreeCourseChallengePrompt } from "@/lib/freeCourseChallenges";
 import { deriveChecks } from "@/lib/challengeChecks";
 import { plainDefinitions, type PlainDefinition } from "@/lib/lessonPlainDefinitions";
+import { extraCourses, extraTopicPrefix, getExtraCourse } from "@/lib/extra-courses";
 export type LessonKind =
   | "intro" | "setup" | "hello" | "structure" | "output" | "comments" | "variables" | "types"
   | "numbers" | "strings" | "operators" | "condition" | "loop" | "function" | "collection"
@@ -89,6 +90,11 @@ const kindMatchers: [RegExp, LessonKind][] = [
   [/insert/i, "insert"], [/update|delete/i, "update"], [/aggregate|group by|count|sum|average/i, "aggregate"],
   [/join/i, "join"], [/pointer/i, "pointer"], [/structure/i, "structure-data"],
 ];
+
+/** Drops a leading language or technology name ("Java ", "Bootstrap ", "Node.js ") so topic rules match on the concept. */
+function stripTopicPrefix(title: string) {
+  return title.replace(/^(?:javascript|java|html|css|sql|mysql|c\+\+|c|php|react|js)\s+/i, "").replace(extraTopicPrefix, "");
+}
 
 export function toTopicSlug(title: string) {
   return title.toLowerCase().trim().replace(/[^a-z0-9]+/g, "-").replace(/^-|-$/g, "");
@@ -275,6 +281,8 @@ const codeSamples: Record<string, Partial<Record<LessonKind, { code: string; out
   },
 };
 
+for (const course of extraCourses) codeSamples[course.slug] = course.samples as Partial<Record<LessonKind, { code: string; output: string }>>;
+
 const setupSamples: Record<string, { code: string; output: string }> = {
   "java-fundamentals": { code: "java --version\njavac --version\n\njavac Main.java\njava Main", output: "The version checks confirm the runtime and compiler. javac compiles Main.java; java runs the compiled Main class." },
   "javascript-fundamentals": { code: "node --version\nnpm --version\n\nnode app.js", output: "The version checks confirm Node.js and npm. Node runs the app.js script." },
@@ -287,6 +295,8 @@ const setupSamples: Record<string, { code: string; output: string }> = {
   "react-fundamentals": { code: "npm create vite@latest my-react-app -- --template react\ncd my-react-app\nnpm install\nnpm run dev", output: "Vite creates and runs a local React development project." },
   "mysql-fundamentals": { code: "SELECT 'MySQL practice database ready' AS status;", output: "The practice database is ready." },
 };
+
+for (const course of extraCourses) setupSamples[course.slug] = { code: course.setup.commands, output: course.setup.workflow };
 
 const pythonVariableExamples: Record<string, { code: string; output: string }> = {
   "what-is-a-variable": { code: 'student_name = "MyLoginn"\nprint(student_name)', output: "MyLoginn" },
@@ -989,15 +999,17 @@ const topicExamples: Record<string, [RegExp, LessonExample][]> = {
   ],
 };
 
+for (const course of extraCourses) topicExamples[course.slug] = course.examples;
+
 function getTopicExample(courseSlug: string, title: string): LessonExample | undefined {
   const rules = topicExamples[courseSlug];
   if (!rules) return undefined;
-  const topic = title.replace(/^(?:javascript|java|html|css|sql|mysql|c\+\+|c|php|react|js)\s+/i, "").toLowerCase();
+  const topic = stripTopicPrefix(title).toLowerCase();
   return rules.find(([pattern]) => pattern.test(topic))?.[1];
 }
 
 function getTopicConcept(title: string, languageName: string): { definition: string; explanation: string } | undefined {
-  const topic = title.replace(/^(?:JavaScript|Java|HTML|CSS|SQL|MySQL|C\+\+|C|PHP|React|JS)\s+/i, "").toLowerCase();
+  const topic = stripTopicPrefix(title).toLowerCase();
   const concepts: [RegExp, string, string][] = [
     [/^(?:home|tutorial|examples?|reference|quick ref|summary|syllabus|study plan|certificate|quiz|exercises?)$/, "A course overview or reference page organizes the material and provides a place to review the named subject.", "Use this section to find the scope of ${topic}, review its syntax, and identify which earlier lesson explains any prerequisite. Reference pages summarize available forms; exercises and quizzes check whether you can apply them."],
     [/^(?:intro|introduction|what is .+|.+ basics?)$/, "An introduction establishes the purpose and vocabulary of ${topic} before detailed rules are introduced.", "Start by identifying what ${topic} does in ${languageName}, then connect it to a small example. Later lessons can build on the vocabulary and behavior introduced here."],
@@ -1064,9 +1076,11 @@ const courseIntroCopy: Record<string, { definition: string; overview: string; hi
   "mysql-fundamentals": { definition: "MySQL is a relational database management system that stores structured data in tables and supports SQL queries.", overview: "MySQL applications define tables and relationships, then use SQL to read, add, update, and summarize records. It is commonly used for web application data.", history: "MySQL began in the 1990s as an open-source relational database and became widely adopted in web hosting and application stacks. It is now developed by Oracle with community and commercial editions.", focus: "relational tables, SQL queries, keys, and safe data changes" },
 };
 
+for (const course of extraCourses) courseIntroCopy[course.slug] = course.intro;
+
 function getTopicCopy(courseSlug: string, title: string, kind: LessonKind, languageName: string, code: string, output: string): TopicCopy {
   const normalized = title.toLowerCase().replace(/[?!]/g, "").trim();
-  const normalizedTopic = normalized.replace(/^(?:javascript|java|html|css|sql|mysql|c\+\+|c|php|react|js)\s+/i, "");
+  const normalizedTopic = stripTopicPrefix(normalized);
   const specific = getTopicSpecificLesson(courseSlug, title);
   if (specific) return {
     overview: specific.overview,
@@ -1107,7 +1121,8 @@ function getTopicCopy(courseSlug: string, title: string, kind: LessonKind, langu
       "react-fundamentals": { overview: "React is a JavaScript UI library. Start with a supported Node.js installation and a development tool such as Vite, then run the local development server.", commands: "node --version\nnpm --version\n\nnpm create vite@latest my-react-app -- --template react\ncd my-react-app\nnpm install\nnpm run dev", workflow: "Node.js runs the development tools and npm installs the project packages. The dev command starts a local server that refreshes as you edit React components." },
       "mysql-fundamentals": { overview: "MySQL examples need a MySQL server and a client or graphical database tool. Install a current supported server distribution and create a practice database with a least-privilege learner account.", commands: "mysql --version\nmysql -u learner -p\n\nCREATE DATABASE practice;\nUSE practice;", workflow: "The version check confirms the client is available. Sign in to a running MySQL server, then select or create a practice database before running course queries." },
     };
-    const guide = guides[courseSlug];
+    const extraSetup = getExtraCourse(courseSlug)?.setup;
+    const guide = guides[courseSlug] ?? (extraSetup ? { overview: extraSetup.overview, commands: extraSetup.commands, workflow: extraSetup.workflow } : undefined);
     if (guide) return {
       overview: guide.overview,
       definition: `A ${languageName} development setup is the editor and runtime, compiler, browser, or database tool needed to write and run ${languageName} examples.`,
@@ -1183,6 +1198,9 @@ function starterForLanguage(courseSlug: string, title: string) {
   const body = [`Challenge: ${title}`, "Write your solution below."];
   // Keep requirement text from closing the comment early (for example a literal --> or */ inside a task).
   const safe = (line: string) => courseSlug === "html-fundamentals" ? line.replace(/</g, "‹").replace(/>/g, "›") : courseSlug === "css-fundamentals" ? line.replace(/\*\//g, "* /") : line;
+  const extra = getExtraCourse(courseSlug);
+  if (extra?.comment.close) return `${extra.comment.open}\n${body.map((line) => `  ${line.replace(/-->/g, "-- >")}`.trimEnd()).join("\n")}\n${extra.comment.close.trim()}\n`;
+  if (extra) return `${body.map((line) => `${extra.comment.open} ${line}`.trimEnd()).join("\n")}\n\n`;
   if (courseSlug === "html-fundamentals") return `<!--\n${body.map((line) => `  ${safe(line)}`.trimEnd()).join("\n")}\n-->\n`;
   if (courseSlug === "css-fundamentals") return `/*\n${body.map((line) => ` * ${safe(line)}`.trimEnd()).join("\n")}\n */\n`;
   const marker = courseSlug === "python-fundamentals" ? "#" : courseSlug === "sql-fundamentals" || courseSlug === "mysql-fundamentals" ? "--" : "//";
@@ -1218,9 +1236,10 @@ export function buildTutorialLesson(courseSlug: string, title: string, index: nu
     "html-fundamentals": "<!--", "css-fundamentals": "/*", "sql-fundamentals": "--",
     "c-fundamentals": "//", "cpp-fundamentals": "//", "php-fundamentals": "//",
     "react-fundamentals": "//", "mysql-fundamentals": "--",
+    ...Object.fromEntries(extraCourses.map((course) => [course.slug, course.comment.open])),
   };
-  const closingComment: Record<string, string> = { "html-fundamentals": " -->", "css-fundamentals": " */" };
-  const languageName = ({ "python-fundamentals": "Python", "java-fundamentals": "Java", "javascript-fundamentals": "JavaScript", "html-fundamentals": "HTML", "css-fundamentals": "CSS", "sql-fundamentals": "SQL", "c-fundamentals": "C", "cpp-fundamentals": "C++", "php-fundamentals": "PHP", "react-fundamentals": "React", "mysql-fundamentals": "MySQL" } as Record<string, string>)[courseSlug] ?? courseSlug.replace(/-fundamentals$/, "").replace(/-/g, " ");
+  const closingComment: Record<string, string> = { "html-fundamentals": " -->", "css-fundamentals": " */", ...Object.fromEntries(extraCourses.filter((course) => course.comment.close).map((course) => [course.slug, course.comment.close as string])) };
+  const languageName = ({ "python-fundamentals": "Python", "java-fundamentals": "Java", "javascript-fundamentals": "JavaScript", "html-fundamentals": "HTML", "css-fundamentals": "CSS", "sql-fundamentals": "SQL", "c-fundamentals": "C", "cpp-fundamentals": "C++", "php-fundamentals": "PHP", "react-fundamentals": "React", "mysql-fundamentals": "MySQL", ...Object.fromEntries(extraCourses.map((course) => [course.slug, course.languageName])) } as Record<string, string>)[courseSlug] ?? courseSlug.replace(/-fundamentals$/, "").replace(/-/g, " ");
   const code = sample?.code ?? `${commentPrefix[courseSlug] ?? "//"} ${title}${closingComment[courseSlug] ?? ""}\n${commentPrefix[courseSlug] ?? "//"} Explore the key idea, then build a small example of your own.${closingComment[courseSlug] ?? ""}`;
   const syntaxByKind: Partial<Record<LessonKind, string>> = {
     variables: courseSlug === "python-fundamentals" ? "name = value  ·  example: student = \"MyLoginn\"" : "type name = value;  ·  syntax varies by language",

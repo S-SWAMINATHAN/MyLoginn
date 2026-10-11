@@ -1,5 +1,6 @@
 import type { LessonKind } from "@/lib/freeCourseTutorial";
 import { authoredChallenges, type AuthoredChallenge } from "@/lib/challengeData";
+import { extraCourses, getExtraCourse } from "@/lib/extra-courses";
 
 /** `task` is the learner-facing brief; `given` lists sample input (or program stdin) shown beside the editor. */
 export type FreeCourseChallenge = { code: string; output: string; task?: string; given?: string[]; stdin?: string };
@@ -122,6 +123,9 @@ const challenges: Record<string, Partial<Record<LessonKind, FreeCourseChallenge>
   },
 };
 
+// New tutorial courses: any topic without a hand-written challenge falls back to the course-wide practice task.
+for (const course of extraCourses) challenges[course.slug] = { practice: { code: course.practice.code, output: course.practice.output, task: course.practice.task } };
+
 export function getAuthoredChallenge(courseSlug: string, title: string): AuthoredChallenge | undefined {
   return authoredChallenges[courseSlug]?.[topicKey(title)];
 }
@@ -170,6 +174,8 @@ export function getFreeCourseChallengePrompt(courseSlug: string, title: string, 
     event: "Make a Join workshop button call a handler that announces the action.",
     practice: `Build a fresh ${title.toLowerCase()} example around a workshop catalog. Use the challenge data and produce the result shown in the challenge solution.`
   };
+  const extra = getExtraCourse(courseSlug);
+  if (extra) return `Topic challenge — ${title}: ${extra.practice.task} Focus it on ${title.toLowerCase()}, use your own values, and check your work against the expected result.`;
   if (!challenges[courseSlug]?.[kind]) {
     return `Write a separate ${languageName} challenge for ${title.toLowerCase()} using new data and a result different from the lesson example. Use the challenge solution only to check your work.`;
   }

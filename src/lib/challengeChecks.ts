@@ -7,10 +7,13 @@
  */
 export type Check = { id: string; label: string; test: (source: string) => boolean };
 
-type Family = "html" | "css" | "sql" | "python" | "php" | "c-like";
+type Family = "html" | "css" | "sql" | "python" | "php" | "c-like" | "lines";
 
 const familyOf = (courseSlug: string): Family => {
-  if (courseSlug === "html-fundamentals") return "html";
+  if (["html-fundamentals", "bootstrap-fundamentals", "xml-fundamentals", "angularjs-fundamentals"].includes(courseSlug)) return "html";
+  if (courseSlug === "git-fundamentals" || courseSlug === "excel-fundamentals") return "lines";
+  if (["django-fundamentals", "numpy-fundamentals", "pandas-fundamentals", "dsa-fundamentals"].includes(courseSlug)) return "python";
+  if (courseSlug === "postgresql-fundamentals") return "sql";
   if (courseSlug === "css-fundamentals") return "css";
   if (courseSlug === "sql-fundamentals" || courseSlug === "mysql-fundamentals") return "sql";
   if (courseSlug === "python-fundamentals") return "python";
@@ -26,7 +29,7 @@ export function stripComments(courseSlug: string, source: string) {
   const text = source.replace(/\r\n/g, "\n");
   if (family === "html") return text.replace(/<!--[\s\S]*?-->/g, "");
   if (family === "css") return text.replace(/\/\*[\s\S]*?\*\//g, "");
-  const line = family === "python" ? "#[^\\n]*" : family === "sql" ? "--[^\\n]*|\\/\\*[\\s\\S]*?\\*\\/" : family === "php" ? "\\/\\/[^\\n]*|#[^\\n]*|\\/\\*[\\s\\S]*?\\*\\/" : "\\/\\/[^\\n]*|\\/\\*[\\s\\S]*?\\*\\/";
+  const line = family === "python" || family === "lines" ? "#[^\\n]*" : family === "sql" ? "--[^\\n]*|\\/\\*[\\s\\S]*?\\*\\/" : family === "php" ? "\\/\\/[^\\n]*|#[^\\n]*|\\/\\*[\\s\\S]*?\\*\\/" : "\\/\\/[^\\n]*|\\/\\*[\\s\\S]*?\\*\\/";
   return text.replace(new RegExp(`(${STRING})|${line}`, "g"), (_match, str: string | undefined) => str ?? "");
 }
 
@@ -40,7 +43,7 @@ const FREE_TEXT_ATTRIBUTES = new Set(["alt", "title", "aria-label", "aria-labell
 function htmlChecks(solution: string): Check[] {
   const checks: Check[] = [];
   const body = solution.replace(/<!--[\s\S]*?-->/g, "");
-  for (const tag of unique([...body.matchAll(/<([a-z][a-z0-9-]*)/gi)].map((match) => match[1].toLowerCase()))) {
+  for (const tag of unique([...body.matchAll(/<([a-z][a-z0-9:-]*)/gi)].map((match) => match[1].toLowerCase()))) {
     checks.push({ id: `tag-${tag}`, label: `Use the <${tag}> element`, test: (source) => new RegExp(`<${escapeRe(tag)}[\\s>/]`, "i").test(source) });
   }
   const seen = new Set<string>();
@@ -105,7 +108,7 @@ const KEYWORDS: Record<Family, string[]> = {
   python: ["def", "class", "lambda", "yield", "return", "import", "from", "with", "try", "except", "finally", "raise", "for", "while", "if", "elif", "else", "break", "continue", "pass", "global", "nonlocal", "assert", "async", "await"],
   php: ["function", "class", "interface", "return", "foreach", "for", "while", "if", "elseif", "else", "switch", "match", "try", "catch", "finally", "throw", "namespace", "use", "static", "abstract", "fn", "echo", "require", "include"],
   "c-like": ["function", "class", "interface", "struct", "enum", "union", "typedef", "record", "return", "for", "while", "do", "if", "else", "switch", "case", "break", "continue", "try", "catch", "finally", "throw", "const", "let", "var", "static", "import", "export", "async", "await", "new", "extends", "implements", "template", "namespace", "using", "sizeof"],
-  html: [], css: [], sql: [],
+  html: [], css: [], sql: [], lines: [],
 };
 
 function codeChecks(family: Family, solution: string): Check[] {
@@ -135,7 +138,7 @@ function lineChecks(solution: string): Check[] {
 export function deriveChecks(courseSlug: string, solution: string, kind?: string): Check[] {
   if (kind === "packages") return lineChecks(solution).slice(0, 8);
   const family = familyOf(courseSlug);
-  const checks = family === "html" ? htmlChecks(solution) : family === "css" ? cssChecks(solution) : family === "sql" ? sqlChecks(solution) : codeChecks(family, solution);
+  const checks = family === "html" ? htmlChecks(solution) : family === "css" ? cssChecks(solution) : family === "sql" ? sqlChecks(solution) : family === "lines" ? lineChecks(solution) : codeChecks(family, solution);
   return (checks.length ? checks : lineChecks(solution)).slice(0, 10);
 }
 

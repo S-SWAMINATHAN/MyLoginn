@@ -4,6 +4,7 @@ import Image from "next/image";
 import { Check, CircleDashed, Gift, Lock, LockOpen, Copy, FileCode2, Keyboard, Lightbulb, ListChecks, Moon, Play, RotateCcw, Send, Sun, Terminal, X, BookOpenCheck, Eye } from "lucide-react";
 import { useEffect, useMemo, useRef, useState } from "react";
 import { deriveChecks, evaluateChecks } from "@/lib/challengeChecks";
+import { extraCourses } from "@/lib/extra-courses";
 
 type Props = {
   courseSlug: string; courseTitle: string; topicSlug: string; moduleTitle: string; isLastTopicInModule: boolean; nextHref: string;
@@ -34,6 +35,7 @@ declare global {
 }
 
 const extensionFor = (courseSlug: string) => ({
+  ...Object.fromEntries(extraCourses.map((course) => [course.slug, course.extension])),
   "python-fundamentals": "py", "java-fundamentals": "java", "javascript-fundamentals": "js", "html-fundamentals": "html", "css-fundamentals": "css",
   "sql-fundamentals": "sql", "mysql-fundamentals": "sql", "c-fundamentals": "c", "cpp-fundamentals": "cpp", "php-fundamentals": "php", "react-fundamentals": "jsx",
 } as Record<string, string>)[courseSlug] ?? "txt";
@@ -207,7 +209,7 @@ export function CodeIDE({ courseSlug, courseTitle, topicSlug, moduleTitle, isLas
     } finally {
       window.clearTimeout(timeout);
     }
-    const payload = await response.json();
+    const payload = await response.json().catch(() => ({} as Record<string, any>));
     if (!response.ok) throw new Error(response.status === 422 ? payload.error || "Challenge not passed yet. Check your code and try again." : payload.error || "Challenge verification failed.");
     setStatus(`Challenge passed · +${payload.pointsEarned ?? 0} points`);
     setChallengePassed(true);
@@ -265,7 +267,7 @@ export function CodeIDE({ courseSlug, courseTitle, topicSlug, moduleTitle, isLas
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify({ query: source, expectedQuery: solutionCode }),
         });
-        const result = await response.json();
+        const result = await response.json().catch(() => ({} as Record<string, any>));
         if (!response.ok) throw new Error(result.error || "The SQL query could not be run.");
         setOutput(result.output);
         setLastRun({ source, output: result.output, passed: Boolean(result.passed) });

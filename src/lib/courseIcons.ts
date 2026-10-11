@@ -5,7 +5,10 @@
  * icon, per-category gradient) instead of generic stroke icons.
  */
 
+import { EXTRA_ACCENT, EXTRA_GRAD, EXTRA_SVGS, LANG_SVGS, getExtraIconKey, type ExtraIconKey } from "@/lib/courseIconsExtra";
+
 export type CourseIconKey =
+  | ExtraIconKey
   | "ml"
   | "devops"
   | "cloud"
@@ -47,6 +50,7 @@ export type CourseIconInfo = {
 
 /* ── Gradient backgrounds per category ──────────────────────────────── */
 const GRAD: Record<CourseIconKey, string> = {
+  ...EXTRA_GRAD,
   ml: "linear-gradient(145deg,#12003a,#4c1d95,#7c3aed)",
   devops: "linear-gradient(145deg,#1c0500,#9a3412,#ea580c)",
   cloud: "linear-gradient(145deg,#02101f,#075985,#0ea5e9)",
@@ -82,6 +86,7 @@ const GRAD: Record<CourseIconKey, string> = {
 
 /* ── Accent colours (brightest hue per category) ─────────────────────── */
 const ACCENT: Record<CourseIconKey, string> = {
+  ...EXTRA_ACCENT,
   ml: "#7c3aed",
   devops: "#ea580c",
   cloud: "#0ea5e9",
@@ -122,6 +127,9 @@ function getKey(title: string): CourseIconKey {
   // Digital Marketing"), which would otherwise be caught by the ai/ml checks below.
   if (/market|advertis|\bseo\b|social\s*media|campaign|\bbrand/.test(s)) return "marketing";
   // Language courses are matched first so "Programming Languages" or "SQL" never fall into a generic bucket.
+  // Technology courses (Bootstrap, Git, Pandas, …) get their own icon before any generic category matches.
+  const extra = getExtraIconKey(s);
+  if (extra) return extra;
   if (/\breact\b/.test(s)) return "react";
   if (/javascript|\bjs\b|node\.?js/.test(s)) return "javascript";
   if (/\bjava\b/.test(s)) return "java";
@@ -1252,21 +1260,29 @@ function svgSql(p: string) {
 function svgMySql(p: string) {
   return `<svg viewBox="0 0 64 64" fill="none" xmlns="http://www.w3.org/2000/svg">
 <defs>
-  <linearGradient id="${p}body" x1="0" y1="0" x2="1" y2="0"><stop offset="0%" stop-color="#075985"/><stop offset="50%" stop-color="#38bdf8"/><stop offset="100%" stop-color="#075985"/></linearGradient>
-  <linearGradient id="${p}dol" x1="0" y1="0" x2="1" y2="1"><stop offset="0%" stop-color="#fdba74"/><stop offset="100%" stop-color="#ea580c"/></linearGradient>
-  <radialGradient id="${p}bg" cx="50%" cy="50%" r="55%"><stop offset="0%" stop-color="#38bdf8" stop-opacity=".25"/><stop offset="100%" stop-color="#0c4a6e" stop-opacity="0"/></radialGradient>
+  <linearGradient id="${p}body" x1="0" y1="0" x2="1" y2="0"><stop offset="0%" stop-color="#0c4a6e"/><stop offset="45%" stop-color="#0ea5e9"/><stop offset="100%" stop-color="#075985"/></linearGradient>
+  <linearGradient id="${p}top" x1="0" y1="0" x2="1" y2="1"><stop offset="0%" stop-color="#e0f2fe"/><stop offset="100%" stop-color="#7dd3fc"/></linearGradient>
+  <linearGradient id="${p}acc" x1="0" y1="0" x2="1" y2="1"><stop offset="0%" stop-color="#fdba74"/><stop offset="100%" stop-color="#f97316"/></linearGradient>
+  <radialGradient id="${p}bg" cx="50%" cy="50%" r="55%"><stop offset="0%" stop-color="#38bdf8" stop-opacity=".28"/><stop offset="100%" stop-color="#0c4a6e" stop-opacity="0"/></radialGradient>
   <filter id="${p}glow"><feGaussianBlur stdDeviation="1.6" result="b"/><feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge></filter>
 </defs>
 <circle cx="32" cy="32" r="30" fill="url(#${p}bg)"><animate attributeName="r" values="28;31;28" dur="4s" repeatCount="indefinite"/></circle>
+<ellipse cx="32" cy="32" rx="27" ry="10" stroke="#38bdf8" stroke-opacity=".45" stroke-width="1" stroke-dasharray="3 4" transform="rotate(-18 32 32)"><animate attributeName="stroke-dashoffset" values="0;-28" dur="4s" repeatCount="indefinite"/></ellipse>
 <g filter="url(#${p}glow)">
-  <path d="M14 30V48C14 52.5 22 56 32 56S50 52.5 50 48V30Z" fill="url(#${p}body)"/>
-  <ellipse cx="32" cy="30" rx="18" ry="6.5" fill="#bae6fd"/>
-  <path d="M14 40C14 44 22 47.5 32 47.5S50 44 50 40" stroke="#e0f2fe" stroke-width="1.6" opacity=".75"/>
+  <animateTransform attributeName="transform" type="translate" values="0,0;0,-1.5;0,0" dur="3s" repeatCount="indefinite"/>
+  <path d="M16 38V45C16 49 23 52 32 52S48 49 48 45V38Z" fill="url(#${p}body)"/>
+  <ellipse cx="32" cy="38" rx="16" ry="5" fill="url(#${p}top)"/>
+  <path d="M16 27V34C16 38 23 41 32 41S48 38 48 34V27Z" fill="url(#${p}body)"/>
+  <ellipse cx="32" cy="27" rx="16" ry="5" fill="url(#${p}top)"/>
+  <path d="M16 16V23C16 27 23 30 32 30S48 27 48 23V16Z" fill="url(#${p}body)"/>
+  <ellipse cx="32" cy="16" rx="16" ry="5" fill="url(#${p}top)"/>
+  <g fill="#fff"><circle cx="21" cy="21" r="1.2"><animate attributeName="opacity" values=".3;1;.3" dur="1.8s" repeatCount="indefinite"/></circle><circle cx="21" cy="32" r="1.2"><animate attributeName="opacity" values=".3;1;.3" dur="1.8s" begin=".3s" repeatCount="indefinite"/></circle><circle cx="21" cy="43" r="1.2"><animate attributeName="opacity" values=".3;1;.3" dur="1.8s" begin=".6s" repeatCount="indefinite"/></circle></g>
 </g>
 <g filter="url(#${p}glow)">
-  <animateMotion dur="3s" repeatCount="indefinite" path="M10 34C16 8 36 2 54 30" rotate="auto" keyPoints="0;1" keyTimes="0;1" calcMode="spline" keySplines=".4 0 .6 1"/>
-  <path d="M-9 0C-5 -6 3 -7 9 -2C11 -1 12 0 13 -2C13 1 12 4 9 4C5 3 0 3 -3 6C-3 3 -5 2 -9 0Z" fill="url(#${p}dol)"/>
-  <circle cx="7" cy="-2" r="1" fill="#fff"/>
+  <circle r="3.2" fill="url(#${p}acc)">
+    <animateMotion dur="3.6s" repeatCount="indefinite" path="M6 36C6 20 20 10 32 10S58 20 58 36"/>
+    <animate attributeName="opacity" values="0;1;1;0" dur="3.6s" repeatCount="indefinite"/>
+  </circle>
 </g>
 </svg>`;
 }
@@ -1358,7 +1374,8 @@ function svgDefault(p: string) {
   return svgML(p);
 }
 
-const SVGS: Record<CourseIconKey, (p: string) => string> = {
+const BASE_SVGS: Record<CourseIconKey, (p: string) => string> = {
+  ...EXTRA_SVGS,
   ml: svgML,
   devops: svgDevOps,
   cloud: svgCloud,
@@ -1391,6 +1408,9 @@ const SVGS: Record<CourseIconKey, (p: string) => string> = {
   react: svgReact,
   default: svgDefault,
 };
+
+// Realistic redraws of the original language icons replace the older hand-drawn ones.
+const SVGS: Record<CourseIconKey, (p: string) => string> = { ...BASE_SVGS, ...LANG_SVGS };
 
 /* ── Public API ───────────────────────────────────────────────────────────
    `idSeed` must be stable across server and client render (e.g. React's

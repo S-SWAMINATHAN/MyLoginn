@@ -78,18 +78,18 @@ export function CourseTutorial({ courseTitle, courseSlug, learnerName = "MyLogin
 
   return (
     <div className="mx-auto max-w-[1440px] px-4 pb-16 pt-6 sm:px-6 lg:px-8">
-      <div className="mb-5 flex flex-wrap items-end justify-between gap-3 rounded-2xl border border-sky-100 bg-gradient-to-r from-white via-sky-50/80 to-indigo-50/80 px-4 py-3 shadow-sm dark:border-slate-800 dark:from-slate-950 dark:via-slate-900 dark:to-indigo-950/30 sm:px-5">
+      <div className="mb-5 flex flex-col gap-3 rounded-2xl border border-sky-100 bg-gradient-to-r from-white via-sky-50/80 to-indigo-50/80 px-3.5 py-3 shadow-sm dark:border-slate-800 dark:from-slate-950 dark:via-slate-900 dark:to-indigo-950/30 sm:px-5 md:flex-row md:items-end md:justify-between">
         <div className="min-w-0">
-          <nav aria-label="Breadcrumb" className="flex min-w-0 items-center gap-1 overflow-x-auto whitespace-nowrap text-xs">
+          <nav aria-label="Breadcrumb" className="flex min-w-0 flex-wrap items-center gap-x-1 gap-y-0.5 text-xs md:flex-nowrap md:overflow-x-auto md:whitespace-nowrap">
             <Link href="/" className="rounded-md px-1.5 py-1 font-medium text-slate-500 hover:bg-white hover:text-blue-700 dark:text-slate-400 dark:hover:bg-slate-800">Home</Link><ChevronRight aria-hidden="true" className="h-3.5 w-3.5 shrink-0 text-slate-400" />
-            <Link href="/courses" className="rounded-md px-1.5 py-1 font-medium text-slate-500 hover:bg-white hover:text-blue-700 dark:text-slate-400 dark:hover:bg-slate-800">Courses</Link><ChevronRight aria-hidden="true" className="h-3.5 w-3.5 shrink-0 text-slate-400" />
-            <Link href={`/courses/${courseSlug}`} className="max-w-40 truncate rounded-md px-1.5 py-1 font-semibold text-blue-700 hover:bg-white dark:text-blue-300 dark:hover:bg-slate-800">{courseTitle}</Link><ChevronRight aria-hidden="true" className="h-3.5 w-3.5 shrink-0 text-slate-400" />
-            <span title={currentModule?.title} className="max-w-36 truncate rounded-md px-1.5 py-1 font-medium text-slate-600 dark:text-slate-300">{currentModule?.title ?? "Course lessons"}</span><ChevronRight aria-hidden="true" className="h-3.5 w-3.5 shrink-0 text-slate-400" />
-            <span aria-current="page" className="max-w-40 truncate rounded-md bg-blue-100/80 px-2 py-1 font-bold text-blue-900 dark:bg-blue-900/40 dark:text-blue-100">{title}</span>
+            <Link href="/courses" className="hidden rounded-md px-1.5 py-1 font-medium text-slate-500 hover:bg-white hover:text-blue-700 dark:text-slate-400 dark:hover:bg-slate-800 sm:block">Courses</Link><ChevronRight aria-hidden="true" className="hidden h-3.5 w-3.5 shrink-0 text-slate-400 sm:block" />
+            <Link href={`/courses/${courseSlug}`} className="max-w-[9rem] truncate rounded-md px-1.5 py-1 font-semibold text-blue-700 hover:bg-white dark:text-blue-300 dark:hover:bg-slate-800 sm:max-w-40">{courseTitle}</Link><ChevronRight aria-hidden="true" className="h-3.5 w-3.5 shrink-0 text-slate-400" />
+            <span title={currentModule?.title} className="hidden max-w-36 truncate rounded-md px-1.5 py-1 font-medium text-slate-600 dark:text-slate-300 md:block">{currentModule?.title ?? "Course lessons"}</span><ChevronRight aria-hidden="true" className="hidden h-3.5 w-3.5 shrink-0 text-slate-400 md:block" />
+            <span aria-current="page" title={title} className="min-w-0 max-w-[11rem] truncate rounded-md bg-blue-100/80 px-2 py-1 font-bold text-blue-900 dark:bg-blue-900/40 dark:text-blue-100 sm:max-w-56">{title}</span>
           </nav>
-          <p className="mt-1.5 truncate pl-1 text-xs text-slate-500 dark:text-slate-400">Welcome back, {learnerName} <span aria-hidden="true">·</span> Your learning workspace</p>
+          <p className="mt-1.5 pl-1 text-xs text-slate-500 dark:text-slate-400 md:truncate">Welcome back, {learnerName} <span aria-hidden="true">·</span> Your learning workspace</p>
         </div>
-        <div className="flex shrink-0 flex-wrap items-center justify-end gap-2"><Link href="/leaderboard" className="rounded-full border border-slate-200 bg-white/90 px-3 py-2 text-xs font-semibold text-slate-700 transition hover:border-blue-200 hover:bg-blue-50 hover:text-blue-800 dark:border-slate-700 dark:bg-slate-900 dark:text-slate-200 dark:hover:bg-blue-950">Leaderboard</Link><div className="flex items-center gap-2 rounded-full border border-blue-100 bg-blue-600 px-3.5 py-2 text-xs font-bold text-white shadow-sm shadow-blue-900/15"><BookOpenCheck className="h-4 w-4" /> Lesson {index + 1} of {topics.length}</div></div>
+        <div className="flex shrink-0 flex-wrap items-center gap-2 md:justify-end [&>*]:min-w-[8.5rem] [&>*]:flex-1 md:[&>*]:flex-none"><Link href="/leaderboard" className="rounded-full border border-slate-200 bg-white/90 px-3 py-2 text-center text-xs font-semibold text-slate-700 transition hover:border-blue-200 hover:bg-blue-50 hover:text-blue-800 dark:border-slate-700 dark:bg-slate-900 dark:text-slate-200 dark:hover:bg-blue-950">Leaderboard</Link><div className="flex items-center justify-center gap-2 whitespace-nowrap rounded-full border border-blue-100 bg-blue-600 px-3.5 py-2 text-xs font-bold text-white shadow-sm shadow-blue-900/15"><BookOpenCheck className="h-4 w-4" /> Lesson {index + 1} of {topics.length}</div></div>
       </div>
 
       <TopicProgressControl courseSlug={courseSlug} topicSlug={toTopicSlug(title)} requiresCodeChallenge={lesson.requiresCodeChallenge} initialCompleted={completedTopicSlugs.includes(toTopicSlug(title))} initialProgress={courseProgress} initialCount={completedTopicSlugs.length} totalTopics={topics.length} />
@@ -194,7 +194,7 @@ export function CourseTutorial({ courseTitle, courseSlug, learnerName = "MyLogin
 
           <div className="mt-6"><DownloadLessonMaterial courseTitle={courseTitle} title={title} lesson={lesson} /></div>
 
-          <div className="mt-10 flex flex-wrap items-center justify-between gap-3 border-t border-border-soft pt-6">
+          <div className="mt-8 grid gap-3 border-t border-border-soft pt-6 sm:mt-10 sm:flex sm:flex-wrap sm:items-center sm:justify-between [&>*]:w-full [&>*]:justify-center [&>span:empty]:hidden sm:[&>*]:w-auto">
             {previous ? <Link href={previous} className="inline-flex items-center gap-2 rounded-full border border-border-soft px-5 py-3 text-sm font-semibold hover:bg-surface-2"><ArrowLeft className="h-4 w-4" /> Previous lesson</Link> : <span />}
             {index < topics.length - 1 ? <LessonNextLink href={next} label="Next lesson" courseSlug={courseSlug} topicSlug={toTopicSlug(title)} requiresCodeChallenge={lesson.requiresCodeChallenge} initiallyUnlocked={currentCompleted || !lesson.requiresCodeChallenge} initiallyCompleted={currentCompleted} /> : <Link href={next} className="inline-flex items-center gap-2 rounded-full brand-gradient-bg px-5 py-3 text-sm font-semibold text-white shadow-[var(--shadow-soft)]">Back to course<ArrowRight className="h-4 w-4" /></Link>}
           </div>

@@ -1,5 +1,6 @@
 import { PrismaClient } from "@prisma/client";
 import { loadEnvConfig } from "@next/env";
+import { extraCourses } from "../src/lib/extra-courses";
 
 loadEnvConfig(process.cwd());
 
@@ -73,6 +74,14 @@ const courses = [
     syllabus: ["MySQL introduction and relational databases", "SELECT, filtering, and sorting", "Insert, update, and delete safely", "Aggregate functions and grouping", "Joins and subqueries", "Tables, keys, and constraints", "Indexes, views, and transactions", "Prepared statements and security", "MySQL functions and references", "Projects and practice"],
   },
 ];
+
+// W3Schools-style tutorial courses (Bootstrap, jQuery, Excel, XML, Django, NumPy, Pandas, Node.js, DSA, TypeScript, AngularJS, Git, PostgreSQL, MongoDB, ASP.NET).
+for (const course of extraCourses) {
+  courses.push({
+    title: course.title.replace(/ Fundamentals$/, ` ${course.term}`), slug: course.slug, category: course.category, description: course.description,
+    durationWeeks: course.durationWeeks, imageColor: course.imageColor, tags: ["FREE", "Fundamentals", course.languageName, "Beginner"], syllabus: course.syllabus,
+  });
+}
 
 async function main() {
   let added = 0;

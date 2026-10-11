@@ -1,4 +1,5 @@
 import { ArrowRight, ArrowDown } from "lucide-react";
+import { extraCourses } from "@/lib/extra-courses";
 
 type Visual = { caption: string; nodes: { label: string; value: string; detail?: string }[]; summary: string };
 type Props = { visual: Visual; courseSlug: string; title: string; code: string; output: string; syntax: string };
@@ -8,6 +9,7 @@ const FILE_NAMES: Record<string, string> = {
   "html-fundamentals": "index.html", "css-fundamentals": "styles.css", "sql-fundamentals": "query.sql",
   "mysql-fundamentals": "query.sql", "c-fundamentals": "main.c", "cpp-fundamentals": "main.cpp",
   "php-fundamentals": "index.php", "react-fundamentals": "App.jsx",
+  ...Object.fromEntries(extraCourses.map((course) => [course.slug, `example.${course.extension}`])),
 };
 const STAGE_STYLES = [
   { ring: "border-brand-300 dark:border-brand-400/40", dot: "bg-brand-600", text: "text-brand-700 dark:text-brand-200" },

@@ -1,3 +1,5 @@
+import { extraCourses } from "@/lib/extra-courses";
+
 const FREE_COURSE_TERMS: Record<string, string> = {
   "python-fundamentals": "Essentials",
   "java-fundamentals": "Core Concepts",
@@ -10,6 +12,7 @@ const FREE_COURSE_TERMS: Record<string, string> = {
   "php-fundamentals": "Nuts and Bolts",
   "react-fundamentals": "Core Concepts",
   "mysql-fundamentals": "Foundations",
+  ...Object.fromEntries(extraCourses.map((course) => [course.slug, course.term])),
 };
 
 export function getFreeCourseTerm(slug: string): string | undefined {

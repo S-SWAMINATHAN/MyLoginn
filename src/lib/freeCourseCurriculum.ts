@@ -1,3 +1,5 @@
+import { extraCourses } from "@/lib/extra-courses";
+
 export type CourseModule = { title: string; topics: string[] };
 
 const pythonModules: CourseModule[] = [
@@ -178,6 +180,8 @@ const expandedCourseModules: Record<string, CourseModule[]> = {
     ["MySQL References", "MySQL Data Types|MySQL Functions|MySQL String Functions|MySQL Date Functions|MySQL Numeric Functions|MySQL JSON Functions|MySQL Window Functions|MySQL Keywords|MySQL Quick Reference"],
   ]),
 };
+
+for (const course of extraCourses) expandedCourseModules[course.slug] = defineModules(course.modules);
 
 function inferModuleTitle(courseSlug: string, topic: string) {
   const language = courseSlug.replace(/-fundamentals$/, "").replace(/-/g, " ").replace(/\b\w/g, (letter) => letter.toUpperCase());

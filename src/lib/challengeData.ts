@@ -9,6 +9,7 @@ import { reactChallenges } from "@/lib/challenge-data/react";
 import { cChallenges } from "@/lib/challenge-data/c";
 import { cppChallenges } from "@/lib/challenge-data/cpp";
 import { phpChallenges } from "@/lib/challenge-data/php";
+import { extraCourses } from "@/lib/extra-courses";
 
 /**
  * Hand-authored, topic-specific challenges. Every entry has its own scenario, data and expected output, so no two
@@ -37,4 +38,5 @@ export const authoredChallenges: Record<string, Record<string, AuthoredChallenge
   "c-fundamentals": build(cChallenges),
   "cpp-fundamentals": build(cppChallenges),
   "php-fundamentals": build(phpChallenges),
+  ...Object.fromEntries(extraCourses.map((course) => [course.slug, build(course.challenges)])),
 };
