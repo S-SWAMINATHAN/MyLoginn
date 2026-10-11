@@ -25,6 +25,17 @@ export type CourseIconKey =
   | "math"
   | "physics"
   | "chemistry"
+  | "python"
+  | "java"
+  | "javascript"
+  | "html"
+  | "css"
+  | "sql"
+  | "mysql"
+  | "c"
+  | "cpp"
+  | "php"
+  | "react"
   | "default";
 
 export type CourseIconInfo = {
@@ -55,6 +66,17 @@ const GRAD: Record<CourseIconKey, string> = {
   math: "linear-gradient(145deg,#0a1a1c,#155e63,#0891b2)",
   physics: "linear-gradient(145deg,#1a0a2e,#4c1d95,#8b5cf6)",
   chemistry: "linear-gradient(145deg,#031a12,#065f46,#059669)",
+  python: "linear-gradient(145deg,#06122e,#1e3a8a,#2563eb)",
+  java: "linear-gradient(145deg,#1c0500,#9a3412,#ea580c)",
+  javascript: "linear-gradient(145deg,#1a1400,#854d0e,#ca8a04)",
+  html: "linear-gradient(145deg,#1c0a00,#9a3412,#f97316)",
+  css: "linear-gradient(145deg,#030a1e,#1e40af,#3b82f6)",
+  sql: "linear-gradient(145deg,#02161c,#155e75,#06b6d4)",
+  mysql: "linear-gradient(145deg,#04121f,#075985,#0ea5e9)",
+  c: "linear-gradient(145deg,#06091f,#1e3a8a,#3b82f6)",
+  cpp: "linear-gradient(145deg,#0b0a2e,#312e81,#6366f1)",
+  php: "linear-gradient(145deg,#0f0a2e,#3730a3,#7c83e8)",
+  react: "linear-gradient(145deg,#021a22,#155e75,#06b6d4)",
   default: "linear-gradient(145deg,#12003a,#4c1d95,#7c3aed)",
 };
 
@@ -79,6 +101,17 @@ const ACCENT: Record<CourseIconKey, string> = {
   math: "#0891b2",
   physics: "#8b5cf6",
   chemistry: "#059669",
+  python: "#2563eb",
+  java: "#ea580c",
+  javascript: "#eab308",
+  html: "#f97316",
+  css: "#3b82f6",
+  sql: "#06b6d4",
+  mysql: "#0ea5e9",
+  c: "#3b82f6",
+  cpp: "#6366f1",
+  php: "#7c83e8",
+  react: "#22d3ee",
   default: "#7c3aed",
 };
 
@@ -88,6 +121,18 @@ function getKey(title: string): CourseIconKey {
   // Checked first: "marketing" titles frequently mention "AI" (e.g. "AI-Powered
   // Digital Marketing"), which would otherwise be caught by the ai/ml checks below.
   if (/market|advertis|\bseo\b|social\s*media|campaign|\bbrand/.test(s)) return "marketing";
+  // Language courses are matched first so "Programming Languages" or "SQL" never fall into a generic bucket.
+  if (/\breact\b/.test(s)) return "react";
+  if (/javascript|\bjs\b|node\.?js/.test(s)) return "javascript";
+  if (/\bjava\b/.test(s)) return "java";
+  if (/mysql|mariadb/.test(s)) return "mysql";
+  if (/\bsql\b|postgres|sqlite|\brdbms\b/.test(s)) return "sql";
+  if (/\bpython\b/.test(s)) return "python";
+  if (/\bhtml\b/.test(s)) return "html";
+  if (/\bcss\b/.test(s)) return "css";
+  if (/\bphp\b/.test(s)) return "php";
+  if (/\bc\+\+|\bcpp\b/.test(s)) return "cpp";
+  if (/(^|\s)c(\s|$)/.test(s)) return "c";
   if (/machine\s*learn|ml\b|deep\s*learn|neural|nlp|llm|gpt|gen\s*ai|generative/.test(s)) return "ml";
   if (/\bai\b|artificial\s*intel|computer\s*vision/.test(s)) return "ai";
   if (/devops|ci\/?cd|jenkins|kubernetes|k8s|docker|ansible|terraform|pipeline/.test(s)) return "devops";
@@ -1067,6 +1112,248 @@ function svgChemistry(p: string) {
 </svg>`;
 }
 
+/* ══════════════════════════════════════════════════════════════════════
+   LANGUAGE ICONS — one animated mark per programming/database course so a
+   card shows the language it teaches (Python → Python, SQL → database, …)
+   ══════════════════════════════════════════════════════════════════════ */
+
+function svgPython(p: string) {
+  return `<svg viewBox="0 0 64 64" fill="none" xmlns="http://www.w3.org/2000/svg">
+<defs>
+  <linearGradient id="${p}blue" x1="0" y1="0" x2="1" y2="1"><stop offset="0%" stop-color="#60a5fa"/><stop offset="100%" stop-color="#1d4ed8"/></linearGradient>
+  <linearGradient id="${p}yel" x1="0" y1="0" x2="1" y2="1"><stop offset="0%" stop-color="#fde68a"/><stop offset="100%" stop-color="#f59e0b"/></linearGradient>
+  <radialGradient id="${p}bg" cx="50%" cy="50%" r="55%"><stop offset="0%" stop-color="#60a5fa" stop-opacity=".25"/><stop offset="100%" stop-color="#1e3a8a" stop-opacity="0"/></radialGradient>
+  <filter id="${p}glow"><feGaussianBlur stdDeviation="1.6" result="b"/><feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge></filter>
+</defs>
+<circle cx="32" cy="32" r="30" fill="url(#${p}bg)"><animate attributeName="r" values="28;31;28" dur="4s" repeatCount="indefinite"/></circle>
+<g filter="url(#${p}glow)">
+  <animateTransform attributeName="transform" type="translate" values="0,0;1.5,-1.5;0,0" dur="3s" repeatCount="indefinite"/>
+  <path d="M31 8C21 8 21.5 12.5 21.5 12.5V17.5H32V19.5H17.5S9.5 18.6 9.5 31C9.5 43.4 16.5 42.5 16.5 42.5H20.5V36.8S20.3 30 27 30H37.5S43.8 30.1 43.8 24V14S44.8 8 31 8Z" fill="url(#${p}blue)"/>
+  <circle cx="26.5" cy="13.5" r="2" fill="#fff"/>
+</g>
+<g filter="url(#${p}glow)">
+  <animateTransform attributeName="transform" type="translate" values="0,0;-1.5,1.5;0,0" dur="3s" repeatCount="indefinite"/>
+  <path d="M33 56C43 56 42.5 51.5 42.5 51.5V46.5H32V44.5H46.5S54.5 45.4 54.5 33C54.5 20.6 47.5 21.5 47.5 21.5H43.5V27.2S43.7 34 37 34H26.5S20.2 33.9 20.2 40V50S19.2 56 33 56Z" fill="url(#${p}yel)"/>
+  <circle cx="37.5" cy="50.5" r="2" fill="#fff"/>
+</g>
+</svg>`;
+}
+
+function svgJava(p: string) {
+  return `<svg viewBox="0 0 64 64" fill="none" xmlns="http://www.w3.org/2000/svg">
+<defs>
+  <linearGradient id="${p}cup" x1="0" y1="0" x2="0" y2="1"><stop offset="0%" stop-color="#fb923c"/><stop offset="100%" stop-color="#c2410c"/></linearGradient>
+  <radialGradient id="${p}bg" cx="50%" cy="50%" r="55%"><stop offset="0%" stop-color="#fb923c" stop-opacity=".25"/><stop offset="100%" stop-color="#7c2d12" stop-opacity="0"/></radialGradient>
+  <filter id="${p}glow"><feGaussianBlur stdDeviation="1.6" result="b"/><feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge></filter>
+</defs>
+<circle cx="32" cy="32" r="30" fill="url(#${p}bg)"><animate attributeName="r" values="28;31;28" dur="4s" repeatCount="indefinite"/></circle>
+<g stroke="#fdba74" stroke-width="2.4" stroke-linecap="round" fill="none" filter="url(#${p}glow)">
+  <path d="M25 22C21 18 29 15 25 10"><animate attributeName="opacity" values="0;1;0" dur="2.4s" repeatCount="indefinite"/><animateTransform attributeName="transform" type="translate" values="0,6;0,-4" dur="2.4s" repeatCount="indefinite"/></path>
+  <path d="M33 22C29 18 37 15 33 10"><animate attributeName="opacity" values="0;1;0" dur="2.4s" begin=".8s" repeatCount="indefinite"/><animateTransform attributeName="transform" type="translate" values="0,6;0,-4" dur="2.4s" begin=".8s" repeatCount="indefinite"/></path>
+  <path d="M41 22C37 18 45 15 41 10"><animate attributeName="opacity" values="0;1;0" dur="2.4s" begin="1.6s" repeatCount="indefinite"/><animateTransform attributeName="transform" type="translate" values="0,6;0,-4" dur="2.4s" begin="1.6s" repeatCount="indefinite"/></path>
+</g>
+<g filter="url(#${p}glow)">
+  <animateTransform attributeName="transform" type="translate" values="0,0;0,-1.2;0,0" dur="3s" repeatCount="indefinite"/>
+  <path d="M15 27H49V38C49 46 43 52 35 52H29C21 52 15 46 15 38Z" fill="url(#${p}cup)"/>
+  <path d="M49 30H52C57 30 57 41 50 41H48.5" stroke="#fdba74" stroke-width="3" stroke-linecap="round"/>
+  <path d="M15 27H49" stroke="#fed7aa" stroke-width="2"/>
+  <path d="M22 33V40" stroke="#fff" stroke-opacity=".35" stroke-width="2.4" stroke-linecap="round"/>
+</g>
+<ellipse cx="32" cy="56" rx="20" ry="3" fill="#7c2d12" opacity=".45"/>
+</svg>`;
+}
+
+function svgJavaScript(p: string) {
+  return `<svg viewBox="0 0 64 64" fill="none" xmlns="http://www.w3.org/2000/svg">
+<defs>
+  <linearGradient id="${p}g" x1="0" y1="0" x2="1" y2="1"><stop offset="0%" stop-color="#fef08a"/><stop offset="100%" stop-color="#eab308"/></linearGradient>
+  <linearGradient id="${p}shine" x1="0" y1="0" x2="1" y2="0"><stop offset="0%" stop-color="#fff" stop-opacity="0"/><stop offset="50%" stop-color="#fff" stop-opacity=".7"/><stop offset="100%" stop-color="#fff" stop-opacity="0"/></linearGradient>
+  <radialGradient id="${p}bg" cx="50%" cy="50%" r="55%"><stop offset="0%" stop-color="#facc15" stop-opacity=".28"/><stop offset="100%" stop-color="#713f12" stop-opacity="0"/></radialGradient>
+  <clipPath id="${p}clip"><rect x="10" y="10" width="44" height="44" rx="8"/></clipPath>
+  <filter id="${p}glow"><feGaussianBlur stdDeviation="2" result="b"/><feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge></filter>
+</defs>
+<circle cx="32" cy="32" r="30" fill="url(#${p}bg)"><animate attributeName="r" values="28;31;28" dur="4s" repeatCount="indefinite"/></circle>
+<g filter="url(#${p}glow)">
+  <animateTransform attributeName="transform" type="translate" values="0,0;0,-2.5;0,0" dur="2.6s" repeatCount="indefinite" calcMode="spline" keySplines=".4 0 .6 1;.4 0 .6 1"/>
+  <rect x="10" y="10" width="44" height="44" rx="8" fill="url(#${p}g)"/>
+  <text x="50" y="49" text-anchor="end" font-family="Arial, Helvetica, sans-serif" font-weight="800" font-size="22" fill="#1c1917">JS</text>
+  <rect x="-30" y="10" width="22" height="44" fill="url(#${p}shine)" clip-path="url(#${p}clip)" transform="skewX(-18)">
+    <animate attributeName="x" values="-30;80" dur="2.8s" repeatCount="indefinite"/>
+  </rect>
+</g>
+</svg>`;
+}
+
+function svgHtml(p: string) {
+  return `<svg viewBox="0 0 64 64" fill="none" xmlns="http://www.w3.org/2000/svg">
+<defs>
+  <linearGradient id="${p}g" x1="0" y1="0" x2="0" y2="1"><stop offset="0%" stop-color="#fdba74"/><stop offset="100%" stop-color="#ea580c"/></linearGradient>
+  <radialGradient id="${p}bg" cx="50%" cy="50%" r="55%"><stop offset="0%" stop-color="#fb923c" stop-opacity=".25"/><stop offset="100%" stop-color="#7c2d12" stop-opacity="0"/></radialGradient>
+  <filter id="${p}glow"><feGaussianBlur stdDeviation="1.8" result="b"/><feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge></filter>
+</defs>
+<circle cx="32" cy="32" r="30" fill="url(#${p}bg)"><animate attributeName="r" values="28;31;28" dur="4s" repeatCount="indefinite"/></circle>
+<g filter="url(#${p}glow)">
+  <animateTransform attributeName="transform" type="translate" values="0,0;0,-2;0,0" dur="3s" repeatCount="indefinite"/>
+  <path d="M10 8H54L49.5 52L32 58L14.5 52Z" fill="url(#${p}g)"/>
+  <path d="M32 12V54.5L46 50L49.8 12Z" fill="#fff" opacity=".16"/>
+  <g stroke="#fff" stroke-width="3.6" stroke-linecap="round" stroke-linejoin="round">
+    <path d="M24 24L16.5 31.5L24 39"><animateTransform attributeName="transform" type="translate" values="0,0;-2,0;0,0" dur="2s" repeatCount="indefinite"/></path>
+    <path d="M40 24L47.5 31.5L40 39"><animateTransform attributeName="transform" type="translate" values="0,0;2,0;0,0" dur="2s" repeatCount="indefinite"/></path>
+    <path d="M35 21L29 42"><animate attributeName="opacity" values="1;.45;1" dur="2s" repeatCount="indefinite"/></path>
+  </g>
+</g>
+</svg>`;
+}
+
+function svgCss(p: string) {
+  return `<svg viewBox="0 0 64 64" fill="none" xmlns="http://www.w3.org/2000/svg">
+<defs>
+  <linearGradient id="${p}g" x1="0" y1="0" x2="0" y2="1"><stop offset="0%" stop-color="#60a5fa"/><stop offset="100%" stop-color="#1d4ed8"/></linearGradient>
+  <radialGradient id="${p}bg" cx="50%" cy="50%" r="55%"><stop offset="0%" stop-color="#60a5fa" stop-opacity=".25"/><stop offset="100%" stop-color="#1e3a8a" stop-opacity="0"/></radialGradient>
+  <filter id="${p}glow"><feGaussianBlur stdDeviation="1.8" result="b"/><feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge></filter>
+</defs>
+<circle cx="32" cy="32" r="30" fill="url(#${p}bg)"><animate attributeName="r" values="28;31;28" dur="4s" repeatCount="indefinite"/></circle>
+<g filter="url(#${p}glow)">
+  <animateTransform attributeName="transform" type="translate" values="0,0;0,-2;0,0" dur="3s" repeatCount="indefinite"/>
+  <path d="M10 8H54L49.5 52L32 58L14.5 52Z" fill="url(#${p}g)"/>
+  <path d="M32 12V54.5L46 50L49.8 12Z" fill="#fff" opacity=".14"/>
+  <g stroke="#fff" stroke-width="3.2" stroke-linecap="round" stroke-linejoin="round">
+    <path d="M26 21C21 21 24 30 19 31.5C24 33 21 42 26 42"><animateTransform attributeName="transform" type="translate" values="0,0;-1.5,0;0,0" dur="2s" repeatCount="indefinite"/></path>
+    <path d="M38 21C43 21 40 30 45 31.5C40 33 43 42 38 42"><animateTransform attributeName="transform" type="translate" values="0,0;1.5,0;0,0" dur="2s" repeatCount="indefinite"/></path>
+  </g>
+  <circle cx="32" cy="31.5" r="3.4" fill="#f472b6"><animate attributeName="fill" values="#f472b6;#facc15;#4ade80;#22d3ee;#f472b6" dur="4s" repeatCount="indefinite"/><animate attributeName="r" values="2.8;4;2.8" dur="2s" repeatCount="indefinite"/></circle>
+</g>
+</svg>`;
+}
+
+function svgSql(p: string) {
+  return `<svg viewBox="0 0 64 64" fill="none" xmlns="http://www.w3.org/2000/svg">
+<defs>
+  <linearGradient id="${p}body" x1="0" y1="0" x2="1" y2="0"><stop offset="0%" stop-color="#0e7490"/><stop offset="50%" stop-color="#22d3ee"/><stop offset="100%" stop-color="#0e7490"/></linearGradient>
+  <radialGradient id="${p}bg" cx="50%" cy="50%" r="55%"><stop offset="0%" stop-color="#22d3ee" stop-opacity=".25"/><stop offset="100%" stop-color="#164e63" stop-opacity="0"/></radialGradient>
+  <filter id="${p}glow"><feGaussianBlur stdDeviation="1.8" result="b"/><feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge></filter>
+</defs>
+<circle cx="32" cy="32" r="30" fill="url(#${p}bg)"><animate attributeName="r" values="28;31;28" dur="4s" repeatCount="indefinite"/></circle>
+<g filter="url(#${p}glow)">
+  <path d="M12 14V46C12 51 21 55 32 55S52 51 52 46V14Z" fill="url(#${p}body)"/>
+  <ellipse cx="32" cy="14" rx="20" ry="7" fill="#a5f3fc"/>
+  <path d="M12 26C12 31 21 35 32 35S52 31 52 26" stroke="#ecfeff" stroke-width="1.8" opacity=".75"/>
+  <path d="M12 38C12 43 21 47 32 47S52 43 52 38" stroke="#ecfeff" stroke-width="1.8" opacity=".75"/>
+</g>
+<g fill="#fff">
+  <rect x="18" y="22" width="9" height="2.6" rx="1.3"><animate attributeName="width" values="4;14;4" dur="2.4s" repeatCount="indefinite"/></rect>
+  <rect x="18" y="31" width="14" height="2.6" rx="1.3"><animate attributeName="width" values="14;6;14" dur="2.4s" begin=".4s" repeatCount="indefinite"/></rect>
+  <rect x="18" y="43" width="8" height="2.6" rx="1.3"><animate attributeName="width" values="6;16;6" dur="2.4s" begin=".8s" repeatCount="indefinite"/></rect>
+</g>
+<circle r="2.6" fill="#fde047"><animate attributeName="cx" values="14;50" dur="2.4s" repeatCount="indefinite"/><animate attributeName="cy" values="22;44" dur="2.4s" repeatCount="indefinite"/><animate attributeName="opacity" values="0;1;0" dur="2.4s" repeatCount="indefinite"/></circle>
+</svg>`;
+}
+
+function svgMySql(p: string) {
+  return `<svg viewBox="0 0 64 64" fill="none" xmlns="http://www.w3.org/2000/svg">
+<defs>
+  <linearGradient id="${p}body" x1="0" y1="0" x2="1" y2="0"><stop offset="0%" stop-color="#075985"/><stop offset="50%" stop-color="#38bdf8"/><stop offset="100%" stop-color="#075985"/></linearGradient>
+  <linearGradient id="${p}dol" x1="0" y1="0" x2="1" y2="1"><stop offset="0%" stop-color="#fdba74"/><stop offset="100%" stop-color="#ea580c"/></linearGradient>
+  <radialGradient id="${p}bg" cx="50%" cy="50%" r="55%"><stop offset="0%" stop-color="#38bdf8" stop-opacity=".25"/><stop offset="100%" stop-color="#0c4a6e" stop-opacity="0"/></radialGradient>
+  <filter id="${p}glow"><feGaussianBlur stdDeviation="1.6" result="b"/><feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge></filter>
+</defs>
+<circle cx="32" cy="32" r="30" fill="url(#${p}bg)"><animate attributeName="r" values="28;31;28" dur="4s" repeatCount="indefinite"/></circle>
+<g filter="url(#${p}glow)">
+  <path d="M14 30V48C14 52.5 22 56 32 56S50 52.5 50 48V30Z" fill="url(#${p}body)"/>
+  <ellipse cx="32" cy="30" rx="18" ry="6.5" fill="#bae6fd"/>
+  <path d="M14 40C14 44 22 47.5 32 47.5S50 44 50 40" stroke="#e0f2fe" stroke-width="1.6" opacity=".75"/>
+</g>
+<g filter="url(#${p}glow)">
+  <animateMotion dur="3s" repeatCount="indefinite" path="M10 34C16 8 36 2 54 30" rotate="auto" keyPoints="0;1" keyTimes="0;1" calcMode="spline" keySplines=".4 0 .6 1"/>
+  <path d="M-9 0C-5 -6 3 -7 9 -2C11 -1 12 0 13 -2C13 1 12 4 9 4C5 3 0 3 -3 6C-3 3 -5 2 -9 0Z" fill="url(#${p}dol)"/>
+  <circle cx="7" cy="-2" r="1" fill="#fff"/>
+</g>
+</svg>`;
+}
+
+function svgC(p: string) {
+  return `<svg viewBox="0 0 64 64" fill="none" xmlns="http://www.w3.org/2000/svg">
+<defs>
+  <linearGradient id="${p}g" x1="0" y1="0" x2="1" y2="1"><stop offset="0%" stop-color="#93c5fd"/><stop offset="100%" stop-color="#1d4ed8"/></linearGradient>
+  <radialGradient id="${p}bg" cx="50%" cy="50%" r="55%"><stop offset="0%" stop-color="#60a5fa" stop-opacity=".25"/><stop offset="100%" stop-color="#1e3a8a" stop-opacity="0"/></radialGradient>
+  <filter id="${p}glow"><feGaussianBlur stdDeviation="2" result="b"/><feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge></filter>
+</defs>
+<circle cx="32" cy="32" r="30" fill="url(#${p}bg)"><animate attributeName="r" values="28;31;28" dur="4s" repeatCount="indefinite"/></circle>
+<g filter="url(#${p}glow)">
+  <animateTransform attributeName="transform" type="translate" values="0,0;0,-2;0,0" dur="3s" repeatCount="indefinite"/>
+  <path d="M32 6L55 19V45L32 58L9 45V19Z" fill="url(#${p}g)"/>
+  <path d="M32 6L55 19V45L32 58Z" fill="#fff" opacity=".12"/>
+  <path d="M32 6L55 19V45L32 58L9 45V19Z" stroke="#bfdbfe" stroke-width="1.6" stroke-dasharray="6 5" fill="none"><animate attributeName="stroke-dashoffset" values="0;-22" dur="2s" repeatCount="indefinite"/></path>
+  <path d="M41.5 25.5C39.3 23 36.5 21.8 33 21.8C26.6 21.8 22 26.2 22 32S26.6 42.2 33 42.2C36.5 42.2 39.3 41 41.5 38.5" stroke="#fff" stroke-width="5.2" stroke-linecap="round"><animate attributeName="stroke-opacity" values="1;.7;1" dur="2s" repeatCount="indefinite"/></path>
+</g>
+</svg>`;
+}
+
+function svgCpp(p: string) {
+  return `<svg viewBox="0 0 64 64" fill="none" xmlns="http://www.w3.org/2000/svg">
+<defs>
+  <linearGradient id="${p}g" x1="0" y1="0" x2="1" y2="1"><stop offset="0%" stop-color="#a5b4fc"/><stop offset="100%" stop-color="#3730a3"/></linearGradient>
+  <radialGradient id="${p}bg" cx="50%" cy="50%" r="55%"><stop offset="0%" stop-color="#818cf8" stop-opacity=".25"/><stop offset="100%" stop-color="#1e1b4b" stop-opacity="0"/></radialGradient>
+  <filter id="${p}glow"><feGaussianBlur stdDeviation="2" result="b"/><feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge></filter>
+</defs>
+<circle cx="32" cy="32" r="30" fill="url(#${p}bg)"><animate attributeName="r" values="28;31;28" dur="4s" repeatCount="indefinite"/></circle>
+<g filter="url(#${p}glow)">
+  <animateTransform attributeName="transform" type="translate" values="0,0;0,-2;0,0" dur="3s" repeatCount="indefinite"/>
+  <path d="M32 6L55 19V45L32 58L9 45V19Z" fill="url(#${p}g)"/>
+  <path d="M32 6L55 19V45L32 58Z" fill="#fff" opacity=".12"/>
+  <path d="M32 6L55 19V45L32 58L9 45V19Z" stroke="#c7d2fe" stroke-width="1.6" stroke-dasharray="6 5" fill="none"><animate attributeName="stroke-dashoffset" values="0;-22" dur="2s" repeatCount="indefinite"/></path>
+  <path d="M33 26.5C31.4 24.5 29.2 23.5 26.6 23.5C21.8 23.5 18.4 27.2 18.4 32S21.8 40.5 26.6 40.5C29.2 40.5 31.4 39.5 33 37.5" stroke="#fff" stroke-width="4.2" stroke-linecap="round"/>
+  <g stroke="#fff" stroke-width="2.8" stroke-linecap="round">
+    <path d="M38.5 32H46.5"><animate attributeName="opacity" values="1;.4;1" dur="1.6s" repeatCount="indefinite"/></path>
+    <path d="M42.5 28V36"><animate attributeName="opacity" values="1;.4;1" dur="1.6s" repeatCount="indefinite"/></path>
+    <path d="M48.5 32H54"><animate attributeName="opacity" values=".4;1;.4" dur="1.6s" repeatCount="indefinite"/></path>
+    <path d="M51.2 29.2V34.8"><animate attributeName="opacity" values=".4;1;.4" dur="1.6s" repeatCount="indefinite"/></path>
+  </g>
+</g>
+</svg>`;
+}
+
+function svgPhp(p: string) {
+  return `<svg viewBox="0 0 64 64" fill="none" xmlns="http://www.w3.org/2000/svg">
+<defs>
+  <linearGradient id="${p}g" x1="0" y1="0" x2="1" y2="1"><stop offset="0%" stop-color="#a5b4fc"/><stop offset="100%" stop-color="#4f46e5"/></linearGradient>
+  <linearGradient id="${p}shine" x1="0" y1="0" x2="1" y2="0"><stop offset="0%" stop-color="#fff" stop-opacity="0"/><stop offset="50%" stop-color="#fff" stop-opacity=".55"/><stop offset="100%" stop-color="#fff" stop-opacity="0"/></linearGradient>
+  <radialGradient id="${p}bg" cx="50%" cy="50%" r="55%"><stop offset="0%" stop-color="#818cf8" stop-opacity=".25"/><stop offset="100%" stop-color="#312e81" stop-opacity="0"/></radialGradient>
+  <clipPath id="${p}clip"><ellipse cx="32" cy="32" rx="28" ry="17"/></clipPath>
+  <filter id="${p}glow"><feGaussianBlur stdDeviation="2" result="b"/><feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge></filter>
+</defs>
+<circle cx="32" cy="32" r="30" fill="url(#${p}bg)"><animate attributeName="r" values="28;31;28" dur="4s" repeatCount="indefinite"/></circle>
+<g filter="url(#${p}glow)">
+  <animateTransform attributeName="transform" type="translate" values="0,0;0,-2.5;0,0" dur="2.8s" repeatCount="indefinite" calcMode="spline" keySplines=".4 0 .6 1;.4 0 .6 1"/>
+  <ellipse cx="32" cy="32" rx="28" ry="17" fill="url(#${p}g)"/>
+  <text x="32" y="38" text-anchor="middle" font-family="Arial, Helvetica, sans-serif" font-weight="800" font-style="italic" font-size="19" fill="#fff">php</text>
+  <rect x="-24" y="12" width="14" height="40" fill="url(#${p}shine)" clip-path="url(#${p}clip)" transform="skewX(-18)"><animate attributeName="x" values="-24;78" dur="3s" repeatCount="indefinite"/></rect>
+</g>
+</svg>`;
+}
+
+function svgReact(p: string) {
+  return `<svg viewBox="0 0 64 64" fill="none" xmlns="http://www.w3.org/2000/svg">
+<defs>
+  <radialGradient id="${p}bg" cx="50%" cy="50%" r="55%"><stop offset="0%" stop-color="#22d3ee" stop-opacity=".3"/><stop offset="100%" stop-color="#155e75" stop-opacity="0"/></radialGradient>
+  <filter id="${p}glow"><feGaussianBlur stdDeviation="1.6" result="b"/><feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge></filter>
+</defs>
+<circle cx="32" cy="32" r="30" fill="url(#${p}bg)"><animate attributeName="r" values="28;31;28" dur="4s" repeatCount="indefinite"/></circle>
+<g filter="url(#${p}glow)">
+  <animateTransform attributeName="transform" type="rotate" from="0 32 32" to="360 32 32" dur="14s" repeatCount="indefinite"/>
+  <g stroke="#22d3ee" stroke-width="2.4" fill="none">
+    <ellipse cx="32" cy="32" rx="25" ry="9.5"/>
+    <ellipse cx="32" cy="32" rx="25" ry="9.5" transform="rotate(60 32 32)"/>
+    <ellipse cx="32" cy="32" rx="25" ry="9.5" transform="rotate(120 32 32)"/>
+  </g>
+  <circle r="2.8" fill="#a5f3fc"><animateMotion dur="2.6s" repeatCount="indefinite" path="M57 32A25 9.5 0 1 1 7 32A25 9.5 0 1 1 57 32"/></circle>
+  <circle r="2.8" fill="#a5f3fc"><animateMotion dur="2.6s" begin=".9s" repeatCount="indefinite" path="M57 32A25 9.5 0 1 1 7 32A25 9.5 0 1 1 57 32" rotate="0"/></circle>
+</g>
+<circle cx="32" cy="32" r="5" fill="#22d3ee" filter="url(#${p}glow)"><animate attributeName="r" values="4;6;4" dur="2s" repeatCount="indefinite"/></circle>
+<circle cx="32" cy="32" r="2" fill="#fff"/>
+</svg>`;
+}
+
 function svgDefault(p: string) {
   return svgML(p);
 }
@@ -1091,6 +1378,17 @@ const SVGS: Record<CourseIconKey, (p: string) => string> = {
   math: svgMath,
   physics: svgPhysics,
   chemistry: svgChemistry,
+  python: svgPython,
+  java: svgJava,
+  javascript: svgJavaScript,
+  html: svgHtml,
+  css: svgCss,
+  sql: svgSql,
+  mysql: svgMySql,
+  c: svgC,
+  cpp: svgCpp,
+  php: svgPhp,
+  react: svgReact,
   default: svgDefault,
 };
 

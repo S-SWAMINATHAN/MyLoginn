@@ -13,6 +13,7 @@ import { AnimatedLayers } from "@/components/ui/icons/AnimatedLayers";
 import { AnimatedGraduation } from "@/components/ui/icons/AnimatedGraduation";
 import { AnimatedMegaphone } from "@/components/ui/icons/AnimatedMegaphone";
 import { AnimatedCode } from "@/components/ui/icons/AnimatedCode";
+import { AnimatedSparkle } from "@/components/ui/icons/AnimatedSparkle";
 import { AnimatedMail } from "@/components/ui/icons/AnimatedMail";
 import { cn } from "@/lib/cn";
 
@@ -31,6 +32,7 @@ const servicesPopupLinks: { href: string; label: string; desc: string; icon: Ico
   { href: "/projects", label: "Project", desc: "Build your portfolio", icon: AnimatedFolder },
   { href: "/services/digital-marketing", label: "Digital Marketing", desc: "AI-driven growth campaigns", icon: AnimatedMegaphone },
   { href: "/services/app-web-development", label: "App & Web Development", desc: "Full-stack builds, premium UX", icon: AnimatedCode },
+  { href: "/services/astrology", label: "Astrology", desc: "Horoscope & matching reports", icon: AnimatedSparkle },
 ];
 
 const learnPopupLinks: { href: string; label: string; desc: string; icon: IconComponent }[] = [

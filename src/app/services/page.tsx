@@ -16,6 +16,7 @@ export const metadata = createPageMetadata({
 const services = [
   { title: "App & Web Development", text: "Website development, web applications, mobile apps, and custom software built around your product needs.", href: "/services/app-web-development" },
   { title: "Digital Marketing", text: "SEO, paid campaigns, social media, content, and performance analytics for business growth.", href: "/services/digital-marketing" },
+  { title: "Astrology", text: "Birth-chart horoscopes and horoscope matching reports, unlocked for print and download after a one-time payment.", href: "/services/astrology" },
 ];
 
 export default function ServicesPage() {

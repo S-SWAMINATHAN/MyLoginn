@@ -12,6 +12,7 @@ const publicRoutes = [
   { path: "/tutoring", priority: 0.8, changeFrequency: "weekly" as const },
   { path: "/contact", priority: 0.6, changeFrequency: "monthly" as const },
   { path: "/services/app-web-development", priority: 0.8, changeFrequency: "monthly" as const },
+  { path: "/services/astrology", priority: 0.7, changeFrequency: "monthly" as const },
   { path: "/services/digital-marketing", priority: 0.8, changeFrequency: "monthly" as const },
 ];
 

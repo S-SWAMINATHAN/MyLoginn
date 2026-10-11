@@ -1,0 +1,1455 @@
+@reference "../../globals.css";
+
+/* Fonts
+   New UI : Inter (Latin) + Outfit (display) + Noto Sans Tamil (Tamil glyphs)
+   Legacy : Kavivanar / Caveat / Baloo Thambi 2 / Noto Serif Tamil / Cinzel …
+            still required by the handwritten Jathagam and its ink/typeface panel. */
+/* Google Fonts are linked from app/layout.tsx <head> (parallel download, not a
+   render-blocking @import chain). */
+
+/* Tamil-style panel faces: the owner's STMZH fonts converted to Unicode OpenType
+   (public/fonts/tamil). See lib/jathagamTheme.tsx -> TAMIL_FONTS. */
+@font-face { font-family: "MLA Tamil 090"; src: url("/astrology/fonts/tamil/MLATamil-090.woff2") format("woff2"); font-display: swap; }
+@font-face { font-family: "MLA Tamil 138"; src: url("/astrology/fonts/tamil/MLATamil-138.woff2") format("woff2"); font-display: swap; }
+@font-face { font-family: "MLA Tamil 089"; src: url("/astrology/fonts/tamil/MLATamil-089.woff2") format("woff2"); font-display: swap; }
+@font-face { font-family: "MLA Tamil 133"; src: url("/astrology/fonts/tamil/MLATamil-133.woff2") format("woff2"); font-display: swap; }
+@font-face { font-family: "MLA Tamil 108"; src: url("/astrology/fonts/tamil/MLATamil-108.woff2") format("woff2"); font-display: swap; }
+@font-face { font-family: "MLA Tamil 111"; src: url("/astrology/fonts/tamil/MLATamil-111.woff2") format("woff2"); font-display: swap; }
+@font-face { font-family: "MLA Tamil 103"; src: url("/astrology/fonts/tamil/MLATamil-103.woff2") format("woff2"); font-display: swap; }
+@font-face { font-family: "MLA Tamil 123"; src: url("/astrology/fonts/tamil/MLATamil-123.woff2") format("woff2"); font-display: swap; }
+@font-face { font-family: "MLA Tamil 144"; src: url("/astrology/fonts/tamil/MLATamil-144.woff2") format("woff2"); font-display: swap; }
+@font-face { font-family: "MLA Tamil 105"; src: url("/astrology/fonts/tamil/MLATamil-105.woff2") format("woff2"); font-display: swap; }
+@font-face { font-family: "MLA Tamil 126"; src: url("/astrology/fonts/tamil/MLATamil-126.woff2") format("woff2"); font-display: swap; }
+@font-face { font-family: "MLA Tamil 130"; src: url("/astrology/fonts/tamil/MLATamil-130.woff2") format("woff2"); font-display: swap; }
+@font-face { font-family: "MLA Tamil 132"; src: url("/astrology/fonts/tamil/MLATamil-132.woff2") format("woff2"); font-display: swap; }
+
+/* ==========================================================================
+ * MyLoginn Astrology — design tokens
+ * Ported from the reference project's global.css (Tailwind v4 → v3.4).
+ * Brand: deep navy → royal / electric blue → cyan.
+ * ========================================================================== */
+.astro-root {
+  --background: #ffffff;
+  --foreground: #0b1220;
+  --surface: #ffffff;
+  --surface-2: #f3f7fd;
+  --muted: #576179;
+
+  /* RGB channels — lets Tailwind apply opacity (bg-surface/70 …) */
+  --background-rgb: 255 255 255;
+  --foreground-rgb: 11 18 32;
+  --surface-rgb: 255 255 255;
+  --surface-2-rgb: 243 247 253;
+  --muted-rgb: 87 97 121;
+  --brand-fg-rgb: 31 86 214;          /* brand-600 */
+  --brand-fg-strong-rgb: 22 51 126;   /* brand-800 */
+  --brand-fg: rgb(31 86 214);
+  --brand-fg-strong: rgb(22 51 126);
+
+  --border-soft: rgba(11, 31, 77, 0.09);
+  --line: rgba(11, 31, 77, 0.16);      /* form-control borders */
+  --glass-bg: rgba(255, 255, 255, 0.62);
+  --glass-nav-bg: rgba(255, 255, 255, 0.92);
+  --glass-border: rgba(11, 31, 77, 0.08);
+
+  --brand-50: #eef4ff;
+  --brand-100: #dbe7ff;
+  --brand-200: #b6d0ff;
+  --brand-300: #86b0ff;
+  --brand-400: #5590ff;
+  --brand-500: #2f6fed;
+  --brand-600: #1f56d6;
+  --brand-700: #1a44ab;
+  --brand-800: #16337e;
+  --brand-900: #0b1f4d;
+
+  --accent-400: #22d3ee;
+  --accent-500: #06b6d4;
+  --accent-600: #0891b2;
+
+  --success: #16a34a;
+  --warning: #d97706;
+  --danger: #dc2626;
+
+  --shadow-soft: 0 1px 2px rgba(11, 31, 77, 0.05), 0 8px 24px rgba(11, 31, 77, 0.07);
+  --shadow-lift: 0 12px 32px rgba(31, 86, 214, 0.18), 0 2px 8px rgba(11, 31, 77, 0.07);
+  --link-line: var(--brand-600);
+
+  /* Story-engine palette (same names as the reference project) */
+  --story-navy: #0b1f4d;
+  --story-royal: #1f56d6;
+  --story-electric: #2f6fed;
+  --story-bright: #5590ff;
+  --story-cyan: #22d3ee;
+  --story-mist: #f4f8ff;
+  --story-line: rgba(11, 31, 77, 0.1);
+
+  --font-ui: 'Inter', 'Noto Sans Tamil', ui-sans-serif, system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif;
+  --font-display: 'Outfit', 'Inter', 'Noto Sans Tamil', ui-sans-serif, system-ui, sans-serif;
+
+  /* ── Legacy parchment variables — read ONLY by the handwritten Jathagam ── */
+  --paper: #f0e5cc;
+  --paper-card: #fdfaf2;
+  --ink: #2b2117;
+  --ink-soft: #6f6049;
+  --ink-faint: #a3917a;
+  --red: #b03726;
+  --red-deep: #8e2b1c;
+  --font-tamil: 'Kavivanar', 'Noto Sans Tamil', cursive;
+  --font-script: 'Kavivanar', cursive;
+  --font-cinzel: 'Caveat', 'Kavivanar', cursive;
+  --font-caveat: 'Caveat', cursive;
+  --font-mono: 'Caveat', cursive;
+}
+
+:root[data-theme="dark"] .astro-root {
+  --background: #060912;
+  --foreground: #eef3ff;
+  --surface: #0c1222;
+  --surface-2: #101a30;
+  --muted: #93a0c2;
+
+  --background-rgb: 6 9 18;
+  --foreground-rgb: 238 243 255;
+  --surface-rgb: 12 18 34;
+  --surface-2-rgb: 16 26 48;
+  --muted-rgb: 147 160 194;
+  --brand-fg-rgb: 134 176 255;        /* brand-300 */
+  --brand-fg-strong-rgb: 182 208 255; /* brand-200 */
+  --brand-fg: rgb(134 176 255);
+  --brand-fg-strong: rgb(182 208 255);
+
+  --border-soft: rgba(134, 176, 255, 0.14);
+  --line: rgba(134, 176, 255, 0.24);
+  --glass-bg: rgba(12, 18, 34, 0.55);
+  --glass-nav-bg: rgba(9, 14, 26, 0.92);
+  --glass-border: rgba(134, 176, 255, 0.14);
+
+  --shadow-soft: 0 1px 2px rgba(0, 0, 0, 0.3), 0 8px 24px rgba(0, 0, 0, 0.35);
+  --shadow-lift: 0 16px 40px rgba(47, 111, 237, 0.32), 0 2px 8px rgba(0, 0, 0, 0.4);
+  --link-line: var(--brand-300);
+  --story-mist: #0c1630;
+  --story-line: rgba(134, 176, 255, 0.14);
+}
+
+/* ==========================================================================
+ * Base
+ * ========================================================================== */
+.astro-root {
+    scroll-behavior: smooth;
+  }
+.astro-root {
+    background: var(--background);
+    color: var(--foreground);
+    font-family: var(--font-ui);
+    /* 17px / 1.85 is the typography the handwritten Jathagam was designed and
+       PDF-exported against (html2canvas measures text against the page's body
+       metrics). Keeping it here keeps both PDFs identical to before; Tamil also
+       benefits from the generous line-height. */
+    font-size: 17px;
+    line-height: 1.85;
+    overflow-x: hidden;
+    -webkit-font-smoothing: antialiased;
+    text-rendering: optimizeLegibility;
+    transition: background-color 0.5s ease, color 0.5s ease;
+  }
+.astro-root h1, .astro-root h2, .astro-root h3, .astro-root h4 {
+    font-family: var(--font-display);
+    line-height: 1.25;
+  }
+.astro-root ::selection {
+    background: var(--brand-400);
+    color: #fff;
+  }
+.astro-root :focus-visible {
+    outline: 2px solid var(--brand-400);
+    outline-offset: 2px;
+  }
+.astro-root input::placeholder,
+  .astro-root textarea::placeholder {
+    color: rgb(var(--muted-rgb) / 0.65);
+  }
+/* native date / select widgets follow the theme */
+.astro-root { color-scheme: light; }
+:root[data-theme="dark"] .astro-root { color-scheme: dark; }
+
+/* ==========================================================================
+ * Components
+ * ========================================================================== */
+/* ── Buttons ── */
+.astro-root .btn {
+    @apply inline-flex items-center justify-center gap-2 rounded-xl px-4 py-2.5 text-sm font-semibold
+           transition-all duration-200 select-none disabled:cursor-not-allowed disabled:opacity-50;
+  }
+.astro-root .btn-primary {
+    @apply inline-flex items-center justify-center gap-2 rounded-xl px-4 py-2.5 text-sm font-semibold transition-all duration-200 select-none disabled:cursor-not-allowed disabled:opacity-50 text-white shadow-soft hover:-translate-y-0.5 hover:shadow-lift active:translate-y-0;
+    background: linear-gradient(135deg, var(--brand-600), var(--brand-500) 45%, var(--accent-500));
+  }
+.astro-root .btn-secondary {
+    @apply inline-flex items-center justify-center gap-2 rounded-xl px-4 py-2.5 text-sm font-semibold transition-all duration-200 select-none disabled:cursor-not-allowed disabled:opacity-50 border border-line bg-surface text-foreground hover:border-brand-400 hover:bg-brand-500/5;
+  }
+.astro-root .btn-ghost {
+    @apply inline-flex items-center justify-center gap-2 rounded-xl px-4 py-2.5 text-sm font-semibold transition-all duration-200 select-none disabled:cursor-not-allowed disabled:opacity-50 text-muted hover:bg-brand-500/10 hover:text-brand-fg;
+  }
+/* ── Surfaces ── */
+.astro-root .card {
+    @apply rounded-2xl border border-border-soft bg-surface shadow-soft;
+  }
+.astro-root .card-glass {
+    background: var(--glass-bg);
+    backdrop-filter: blur(20px) saturate(160%);
+    -webkit-backdrop-filter: blur(20px) saturate(160%);
+    border: 1px solid var(--glass-border);
+    box-shadow: var(--shadow-soft);
+    @apply rounded-3xl;
+  }
+.astro-root .card-hover {
+    @apply transition-all duration-300 hover:-translate-y-0.5 hover:shadow-lift hover:border-brand-400/40;
+  }
+.astro-root .well {
+    @apply rounded-xl border border-border-soft bg-surface-2;
+  }
+/* ── Form controls ── */
+.astro-root .field {
+    @apply w-full rounded-xl border border-line bg-surface px-3.5 py-2.5 text-sm text-foreground outline-none
+           transition-all placeholder:text-muted/60
+           hover:border-brand-400/60 focus:border-brand-500 focus:ring-2 focus:ring-brand-500/20;
+  }
+.astro-root .field-label {
+    @apply mb-1.5 block text-xs font-semibold text-muted;
+  }
+/* segmented / choice button */
+.astro-root .choice {
+    @apply rounded-xl border border-line bg-surface-2 px-3 py-2.5 text-center text-xs font-semibold text-foreground
+           transition-all hover:border-brand-400 hover:bg-brand-500/10;
+  }
+.astro-root .choice-active {
+    @apply border-brand-600 text-white shadow-soft hover:border-brand-600 hover:bg-transparent;
+    background: linear-gradient(135deg, var(--brand-600), var(--brand-500));
+  }
+/* ── Chips / badges ── */
+.astro-root .chip {
+    @apply inline-flex items-center gap-1.5 rounded-full border border-border-soft bg-surface-2 px-3 py-1 text-xs font-medium text-muted;
+  }
+.astro-root .chip-brand   { @apply inline-flex items-center gap-1.5 rounded-full border border-border-soft bg-surface-2 px-3 py-1 text-xs font-medium text-muted border-brand-500/25 bg-brand-500/10 text-brand-fg; }
+.astro-root .chip-success { @apply inline-flex items-center gap-1.5 rounded-full border border-border-soft bg-surface-2 px-3 py-1 text-xs font-medium text-muted border-success/30 bg-success/10 text-success; }
+.astro-root .chip-warning { @apply inline-flex items-center gap-1.5 rounded-full border border-border-soft bg-surface-2 px-3 py-1 text-xs font-medium text-muted border-warning/30 bg-warning/10 text-warning; }
+.astro-root .chip-danger  { @apply inline-flex items-center gap-1.5 rounded-full border border-border-soft bg-surface-2 px-3 py-1 text-xs font-medium text-muted border-danger/30 bg-danger/10 text-danger; }
+/* ── Tables ── */
+.astro-root .table-clean {
+    @apply w-full border-collapse text-sm;
+  }
+.astro-root .table-clean th {
+    @apply border-b border-line bg-surface-2 px-3.5 py-2.5 text-left text-xs font-semibold uppercase tracking-wide text-muted;
+  }
+.astro-root .table-clean td {
+    @apply border-b border-border-soft px-3.5 py-2.5 text-foreground;
+  }
+.astro-root .table-clean tbody tr {
+    @apply transition-colors hover:bg-brand-500/5;
+  }
+
+/* ==========================================================================
+ * Brand utilities (from the reference project)
+ * ========================================================================== */
+.astro-root .glass {
+  background: var(--glass-bg);
+  backdrop-filter: blur(18px) saturate(160%);
+  -webkit-backdrop-filter: blur(18px) saturate(160%);
+  border: 1px solid var(--glass-border);
+}
+
+.astro-root .glass-panel {
+  background: var(--glass-bg);
+  backdrop-filter: blur(24px) saturate(160%);
+  -webkit-backdrop-filter: blur(24px) saturate(160%);
+  border: 1px solid var(--glass-border);
+  box-shadow: var(--shadow-soft);
+}
+
+/* Near-opaque glass for fixed navigation chrome */
+.astro-root .glass-nav {
+  background: var(--glass-nav-bg);
+  backdrop-filter: blur(18px) saturate(160%);
+  -webkit-backdrop-filter: blur(18px) saturate(160%);
+}
+
+.astro-root .brand-gradient-text {
+  background: linear-gradient(120deg, var(--brand-500), var(--accent-500) 60%, var(--brand-400));
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+}
+
+.astro-root .brand-gradient-bg {
+  background: linear-gradient(135deg, var(--brand-600), var(--brand-500) 45%, var(--accent-500));
+}
+
+/* Cinematic entrance animations */
+.astro-root .animate-pulse-glow { animation: pulse-glow 2.6s ease-in-out infinite; }
+.astro-root .animate-fade-up { animation: fade-up 0.8s cubic-bezier(0.16, 1, 0.3, 1) both; }
+.astro-root .animate-fade-in { animation: fade-in 1s ease both; }
+.astro-root .animate-scale-in { animation: scale-in 0.7s cubic-bezier(0.16, 1, 0.3, 1) both; }
+.astro-root .animate-float { animation: float-y 5s ease-in-out infinite; }
+
+.astro-root .bg-size-200 {
+  background-size: 200% 200%;
+  animation: gradient-shift 8s ease infinite;
+}
+
+.astro-root .stagger-1 { animation-delay: 0.08s; }
+.astro-root .stagger-2 { animation-delay: 0.16s; }
+.astro-root .stagger-3 { animation-delay: 0.24s; }
+.astro-root .stagger-4 { animation-delay: 0.32s; }
+.astro-root .stagger-5 { animation-delay: 0.4s; }
+.astro-root .stagger-6 { animation-delay: 0.48s; }
+.astro-root .animate-breathe-ring { animation: breathe-ring 3s ease-in-out infinite; }
+
+/* Card hover shine sweep — add .card-shine to any overflow-hidden card */
+.astro-root .card-shine::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  z-index: 5;
+  pointer-events: none;
+  opacity: 0;
+  background: linear-gradient(105deg, transparent 40%, rgba(255, 255, 255, 0.22) 50%, transparent 60%);
+  background-size: 220% 100%;
+  background-position: 180% center;
+  transition: opacity 0.3s ease;
+}
+.astro-root .card-shine:hover::before {
+  opacity: 1;
+  animation: icon-thumb-shimmer 0.8s ease;
+}
+
+/* Animated gradient border for highlight cards */
+.astro-root .gradient-border { position: relative; }
+.astro-root .gradient-border::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+  border-radius: inherit;
+  padding: 1.5px;
+  background: linear-gradient(120deg, var(--brand-400), var(--accent-400), var(--brand-600), var(--brand-400));
+  background-size: 300% 300%;
+  animation: border-flow 6s ease infinite;
+  -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+   mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+  -webkit-mask-composite: xor;
+  mask-composite: exclude;
+  pointer-events: none;
+}
+
+/* Hero aurora / ambient page glows */
+.astro-root .aurora-blob {
+  position: absolute;
+  border-radius: 9999px;
+  filter: blur(70px);
+  pointer-events: none;
+  animation: aurora-drift 16s ease-in-out infinite;
+}
+.astro-root .aurora-blob-alt { animation: aurora-drift-alt 19s ease-in-out infinite; }
+
+/* Fixed, page-wide ambient backdrop (sits behind everything, never printed) */
+.astro-root .app-ambient {
+  position: fixed;
+  inset: 0;
+  z-index: -1;
+  pointer-events: none;
+  overflow: hidden;
+}
+.astro-root .app-ambient::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background:
+    radial-gradient(60% 45% at 50% -5%, rgba(85, 144, 255, 0.16), transparent 70%),
+    radial-gradient(40% 35% at 90% 12%, rgba(34, 211, 238, 0.10), transparent 70%);
+}
+:root[data-theme="dark"] .astro-root .app-ambient::before {
+  background:
+    radial-gradient(60% 45% at 50% -5%, rgba(47, 111, 237, 0.28), transparent 70%),
+    radial-gradient(40% 35% at 90% 12%, rgba(34, 211, 238, 0.12), transparent 70%);
+}
+
+/* Cinematic story headings */
+.astro-root .story-heading {
+  font-family: var(--font-display);
+  font-weight: 600;
+  letter-spacing: -0.015em;
+  line-height: 1.3;
+  font-size: clamp(2.2rem, 1.2rem + 5vw, 4.5rem);
+  /* Gradient text is clipped to its own box, which cuts off tall Tamil glyphs.
+   Extra padding on an inline element grows the painted area only; it doesn't move the layout. */
+.astro-root .story-heading .brand-gradient-text,
+.astro-root .story-subheading .brand-gradient-text {
+  padding-top: 0.1em;
+  padding-bottom: 0.3em;
+}
+}
+.astro-root .story-subheading {
+  font-family: var(--font-display);
+  font-weight: 600;
+  letter-spacing: -0.01em;
+  line-height: 1.12;
+  font-size: clamp(1.5rem, 1rem + 2.4vw, 2.5rem);
+}
+.astro-root .story-eyebrow {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  font-size: 0.7rem;
+  font-weight: 700;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  color: var(--brand-600);
+}
+:root[data-theme="dark"] .astro-root .story-eyebrow { color: var(--brand-300); }
+
+.astro-root .story-grid-bg {
+  background-image: linear-gradient(var(--story-line) 1px, transparent 1px),
+    linear-gradient(90deg, var(--story-line) 1px, transparent 1px);
+  background-size: 44px 44px;
+  mask-image: radial-gradient(60% 60% at 50% 40%, black, transparent 85%);
+  -webkit-mask-image: radial-gradient(60% 60% at 50% 40%, black, transparent 85%);
+}
+
+.astro-root .story-panel {
+  background: linear-gradient(180deg, rgba(255, 255, 255, 0.97), rgba(248, 251, 255, 0.94));
+  backdrop-filter: blur(20px) saturate(160%);
+  -webkit-backdrop-filter: blur(20px) saturate(160%);
+  border: 1px solid rgba(11, 31, 77, 0.08);
+  box-shadow: 0 1px 1px rgba(11, 31, 77, 0.04), 0 20px 48px -12px rgba(11, 31, 77, 0.16);
+}
+:root[data-theme="dark"] .astro-root .story-panel {
+  background: linear-gradient(180deg, rgba(14, 22, 42, 0.96), rgba(10, 16, 32, 0.94));
+  border-color: var(--glass-border);
+  box-shadow: 0 1px 1px rgba(0, 0, 0, 0.3), 0 20px 48px -12px rgba(0, 0, 0, 0.55);
+}
+
+.astro-root .no-scrollbar { scrollbar-width: none; }
+
+@media (prefers-reduced-motion: reduce) {
+  .astro-root .app-shell *,
+  .astro-root .app-shell *::before,
+  .astro-root .app-shell *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+}
+
+/* ==========================================================================
+ * The Jathagam "desk"
+ * The results area (theme panel + full report / single-page sheet + 50-page
+ * viewer) is a piece of handwritten paper lying on the new blue app. The desk
+ * supplies the parchment the legacy cards were designed to sit on (the old
+ * body background + grain + edge-ageing overlays), so the Jathagam looks the
+ * same as before — and the ink/typeface panel keeps working — with no change
+ * to any Jathagam component.
+ * ========================================================================== */
+.astro-root .jathagam-desk {
+  /* Bug 2: the parchment "desk" behind the results was removed — the
+     Jathagam now sits directly on the website like every other page.
+     Kept as a no-op class so nothing that references it breaks. */
+  position: relative;
+}
+@media (min-width: 900px) {
+  .astro-root .jathagam-desk { padding: 0; }
+}
+
+/* Small "paper" label that introduces the desk */
+.astro-root .desk-tab {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  border-radius: 9999px;
+  padding: 0.35rem 0.9rem;
+  font-size: 0.75rem;
+  font-weight: 600;
+  color: var(--brand-800);
+  background: var(--brand-50);
+  border: 1px solid var(--brand-200);
+}
+
+/* ==========================================================================
+ * JATHAGAM LEGACY LAYER  —  DO NOT RESTYLE
+ *
+ * The handwritten Jathagam (full-report cards, 50-page manuscript, single-page
+ * sheet, ink/typeface theme panel and BOTH PDF exports) was designed against the
+ * old parchment stylesheet. Everything below is that stylesheet, kept as it was.
+ *
+ * What changed is only SCOPE. The old file applied its handwriting typography to
+ * <body> and to every element type site-wide. That is now confined to
+ * `.jathagam-legacy` (the results "desk" in app/page.tsx), so the rest of the
+ * site can use the new blue system without touching the Jathagam.
+ *
+ * `:where()` is used on purpose: it adds ZERO specificity, so every rule here
+ * cascades against Tailwind utilities exactly as it did before.
+ * ========================================================================== */
+
+/* Base typography that used to live on <body> */
+.astro-root :where(.jathagam-legacy) {
+  color: var(--ink);
+  font-family: 'Kavivanar', 'Caveat', cursive, sans-serif;
+  font-size: 17px;
+  line-height: 1.85;
+  -webkit-font-smoothing: antialiased;
+  text-rendering: optimizeLegibility;
+  text-shadow: 0.12px 0.12px 0 rgba(43, 33, 23, 0.22);
+}
+
+/* Universal handwritten text across the Jathagam */
+.astro-root :where(.jathagam-legacy) input,
+.astro-root :where(.jathagam-legacy) button,
+.astro-root :where(.jathagam-legacy) select,
+.astro-root :where(.jathagam-legacy) textarea,
+.astro-root :where(.jathagam-legacy) table,
+.astro-root :where(.jathagam-legacy) th,
+.astro-root :where(.jathagam-legacy) td,
+.astro-root :where(.jathagam-legacy) h1,
+.astro-root :where(.jathagam-legacy) h2,
+.astro-root :where(.jathagam-legacy) h3,
+.astro-root :where(.jathagam-legacy) h4,
+.astro-root :where(.jathagam-legacy) h5,
+.astro-root :where(.jathagam-legacy) h6,
+.astro-root :where(.jathagam-legacy) span,
+.astro-root :where(.jathagam-legacy) p,
+.astro-root :where(.jathagam-legacy) div,
+.astro-root :where(.jathagam-legacy) label,
+.astro-root :where(.jathagam-legacy) a {
+  font-family: 'Kavivanar', 'Caveat', cursive, sans-serif;
+}
+
+/* The new base styles give headings a display face + tight line-height. The
+   Jathagam never had a heading rule (headings inherited the body's 1.85), so
+   restore that inheritance here. */
+.astro-root :where(.jathagam-legacy) :is(h1, h2, h3, h4) {
+  line-height: inherit;
+}
+
+/* Handwritten numerals & technical markings */
+.astro-root :where(.jathagam-legacy) .num-hand,
+.astro-root :where(.jathagam-legacy) .font-mono,
+.astro-root :where(.jathagam-legacy) code,
+.astro-root :where(.jathagam-legacy) kbd,
+.astro-root :where(.jathagam-legacy) samp,
+.astro-root :where(.jathagam-legacy) pre {
+  font-family: 'Caveat', cursive !important;
+  font-size: 1.15em;
+  letter-spacing: 0.03em;
+}
+
+/* Map cinzel/serif headings to authentic cursive calligraphy */
+.astro-root :where(.jathagam-legacy) .font-cinzel {
+  font-family: 'Caveat', 'Kavivanar', cursive !important;
+  letter-spacing: 0.06em;
+}
+
+.astro-root :where(.jathagam-legacy) .font-serif,
+.astro-root :where(.jathagam-legacy) .font-sans {
+  font-family: 'Kavivanar', 'Caveat', cursive !important;
+}
+
+/* SVG chart handwritten font */
+.astro-root :where(.jathagam-legacy) svg text,
+.astro-root :where(.jathagam-legacy) .chart text {
+  font-family: 'Kavivanar', 'Caveat', cursive !important;
+}
+
+/* ── Paper Grain & Edge Aging Overlays (from design-1.html) ── */
+.astro-root .grain {
+  position: fixed;
+  inset: -40px;
+  pointer-events: none;
+  z-index: 999;
+  opacity: 0.35;
+  mix-blend-mode: multiply;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='260' height='260'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.8' numOctaves='2' stitchTiles='stitch'/%3E%3CfeColorMatrix values='0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0.55 0'/%3E%3C/filter%3E%3Crect width='260' height='260' filter='url(%23n)'/%3E%3C/svg%3E");
+}
+
+.astro-root .age {
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+  z-index: 998;
+  background: radial-gradient(ellipse 130% 100% at 50% 38%, rgba(0,0,0,0) 62%, rgba(94,72,40,0.14) 100%);
+}
+
+/* ── Traditional Masthead Elements ── */
+.astro-root .sri {
+  color: var(--red);
+  font-size: 26px;
+  line-height: 1.2;
+  font-family: 'Kavivanar', cursive;
+}
+
+.astro-root .over-title {
+  font-family: 'Caveat', cursive;
+  letter-spacing: 0.42em;
+  text-transform: uppercase;
+  font-size: 14px;
+  color: var(--red);
+  padding-left: 0.42em;
+}
+
+/* ── Hand-Drawn Wobbly Cards & Boxes (design-1.html style) ── */
+.astro-root .hand-card {
+  /* Bug 2: website card look (was a wobbly hand-drawn parchment card).
+     Fixed white on purpose: the ink colours inside are dark in every
+     palette, so the card must stay a light "document" even in dark mode. */
+  background: #ffffff;
+  border: 1px solid rgba(11, 31, 77, 0.10);
+  border-radius: 1rem;
+  box-shadow: 0 1px 2px rgba(11, 31, 77, 0.05), 0 8px 24px rgba(11, 31, 77, 0.07);
+  position: relative;
+}
+
+.astro-root .hand-card-clean {
+  /* Bug 2: website card look (was a wobbly hand-drawn parchment card).
+     Fixed white on purpose: the ink colours inside are dark in every
+     palette, so the card must stay a light "document" even in dark mode. */
+  background: #ffffff;
+  border: 1px solid rgba(11, 31, 77, 0.10);
+  border-radius: 1rem;
+  box-shadow: 0 1px 2px rgba(11, 31, 77, 0.05), 0 8px 24px rgba(11, 31, 77, 0.07);
+
+}
+
+.astro-root .facts {
+  /* Bug 2: website card look (was rotated, hand-drawn) */
+  max-width: 760px;
+  margin: 8px auto 0;
+  padding: 12px 24px;
+  background: #ffffff;
+  border: 1px solid rgba(11, 31, 77, 0.10);
+  border-radius: 1rem;
+  box-shadow: 0 1px 2px rgba(11, 31, 77, 0.05), 0 8px 24px rgba(11, 31, 77, 0.07);
+  font-size: 15px;
+  color: #0b1220;
+}
+
+.astro-root .facts .fl {
+  color: var(--red);
+  font-weight: 600;
+}
+
+.astro-root .fine {
+  font-size: 13.5px;
+  color: var(--ink-faint);
+}
+
+/* ── Hand-Drawn Buttons ── */
+.astro-root .btn-hand {
+  /* Bug 2: website secondary-button look (was a hand-drawn outline) */
+  font-family: var(--font-ui);
+  font-size: 14px;
+  font-weight: 600;
+  color: #0b1220;
+  background: #ffffff;
+  border: 1px solid rgba(11, 31, 77, 0.16);
+  border-radius: 0.75rem;
+  padding: 8px 16px;
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  transition: border-color 0.18s, background 0.18s, transform 0.18s;
+}
+
+.astro-root .btn-hand:hover {
+  transform: translateY(-1px);
+  border-color: var(--brand-400);
+  background: rgba(47, 111, 237, 0.06);
+}
+
+.astro-root .btn-hand:active {
+  transform: translateY(1px);
+}
+
+.astro-root .btn-hand-red {
+  /* Bug 2: website primary-button look */
+  background: linear-gradient(135deg, var(--brand-600), var(--brand-500) 45%, var(--accent-500));
+  color: #ffffff !important;
+  border: 0;
+  border-radius: 0.75rem;
+  padding: 10px 24px;
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  font-family: var(--font-ui);
+  font-weight: 600;
+  transition: transform 0.18s ease, box-shadow 0.18s;
+  box-shadow: var(--shadow-soft);
+}
+
+.astro-root .btn-hand-red:hover {
+  transform: translateY(-1px);
+  box-shadow: var(--shadow-lift);
+}
+
+/* ── Hand-Ruled Table Styling ── */
+.astro-root .table-hand {
+  width: 100%;
+  border-collapse: collapse;
+  font-family: 'Kavivanar', cursive;
+}
+
+.astro-root .table-hand th {
+  font-weight: 400;
+  font-size: 15px;
+  color: var(--ink-soft);
+  text-align: left;
+  padding: 10px 14px;
+  border-bottom: 1.5px solid rgba(43, 33, 23, 0.35);
+  vertical-align: bottom;
+}
+
+.astro-root .table-hand th i {
+  display: block;
+  font-style: normal;
+  font-family: 'Caveat', cursive;
+  font-size: 13px;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  color: var(--red);
+  line-height: 1.2;
+}
+
+.astro-root .table-hand td {
+  padding: 10px 14px;
+  font-size: 16px;
+  border-bottom: 1px dashed rgba(43, 33, 23, 0.18);
+  color: var(--ink);
+}
+
+.astro-root .table-hand tbody tr {
+  transition: background 0.15s;
+}
+
+.astro-root .table-hand tbody tr:hover {
+  background: rgba(43, 33, 23, 0.04);
+}
+
+.astro-root .num-hand {
+  font-family: 'Caveat', cursive;
+  font-size: 18.5px;
+}
+
+/* Palm Leaf / Parchment legacy classes updated to warm style */
+.astro-root .palm-leaf-texture {
+  /* Bug 3: plain white (was an aged, ruled parchment gradient) */
+  background: #ffffff;
+  color: #2b170c;
+  box-shadow: 0 1px 2px rgba(11, 31, 77, 0.05), 0 8px 24px rgba(11, 31, 77, 0.07);
+}
+
+.astro-root .palm-leaf-dark {
+  /* Bug 2: website card look (was a wobbly hand-drawn parchment card).
+     Fixed white on purpose: the ink colours inside are dark in every
+     palette, so the card must stay a light "document" even in dark mode. */
+  background: #ffffff;
+  border: 1px solid rgba(11, 31, 77, 0.10);
+  border-radius: 1rem;
+  box-shadow: 0 1px 2px rgba(11, 31, 77, 0.05), 0 8px 24px rgba(11, 31, 77, 0.07);
+  color: var(--ink);
+}
+
+.astro-root .gold-gradient-text {
+  color: var(--red-deep);
+}
+
+.astro-root .temple-border {
+  border: 1px solid rgba(11, 31, 77, 0.12);
+  border-radius: 1rem;
+}
+
+/* ── Handwritten Tamil Manuscript (Realistic Palm-Leaf) ── */
+.astro-root .manuscript-container,
+.astro-root .manuscript-container *,
+.astro-root .manuscript-page,
+.astro-root .manuscript-page * {
+  font-family: 'Kavivanar', 'Caveat', cursive !important;
+}
+
+.astro-root .handwritten-tamil {
+  font-family: 'Kavivanar', cursive !important;
+  font-weight: 400;
+  letter-spacing: 0.5px;
+  line-height: 1.95;
+  color: #1e0f08;
+  text-shadow: 0.15px 0.15px 0 rgba(45, 18, 8, 0.35);
+  /* subtle ink bleed */
+}
+
+.astro-root .handwritten-heading {
+  font-family: 'Kavivanar', 'Caveat', cursive !important;
+  font-weight: 600;
+  letter-spacing: 0.7px;
+  color: #6b1426;
+  text-shadow: 0.3px 0.3px 0 rgba(107, 20, 38, 0.3);
+}
+
+.astro-root .manuscript-page {
+  width: 794px; /* A4 @ 96dpi */
+  min-height: 1123px;
+  margin: 0 auto;
+  /* Bug 3: pure white page (was parchment + ruled lines + stain gradients).
+     The same DOM is rasterised for the 50-page PDF and printed natively, so
+     this one rule makes the screen, the PDF and the print all white. */
+  background: #ffffff;
+  position: relative;
+  box-shadow: 0 1px 2px rgba(11, 31, 77, 0.06), 0 10px 30px rgba(11, 31, 77, 0.10);
+  border: 1px solid rgba(11, 31, 77, 0.10);
+  page-break-after: always;
+  overflow: hidden;
+}
+
+.astro-root .manuscript-page::before {
+  /* Bug 3: the palm-leaf fibre texture was removed (white pages) */
+  content: none;
+}
+
+.astro-root .manuscript-page::after {
+  /* vignette border aging */
+  content: "";
+  position: absolute;
+  inset: 12px;
+  border: 1.2px solid rgba(170, 130, 10, 0.35);
+  border-radius: 6px;
+  pointer-events: none;
+  /* Bug 3: brown inner vignette removed; the thin frame line stays */
+}
+
+.astro-root .manuscript-inner {
+  position: relative;
+  z-index: 1;
+  padding: 48px 52px 56px 52px;
+}
+
+.astro-root .manuscript-rule {
+  border: none;
+  height: 1px;
+  background: linear-gradient(90deg, transparent, rgba(120, 70, 25, 0.25) 15%, rgba(120, 70, 25, 0.25) 85%, transparent);
+  margin: 14px 0;
+}
+
+.astro-root .ink-underline {
+  border-bottom: 1.5px solid rgba(90, 25, 35, 0.55);
+  padding-bottom: 2px;
+  box-shadow: 0 1px 0 rgba(107, 20, 38, 0.15);
+}
+
+.astro-root .manu-wobble-1 { transform: rotate(-0.25deg); }
+.astro-root .manu-wobble-2 { transform: rotate(0.35deg); }
+.astro-root .manu-wobble-3 { transform: rotate(-0.15deg); }
+
+/* Palm-leaf stains / coffee spots */
+.astro-root .palm-stain {
+  /* Bug 3: aging stains removed — pages are plain white */
+  display: none;
+}
+
+@media print {
+  .astro-root {
+    background: #ffffff !important;
+    color: #000000 !important;
+  }
+  .astro-root .no-print {
+    display: none !important;
+  }
+  .astro-root .palm-leaf-texture {
+    box-shadow: none !important;
+    background: #ffffff !important;
+  }
+  .astro-root .manuscript-page {
+    box-shadow: none !important;
+    border: none !important;
+  }
+  .astro-root .thirukanitham-manuscript-card,
+  .astro-root .vakhyam-manuscript-card {
+    box-shadow: none !important;
+    page-break-inside: avoid;
+    break-inside: avoid;
+    margin: 0 !important;
+    border-width: 2px !important;
+  }
+}
+
+
+
+@media print {
+  .astro-root .jathagam-desk {
+    background: none !important;
+    box-shadow: none !important;
+    padding: 0 !important;
+    border-radius: 0 !important;
+  }
+}
+
+/* ═══════════════════════════════════════════════════════════════════
+   PRINT = THE HANDWRITTEN MANUSCRIPT, NOT THE LIGHT-THEME PAGE.
+   Pressing "Print" used to run window.print() on whatever was on
+   screen — the smooth light-theme results view — because nothing told
+   the browser to print the off-screen manuscript instead. That view is
+   now wrapped in `.no-print` (see app/page.tsx), which the rule above
+   already turns into `display:none` (no leftover blank space).
+   All that's left is to bring the actual print targets back into
+   normal, visible document flow:
+     - #handwritten-manuscript + the ManuscriptTocPage host (both carry
+       `data-pdf-host`, full-mode 50-page book), and
+     - #single-page-report (single-page mode).
+   Both are ordinary DOM/canvas content already styled exactly like the
+   downloaded PDF, so printing them natively reproduces that same
+   layout, page-by-page, via each .manuscript-page's own
+   page-break-after rule — no separate print stylesheet to maintain.
+   ═══════════════════════════════════════════════════════════════════ */
+@media print {
+  .astro-root [data-pdf-host] {
+    position: static !important;
+    left: auto !important;
+    top: auto !important;
+    pointer-events: auto !important;
+  }
+
+  /* .manuscript-container is `flex flex-col` for the on-screen scrollable
+     viewer — several browsers don't honour page-break-after on flex
+     children, so force normal block flow for print, where each
+     .manuscript-page already centers itself via margin:0 auto. */
+  .astro-root .manuscript-container {
+    display: block !important;
+  }
+
+  /* ── Pagination hardening (fixes "page 1 overlaps page 2" / 53-vs-51
+     sheets) ─────────────────────────────────────────────────────────────
+     `.manuscript-page` previously had a page-break-AFTER rule but no
+     page-break-INSIDE rule. If a page's real height ever landed even
+     slightly past the A4 box (a webfont metric difference, a long line),
+     the browser sliced that ONE logical page mid-way across TWO physical
+     sheets instead of starting a clean new one — which is exactly what
+     read as one page's content overlapping into the next. `break-inside:
+     avoid` makes a page that doesn't fit move to a fresh sheet instead of
+     fracturing across two. This also covers the cloned contents page that
+     handlePrint (app/page.tsx) inserts right after the cover for print, so
+     it prints as a single, complete page-2 sheet. */
+  .astro-root .manuscript-page,
+  .astro-root #manuscript-toc-page,
+  .astro-root [data-print-toc-clone] {
+    break-inside: avoid !important;
+    page-break-inside: avoid !important;
+  }
+
+  /* The cloned contents page always opens on its own fresh sheet right
+     after the cover, and always hands off to a fresh sheet for the rest
+     of the manuscript that follows it. */
+  .astro-root [data-print-toc-clone] {
+    break-before: page !important;
+    page-break-before: always !important;
+    break-after: page !important;
+    page-break-after: always !important;
+  }
+
+  /* The page that is genuinely last must not force another page-break
+     after itself — that stray trailing break was producing an extra blank
+     sheet at the end of every print job. handlePrint tags the true last
+     page with this attribute only for the duration of the print. */
+  .astro-root .manuscript-page[data-print-last-page] {
+    break-after: auto !important;
+    page-break-after: auto !important;
+  }
+
+  /* ── ROOT-CAUSE FIX: "page 1 overlaps / spills onto page 2" ───────────────
+     On screen a page is `width: 794px; min-height: 1123px`. A physical A4
+     sheet is 210mm x 297mm = 793.7px x 1122.52px, so every page was ~0.5px
+     TALLER than the sheet it prints on. `break-inside: avoid` cannot help
+     when a box is taller than the page, so the browser fragmented it: a
+     0.5px sliver flowed onto the next sheet — carrying the page's absolutely
+     positioned footer ("பக்கம் 1/50") to the TOP of sheet 2 — and then the
+     page-break-after pushed real content to sheet 3. That is exactly the
+     "footer at the top of a blank page 2" seen in the print preview, and the
+     reason the sheet count balloons past 51.
+     Fix: in print, give each page an EXACT, slightly-under-A4 fixed height
+     (1mm of slack) instead of min-height, and clip anything beyond it. */
+  .astro-root .manuscript-page,
+  .astro-root [data-print-toc-clone] {
+    box-sizing: border-box !important;
+    width: 210mm !important;
+    height: 296mm !important;
+    min-height: 0 !important;
+    max-height: 296mm !important;
+    margin: 0 !important;
+    overflow: hidden !important;
+    break-after: page !important;
+    page-break-after: always !important;
+  }
+
+  /* A cloned TOC wrapper should not add its own extra box — its child page
+     is what fills the sheet. Only apply if the clone is a plain wrapper. */
+  .astro-root [data-print-toc-clone] > .manuscript-page {
+    height: 100% !important;
+    max-height: 100% !important;
+    break-after: auto !important;
+    page-break-after: auto !important;
+  }
+
+  /* ── SECOND ROOT CAUSE: whole page pushed down/right ─────────────────────
+     The print preview showed the cover starting ~20mm below the top and
+     ~15mm in from the left, so its bottom (and footer) fell onto sheet 2.
+     Something wrapping the pages (the scroll-viewer container, padding,
+     gap, centering, scale transform) was still adding space in print.
+     Flatten every wrapper that sits between the host and a page. */
+  .astro-root [data-pdf-host],
+  .astro-root [data-pdf-host] :has(.manuscript-page),
+  .astro-root [data-pdf-host]:has(.manuscript-page) {
+    position: static !important;
+    display: block !important;
+    margin: 0 !important;
+    padding: 0 !important;
+    border: 0 !important;
+    gap: 0 !important;
+    width: auto !important;
+    min-width: 0 !important;
+    max-width: none !important;
+    height: auto !important;
+    min-height: 0 !important;
+    max-height: none !important;
+    overflow: visible !important;
+    transform: none !important;
+    zoom: 1 !important;
+    inset: auto !important;
+    background: none !important;
+    box-shadow: none !important;
+  }
+
+  /* ── THIRD (ACTUAL) ROOT CAUSE: the ANCESTORS of the hosts ──────────────
+     The previous rule only flattened wrappers INSIDE the host. But the
+     hosts live inside <main class="px-4 sm:px-6 py-6 max-w-7xl mx-auto
+     space-y-10"> → <section.jathagam-desk space-y-6> → <div space-y-10>.
+     In print that padding pushed every page ~6mm right and ~6mm+ down, and
+     the space-y margins added more, so a full-height page starting below
+     the top edge always ran off the bottom of the sheet: its footer landed
+     on the next sheet and everything after it drifted (53 sheets).
+     Flatten every ancestor that contains a print host, and drop the site
+     header/footer (they were adding an extra printed sheet). */
+  .astro-root .app-shell > :not(main) {
+    display: none !important;
+  }
+  body :has([data-pdf-host]),
+  body :has(#single-page-report),
+  body:has([data-pdf-host]) main {
+    display: block !important;
+    position: static !important;
+    margin: 0 !important;
+    padding: 0 !important;
+    border: 0 !important;
+    gap: 0 !important;
+    width: auto !important;
+    max-width: none !important;
+    min-width: 0 !important;
+    height: auto !important;
+    min-height: 0 !important;
+    max-height: none !important;
+    overflow: visible !important;
+    transform: none !important;
+    background: none !important;
+    box-shadow: none !important;
+    border-radius: 0 !important;
+  }
+
+  /* Ancestors must not clip / cap pagination to one viewport-high box. */
+  .astro-root,
+  .astro-root,
+  .astro-root .app-shell {
+    height: auto !important;
+    min-height: 0 !important;
+    overflow: visible !important;
+    display: block !important;
+  }
+
+  /* The last page must not force a trailing blank sheet (re-asserted after
+     the height block above so it wins on specificity/order). */
+  .astro-root .manuscript-page[data-print-last-page] {
+    break-after: auto !important;
+    page-break-after: auto !important;
+  }
+
+  .astro-root #single-page-report {
+    position: static !important;
+    margin: 0 auto !important;
+  }
+
+  /* The flex/centering wrapper SinglePageReport renders #single-page-report
+     inside is otherwise harmless for print, but reset it in case its
+     flex context clips or off-centers a static-flow child during
+     pagination. */
+  .astro-root #single-page-report,
+  .astro-root #single-page-report * {
+    box-shadow: none !important;
+  }
+}
+
+/* @page must live at the top level — Chrome can ignore it when nested in
+   @media. Without margin:0 honoured, Chrome adds its own default margins. */
+@page {
+  size: A4;
+  margin: 0;
+}
+
+/* ==========================================================================
+ * Bug 2 — website chrome inside the Jathagam
+ * Controls marked `.jat-chrome` (toolbars, tabs, download buttons) use the
+ * website's normal UI font and colours, even when they sit inside a
+ * handwritten "document island". The theme's own font rule already skips
+ * them (lib/jathagamTheme.tsx); this undoes the legacy element-level
+ * handwriting defaults for them too. Specificity (0,1,0) beats the legacy
+ * `:where(.jathagam-legacy) div` rules (0,0,1).
+ * ========================================================================== */
+.astro-root .jat-chrome,
+.astro-root .jat-chrome * {
+  font-family: var(--font-ui);
+  text-shadow: none;
+}
+.astro-root .jat-chrome {
+  color: var(--foreground);
+}
+
+/* ==========================================================================
+ * A4 PRINT SHEET FOR THE BABY-NAME LIST
+ *
+ * window.print() on the names page prints ONLY `.names-print-sheet`, laid out
+ * for A4 portrait and flowing across as many pages as the list needs.
+ *
+ * How it works:
+ *  - Everything on the page is hidden, then the sheet alone is un-hidden.
+ *    Hiding by ancestor (`body *`) rather than by listing every header,
+ *    footer, sidebar and button means nothing new can leak into the print.
+ *  - CSS multi-column gives the compact 2/3-column flow. Unlike grid or
+ *    flex, columns FRAGMENT across pages natively, which is what lets one
+ *    long list spill onto page 2, 3, 4 ... without manual slicing.
+ *  - `break-inside: avoid` on each entry stops a name being split in half
+ *    across a column or page boundary.
+ *  - Tamil needs room: `line-height: 1.75` and no `overflow: hidden` or
+ *    fixed heights anywhere in the sheet, because Tamil vowel signs sit
+ *    above and below the baseline and get sliced by tight boxes. Any
+ *    `truncate` (which is overflow:hidden + nowrap) is undone for print.
+ * ========================================================================== */
+@media screen {
+  .astro-root .names-print-sheet { display: none; }
+}
+
+@media print {
+  @page {
+    size: A4 portrait;
+    margin: 12mm 10mm;
+  }
+
+  /* 1. Hide the whole app, then reveal just the sheet.
+        Scoped to a tagged print: without the guard, pressing Ctrl+P (rather
+        than a Print button) hid everything and revealed nothing, printing a
+        blank page. Untagged printing now behaves as it did before. */
+  body[data-print-target="nakshatra-names"] * { visibility: hidden !important; }
+  body[data-print-target="nakshatra-names"] .names-print-sheet,
+  body[data-print-target="nakshatra-names"] .names-print-sheet * { visibility: visible !important; }
+
+  body[data-print-target="nakshatra-names"] .names-print-sheet {
+    display: block !important;
+    position: absolute !important;
+    left: 0;
+    top: 0;
+    width: 100%;
+    margin: 0;
+    padding: 0;
+    background: #ffffff !important;
+    color: #000000 !important;
+  }
+
+  /* Belt and braces: anything explicitly marked as chrome never prints. */
+  .astro-root .no-print,
+  .astro-root header,
+  .astro-root nav,
+  .astro-root footer,
+  .astro-root aside,
+  .astro-root button { display: none !important; }
+  .astro-root .names-print-sheet button { display: none !important; }
+
+  /* 2. The flowing columns. 2 columns is the readable default for A4
+        portrait with Tamil + English + meaning; `.cols-3` opts into 3. */
+  .astro-root .names-print-cols {
+    column-count: 2;
+    column-gap: 8mm;
+    column-fill: auto;      /* fill page 1 fully before starting page 2 */
+    widows: 2;
+    orphans: 2;
+  }
+  .astro-root .names-print-cols.cols-3 { column-count: 3; column-gap: 6mm; }
+
+  /* 3. One entry = one unbreakable block. */
+  .astro-root .names-print-entry {
+    break-inside: avoid;
+    page-break-inside: avoid;
+    -webkit-column-break-inside: avoid;
+    display: block;
+    padding: 1.6mm 0;
+    border-bottom: 0.2mm solid #d4d4d4;
+  }
+
+  /* 4. Tamil-safe typography — generous leading, nothing clipped. */
+  .astro-root .names-print-sheet,
+  .astro-root .names-print-sheet * {
+    font-family: 'Noto Sans Tamil', 'Latha', 'Inter', sans-serif !important;
+    line-height: 1.75 !important;
+    overflow: visible !important;
+    text-overflow: clip !important;
+    white-space: normal !important;   /* undoes any `truncate` */
+    max-height: none !important;
+    box-shadow: none !important;
+    text-shadow: none !important;
+  }
+  .astro-root .names-print-sheet .print-name    { font-size: 10.5pt; font-weight: 700; }
+  .astro-root .names-print-sheet .print-alt     { font-size: 8pt;  color: #555555; }
+  .astro-root .names-print-sheet .print-meaning { font-size: 8.5pt; color: #222222; }
+
+  /* 5. Section heading per pada syllable — never left stranded at the foot
+        of a column with its list on the next one. */
+  .astro-root .names-print-section {
+    break-inside: avoid-column;
+    break-after: avoid;
+    page-break-after: avoid;
+    font-size: 10pt;
+    font-weight: 700;
+    margin: 3mm 0 1.5mm;
+    padding: 1mm 2mm;
+    border-left: 1mm solid #000000;
+    background: #f2f2f2 !important;
+    -webkit-print-color-adjust: exact;
+    print-color-adjust: exact;
+  }
+
+  /* 6. The title block spans both columns and only prints on page 1. */
+  .astro-root .names-print-header {
+    column-span: all;
+    text-align: center;
+    border-bottom: 0.4mm solid #000000;
+    padding-bottom: 2mm;
+    margin-bottom: 3mm;
+  }
+  .astro-root .names-print-header .t1 { font-size: 15pt; font-weight: 700; }
+  .astro-root .names-print-header .t2 { font-size: 9pt; color: #444444; }
+}
+
+/* ==========================================================================
+ * PRINT: GENERAL BABY NAME GENERATOR
+ *
+ * `print:hidden` / `print:block` on the component handle what shows. These
+ * rules handle what Tailwind utilities cannot express per-element: the page
+ * box, the site chrome, and the column flow.
+ *
+ * Columns rather than grid, again on purpose — CSS columns fragment across
+ * pages natively, so 200 names spill onto page 2 and 3 by themselves. A grid
+ * would print page one and silently drop the rest.
+ * ========================================================================== */
+@media print {
+  @page { size: A4 portrait; margin: 12mm 10mm; }
+
+  /* Site chrome never prints. */
+  .astro-root header, .astro-root nav, .astro-root footer, .astro-root aside { display: none !important; }
+
+  /* Everything except the generator section collapses, so the printed sheet
+     is the name list alone — not the birth-details form above it or the
+     numerology panel below. */
+  /* Scoped for the same reason as above — see the note there. */
+  body[data-print-target="general-names"] > * { visibility: hidden !important; }
+  body[data-print-target="general-names"] #general-name-generator,
+  body[data-print-target="general-names"] #general-name-generator * { visibility: visible !important; }
+  body[data-print-target="general-names"] #general-name-generator {
+    position: absolute !important;
+    left: 0;
+    top: 0;
+    width: 100%;
+  }
+
+  /* Tamil needs vertical room: its vowel signs sit above and below the
+     baseline and get sliced by tight boxes or `truncate`. */
+  .astro-root #general-name-generator * {
+    font-family: 'Noto Sans Tamil', 'Latha', 'Inter', sans-serif !important;
+    line-height: 1.7 !important;
+    overflow: visible !important;
+    white-space: normal !important;
+    text-overflow: clip !important;
+    max-height: none !important;
+    box-shadow: none !important;
+    color: #000 !important;
+    background: transparent !important;
+  }
+}
+
+/* One print target at a time.
+   Both baby-name panels sit on the same page and each defines a print sheet.
+   Without a target, pressing Print on either revealed BOTH — the list came
+   out twice. The button sets data-print-target on <body> for the duration of
+   the print; these rules make the untagged sheet stay hidden. */
+@media print {
+  body[data-print-target] .names-print-sheet { display: none !important; }
+  body[data-print-target="nakshatra-names"] .names-print-sheet { display: block !important; }
+  body[data-print-target="general-names"] #general-name-generator .print\:static { position: static !important; }
+}
+
+
+
+/* ------------------------------------------------------------------
+   Kalai feature reports (Kanitha, KP, 12 Porutham, Names): text and
+   numbers must stay inside their cells for EVERY Tamil typeface and
+   colour of the Jathagam panel — wider/taller handwriting faces wrap
+   instead of spilling out, and names are never cut.
+   ------------------------------------------------------------------ */
+.astro-root .kalai-page { line-height: 1.6; overflow-wrap: anywhere; }
+.astro-root .kalai-page * { min-width: 0; }
+.astro-root .kalai-page table { width: 100%; max-width: 100%; border-collapse: collapse; table-layout: auto; font-size: 0.92em; }
+.astro-root .kalai-page th, .astro-root .kalai-page td {
+  padding: 0.4rem 0.45rem; white-space: normal; overflow-wrap: anywhere; word-break: normal;
+  line-height: 1.55; vertical-align: top; overflow: visible; text-overflow: clip;
+}
+.astro-root .kalai-page td.font-mono, .astro-root .kalai-page .font-mono { white-space: nowrap; overflow-wrap: normal; }
+.astro-root .kalai-page h1, .astro-root .kalai-page h2, .astro-root .kalai-page h3 { line-height: 1.4; overflow-wrap: anywhere; }
+.astro-root .kalai-page .truncate { overflow: visible; white-space: normal; text-overflow: clip; }
+
+/* ==========================================================================
+ * Phones and tablets (all devices)
+ * ------------------------------------------------------------------------
+ * Report tables (graha / bhava spudam, ashtakavarga, prasthara, shadbala,
+ * varga, Kalachakra, Panchapakshi, KP …) are wider than a phone. Each one sits
+ * in a .table-scroll strip that slides sideways on its own, so the PAGE never
+ * scrolls sideways and nothing is cut. On desktop the tables fit, so the strip
+ * changes nothing. While a PDF is made (html.pdf-export) and in print the strip
+ * is switched off, so every column is captured.
+ * ========================================================================== */
+.astro-root .table-scroll {
+  max-width: 100%;
+  overflow-x: auto;
+  overflow-y: hidden;
+  -webkit-overflow-scrolling: touch;
+  overscroll-behavior-x: contain;
+  scrollbar-width: thin;
+}
+.astro-root .table-scroll > table { min-width: 100%; }
+html.pdf-export .astro-root .table-scroll { overflow: visible !important; max-width: none !important; }
+@media print {
+  .astro-root .table-scroll { overflow: visible !important; max-width: none !important; }
+}
+
+@media (max-width: 639px) {
+  /* report sheets: less outer padding, so a 360 px phone keeps ~330 px for content */
+  html:not(.pdf-export) .kalai-page.story-panel { padding: 14px !important; border-radius: 18px; }
+  html:not(.pdf-export) .kalai-page table { font-size: 10.5px; }
+  html:not(.pdf-export) .kalai-page th, html:not(.pdf-export) .kalai-page td { padding: 3px 2px; }
+  /* numbers and short codes stay whole; words wrap normally, so only genuinely
+     wide tables need to slide */
+  .astro-root .kalai-page td.font-mono, .astro-root .kalai-page td.tabular-nums { white-space: nowrap; }
+  /* big headings and long Tamil words wrap instead of widening the page */
+  .astro-root h1, .astro-root h2, .astro-root h3 { overflow-wrap: anywhere; }
+}
+
+/* last safety net: a stray wide element can never make the whole page slide
+   sideways on a phone ('clip' keeps the sticky header working, unlike hidden) */
+.astro-root, .astro-root { max-width: 100%; overflow-x: clip; }
+
+/* smoother scrolling on touch devices; no 300 ms tap delay; no iOS text zoom on rotate */
+.astro-root { -webkit-text-size-adjust: 100%; text-size-adjust: 100%; }
+.astro-root a, .astro-root button, .astro-root select, .astro-root input, .astro-root label { touch-action: manipulation; }
+/* iOS zooms into any input with text smaller than 16 px; keep form fields at 16 px on phones */
+@media (max-width: 639px) {
+  .astro-root input:not([type="checkbox"]):not([type="radio"]), .astro-root select, .astro-root textarea { font-size: 16px !important; }
+}
+
+/* ---- smooth scrolling on phones and low-power devices ----------------------
+   A full report is ~130 000 px tall. On phones the panels drop their 20 px
+   backdrop blur (very costly while scrolling) and report pages that are off
+   screen are not rendered until they come near (content-visibility). Both are
+   switched off while a PDF is captured, so the PDF is unchanged. */
+@media (max-width: 1023px), (pointer: coarse) {
+  .astro-root .story-panel { -webkit-backdrop-filter: none; backdrop-filter: none; }
+  .astro-root .kalai-page { content-visibility: auto; contain-intrinsic-size: auto 1400px; }
+}
+html.pdf-export .astro-root .kalai-page { content-visibility: visible !important; }
+@media print { .astro-root .kalai-page { content-visibility: visible !important; } }
+
+/* ---- notch / rounded corners (iPhone, Android cut-outs) --------------------- */
+.astro-root .glass-nav {
+  padding-left: env(safe-area-inset-left);
+  padding-right: env(safe-area-inset-right);
+}
+
+/* Table cells wrap between WORDS only. The page-wide `overflow-wrap: anywhere`
+   (kept for paragraphs) let a narrow screen squeeze a column down to one letter
+   (சந்|தி|ர|ன்); with break-word the column keeps its longest word and a wide
+   table slides inside its .table-scroll strip instead. */
+.astro-root .kalai-page th, .astro-root .kalai-page td { overflow-wrap: break-word; word-break: normal; }
+
+/* single-page sheet: one-column details on phones, two columns elsewhere
+   (and always two columns while a PDF is captured or printed) */
+.astro-root .sheet-narrow { display: none; }
+@media (max-width: 639px) {
+  html:not(.pdf-export) .sheet-narrow { display: block; }
+  html:not(.pdf-export) .sheet-wide { display: none; }
+}
+@media print { .astro-root .sheet-narrow { display: none !important; } .astro-root .sheet-wide { display: block !important; } }
+
+/* ==========================================================================
+ * Copyright protection (see components/astrology/AstrologyGuard.tsx)
+ * Until a report is paid for: no text selection, and printing shows only a notice.
+ * ========================================================================== */
+.astro-print-notice { display: none; }
+
+html[data-astro-report]:not([data-astro-unlocked]) .astro-report-watermark :not(input):not(textarea):not(select) {
+  -webkit-user-select: none;
+  user-select: none;
+  -webkit-touch-callout: none;
+}
+
+@media print {
+  html[data-astro-report]:not([data-astro-unlocked]) body * { visibility: hidden !important; }
+  html[data-astro-report]:not([data-astro-unlocked]) .astro-print-notice,
+  html[data-astro-report]:not([data-astro-unlocked]) .astro-print-notice * { visibility: visible !important; }
+  html[data-astro-report]:not([data-astro-unlocked]) .astro-print-notice {
+    display: block !important;
+    position: fixed;
+    inset: 0;
+    padding: 30mm 20mm;
+    text-align: center;
+    background: #fff;
+    color: #111;
+    z-index: 2147483647;
+  }
+}
+
+
+/* ── Report viewer (zoom / page view / full screen) ──
+   Everything the viewer does to the report is undone for PDF export and print,
+   so those still capture / print every page at natural size. */
+html.pdf-export .astro-root .rv-zoom { zoom: 1 !important; }
+html.pdf-export .astro-root .rv-root { border: 0 !important; border-radius: 0 !important; background: none !important; }
+html.pdf-export .astro-root .rv-toolbar { display: none !important; }
+html.pdf-export .astro-root .rv-stage .kalai-page:not([data-rv-locked]) { display: block !important; }
+html.pdf-export .astro-root .rv-stage { height: auto !important; max-height: none !important; overflow: visible !important; padding: 0 !important; }
+@media print {
+  .astro-root .rv-zoom { zoom: 1 !important; }
+  .astro-root .rv-stage .kalai-page:not([data-rv-locked]) { display: block !important; }
+  .astro-root .rv-lock { display: none !important; }
+  .astro-root .rv-stage { height: auto !important; max-height: none !important; overflow: visible !important; padding: 0 !important; }
+  .astro-root .rv-root { position: static !important; border: 0 !important; background: none !important; }
+  .astro-root .rv-toolbar { display: none !important; }
+}
+
+/* Pages keep the same width they had before the viewer existed (the page content
+   column is 1216px wide on desktop), also in full screen — so the PDF is identical. */
+.astro-root .rv-zoom { max-width: 1216px; margin-inline: auto; }
+
+/* The report's own PDF button lives in the viewer toolbar instead. */
+.astro-root .rv-stage div:has(> [data-pdf-download]) { display: none; }
+
+/* Free preview: pages past the free limit stay hidden (screen, print and export) until paid. */
+.astro-root .rv-stage .kalai-page[data-rv-locked] { display: none !important; }

@@ -53,9 +53,14 @@ export async function getCurrentUser() {
   if (!token) return null;
   const payload = verifySession(token);
   if (!payload) return null;
-  const user = await prisma.user.findUnique({ where: { id: payload.userId } });
-  if (!user) return null;
-  return user;
+  try {
+    const user = await prisma.user.findUnique({ where: { id: payload.userId } });
+    return user ?? null;
+  } catch (error) {
+    // A database outage must not crash every page that reads the session.
+    console.error("getCurrentUser: database unreachable", error);
+    return null;
+  }
 }
 
 export async function requireAdmin() {

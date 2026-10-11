@@ -46,6 +46,7 @@ model User {
   pointsTransactions     PointsTransaction[]
   solutionUnlocks        SolutionUnlock[]
   courseTopicProgress    CourseTopicProgress[]
+  astrologyPurchases     AstrologyPurchase[]
 }
 
 model DailyActivity {
@@ -208,6 +209,31 @@ model Payment {
   course Course @relation(fields: [courseId], references: [id])
 
   @@index([userId])
+}
+
+// One-time unlock of printing / downloading for one astrology report.
+// Amount is in paise.
+model AstrologyPurchase {
+  id                String   @id @default(cuid())
+  // No login is needed to buy: the purchase belongs to the buyer's browser (buyerToken cookie),
+  // and also to the account when the buyer happens to be signed in.
+  userId            String?
+  buyerToken        String?
+  product           String // SINGLE_PAGE | FULL | MATCHING
+  reportKey         String
+  razorpayOrderId   String   @unique
+  razorpayPaymentId String?
+  razorpaySignature String?
+  amount            Int
+  currency          String   @default("INR")
+  status            String   @default("created")
+  createdAt         DateTime @default(now())
+  updatedAt         DateTime @updatedAt
+
+  user User? @relation(fields: [userId], references: [id])
+
+  @@index([userId, product, reportKey])
+  @@index([buyerToken, product, reportKey])
 }
 
 model Tutor {

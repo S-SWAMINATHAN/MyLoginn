@@ -1,9 +1,8 @@
-import OpenAI from "openai";
-import type { ChatCompletionChunk } from "openai/resources/chat/completions";
-import type { Stream } from "openai/streaming";
 import { NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
 import { CONTACT_EMAIL, CONTACT_PHONES, CONTACT_HOURS, WHATSAPP_PHONE } from "@/lib/contactInfo";
+import { MyBuddyError, isMyBuddyConfigured, streamMyBuddyReply } from "@/lib/mybuddy";
+import { REQUEST_SCOPED_STYLE, currentDateTimeContext, detectTopics, type ChatTopic } from "@/lib/chatIntent";
 
 export const runtime = "nodejs";
 
@@ -24,18 +23,22 @@ function isChatTurn(value: unknown): value is ChatTurn {
 }
 
 /** Company knowledge is pulled live from the DB so the agent never answers from stale hardcoded data. */
-async function buildSystemPrompt() {
+async function buildSystemPrompt(topics: Set<ChatTopic>) {
+  // Auto-route by request: an unrecognised request gets everything, a recognised one only what it needs.
+  const all = topics.size === 0;
+  const wants = (t: ChatTopic) => all || topics.has(t);
+  const noRows = Promise.resolve([] as never[]);
   const [courses, internships, tutors] = await Promise.all([
-    prisma.course.findMany({
+    !wants("courses") ? noRows : prisma.course.findMany({
       select: { title: true, category: true, level: true, durationWeeks: true, price: true, description: true },
       orderBy: [{ featured: "desc" }, { studentsCount: "desc" }],
     }),
-    prisma.internship.findMany({
+    !wants("internships") ? noRows : prisma.internship.findMany({
       where: { applyDeadline: { gte: new Date() } },
       select: { title: true, type: true, paid: true, stipend: true, location: true, durationWeeks: true },
       orderBy: { featured: "desc" },
     }),
-    prisma.tutor.findMany({
+    !wants("tutoring") ? noRows : prisma.tutor.findMany({
       select: { name: true, subject: true, boards: true, experienceYears: true },
     }),
   ]);
@@ -56,7 +59,26 @@ async function buildSystemPrompt() {
     .join("\n");
   const phoneList = CONTACT_PHONES.map((p) => p.display).join(", ");
 
-  return `You are the official AI assistant for MyLoginn, an AI-powered learning and digital growth company from India.
+  const sections: string[] = [];
+  if (wants("courses"))
+    sections.push(`Current course catalog:\n${courseList || "- (catalog is being updated — direct the user to /courses)"}`);
+  if (wants("internships"))
+    sections.push(
+      `Open internships:\n${internshipList || "- (no open positions right now — direct the user to /internships to check back)"}`
+    );
+  if (wants("tutoring"))
+    sections.push(`Tutors:\n${tutorList || "- (tutor list is being updated — direct the user to /tutoring)"}`);
+  if (wants("contact") || sections.length === 0)
+    sections.push(`Contact:
+- Email: ${CONTACT_EMAIL}
+- Phone: ${phoneList} (${CONTACT_HOURS})
+- WhatsApp: ${WHATSAPP_PHONE}
+- Contact page: /contact
+- New users sign up at /signup; existing users log in at /login. Payments are processed securely via Razorpay in INR.`);
+
+  return `${currentDateTimeContext()}
+
+You are the official AI assistant for MyLoginn, an AI-powered learning and digital growth company from India.
 
 What MyLoginn offers:
 1. Courses — advanced digital marketing and AI/ML courses (page: /courses)
@@ -65,32 +87,19 @@ What MyLoginn offers:
 4. Tutoring — 1:1 mentor sessions and live classes for CBSE/State Board students (page: /tutoring)
 5. Services for businesses — AI-driven digital marketing (/services/digital-marketing) and app & web development (/services/app-web-development)
 
-Current course catalog:
-${courseList || "- (catalog is being updated — direct the user to /courses)"}
-
-Open internships:
-${internshipList || "- (no open positions right now — direct the user to /internships to check back)"}
-
-Tutors:
-${tutorList || "- (tutor list is being updated — direct the user to /tutoring)"}
-
-Contact:
-- Email: ${CONTACT_EMAIL}
-- Phone: ${phoneList} (${CONTACT_HOURS})
-- WhatsApp: ${WHATSAPP_PHONE}
-- Contact page: /contact
-- New users sign up at /signup; existing users log in at /login. Payments are processed securely via Razorpay in INR.
+${sections.join("\n\n")}
 
 How to behave:
 - Answer only questions related to MyLoginn — its courses, internships, projects, tutoring, services, pricing, enrollment, and contact details. For unrelated topics, politely steer the conversation back to MyLoginn.
 - Be warm, concise, and helpful. Keep answers short (2-5 sentences) unless the user asks for detail. Plain text only — no markdown headings or tables; simple hyphen lists are fine.
 - When a page is relevant, mention its path (e.g. "see /courses") so the user can navigate there.
-- Never invent prices, dates, or offerings that are not listed above. If you don't know, say so and share the contact details.`;
+- Never invent prices, dates, or offerings that are not listed above. If you don't know, say so and share the contact details.
+
+${REQUEST_SCOPED_STYLE}`;
 }
 
 export async function POST(req: Request) {
-  const apiKey = process.env.OPENROUTER_API_KEY;
-  if (!apiKey) {
+  if (!isMyBuddyConfigured()) {
     return NextResponse.json(
       { error: `The AI assistant isn't configured yet. Please reach us at ${CONTACT_EMAIL}.` },
       { status: 503 }
@@ -112,62 +121,29 @@ export async function POST(req: Request) {
     return NextResponse.json({ error: "Last message must be from the user" }, { status: 400 });
   }
 
-  const history = rawMessages.slice(-MAX_TURNS).map((m) => ({ role: m.role, content: m.content }));
-  const system = await buildSystemPrompt();
-  const client = new OpenAI({
-    apiKey,
-    baseURL: process.env.OPENROUTER_BASE_URL || "https://openrouter.ai/api/v1",
-    defaultHeaders: {
-      "HTTP-Referer": process.env.NEXT_PUBLIC_SITE_URL || "https://myloginn.com",
-      "X-Title": "MyLoginn Chat",
-    },
-  });
+  const history = rawMessages.slice(-MAX_TURNS);
+  const latest = history[history.length - 1];
+  const earlier = history.slice(0, -1);
+  const topics = detectTopics(history.filter((m) => m.role === "user").map((m) => m.content));
 
-  let stream: Stream<ChatCompletionChunk>;
-  try {
-    stream = await client.chat.completions.create({
-      model: process.env.OPENROUTER_MODEL || "openai/gpt-4o-mini",
-      max_tokens: 1024,
-      stream: true,
-      messages: [{ role: "system" as const, content: system }, ...history],
-    });
-  } catch (error) {
-    if (error instanceof OpenAI.APIError) {
-      console.error("Chat API error:", error.status, error.message);
-      const friendly =
-        error.status === 401
-          ? "The AI assistant's API key is invalid. Please contact us instead."
-          : error.code === "insufficient_quota"
-            ? "The AI assistant's account has run out of credits. Please contact us instead."
-            : "The AI assistant is temporarily unavailable. Please try again in a moment.";
-      return NextResponse.json({ error: `${friendly} Email: ${CONTACT_EMAIL}` }, { status: 502 });
-    }
-    throw error;
+  // Each request runs in a fresh MyBuddy conversation, so earlier turns ride along in the instructions.
+  let system = await buildSystemPrompt(topics);
+  if (earlier.length > 0) {
+    const transcript = earlier.map((m) => `${m.role === "user" ? "User" : "Assistant"}: ${m.content}`).join("\n");
+    system += `\n\nConversation so far (for context only):\n${transcript}`;
   }
 
-  const encoder = new TextEncoder();
-  const readable = new ReadableStream<Uint8Array>({
-    async start(controller) {
-      try {
-        for await (const chunk of stream) {
-          const delta = chunk.choices[0]?.delta?.content;
-          if (delta) controller.enqueue(encoder.encode(delta));
-        }
-        controller.close();
-      } catch (error) {
-        console.error("Chat stream error:", error);
-        controller.error(error);
-      }
-    },
-    cancel() {
-      stream.controller.abort();
-    },
-  });
-
-  return new Response(readable, {
-    headers: {
-      "Content-Type": "text/plain; charset=utf-8",
-      "Cache-Control": "no-store",
-    },
-  });
+  try {
+    const { stream } = await streamMyBuddyReply(system, latest.content, req.signal);
+    return new Response(stream, {
+      headers: { "Content-Type": "text/plain; charset=utf-8", "Cache-Control": "no-store" },
+    });
+  } catch (error) {
+    console.error("MyBuddy error:", error);
+    const friendly =
+      error instanceof MyBuddyError && error.kind === "auth"
+        ? "The AI assistant's login is invalid. Please contact us instead."
+        : "The AI assistant is temporarily unavailable. Please try again in a moment.";
+    return NextResponse.json({ error: `${friendly} Email: ${CONTACT_EMAIL}` }, { status: 502 });
+  }
 }

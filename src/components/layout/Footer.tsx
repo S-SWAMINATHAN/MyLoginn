@@ -40,6 +40,7 @@ const columns = [
     links: [
       { href: "/services/app-web-development", label: "App & web development" },
       { href: "/services/digital-marketing", label: "Digital marketing" },
+      { href: "/services/astrology", label: "Astrology" },
       { href: "/tutoring", label: "Tutoring" },
       { href: "/internships", label: "Internships" },
     ],

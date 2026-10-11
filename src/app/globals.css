@@ -123,6 +123,35 @@
   --font-sans: var(--font-sans-body), ui-sans-serif, system-ui, sans-serif;
   --font-display: var(--font-display-face), var(--font-sans-body), ui-sans-serif, system-ui, sans-serif;
   --font-mono: var(--font-mono-code), ui-monospace, SFMono-Regular, Menlo, monospace;
+
+  /* ── Astrology service (src/app/services/astrology) ── */
+  --color-line: var(--line);
+  --color-brand-fg: var(--brand-fg);
+  --color-brand-fg-strong: var(--brand-fg-strong);
+  --color-parchment-50: #fdfbf7;
+  --color-parchment-100: #fbf6ec;
+  --color-parchment-200: #f5e8d0;
+  --color-parchment-300: #edd5af;
+  --color-parchment-400: #e0b87f;
+  --color-parchment-500: #d39c56;
+  --color-parchment-600: #c0803e;
+  --color-parchment-700: #9f6333;
+  --color-parchment-800: #804e2e;
+  --color-parchment-900: #684028;
+  --color-temple-maroon: #6b1426;
+  --color-temple-deepmaroon: #450a16;
+  --color-temple-gold: #d4af37;
+  --color-temple-deepgold: #aa820a;
+  --color-temple-saffron: #e65c00;
+  --color-temple-emerald: #115e59;
+  --color-temple-ink: #1c1917;
+  --font-tamil: 'Kavivanar', 'Noto Sans Tamil', cursive;
+  --font-script: 'Kavivanar', cursive;
+  --font-cinzel: 'Caveat', 'Kavivanar', cursive;
+  --font-caveat: 'Caveat', cursive;
+  --shadow-soft: var(--shadow-soft);
+  --shadow-lift: var(--shadow-lift);
+  --radius-4xl: 2rem;
 }
 
 @media (max-width: 767px) {

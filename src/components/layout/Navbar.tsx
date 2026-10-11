@@ -21,6 +21,7 @@ import { AnimatedFolder } from "@/components/ui/icons/AnimatedFolder";
 import { AnimatedGraduation } from "@/components/ui/icons/AnimatedGraduation";
 import { AnimatedMegaphone } from "@/components/ui/icons/AnimatedMegaphone";
 import { AnimatedCode } from "@/components/ui/icons/AnimatedCode";
+import { AnimatedSparkle } from "@/components/ui/icons/AnimatedSparkle";
 import { AnimatedMail } from "@/components/ui/icons/AnimatedMail";
 import { AnimatedUser } from "@/components/ui/icons/AnimatedUser";
 import { AnimatedBuilding } from "@/components/ui/icons/AnimatedBuilding";
@@ -35,6 +36,7 @@ type NavUser = ProfileUser | null;
 const serviceLinks = [
   { href: "/services/digital-marketing", label: "Digital Marketing", desc: "AI-driven growth campaigns" },
   { href: "/services/app-web-development", label: "App & Web Development", desc: "Full-stack builds, premium UX" },
+  { href: "/services/astrology", label: "Astrology", desc: "Horoscope & matching reports" },
 ];
 
 const learnLinks = [
@@ -67,6 +69,12 @@ const mobileServiceLinks: MobileLink[] = [
     label: "App & Web Development",
     desc: "Full-stack builds, premium UX",
     icon: AnimatedCode,
+  },
+  {
+    href: "/services/astrology",
+    label: "Astrology",
+    desc: "Horoscope & matching reports",
+    icon: AnimatedSparkle,
   },
 ];
 

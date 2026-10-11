@@ -1,8 +1,9 @@
 "use client";
 
 import Link from "next/link";
+import { useRouter } from "next/navigation";
 import { motion } from "framer-motion";
-import { Percent } from "lucide-react";
+import { Award, Percent } from "lucide-react";
 import { Card } from "@/components/ui/Card";
 import { AnimatedClock } from "@/components/ui/icons/AnimatedClock";
 import { AnimatedSuccess } from "@/components/ui/icons/AnimatedSuccess";
@@ -50,6 +51,14 @@ export function CourseCard({
   ) ?? course.category;
   const displayTitle = getCourseDisplayTitle(course.slug, course.title);
   const { rotateX, rotateY, spotlightBg, onMouseMove, onMouseLeave } = useTiltSpotlight();
+  const router = useRouter();
+  const detailsHref = `/courses/${course.slug}`;
+
+  // The whole card opens the course page; real links and buttons inside (enroll, continue, title) keep their own behaviour.
+  function openDetails(event: React.MouseEvent<HTMLElement>) {
+    if ((event.target as HTMLElement).closest("a, button, input, label")) return;
+    router.push(detailsHref);
+  }
 
   return (
     <motion.div
@@ -68,13 +77,16 @@ export function CourseCard({
         style={{ rotateX, rotateY }}
         className="group h-full"
       >
-          <Card className="relative flex h-full flex-col items-center overflow-hidden p-6 text-center transition-shadow duration-300 group-hover:shadow-[var(--shadow-lift)] group-hover:-translate-y-1.5">
+          <Card onClick={openDetails} className="relative flex h-full cursor-pointer flex-col items-center overflow-hidden p-6 text-center transition-shadow duration-300 group-hover:shadow-[var(--shadow-lift)] group-hover:-translate-y-1.5">
             <motion.div
               className="pointer-events-none absolute inset-0 opacity-0 transition-opacity duration-300 group-hover:opacity-100"
               style={{ background: spotlightBg }}
             />
 
-            {recommended && <span className="absolute left-4 top-4 z-10 text-[11px] font-semibold text-brand-600 dark:text-brand-300">Featured</span>}
+            <div className="absolute left-4 top-4 z-10 flex items-center gap-2">
+              {recommended && <span className="text-[11px] font-semibold text-brand-600 dark:text-brand-300">Featured</span>}
+              <span className="inline-flex items-center gap-1 rounded-full bg-amber-50 px-2.5 py-1 text-[11px] font-semibold text-amber-700 ring-1 ring-amber-200 dark:bg-amber-400/10 dark:text-amber-300 dark:ring-amber-400/25"><Award className="h-3.5 w-3.5" aria-hidden="true" />Certificate</span>
+            </div>
             <span className="absolute right-4 top-4 z-10 rounded-full bg-surface-2 px-2.5 py-1 text-[11px] font-semibold uppercase tracking-wide text-foreground/70">
               {course.price === 0 ? `FREE · ${courseKeyword}` : course.level}
             </span>
@@ -97,7 +109,10 @@ export function CourseCard({
               <span className="truncate">Instructor: {course.instructor}</span>
             </div>
 
-            <div className="relative z-10 mt-5 flex w-full flex-col items-center border-t border-border-soft pt-4">
+            {course.price === 0 ? <div className="relative z-10 mt-4 flex w-full items-center justify-between border-t border-border-soft pt-3 text-xs">
+              <span className="font-medium uppercase tracking-wider text-muted">Course access</span>
+              <span className="inline-flex items-center gap-1.5 rounded-full bg-emerald-50 px-2.5 py-1 font-bold tracking-wide text-emerald-700 ring-1 ring-emerald-200 dark:bg-emerald-400/10 dark:text-emerald-300 dark:ring-emerald-400/25"><span aria-hidden="true" className="h-1.5 w-1.5 rounded-full bg-emerald-500" />FREE</span>
+            </div> : <div className="relative z-10 mt-5 flex w-full flex-col items-center border-t border-border-soft pt-4">
               <span className="text-[11px] font-medium uppercase tracking-wider text-muted">{course.price === 0 ? "Course access" : "Course fee"}</span>
               <div className="mt-1 flex flex-wrap items-baseline justify-center gap-x-2 gap-y-1">
                 <span className={`font-bold ${course.price === 0 ? "text-lg text-success sm:text-xl" : "text-2xl sm:text-3xl"}`}>{course.price === 0 ? "FREE" : `₹${course.price.toLocaleString("en-IN")}`}</span>
@@ -112,7 +127,7 @@ export function CourseCard({
                   <Percent className="h-3.5 w-3.5" /> Save {discountPct}%
                 </span>
               )}
-            </div>
+            </div>}
 
             {course.price === 0 ? <div className="relative z-10 mt-4 w-full">
               {enrolled && <div className="mb-3 text-left"><div className="mb-1 flex justify-between text-xs"><span className="text-muted">Course progress</span><span className="font-semibold text-brand-700">{course.progress}%</span></div><div className="h-1.5 overflow-hidden rounded-full bg-surface-2"><div className="h-full rounded-full bg-brand-500 transition-[width]" style={{ width: `${course.progress}%` }} /></div></div>}
