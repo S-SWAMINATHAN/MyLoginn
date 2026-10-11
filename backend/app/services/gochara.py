@@ -115,7 +115,8 @@ def compute_current_transits(
     swe.set_sid_mode(swe.SIDM_LAHIRI)
 
     if not date_str:
-        local_tz = pytz.timezone(timezone_str)
+        from backend.app.services.ephemeris import get_tz
+        local_tz = get_tz(timezone_str)
         now = datetime.now(local_tz)
         date_str = now.strftime("%Y-%m-%d")
         time_str = now.strftime("%H:%M:%S")

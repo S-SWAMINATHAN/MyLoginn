@@ -58,3 +58,20 @@ export function toTime24h(value?: string | null): string {
   }
   return `${String(h).padStart(2, "0")}:${mm}:${ss}`;
 }
+
+/** "00:32:00" → "12:32:00 AM", "16:40" → "04:40:00 PM" (12-hour, as Kalai prints). */
+export function to12h(t?: string | null): string {
+  if (!t) return "";
+  const m = String(t).match(/^(\d{1,2}):(\d{2})(?::(\d{2}))?/);
+  if (!m) return String(t);
+  const h = Number(m[1]);
+  const hh = h % 12 === 0 ? 12 : h % 12;
+  return `${String(hh).padStart(2, "0")}:${m[2]}:${m[3] ?? "00"} ${h < 12 ? "AM" : "PM"}`;
+}
+
+/** "2004-10-06" → "06-10-2004". */
+export function toDdMmYyyy(d?: string | null): string {
+  if (!d) return "";
+  const m = String(d).match(/^(\d{4})-(\d{2})-(\d{2})/);
+  return m ? `${m[3]}-${m[2]}-${m[1]}` : String(d);
+}

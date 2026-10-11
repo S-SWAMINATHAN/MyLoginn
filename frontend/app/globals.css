@@ -2,7 +2,25 @@
    New UI : Inter (Latin) + Outfit (display) + Noto Sans Tamil (Tamil glyphs)
    Legacy : Kavivanar / Caveat / Baloo Thambi 2 / Noto Serif Tamil / Cinzel …
             still required by the handwritten Jathagam and its ink/typeface panel. */
-@import url('https://fonts.googleapis.com/css2?family=Baloo+Thambi+2:wght@400;500;600;700&family=Caveat:wght@400..700&family=Cinzel:wght@400..900&family=Inter:wght@400;500;600;700;800&family=Kalam:wght@300;400;700&family=Kavivanar&family=Noto+Sans+Tamil:wght@300;400;500;600;700;800&family=Noto+Serif+Tamil:wght@300;400;500;600;700&family=Outfit:wght@300;400;500;600;700;800&display=swap');
+/* Google Fonts are linked from app/layout.tsx <head> (parallel download, not a
+   render-blocking @import chain). */
+
+/* Tamil-style panel faces: the owner's STMZH fonts converted to Unicode OpenType
+   (public/fonts/tamil). See lib/jathagamTheme.tsx -> TAMIL_FONTS. */
+@font-face { font-family: "MLA Tamil 090"; src: url("/fonts/tamil/MLATamil-090.woff2") format("woff2"); font-display: swap; }
+@font-face { font-family: "MLA Tamil 138"; src: url("/fonts/tamil/MLATamil-138.woff2") format("woff2"); font-display: swap; }
+@font-face { font-family: "MLA Tamil 089"; src: url("/fonts/tamil/MLATamil-089.woff2") format("woff2"); font-display: swap; }
+@font-face { font-family: "MLA Tamil 133"; src: url("/fonts/tamil/MLATamil-133.woff2") format("woff2"); font-display: swap; }
+@font-face { font-family: "MLA Tamil 108"; src: url("/fonts/tamil/MLATamil-108.woff2") format("woff2"); font-display: swap; }
+@font-face { font-family: "MLA Tamil 111"; src: url("/fonts/tamil/MLATamil-111.woff2") format("woff2"); font-display: swap; }
+@font-face { font-family: "MLA Tamil 103"; src: url("/fonts/tamil/MLATamil-103.woff2") format("woff2"); font-display: swap; }
+@font-face { font-family: "MLA Tamil 123"; src: url("/fonts/tamil/MLATamil-123.woff2") format("woff2"); font-display: swap; }
+@font-face { font-family: "MLA Tamil 144"; src: url("/fonts/tamil/MLATamil-144.woff2") format("woff2"); font-display: swap; }
+@font-face { font-family: "MLA Tamil 105"; src: url("/fonts/tamil/MLATamil-105.woff2") format("woff2"); font-display: swap; }
+@font-face { font-family: "MLA Tamil 126"; src: url("/fonts/tamil/MLATamil-126.woff2") format("woff2"); font-display: swap; }
+@font-face { font-family: "MLA Tamil 130"; src: url("/fonts/tamil/MLATamil-130.woff2") format("woff2"); font-display: swap; }
+@font-face { font-family: "MLA Tamil 132"; src: url("/fonts/tamil/MLATamil-132.woff2") format("woff2"); font-display: swap; }
+
 
 @tailwind base;
 @tailwind components;
@@ -80,7 +98,7 @@
   --ink-faint: #a3917a;
   --red: #b03726;
   --red-deep: #8e2b1c;
-  --font-tamil: 'Kavivanar', 'Baloo Thambi 2', cursive;
+  --font-tamil: 'Kavivanar', 'Noto Sans Tamil', cursive;
   --font-script: 'Kavivanar', cursive;
   --font-cinzel: 'Caveat', 'Kavivanar', cursive;
   --font-caveat: 'Caveat', cursive;
@@ -1349,3 +1367,102 @@
   body[data-print-target="general-names"] #general-name-generator .print\:static { position: static !important; }
 }
 
+
+
+/* ------------------------------------------------------------------
+   Kalai feature reports (Kanitha, KP, 12 Porutham, Names): text and
+   numbers must stay inside their cells for EVERY Tamil typeface and
+   colour of the Jathagam panel — wider/taller handwriting faces wrap
+   instead of spilling out, and names are never cut.
+   ------------------------------------------------------------------ */
+.kalai-page { line-height: 1.6; overflow-wrap: anywhere; }
+.kalai-page * { min-width: 0; }
+.kalai-page table { width: 100%; max-width: 100%; border-collapse: collapse; table-layout: auto; font-size: 0.92em; }
+.kalai-page th, .kalai-page td {
+  padding: 0.4rem 0.45rem; white-space: normal; overflow-wrap: anywhere; word-break: normal;
+  line-height: 1.55; vertical-align: top; overflow: visible; text-overflow: clip;
+}
+.kalai-page td.font-mono, .kalai-page .font-mono { white-space: nowrap; overflow-wrap: normal; }
+.kalai-page h1, .kalai-page h2, .kalai-page h3 { line-height: 1.4; overflow-wrap: anywhere; }
+.kalai-page .truncate { overflow: visible; white-space: normal; text-overflow: clip; }
+
+/* ==========================================================================
+ * Phones and tablets (all devices)
+ * ------------------------------------------------------------------------
+ * Report tables (graha / bhava spudam, ashtakavarga, prasthara, shadbala,
+ * varga, Kalachakra, Panchapakshi, KP …) are wider than a phone. Each one sits
+ * in a .table-scroll strip that slides sideways on its own, so the PAGE never
+ * scrolls sideways and nothing is cut. On desktop the tables fit, so the strip
+ * changes nothing. While a PDF is made (html.pdf-export) and in print the strip
+ * is switched off, so every column is captured.
+ * ========================================================================== */
+.table-scroll {
+  max-width: 100%;
+  overflow-x: auto;
+  overflow-y: hidden;
+  -webkit-overflow-scrolling: touch;
+  overscroll-behavior-x: contain;
+  scrollbar-width: thin;
+}
+.table-scroll > table { min-width: 100%; }
+html.pdf-export .table-scroll { overflow: visible !important; max-width: none !important; }
+@media print {
+  .table-scroll { overflow: visible !important; max-width: none !important; }
+}
+
+@media (max-width: 639px) {
+  /* report sheets: less outer padding, so a 360 px phone keeps ~330 px for content */
+  html:not(.pdf-export) .kalai-page.story-panel { padding: 14px !important; border-radius: 18px; }
+  html:not(.pdf-export) .kalai-page table { font-size: 10.5px; }
+  html:not(.pdf-export) .kalai-page th, html:not(.pdf-export) .kalai-page td { padding: 3px 2px; }
+  /* numbers and short codes stay whole; words wrap normally, so only genuinely
+     wide tables need to slide */
+  .kalai-page td.font-mono, .kalai-page td.tabular-nums { white-space: nowrap; }
+  /* big headings and long Tamil words wrap instead of widening the page */
+  h1, h2, h3 { overflow-wrap: anywhere; }
+}
+
+/* last safety net: a stray wide element can never make the whole page slide
+   sideways on a phone ('clip' keeps the sticky header working, unlike hidden) */
+html, body { max-width: 100%; overflow-x: clip; }
+
+/* smoother scrolling on touch devices; no 300 ms tap delay; no iOS text zoom on rotate */
+html { -webkit-text-size-adjust: 100%; text-size-adjust: 100%; }
+a, button, select, input, label { touch-action: manipulation; }
+/* iOS zooms into any input with text smaller than 16 px; keep form fields at 16 px on phones */
+@media (max-width: 639px) {
+  input:not([type="checkbox"]):not([type="radio"]), select, textarea { font-size: 16px !important; }
+}
+
+/* ---- smooth scrolling on phones and low-power devices ----------------------
+   A full report is ~130 000 px tall. On phones the panels drop their 20 px
+   backdrop blur (very costly while scrolling) and report pages that are off
+   screen are not rendered until they come near (content-visibility). Both are
+   switched off while a PDF is captured, so the PDF is unchanged. */
+@media (max-width: 1023px), (pointer: coarse) {
+  .story-panel { -webkit-backdrop-filter: none; backdrop-filter: none; }
+  .kalai-page { content-visibility: auto; contain-intrinsic-size: auto 1400px; }
+}
+html.pdf-export .kalai-page { content-visibility: visible !important; }
+@media print { .kalai-page { content-visibility: visible !important; } }
+
+/* ---- notch / rounded corners (iPhone, Android cut-outs) --------------------- */
+.glass-nav {
+  padding-left: env(safe-area-inset-left);
+  padding-right: env(safe-area-inset-right);
+}
+
+/* Table cells wrap between WORDS only. The page-wide `overflow-wrap: anywhere`
+   (kept for paragraphs) let a narrow screen squeeze a column down to one letter
+   (சந்|தி|ர|ன்); with break-word the column keeps its longest word and a wide
+   table slides inside its .table-scroll strip instead. */
+.kalai-page th, .kalai-page td { overflow-wrap: break-word; word-break: normal; }
+
+/* single-page sheet: one-column details on phones, two columns elsewhere
+   (and always two columns while a PDF is captured or printed) */
+.sheet-narrow { display: none; }
+@media (max-width: 639px) {
+  html:not(.pdf-export) .sheet-narrow { display: block; }
+  html:not(.pdf-export) .sheet-wide { display: none; }
+}
+@media print { .sheet-narrow { display: none !important; } .sheet-wide { display: block !important; } }

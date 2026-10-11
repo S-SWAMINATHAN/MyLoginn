@@ -77,8 +77,13 @@ def test_vakhyam_panchangam_calculation():
     # Compute with Vakhyam
     eph_vak = compute_planetary_positions(jd, lat, lon, panchangam_system="vakhyam")
 
-    assert "Surya Siddhanta" in eph_vak["basic_details"]["ayanamsa_name"]
+    assert "Vakkiyam" in eph_vak["basic_details"]["ayanamsa_name"]
     assert "Lahiri" in eph_thiru["basic_details"]["ayanamsa_name"]
-    # The sidereal positions should reflect Surya Siddhanta difference
     assert eph_vak["basic_details"]["ayanamsa_value"] != eph_thiru["basic_details"]["ayanamsa_value"]
+    # Vakkiyam mode must take its planets from the Vakkiyam engine (not Swiss Ephemeris)
+    from backend.app.services.vakkiyam import vakkiyam_for_jd
+    vak = vakkiyam_for_jd(jd, lat, lon)
+    for p in ("Sun", "Moon", "Mars", "Mercury", "Jupiter", "Venus", "Saturn", "Rahu"):
+        assert abs(eph_vak["positions_by_name"][p]["total_degree"] - round(vak[p]["lon"] % 360.0, 4)) < 1e-6
+    assert abs(eph_vak["lagna_info"]["total_degree"] - round(vak["Lagna"]["lon"] % 360.0, 4)) < 1e-6
 

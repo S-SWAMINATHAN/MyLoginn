@@ -13,7 +13,7 @@ export const Footer: React.FC<FooterProps> = ({ lang, note }) => (
     <div className="mx-auto flex max-w-7xl flex-col items-center gap-4 px-4 py-10 text-center sm:px-6 lg:px-8">
       <div className="flex items-center gap-2.5">
         {/* eslint-disable-next-line @next/next/no-img-element */}
-        <img src="/logo-mark.png" alt="" width={28} height={28} className="h-7 w-7 rounded-lg" />
+        <img src="/logo-mark-144.png" alt="" width={144} height={144} className="h-8 w-8 object-contain" />
         <span className="font-display text-base font-semibold brand-gradient-text">MyLoginn Astrology</span>
       </div>
       <p className="max-w-2xl text-sm text-muted">

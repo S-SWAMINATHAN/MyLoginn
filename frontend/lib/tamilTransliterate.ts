@@ -19,10 +19,19 @@
 // * Case is ignored for phonetics (normal users type "Ramesh", not the
 //   Azhagi/Google "capital = retroflex" convention, and treating the capital R
 //   in "Ramesh" as ற would be wrong). The one exception: a short ALL-CAPS token
-//   such as "CM" is read as initials and spelled with Tamil letter names
-//   (சி.எம்.).
+//   such as "CM" is read as initials, written with each letter's Tamil sound
+//   (ச.ம.). A single capital letter is an initial only when written as one
+//   ("C." or "C Prasath" → ச.); on its own it is the first sound of a name
+//   being typed, so "C" → ச.
+// * Letters follow the usual Thanglish keyboard reading: c / ch / s = ச,
+//   k / g = க, sh = ஷ, f = ஃப, ng + vowel = ங்க, nj + vowel = ஞ்ச, nk = ங்க,
+//   nch = ஞ்ச, a word-final s = ஸ், a final -y = இ, English silent final e
+//   dropped. The less common reading (c = க, nn = ன்ன, medial d = த,
+//   th = த்த …) is still offered further down the list.
 // * This is a suggestion aid only. It never runs on a value unless the user
 //   explicitly picks the suggestion.
+
+import { curatedPlaceTa } from "@/lib/placeNamesTa";
 
 const TAMIL_RANGE = /[\u0B80-\u0BFF]/;
 export const hasTamil = (s: string): boolean => TAMIL_RANGE.test(s || "");
@@ -43,8 +52,9 @@ const VOWEL_SIGN: Record<string, string> = {
 };
 
 // Latin vowel spellings -> canonical vowel keys, longest first.
+// ("ay" is NOT read as ஐ: Vijay → விஜய், Jayanthi → ஜயந்தி.)
 const VOWEL_TOKENS: Array<[string, string]> = [
-  ["aa", "aa"], ["ai", "ai"], ["au", "au"], ["ay", "ai"],
+  ["aa", "aa"], ["ai", "ai"], ["au", "au"],
   ["ee", "ii"], ["ii", "ii"], ["ie", "ii"],
   ["oo", "uu"], ["uu", "uu"], ["ou", "uu"],
   ["oa", "oo"],
@@ -56,14 +66,15 @@ const VOWEL_TOKENS: Array<[string, string]> = [
 const CONS_TOKENS: Array<[string, string]> = [
   ["ksh", "ksh"], ["sri", "SRI"], ["shr", "sh"],
   ["zh", "zh"], ["sh", "sh"], ["ch", "ch"], ["th", "th"], ["dh", "th"],
-  ["ng", "ng"], ["nj", "nj"], ["gn", "nj"],
+  ["ng", "ng"], ["nj", "nj"], ["ck", "k"],
   ["kh", "k"], ["gh", "k"], ["ph", "p"], ["bh", "p"], ["jh", "j"],
   ["tt", "TT"], ["dd", "TT"], ["ll", "LL"], ["nn", "NN"], ["rr", "RR"],
-  ["k", "k"], ["g", "k"], ["c", "k"], ["q", "k"],
+  // Thanglish: "c" is ச (c = ச, ch = ச, k = க) — "Celvi" → செல்வி.
+  ["k", "k"], ["g", "k"], ["c", "c"], ["q", "k"],
   ["j", "j"], ["z", "j"],
   ["t", "T"], ["d", "D"],
   ["n", "N"], ["m", "m"],
-  ["p", "p"], ["b", "p"], ["f", "p"],
+  ["p", "p"], ["b", "p"], ["f", "f"],
   ["y", "y"], ["r", "r"], ["l", "l"], ["v", "v"], ["w", "v"],
   ["s", "s"], ["h", "h"], ["x", "x"],
 ];
@@ -71,15 +82,18 @@ const CONS_TOKENS: Array<[string, string]> = [
 // Unambiguous consonant key -> Tamil base letter.
 const CONS_BASE: Record<string, string> = {
   k: "க", ng: "ங", ch: "ச", nj: "ஞ", j: "ஜ", th: "த", p: "ப", m: "ம",
-  y: "ய", r: "ர", l: "ல", v: "வ", zh: "ழ", sh: "ஷ", s: "ச", h: "ஹ",
+  y: "ய", r: "ர", l: "ல", v: "வ", zh: "ழ", sh: "ஷ", s: "ச", h: "ஹ", f: "ஃப",
 };
 
-// Tamil names of Latin letters, for initials such as "CM" -> சி.எம்.
+// Initials are written with the letter's Tamil SOUND, the same reading as the
+// rest of the Thanglish rules (c = ச): "C.M." -> ச.ம., "R.K." -> ர.க., "S." -> ச.
+// (Not the English letter names சி / எம் / ஆர்.) Keep in sync with
+// backend/app/services/pdf/ta_text.py LETTER_TA.
 const LETTER_NAMES: Record<string, string> = {
-  A: "ஏ", B: "பி", C: "சி", D: "டி", E: "இ", F: "எஃப்", G: "ஜி", H: "ஹெச்",
-  I: "ஐ", J: "ஜே", K: "கே", L: "எல்", M: "எம்", N: "என்", O: "ஓ", P: "பி",
-  Q: "க்யூ", R: "ஆர்", S: "எஸ்", T: "டி", U: "யு", V: "வி", W: "டபிள்யு",
-  X: "எக்ஸ்", Y: "ஒய்", Z: "இசட்",
+  A: "அ", B: "ப", C: "ச", D: "த", E: "எ", F: "ஃப", G: "க", H: "ஹ",
+  I: "இ", J: "ஜ", K: "க", L: "ல", M: "ம", N: "ந", O: "ஒ", P: "ப",
+  Q: "க", R: "ர", S: "ச", T: "த", U: "உ", V: "வ", W: "வ",
+  X: "க்ஸ", Y: "ய", Z: "ஜ",
 };
 
 interface Opts {
@@ -93,6 +107,12 @@ interface Opts {
   llRetro: boolean;         // ll -> ள்ள (Pollachi) vs ல்ல (Nalla)
   initialALong: boolean;    // word-initial a -> ஆ (Anand -> ஆனந்த்) vs அ (Arun)
   chGeminate: boolean;      // intervocalic ch -> ச்ச (Pollachi, Sachin)
+  cHard: boolean;           // c -> க (Coimbatore) vs ச (Celvi; the Thanglish default)
+  nnRetro: boolean;         // nn -> ண்ண (Kannan) vs ன்ன (Chennai, Ponnu)
+  medialDDental: boolean;   // d between vowels -> த (Madurai) vs ட (Vadivel)
+  thGeminate: boolean;      // th between vowels -> த்த (Muthu) vs த (Kavitha)
+  silentFinalE: boolean;    // English silent final e (Grace -> கிரேஸ், Mysore -> மைசூர்)
+  loneConsBare: boolean;    // a lone consonant being typed: "c" -> ச (vs ச்)
 }
 
 type Seg = { kind: "C"; key: string } | { kind: "V"; key: string };
@@ -102,6 +122,19 @@ function tokenizeWord(word: string): Seg[] {
   const segs: Seg[] = [];
   let i = 0;
   outer: while (i < w.length) {
+    // "oi" inside a word is ஒ + ய் (Coimbatore -> கோயம்...), not ஒ + இ
+    if (i > 0 && w.startsWith("oi", i)) {
+      segs.push({ kind: "V", key: "o" }, { kind: "C", key: "y" });
+      i += 2;
+      continue;
+    }
+    // y after a consonant is a vowel: final -y = இ (Shanthy -> சாந்தி),
+    // before another consonant = ஐ (Mysore -> மைசூர்)
+    if (w[i] === "y" && segs.length && segs[segs.length - 1].kind === "C" && !/[aeiou]/.test(w[i + 1] || "")) {
+      segs.push({ kind: "V", key: i + 1 >= w.length ? "i" : "ai" });
+      i += 1;
+      continue;
+    }
     for (const [lat, key] of VOWEL_TOKENS) {
       if (w.startsWith(lat, i)) {
         segs.push({ kind: "V", key });
@@ -125,14 +158,32 @@ const isC = (s?: Seg) => !!s && s.kind === "C";
 const isV = (s?: Seg) => !!s && s.kind === "V";
 const DOUBLE_KEYS = new Set(["TT", "LL", "NN", "RR"]);
 
-function transliterateWord(word: string, o: Opts): string {
-  // Initials: short ALL-CAPS token (CM, R, KV)
-  if (word.length <= 3 && /^[A-Z]+$/.test(word)) {
-    return word.split("").map((ch) => LETTER_NAMES[ch] || ch).join(".") + ".";
+function transliterateWord(word: string, o: Opts, asInitials = false, dotFollows = false): string {
+  // Initials (CM, KVS, or a capital written as an initial: "C." / "C Prasath")
+  // are written with each letter's Tamil sound: ச.ம. A capital letter on its own —
+  // the first key of a name being typed — is a sound, not an initial: "C" → ச.
+  if (asInitials) {
+    // the text's own "." after an initial is kept as typed (no "ச..")
+    return word.split("").map((ch) => LETTER_NAMES[ch] || ch).join(".") + (dotFollows ? "" : ".");
   }
   if (!hasLatin(word)) return word;
 
-  const segs = tokenizeWord(word);
+  let segs = tokenizeWord(word);
+  // English silent final e after vowel + consonant: Grace, Mysore, Vellore
+  if (o.silentFinalE && segs.length >= 3 && /e$/i.test(word)) {
+    const n = segs.length;
+    if (isV(segs[n - 1]) && segs[n - 1].key === "e" && isC(segs[n - 2]) && isV(segs[n - 3])) segs = segs.slice(0, n - 1);
+  }
+  // A single consonant being typed ("c", "k", "s") is shown as the bare letter
+  if (o.loneConsBare && segs.length === 1 && segs[0].kind === "C") {
+    const k = segs[0].key;
+    const bare =
+      k === "c" ? (o.cHard ? "க" : "ச")
+      : k === "N" ? "ந"
+      : k === "T" || k === "D" ? (o.initialDDental ? "த" : "ட")
+      : CONS_BASE[k];
+    if (bare) return bare;
+  }
   const vowelCount = segs.filter((s) => s.kind === "V").length;
   const lastVowelIdx = (() => { for (let k = segs.length - 1; k >= 0; k--) if (segs[k].kind === "V") return k; return -1; })();
   let out = "";
@@ -164,6 +215,7 @@ function transliterateWord(word: string, o: Opts): string {
         if (isLast && o.finalALong && isC(prev)) vk = "aa";
         else if (!prev && o.initialALong) vk = "aa";
         else if (vowelCount === 1 && i === lastVowelIdx && consAfter >= 1) vk = "aa"; // monosyllable: Ram -> ராம்
+        else if (i === lastVowelIdx && consAfter === 1 && vowelCount > 1 && (next?.key === "sh" || next?.key === "s")) vk = "aa"; // Prakash -> பிரகாஷ், Akash -> ஆகாஷ்
         else if (i === lastVowelIdx && consAfter >= 1 && o.closedFinalALong && vowelCount > 1) vk = "aa";
         else if (o.aLongBeforeRCluster && next?.kind === "C" && next.key === "r" && isC(next2)) vk = "aa";
       }
@@ -181,27 +233,45 @@ function transliterateWord(word: string, o: Opts): string {
         continue;
       case "ksh": base = "க்ஷ"; break;
       case "x": base = "க்ஸ"; break;
+      case "c":
+        base = o.cHard ? "க" : "ச";
+        break;
+      case "s":
+        // a word-final s is ஸ் (Vikas -> விகாஸ், Thomas -> தோமஸ்); elsewhere ச (Suresh -> சுரேஷ்)
+        base = isLast && isV(prev) ? "ஸ" : "ச";
+        break;
+      case "ng":
+        // ng before a vowel is ங்க (Mangalam -> மங்கலம், Ranga -> ரங்கா)
+        base = isV(next) ? "ங்க" : "ங";
+        break;
+      case "nj":
+        // nj before a vowel is ஞ்ச (Thanjavur -> தஞ்சாவூர், Anjali -> அஞ்சலி)
+        base = isV(next) ? "ஞ்ச" : "ஞ";
+        break;
       case "N":
         if (!prev) base = "ந";
+        else if (isC(next) && (next!.key === "k" || (next!.key === "c" && o.cHard))) base = "ங"; // nk -> ங்க (Shankar)
+        else if (isC(next) && (next!.key === "ch" || next!.key === "j")) base = "ஞ"; // nch -> ஞ்ச (Panchami)
         else if (isC(next) && (next!.key === "th" || next!.key === "D")) base = "ந"; // nd / nth -> ந்த (Anand, Sundar)
         else if (isC(next) && (next!.key === "T" || next!.key === "TT")) base = "ண";
         else if (isV(prev) && isV(next)) base = o.medialNRetro ? "ண" : "ன";
         else base = "ன";
         break;
-      case "NN": base = "ண்ண"; break;
+      case "NN": base = o.nnRetro ? "ண்ண" : "ன்ன"; break;
       case "LL": base = o.llRetro ? "ள்ள" : "ல்ல"; break;
       case "RR": base = "ற்ற"; break;
       case "TT": base = "ட்ட"; break;
       case "D":
         if (prev && prev.kind === "C" && prev.key === "N") base = "த"; // nd -> ந்த
-        else base = !prev ? (o.initialDDental ? "த" : "ட") : "ட";
+        else if (!prev) base = o.initialDDental ? "த" : "ட";
+        else base = o.medialDDental && isV(prev) && isV(next) ? "த" : "ட";
         break;
       case "T":
         base = !prev ? (o.initialDDental ? "த" : "ட") : "ட";
         break;
       case "th":
         // r+th geminates: Karthik -> கார்த்திக், Keerthi -> கீர்த்தி
-        base = prev && prev.kind === "C" && prev.key === "r" && isV(next) ? "த்த" : "த";
+        base = (prev && prev.kind === "C" && prev.key === "r" && isV(next)) || (o.thGeminate && isV(prev) && isV(next)) ? "த்த" : "த";
         break;
       case "ch":
         base = o.chGeminate && isV(prev) && isV(next) ? "ச்ச" : "ச";
@@ -214,7 +284,7 @@ function transliterateWord(word: string, o: Opts): string {
     if (!isV(next)) {
       // Consonant + r/l cluster (initial or medial): split with a short i
       // (பிரியா, குருபிரசாத்) instead of a pulli, per standard Tamil orthography.
-      const clusterable = ["k", "p", "T", "D", "th", "s", "sh", "v", "m"].includes(s.key);
+      const clusterable = ["k", "c", "p", "f", "T", "D", "th", "s", "sh", "v", "m"].includes(s.key);
       if (o.splitCluster && clusterable && isC(next) && next!.key === "r" && (!prev || isV(prev))) {
         out += VOWEL_SIGN.i;
       } else {
@@ -227,10 +297,21 @@ function transliterateWord(word: string, o: Opts): string {
 
 function transliterateText(text: string, o: Opts): string {
   // Preserve separators (spaces, dots, commas) and any Tamil already typed.
-  return text
-    .split(/(\s+|[.,\-/()])/)
-    .map((part) => (hasLatin(part) ? transliterateWord(part, o) : part))
+  const parts = text.split(/(\s+|[.,\-/()])/);
+  return parts
+    .map((part, i) => {
+      if (!hasLatin(part)) return part;
+      const rest = parts.slice(i + 1).join("");
+      return transliterateWord(part, o, isInitials(part, rest), rest.startsWith("."));
+    })
     .join("");
+}
+
+/** "CM", "KVS", "C." and "C Prasath" are initials; a lone "C" (being typed) and "SRI" are not. */
+function isInitials(word: string, rest: string): boolean {
+  if (!/^[A-Z]+$/.test(word) || word.length > 3) return false;
+  if (word.length === 1) return /^\s*\./.test(rest) || /^\s+\S/.test(rest);
+  return word !== "SRI";
 }
 
 // Each ambiguity flag with its default and a "cost" for flipping it. Lower
@@ -246,29 +327,40 @@ const FLAGS: Array<{ key: keyof Opts; def: any; alt: any[]; cost: number }> = [
   { key: "chGeminate", def: true, alt: [false], cost: 2 },
   { key: "splitCluster", def: true, alt: [false], cost: 2 },
   { key: "initialDDental", def: true, alt: [false], cost: 3 },
+  { key: "cHard", def: false, alt: [true], cost: 2 },
+  { key: "nnRetro", def: true, alt: [false], cost: 1 },
+  { key: "medialDDental", def: false, alt: [true], cost: 1 },
+  { key: "thGeminate", def: false, alt: [true], cost: 1 },
+  { key: "silentFinalE", def: true, alt: [false], cost: 2 },
+  { key: "loneConsBare", def: true, alt: [false], cost: 1 },
 ];
+
+// Only spellings within MAX_COST of the most conventional one are tried: the
+// full product of every flag (~98,000 combinations) is far too slow to run on
+// each keystroke, and spellings that far from the convention are never wanted.
+const MAX_COST = 5;
 
 function* optionCombos(): Generator<{ o: Opts; cost: number }> {
   const n = FLAGS.length;
-  const choices = FLAGS.map((f) => [f.def, ...f.alt]);
-  const idx = new Array(n).fill(0);
-  while (true) {
-    const o: any = {};
-    let cost = 0;
-    for (let k = 0; k < n; k++) {
-      o[FLAGS[k].key] = choices[k][idx[k]];
-      if (idx[k] > 0) cost += FLAGS[k].cost;
+  const pick: any[] = FLAGS.map((f) => f.def);
+  function* walk(k: number, cost: number): Generator<{ o: Opts; cost: number }> {
+    if (k === n) {
+      const o: any = {};
+      for (let j = 0; j < n; j++) o[FLAGS[j].key] = pick[j];
+      yield { o, cost };
+      return;
     }
-    yield { o, cost };
-    let k = 0;
-    while (k < n) {
-      idx[k]++;
-      if (idx[k] < choices[k].length) break;
-      idx[k] = 0;
-      k++;
+    pick[k] = FLAGS[k].def;
+    yield* walk(k + 1, cost);
+    if (cost + FLAGS[k].cost <= MAX_COST) {
+      for (const alt of FLAGS[k].alt) {
+        pick[k] = alt;
+        yield* walk(k + 1, cost + FLAGS[k].cost);
+      }
+      pick[k] = FLAGS[k].def;
     }
-    if (k === n) return;
   }
+  yield* walk(0, 0);
 }
 
 /**
@@ -306,5 +398,7 @@ export function toTamil(text: string): string {
 export function tamilPlaceLabel(englishName: string, curatedTa?: string | null): string {
   if (curatedTa && hasTamil(curatedTa)) return curatedTa;
   const primary = (englishName || "").split(",")[0].trim();
-  return toTamil(primary) || englishName;
+  // Standard Tamil spelling first (Palakkad → பாலக்காடு); a letter-by-letter
+  // guess only for places that are not in lib/placeNamesTa.ts.
+  return curatedPlaceTa(primary) || toTamil(primary) || englishName;
 }

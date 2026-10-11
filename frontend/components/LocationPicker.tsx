@@ -5,6 +5,7 @@ import { MapPin, Search, ChevronDown, Check, Plus, Globe, Navigation, Loader2 } 
 import { getGroupedLocationsApi, suggestPlacesApi, directGeocodeApi } from "@/lib/api";
 import { GroupedLocations, LocationItem, PlaceSuggestion } from "@/lib/types";
 import { tamilPlaceLabel } from "@/lib/tamilTransliterate";
+import { rememberPlaceTa } from "@/lib/placeLabel";
 
 interface LocationPickerProps {
   value: string;
@@ -69,8 +70,13 @@ export const LocationPicker: React.FC<LocationPickerProps> = ({
   // Priority: curated Tamil name (backend KNOWN_LOCATIONS) -> phonetic
   // Tamil transliteration of the English name.
   const [taLabels, setTaLabels] = useState<Record<string, string>>({});
-  const rememberTa = (english: string, ta: string) =>
+  // The Tamil shown here is also recorded for the reports and PDFs
+  // (lib/placeLabel.ts), so they print exactly this name — not a fresh
+  // letter-by-letter transliteration of the English value.
+  const rememberTa = (english: string, ta: string) => {
+    rememberPlaceTa(english, ta);
     setTaLabels((prev) => (prev[english] === ta ? prev : { ...prev, [english]: ta }));
+  };
 
   const curatedTaFor = (english: string): string | undefined => {
     if (!groupedData || !english) return undefined;
@@ -85,6 +91,10 @@ export const LocationPicker: React.FC<LocationPickerProps> = ({
     return taLabels[value] || tamilPlaceLabel(value, curatedTaFor(value));
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [lang, value, taLabels, groupedData]);
+
+  useEffect(() => {
+    if (value && triggerTa) rememberPlaceTa(value, triggerTa);
+  }, [value, triggerTa]);
 
   useEffect(() => {
     getGroupedLocationsApi()
@@ -213,7 +223,7 @@ export const LocationPicker: React.FC<LocationPickerProps> = ({
             lang === "ta" && triggerTa && triggerTa !== value ? (
               <>
                 {triggerTa}
-                <span className="ml-1.5 text-[11px] font-normal text-muted">({value})</span>
+                <span className="ml-1.5 hidden text-[11px] font-normal text-muted sm:inline">({value})</span>
               </>
             ) : (
               value

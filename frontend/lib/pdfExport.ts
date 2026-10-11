@@ -52,6 +52,11 @@ import html2canvas from "html2canvas";
 import { toCanvas as foreignObjectToCanvas } from "html-to-image";
 
 export const A4_MM = { w: 210, h: 297 };
+export const A5_MM = { w: 148, h: 210 };
+/** Paper of the exported PDF. A5 has the same 1 : √2 shape as A4, so every
+ *  captured page keeps exactly the same layout, only the sheet is smaller. */
+export type PaperSize = "A4" | "A5";
+const paperMm = (p?: PaperSize) => (p === "A5" ? A5_MM : A4_MM);
 export const DEFAULT_MARGIN_MM = 4;
 export const PAGE_WIDTH_PX = 794; // A4 width @96dpi — what the sheets are built at
 
@@ -71,6 +76,12 @@ export async function waitForRenderReady(extraMs = 150): Promise<void> {
     }
   } catch {
     /* Font Loading API unavailable — carry on */
+  }
+  // Chapter 15 (Kalai tables) loads its data after the chart; wait up to 25 s
+  // so a PDF never captures the "Computing…" placeholder.
+  const t0 = Date.now();
+  while (document.querySelector('[data-kalai-loaded="0"]') && Date.now() - t0 < 25000) {
+    await new Promise((r) => setTimeout(r, 250));
   }
   await new Promise((r) => requestAnimationFrame(() => setTimeout(r, extraMs)));
 }
@@ -183,23 +194,36 @@ export async function captureNode(
 export function addCanvasToPdf(
   pdf: jsPDF,
   canvas: HTMLCanvasElement,
-  opts: { margin?: number; background?: string } = {}
+  opts: { margin?: number; background?: string; keep?: Array<[number, number]>; fitOnePage?: boolean; paper?: PaperSize } = {}
 ): void {
-  const margin = opts.margin ?? DEFAULT_MARGIN_MM;
-  const usableW = A4_MM.w - margin * 2;
-  const usableH = A4_MM.h - margin * 2;
+  const sheet = paperMm(opts.paper);
+  const fmt = opts.paper === "A5" ? "a5" : "a4";
+  // margins scale with the sheet so A5 keeps the same proportions as A4
+  const margin = (opts.margin ?? DEFAULT_MARGIN_MM) * (sheet.w / A4_MM.w);
+  const usableW = sheet.w - margin * 2;
+  const usableH = sheet.h - margin * 2;
   const ratio = canvas.height / canvas.width;
   const a4Ratio = usableH / usableW;
+  // Coloured background (turmeric): paint the whole sheet, margins included,
+  // so the page is one colour edge to edge. White needs nothing.
+  const paintSheet = () => {
+    const bg = (opts.background || "#ffffff").toLowerCase();
+    if (bg === "#ffffff" || bg === "#fff" || bg === "white") return;
+    pdf.setFillColor(bg);
+    pdf.rect(0, 0, sheet.w, sheet.h, "F");
+  };
 
-  if (ratio <= a4Ratio * 1.15) {
+  // The single-page jathagam (and any sheet marked .single-sheet) always prints on ONE page.
+  if (ratio <= a4Ratio * 1.15 || opts.fitOnePage) {
     let w = usableW;
     let h = w * ratio;
     if (h > usableH) {
       h = usableH;
       w = h / ratio;
     }
-    const x = (A4_MM.w - w) / 2;
-    const y = (A4_MM.h - h) / 2;
+    const x = (sheet.w - w) / 2;
+    const y = (sheet.h - h) / 2;
+    paintSheet();
     pdf.addImage(canvas.toDataURL("image/jpeg", 0.95), "JPEG", x, y, w, h, undefined, "FAST");
     return;
   }
@@ -208,7 +232,17 @@ export function addCanvasToPdf(
   let offset = 0;
   let page = 0;
   while (offset < canvas.height) {
-    const thisSlice = Math.min(sliceHeightPx, canvas.height - offset);
+    let thisSlice = Math.min(sliceHeightPx, canvas.height - offset);
+    // Move the cut up so it never falls inside a chart, table row or card
+    // (a block taller than one page is still split, there is no other way).
+    if (offset + thisSlice < canvas.height && opts.keep) {
+      const cut = offset + thisSlice;
+      let best = cut;
+      for (const [top, bottom] of opts.keep) {
+        if (top < best && bottom > best && bottom - top < sliceHeightPx && top > offset + sliceHeightPx * 0.2) best = top;
+      }
+      thisSlice = Math.max(1, best - offset);
+    }
     const part = document.createElement("canvas");
     part.width = canvas.width;
     part.height = thisSlice;
@@ -218,7 +252,8 @@ export function addCanvasToPdf(
     ctx.fillRect(0, 0, part.width, part.height);
     ctx.drawImage(canvas, 0, offset, canvas.width, thisSlice, 0, 0, canvas.width, thisSlice);
 
-    if (page > 0) pdf.addPage("a4", "portrait");
+    if (page > 0) pdf.addPage(fmt, "portrait");
+    paintSheet();
     pdf.addImage(
       part.toDataURL("image/jpeg", 0.95),
       "JPEG",
@@ -234,6 +269,20 @@ export function addCanvasToPdf(
   }
 }
 
+/**
+ * The page background chosen in the colour panel (white / turmeric), read from
+ * the --jat-page-bg variable the theme sets on the document island; white when
+ * the panel is on "palette default" (the earlier behaviour).
+ */
+export function pageBackgroundOf(node: HTMLElement): string {
+  try {
+    const v = getComputedStyle(node).getPropertyValue("--jat-page-bg").trim();
+    return v || "#ffffff";
+  } catch {
+    return "#ffffff";
+  }
+}
+
 /** Captures one node per PDF page and saves the file. */
 export async function exportNodesToPdf(
   nodes: HTMLElement[],
@@ -242,23 +291,60 @@ export async function exportNodesToPdf(
     margin?: number;
     background?: string;
     scale?: number;
+    /** A4 (default) or A5 sheet. */
+    paper?: PaperSize;
     onProgress?: (done: number, total: number) => void;
   } = {}
 ): Promise<void> {
   if (!nodes.length) throw new Error("Nothing to export.");
 
-  const pdf = new jsPDF({ orientation: "portrait", unit: "mm", format: "a4", compress: true });
+  const fmt = options.paper === "A5" ? "a5" : "a4";
+  const pdf = new jsPDF({ orientation: "portrait", unit: "mm", format: fmt, compress: true });
 
+  // Phones / tablets: a page narrower than A4 is laid out at A4 width while it is
+  // captured, and the table scroll strips are switched off (html.pdf-export), so
+  // a PDF made on a phone has the same full-width pages and every table column
+  // as one made on a computer. Desktop pages (already wider) are not touched.
+  const root = document.documentElement;
+  root.classList.add("pdf-export");
+  const widened: Array<[HTMLElement, string, string]> = [];
+  for (const n of nodes) {
+    if (n.getBoundingClientRect().width < PAGE_WIDTH_PX) {
+      widened.push([n, n.style.width, n.style.maxWidth]);
+      n.style.width = `${PAGE_WIDTH_PX}px`;
+      n.style.maxWidth = "none";
+    }
+  }
+  try {
   for (let i = 0; i < nodes.length; i++) {
     options.onProgress?.(i, nodes.length);
-    const canvas = await captureNode(nodes[i], {
+    const node = nodes[i];
+    const background = options.background ?? pageBackgroundOf(node);
+    const canvas = await captureNode(node, {
       scale: options.scale,
-      background: options.background,
+      background,
     });
-    if (i > 0) pdf.addPage("a4", "portrait");
-    addCanvasToPdf(pdf, canvas, { margin: options.margin, background: options.background });
+    // blocks that must stay whole, in canvas pixels
+    const nodeTop = node.getBoundingClientRect().top;
+    const k = canvas.height / Math.max(1, node.scrollHeight || node.getBoundingClientRect().height);
+    const keep: Array<[number, number]> = [];
+    node.querySelectorAll<HTMLElement>(".kalai-chart, canvas, svg, tr, .pdf-keep, .break-inside-avoid, h2, h3").forEach((el) => {
+      const r = el.getBoundingClientRect();
+      if (r.height > 0) keep.push([(r.top - nodeTop) * k, (r.bottom - nodeTop) * k]);
+    });
+    if (i > 0) pdf.addPage(fmt, "portrait");
+    const fitOnePage = !!node.querySelector(".single-sheet") || node.classList.contains("single-sheet");
+    addCanvasToPdf(pdf, canvas, { margin: options.margin, background, keep, fitOnePage, paper: options.paper });
     // Yield so the browser repaints the progress label and can reclaim memory.
     await new Promise((r) => setTimeout(r, 25));
+  }
+
+  } finally {
+    for (const [n, w, mw] of widened) {
+      n.style.width = w;
+      n.style.maxWidth = mw;
+    }
+    root.classList.remove("pdf-export");
   }
 
   options.onProgress?.(nodes.length, nodes.length);

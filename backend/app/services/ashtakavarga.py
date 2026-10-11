@@ -61,7 +61,11 @@ ASHTAKAVARGA_RULES = {
     "Venus": {
         "Sun": [8, 11, 12],
         "Moon": [1, 2, 3, 4, 5, 8, 9, 11, 12],
-        "Mars": [3, 4, 6, 9, 11, 12],
+        # Kalai Magal parity: Mars gives Venus bindus in 3,5,6,9,11,12
+        # (BPHS 66, Santhanam edition). The earlier 3,4,6,... row shifted one
+        # bindu between signs 4 and 5 from Mars; with this row all 12
+        # Sarvashtakavarga totals match a Kalai Magal Type-D report.
+        "Mars": [3, 5, 6, 9, 11, 12],
         "Mercury": [3, 5, 6, 9, 11],
         "Jupiter": [5, 8, 9, 10, 11],
         "Venus": [1, 2, 3, 4, 5, 8, 9, 10, 11],

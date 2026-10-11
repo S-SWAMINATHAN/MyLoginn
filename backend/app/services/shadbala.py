@@ -546,7 +546,13 @@ def calculate_shadbala(
     is_shukla_paksha: bool,
     vaaram_lord: str,
     birth_hour: float,
-    day_num: int
+    day_num: int,
+    jd: float = None,
+    lat: float = None,
+    lon: float = None,
+    date_str: str = None,
+    time_str: str = None,
+    tz_name: str = "Asia/Kolkata",
 ) -> Dict[str, Any]:
     """
     Computes complete Shadbala (6-fold planetary strength) for all 7 classical planets.
@@ -565,6 +571,12 @@ def calculate_shadbala(
     --------
     Dict with per-planet 6-fold breakdown + total + strength classification.
     """
+    # Kalai Magal parity (Phase 2): when the birth context is supplied, the
+    # full BPHS engine in kalai_shadbala.py is used and mapped onto this
+    # function's existing output schema (values in virupas, as before).
+    if None not in (jd, lat, lon, date_str, time_str):
+        return _kalai_to_legacy(jd, lat, lon, date_str, time_str, tz_name)
+
     hora_lord = _compute_hora_lord(birth_hour, day_num)
     results = {}
 
@@ -650,4 +662,66 @@ def calculate_shadbala(
     return {
         "planets": results,
         "classical_source": "Brihat Parashara Hora Shastra Ch. 27–29 (Shadbala Adhyaya)"
+    }
+
+
+def _kalai_to_legacy(jd, lat, lon, date_str, time_str, tz_name):
+    from backend.app.services.kalai_shadbala import compute_kalai_shadbala_auto
+    k = compute_kalai_shadbala_auto(jd, lat, lon, date_str, time_str, tz_name)
+    results = {}
+    for name, p in k["planets"].items():
+        sp, kp = p["sthana_parts"], p["kala_parts"]
+        total_rupas = p["total_rupas"]
+        min_required = MINIMUM_RUPAS.get(name, 5.0)
+        if total_rupas >= min_required * 1.5:
+            strength, strength_ta = "Very Strong", "மிக பலமானது"
+        elif total_rupas >= min_required:
+            strength, strength_ta = "Strong", "பலமானது"
+        elif total_rupas >= min_required * 0.75:
+            strength, strength_ta = "Average", "சராசரி"
+        elif total_rupas >= min_required * 0.5:
+            strength, strength_ta = "Weak", "பலவீனமானது"
+        else:
+            strength, strength_ta = "Very Weak", "மிக பலவீனமானது"
+        results[name] = {
+            "planet": name,
+            "planet_ta": p["planet_ta"],
+            "sthana_bala": {
+                "uchcha_bala": round(sp["uchcha"], 2),
+                "saptavargaja_bala": round(sp["saptavargaja"], 2),
+                "ojhayugma_bala": round(sp["ojayugma"], 2),
+                "kendradi_bala": round(sp["kendradi"], 2),
+                "drekkana_bala": round(sp["drekkana"], 2),
+                "total": round(sp["total"], 2),
+            },
+            "dig_bala": round(p["dig"] * 60, 2),
+            "kaala_bala": {
+                "nathonnatha_bala": round(kp["natonnata"], 2),
+                "paksha_bala": round(kp["paksha"], 2),
+                "tribhaga_bala": round(kp["tribhaga"], 2),
+                "abda_bala": round(kp["abda"], 2),
+                "masa_bala": round(kp["masa"], 2),
+                "vara_bala": round(kp["vara"], 2),
+                "hora_bala": round(kp["hora"], 2),
+                "ayana_bala": round(kp["ayana"], 2),
+                "total": round(kp["total"], 2),
+            },
+            "cheshta_bala": round(p["cheshta"] * 60, 2),
+            "naisargika_bala": round(p["naisargika"] * 60, 2),
+            "drig_bala": round(p["drik"] * 60, 2),
+            "total_virupas": p["total_virupas"],
+            "total_rupas": total_rupas,
+            "minimum_required_rupas": min_required,
+            "ishta_phala": p["ishta"],
+            "kashta_phala": p["kashta"],
+            "percentage": p["percentage"],
+            "rank": p["rank"],
+            "strength": strength,
+            "strength_ta": strength_ta,
+        }
+    return {
+        "planets": results,
+        "bhavas": k["bhavas"],
+        "context": k["context"],
+        "classical_source": "BPHS Ch. 27-28 with Kalai Magal conventions (kalai_shadbala.py)",
     }

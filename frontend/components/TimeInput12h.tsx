@@ -56,7 +56,8 @@ export const TimeInput12h: React.FC<TimeInput12hProps> = ({ value, onChange }) =
 
   return (
     <div className="relative">
-      <div className="flex items-center gap-2 pl-1">
+      {/* wraps on narrow screens / half-width columns, so AM / PM never runs past the edge */}
+      <div className="flex flex-wrap items-center gap-x-2 gap-y-2 pl-1">
         <Clock className="w-4 h-4 text-brand-500 shrink-0" />
 
         <select
@@ -95,7 +96,7 @@ export const TimeInput12h: React.FC<TimeInput12hProps> = ({ value, onChange }) =
           ))}
         </select>
 
-        <div className="grid grid-cols-2 gap-1.5 ml-1">
+        <div className="grid grid-cols-2 gap-1.5">
           {(["AM", "PM"] as const).map((period) => (
             <button
               key={period}

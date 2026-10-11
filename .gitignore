@@ -161,6 +161,7 @@ frontend/node_modules/
 out/
 build/
 frontend/.next/
+frontend/.next-audit/
 frontend/out/
 frontend/build/
 frontend/dist/

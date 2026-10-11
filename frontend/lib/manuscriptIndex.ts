@@ -38,6 +38,7 @@ export const MANUSCRIPT_CHAPTERS: ManuscriptChapter[] = [
   { ch: 12, startPage: 47, endPage: 48, titleTa: "கோச்சாரம் & பொருத்தம்", titleEn: "Transits & Porutham" },
   { ch: 13, startPage: 49, endPage: 49, titleTa: "பஞ்ச பட்சி & நாமகரணம்", titleEn: "Pancha Pakshi & Names" },
   { ch: 14, startPage: 50, endPage: 50, titleTa: "பரிகாரம் & மங்கள வாழ்த்து", titleEn: "Remedies & Mangalam" },
+  { ch: 15, startPage: 51, endPage: 56, titleTa: "கலைமகள் கணித அட்டவணைகள்", titleEn: "Kalai Magal Computation Tables" },
 ];
 
 export const MANUSCRIPT_PAGES: ManuscriptPageEntry[] = [
@@ -91,4 +92,10 @@ export const MANUSCRIPT_PAGES: ManuscriptPageEntry[] = [
   { page: 48, titleTa: "10 திருமணப் பொருத்தங்கள் & அஷ்டகூட வழிகாட்டி", titleEn: "10 Poruthams & Kuta Guide" },
   { page: 49, titleTa: "அகஸ்தியர் பஞ்ச பட்சி, எண் கணிதம் & 108 நாம அக்ஷரம்", titleEn: "Pancha Pakshi, Numerology & Names" },
   { page: 50, titleTa: "சர்வ தோஷ சாந்தி, பரிகாரங்கள் & மங்கள வாழ்த்து", titleEn: "Master Remedies & Mangalam" },
+  { page: 51, titleTa: "காலச்சக்கிர தசை", titleEn: "Kalachakra Dasa" },
+  { page: 52, titleTa: "சோடச வர்க்க பலம்", titleEn: "Shodasa Varga Bala" },
+  { page: 53, titleTa: "கிரகங்களின் விவர அட்டவணை", titleEn: "Planet Details" },
+  { page: 54, titleTa: "உப கிரக ஸ்புடம் & பிரஸ்தார் சுருக்கம்", titleEn: "Upagraha & Prasthara" },
+  { page: 55, titleTa: "பஞ்சபட்சி", titleEn: "Panchapakshi" },
+  { page: 56, titleTa: "கே.பி அட்டவணைகள்", titleEn: "KP Tables" },
 ];

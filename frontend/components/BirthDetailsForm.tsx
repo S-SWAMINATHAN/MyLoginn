@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { GenerateChartRequest } from "@/lib/types";
 import {
   Calendar,
@@ -21,16 +21,30 @@ import { TimeInput12h } from "./TimeInput12h";
 import { LocationPicker } from "./LocationPicker";
 import { TamilNameInput } from "./TamilNameInput";
 
+type ChoiceLabel = { ta: string; en: string; sub?: string };
+
 interface BirthDetailsFormProps {
   onSubmit: (data: GenerateChartRequest) => void;
   isLoading: boolean;
   lang: "ta" | "en";
+  /** Optional: rename the two convention buttons (KP uses them for Birth chart / Horary). */
+  systemLabels?: { thirukkanitham: ChoiceLabel; vakhyam: ChoiceLabel; heading?: ChoiceLabel };
+  /** Optional: rename the two report-format buttons (KP: KP All / KP Type A). */
+  outputLabels?: { full: ChoiceLabel; single_page: ChoiceLabel; heading?: ChoiceLabel; custom?: ChoiceLabel };
+  /** Optional: called whenever the convention / format / chart-style buttons change. */
+  onModeChange?: (m: { panchangam_system: string; output_mode: string; chart_style: string }) => void;
+  /** Optional extra fields shown inside the form, after the format buttons. */
+  children?: React.ReactNode;
 }
 
 export const BirthDetailsForm: React.FC<BirthDetailsFormProps> = ({
   onSubmit,
   isLoading,
   lang,
+  systemLabels,
+  outputLabels,
+  onModeChange,
+  children,
 }) => {
   const [formData, setFormData] = useState<GenerateChartRequest>({
     name: "",
@@ -68,6 +82,14 @@ export const BirthDetailsForm: React.FC<BirthDetailsFormProps> = ({
     residence_address: "",
   });
 
+  useEffect(() => {
+    onModeChange?.({
+      panchangam_system: String(formData.panchangam_system ?? "thirukkanitham"),
+      output_mode: String((formData as { output_mode?: string }).output_mode ?? "full"),
+      chart_style: String((formData as { chart_style?: string }).chart_style ?? "tamil"),
+    });
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [formData.panchangam_system, (formData as { output_mode?: string }).output_mode, (formData as { chart_style?: string }).chart_style]);
   const [showAdvanced, setShowAdvanced] = useState(false);
 
   // Fresh-load guard: nothing is pre-filled any more, so the form must not be
@@ -214,33 +236,33 @@ export const BirthDetailsForm: React.FC<BirthDetailsFormProps> = ({
         {/* Panchangam System */}
         <div>
           <label className="block text-xs font-semibold text-muted mb-1.5">
-            {lang === "ta" ? "பஞ்சாங்க கணிப்பு முறை" : "Panchangam Convention"}
+            {systemLabels?.heading ? (lang === "ta" ? systemLabels.heading.ta : systemLabels.heading.en) : (lang === "ta" ? "பஞ்சாங்க கணிப்பு முறை" : "Panchangam Convention")}
           </label>
           <div className="grid grid-cols-2 gap-2">
             <button
               type="button"
               onClick={() => setFormData({ ...formData, panchangam_system: "thirukkanitham" })}
-              className={`py-2 px-3 rounded-xl text-xs font-medium border transition-all text-center ${
+              className={`min-w-0 break-words py-2 px-1.5 sm:px-3 rounded-xl text-xs font-medium border transition-all text-center ${
                 formData.panchangam_system === "thirukkanitham"
                   ? "choice-active"
                   : "choice"
               }`}
             >
-              <div className="font-semibold">{lang === "ta" ? "திருக்கணிதம்" : "Thirukanitham"}</div>
-              <span className="text-[9px] opacity-85 block">Drik-Siddha</span>
+              <div className="font-semibold">{systemLabels ? (lang === "ta" ? systemLabels.thirukkanitham.ta : systemLabels.thirukkanitham.en) : (lang === "ta" ? "திருக்கணிதம்" : "Thirukanitham")}</div>
+              <span className="text-[9px] opacity-85 block">{systemLabels ? systemLabels.thirukkanitham.sub ?? "" : "Drik-Siddha"}</span>
             </button>
 
             <button
               type="button"
               onClick={() => setFormData({ ...formData, panchangam_system: "vakhyam" })}
-              className={`py-2 px-3 rounded-xl text-xs font-medium border transition-all text-center ${
+              className={`min-w-0 break-words py-2 px-1.5 sm:px-3 rounded-xl text-xs font-medium border transition-all text-center ${
                 formData.panchangam_system === "vakhyam"
                   ? "choice-active"
                   : "choice"
               }`}
             >
-              <div className="font-semibold">{lang === "ta" ? "வாக்கியம்" : "Vakhyam"}</div>
-              <span className="text-[9px] opacity-85 block">Traditional</span>
+              <div className="font-semibold">{systemLabels ? (lang === "ta" ? systemLabels.vakhyam.ta : systemLabels.vakhyam.en) : (lang === "ta" ? "வாக்கியம்" : "Vakhyam")}</div>
+              <span className="text-[9px] opacity-85 block">{systemLabels ? systemLabels.vakhyam.sub ?? "" : "Traditional"}</span>
             </button>
           </div>
         </div>
@@ -275,37 +297,51 @@ export const BirthDetailsForm: React.FC<BirthDetailsFormProps> = ({
         {/* Output Mode */}
         <div>
           <label className="block text-xs font-semibold text-muted mb-1.5">
-            {lang === "ta" ? "அறிக்கை வடிவம்" : "Report Format"}
+            {outputLabels?.heading ? (lang === "ta" ? outputLabels.heading.ta : outputLabels.heading.en) : (lang === "ta" ? "அறிக்கை வடிவம்" : "Report Format")}
           </label>
-          <div className="grid grid-cols-2 gap-2">
+          <div className={`grid gap-2 ${outputLabels?.custom ? "grid-cols-3" : "grid-cols-2"}`}>
             <button
               type="button"
               onClick={() => setFormData({ ...formData, output_mode: "full" })}
-              className={`py-2 px-3 rounded-xl text-xs font-medium border transition-all text-center ${
+              className={`min-w-0 break-words py-2 px-1.5 sm:px-3 rounded-xl text-xs font-medium border transition-all text-center ${
                 formData.output_mode === "full"
                   ? "choice-active"
                   : "choice"
               }`}
             >
-              <div className="font-semibold">{lang === "ta" ? "முழு ஜாதகம்" : "Full Report"}</div>
-              <span className="text-[9px] opacity-85 block">All 12 Sections</span>
+              <div className="font-semibold">{outputLabels ? (lang === "ta" ? outputLabels.full.ta : outputLabels.full.en) : (lang === "ta" ? "முழு ஜாதகம்" : "Full Report")}</div>
+              <span className="text-[9px] opacity-85 block">{outputLabels ? outputLabels.full.sub ?? "" : "All 12 Sections"}</span>
             </button>
 
             <button
               type="button"
               onClick={() => setFormData({ ...formData, output_mode: "single_page" })}
-              className={`py-2 px-3 rounded-xl text-xs font-medium border transition-all text-center ${
+              className={`min-w-0 break-words py-2 px-1.5 sm:px-3 rounded-xl text-xs font-medium border transition-all text-center ${
                 formData.output_mode === "single_page"
                   ? "choice-active"
                   : "choice"
               }`}
             >
-              <div className="font-semibold">{lang === "ta" ? "சுருக்க ஜாதகம்" : "Quick Summary"}</div>
-              <span className="text-[9px] opacity-85 block">Single Page</span>
+              <div className="font-semibold">{outputLabels ? (lang === "ta" ? outputLabels.single_page.ta : outputLabels.single_page.en) : (lang === "ta" ? "சுருக்க ஜாதகம்" : "Quick Summary")}</div>
+              <span className="text-[9px] opacity-85 block">{outputLabels ? outputLabels.single_page.sub ?? "" : "Single Page"}</span>
             </button>
+
+            {outputLabels?.custom && (
+              <button
+                type="button"
+                onClick={() => setFormData({ ...formData, output_mode: "custom" })}
+                className={`min-w-0 break-words py-2 px-1.5 sm:px-3 rounded-xl text-xs font-medium border transition-all text-center ${
+                  formData.output_mode === "custom" ? "choice-active" : "choice"
+                }`}
+              >
+                <div className="font-semibold">{lang === "ta" ? outputLabels.custom.ta : outputLabels.custom.en}</div>
+                <span className="text-[9px] opacity-85 block">{outputLabels.custom.sub ?? ""}</span>
+              </button>
+            )}
           </div>
         </div>
       </div>
+      {children}
 
       {/* Comprehensive Parents & Horoscope Bio-Data Accordion */}
       <div className="mt-6 pt-5 border-t border-border-soft">
@@ -314,8 +350,8 @@ export const BirthDetailsForm: React.FC<BirthDetailsFormProps> = ({
           onClick={() => setShowAdvanced(!showAdvanced)}
           className="w-full flex items-center justify-between p-3.5 rounded-2xl bg-surface/80 border-2 border-brand-500/30 hover:border-brand-500 transition-all text-left shadow-xs group"
         >
-          <div className="flex items-center gap-2.5">
-            <HeartHandshake className="w-5 h-5 text-brand-fg group-hover:scale-110 transition-transform" />
+          <div className="flex min-w-0 items-center gap-2.5">
+            <HeartHandshake className="w-5 h-5 shrink-0 text-brand-fg group-hover:scale-110 transition-transform" />
             <div>
               <span className="text-sm font-bold text-foreground block">
                 {lang === "ta"
@@ -329,8 +365,8 @@ export const BirthDetailsForm: React.FC<BirthDetailsFormProps> = ({
               </span>
             </div>
           </div>
-          <div className="flex items-center gap-2">
-            <span className="text-[10px] bg-brand-500/10 text-brand-fg font-semibold px-2 py-0.5 rounded-full">
+          <div className="flex shrink-0 items-center gap-2">
+            <span className="hidden text-[10px] bg-brand-500/10 text-brand-fg font-semibold px-2 py-0.5 rounded-full sm:inline">
               {showAdvanced ? (lang === "ta" ? "மறைக்க" : "Hide") : (lang === "ta" ? "விரிவாக்க" : "Expand")}
             </span>
             {showAdvanced ? <ChevronUp className="w-4 h-4 text-brand-fg" /> : <ChevronDown className="w-4 h-4 text-brand-fg" />}
@@ -352,10 +388,11 @@ export const BirthDetailsForm: React.FC<BirthDetailsFormProps> = ({
                   <label className="block text-xs font-medium text-muted mb-1">
                     {lang === "ta" ? "தந்தை பெயர் (Father's Name)" : "Father's Full Name"}
                   </label>
-                  <input
-                    type="text"
+                  <TamilNameInput
+                    hideIcon
+                    lang={lang}
                     value={formData.father_name || ""}
-                    onChange={(e) => setFormData({ ...formData, father_name: e.target.value, parent_name: e.target.value })}
+                    onChange={(v) => setFormData((prev) => ({ ...prev, father_name: v, parent_name: v }))}
                     className="w-full px-3 py-2 bg-surface border border-line rounded-xl text-foreground text-xs outline-none focus:border-brand-500"
                     placeholder={lang === "ta" ? "எ.கா. கா. ராமநாதன்" : "e.g. K. Ramanathan"}
                   />
@@ -365,10 +402,11 @@ export const BirthDetailsForm: React.FC<BirthDetailsFormProps> = ({
                   <label className="block text-xs font-medium text-muted mb-1">
                     {lang === "ta" ? "தந்தை தொழில் / பணி (Father's Work)" : "Father's Occupation"}
                   </label>
-                  <input
-                    type="text"
+                  <TamilNameInput
+                    hideIcon
+                    lang={lang}
                     value={formData.father_occupation || ""}
-                    onChange={(e) => setFormData({ ...formData, father_occupation: e.target.value })}
+                    onChange={(v) => setFormData((prev) => ({ ...prev, father_occupation: v }))}
                     className="w-full px-3 py-2 bg-surface border border-line rounded-xl text-foreground text-xs outline-none focus:border-brand-500"
                     placeholder={lang === "ta" ? "எ.கா. அரசு ஆசிரியர் / வணிகம்" : "e.g. Govt Teacher / Business"}
                   />
@@ -378,10 +416,11 @@ export const BirthDetailsForm: React.FC<BirthDetailsFormProps> = ({
                   <label className="block text-xs font-medium text-muted mb-1">
                     {lang === "ta" ? "தாய் பெயர் (Mother's Name)" : "Mother's Full Name"}
                   </label>
-                  <input
-                    type="text"
+                  <TamilNameInput
+                    hideIcon
+                    lang={lang}
                     value={formData.mother_name || ""}
-                    onChange={(e) => setFormData({ ...formData, mother_name: e.target.value })}
+                    onChange={(v) => setFormData((prev) => ({ ...prev, mother_name: v }))}
                     className="w-full px-3 py-2 bg-surface border border-line rounded-xl text-foreground text-xs outline-none focus:border-brand-500"
                     placeholder={lang === "ta" ? "எ.கா. பார்வதி ராமநாதன்" : "e.g. Parvathi Ramanathan"}
                   />
@@ -391,10 +430,11 @@ export const BirthDetailsForm: React.FC<BirthDetailsFormProps> = ({
                   <label className="block text-xs font-medium text-muted mb-1">
                     {lang === "ta" ? "தாய் தொழில் / பணி (Mother's Work)" : "Mother's Occupation"}
                   </label>
-                  <input
-                    type="text"
+                  <TamilNameInput
+                    hideIcon
+                    lang={lang}
                     value={formData.mother_occupation || ""}
-                    onChange={(e) => setFormData({ ...formData, mother_occupation: e.target.value })}
+                    onChange={(v) => setFormData((prev) => ({ ...prev, mother_occupation: v }))}
                     className="w-full px-3 py-2 bg-surface border border-line rounded-xl text-foreground text-xs outline-none focus:border-brand-500"
                     placeholder={lang === "ta" ? "எ.கா. இல்லத்தரசி / வங்கிப்பணி" : "e.g. Home Maker / Bank Officer"}
                   />
@@ -404,10 +444,11 @@ export const BirthDetailsForm: React.FC<BirthDetailsFormProps> = ({
                   <label className="block text-xs font-medium text-muted mb-1">
                     {lang === "ta" ? "கோத்திரம் / குலம் (Gothram / Kulam)" : "Gothram / Kulam"}
                   </label>
-                  <input
-                    type="text"
+                  <TamilNameInput
+                    hideIcon
+                    lang={lang}
                     value={formData.gothram || ""}
-                    onChange={(e) => setFormData({ ...formData, gothram: e.target.value })}
+                    onChange={(v) => setFormData((prev) => ({ ...prev, gothram: v }))}
                     className="w-full px-3 py-2 bg-surface border border-line rounded-xl text-foreground text-xs outline-none focus:border-brand-500"
                     placeholder={lang === "ta" ? "எ.கா. காசியப / சிவ கோத்திரம்" : "e.g. Kashyapa / Shiva Gothram"}
                   />
@@ -417,10 +458,11 @@ export const BirthDetailsForm: React.FC<BirthDetailsFormProps> = ({
                   <label className="block text-xs font-medium text-muted mb-1">
                     {lang === "ta" ? "பூர்வீகம் / சொந்த ஊர் (Native Place)" : "Ancestral Town / Native"}
                   </label>
-                  <input
-                    type="text"
+                  <TamilNameInput
+                    hideIcon
+                    lang={lang}
                     value={formData.native_place || ""}
-                    onChange={(e) => setFormData({ ...formData, native_place: e.target.value })}
+                    onChange={(v) => setFormData((prev) => ({ ...prev, native_place: v }))}
                     className="w-full px-3 py-2 bg-surface border border-line rounded-xl text-foreground text-xs outline-none focus:border-brand-500"
                     placeholder={lang === "ta" ? "எ.கா. திருநெல்வேலி / தஞ்சாவூர்" : "e.g. Tirunelveli / Thanjavur"}
                   />
@@ -430,10 +472,11 @@ export const BirthDetailsForm: React.FC<BirthDetailsFormProps> = ({
                   <label className="block text-xs font-medium text-muted mb-1">
                     {lang === "ta" ? "குலதெய்வம் & கோவில் (Kula Deivam)" : "Family Deity & Temple Place"}
                   </label>
-                  <input
-                    type="text"
+                  <TamilNameInput
+                    hideIcon
+                    lang={lang}
                     value={formData.kula_deivam || ""}
-                    onChange={(e) => setFormData({ ...formData, kula_deivam: e.target.value, family_details: e.target.value })}
+                    onChange={(v) => setFormData((prev) => ({ ...prev, kula_deivam: v, family_details: v }))}
                     className="w-full px-3 py-2 bg-surface border border-line rounded-xl text-foreground text-xs outline-none focus:border-brand-500"
                     placeholder={lang === "ta" ? "எ.கா. ஸ்ரீ அங்காளம்மன் கோவில்" : "e.g. Sri Angalamman Temple"}
                   />
@@ -443,10 +486,11 @@ export const BirthDetailsForm: React.FC<BirthDetailsFormProps> = ({
                   <label className="block text-xs font-medium text-muted mb-1">
                     {lang === "ta" ? "சாதி / உட்பிரிவு (Caste / Community)" : "Caste / Sub-Caste"}
                   </label>
-                  <input
-                    type="text"
+                  <TamilNameInput
+                    hideIcon
+                    lang={lang}
                     value={formData.caste_subcaste || ""}
-                    onChange={(e) => setFormData({ ...formData, caste_subcaste: e.target.value })}
+                    onChange={(v) => setFormData((prev) => ({ ...prev, caste_subcaste: v }))}
                     className="w-full px-3 py-2 bg-surface border border-line rounded-xl text-foreground text-xs outline-none focus:border-brand-500"
                     placeholder={lang === "ta" ? "எ.கா. பிள்ளை / முதலியார் / செட்டியார்" : "e.g. Community / Sub-caste"}
                   />
@@ -456,10 +500,11 @@ export const BirthDetailsForm: React.FC<BirthDetailsFormProps> = ({
                   <label className="block text-xs font-medium text-muted mb-1">
                     {lang === "ta" ? "உடன் பிறந்தோர் விவரம் (Siblings)" : "Brothers & Sisters"}
                   </label>
-                  <input
-                    type="text"
+                  <TamilNameInput
+                    hideIcon
+                    lang={lang}
                     value={formData.siblings || ""}
-                    onChange={(e) => setFormData({ ...formData, siblings: e.target.value })}
+                    onChange={(v) => setFormData((prev) => ({ ...prev, siblings: v }))}
                     className="w-full px-3 py-2 bg-surface border border-line rounded-xl text-foreground text-xs outline-none focus:border-brand-500"
                     placeholder={lang === "ta" ? "எ.கா. 1 அண்ணன் (திருமணமானவர்), 1 தங்கை" : "e.g. 1 elder brother (married), 1 sister"}
                   />
@@ -480,10 +525,11 @@ export const BirthDetailsForm: React.FC<BirthDetailsFormProps> = ({
                   <label className="block text-xs font-medium text-muted mb-1">
                     {lang === "ta" ? "கல்வித் தகுதி (Education)" : "Educational Degree"}
                   </label>
-                  <input
-                    type="text"
+                  <TamilNameInput
+                    hideIcon
+                    lang={lang}
                     value={formData.education || ""}
-                    onChange={(e) => setFormData({ ...formData, education: e.target.value })}
+                    onChange={(v) => setFormData((prev) => ({ ...prev, education: v }))}
                     className="w-full px-3 py-2 bg-surface border border-line rounded-xl text-foreground text-xs outline-none focus:border-brand-500"
                     placeholder={lang === "ta" ? "எ.கா. B.E. (Computer Science), MBA" : "e.g. B.Tech / M.S / MBA"}
                   />
@@ -493,10 +539,11 @@ export const BirthDetailsForm: React.FC<BirthDetailsFormProps> = ({
                   <label className="block text-xs font-medium text-muted mb-1">
                     {lang === "ta" ? "தொழில் / உத்தியோகம் (Profession)" : "Designation / Company"}
                   </label>
-                  <input
-                    type="text"
+                  <TamilNameInput
+                    hideIcon
+                    lang={lang}
                     value={formData.occupation || ""}
-                    onChange={(e) => setFormData({ ...formData, occupation: e.target.value })}
+                    onChange={(v) => setFormData((prev) => ({ ...prev, occupation: v }))}
                     className="w-full px-3 py-2 bg-surface border border-line rounded-xl text-foreground text-xs outline-none focus:border-brand-500"
                     placeholder={lang === "ta" ? "எ.கா. Senior Software Engineer" : "e.g. Software Lead / Govt Officer"}
                   />
@@ -506,10 +553,11 @@ export const BirthDetailsForm: React.FC<BirthDetailsFormProps> = ({
                   <label className="block text-xs font-medium text-muted mb-1">
                     {lang === "ta" ? "மாத / ஆண்டு வருமானம் (Income)" : "Annual Income (Optional)"}
                   </label>
-                  <input
-                    type="text"
+                  <TamilNameInput
+                    hideIcon
+                    lang={lang}
                     value={formData.annual_income || ""}
-                    onChange={(e) => setFormData({ ...formData, annual_income: e.target.value })}
+                    onChange={(v) => setFormData((prev) => ({ ...prev, annual_income: v }))}
                     className="w-full px-3 py-2 bg-surface border border-line rounded-xl text-foreground text-xs outline-none focus:border-brand-500"
                     placeholder={lang === "ta" ? "எ.கா. 12 LPA / ₹1,00,000" : "e.g. ₹15 LPA"}
                   />
@@ -519,10 +567,11 @@ export const BirthDetailsForm: React.FC<BirthDetailsFormProps> = ({
                   <label className="block text-xs font-medium text-muted mb-1">
                     {lang === "ta" ? "உயரம் / உடல்வாகு (Height)" : "Height / Appearance"}
                   </label>
-                  <input
-                    type="text"
+                  <TamilNameInput
+                    hideIcon
+                    lang={lang}
                     value={formData.height || ""}
-                    onChange={(e) => setFormData({ ...formData, height: e.target.value })}
+                    onChange={(v) => setFormData((prev) => ({ ...prev, height: v }))}
                     className="w-full px-3 py-2 bg-surface border border-line rounded-xl text-foreground text-xs outline-none focus:border-brand-500"
                     placeholder={lang === "ta" ? "எ.கா. 5 அடி 9 அங்குலம் (175 cm)" : "e.g. 5' 9\" (175 cm)"}
                   />
@@ -582,10 +631,11 @@ export const BirthDetailsForm: React.FC<BirthDetailsFormProps> = ({
                   <label className="block text-xs font-medium text-muted mb-1">
                     {lang === "ta" ? "இருப்பிட முகவரி (Address)" : "Residential Address"}
                   </label>
-                  <input
-                    type="text"
+                  <TamilNameInput
+                    hideIcon
+                    lang={lang}
                     value={formData.residence_address || ""}
-                    onChange={(e) => setFormData({ ...formData, residence_address: e.target.value })}
+                    onChange={(v) => setFormData((prev) => ({ ...prev, residence_address: v }))}
                     className="w-full px-3 py-2 bg-surface border border-line rounded-xl text-foreground text-xs outline-none focus:border-brand-500"
                     placeholder={lang === "ta" ? "கதவு எண், தெரு, ஊர், பின்கோடு" : "Door No, Street, City, Pincode"}
                   />

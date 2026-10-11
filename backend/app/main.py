@@ -13,6 +13,7 @@ from backend.app.api.horoscope import router as horoscope_router  # NEW
 from backend.app.api.numerology import router as numerology_router  # NEW
 from backend.app.api.muhurtha import router as muhurtha_router  # FIX: was never registered -> every /api/muhurtha/* call returned 404 "Not Found"
 from backend.app.api.general_names import router as general_names_router  # A-Z name browsing
+from backend.app.api.kalai import router as kalai_router  # Kalai Magal parity report (Phase 1)
 
 # Create Database Tables
 Base.metadata.create_all(bind=engine)
@@ -43,6 +44,9 @@ app.include_router(horoscope_router, prefix=settings.API_V1_STR)  # NEW
 app.include_router(numerology_router, prefix=settings.API_V1_STR)  # NEW
 app.include_router(muhurtha_router, prefix=settings.API_V1_STR)  # FIX: Muhurtha search (general / marriage / travel)
 app.include_router(general_names_router, prefix=settings.API_V1_STR)  # General Baby Name Generator (A-Z)
+app.include_router(kalai_router, prefix=settings.API_V1_STR)  # Kalai Magal parity report (Phase 1)
+from backend.app.api.pdf import router as pdf_router  # WeasyPrint print PDFs
+app.include_router(pdf_router, prefix=settings.API_V1_STR)
 
 
 @app.on_event("startup")
@@ -52,6 +56,11 @@ def _seed_baby_names() -> None:
     try:
         from backend.app.services.name_db import seed_from_banks
         seed_from_banks()
+        try:
+            from backend.app.services.kalai_name_import import seed_kalai_names
+            seed_kalai_names()
+        except Exception as exc:  # never block start-up on the optional Kalai names
+            print(f"Kalai names not seeded: {exc}")
     except Exception as exc:  # never block startup on this
         print(f"[baby_names] seeding skipped: {exc}")
 

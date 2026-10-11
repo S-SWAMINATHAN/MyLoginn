@@ -7,3 +7,6 @@ pytz>=2024.1
 httpx>=0.25.0
 sqlalchemy>=2.0.0
 pytest>=8.0.0
+pdfplumber
+open-tamil
+weasyprint>=62

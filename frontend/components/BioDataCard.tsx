@@ -2,6 +2,8 @@
 
 import React from "react";
 import { ChartResponse } from "@/lib/types";
+import { nameTa, placeTa, timeTa } from "@/lib/taText";
+import { to12h } from "@/lib/timeFormat";
 import {
   User,
   Users,
@@ -20,11 +22,16 @@ import {
 interface BioDataCardProps {
   chart: ChartResponse;
   lang: "ta" | "en";
+  /** Hide father / mother names when the report already prints them (no repetition). */
+  omitParentNames?: boolean;
 }
 
-export const BioDataCard: React.FC<BioDataCardProps> = ({ chart, lang }) => {
+export const BioDataCard: React.FC<BioDataCardProps> = ({ chart, lang, omitParentNames = false }) => {
   const bio = chart.bio_data || {};
   const d = chart.basic_details || {};
+  const ta = lang === "ta";
+  // names and places typed in English are shown in Tamil on Tamil pages
+  const N = (v: string) => (ta && v !== "—" ? nameTa(v) : v);
 
   // Check if at least some bio data is present
   const hasParentsData =
@@ -52,14 +59,14 @@ export const BioDataCard: React.FC<BioDataCardProps> = ({ chart, lang }) => {
     bio.residence_address;
 
   // Fallbacks
-  const fatherName = bio.father_name || chart.parent_name || "—";
+  const fatherName = N(bio.father_name || chart.parent_name || "—");
   const fatherWork = bio.father_occupation || "—";
-  const motherName = bio.mother_name || "—";
+  const motherName = N(bio.mother_name || "—");
   const motherWork = bio.mother_occupation || "—";
-  const gothram = bio.gothram || "—";
-  const nativePlace = bio.native_place || "—";
-  const kulaDeivam = bio.kula_deivam || chart.family_details || "—";
-  const caste = bio.caste_subcaste || "—";
+  const gothram = N(bio.gothram || "—");
+  const nativePlace = ta && bio.native_place ? placeTa(bio.native_place) : bio.native_place || "—";
+  const kulaDeivam = N(bio.kula_deivam || chart.family_details || "—");
+  const caste = N(bio.caste_subcaste || "—");
   const siblings = bio.siblings || "—";
 
   const education = bio.education || "—";
@@ -107,19 +114,19 @@ export const BioDataCard: React.FC<BioDataCardProps> = ({ chart, lang }) => {
           <div className="flex items-center gap-2 pb-2.5 mb-3 border-b border-[#8b5a2b]/20">
             <User className="w-4 h-4 text-[#b03726]" />
             <h3 className="text-xs font-bold text-[#6b1426] tracking-wider uppercase font-tamil">
-              {lang === "ta" ? "ஜாதகர் விபரங்கள் (Candidate)" : "Candidate Particulars"}
+              {lang === "ta" ? "ஜாதகர் விபரங்கள்" : "Candidate Particulars"}
             </h3>
           </div>
 
           <div className="space-y-2.5 text-xs handwritten-tamil flex-1">
             <div className="flex justify-between border-b border-black/5 pb-1">
               <span className="text-[#6f6049]">{lang === "ta" ? "பெயர்:" : "Full Name:"}</span>
-              <span className="font-bold text-[#2b2117]">{lang === "en" && chart.name_en ? chart.name_en : chart.name} ({chart.gender === "male" ? (lang === "ta" ? "ஆண்" : "Male") : (lang === "ta" ? "பெண்" : "Female")})</span>
+              <span className="font-bold text-[#2b2117]">{lang === "en" && chart.name_en ? chart.name_en : ta ? nameTa(chart.name) : chart.name} ({chart.gender === "male" ? (lang === "ta" ? "ஆண்" : "Male") : (lang === "ta" ? "பெண்" : "Female")})</span>
             </div>
 
             <div className="flex justify-between border-b border-black/5 pb-1">
               <span className="text-[#6f6049]">{lang === "ta" ? "பிறந்த தேதி & நேரம்:" : "DOB & Time:"}</span>
-              <span className="font-semibold text-[#2b2117] text-right">{chart.date_of_birth} · {chart.time_of_birth}</span>
+              <span className="font-semibold text-[#2b2117] text-right">{chart.date_of_birth} · {ta ? timeTa(to12h(chart.time_of_birth)) : to12h(chart.time_of_birth)}</span>
             </div>
 
             <div className="flex justify-between border-b border-black/5 pb-1">
@@ -130,13 +137,13 @@ export const BioDataCard: React.FC<BioDataCardProps> = ({ chart, lang }) => {
             <div className="flex justify-between border-b border-black/5 pb-1">
               <span className="text-[#6f6049]">{lang === "ta" ? "ராசி & நட்சத்திரம்:" : "Rasi & Star:"}</span>
               <span className="font-bold text-[#8e2b1c] text-right">
-                {lang === "ta" ? d.rasi_ta : d.rasi} · {lang === "ta" ? d.nakshatram_ta : d.nakshatram} ({d.pada}ம் பாதம்)
+                {lang === "ta" ? d.rasi_ta : d.rasi} · {lang === "ta" ? d.nakshatram_ta : d.nakshatram} ({ta ? `${d.pada}ம் பாதம்` : `pada ${d.pada}`})
               </span>
             </div>
 
             <div className="flex justify-between border-b border-black/5 pb-1">
               <span className="text-[#6f6049]">{lang === "ta" ? "லக்னம்:" : "Lagna:"}</span>
-              <span className="font-bold text-[#8e2b1c]">{lang === "ta" ? d.lagnam_ta : d.lagnam} லக்னம்</span>
+              <span className="font-bold text-[#8e2b1c]">{lang === "ta" ? `${d.lagnam_ta} லக்னம்` : d.lagnam}</span>
             </div>
 
             <div className="flex justify-between border-b border-black/5 pb-1">
@@ -166,25 +173,29 @@ export const BioDataCard: React.FC<BioDataCardProps> = ({ chart, lang }) => {
           <div className="flex items-center gap-2 pb-2.5 mb-3 border-b border-[#8b5a2b]/20">
             <Users className="w-4 h-4 text-[#b03726]" />
             <h3 className="text-xs font-bold text-[#6b1426] tracking-wider uppercase font-tamil">
-              {lang === "ta" ? "பெற்றோர் & குடும்பம் (Parents & Family)" : "Parents & Family Background"}
+              {lang === "ta" ? "பெற்றோர் & குடும்பம்" : "Parents & Family Background"}
             </h3>
           </div>
 
           <div className="space-y-2.5 text-xs handwritten-tamil flex-1">
+            {!omitParentNames && (
             <div className="flex justify-between border-b border-black/5 pb-1">
               <span className="text-[#6f6049]">{lang === "ta" ? "தந்தை பெயர்:" : "Father's Name:"}</span>
               <span className="font-bold text-[#2b2117]">{fatherName}</span>
             </div>
+            )}
 
             <div className="flex justify-between border-b border-black/5 pb-1">
               <span className="text-[#6f6049]">{lang === "ta" ? "தந்தை தொழில்:" : "Father's Work:"}</span>
               <span className="font-semibold text-[#2b2117]">{fatherWork}</span>
             </div>
 
+            {!omitParentNames && (
             <div className="flex justify-between border-b border-black/5 pb-1">
               <span className="text-[#6f6049]">{lang === "ta" ? "தாய் பெயர்:" : "Mother's Name:"}</span>
               <span className="font-bold text-[#2b2117]">{motherName}</span>
             </div>
+            )}
 
             <div className="flex justify-between border-b border-black/5 pb-1">
               <span className="text-[#6f6049]">{lang === "ta" ? "தாய் தொழில்:" : "Mother's Work:"}</span>
@@ -223,7 +234,7 @@ export const BioDataCard: React.FC<BioDataCardProps> = ({ chart, lang }) => {
           <div className="flex items-center gap-2 pb-2.5 mb-3 border-b border-[#8b5a2b]/20">
             <Phone className="w-4 h-4 text-[#b03726]" />
             <h3 className="text-xs font-bold text-[#6b1426] tracking-wider uppercase font-tamil">
-              {lang === "ta" ? "தொடர்பு விபரங்கள் (Contact & Address)" : "Contact & Residence"}
+              {lang === "ta" ? "தொடர்பு விபரங்கள்" : "Contact & Residence"}
             </h3>
           </div>
 

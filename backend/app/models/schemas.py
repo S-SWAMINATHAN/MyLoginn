@@ -251,6 +251,9 @@ class SthanaBalaSub(BaseModel):
     total: float = 0.0
 
 class KaalaBalaSub(BaseModel):
+    tribhaga_bala: float = 0.0
+    abda_bala: float = 0.0
+    masa_bala: float = 0.0
     nathonnatha_bala: float = 0.0
     paksha_bala: float = 0.0
     vara_bala: float = 0.0
@@ -272,10 +275,18 @@ class PlanetShadbala(BaseModel):
     minimum_required_rupas: float = 5.0
     strength: str = "Average"
     strength_ta: str = "சராசரி"
+    # Kalai Magal parity (Phase 2)
+    ishta_phala: Optional[float] = None
+    kashta_phala: Optional[float] = None
+    percentage: Optional[float] = None
+    rank: Optional[int] = None
 
 class ShadbalaResult(BaseModel):
     planets: Dict[str, PlanetShadbala]
     classical_source: str = "Brihat Parashara Hora Shastra Ch. 27–29"
+    # Kalai Magal parity (Phase 2)
+    bhavas: List[Dict[str, Any]] = []
+    context: Dict[str, Any] = {}
 
 class GocharaTransitResult(BaseModel):
     planet: str
@@ -315,6 +326,9 @@ class SthanaBalaSub(BaseModel):
     total: float = 0.0
 
 class KaalaBalaSub(BaseModel):
+    tribhaga_bala: float = 0.0
+    abda_bala: float = 0.0
+    masa_bala: float = 0.0
     nathonnatha_bala: float = 0.0
     paksha_bala: float = 0.0
     vara_bala: float = 0.0
@@ -336,10 +350,18 @@ class PlanetShadbala(BaseModel):
     minimum_required_rupas: float = 5.0
     strength: str = "Average"
     strength_ta: str = "சராசரி"
+    # Kalai Magal parity (Phase 2)
+    ishta_phala: Optional[float] = None
+    kashta_phala: Optional[float] = None
+    percentage: Optional[float] = None
+    rank: Optional[int] = None
 
 class ShadbalaResult(BaseModel):
     planets: Dict[str, PlanetShadbala]
     classical_source: str = "Brihat Parashara Hora Shastra Ch. 27–29"
+    # Kalai Magal parity (Phase 2)
+    bhavas: List[Dict[str, Any]] = []
+    context: Dict[str, Any] = {}
 
 class GocharaTransitResult(BaseModel):
     planet: str
@@ -529,6 +551,8 @@ class ParentsBioData(BaseModel):
     residence_address: Optional[str] = None
 
 class GenerateChartRequest(BaseModel):
+    # Kalai Magal "Time Correction": none | dst | war (adds +1 h to the zone)
+    time_correction: Optional[str] = None
     name: Optional[str] = "Jathagar"
     # Latin/English spelling of `name`, sent by the frontend when the user
     # accepted a Tamil transliteration suggestion for a Thanglish name. It is

@@ -17,6 +17,7 @@ import { Chapter11BhavaPredictions } from "./manuscript/Chapter11BhavaPrediction
 import { Chapter12GocharaMatching } from "./manuscript/Chapter12GocharaMatching";
 import { Chapter13PanchaPakshiNama } from "./manuscript/Chapter13PanchaPakshiNama";
 import { Chapter14RemediesMangalam } from "./manuscript/Chapter14RemediesMangalam";
+import { Chapter15KalaiTables } from "./manuscript/Chapter15KalaiTables";
 
 interface Props {
   chart: ChartResponse;
@@ -89,6 +90,7 @@ export const HandwrittenManuscript: React.FC<Props> = ({ chart, lang, activePage
 
       {/* Part 14: Sacred Remedies & Auspicious Conclusion (Page 50) */}
       <Chapter14RemediesMangalam chart={chart} lang={lang} />
+      <Chapter15KalaiTables chart={chart} lang={lang} />
     </div>
   </ChartStyleProvider>
   );

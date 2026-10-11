@@ -100,8 +100,8 @@ export const HandwrittenPdfButton: React.FC<Props> = ({ chart, lang }) => {
       className="jat-chrome btn-primary text-xs disabled:opacity-60"
       title={
         lang === "ta"
-          ? "50-பக்க மகா சம்பூர்ண ஜாதக நூல் PDF (பொருளடக்கத்துடன்)"
-          : "50-Page Grand Horoscope Manuscript PDF (with contents page)"
+          ? "56-பக்க மகா சம்பூர்ண ஜாதக நூல் PDF (பொருளடக்கத்துடன்)"
+          : "56-Page Grand Horoscope Manuscript PDF (with contents page)"
       }
     >
       {generating ? <Loader2 className="w-4 h-4 animate-spin" /> : <PenLine className="w-4 h-4" />}
@@ -109,8 +109,8 @@ export const HandwrittenPdfButton: React.FC<Props> = ({ chart, lang }) => {
         {generating
           ? progress || (lang === "ta" ? "தயாராகிறது..." : "Generating...")
           : lang === "ta"
-          ? "50-பக்க ஜாதக நூல் PDF (மஞ்சள் பத்திரம்)"
-          : "50-Page Grand Jathagam PDF"}
+          ? "56-பக்க ஜாதக நூல் PDF (மஞ்சள் பத்திரம்)"
+          : "56-Page Grand Jathagam PDF"}
       </span>
     </button>
   );

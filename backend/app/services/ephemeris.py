@@ -1,3 +1,4 @@
+import re
 """
 High-Precision Swiss Ephemeris calculation engine.
 Strictly adheres to AGENTS.md §1 (Zero Hallucinations, Lahiri Ayanamsha, JPL-backed .se1 precision).
@@ -173,7 +174,7 @@ def compute_astronomical_timings(
     Udhayadhi Nazhigai at birth, Rahu Kalam, Yamagandam, and Kuligai Kalam using Swiss Ephemeris DE431/441.
     """
     geopos = (lon, lat, 0.0)
-    local_tz = pytz.timezone(timezone_str)
+    local_tz = get_tz(timezone_str)
 
     # Local midnight converted to UTC Julian Day
     dt_local_midnight = local_tz.localize(datetime.strptime(f"{date_str} 00:00:00", "%Y-%m-%d %H:%M:%S"))
@@ -183,8 +184,8 @@ def compute_astronomical_timings(
 
     # Calculate Sunrise and Sunset with Swiss Ephemeris
     try:
-        ret_rise, tret_rise = swe.rise_trans(jd_utc_start, swe.SUN, swe.CALC_RISE | swe.BIT_DISC_CENTER, geopos, 0.0, 0.0, swe.FLG_SWIEPH)
-        ret_set, tret_set = swe.rise_trans(jd_utc_start, swe.SUN, swe.CALC_SET | swe.BIT_DISC_CENTER, geopos, 0.0, 0.0, swe.FLG_SWIEPH)
+        ret_rise, tret_rise = swe.rise_trans(jd_utc_start, swe.SUN, swe.CALC_RISE | swe.BIT_DISC_CENTER | swe.BIT_NO_REFRACTION, geopos, 0.0, 0.0, swe.FLG_SWIEPH)
+        ret_set, tret_set = swe.rise_trans(jd_utc_start, swe.SUN, swe.CALC_SET | swe.BIT_DISC_CENTER | swe.BIT_NO_REFRACTION, geopos, 0.0, 0.0, swe.FLG_SWIEPH)
         jd_rise = tret_rise[0]
         jd_set = tret_set[0]
     except Exception:
@@ -249,8 +250,28 @@ def compute_astronomical_timings(
     nazhigai_str = f"{nazhigai} நாழிகை {vinazhigai:02d} விநாழிகை"
     nazhigai_en = f"{nazhigai} Nazhigai {vinazhigai:02d} Vinazhigai"
 
+    # Kalai Magal format: Nazhigai / Vinazhigai / Tharparai.
+    # 1 nazhigai = 24 min, 1 vinazhigai = 24 s, 1 tharparai = 0.4 s.
+    # Reference = sunrise of the civil birth date; a pre-sunrise birth wraps
+    # to the previous Tamil day. Verified against a Kalai Magal Type-D report.
+    _el_sec = elapsed_from_sunrise * 3600.0
+    _n = int(_el_sec // 1440.0)
+    _rem = _el_sec - _n * 1440.0
+    _v = int(_rem // 24.0)
+    _tp = int(round((_rem - _v * 24.0) / 0.4))
+    if _tp >= 60:
+        _tp -= 60
+        _v += 1
+    if _v >= 60:
+        _v -= 60
+        _n += 1
+    nazhigai_full_ta = f"{_n} நாழிகை {_v:02d} விநாழிகை {_tp:02d} தற்பரை"
+    nazhigai_full_en = f"{_n} Nazhigai {_v:02d} Vinazhigai {_tp:02d} Tharparai"
+
     # Day of week for Rahu Kalam / Yamagandam / Kuligai
-    day_num = int(math.floor(jd + 1.5)) % 7
+    # FIX: weekday of the CIVIL local birth date (Sun=0). floor(jd + 1.5)
+    # gave the UT date, i.e. the previous day for births 00:00-05:30 IST.
+    day_num = (datetime.strptime(date_str, "%Y-%m-%d").weekday() + 1) % 7
     one_eighth = day_hours / 8.0
 
     rahu_slots = {0: (7, 8), 1: (1, 2), 2: (6, 7), 3: (4, 5), 4: (5, 6), 5: (3, 4), 6: (2, 3)}
@@ -276,6 +297,40 @@ def compute_astronomical_timings(
     guli_start_eighth, _guli_end_eighth = guli_slots[day_num]
     jd_kuligai_start = jd_rise + (guli_start_eighth * one_eighth) / 24.0
 
+    # --- Kalai Magal Mandi (Maandhi) rising time -----------------------------
+    # Mandi = Lagna at a fixed number of ghatis after the start of the day or
+    # night, scaled to the actual day/night length:
+    #   day   (from sunrise): Sun 26, Mon 22, Tue 18, Wed 14, Thu 10, Fri 6, Sat 2
+    #   night (from sunset):  Sun 10, Mon 6,  Tue 2,  Wed 26, Thu 22, Fri 18, Sat 14
+    # Source: Parashara / Phaladeepika Mandi ghati table. Reproduces a Kalai
+    # Magal Type-D report within 1 arc-second (night birth).
+    MANDI_DAY_GHATI = [26, 22, 18, 14, 10, 6, 2]
+    MANDI_NIGHT_GHATI = [10, 6, 2, 26, 22, 18, 14]
+    rs_flags = swe.BIT_DISC_CENTER | swe.BIT_NO_REFRACTION
+    tamil_weekday = day_num
+    try:
+        if jd < jd_rise:
+            # Before sunrise: the night belongs to the previous weekday.
+            # Kalai: the birth-date sunset shifted back one day (not the true
+            # previous sunset) — makes T03/T06 exact.
+            tamil_weekday = (day_num - 1) % 7
+            seg_start, seg_len = jd_set - 1.0, jd_rise - (jd_set - 1.0)
+            ghati = MANDI_NIGHT_GHATI[tamil_weekday]
+            is_day_birth = False
+        elif jd < jd_set:
+            seg_start, seg_len = jd_rise, jd_set - jd_rise
+            ghati = MANDI_DAY_GHATI[day_num]
+            is_day_birth = True
+        else:
+            # Kalai: the birth-date sunrise shifted forward one day (T02 exact).
+            seg_start, seg_len = jd_set, (jd_rise + 1.0) - jd_set
+            ghati = MANDI_NIGHT_GHATI[day_num]
+            is_day_birth = False
+        jd_mandi_kalai = seg_start + seg_len * ghati / 30.0
+    except Exception:
+        jd_mandi_kalai = None
+        is_day_birth = jd_rise <= jd < jd_set
+
     return {
         "sun_rise": sunrise_str,
         "sun_set": sunset_str,
@@ -289,11 +344,89 @@ def compute_astronomical_timings(
         "yamagandam": format_slot(*yama_slots[day_num]),
         "kuligai": format_slot(*guli_slots[day_num]),
         "kuligai_start_jd": jd_kuligai_start,  # NEW
+        "mandi_jd": jd_mandi_kalai,
+        "is_day_birth": is_day_birth,
+        "tamil_weekday_num": tamil_weekday,
+        "udhayadhi_nazhigai_full": nazhigai_full_ta,
+        "udhayadhi_nazhigai_full_en": nazhigai_full_en,
     }
+
+def get_tz(timezone_str: str):
+    """IANA zone name, or a fixed offset such as "UTC+05:30" / "UTC-06:30" /
+    "GMT+6.5" (Kalai Magal lets the user type any offset)."""
+    s = (timezone_str or "Asia/Kolkata").strip()
+    m = re.match(r"^(?:UTC|GMT)\s*([+-])\s*(\d{1,2})(?:[:.](\d{1,2}))?$", s, re.I)
+    if m:
+        sign = 1 if m.group(1) == "+" else -1
+        hours = int(m.group(2))
+        frac = m.group(3)
+        minutes = 0 if not frac else (int(frac) * 6 if "." in s and len(frac) == 1 else int(frac))
+        return pytz.FixedOffset(sign * (hours * 60 + minutes))
+    return pytz.timezone(s)
+
+
+TIME_CORRECTIONS = {
+    # Kalai "Time Correction": clocks that ran ahead of zone time.
+    "none": 0.0,          # Standard Time (No Correction)
+    "dst": 1.0,           # Summer Time Correction (DST)  (matching.pdf: 07:20 IST -> 00:50 GMT)
+    "war": 1.0,           # War Time (WT) — India 1942-09-01 .. 1945-10-15 (IST + 1 h)
+    "dst2": 2.0,          # Double Summer Time Correction (2DST)
+    "dst_war": 2.0,       # Summer Time Correction (DST) + War Time
+}
+
+
+def apply_time_correction(tz: str, date_str: str, time_str: str, correction: str = "none") -> str:
+    """Returns a fixed-offset zone that includes the Kalai time correction."""
+    extra = TIME_CORRECTIONS.get((correction or "none").lower(), 0.0)
+    if not extra:
+        return tz
+    ts = time_str if len(time_str.split(":")) == 3 else f"{time_str}:00"
+    base = get_tz(tz).utcoffset(datetime.strptime(f"{date_str} {ts}", "%Y-%m-%d %H:%M:%S")).total_seconds() / 60.0
+    total = int(round(base + extra * 60))
+    sign = "+" if total >= 0 else "-"
+    return f"UTC{sign}{abs(total) // 60:02d}:{abs(total) % 60:02d}"
+
+
+# ---------------------------------------------------------------------------
+# Kalai Magal Delta-T emulation (Phase 3b)
+# Kalai Magal ships an old Swiss Ephemeris DLL whose Delta-T for recent/future
+# years differs from today's tables (e.g. ~84 s instead of ~69 s in 2026,
+# moving the Moon ~8"). Measured from Kalai printouts 1973-2026: it matches the
+# modern table before 2011 and follows this quadratic from 2011 on
+# (t = year - 2000, seconds). Fit rms 0.5 s, i.e. within the 1" print rounding.
+# ---------------------------------------------------------------------------
+import threading as _threading
+from contextlib import contextmanager as _contextmanager
+
+KALAI_DELTA_T_ENABLED = True
+_DT_LOCK = _threading.RLock()
+
+
+def kalai_delta_t_seconds(jd_ut: float):
+    year = 2000.0 + (jd_ut - 2451545.0) / 365.25
+    if year < 2011.0:
+        return None
+    t = year - 2000.0
+    return 0.03524 * t * t - 0.18934 * t + 64.28915
+
+
+@_contextmanager
+def kalai_ephemeris(jd_ut: float):
+    """Run Swiss-Ephemeris calculations with Kalai Magal's Delta-T."""
+    dt = kalai_delta_t_seconds(jd_ut) if KALAI_DELTA_T_ENABLED else None
+    with _DT_LOCK:
+        if dt is not None:
+            swe.set_delta_t_userdef(dt / 86400.0)
+        try:
+            yield
+        finally:
+            if dt is not None:
+                swe.set_delta_t_userdef(swe.DELTAT_AUTOMATIC)
+
 
 def get_julian_day(date_str: str, time_str: str, timezone_str: str = "Asia/Kolkata") -> float:
     """Converts local date and time string to UTC Julian Day."""
-    local_tz = pytz.timezone(timezone_str)
+    local_tz = get_tz(timezone_str)
     if time_str and len(time_str.split(':')) == 2:
         time_str = f"{time_str}:00"
     dt_naive = datetime.strptime(f"{date_str} {time_str}", "%Y-%m-%d %H:%M:%S")
@@ -318,16 +451,32 @@ def compute_planetary_positions(
     Tamil Subha Yoga, and Astronomical timings.
     Uses Lahiri (Chitrapaksha) Ayanamsha (swe.SIDM_LAHIRI) backed by Swiss Ephemeris DE431/441 data files.
     """
-    is_vakhyam = (panchangam_system.lower() == "vakhyam")
+    is_vakhyam = (panchangam_system or "").strip().lower() in ("vakhyam", "vakkiyam", "vakyam", "vakya")
+    # Swiss Ephemeris always stays on Lahiri. In Vakkiyam mode the Sun..Rahu,
+    # Lagna and Mandi longitudes are REPLACED below by the Kalai Magal-calibrated
+    # Vakkiyam engine (backend/app/services/vakkiyam.py). Previously this branch
+    # only switched the ayanamsa to SIDM_SURYASIDDHANTA, which still gave modern
+    # (drik) planets — that was not Vakkiyam.
+    swe.set_sid_mode(swe.SIDM_LAHIRI)
+    vak = None
     if is_vakhyam:
-        # Traditional Surya Siddhanta sidereal calculation used by Tamil Vakhyam Panchangams (Pambu Panchangam)
-        # Citations: Surya Siddhanta, AGENTS.md §1.4, Swiss Ephemeris SIDM_SURYASIDDHANTA
-        swe.set_sid_mode(swe.SIDM_SURYASIDDHANTA)
-        ayanamsa_name = "Surya Siddhanta (வாக்கிய முறை)"
+        from backend.app.services.vakkiyam import vakkiyam_for_jd, vakya_lagna
+        vak = vakkiyam_for_jd(jd, lat, lon)
+        ayanamsa_name = "வாக்கியம் (Vakkiyam)"
+        ayanamsa = vak["ayanamsa"]          # implied: true tropical Sun − Vakkiyam Sun
+        ayanamsa_true = ayanamsa
     else:
-        swe.set_sid_mode(swe.SIDM_LAHIRI)
         ayanamsa_name = "Lahiri (Chitrapaksha)"
-    ayanamsa = swe.get_ayanamsa_ut(jd)
+        ayanamsa = swe.get_ayanamsa_ut(jd)
+        # Display value: true ayanamsa (with nutation), as printed by Kalai Magal.
+        try:
+            ayanamsa_true = swe.get_ayanamsa_ex_ut(jd, swe.FLG_SIDEREAL)[1]
+        except Exception:
+            ayanamsa_true = ayanamsa
+    # Nakshatra Horai (நட்சத்திர ஹோரை) = local sidereal time at birth.
+    _st = (swe.sidtime(jd) + lon / 15.0) % 24.0
+    _st_s = int(round(_st * 3600.0)) % 86400
+    nakshatra_horai = f"{_st_s // 3600:02d}:{(_st_s % 3600) // 60:02d}:{_st_s % 60:02d}"
 
     flags = swe.FLG_SIDEREAL | swe.FLG_SPEED | swe.FLG_SWIEPH
 
@@ -337,6 +486,8 @@ def compute_planetary_positions(
     # Calculate Ascendant (Lagna)
     cusps, ascmc = swe.houses_ex(jd, lat, lon, b'P', flags)
     lagna_deg = ascmc[0] % 360.0
+    if vak is not None:
+        lagna_deg = vak["Lagna"]["lon"] % 360.0   # Vakkiyam lagna
 
     lagna_sign_num = int(lagna_deg // 30) + 1
     lagna_deg_in_sign = lagna_deg % 30.0
@@ -388,9 +539,13 @@ def compute_planetary_positions(
 
     # Calculate 7 main planets + Rahu
     for name, swe_id in SWE_PLANET_MAP.items():
-        res, flag = swe.calc_ut(jd, swe_id, flags)
-        lon_deg = res[0] % 360.0
-        speed = res[3]
+        if vak is not None:
+            lon_deg = vak[name]["lon"] % 360.0     # Vakkiyam longitude
+            speed = vak[name]["speed"]
+        else:
+            res, flag = swe.calc_ut(jd, swe_id, flags)
+            lon_deg = res[0] % 360.0
+            speed = res[3]
         is_retro = speed < 0
 
         sign_num = int(lon_deg // 30) + 1
@@ -572,10 +727,12 @@ def compute_planetary_positions(
     # handling is required later, it should be added as an explicit,
     # separately-cited branch per AGENTS.md §1.7, applied consistently to
     # Rahu Kalam / Yamagandam / Kuligai Kalam / Mandi together.
-    jd_mandi = astro_timings.get("kuligai_start_jd")
+    jd_mandi = astro_timings.get("mandi_jd") or astro_timings.get("kuligai_start_jd")
     if jd_mandi is not None:
         _, ascmc_mandi = swe.houses_ex(jd_mandi, lat, lon, b'P', flags)
         mandi_deg = ascmc_mandi[0] % 360.0
+        if vak is not None:
+            mandi_deg = vakya_lagna(jd_mandi, lat, lon) % 360.0   # Vakkiyam lagna at Mandi time
 
         mandi_sign_num = int(mandi_deg // 30) + 1
         mandi_deg_in_sign = mandi_deg % 30.0
@@ -697,7 +854,8 @@ def compute_planetary_positions(
         # 7. High-Precision Ephemeris & Astronomical Timings
         "ayanamsa_name": ayanamsa_name,
         "ayanamsa_value": round(ayanamsa, 4),
-        "ayanamsa_dms": format_dms(ayanamsa),
+        "ayanamsa_dms": format_dms(ayanamsa_true),
+        "nakshatra_horai": nakshatra_horai,
         "panchangam_system": panchangam_system,
         "sun_rise": astro_timings["sun_rise"],
         "sun_set": astro_timings["sun_set"],
@@ -707,6 +865,10 @@ def compute_planetary_positions(
         "ratrimana_en": astro_timings["ratrimana_en"],
         "udhayadhi_nazhigai": astro_timings["udhayadhi_nazhigai"],
         "udhayadhi_nazhigai_en": astro_timings["udhayadhi_nazhigai_en"],
+        "udhayadhi_nazhigai_full": astro_timings.get("udhayadhi_nazhigai_full"),
+        "udhayadhi_nazhigai_full_en": astro_timings.get("udhayadhi_nazhigai_full_en"),
+        "is_day_birth": astro_timings.get("is_day_birth"),
+        "tamil_weekday_num": astro_timings.get("tamil_weekday_num"),
         "rahu_kalam": astro_timings["rahu_kalam"],
         "yamagandam": astro_timings["yamagandam"],
         "kuligai": astro_timings["kuligai"]
@@ -719,4 +881,4 @@ def compute_planetary_positions(
         "ayanamsa": ayanamsa,
         "lagna_info": positions_by_name["Lagna"],
         "mandi_info": positions_by_name.get("Mandi"),  # NEW
-    }
+    }

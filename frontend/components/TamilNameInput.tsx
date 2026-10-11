@@ -17,6 +17,8 @@ interface TamilNameInputProps {
   placeholder?: string;
   required?: boolean;
   className?: string;
+  /** Plain field (no person icon) — used for bio-data fields such as father's name or occupation. */
+  hideIcon?: boolean;
 }
 
 /**
@@ -36,6 +38,7 @@ export const TamilNameInput: React.FC<TamilNameInputProps> = ({
   placeholder,
   required,
   className,
+  hideIcon = false,
 }) => {
   const [open, setOpen] = useState(false);
   const [active, setActive] = useState(0);
@@ -74,7 +77,7 @@ export const TamilNameInput: React.FC<TamilNameInputProps> = ({
 
   return (
     <div ref={wrapRef} className="relative">
-      <User className="absolute left-3.5 top-3.5 w-4 h-4 text-brand-fg/80 pointer-events-none" />
+      {!hideIcon && <User className="absolute left-3.5 top-3.5 w-4 h-4 text-brand-fg/80 pointer-events-none" />}
       <input
         type="text"
         required={required}
@@ -115,7 +118,7 @@ export const TamilNameInput: React.FC<TamilNameInputProps> = ({
         >
           <div className="px-3 py-1.5 text-[10px] font-bold uppercase tracking-wider text-brand-fg bg-surface-2 flex items-center gap-1.5">
             <Languages className="w-3 h-3" />
-            தமிழில் பெயர் பரிந்துரை — தேர்ந்தெடுக்கவும்
+            தமிழ் பரிந்துரை — தேர்ந்தெடுக்கவும்
           </div>
           {suggestions.map((s, i) => (
             <button

@@ -212,8 +212,9 @@ def test_2004_manosakthi_chart():
     assert "கபம்" in b["nadi_ta"]
 
     # 6. Sunrise & Astronomical Timings in Pollachi
-    assert "06:40" in b["sun_rise"]
-    assert "06:09" in b["sun_set"]
+    # Kalai Magal convention: disc centre WITHOUT refraction (was 06:40 with refraction)
+    assert "06:43" in b["sun_rise"]
+    assert "06:06" in b["sun_set"]  # Kalai convention: no refraction (was 06:09)
     assert "18 நாழிகை" in b["udhayadhi_nazhigai"]
 
 def test_2015_madurai_chart():

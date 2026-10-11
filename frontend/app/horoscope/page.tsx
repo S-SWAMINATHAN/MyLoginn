@@ -1,5 +1,6 @@
 "use client";
 
+import { usePersistentLang } from "@/lib/useLang";
 import React, { useState } from "react";
 import { Header } from "@/components/Header";
 import { Footer } from "@/components/Footer";
@@ -22,7 +23,7 @@ const TABS: { id: HoroscopeTab; ta: string; en: string; icon: React.ReactNode }[
 ];
 
 export default function HoroscopePage() {
-  const [lang, setLang] = useState<"ta" | "en">("ta");
+  const [lang, setLang] = usePersistentLang();
   const [activeTab, setActiveTab] = useState<HoroscopeTab>("daily");
 
   // Daily/Weekly/Monthly/Yearly state

@@ -6,7 +6,7 @@ from backend.app.db.session import get_db
 from backend.app.models.db_models import Chart, Profile
 from backend.app.models.schemas import GenerateChartRequest, ChartResponse, BabyNameResult, NarrationResult
 from backend.app.services.geocode import resolve_place
-from backend.app.services.ephemeris import get_julian_day, compute_planetary_positions
+from backend.app.services.ephemeris import get_julian_day, compute_planetary_positions, kalai_ephemeris
 from backend.app.services.chart_builder import (
     build_rasi_and_navamsa_kattams,
     calculate_bhava_predictions,
@@ -29,6 +29,21 @@ from backend.app.services.llm_narration import generate_chart_narration
 router = APIRouter(prefix="/charts", tags=["charts"])
 
 def run_chart_calculation(req: GenerateChartRequest, profile_id: int = None) -> dict:
+    """Kalai Magal parity: every Swiss-Ephemeris call of this chart runs with
+    Kalai Magal's Delta-T (see ephemeris.kalai_ephemeris)."""
+    lat, lon, tz = resolve_place(req.place, req.latitude, req.longitude, req.timezone)
+    if getattr(req, "time_correction", None) not in (None, "", "none"):
+        from backend.app.services.ephemeris import apply_time_correction
+        req.timezone = apply_time_correction(tz, req.date_of_birth, req.time_of_birth, req.time_correction)
+        req.latitude, req.longitude = lat, lon
+        tz = req.timezone
+    tob = req.time_of_birth if len(req.time_of_birth.split(":")) == 3 else f"{req.time_of_birth}:00"
+    jd = get_julian_day(req.date_of_birth, tob, tz)
+    with kalai_ephemeris(jd):
+        return _run_chart_calculation_inner(req, profile_id)
+
+
+def _run_chart_calculation_inner(req: GenerateChartRequest, profile_id: int = None) -> dict:
     # 1. Resolve Place & Timezone
     lat, lon, tz = resolve_place(req.place, req.latitude, req.longitude, req.timezone)
 
@@ -92,7 +107,13 @@ def run_chart_calculation(req: GenerateChartRequest, profile_id: int = None) -> 
         is_shukla_paksha=is_shukla,
         vaaram_lord=vaaram_lord,
         birth_hour=birth_hour,
-        day_num=day_num
+        day_num=day_num,
+        jd=jd,
+        lat=lat,
+        lon=lon,
+        date_str=req.date_of_birth,
+        time_str=req.time_of_birth,
+        tz_name=tz,
     )
 
     # 10. Compute Gochara (Current Transit Analysis)

@@ -77,8 +77,10 @@ def test_vimshottari_dasha_calculation():
     assert dashas[2]["planet"] == "Ketu"
     assert dashas[2]["duration_years"] == 7.0
 
-    # Verify each dasha has 9 bhuktis
-    for d in dashas:
+    # Kalai Magal parity: the running first dasa lists only the bhuktis that
+    # end after birth; every later dasa has all 9.
+    assert 1 <= len(dashas[0]["bhuktis"]) <= 9
+    for d in dashas[1:]:
         assert len(d["bhuktis"]) == 9
 
 def test_ashtakavarga_sum_337():

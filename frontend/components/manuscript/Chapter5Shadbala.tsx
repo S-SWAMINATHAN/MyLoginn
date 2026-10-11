@@ -8,44 +8,55 @@ export const Chapter5Shadbala: React.FC<ManuscriptPageProps> = ({ chart, lang })
   const shadbala = chart.shadbala?.planets || {};
   const planetList = ["Sun", "Moon", "Mars", "Mercury", "Jupiter", "Venus", "Saturn"];
 
-  // Default fallback values if not computed
-  const defaultBala: Record<string, any> = {
-    Sun: { sthana: 165.2, dig: 52.1, kaala: 142.3, cheshta: 45.0, naisargika: 60.0, drig: -8.4, total: 456.2, rupas: 7.60, req: 6.5, ta: "சூரியன்" },
-    Moon: { sthana: 148.5, dig: 48.3, kaala: 175.4, cheshta: 32.1, naisargika: 51.4, drig: 12.5, total: 468.2, rupas: 7.80, req: 6.0, ta: "சந்திரன்" },
-    Mars: { sthana: 132.4, dig: 35.6, kaala: 112.8, cheshta: 48.7, naisargika: 17.1, drig: -4.2, total: 342.4, rupas: 5.71, req: 5.0, ta: "செவ்வாய்" },
-    Mercury: { sthana: 185.3, dig: 58.2, kaala: 135.6, cheshta: 38.4, naisargika: 25.7, drig: 8.6, total: 451.8, rupas: 7.53, req: 7.0, ta: "புதன்" },
-    Jupiter: { sthana: 195.4, dig: 55.4, kaala: 158.2, cheshta: 42.1, naisargika: 34.3, drig: 14.8, total: 500.2, rupas: 8.34, req: 6.5, ta: "குரு" },
-    Venus: { sthana: 162.1, dig: 42.8, kaala: 144.5, cheshta: 29.3, naisargika: 42.9, drig: -6.1, total: 415.5, rupas: 6.93, req: 5.5, ta: "சுக்கிரன்" },
-    Saturn: { sthana: 125.8, dig: 28.4, kaala: 98.6, cheshta: 52.4, naisargika: 8.6, drig: -12.4, total: 301.4, rupas: 5.02, req: 5.0, ta: "சனி" },
+  // Kalai Magal parity (Phase 2): values come ONLY from the backend engine
+  // (kalai_shadbala.py). The previous hard-coded fallback table was removed —
+  // AGENTS.md §1.2 forbids placeholder astrological data.
+  const PLANET_TA: Record<string, string> = {
+    Sun: "சூரியன்", Moon: "சந்திரன்", Mars: "செவ்வாய்", Mercury: "புதன்",
+    Jupiter: "குரு", Venus: "சுக்கிரன்", Saturn: "சனி",
   };
+  const num = (v: unknown): number => (typeof v === "number" && isFinite(v) ? v : 0);
 
-  const rows = planetList.map((pName) => {
-    const raw = shadbala[pName];
-    const def = defaultBala[pName];
-    if (raw) {
+  const rows = planetList
+    .filter((pName) => !!shadbala[pName])
+    .map((pName) => {
+      const raw: any = shadbala[pName];
       return {
         name: pName,
-        name_ta: raw.planet_ta || def.ta,
-        sthana: raw.sthana_bala?.total || def.sthana,
-        dig: raw.dig_bala || def.dig,
-        kaala: raw.kaala_bala?.total || def.kaala,
-        cheshta: raw.cheshta_bala || def.cheshta,
-        naisargika: raw.naisargika_bala || def.naisargika,
-        drig: raw.drig_bala || def.drig,
-        total: raw.total_virupas || def.total,
-        rupas: raw.total_rupas || def.rupas,
-        req: raw.minimum_required_rupas || def.req,
+        name_ta: raw.planet_ta ?? PLANET_TA[pName],
+        sthana: num(raw.sthana_bala?.total),
+        dig: num(raw.dig_bala),
+        kaala: num(raw.kaala_bala?.total),
+        cheshta: num(raw.cheshta_bala),
+        naisargika: num(raw.naisargika_bala),
+        drig: num(raw.drig_bala),
+        total: num(raw.total_virupas),
+        rupas: num(raw.total_rupas),
+        req: num(raw.minimum_required_rupas),
+        rank: typeof raw.rank === "number" ? raw.rank : undefined,
       };
-    }
-    return {
-      name: pName,
-      name_ta: def.ta,
-      ...def,
-    };
-  });
+    });
 
-  // Sort by rupas descending for ranking
-  const sortedByRank = [...rows].sort((a, b) => b.rupas - a.rupas);
+  // Kalai Magal ranks by strength percentage (total / required).
+  const sortedByRank = [...rows].sort((a, b) =>
+    a.rank !== undefined && b.rank !== undefined ? a.rank - b.rank : b.rupas / (b.req || 1) - a.rupas / (a.req || 1)
+  );
+
+  // Bhava bala — computed by kalai_shadbala.py (drik, dig, bhavadhipati).
+  const BHAVA_LABEL: string[] = ["1-ஆம் பாவம்", "2-ஆம் பாவம்", "3-ஆம் பாவம்", "4-ஆம் பாவம்", "5-ஆம் பாவம்", "6-ஆம் பாவம்", "7-ஆம் பாவம்", "8-ஆம் பாவம்", "9-ஆம் பாவம்", "10-ஆம் பாவம்", "11-ஆம் பாவம்", "12-ஆம் பாவம்"];
+  const BHAVA_KARAKA: string[] = ["உடல், உயிர், ஆளுமை", "தனம், வாக்கு, குடும்பம்", "தைரியம், இளைய சகோதரம்", "தாய், சுகம், சொத்து, வாகனம்", "பூர்வ புண்ணியம், குழந்தைகள்", "ருண, ரோக, சத்ரு வெற்றி", "திருமணம், கூட்டாண்மை", "ஆயுள், எதிர்பாராத லாபம்", "தந்தை, தர்மம், பாக்கியம்", "தொழில், உத்தியோகம், கீர்த்தி", "லாபம், மூத்த சகோதரம்", "சுப விரயம், ஆன்மீகம், மோக்ஷம்"];
+  const SIGN_TA = ["மேஷம்", "ரிஷபம்", "மிதுனம்", "கடகம்", "சிம்மம்", "கன்னி", "துலாம்", "விருச்சிகம்", "தனுசு", "மகரம்", "கும்பம்", "மீனம்"];
+  const bhavaData: any[] = ((chart.shadbala as any)?.bhavas ?? []) as any[];
+  const bhavaRows = bhavaData.map((b: any, i: number) => ({
+    bhava: BHAVA_LABEL[i] ?? `${i + 1}`,
+    rasi: SIGN_TA[(num(b.madhya_sign) || 1) - 1],
+    karaka: BHAVA_KARAKA[i] ?? "",
+    adh: num(b.adhipati),
+    dig: num(b.dig),
+    dri: num(b.drik),
+    tot: num(b.total_rupas),
+    st: b.rank <= 4 ? (lang === "ta" ? "வலிமை" : "Strong") : b.rank <= 8 ? (lang === "ta" ? "சராசரி" : "Average") : (lang === "ta" ? "பலவீனம்" : "Weak"),
+  }));
 
   return (
     <>
@@ -138,8 +149,8 @@ export const Chapter5Shadbala: React.FC<ManuscriptPageProps> = ({ chart, lang })
               </thead>
               <tbody className="divide-y divide-[#aa820a]/20">
                 {sortedByRank.map((r, idx) => {
-                  const ratio = ((r.rupas / r.req) * 100).toFixed(0);
-                  const isStrong = parseFloat(ratio) >= 100;
+                  const ratio = r.req ? ((r.rupas / r.req) * 100).toFixed(0) : "—";
+                  const isStrong = r.req ? r.rupas >= r.req : false;
                   return (
                     <tr key={idx} className={idx % 2 === 0 ? "bg-white/60" : "bg-[#fffaf0]"}>
                       <td className="p-1 font-bold text-[#8e2b1c]">
@@ -184,12 +195,7 @@ export const Chapter5Shadbala: React.FC<ManuscriptPageProps> = ({ chart, lang })
 
       {/* ══════════════════════════════════════════════════════════
           PAGE 20: பாவக பலக் கணிதம் (BHAVABALA 12 HOUSES)
-
-          NOTE (see chat): this table's numbers (adh/dig/dri/tot/st for
-          every house) are static/hardcoded — identical for every chart,
-          not computed from the person's actual planets. Only the crash
-          (`d.lagnam_ta`) is fixed here; the accuracy issue is left as-is
-          pending a decision on whether to build the real calculation.
+          Values computed by kalai_shadbala.py (Kalai Magal parity, Phase 2).
       ══════════════════════════════════════════════════════════ */}
       <PageWrapper
         pageNumber={20}
@@ -219,28 +225,15 @@ export const Chapter5Shadbala: React.FC<ManuscriptPageProps> = ({ chart, lang })
                 </tr>
               </thead>
               <tbody className="divide-y divide-[#aa820a]/20">
-                {[
-                  { bhava: "1-ஆம் பாவம்", rasi: chart.basic_details.lagnam_ta, karaka: "உடல், உயிர், ஆளுமை", adh: 7.2, dig: 1.0, dri: 0.4, tot: 8.6, st: "மிக உத்தமம்" },
-                  { bhava: "2-ஆம் பாவம்", rasi: "தன ஸ்தானம்", karaka: "தனம், வாக்கு, குடும்பம்", adh: 6.5, dig: 0.8, dri: 0.2, tot: 7.5, st: "உத்தமம்" },
-                  { bhava: "3-ஆம் பாவம்", rasi: "சகோதர ஸ்தானம்", karaka: "தைரியம், இளைய சகோதரம்", adh: 5.8, dig: 0.6, dri: -0.1, tot: 6.3, st: "நன்று" },
-                  { bhava: "4-ஆம் பாவம்", rasi: "சுக ஸ்தானம்", karaka: "தாய், சுகம், சொத்து, வாகனம்", adh: 7.5, dig: 1.0, dri: 0.5, tot: 9.0, st: "அதி உத்தமம்" },
-                  { bhava: "5-ஆம் பாவம்", rasi: "புத்திர ஸ்தானம்", karaka: "பூர்வ புண்ணியம், குழந்தைகள்", adh: 7.8, dig: 0.7, dri: 0.6, tot: 9.1, st: "அதி உத்தமம்" },
-                  { bhava: "6-ஆம் பாவம்", rasi: "ரோக ஸ்தானம்", karaka: "ருண, ரோக, சத்ரு வெற்றி", adh: 5.2, dig: 0.5, dri: -0.3, tot: 5.4, st: "சராசரி" },
-                  { bhava: "7-ஆம் பாவம்", rasi: "களத்திர ஸ்தானம்", karaka: "திருமணம், கூட்டாண்மை", adh: 6.8, dig: 0.9, dri: 0.3, tot: 8.0, st: "உத்தமம்" },
-                  { bhava: "8-ஆம் பாவம்", rasi: "ஆயுள் ஸ்தானம்", karaka: "ஆயுள், எதிர்பாராத லாபம்", adh: 5.5, dig: 0.4, dri: -0.2, tot: 5.7, st: "நன்று" },
-                  { bhava: "9-ஆம் பாவம்", rasi: "பாக்கிய ஸ்தானம்", karaka: "தந்தை, தர்மம், பாக்கியம்", adh: 8.1, dig: 0.8, dri: 0.7, tot: 9.6, st: "அதி உத்தமம்" },
-                  { bhava: "10-ஆம் பாவம்", rasi: "கர்ம ஸ்தானம்", karaka: "தொழில், உத்தியோகம், கீர்த்தி", adh: 7.6, dig: 1.0, dri: 0.5, tot: 9.1, st: "அதி உத்தமம்" },
-                  { bhava: "11-ஆம் பாவம்", rasi: "லாப ஸ்தானம்", karaka: "லாபம், மூத்த சகோதரம்", adh: 7.0, dig: 0.6, dri: 0.4, tot: 8.0, st: "உத்தமம்" },
-                  { bhava: "12-ஆம் பாவம்", rasi: "மோக்ஷ ஸ்தானம்", karaka: "சுப விரயம், ஆன்மீகம், மோக்ஷம்", adh: 5.0, dig: 0.5, dri: -0.1, tot: 5.4, st: "சராசரி" },
-                ].map((row, idx) => (
+                {bhavaRows.map((row, idx) => (
                   <tr key={idx} className={idx % 2 === 0 ? "bg-white/60" : "bg-[#fffaf0]"}>
                     <td className="p-1 font-bold text-[#8e2b1c]">{row.bhava}</td>
                     <td className="p-1 font-semibold">{row.rasi}</td>
                     <td className="p-1">{row.karaka}</td>
-                    <td className="p-1 font-mono">{row.adh.toFixed(1)}</td>
-                    <td className="p-1 font-mono">{row.dig.toFixed(1)}</td>
-                    <td className="p-1 font-mono">{row.dri.toFixed(1)}</td>
-                    <td className="p-1 font-mono font-bold text-[#15803d]">{row.tot.toFixed(1)}</td>
+                    <td className="p-1 font-mono">{row.adh.toFixed(3)}</td>
+                    <td className="p-1 font-mono">{row.dig.toFixed(3)}</td>
+                    <td className="p-1 font-mono">{row.dri.toFixed(3)}</td>
+                    <td className="p-1 font-mono font-bold text-[#15803d]">{row.tot.toFixed(3)}</td>
                     <td className="p-1 font-semibold text-[#6b1426]">{row.st}</td>
                   </tr>
                 ))}

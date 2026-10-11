@@ -7,6 +7,12 @@ export const metadata: Metadata = {
 };
 
 export const viewport: Viewport = {
+  // phones / tablets: device width, no forced zoom (users can still pinch-zoom),
+  // and the page may use the full screen behind an iPhone notch (safe areas are
+  // respected in globals.css)
+  width: "device-width",
+  initialScale: 1,
+  viewportFit: "cover",
   themeColor: [
     { media: "(prefers-color-scheme: light)", color: "#ffffff" },
     { media: "(prefers-color-scheme: dark)", color: "#060912" },
@@ -30,18 +36,20 @@ export default function RootLayout({
       <head>
         <script dangerouslySetInnerHTML={{ __html: THEME_INIT }} />
         {/*
-          Tamil typefaces offered by the Jathagam theme panel
-          (lib/jathagamTheme.tsx → TAMIL_FONTS). globals.css already imports
-          Kavivanar / Baloo Thambi 2 / Noto Sans Tamil / Noto Serif Tamil (and
-          the new UI's Inter + Outfit); the rest are loaded here so switching
-          typeface never falls back to a face without Tamil glyphs (which
-          renders as tofu boxes, not as Tamil).
+          Fonts: globals.css imports Inter / Outfit / Kavivanar / Noto Tamil from
+          Google Fonts, and declares the 13 "MLA Tamil" faces of the Tamil-style
+          panel (served locally from /public/fonts/tamil). The old Google link for
+          Anek / Arima / Catamaran / Hind Madurai / Meera / Mukta / Pavanam /
+          Tiro / Coiny was removed with those panel entries.
         */}
         <link rel="preconnect" href="https://fonts.googleapis.com" />
         <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="anonymous" />
+        {/* one parallel request (was an @import inside globals.css, which made the
+            browser wait for the site CSS first); unused Cinzel / Noto Serif Tamil /
+            Baloo Thambi 2 removed */}
         <link
           rel="stylesheet"
-          href="https://fonts.googleapis.com/css2?family=Anek+Tamil:wght@400;500;600;700&family=Arima:wght@400;500;600;700&family=Catamaran:wght@400;500;600;700;800&family=Hind+Madurai:wght@400;500;600;700&family=Meera+Inimai&family=Mukta+Malar:wght@400;500;600;700&family=Pavanam&family=Tiro+Tamil:ital@0;1&family=Coiny&display=swap"
+          href="https://fonts.googleapis.com/css2?family=Caveat:wght@400..700&family=Inter:wght@400;500;600;700;800&family=Kalam:wght@300;400;700&family=Kavivanar&family=Noto+Sans+Tamil:wght@300;400;500;600;700;800&family=Outfit:wght@300;400;500;600;700;800&display=swap"
         />
       </head>
       <body className="antialiased">
