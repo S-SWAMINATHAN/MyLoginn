@@ -7,6 +7,7 @@ Vercel Python function that serves the astrology FastAPI app (astrology/backend)
 Serverless notes: the deployment filesystem is read-only, so SQLite lives in /tmp (it is rebuilt on a cold start),
 and the WeasyPrint PDF engine is not installed (it needs Pango), so /api/pdf/* answers 503 on this host.
 """
+import hashlib
 import os
 import sys
 import tempfile
@@ -21,6 +22,10 @@ _TMP_DB = os.path.join(tempfile.gettempdir(), "jathagam.db")
 # never be picked up by the astrology tables.
 os.environ["DATABASE_URL"] = f"sqlite:///{_TMP_DB}"
 os.environ.setdefault("SE_EPHE_PATH", str(ROOT / "ephe"))
+# This function is publicly routable, so it must only answer the website's own proxy (which enforces payment for the
+# print PDFs). Without an explicit ASTROLOGY_API_SECRET, derive the shared secret from JWT_SECRET; the proxy does the same.
+if not os.environ.get("ASTROLOGY_API_SECRET") and os.environ.get("JWT_SECRET"):
+    os.environ["ASTROLOGY_API_SECRET"] = hashlib.sha256(("astrology-api:" + os.environ["JWT_SECRET"]).encode()).hexdigest()
 
 try:
     from backend.app.main import app as _backend  # noqa: E402

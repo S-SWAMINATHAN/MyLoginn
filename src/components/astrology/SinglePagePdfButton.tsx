@@ -28,7 +28,7 @@ export const SinglePagePdfButton: React.FC<Props> = ({ chart, lang }) => {
   const { palette } = useJathagamTheme();
 
   const handleDownload = async () => {
-    if (!requireUnlock()) return;
+    if (!requireUnlock(() => { void handleDownload(); })) return;
     const el = document.getElementById("single-page-report");
     if (!el) {
       alert(lang === "ta" ? "அறிக்கை கிடைக்கவில்லை." : "Report not found.");

@@ -1,3 +1,4 @@
+import { createHash } from "crypto";
 import { NextResponse } from "next/server";
 import { pdfRequestAccess, type ReportAccess } from "@/lib/astrology/access";
 import { getBuyer, hasAstrologyAccess } from "@/lib/astrologyAccess";
@@ -23,6 +24,14 @@ const BACKEND_TIMEOUT_MS = 55_000;
  *  3. the local service on port 8765.
  * A value that is just this website (e.g. https://myloginn.com) is ignored: it would make the proxy call itself.
  */
+/** Shared secret the Python service requires. Same derivation as api/astro.py when ASTROLOGY_API_SECRET is not set. */
+function apiSecret() {
+  const explicit = process.env.ASTROLOGY_API_SECRET;
+  if (explicit) return explicit;
+  const seed = process.env.JWT_SECRET;
+  return seed ? createHash("sha256").update(`astrology-api:${seed}`).digest("hex") : "";
+}
+
 function backendBase(req: Request) {
   const site = new URL(req.url);
   const configured = (process.env.ASTROLOGY_API_URL || "").trim().replace(/\/+$/, "");
@@ -76,7 +85,8 @@ async function handle(req: Request, ctx: { params: Promise<{ path: string[] }> }
     const value = req.headers.get(name);
     if (value) headers.set(name, value);
   }
-  if (process.env.ASTROLOGY_API_SECRET) headers.set("x-astrology-secret", process.env.ASTROLOGY_API_SECRET);
+  const secret = apiSecret();
+  if (secret) headers.set("x-astrology-secret", secret);
 
   try {
     const upstream = await fetch(target, {

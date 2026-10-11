@@ -297,7 +297,7 @@ export async function exportNodesToPdf(
     onProgress?: (done: number, total: number) => void;
   } = {}
 ): Promise<void> {
-  if (!requireUnlock()) return; // unpaid reports cannot be exported
+  if (!requireUnlock(() => { void exportNodesToPdf(nodes, fileName, options); })) return; // unpaid reports cannot be exported; resumes after payment
   if (!nodes.length) throw new Error("Nothing to export.");
 
   const fmt = options.paper === "A5" ? "a5" : "a4";

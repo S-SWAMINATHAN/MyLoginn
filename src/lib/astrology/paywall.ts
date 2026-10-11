@@ -23,6 +23,15 @@ type State = {
 };
 
 let state: State = { context: null, unlocked: false, checking: false, modalOpen: false };
+// The action the buyer clicked while the report was still locked (preview, download, ...). It runs once after payment,
+// so they do not have to press the button a second time.
+let pendingAction: (() => void) | null = null;
+
+function runPending() {
+  const action = pendingAction;
+  pendingAction = null;
+  if (action) setTimeout(action, 0);
+}
 const listeners = new Set<() => void>();
 let checkSeq = 0;
 
@@ -62,7 +71,10 @@ export async function refreshUnlock(): Promise<boolean> {
       body: JSON.stringify({ product: ctx.product, reportKey: ctx.reportKey }),
     });
     const data = (await res.json()) as { unlocked?: boolean };
-    if (seq === checkSeq) set({ unlocked: !!data.unlocked, checking: false });
+    if (seq === checkSeq) {
+      set({ unlocked: !!data.unlocked, checking: false });
+      if (data.unlocked) runPending();
+    }
     return !!data.unlocked;
   } catch {
     if (seq === checkSeq) set({ unlocked: false, checking: false });
@@ -83,13 +95,15 @@ export function openUnlockModal() {
 }
 
 export function closeUnlockModal() {
+  pendingAction = null; // closing the dialog without paying cancels the blocked action
   set({ modalOpen: false });
 }
 
 /** Gate for every print / download. Opens the unlock dialog and returns false when the report is not paid for. */
-export function requireUnlock(): boolean {
+export function requireUnlock(afterUnlock?: () => void): boolean {
   // Nothing is registered on pages that show no generated report (e.g. the A-Z name browser).
   if (!state.context || state.unlocked) return true;
+  pendingAction = afterUnlock ?? null;
   openUnlockModal();
   return false;
 }
@@ -102,6 +116,7 @@ export function guardedPrint() {
 export function markUnlocked(product: AstroProduct, reportKey: string) {
   if (state.context && state.context.product === product && state.context.reportKey === reportKey) {
     set({ unlocked: true, modalOpen: false });
+    runPending();
   }
   // A full-horoscope purchase also covers the single-page sheet; re-ask the server to be exact.
   void refreshUnlock();

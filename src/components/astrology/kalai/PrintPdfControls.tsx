@@ -42,7 +42,7 @@ export function PrintPdfControls({ path, body, filename, lang, ready, paper, onP
   }, [palette.id, palette.paper, font.id, god, paper, JSON.stringify(body)]);
 
   const preview = async () => {
-    if (!requireUnlock()) return;
+    if (!requireUnlock(() => { void preview(); })) return;
     setBusy(true); setErr(null);
     try {
       const theme = {
@@ -87,7 +87,7 @@ export function PrintPdfControls({ path, body, filename, lang, ready, paper, onP
   };
 
   const download = () => {
-    if (!url || !requireUnlock()) return;
+    if (!url || !requireUnlock(download)) return;
     if (printable) { // choose "Save as PDF" in the print dialog
       frameRef.current?.contentWindow?.focus();
       frameRef.current?.contentWindow?.print();
