@@ -43,10 +43,14 @@ export const SinglePagePdfButton: React.FC<Props> = ({ chart, lang }) => {
       pdf.save(`${safeFileName(chart.name)}_Single_Page_Jathagam_${chart.date_of_birth}.pdf`);
     } catch (e: any) {
       console.error(e);
+      // The in-browser image capture can fail on some browsers/hosts (e.g. "Unable to find element in cloned iframe").
+      // The browser's own print dialog always works: choose "Save as PDF" there.
       alert(
-        (lang === "ta" ? "PDF உருவாக்குவதில் பிழை: " : "Error generating PDF: ") +
-          (e?.message || String(e))
+        lang === "ta"
+          ? "தானியங்கி PDF உருவாக்க இயலவில்லை. திறக்கும் அச்சு சாளரத்தில் 'PDF ஆக சேமி' என்பதைத் தேர்ந்தெடுக்கவும்."
+          : "Automatic PDF creation is not available here. In the print window that opens, choose \"Save as PDF\"."
       );
+      window.print();
     } finally {
       setGenerating(false);
     }

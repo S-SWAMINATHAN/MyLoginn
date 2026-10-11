@@ -14,13 +14,25 @@ from __future__ import annotations
 import re
 from typing import Any, Dict, List, Literal, Optional
 
-from fastapi import APIRouter, HTTPException
+from fastapi import APIRouter, Depends, HTTPException, Query
 from fastapi.responses import Response
 from pydantic import BaseModel, ValidationError
 
 from backend.app.services.pdf.schemas import PdfRequest
+from backend.app.services.pdf.web import BROWSER_MODE
 
-router = APIRouter(prefix="/pdf", tags=["pdf"])
+async def _read_format(format: Optional[str] = Query(None)) -> None:
+    """`?format=html` returns the print-ready HTML page instead of a PDF (for hosts without the PDF engine)."""
+    BROWSER_MODE.set(format == "html")
+
+
+router = APIRouter(prefix="/pdf", tags=["pdf"], dependencies=[Depends(_read_format)])
+
+
+def _file_response(data: bytes, filename: str) -> Response:
+    if data[:4] == b"%PDF":
+        return Response(content=data, media_type="application/pdf", headers={"Content-Disposition": f'attachment; filename="{filename}"'})
+    return Response(content=data, media_type="text/html; charset=utf-8", headers={"Cache-Control": "no-store"})
 
 
 def _pdf_response(req: PdfRequest, filename: str) -> Response:
@@ -30,8 +42,7 @@ def _pdf_response(req: PdfRequest, filename: str) -> Response:
     except (OSError, ImportError) as exc:  # Pango/GTK runtime or WeasyPrint missing (Windows, serverless) — explain clearly
         raise HTTPException(status_code=503, detail=f"The PDF engine is not available on this server: {exc}")
     safe = re.sub(r"[^A-Za-z0-9_.-]+", "_", filename) or "report.pdf"
-    return Response(content=data, media_type="application/pdf",
-                    headers={"Content-Disposition": f'attachment; filename="{safe}"'})
+    return _file_response(data, safe)
 
 
 @router.post("/generate")
@@ -113,7 +124,7 @@ def kanitha_pdf(body: BirthPdfIn):
         except (OSError, ImportError) as exc:
             raise HTTPException(status_code=503, detail=f"The PDF engine is not available on this server: {exc}")
         name = re.sub(r"[^A-Za-z0-9_.-]+", "_", f"oru-pakka-jathagam-{b.get('name', 'report')}.pdf")
-        return Response(content=data, media_type="application/pdf", headers={"Content-Disposition": f'attachment; filename="{name}"'})
+        return _file_response(data, name)
     from backend.app.services.pdf.builders import kanitha_request
     try:
         req = kanitha_request(_place_for(body.birth, body.language), body.language, body.god_image, body.chart_style, body.theme, body.mode or "full",

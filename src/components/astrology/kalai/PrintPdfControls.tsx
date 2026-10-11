@@ -3,7 +3,7 @@
 // Print-quality PDF (WeasyPrint) with PREVIEW before download.
 // Sends the current colour / Tamil-style panel choice (palette + typeface) with
 // the request, so the printed PDF uses exactly the colours and font on screen.
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import { useJathagamTheme } from "@/lib/astrology/jathagamTheme";
 import { JathagamThemePanel } from "@/components/astrology/JathagamThemePanel";
 import { Eye, Loader2, Printer } from "lucide-react";
@@ -31,6 +31,9 @@ export function PrintPdfControls({ path, body, filename, lang, ready, paper, onP
   const [busy, setBusy] = useState(false);
   const [err, setErr] = useState<string | null>(null);
   const [url, setUrl] = useState<string | null>(null);
+  // True when the server has no PDF engine (e.g. Vercel) and returned the print-ready page: the browser prints it to PDF.
+  const [printable, setPrintable] = useState(false);
+  const frameRef = useRef<HTMLIFrameElement>(null);
 
   useEffect(() => () => { if (url) URL.revokeObjectURL(url); }, [url]);
   useEffect(() => {
@@ -46,7 +49,7 @@ export function PrintPdfControls({ path, body, filename, lang, ready, paper, onP
         ink: palette.ink, inkSoft: palette.inkSoft, accent: palette.accent, accentDeep: palette.accentDeep,
         gold: palette.gold, paper: palette.paper, paperCard: palette.paperCard, fontId: font.id,
       };
-      const res = await fetch(`${API_BASE}/pdf/${path}`, {
+      const init: RequestInit = {
         method: "POST", headers: { "Content-Type": "application/json" },
         // Tamil page: parents' / family names in Tamil, so the PDF has no English words
         body: JSON.stringify({
@@ -55,14 +58,26 @@ export function PrintPdfControls({ path, body, filename, lang, ready, paper, onP
           ...(paper ? { page_size: paper } : {}),
           language: lang, god_image: god, theme,
         }),
-      });
+      };
+      let res = await fetch(`${API_BASE}/pdf/${path}`, init);
+      let asPage = false;
+      if (res.status === 503) { // no PDF engine on the server: ask for the print-ready page instead
+        res = await fetch(`${API_BASE}/pdf/${path}?format=html`, init);
+        asPage = true;
+      }
       if (!res.ok) {
         let msg = `HTTP ${res.status}`;
         try { const j = await res.json(); msg = typeof j.detail === "string" ? j.detail : msg; } catch { /* not JSON */ }
         throw new Error(msg);
       }
-      const blob = await res.blob();
+      let blob = await res.blob();
+      if (asPage) {
+        // blob: documents have no base URL, so point relative asset links (/astrology/pdf/...) at this site.
+        const page = (await blob.text()).replace(/<head>/i, `<head><base href="${window.location.origin}/">`);
+        blob = new Blob([page], { type: "text/html;charset=utf-8" });
+      }
       if (url) URL.revokeObjectURL(url);
+      setPrintable(asPage);
       setUrl(URL.createObjectURL(blob));
     } catch (e) {
       setErr(e instanceof Error ? e.message : String(e));
@@ -73,6 +88,11 @@ export function PrintPdfControls({ path, body, filename, lang, ready, paper, onP
 
   const download = () => {
     if (!url || !requireUnlock()) return;
+    if (printable) { // choose "Save as PDF" in the print dialog
+      frameRef.current?.contentWindow?.focus();
+      frameRef.current?.contentWindow?.print();
+      return;
+    }
     const a = document.createElement("a");
     a.href = url; a.download = filename; document.body.appendChild(a); a.click(); a.remove();
   };
@@ -143,14 +163,14 @@ export function PrintPdfControls({ path, body, filename, lang, ready, paper, onP
             </span>
             <div className="flex gap-2">
               <button type="button" onClick={download} className="rounded-xl brand-gradient-bg px-5 py-2 text-sm font-semibold text-white">
-                {lang === "ta" ? "பதிவிறக்கு" : "Download"}
+                {printable ? (lang === "ta" ? "அச்சிடு / PDF சேமி" : "Print / Save as PDF") : (lang === "ta" ? "பதிவிறக்கு" : "Download")}
               </button>
               <button type="button" onClick={() => setUrl(null)} className="rounded-xl border border-line bg-surface px-5 py-2 text-sm font-semibold text-foreground">
                 {lang === "ta" ? "மூடு" : "Close"}
               </button>
             </div>
           </div>
-          <iframe title="PDF preview" src={url} className="h-[80vh] w-full rounded-b-2xl border border-line bg-white" />
+          <iframe ref={frameRef} title="PDF preview" src={url} className="h-[80vh] w-full rounded-b-2xl border border-line bg-white" />
         </div>
       )}
     </div>

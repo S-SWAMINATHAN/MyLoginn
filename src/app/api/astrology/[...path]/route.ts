@@ -87,7 +87,8 @@ async function handle(req: Request, ctx: { params: Promise<{ path: string[] }> }
       signal: AbortSignal.timeout(BACKEND_TIMEOUT_MS),
     });
     // An HTML answer means something other than the astrology service replied (wrong address, proxy error page).
-    if ((upstream.headers.get("content-type") ?? "").includes("text/html")) {
+    const wantsHtml = url.searchParams.get("format") === "html"; // print-ready page for browsers, see astrology/backend services/pdf/web.py
+    if (!wantsHtml && (upstream.headers.get("content-type") ?? "").includes("text/html")) {
       console.error("astrology proxy: upstream returned HTML instead of JSON", target, upstream.status);
       return NextResponse.json(
         { detail: "The astrology service returned an unexpected page. Check that ASTROLOGY_API_URL points to the running Python service." },

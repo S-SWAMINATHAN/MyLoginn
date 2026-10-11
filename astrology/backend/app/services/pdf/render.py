@@ -1058,6 +1058,9 @@ def build_html(req: PdfRequest) -> str:
 
 
 def render_pdf(req: PdfRequest) -> bytes:
+    from backend.app.services.pdf.web import BROWSER_MODE, browser_html
+    if BROWSER_MODE.get():  # format=html: the browser prints the page (no WeasyPrint on this host)
+        return browser_html(build_html(req)).encode("utf-8")
     from weasyprint import HTML  # imported lazily: WeasyPrint needs Pango at runtime
     zoom = A5_ZOOM if req.page_size == "A5" else 1
     return HTML(string=build_html(req), base_url=FONT_DIR).write_pdf(zoom=zoom)

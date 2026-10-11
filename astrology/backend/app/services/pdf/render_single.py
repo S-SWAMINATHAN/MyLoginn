@@ -239,6 +239,9 @@ h3 {{ text-align: center; font-size: 10pt; color: {theme.accent}; margin: 3mm 0 
 
 def render_single_pdf(r: Dict[str, Any], lang: str, theme: Optional[PdfTheme] = None, tz_hours: float = 5.5,
                       father: str = "", mother: str = "", god_image: str = "ganesha", chart_style: str = "south") -> bytes:
+    from backend.app.services.pdf.web import BROWSER_MODE, browser_html
+    page = build_single_html(r, lang, theme, tz_hours, father, mother, god_image, chart_style)
+    if BROWSER_MODE.get():  # format=html: the browser prints the page (no WeasyPrint on this host)
+        return browser_html(page).encode("utf-8")
     from weasyprint import HTML
-    return HTML(string=build_single_html(r, lang, theme, tz_hours, father, mother, god_image, chart_style),
-                base_url=FONT_DIR).write_pdf()
+    return HTML(string=page, base_url=FONT_DIR).write_pdf()
