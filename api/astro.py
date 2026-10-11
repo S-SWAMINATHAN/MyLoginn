@@ -17,13 +17,22 @@ ROOT = Path(__file__).resolve().parent.parent / "astrology"
 sys.path.insert(0, str(ROOT))
 
 _TMP_DB = os.path.join(tempfile.gettempdir(), "jathagam.db")
-os.environ.setdefault("DATABASE_URL", f"sqlite:///{_TMP_DB}")
+# Always use a private temp SQLite file. The Vercel project's own DATABASE_URL belongs to the website (Postgres) and must
+# never be picked up by the astrology tables.
+os.environ["DATABASE_URL"] = f"sqlite:///{_TMP_DB}"
 os.environ.setdefault("SE_EPHE_PATH", str(ROOT / "ephe"))
 
-from backend.app.main import app as _backend  # noqa: E402
-from backend.app.services import name_db  # noqa: E402
+try:
+    from backend.app.main import app as _backend  # noqa: E402
+    from backend.app.services import name_db  # noqa: E402
 
-name_db.DB_PATH = _TMP_DB  # the baby-name tables are created on demand in the writable temp database
+    name_db.DB_PATH = _TMP_DB  # the baby-name tables are created on demand in the writable temp database
+    _startup_error = None
+except Exception as exc:  # report the real reason instead of an opaque platform 500
+    import traceback
+
+    _startup_error = f"{type(exc).__name__}: {exc}" + "\n" + "".join(traceback.format_exc().splitlines(True)[-12:])
+    print("astrology function failed to start:", _startup_error)
 
 
 class RestorePath:
@@ -46,4 +55,13 @@ class RestorePath:
         await self.app(scope, receive, send)
 
 
-app = RestorePath(_backend)
+async def _failed(scope, receive, send):
+    if scope["type"] != "http":
+        return
+    body = ('{"detail": "The astrology service failed to start on the server.", "python": "%s", "error": %s}'
+            % (sys.version.split()[0], __import__("json").dumps(_startup_error))).encode()
+    await send({"type": "http.response.start", "status": 502, "headers": [(b"content-type", b"application/json")]})
+    await send({"type": "http.response.body", "body": body})
+
+
+app = RestorePath(_backend) if _startup_error is None else _failed
