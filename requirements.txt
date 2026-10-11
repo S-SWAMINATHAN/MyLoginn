@@ -1,0 +1,9 @@
+# Python dependencies for the Vercel function in api/astro.py (the astrology API).
+# WeasyPrint is intentionally left out: it needs the Pango system library, which Vercel does not provide.
+fastapi>=0.100.0
+pydantic>=2.0.0
+sqlalchemy>=2.0.0
+pyswisseph>=2.10.3.2
+timezonefinder>=6.5.0
+pytz>=2024.1
+httpx>=0.25.0

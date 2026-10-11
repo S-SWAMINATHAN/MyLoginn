@@ -12,6 +12,12 @@ EPHE_DIR = os.getenv("SE_EPHE_PATH", str(WORKSPACE_DIR / "ephe"))
 # hides the data files from Swiss Ephemeris; set KALAI_EPHEMERIS=files to use them.
 KALAI_EPHEMERIS = os.getenv("KALAI_EPHEMERIS", "moshier").lower()
 _MOSHIER_DIR = str(BASE_DIR / ".moshier_only")  # deliberately empty directory
+try:
+    os.makedirs(_MOSHIER_DIR, exist_ok=True)
+except OSError:  # read-only deployment (e.g. Vercel): use the writable temp directory instead
+    import tempfile
+    _MOSHIER_DIR = os.path.join(tempfile.gettempdir(), "moshier_only")
+    os.makedirs(_MOSHIER_DIR, exist_ok=True)
 
 class Settings:
     PROJECT_NAME: str = "AI Jathagam Generator"
@@ -26,4 +32,3 @@ class Settings:
     ANTHROPIC_API_KEY: str = os.getenv("ANTHROPIC_API_KEY", "")
 
 settings = Settings()
-os.makedirs(_MOSHIER_DIR, exist_ok=True)

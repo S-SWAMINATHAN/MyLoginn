@@ -27,8 +27,8 @@ def _pdf_response(req: PdfRequest, filename: str) -> Response:
     from backend.app.services.pdf.render import render_pdf
     try:
         data = render_pdf(req)
-    except OSError as exc:  # Pango/GTK runtime missing (Windows) — explain clearly
-        raise HTTPException(status_code=500, detail=f"WeasyPrint runtime not available: {exc}. See PASTE_HERE.md (GTK3 runtime).")
+    except (OSError, ImportError) as exc:  # Pango/GTK runtime or WeasyPrint missing (Windows, serverless) — explain clearly
+        raise HTTPException(status_code=503, detail=f"The PDF engine is not available on this server: {exc}")
     safe = re.sub(r"[^A-Za-z0-9_.-]+", "_", filename) or "report.pdf"
     return Response(content=data, media_type="application/pdf",
                     headers={"Content-Disposition": f'attachment; filename="{safe}"'})
@@ -110,8 +110,8 @@ def kanitha_pdf(body: BirthPdfIn):
                                      god_image=body.god_image, chart_style=body.chart_style)
         except (KeyError, ValueError) as exc:
             raise HTTPException(status_code=400, detail=str(exc))
-        except OSError as exc:
-            raise HTTPException(status_code=500, detail=f"WeasyPrint runtime not available: {exc}")
+        except (OSError, ImportError) as exc:
+            raise HTTPException(status_code=503, detail=f"The PDF engine is not available on this server: {exc}")
         name = re.sub(r"[^A-Za-z0-9_.-]+", "_", f"oru-pakka-jathagam-{b.get('name', 'report')}.pdf")
         return Response(content=data, media_type="application/pdf", headers={"Content-Disposition": f'attachment; filename="{name}"'})
     from backend.app.services.pdf.builders import kanitha_request

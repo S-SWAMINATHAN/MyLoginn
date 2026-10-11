@@ -16,8 +16,27 @@ export const maxDuration = 60;
 const FORWARD_HEADERS = ["content-type", "accept", "accept-language"];
 const BACKEND_TIMEOUT_MS = 55_000;
 
-function backendBase() {
-  return (process.env.ASTROLOGY_API_URL || "http://127.0.0.1:8765").replace(/\/+$/, "");
+/**
+ * Where the astrology API lives, in order of preference:
+ *  1. ASTROLOGY_API_URL, when it points at a separate service (or a sub-path such as /api/astro);
+ *  2. on Vercel, the Python function in this same project (api/astro.py), so no extra host or domain is needed;
+ *  3. the local service on port 8765.
+ * A value that is just this website (e.g. https://myloginn.com) is ignored: it would make the proxy call itself.
+ */
+function backendBase(req: Request) {
+  const site = new URL(req.url);
+  const configured = (process.env.ASTROLOGY_API_URL || "").trim().replace(/\/+$/, "");
+  if (configured) {
+    try {
+      const target = new URL(configured);
+      const isThisWebsite = target.host === site.host && target.pathname.replace(/\/+$/, "") === "";
+      if (!isThisWebsite) return configured;
+    } catch {
+      console.error("astrology proxy: ASTROLOGY_API_URL is not a valid URL, ignoring it", configured);
+    }
+  }
+  if (process.env.VERCEL) return `${site.origin}/api/astro`;
+  return "http://127.0.0.1:8765";
 }
 
 async function handle(req: Request, ctx: { params: Promise<{ path: string[] }> }) {
@@ -50,25 +69,7 @@ async function handle(req: Request, ctx: { params: Promise<{ path: string[] }> }
   }
 
   const url = new URL(req.url);
-  const base = backendBase();
-  // ASTROLOGY_API_URL must be the Python service, never this website: pointing it at the site would make the
-  // proxy call itself and return the site's HTML 404 page instead of JSON.
-  try {
-    const baseHost = new URL(base).host;
-    if (baseHost === url.host || baseHost === req.headers.get("host")) {
-      console.error("astrology proxy: ASTROLOGY_API_URL points at this website", base);
-      return NextResponse.json(
-        { detail: "The astrology service address is misconfigured on the server (ASTROLOGY_API_URL must point to the Python astrology service, not to this website)." },
-        { status: 502 },
-      );
-    }
-  } catch {
-    console.error("astrology proxy: ASTROLOGY_API_URL is not a valid URL (include http:// or https://)", base);
-    return NextResponse.json(
-      { detail: "The astrology service address is invalid on the server (ASTROLOGY_API_URL needs a full http:// or https:// address)." },
-      { status: 502 },
-    );
-  }
+  const base = backendBase(req);
   const target = `${base}/api/${joined}${url.search}`;
   const headers = new Headers();
   for (const name of FORWARD_HEADERS) {

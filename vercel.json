@@ -1,0 +1,13 @@
+{
+  "functions": {
+    "api/astro.py": {
+      "maxDuration": 60,
+      "memory": 1024,
+      "includeFiles": "astrology/**",
+      "excludeFiles": "astrology/backend/tests/**"
+    }
+  },
+  "rewrites": [
+    { "source": "/api/astro/:path*", "destination": "/api/astro?__p=:path*" }
+  ]
+}
