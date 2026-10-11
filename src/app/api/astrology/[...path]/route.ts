@@ -50,7 +50,26 @@ async function handle(req: Request, ctx: { params: Promise<{ path: string[] }> }
   }
 
   const url = new URL(req.url);
-  const target = `${backendBase()}/api/${joined}${url.search}`;
+  const base = backendBase();
+  // ASTROLOGY_API_URL must be the Python service, never this website: pointing it at the site would make the
+  // proxy call itself and return the site's HTML 404 page instead of JSON.
+  try {
+    const baseHost = new URL(base).host;
+    if (baseHost === url.host || baseHost === req.headers.get("host")) {
+      console.error("astrology proxy: ASTROLOGY_API_URL points at this website", base);
+      return NextResponse.json(
+        { detail: "The astrology service address is misconfigured on the server (ASTROLOGY_API_URL must point to the Python astrology service, not to this website)." },
+        { status: 502 },
+      );
+    }
+  } catch {
+    console.error("astrology proxy: ASTROLOGY_API_URL is not a valid URL (include http:// or https://)", base);
+    return NextResponse.json(
+      { detail: "The astrology service address is invalid on the server (ASTROLOGY_API_URL needs a full http:// or https:// address)." },
+      { status: 502 },
+    );
+  }
+  const target = `${base}/api/${joined}${url.search}`;
   const headers = new Headers();
   for (const name of FORWARD_HEADERS) {
     const value = req.headers.get(name);
@@ -66,6 +85,14 @@ async function handle(req: Request, ctx: { params: Promise<{ path: string[] }> }
       cache: "no-store",
       signal: AbortSignal.timeout(BACKEND_TIMEOUT_MS),
     });
+    // An HTML answer means something other than the astrology service replied (wrong address, proxy error page).
+    if ((upstream.headers.get("content-type") ?? "").includes("text/html")) {
+      console.error("astrology proxy: upstream returned HTML instead of JSON", target, upstream.status);
+      return NextResponse.json(
+        { detail: "The astrology service returned an unexpected page. Check that ASTROLOGY_API_URL points to the running Python service." },
+        { status: 502 },
+      );
+    }
     const out = new Headers();
     for (const name of ["content-type", "content-disposition", "cache-control"]) {
       const value = upstream.headers.get(name);
