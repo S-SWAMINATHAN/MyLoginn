@@ -57,8 +57,8 @@ const features: { iconKey: CourseIconKey; title: string; description: string }[]
 const stack = ["Next.js", "React Native", "Node.js", "PostgreSQL", "Prisma", "Three.js", "Tailwind CSS", "AWS / Vercel"];
 
 export const metadata = createPageMetadata({
-  title: "App & Web Development Services in Tamil Nadu",
-  description: "Plan secure, scalable websites, mobile apps and custom software with MyLoginn for businesses in Coimbatore, Pollachi, Udumalpet and Tamil Nadu.",
+  title: "Web, Mobile App & Custom Software Development",
+  description: "Secure, scalable websites, web applications, Android and iOS apps and custom software from MyLoginn, an India-based team serving businesses in India and abroad.",
   path: "/services/app-web-development",
   keywords: [
     "MyLoginn website development", "web development company",

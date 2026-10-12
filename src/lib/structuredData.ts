@@ -6,13 +6,13 @@ export const organizationStructuredData = {
   "@type": "Organization",
   "@id": `${siteUrl}/#organization`,
   name: "MyLoginn Tech Private Limited",
-  alternateName: ["MyLoginn", "MyLogin", "My Loginn", "MyLoginn Tech"],
+  alternateName: ["MyLoginn", "My Loginn", "MyLoginn Tech"],
   legalName: "MyLoginn Tech Private Limited",
   url: siteUrl,
   logo: `${siteUrl}/myloginn-logo.png`,
   image: `${siteUrl}/myloginn-logo.png`,
   description:
-    "MyLoginn Tech Private Limited is an Indian technology company providing web and mobile development, custom software, AI solutions, digital marketing, technology courses, tutoring, and internships.",
+    "MyLoginn Tech Private Limited is an India-based technology company building web, mobile, custom software, AI, automation and digital solutions for businesses worldwide, and teaching practical technology skills.",
   email: CONTACT_EMAIL,
   telephone: CONTACT_PHONES[0].tel,
   sameAs: ["https://www.instagram.com/myloginntech/"],
@@ -23,7 +23,9 @@ export const organizationStructuredData = {
     contactType: "customer support",
     areaServed: "IN",
   })),
+  slogan: "Intelligence | Innovation | Integrity | Impact",
   areaServed: [
+    { "@type": "Country", name: "India" },
     ...["Coimbatore", "Pollachi", "Udumalpet", "Erode"].map((name) => ({
       "@type": "City",
       name,
@@ -36,6 +38,9 @@ export const organizationStructuredData = {
     "Mobile app development",
     "Custom software development",
     "Artificial intelligence",
+    "Generative AI",
+    "AI agent development",
+    "Software testing and test automation",
     "Digital marketing",
     "Technology education",
     "Online tutoring",
@@ -50,7 +55,6 @@ export const websiteStructuredData = {
   name: "MyLoginn",
   alternateName: [
     "My Loginn",
-    "MyLogin",
     "MyLoginn Tech",
     "MyLoginn Tech Private Limited",
     "myloginn.com",
@@ -59,3 +63,40 @@ export const websiteStructuredData = {
   publisher: { "@id": `${siteUrl}/#organization` },
   inLanguage: "en-IN",
 };
+
+/** Service schema for a service page; provider links back to the single Organization entity. */
+export function serviceStructuredData({
+  name,
+  description,
+  path,
+  serviceType,
+}: {
+  name: string;
+  description: string;
+  path: string;
+  serviceType: string;
+}) {
+  return {
+    "@context": "https://schema.org",
+    "@type": "Service",
+    "@id": `${siteUrl}${path}#service`,
+    name,
+    serviceType,
+    description,
+    url: `${siteUrl}${path}`,
+    provider: { "@id": `${siteUrl}/#organization` },
+    areaServed: [{ "@type": "Country", name: "India" }, { "@type": "Place", name: "Worldwide (remote delivery)" }],
+  };
+}
+
+export function faqStructuredData(items: { question: string; answer: string }[]) {
+  return {
+    "@context": "https://schema.org",
+    "@type": "FAQPage",
+    mainEntity: items.map(({ question, answer }) => ({
+      "@type": "Question",
+      name: question,
+      acceptedAnswer: { "@type": "Answer", text: answer },
+    })),
+  };
+}

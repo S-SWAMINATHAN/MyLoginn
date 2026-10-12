@@ -1,6 +1,8 @@
 import type { NextConfig } from "next";
 
 const nextConfig: NextConfig = {
+  // Do not advertise the framework in the X-Powered-By response header.
+  poweredByHeader: false,
   experimental: {
     // Turbopack's on-disk dev cache has been corrupting itself in this
     // environment (stale cached module-resolution paths surviving a moved/
@@ -18,7 +20,20 @@ const nextConfig: NextConfig = {
           // Prevent a valid HTTPS certificate from being undermined if an
           // HTTP URL is accidentally introduced in a page or third-party
           // integration. Browsers upgrade those requests before loading them.
-          { key: "Content-Security-Policy", value: "upgrade-insecure-requests" },
+          {
+            key: "Content-Security-Policy",
+            // Safe subset: blocks plugin/object embeds, <base> tag injection and
+            // clickjacking by other sites. A strict script-src is not set because it
+            // needs a nonce rollout and would break Next.js inline scripts and Razorpay.
+            value: "upgrade-insecure-requests; object-src 'none'; base-uri 'self'; frame-ancestors 'self'",
+          },
+          // Stop browsers from MIME-sniffing uploaded or served files into executable types.
+          { key: "X-Content-Type-Options", value: "nosniff" },
+          { key: "X-Frame-Options", value: "SAMEORIGIN" },
+          { key: "Referrer-Policy", value: "strict-origin-when-cross-origin" },
+          // Camera is used by the avatar uploader; everything else sensitive stays off.
+          { key: "Permissions-Policy", value: "camera=(self), microphone=(), geolocation=(), payment=(self)" },
+          { key: "Cross-Origin-Opener-Policy", value: "same-origin-allow-popups" },
           // Remember that this domain (and www) must only be opened over HTTPS.
           { key: "Strict-Transport-Security", value: "max-age=63072000; includeSubDomains" },
         ],

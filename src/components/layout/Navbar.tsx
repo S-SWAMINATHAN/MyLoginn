@@ -36,6 +36,8 @@ type NavUser = ProfileUser | null;
 const serviceLinks = [
   { href: "/services/digital-marketing", label: "Digital Marketing", desc: "AI-driven growth campaigns" },
   { href: "/services/app-web-development", label: "App & Web Development", desc: "Full-stack builds, premium UX" },
+  { href: "/services/ai-development", label: "AI Development", desc: "Generative AI & AI agents" },
+  { href: "/services/testing-automation", label: "Testing & Automation", desc: "QA, API and Playwright testing" },
   { href: "/services/astrology", label: "Astrology", desc: "Horoscope & matching reports" },
 ];
 

@@ -39,6 +39,8 @@ const columns = [
     title: "Services",
     links: [
       { href: "/services/app-web-development", label: "App & web development" },
+      { href: "/services/ai-development", label: "AI development & agents" },
+      { href: "/services/testing-automation", label: "Software testing & automation" },
       { href: "/services/digital-marketing", label: "Digital marketing" },
       { href: "/services/astrology", label: "Astrology" },
       { href: "/tutoring", label: "Tutoring" },
@@ -188,6 +190,7 @@ export function Footer() {
         <Reveal direction="none" duration={0.9}>
           <div className="flex flex-col items-center gap-3 border-t border-border-soft py-7 text-xs text-muted sm:flex-row sm:justify-between">
             <p>&copy; {new Date().getFullYear()} MyLoginn Tech Private Limited. All rights reserved.</p>
+            <p className="inline-flex items-center gap-4"><Link href="/privacy" className="hover:text-brand-700">Privacy Policy</Link><Link href="/terms" className="hover:text-brand-700">Terms of Use</Link></p>
             <p className="inline-flex items-center gap-1.5">
               Made with
               <motion.span

@@ -35,11 +35,11 @@ const fontMono = JetBrains_Mono({
 export const metadata: Metadata = {
   metadataBase: new URL(siteUrl),
   title: {
-    default: "MyLoginn | AI-Driven IT Company for Web, App & Digital Solutions",
+    default: "MyLoginn | AI, Web, Mobile & Software Development Company",
     template: "%s | MyLoginn",
   },
   description:
-    "MyLoginn Tech builds web and mobile software, AI solutions, and digital marketing campaigns, and offers practical technology courses, tutoring, and internships.",
+    "MyLoginn Tech Private Limited is an India-based technology company building web, mobile, custom software, AI and automation solutions for businesses worldwide, with practical technology courses.",
   applicationName: "MyLoginn",
   authors: [{ name: "MyLoginn Tech Private Limited" }],
   creator: "MyLoginn Tech Private Limited",
@@ -52,15 +52,15 @@ export const metadata: Metadata = {
     type: "website",
     locale: "en_IN",
     siteName: "MyLoginn",
-    title: "MyLoginn | AI-Driven IT Company for Web, App & Digital Solutions",
+    title: "MyLoginn | AI, Web, Mobile & Software Development Company",
     description:
-      "MyLoginn provides website and app development, AI solutions, digital marketing, technology courses, tutoring, and internships.",
+      "India-based technology company building web, mobile, custom software, AI and automation solutions for businesses worldwide.",
   },
   twitter: {
     card: "summary_large_image",
-    title: "MyLoginn | AI-Driven IT Company for Web, App & Digital Solutions",
+    title: "MyLoginn | AI, Web, Mobile & Software Development Company",
     description:
-      "MyLoginn provides website and app development, AI solutions, digital marketing, technology courses, tutoring, and internships.",
+      "India-based technology company building web, mobile, custom software, AI and automation solutions for businesses worldwide.",
   },
   robots: {
     index: true,

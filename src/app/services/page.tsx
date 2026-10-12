@@ -3,8 +3,8 @@ import { createPageMetadata } from "@/lib/seo";
 import { Section, Container } from "@/components/ui/Section";
 
 export const metadata = createPageMetadata({
-  title: "IT & Technology Services",
-  description: "Explore MyLoginn Tech Private Limited services for website and app development, custom software, AI solutions, UI/UX, and digital marketing.",
+  title: "Web, Mobile, AI & Software Services",
+  description: "Web and mobile app development, custom software, AI and AI agents, software testing and automation, and digital marketing from India-based MyLoginn Tech.",
   path: "/services",
   keywords: [
     "MyLoginn IT services", "IT services", "technology services",
@@ -15,6 +15,8 @@ export const metadata = createPageMetadata({
 
 const services = [
   { title: "App & Web Development", text: "Website development, web applications, mobile apps, and custom software built around your product needs.", href: "/services/app-web-development" },
+  { title: "AI Development & AI Agents", text: "Generative AI features, AI agents and workflow automation integrated into your business software.", href: "/services/ai-development" },
+  { title: "Software Testing & Automation", text: "Manual QA, API testing and Playwright test automation for web applications.", href: "/services/testing-automation" },
   { title: "Digital Marketing", text: "SEO, paid campaigns, social media, content, and performance analytics for business growth.", href: "/services/digital-marketing" },
   { title: "Astrology", text: "Birth-chart horoscopes and horoscope matching reports, unlocked for print and download after a one-time payment.", href: "/services/astrology" },
 ];

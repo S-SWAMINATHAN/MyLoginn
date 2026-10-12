@@ -26,8 +26,8 @@ const marketingFaqs = [
 ];
 
 export const metadata = createPageMetadata({
-  title: "AI Digital Marketing Agency & Services in Tamil Nadu",
-  description: "AI-focused digital marketing, SEO, paid campaigns, social media, content and analytics for businesses in Coimbatore, Pollachi, Udumalpet and Tamil Nadu.",
+  title: "Digital Marketing & SEO Services",
+  description: "SEO, paid campaigns, social media, content and analytics from MyLoginn, an India-based team supporting businesses across India and internationally.",
   path: "/services/digital-marketing",
   keywords: [
     "MyLoginn digital marketing", "digital marketing company",
