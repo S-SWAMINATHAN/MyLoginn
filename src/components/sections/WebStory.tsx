@@ -6,7 +6,7 @@ import { Chapter } from "@/components/experience/Chapter";
 import { SplitHeadline } from "@/components/experience/SplitHeadline";
 import { Pipeline } from "@/components/sections/parts/Pipeline";
 import { Reveal } from "@/components/ui/Reveal";
-import { Button } from "@/components/ui/Button";
+import { PlanButton } from "@/components/ui/PlanButton";
 import { openProjectRequest } from "@/components/services/ProjectRequestModal";
 import { useReducedMotion } from "@/lib/useReducedMotion";
 
@@ -214,10 +214,8 @@ export function WebStory() {
             <Pipeline steps={PIPELINE_STEPS} className="justify-center lg:justify-start" />
           </Reveal>
 
-          <Reveal direction="up" delay={0.4} className="mt-8 flex justify-center lg:justify-start">
-            <Button type="button" onClick={() => openProjectRequest("web")} variant="outline">
-              Plan a web project
-            </Button>
+          <Reveal direction="up" delay={0.4} className="mt-8 flex justify-center">
+            <PlanButton label="Plan a web project" onClick={() => openProjectRequest("web")} />
           </Reveal>
         </div>
 

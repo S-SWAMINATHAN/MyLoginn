@@ -1,4 +1,5 @@
 ﻿import { createPageMetadata } from "@/lib/seo";
+import { localKeywords } from "@/lib/localSeo";
 import { prisma } from "@/lib/prisma";
 import { getCurrentUser } from "@/lib/auth";
 import { Section, Container, Eyebrow } from "@/components/ui/Section";
@@ -19,19 +20,16 @@ const courseFaqs = [
 ];
 
 export const metadata = createPageMetadata({
-  title: "AI, Technology & Full-Stack Courses in Tamil Nadu",
-  description: "Explore mentor-led artificial intelligence, data, full-stack and digital marketing courses for learners in Coimbatore, Pollachi, Udumalpet and Tamil Nadu.",
+  title: "AI, Technology & Full-Stack Courses in India",
+  description: "Explore mentor-led artificial intelligence, data, full-stack and digital marketing courses for learners across India, including Tamil Nadu.",
   path: "/courses",
   keywords: [
+    ...localKeywords(["AI course", "technology courses", "full stack course", "Python course"]),
     "MyLoginn courses", "AI courses", "Generative AI courses", "Agentic AI courses",
     "Data Analytics courses", "Full-Stack Development courses", "Testing with AI",
     "Automation Testing courses", "Python courses", "Cloud Engineering courses",
     "Data Science courses", "Prompt Engineering courses", "digital marketing courses",
     "online technology learning",
-    "AI course Coimbatore", "AI course Pollachi", "AI course Udumalpet",
-    "AI coaching Coimbatore", "AI coaching Pollachi", "AI coaching Udumalpet",
-    "artificial intelligence classes Tamil Nadu", "technology courses Coimbatore",
-    "technology courses Pollachi", "technology courses Udumalpet", "technology coaching Tamil Nadu",
   ],
 });
 
@@ -84,7 +82,7 @@ export default async function CoursesPage() {
             <Eyebrow className="max-md:gap-1 max-md:px-1 max-md:text-[9px] max-md:tracking-normal"><GraduationCap className="h-4 w-4" /> Upgrade your skills</Eyebrow>
             <h1 className="mt-5 text-4xl font-bold leading-[1.08] tracking-tight max-md:mt-1 max-md:text-[1.625rem] sm:text-5xl">Master skills for <span className="brand-gradient-text">your future</span></h1>
             <p className="mt-4 max-w-xl text-base text-muted max-md:mt-2 max-md:text-sm sm:text-lg">Explore current course topics, levels, duration, fees, and enrolment details in the listings below.</p>
-            <p className="mt-3 max-w-xl text-sm leading-6 text-muted">MyLoginn offers mentor-led AI and technology learning for students in Coimbatore, Pollachi, Udumalpet, Erode, and across Tamil Nadu. Browse current courses and contact us to ask about coaching options.</p>
+            <p className="mt-3 max-w-xl text-sm leading-6 text-muted">MyLoginn offers mentor-led AI and technology learning for learners everywhere. Browse current courses and contact us to ask about coaching options.</p>
             <div className="mt-7 clear-both grid max-w-2xl grid-cols-2 gap-3 max-md:mt-3 sm:grid-cols-4">
               {[
                 { icon: "course-total", value: "Explore All", label: "View full selection" },

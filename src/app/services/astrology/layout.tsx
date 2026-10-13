@@ -1,4 +1,6 @@
 import "./astrology.css";
+import { notFound } from "next/navigation";
+import { HIDE_ASTROLOGY } from "@/lib/hiddenSections";
 import { createPageMetadata } from "@/lib/seo";
 import { AstrologyGuard } from "@/components/astrology/AstrologyGuard";
 
@@ -12,6 +14,7 @@ export const metadata = createPageMetadata({
 
 // The Google Fonts below are the faces the Jathagam manuscript and Tamil UI were designed with.
 export default function AstrologyLayout({ children }: { children: React.ReactNode }) {
+  if (HIDE_ASTROLOGY) notFound();
   return (
     <>
       <link rel="preconnect" href="https://fonts.googleapis.com" />

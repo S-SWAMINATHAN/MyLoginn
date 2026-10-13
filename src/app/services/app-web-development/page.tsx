@@ -1,26 +1,17 @@
 ﻿import { createPageMetadata } from "@/lib/seo";
-import { Section, Container, Eyebrow } from "@/components/ui/Section";
-import { Card } from "@/components/ui/Card";
-import { LeadForm } from "@/components/services/LeadForm";
-import { IconBadge } from "@/components/ui/IconBadge";
-import { ContentIcon } from "@/components/ui/ContentIcon";
-import type { CourseIconKey } from "@/lib/courseIcons";
-import Image from "next/image";
-import developmentHeader from "@/images/App & Web Development header.png";
-import { ReferenceStatIcon } from "@/components/ui/ReferenceStatIcon";
-import { Smartphone } from "lucide-react";
-import { JsonLd } from "@/components/seo/JsonLd";
-import { FaqAccordion } from "@/components/ui/FaqAccordion";
+import { localKeywords, regionalKeywords } from "@/lib/localSeo";
+import { StoryLanding } from "@/components/services/story/StoryLanding";
+import { PlanCta, SiteBuilderMonitor, StackLayersMonitor, AppPhone, DeployMonitor } from "@/components/services/story/StoryVisuals";
 
 const developmentAreas = [
-  "Business websites and landing pages",
-  "Web applications and internal tools",
-  "Android, iOS and cross-platform apps",
-  "UI and UX design implementation",
-  "Backend services, APIs and integrations",
-  "Database design and authentication",
-  "Cloud deployment and release support",
-  "Testing, maintenance and performance improvements",
+  { title: "Business websites and landing pages", text: "Clear, fast sites that present your business and lead visitors to an enquiry.", icon: "html" },
+  { title: "Web applications and internal tools", text: "Dashboards, portals and admin tools built around your team's workflows.", icon: "webdev" },
+  { title: "Android, iOS and cross-platform apps", text: "Mobile apps for your customers or staff, with platform support agreed per project.", icon: "react" },
+  { title: "UI and UX design implementation", text: "Your designs turned into responsive, accessible interfaces.", icon: "css" },
+  { title: "Backend services, APIs and integrations", text: "Server logic, APIs and connections to the tools and services you already use.", icon: "nodejs" },
+  { title: "Database design and authentication", text: "Structured data, secure sign-in and role-based access.", icon: "postgresql" },
+  { title: "Cloud deployment and release support", text: "Hosting, deployment and release steps set up and documented.", icon: "cloud" },
+  { title: "Testing, maintenance and performance", text: "Quality checks, ongoing maintenance and performance improvements.", icon: "testing" },
 ];
 
 const developmentFaqs = [
@@ -31,128 +22,64 @@ const developmentFaqs = [
   { question: "How do I request an estimate?", answer: "Use the enquiry form to outline your goals, expected users, key features, integrations and any timeline constraints. The team can follow up to clarify the scope." },
 ];
 
-const features: { iconKey: CourseIconKey; title: string; description: string }[] = [
-  {
-    iconKey: "webdev",
-    title: "Full-stack development",
-    description: "Modern websites and apps shaped around an agreed project scope and business need.",
-  },
-  {
-    iconKey: "ai",
-    title: "Smooth animations",
-    description: "Polished interactions designed to work smoothly across supported devices.",
-  },
-  {
-    iconKey: "devops",
-    title: "Server maintenance",
-    description: "Monitoring, maintenance, patching and scaling can be included in the agreed delivery scope.",
-  },
-  {
-    iconKey: "network",
-    title: "Real-time updates",
-    description: "Live data updates can connect dashboards, apps and admin tools where the project needs them.",
-  },
-];
-
 const stack = ["Next.js", "React Native", "Node.js", "PostgreSQL", "Prisma", "Three.js", "Tailwind CSS", "AWS / Vercel"];
 
 export const metadata = createPageMetadata({
   title: "Web, Mobile App & Custom Software Development",
-  description: "Secure, scalable websites, web applications, Android and iOS apps and custom software from MyLoginn, an India-based team serving businesses in India and abroad.",
+  description: "Secure, scalable websites, web applications, Android and iOS apps and custom software from MyLoginn, an India-based team serving businesses across India, including Coimbatore and Tamil Nadu, and abroad.",
   path: "/services/app-web-development",
   keywords: [
+    ...regionalKeywords(["web development company", "mobile app development"]),
+    ...localKeywords(["web development company", "website development", "mobile app development", "custom software development"]),
     "MyLoginn website development", "web development company",
     "website development services", "web application development",
     "mobile app development company", "app development company",
     "custom software development", "full-stack development",
-    "app development company Coimbatore", "app development company Pollachi",
-    "app development company Udumalpet", "mobile app development Tamil Nadu",
-    "web development company Coimbatore", "website developers Pollachi",
-    "software development company Udumalpet", "custom app development Tamil Nadu",
   ],
 });
 
+const needs = [
+  { label: "Business website", color: "#2563eb" },
+  { label: "Web application", color: "#7c3aed" },
+  { label: "Mobile app (Android / iOS)", color: "#059669" },
+  { label: "Custom software", color: "#d97706" },
+  { label: "APIs & integrations", color: "#e11d48" },
+  { label: "UI / UX design", color: "#2563eb" },
+  { label: "Maintenance & support", color: "#7c3aed" },
+  { label: "Not sure yet", color: "#059669" },
+];
+
 export default function AppWebDevelopmentPage() {
   return (
-    <Section className="mobile-page-glow pt-3 sm:pt-5">
-      <Container className="max-w-[1480px]">
-        <div className="relative mb-10 block items-center gap-4 rounded-[2rem] bg-[radial-gradient(ellipse_at_75%_45%,rgba(117,177,255,.25),transparent_48%),radial-gradient(ellipse_at_55%_70%,rgba(91,220,235,.16),transparent_45%)] py-5 max-md:mb-5 max-md:py-2 md:grid md:grid-cols-[1.05fr_.95fr]">
-          <div className="relative float-right ml-3 mb-2 block h-24 w-32 max-md:mb-0 md:order-2 md:float-none md:ml-auto md:mb-0 md:h-[430px] md:w-full md:max-w-xl">
-            <Image src={developmentHeader} alt="App and web development with connected devices and code" fill priority className="object-contain object-right md:scale-110 md:object-center" sizes="(max-width: 768px) 128px, 48vw" />
-          </div>
-          <div className="relative z-10 md:order-1">
-            <Eyebrow className="max-md:gap-1.5 max-md:px-2 max-md:text-[10px] max-md:tracking-normal"><Smartphone className="h-4 w-4 shrink-0" /> Full-stack development</Eyebrow>
-            <h1 className="mt-5 text-4xl font-bold leading-[1.08] tracking-tight max-md:mt-1 max-md:text-[1.625rem] max-[380px]:text-2xl sm:text-5xl">Development that builds <span className="brand-gradient-text">scalable platforms</span></h1>
-            <p className="mt-4 max-w-2xl text-base text-muted max-md:mt-1 max-md:text-sm max-md:leading-[1.35] sm:text-lg">Custom end-to-end app and web development, leveraging modern technology stacks for robust, high-performance, and secure user experiences.</p>
-            <p className="mt-3 max-w-2xl text-sm leading-6 text-muted">We work with businesses in Coimbatore, Pollachi, Udumalpet, Erode, and throughout Tamil Nadu on website development, mobile app development, and custom software projects.</p>
-            <div className="mt-7 clear-both grid w-full grid-cols-2 gap-3 max-md:mt-2 sm:grid-cols-4">{[{ icon: "development-projects", value: "Complete", label: "Project delivery" }, { icon: "development-clients", value: "Teamwork", label: "Client approach" }, { icon: "development-stacks", value: "Modern", label: "Technology stacks" }, { icon: "development-rating", value: "Reliable", label: "Development" }].map(({ icon, value, label }) => <div key={label} className="flex min-h-36 min-w-0 flex-col justify-between rounded-2xl border border-border-soft bg-surface/85 p-3 shadow-[var(--shadow-soft)] sm:p-4"><ReferenceStatIcon name={icon as "development-projects" | "development-clients" | "development-stacks" | "development-rating"} className="h-11 w-11 shrink-0 sm:h-10 sm:w-10" /><div className="mt-4 min-w-0"><p className="whitespace-nowrap text-xl font-semibold leading-6 sm:text-lg">{value}</p><p className="mt-1 min-h-8 text-xs uppercase leading-4 text-muted sm:text-[11px]">{label}</p></div></div>)}</div>
-          </div>
-        </div>
-        <div className="grid grid-cols-1 gap-12 lg:grid-cols-5">
-          <div className="lg:col-span-3">
-
-            <div className="mt-10 grid grid-cols-1 gap-5 sm:grid-cols-2">
-              {features.map((f, i) => (
-                <Card
-                  key={f.title}
-                  className={`animate-fade-up stagger-${i + 1} p-6 transition-all duration-300 hover:-translate-y-1 hover:shadow-[var(--shadow-lift)]`}
-                >
-                  <div className="flex items-center justify-between gap-4">
-                    <div className="min-w-0 flex-1">
-                      <h3 className="text-base font-semibold sm:text-lg">{f.title}</h3>
-                      <p className="mt-2 text-sm text-muted">{f.description}</p>
-                    </div>
-                    <IconBadge size="xl" className="shrink-0 text-brand-500 dark:text-brand-400" delay={i * 0.06}>
-                      <ContentIcon keyword={f.iconKey} className="h-12 w-12" />
-                    </IconBadge>
-                  </div>
-                </Card>
-              ))}
-            </div>
-
-            <div className="animate-fade-up stagger-5 mt-10">
-              <h2 className="font-semibold">Our stack</h2>
-              <div className="mt-4 flex flex-wrap gap-2">
-                {stack.map((s) => (
-                  <span
-                    key={s}
-                    className="rounded-full border border-border-soft bg-surface px-3.5 py-1.5 text-sm transition-all duration-200 hover:-translate-y-0.5 hover:border-brand-400 hover:shadow-[var(--shadow-soft)]"
-                  >
-                    {s}
-                  </span>
-                ))}
-              </div>
-            </div>
-
-            <section aria-labelledby="development-capabilities" className="mt-12">
-              <h2 id="development-capabilities" className="text-2xl font-semibold tracking-tight">Development capabilities</h2>
-              <p className="mt-3 leading-7 text-muted">Select the product and support areas relevant to your project. Final scope, platform support and delivery details are agreed during discovery.</p>
-              <ul className="mt-5 grid gap-3 sm:grid-cols-2">
-                {developmentAreas.map((area) => <li key={area} className="rounded-xl border border-border-soft bg-surface p-4 text-sm font-medium">{area}</li>)}
-              </ul>
-            </section>
-
-            <section aria-labelledby="development-process" className="mt-12 rounded-3xl bg-surface-2 p-6 sm:p-8">
-              <h2 id="development-process" className="text-2xl font-semibold tracking-tight">A clear project workflow</h2>
-              <ol className="mt-5 grid gap-3 sm:grid-cols-2">
-                {["Discuss goals and requirements", "Agree on scope and milestones", "Design and build the product", "Test, release and review support needs"].map((step, index) => <li key={step} className="flex gap-3 rounded-xl border border-border-soft bg-surface p-4 text-sm"><span className="font-semibold text-brand-600">0{index + 1}</span><span>{step}</span></li>)}
-              </ol>
-            </section>
-
-            <section aria-labelledby="development-faq" className="mt-12">
-              <JsonLd data={{ "@context": "https://schema.org", "@type": "FAQPage", mainEntity: developmentFaqs.map(({ question, answer }) => ({ "@type": "Question", name: question, acceptedAnswer: { "@type": "Answer", text: answer } })) }} />
-              <h2 id="development-faq" className="text-2xl font-semibold tracking-tight">App and web development FAQs</h2>
-              <FaqAccordion items={developmentFaqs} className="mt-5" />
-            </section>
-          </div>
-
-          <div className="lg:col-span-2">
-            <div className="lg:sticky lg:top-24">
-              <LeadForm service="App & Website Development" />
-            </div>
-          </div>
-        </div>
-      </Container>
-    </Section>
+    <StoryLanding
+      eyebrow="Full-stack development"
+      h1="Development that builds scalable platforms"
+      intro="Custom end-to-end app and web development, leveraging modern technology stacks for robust, high-performance, and secure user experiences."
+      extraIntro="We work with businesses in India and worldwide on website development, mobile app development, and custom software projects."
+      cta={<PlanCta label="Plan a web project" service="web" />}
+      secondaryLabel="Get an estimate"
+      heroVisual={<SiteBuilderMonitor />}
+      steps={[
+        { title: "Discuss goals", text: "Discuss goals and requirements." },
+        { title: "Agree scope", text: "Agree on scope and milestones." },
+        { title: "Build", text: "Design and build the product." },
+        { title: "Release", text: "Test, release and review support needs." },
+      ]}
+      rows={[
+        { id: "stack", eyebrow: "Technology stack", title: "A stack chosen for your product.", text: "The technology stack is selected around product requirements, integrations, hosting and maintenance needs. Select a layer to see the tools we use.", points: ["Full-stack development shaped around an agreed scope", "Polished interactions designed to work across supported devices", "Live data updates for dashboards and admin tools where needed"], visual: <StackLayersMonitor />, flip: true },
+        { id: "mobile-apps", eyebrow: "Mobile apps", title: "Android and iOS apps people keep.", text: "Android, iOS and cross-platform apps, built on the same backend as your website so there is one source of truth.", points: ["Android, iOS and cross-platform apps", "UI and UX design implementation", "Backend services, APIs and integrations"], visual: <AppPhone /> },
+        { id: "release", eyebrow: "Release and support", title: "Shipped, monitored, maintained.", text: "Cloud deployment, release support, monitoring and maintenance can be included in the agreed delivery scope.", points: ["Cloud deployment and release support", "Testing, maintenance and performance improvements", "Monitoring, patching and scaling as agreed"], visual: <DeployMonitor />, flip: true },
+      ]}
+      areasId="development-capabilities"
+      areasTitle="Development capabilities"
+      areasIntro="Select the product and support areas relevant to your project. Final scope, platform support and delivery details are agreed during discovery."
+      areas={developmentAreas}
+      tools={stack}
+      toolsTitle="Our stack"
+      faqs={developmentFaqs}
+      faqId="development-faq"
+      faqTitle="App and web development FAQs"
+      form={{ service: "App & Website Development", needs, needsQuestion: "What do you want to build?", goalsPrefix: "Project type", submitLabel: "Request an estimate", messagePlaceholder: "Describe your goals, expected users, key features, integrations or timeline…", heading: "Tell us about your project" }}
+    />
   );
 }

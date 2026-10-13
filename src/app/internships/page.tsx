@@ -1,4 +1,5 @@
 ﻿import { createPageMetadata } from "@/lib/seo";
+import { localKeywords } from "@/lib/localSeo";
 import { prisma } from "@/lib/prisma";
 import { getCurrentUser } from "@/lib/auth";
 import { Section, Container } from "@/components/ui/Section";
@@ -19,15 +20,13 @@ const internshipFaqs = [
 ];
 
 export const metadata = createPageMetadata({
-  title: "Technology Internships across Tamil Nadu",
-  description: "Explore practical MyLoginn technology internships with real projects and mentor guidance for students in Coimbatore, Pollachi, Udumalpet and Tamil Nadu.",
+  title: "Technology Internships in India with Real Projects",
+  description: "Explore practical MyLoginn technology internships with real projects and mentor guidance for students across India, including Tamil Nadu.",
   path: "/internships",
   keywords: [
+    ...localKeywords(["technology internship", "software internship", "AI internship"]),
     "MyLoginn internships", "AI internships", "software development internships",
     "technology internships", "internship programs", "internships with mentorship",
-    "technology internship Coimbatore", "technology internship Pollachi",
-    "technology internship Udumalpet", "internships in Tamil Nadu",
-    "AI internship Tamil Nadu", "software internship Coimbatore",
   ],
 });
 
@@ -74,7 +73,7 @@ export default async function InternshipsPage() {
           avgWeeks={avgWeeks}
         />
 
-        <p className="mt-5 max-w-3xl text-sm leading-6 text-muted">Students in Coimbatore, Pollachi, Udumalpet, Erode, and across Tamil Nadu can explore current technology internship listings. Check each role for its location, format, eligibility, and application details.</p>
+        <p className="mt-5 max-w-3xl text-sm leading-6 text-muted">Students can explore current technology internship listings. Check each role for its location, format, eligibility, and application details.</p>
 
         <div className="mt-8 sm:mt-10">
           <InternshipsExplorer internships={cards} appliedIds={[...appliedIds]} />

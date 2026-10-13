@@ -1,4 +1,7 @@
-﻿import { createPageMetadata } from "@/lib/seo";
+﻿import { notFound } from "next/navigation";
+import { HIDE_TUTORING } from "@/lib/hiddenSections";
+import { createPageMetadata } from "@/lib/seo";
+import { localKeywords } from "@/lib/localSeo";
 import { prisma } from "@/lib/prisma";
 import { getCurrentUser } from "@/lib/auth";
 import { Section, Container } from "@/components/ui/Section";
@@ -15,21 +18,20 @@ const tutoringFaqs = [
 ];
 
 export const metadata = createPageMetadata({
-  title: "Online Tutoring & Mentor Support in Tamil Nadu",
-  description: "Personalized online tutoring and mentor sessions in programming, data science and mathematics for learners in Coimbatore, Pollachi and Udumalpet.",
+  title: "Online Tutoring & Mentor Support in India",
+  description: "Personalized online tutoring and mentor sessions in programming, data science and mathematics for learners across India, including Tamil Nadu.",
   path: "/tutoring",
   keywords: [
+    ...localKeywords(["online tutor", "programming coaching", "maths tutor"]),
     "MyLoginn tutoring", "online tutoring", "programming tutor",
     "data science tutor", "one-to-one tutoring", "personalized tutoring",
-    "online tutor Coimbatore", "online tutoring Pollachi", "online tutoring Udumalpet",
-    "programming coaching Tamil Nadu", "maths tutor Coimbatore",
-    "technology coaching Pollachi", "data science tutor Tamil Nadu",
   ],
 });
 
 export const dynamic = "force-dynamic";
 
 export default async function TutoringPage() {
+  if (HIDE_TUTORING) notFound();
   const [user, tutors] = await Promise.all([
     getCurrentUser(),
     prisma.tutor.findMany({ orderBy: { name: "asc" } }),
@@ -51,7 +53,7 @@ export default async function TutoringPage() {
       <Container className="max-w-[1480px]">
         <TutoringHero />
 
-        <p className="mt-4 max-w-3xl text-sm leading-6 text-muted">Learners in Coimbatore, Pollachi, Udumalpet, Erode, and across Tamil Nadu can explore online tutoring and mentor support. Available subjects, tutor profiles, and booking details appear in the current listings.</p>
+        <p className="mt-4 max-w-3xl text-sm leading-6 text-muted">Learners can explore online tutoring and mentor support. Available subjects, tutor profiles, and booking details appear in the current listings.</p>
 
         <div className="mt-4 sm:mt-8">
           <TutoringExplorer tutors={tutorCards} isLoggedIn={!!user} />

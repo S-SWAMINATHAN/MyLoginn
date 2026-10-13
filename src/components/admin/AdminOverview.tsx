@@ -93,7 +93,7 @@ export function AdminOverview() {
       { label: "Total Revenue", value: s?.totalRevenue ?? 0, prefix: "₹", href: "/admin/payments", icon: <AnimatedRupee className="h-6 w-6" />, accent: "brand" as const },
       { label: "Revenue This Month", value: s?.revenueMonth ?? 0, prefix: "₹", href: "/admin/payments", icon: <AnimatedCalendar className="h-6 w-6" />, accent: "green" as const },
       { label: "Pending Payments", value: s?.pendingPayments ?? 0, href: "/admin/payments", icon: <AnimatedClock className="h-6 w-6" />, accent: "rose" as const },
-      { label: "Open Inquiries", value: s?.openLeads ?? 0, href: "/admin/leads", icon: <AnimatedChat className="h-6 w-6" />, accent: "cyan" as const },
+      { label: "Open Inquiries", value: s?.openLeads ?? 0, href: "/admin/requests", icon: <AnimatedChat className="h-6 w-6" />, accent: "cyan" as const },
     ],
     [s]
   );

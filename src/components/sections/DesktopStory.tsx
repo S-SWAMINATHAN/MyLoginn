@@ -4,7 +4,7 @@ import { motion } from "framer-motion";
 import { Chapter } from "@/components/experience/Chapter";
 import { SplitHeadline } from "@/components/experience/SplitHeadline";
 import { Reveal } from "@/components/ui/Reveal";
-import { Button } from "@/components/ui/Button";
+import { PlanButton } from "@/components/ui/PlanButton";
 import { openProjectRequest } from "@/components/services/ProjectRequestModal";
 import { useReducedMotion } from "@/lib/useReducedMotion";
 
@@ -139,10 +139,8 @@ export function DesktopStory() {
           <DashboardMockup />
         </Reveal>
 
-        <Reveal direction="up" delay={0.45} className="mt-8">
-          <Button type="button" onClick={() => openProjectRequest("software")} variant="outline">
-            Talk about custom software
-          </Button>
+        <Reveal direction="up" delay={0.45} className="mt-8 flex justify-center">
+          <PlanButton label="Talk about custom software" onClick={() => openProjectRequest("software")} />
         </Reveal>
       </div>
     </Chapter>

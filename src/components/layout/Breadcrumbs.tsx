@@ -10,7 +10,7 @@ const LABELS: Record<string, string> = {
   login: "Log in", signup: "Sign up", "reset-password": "Reset password", learn: "Learn", tutoring: "Tutoring",
 };
 // Folders that only group other pages and have no page of their own, so they must not be links.
-const NOT_PAGES = new Set(["/dashboard/projects"]);
+const NOT_PAGES = new Set(["/dashboard/projects", "/locations"]);
 
 function labelFor(segment: string) {
   const key = decodeURIComponent(segment).toLowerCase();

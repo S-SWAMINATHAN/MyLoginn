@@ -18,7 +18,6 @@ const services = [
   { title: "AI Development & AI Agents", text: "Generative AI features, AI agents and workflow automation integrated into your business software.", href: "/services/ai-development" },
   { title: "Software Testing & Automation", text: "Manual QA, API testing and Playwright test automation for web applications.", href: "/services/testing-automation" },
   { title: "Digital Marketing", text: "SEO, paid campaigns, social media, content, and performance analytics for business growth.", href: "/services/digital-marketing" },
-  { title: "Astrology", text: "Birth-chart horoscopes and horoscope matching reports, unlocked for print and download after a one-time payment.", href: "/services/astrology" },
 ];
 
 export default function ServicesPage() {

@@ -14,9 +14,9 @@ const NODES = [
   { label: "Custom Software", desc: "Software shaped to fit" },
   { label: "Digital Marketing", desc: "Growth & visibility" },
   { label: "Automation Testing", desc: "Quality engineering" },
-  { label: "Tutoring", desc: "Personalized learning" },
   { label: "Mentoring", desc: "Guidance that compounds" },
   { label: "Placement Support", desc: "From skills to opportunity" },
+  { label: "AI Solutions", desc: "Agents & automation" },
 ];
 
 export function Ecosystem() {

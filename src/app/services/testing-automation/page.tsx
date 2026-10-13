@@ -1,5 +1,6 @@
 import { createPageMetadata } from "@/lib/seo";
-import { ServiceLanding } from "@/components/services/ServiceLanding";
+import { regionalKeywords } from "@/lib/localSeo";
+import { TestingLanding } from "@/components/services/testing/TestingLanding";
 
 export const metadata = createPageMetadata({
   title: "Software Testing & Test Automation Services",
@@ -7,6 +8,7 @@ export const metadata = createPageMetadata({
     "Manual and automated QA for web applications, including API testing and Playwright test automation, from the India-based MyLoginn team.",
   path: "/services/testing-automation",
   keywords: [
+    ...regionalKeywords(["software testing company"]),
     "software testing services", "automation testing company", "QA automation services",
     "Playwright automation", "API testing", "regression testing",
   ],
@@ -22,7 +24,7 @@ const faqs = [
 
 export default function TestingAutomationPage() {
   return (
-    <ServiceLanding
+    <TestingLanding
       path="/services/testing-automation"
       eyebrow="Testing and QA"
       h1="Software testing and test automation services"

@@ -9,14 +9,13 @@ const publicRoutes = [
   { path: "/courses", priority: 0.9, changeFrequency: "weekly" as const },
   { path: "/internships", priority: 0.9, changeFrequency: "daily" as const },
   { path: "/projects", priority: 0.8, changeFrequency: "weekly" as const },
-  { path: "/tutoring", priority: 0.8, changeFrequency: "weekly" as const },
+  { path: "/locations/tamil-nadu", priority: 0.6, changeFrequency: "monthly" as const },
   { path: "/privacy", priority: 0.3, changeFrequency: "yearly" as const },
   { path: "/terms", priority: 0.3, changeFrequency: "yearly" as const },
   { path: "/contact", priority: 0.6, changeFrequency: "monthly" as const },
   { path: "/services/app-web-development", priority: 0.8, changeFrequency: "monthly" as const },
   { path: "/services/ai-development", priority: 0.8, changeFrequency: "monthly" as const },
   { path: "/services/testing-automation", priority: 0.8, changeFrequency: "monthly" as const },
-  { path: "/services/astrology", priority: 0.7, changeFrequency: "monthly" as const },
   { path: "/services/digital-marketing", priority: 0.8, changeFrequency: "monthly" as const },
 ];
 

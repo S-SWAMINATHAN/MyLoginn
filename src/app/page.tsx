@@ -1,6 +1,8 @@
 import dynamic from "next/dynamic";
 import { createPageMetadata } from "@/lib/seo";
+import { localKeywords, regionalKeywords } from "@/lib/localSeo";
 import { StoryStage } from "@/components/experience/StoryStage";
+import { ScrollToSection } from "@/components/experience/ScrollToSection";
 import { JsonLd } from "@/components/seo/JsonLd";
 import { organizationStructuredData, websiteStructuredData } from "@/lib/structuredData";
 
@@ -35,17 +37,16 @@ const FinalCta = dynamic(() => import("@/components/sections/FinalCta").then((mo
 export const metadata = createPageMetadata({
   title: "AI, Web, Mobile & Software Development Company",
   description:
-    "MyLoginn Tech Private Limited is an India-based technology company building web, mobile, custom software, AI and automation solutions for businesses worldwide.",
+    "MyLoginn Tech Private Limited is an India-based technology company building web, mobile, custom software, AI and automation solutions for businesses worldwide, including Coimbatore and Tamil Nadu.",
   path: "/",
   keywords: [
+    ...regionalKeywords(["web development company", "software development company", "AI development company"]),
+    ...localKeywords(["web development company", "software development company", "app development company", "AI solutions", "digital marketing company", "technology company"]),
     "MyLoginn company", "MyLoginn IT company", "MyLoginn software company",
     "MyLoginn technology company", "MyLoginn official website", "myloginn.com",
     "AI-driven IT company", "technology solutions", "website development",
     "web development", "app development", "mobile app development",
     "digital marketing", "custom software solutions", "UI/UX design", "AI solutions",
-    "MyLoginn Coimbatore", "web development company Coimbatore",
-    "app development company Tamil Nadu", "software development Tamil Nadu",
-    "AI solutions Coimbatore", "digital solutions Pollachi", "technology company Udumalpet",
   ],
 });
 
@@ -56,6 +57,7 @@ export default function Home() {
         "@context": "https://schema.org",
         "@graph": [organizationStructuredData, websiteStructuredData],
       }} />
+      <ScrollToSection id="ecosystem" />
       <StoryStage>
         <Hero />
         <Ecosystem />

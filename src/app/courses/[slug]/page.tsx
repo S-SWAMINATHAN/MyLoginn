@@ -15,6 +15,8 @@ import { DownloadCertificate } from "@/components/courses/DownloadCertificate";
 import { getCourseModules } from "@/lib/freeCourseCurriculum";
 import { getCourseDisplayTitle, getFreeCourseTerm } from "@/lib/freeCourseTitles";
 import Link from "next/link";
+import { JsonLd } from "@/components/seo/JsonLd";
+import { siteUrl } from "@/lib/site";
 
 export async function generateMetadata({ params }: { params: Promise<{ slug: string }> }): Promise<Metadata> {
   const { slug } = await params;
@@ -75,6 +77,17 @@ export default async function CourseDetailPage({
 
   return (
     <Section className="mobile-page-glow pt-14">
+      <JsonLd data={{
+        "@context": "https://schema.org",
+        "@type": "Course",
+        name: displayTitle,
+        description: course.description,
+        url: `${siteUrl}/courses/${course.slug}`,
+        provider: { "@type": "Organization", "@id": `${siteUrl}/#organization`, name: "MyLoginn Tech Private Limited", sameAs: siteUrl },
+        inLanguage: "en",
+        hasCourseInstance: { "@type": "CourseInstance", courseMode: "online" },
+        offers: { "@type": "Offer", price: course.price, priceCurrency: "INR", category: course.price === 0 ? "Free" : "Paid", url: `${siteUrl}/courses/${course.slug}` },
+      }} />
       <Container>
         <div className="grid grid-cols-1 gap-10 lg:grid-cols-3">
           <div className="lg:col-span-2">

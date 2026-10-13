@@ -57,8 +57,8 @@ export function HeroSection() {
             transition={{ duration: 0.7, delay: 0.75 }}
             className="mx-auto mt-6 max-w-xl text-base text-muted sm:text-lg lg:mx-0"
           >
-            Advanced AI/ML &amp; digital marketing courses, personalized CBSE/State
-            Board tutoring, real internships, and AI-driven growth services &mdash;
+            Advanced AI/ML &amp; digital marketing courses, real
+            internships, and AI-driven growth services &mdash;
             all on one premium platform.
           </motion.p>
 

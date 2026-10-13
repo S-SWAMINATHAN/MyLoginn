@@ -18,10 +18,8 @@ import { AnimatedHome } from "@/components/ui/icons/AnimatedHome";
 import { AnimatedBook } from "@/components/ui/icons/AnimatedBook";
 import { AnimatedBriefcase } from "@/components/ui/icons/AnimatedBriefcase";
 import { AnimatedFolder } from "@/components/ui/icons/AnimatedFolder";
-import { AnimatedGraduation } from "@/components/ui/icons/AnimatedGraduation";
 import { AnimatedMegaphone } from "@/components/ui/icons/AnimatedMegaphone";
 import { AnimatedCode } from "@/components/ui/icons/AnimatedCode";
-import { AnimatedSparkle } from "@/components/ui/icons/AnimatedSparkle";
 import { AnimatedMail } from "@/components/ui/icons/AnimatedMail";
 import { AnimatedUser } from "@/components/ui/icons/AnimatedUser";
 import { AnimatedBuilding } from "@/components/ui/icons/AnimatedBuilding";
@@ -38,12 +36,10 @@ const serviceLinks = [
   { href: "/services/app-web-development", label: "App & Web Development", desc: "Full-stack builds, premium UX" },
   { href: "/services/ai-development", label: "AI Development", desc: "Generative AI & AI agents" },
   { href: "/services/testing-automation", label: "Testing & Automation", desc: "QA, API and Playwright testing" },
-  { href: "/services/astrology", label: "Astrology", desc: "Horoscope & matching reports" },
 ];
 
 const learnLinks = [
   { href: "/courses", label: "Courses", desc: "Learn job-ready skills" },
-  { href: "/tutoring", label: "Tutoring", desc: "1:1 mentor sessions, live classes" },
 ];
 
 type MobileLink = {
@@ -56,7 +52,6 @@ type MobileLink = {
 const mobileMainLinks: MobileLink[] = [
   { href: "/", label: "Home", desc: "Back to the start", icon: AnimatedHome },
   { href: "/courses", label: "Courses", desc: "Learn job-ready skills", icon: AnimatedBook },
-  { href: "/tutoring", label: "Tutoring", desc: "1:1 mentor sessions, live classes", icon: AnimatedGraduation },
 ];
 
 const mobileServiceLinks: MobileLink[] = [
@@ -71,12 +66,6 @@ const mobileServiceLinks: MobileLink[] = [
     label: "App & Web Development",
     desc: "Full-stack builds, premium UX",
     icon: AnimatedCode,
-  },
-  {
-    href: "/services/astrology",
-    label: "Astrology",
-    desc: "Horoscope & matching reports",
-    icon: AnimatedSparkle,
   },
 ];
 

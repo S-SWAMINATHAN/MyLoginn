@@ -3,6 +3,9 @@ import { prisma } from "@/lib/prisma";
 import { leadSchema } from "@/lib/validation";
 import { toWhatsAppLink } from "@/lib/whatsapp";
 import { WHATSAPP_PHONE } from "@/lib/contactInfo";
+import { emailDomainAcceptsMail } from "@/lib/emailDomain";
+
+export const runtime = "nodejs";
 
 export async function POST(req: Request) {
   try {
@@ -18,6 +21,10 @@ export async function POST(req: Request) {
     }
 
     const { name, email, phone, company, goals, service, message } = parsed.data;
+    const domain = email.split("@")[1];
+    if (!(await emailDomainAcceptsMail(domain))) {
+      return NextResponse.json({ error: `We couldn't find a mail server for ${domain}. Please check your email address.` }, { status: 400 });
+    }
     const savedMessage = [
       goals ? `Goals:\n${goals}` : "",
       message ? `Project / enquiry:\n${message}` : "",

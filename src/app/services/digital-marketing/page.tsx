@@ -1,12 +1,6 @@
 ﻿import { createPageMetadata } from "@/lib/seo";
-import { Section, Container } from "@/components/ui/Section";
-import { LeadForm } from "@/components/services/LeadForm";
-import { DigitalMarketingHero } from "@/components/services/DigitalMarketingHero";
-import { FeatureBentoGrid } from "@/components/services/FeatureBentoGrid";
-import { HowItWorksTimeline } from "@/components/services/HowItWorksTimeline";
-import { ProjectRequestTrigger } from "@/components/services/ProjectRequestTrigger";
-import { JsonLd } from "@/components/seo/JsonLd";
-import { FaqAccordion } from "@/components/ui/FaqAccordion";
+import { localKeywords, regionalKeywords } from "@/lib/localSeo";
+import { MarketingLanding } from "@/components/services/marketing/MarketingLanding";
 
 const marketingAreas = [
   { title: "Search and content strategy", description: "Plan useful search content, on-page improvements and content themes around your audience and business goals." },
@@ -27,52 +21,19 @@ const marketingFaqs = [
 
 export const metadata = createPageMetadata({
   title: "Digital Marketing & SEO Services",
-  description: "SEO, paid campaigns, social media, content and analytics from MyLoginn, an India-based team supporting businesses across India and internationally.",
+  description: "SEO, paid campaigns, social media, content and analytics from MyLoginn, an India-based team supporting businesses across India, including Coimbatore and Tamil Nadu, and internationally.",
   path: "/services/digital-marketing",
   keywords: [
+    ...regionalKeywords(["digital marketing agency", "SEO company"]),
+    ...localKeywords(["digital marketing company", "SEO services", "social media marketing", "Google Ads agency"]),
     "MyLoginn digital marketing", "digital marketing company",
     "digital marketing services", "AI digital marketing solutions",
     "SEO services", "social media marketing", "Google Ads management",
     "Meta Ads management", "paid advertising", "content marketing",
     "marketing analytics",
-    "digital marketing services Coimbatore", "digital marketing company Pollachi",
-    "digital marketing agency Udumalpet", "SEO services Coimbatore",
-    "social media marketing Tamil Nadu", "Google Ads agency Coimbatore",
-    "digital marketing for businesses Tamil Nadu",
   ],
 });
 
 export default function DigitalMarketingServicesPage() {
-  return (
-    <Section className="overflow-hidden pt-3 sm:pt-5">
-      <Container className="max-w-[1480px]">
-        <DigitalMarketingHero />
-        <ProjectRequestTrigger service="marketing" label="Plan your marketing campaign" className="mt-8" />
-        <section aria-labelledby="marketing-services" className="mt-12">
-          <h2 id="marketing-services" className="text-2xl font-semibold tracking-tight sm:text-3xl">Digital marketing services</h2>
-          <p className="mt-3 max-w-3xl leading-7 text-muted">Choose a focused set of activities based on your audience, goals and budget. MyLoginn supports businesses in Coimbatore, Pollachi, Udumalpet, Erode, and across Tamil Nadu. The team agrees on deliverables and measurement before campaign work begins.</p>
-          <div className="mt-6 grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
-            {marketingAreas.map((area) => <article key={area.title} className="rounded-2xl border border-border-soft bg-surface p-5"><h3 className="font-semibold">{area.title}</h3><p className="mt-2 text-sm leading-6 text-muted">{area.description}</p></article>)}
-          </div>
-        </section>
-        <div className="mt-12 grid grid-cols-1 gap-12 lg:grid-cols-5">
-          <div className="lg:col-span-3">
-            <FeatureBentoGrid />
-            <HowItWorksTimeline />
-          </div>
-
-          <div className="lg:col-span-2">
-            <div className="lg:sticky lg:top-24">
-              <LeadForm service="Digital Marketing" variant="dynamic" />
-            </div>
-          </div>
-        </div>
-        <section aria-labelledby="marketing-faq" className="mt-16">
-          <JsonLd data={{ "@context": "https://schema.org", "@type": "FAQPage", mainEntity: marketingFaqs.map(({ question, answer }) => ({ "@type": "Question", name: question, acceptedAnswer: { "@type": "Answer", text: answer } })) }} />
-          <h2 id="marketing-faq" className="text-2xl font-semibold tracking-tight sm:text-3xl">Digital marketing FAQs</h2>
-          <FaqAccordion items={marketingFaqs} className="mt-5" />
-        </section>
-      </Container>
-    </Section>
-  );
+  return <MarketingLanding areas={marketingAreas} faqs={marketingFaqs} />;
 }

@@ -14,12 +14,12 @@ type ChatMessage = { role: "user" | "assistant"; content: string };
 const SUGGESTIONS = [
   "What courses do you offer?",
   "Are there paid internships?",
-  "How does tutoring work?",
+  "How do I apply for an internship?",
   "How can I contact you?",
 ];
 
 const GREETING =
-  "Hi! I'm the MyLoginn AI agent. Ask me anything about our courses, internships, tutoring, or services â€” I'm happy to help!";
+  "Hi! I'm the MyLoginn AI agent. Ask me anything about our courses, internships, or services â€” I'm happy to help!";
 
 export function AiAgentWidget() {
   const [open, setOpen] = useState(false);

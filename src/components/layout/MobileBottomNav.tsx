@@ -32,12 +32,10 @@ const servicesPopupLinks: { href: string; label: string; desc: string; icon: Ico
   { href: "/projects", label: "Project", desc: "Build your portfolio", icon: AnimatedFolder },
   { href: "/services/digital-marketing", label: "Digital Marketing", desc: "AI-driven growth campaigns", icon: AnimatedMegaphone },
   { href: "/services/app-web-development", label: "App & Web Development", desc: "Full-stack builds, premium UX", icon: AnimatedCode },
-  { href: "/services/astrology", label: "Astrology", desc: "Horoscope & matching reports", icon: AnimatedSparkle },
 ];
 
 const learnPopupLinks: { href: string; label: string; desc: string; icon: IconComponent }[] = [
   { href: "/courses", label: "Courses", desc: "Learn job-ready skills", icon: AnimatedBook },
-  { href: "/tutoring", label: "Tutoring", desc: "1:1 mentor sessions, live classes", icon: AnimatedGraduation },
 ];
 
 const isLearnPath = (p: string) => p.startsWith("/courses") || p === "/tutoring";

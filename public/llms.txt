@@ -1,10 +1,10 @@
 # MyLoginn
 
-> MyLoginn Tech Private Limited (brand: MyLoginn, website: myloginn.com) is an India-based technology company that builds web, mobile and custom software, AI and AI agent solutions, test automation and digital marketing for businesses worldwide, and teaches practical technology skills through courses, tutoring and internships.
+> MyLoginn Tech Private Limited (brand: MyLoginn, website: myloginn.com) is an India-based technology company that builds web, mobile and custom software, AI and AI agent solutions, test automation and digital marketing for businesses worldwide, and teaches practical technology skills through courses and internships.
 
 MyLoginn is not affiliated with other products named "MyLogin" (for example school single sign-on services). The correct spelling has two n's: MyLoginn.
 
-Based in India. Works with clients across India (including Coimbatore, Pollachi, Erode and Udumalpet in Tamil Nadu) and with international clients remotely.
+Based in India. Works with clients across India and with international clients remotely.
 
 ## Services
 
@@ -12,13 +12,11 @@ Based in India. Works with clients across India (including Coimbatore, Pollachi,
 - [AI development and AI agents](https://www.myloginn.com/services/ai-development): Generative AI features, AI agents, workflow automation and AI integration.
 - [Software testing and test automation](https://www.myloginn.com/services/testing-automation): Manual QA, API testing and Playwright automation.
 - [Digital marketing and SEO](https://www.myloginn.com/services/digital-marketing): SEO, paid campaigns, social media, content and analytics.
-- [Astrology reports](https://www.myloginn.com/services/astrology): Horoscope and matching reports.
 - [All services](https://www.myloginn.com/services)
 
 ## Learning
 
 - [Courses](https://www.myloginn.com/courses): Technology courses including Python, JavaScript, React, SQL, and Generative AI.
-- [Tutoring](https://www.myloginn.com/tutoring): Personalised tutoring.
 - [Internships](https://www.myloginn.com/internships): Current internship opportunities.
 
 ## Company

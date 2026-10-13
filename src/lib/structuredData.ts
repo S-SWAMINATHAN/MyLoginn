@@ -24,6 +24,22 @@ export const organizationStructuredData = {
     areaServed: "IN",
   })),
   slogan: "Intelligence | Innovation | Integrity | Impact",
+  disambiguatingDescription:
+    "MyLoginn (two n's) is an India-based technology company at myloginn.com. It is not related to MyLogin, the school single sign-on service.",
+  hasOfferCatalog: {
+    "@type": "OfferCatalog",
+    name: "MyLoginn services",
+    itemListElement: [
+      { name: "Web, mobile app and custom software development", path: "/services/app-web-development" },
+      { name: "AI development and AI agent development", path: "/services/ai-development" },
+      { name: "Software testing and test automation", path: "/services/testing-automation" },
+      { name: "Digital marketing and SEO", path: "/services/digital-marketing" },
+      { name: "Technology courses", path: "/courses" },
+    ].map((s) => ({
+      "@type": "Offer",
+      itemOffered: { "@type": "Service", name: s.name, url: `${siteUrl}${s.path}` },
+    })),
+  },
   areaServed: [
     { "@type": "Country", name: "India" },
     ...["Coimbatore", "Pollachi", "Udumalpet", "Erode"].map((name) => ({
@@ -43,7 +59,6 @@ export const organizationStructuredData = {
     "Software testing and test automation",
     "Digital marketing",
     "Technology education",
-    "Online tutoring",
     "Technology internships",
   ],
 };

@@ -35,7 +35,7 @@ const shells: Shell[] = [
     icons: [
       { Icon: ShieldCheck, color: "#22c55e", angle: 60, name: "Cyber Security" },
       { Icon: Megaphone, color: "#fb7185", angle: 180, name: "Marketing" },
-      { Icon: GraduationCap, color: "#f59e0b", angle: 300, name: "Tutoring" },
+      { Icon: GraduationCap, color: "#f59e0b", angle: 300, name: "Mentoring" },
     ],
   },
   {

@@ -11,7 +11,7 @@ import { CONTACT_EMAIL, CONTACT_PHONES, WHATSAPP_PHONE } from "@/lib/contactInfo
 
 export const metadata = createPageMetadata({
   title: "Contact",
-  description: "Contact MyLoginn Tech Private Limited about software development, AI, digital marketing, courses, tutoring, and internships.",
+  description: "Contact MyLoginn Tech Private Limited about software development, AI, digital marketing, courses and internships.",
   path: "/contact",
   keywords: ["contact MyLoginn", "MyLoginn contact", "software development enquiry", "digital marketing enquiry"],
 });
@@ -29,7 +29,6 @@ const quickLinks = [
   { title: "Create an account", description: "Set up your MyLoginn learner profile.", href: "/signup", tone: "mint" },
   { title: "Find an internship", description: "Explore current internship opportunities.", href: "/internships", tone: "violet" },
   { title: "Discuss a project", description: "Tell us about a product or marketing need.", href: "/services", tone: "blue" },
-  { title: "Get tutoring support", description: "Explore one-to-one tutoring options.", href: "/tutoring", tone: "mint" },
 ];
 
 export default function ContactPage() {
@@ -46,7 +45,7 @@ export default function ContactPage() {
           <div className="max-w-2xl">
             <span className="inline-flex items-center gap-2 rounded-full bg-[#eff5ff] px-3.5 py-2 text-[11px] font-semibold uppercase tracking-wide text-[#145bea] max-md:gap-1 max-md:px-1.5 max-md:text-[9px] max-md:tracking-normal"><span className="h-2 w-2 rounded-full bg-[#2164f5]" /> Contact &amp; Support</span>
             <h1 className="mt-4 text-[2rem] font-semibold leading-[1.08] max-md:mt-1 max-md:text-[1.625rem] sm:text-[2.8rem]">We&apos;re here to <span className="text-[#2164f5]">help you</span></h1>
-            <p className="mt-3 max-w-xl text-sm leading-6 text-[#62708d] sm:text-base">Course questions, project ideas, tutoring, or internships — tell us what you need and we&apos;ll point you in the right direction.</p>
+            <p className="mt-3 max-w-xl text-sm leading-6 text-[#62708d] sm:text-base">Course questions, project ideas, or internships — tell us what you need and we&apos;ll point you in the right direction.</p>
           </div>
         </header>
 
@@ -55,7 +54,7 @@ export default function ContactPage() {
             { label: "Course guidance", value: "Learning paths" },
             { label: "Career support", value: "Internships" },
             { label: "Business enquiries", value: "Project services" },
-            { label: "Personal learning", value: "Tutoring" },
+            { label: "Personal learning", value: "Mentoring" },
           ].map(({ label, value }, index) => (
             <div key={label} className={`px-4 py-4 sm:px-5 ${index % 2 === 1 ? "border-l border-[#edf0f5] sm:border-l" : ""} ${index > 1 ? "border-t border-[#edf0f5] sm:border-t-0" : ""} ${index === 2 ? "sm:border-l" : ""}`}>
               <p className="text-[10px] font-semibold uppercase tracking-wide text-[#74819a]">{label}</p>

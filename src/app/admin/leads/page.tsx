@@ -1,7 +1,5 @@
-import { EntityScreen } from "@/components/admin/EntityScreen";
-
-export const metadata = { title: "Leads — MyLoginn Admin" };
+import { redirect } from "next/navigation";
 
 export default function AdminLeadsPage() {
-  return <EntityScreen entity="leads" />;
+  redirect("/admin/requests");
 }

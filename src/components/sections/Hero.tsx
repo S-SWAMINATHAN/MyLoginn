@@ -13,7 +13,7 @@ import { RotatingHeadline } from "@/components/ui/RotatingHeadline";
 import heroImage from "@/images/Hero Section images/15.png";
 
 const heroPhrases = [
-  "AI-Driven IT Solutions for Modern Businesses",
+  "AI, Web & Mobile Solutions for Modern Businesses",
   "Where Potential Meets Opportunity",
   "Elevating Learning, Empowering Careers",
   "Learning with Direction. Careers with Impact.",
@@ -74,10 +74,10 @@ export function Hero() {
               transition={{ duration: 0.7, delay: 0.75 }}
               className="mx-auto mt-6 max-w-xl text-base text-muted sm:text-lg lg:mx-0"
             >
-              Advanced AI/ML &amp; digital marketing courses, personalized CBSE/State
-              Board tutoring, real internships, and AI-driven growth services &mdash;
+              Advanced AI/ML &amp; digital marketing courses, real
+              internships, and AI-driven growth services &mdash;
               all on one premium platform. Supporting businesses and learners across
-              Coimbatore, Pollachi, and Erode.
+              India and worldwide.
             </motion.p>
 
             <motion.div

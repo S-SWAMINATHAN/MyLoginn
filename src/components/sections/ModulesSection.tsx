@@ -26,14 +26,6 @@ const modules: {
     color: "var(--brand-500)",
   },
   {
-    iconKey: "student",
-    title: "Online Tutoring Program",
-    description:
-      "Personalized tutoring for CBSE & State Board curricula with live classes, progress dashboards and custom study plans.",
-    href: "/tutoring",
-    color: "var(--accent-500)",
-  },
-  {
     iconKey: "career",
     title: "Internship Programs",
     description:

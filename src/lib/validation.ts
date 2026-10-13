@@ -14,7 +14,7 @@ export const emailSchema = z.string().trim().toLowerCase().email("Enter a valid 
 // Used wherever we need a real inbox to reply to: rejects throwaway-mail domains.
 export const contactEmailSchema = emailSchema.refine((value) => !isDisposableEmail(value), { message: "Please use a permanent email address, not a temporary inbox" });
 
-export const personNameSchema = z.string().trim().min(2, "Enter your full name").max(80, "Name is too long").regex(/^[p{L}][p{L}s.'-]*$/u, "Use letters only (spaces, dots and hyphens are fine)");
+export const personNameSchema = z.string().trim().min(2, "Enter your full name").max(80, "Name is too long").regex(/^\p{L}[\p{L}\p{M}\s.'-]*$/u, "Use letters only (spaces, dots and hyphens are fine)");
 
 const detailsSchema = z.string().trim().max(1000, "Keep this under 1000 characters").refine((value) => value === "" || value.length >= 10, { message: "Add a few more details (at least 10 characters)" }).optional().or(z.literal(""));
 

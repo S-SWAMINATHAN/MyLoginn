@@ -13,7 +13,7 @@ export const metadata = createPageMetadata({
 const sections = [
   { h: "Who we are", p: `This website is operated by MyLoginn Tech Private Limited, an India-based technology company. Contact: ${CONTACT_EMAIL}.` },
   { h: "Information we collect", p: "Account details (name, email, phone), enquiry and project-request details you submit, course progress and enrolment records, payment status, and technical data such as browser type needed to run and secure the site." },
-  { h: "How we use it", p: "To provide accounts, courses, tutoring and internships; respond to enquiries; verify your email or phone with one-time codes; process payments; secure the site and prevent abuse; and improve our services." },
+  { h: "How we use it", p: "To provide accounts, courses and internships; respond to enquiries; verify your email or phone with one-time codes; process payments; secure the site and prevent abuse; and improve our services." },
   { h: "Service providers", p: "We use third-party providers to deliver the service, for example for payments, email, SMS or phone verification, hosting, and AI-assisted chat. They receive only the data needed for their function. We do not sell personal information." },
   { h: "Security", p: "Passwords are stored hashed, traffic is served over HTTPS, and access to administration features is restricted. No online service can guarantee absolute security." },
   { h: "Retention and your choices", p: `You can ask us to access, correct or delete your personal information by emailing ${CONTACT_EMAIL}. We keep records only as long as needed for the purposes above or as required by law.` },

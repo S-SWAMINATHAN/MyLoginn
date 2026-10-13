@@ -5,7 +5,7 @@ import { AnimatePresence, motion } from "framer-motion";
 import { Chapter } from "@/components/experience/Chapter";
 import { SplitHeadline } from "@/components/experience/SplitHeadline";
 import { Reveal } from "@/components/ui/Reveal";
-import { Button } from "@/components/ui/Button";
+import { PlanButton } from "@/components/ui/PlanButton";
 import { openProjectRequest } from "@/components/services/ProjectRequestModal";
 import { useReducedMotion } from "@/lib/useReducedMotion";
 
@@ -167,10 +167,8 @@ export function MobileStory() {
             </p>
           </Reveal>
 
-          <Reveal direction="up" delay={0.4} className="mt-8 flex justify-center lg:justify-start">
-            <Button type="button" onClick={() => openProjectRequest("mobile")} variant="outline">
-              Plan a mobile app
-            </Button>
+          <Reveal direction="up" delay={0.4} className="mt-8 flex justify-center">
+            <PlanButton label="Plan a mobile app" onClick={() => openProjectRequest("mobile")} />
           </Reveal>
         </div>
       </div>

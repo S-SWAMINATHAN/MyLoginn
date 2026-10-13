@@ -15,7 +15,6 @@ const TRACKS = [
   "Cloud & DevOps",
   "Digital Marketing",
   "Cybersecurity",
-  "CBSE / State Board Tutoring",
 ];
 
 const JOURNEY = ["Learn", "Practice", "Build", "Test", "Deploy", "Grow"];
@@ -36,7 +35,7 @@ export function Education() {
 
         <Reveal direction="up" delay={0.15}>
           <p className="mx-auto mt-4 max-w-lg text-sm text-muted sm:text-base">
-            Practical, mentor-led courses and 1:1 tutoring &mdash; the same technology we build with, taught the
+            Practical, mentor-led courses &mdash; the same technology we build with, taught the
             way it&apos;s actually used.
           </p>
         </Reveal>
