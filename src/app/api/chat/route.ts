@@ -2,6 +2,7 @@ import { NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
 import { CONTACT_EMAIL, CONTACT_PHONES, CONTACT_HOURS, WHATSAPP_PHONE } from "@/lib/contactInfo";
 import { MyBuddyError, isMyBuddyConfigured, streamMyBuddyReply } from "@/lib/mybuddy";
+import { GeminiError, isGeminiConfigured, streamGeminiReply } from "@/lib/gemini";
 import { REQUEST_SCOPED_STYLE, currentDateTimeContext, detectTopics, type ChatTopic } from "@/lib/chatIntent";
 
 export const runtime = "nodejs";
@@ -99,7 +100,8 @@ ${REQUEST_SCOPED_STYLE}`;
 }
 
 export async function POST(req: Request) {
-  if (!isMyBuddyConfigured()) {
+  const useGemini = isGeminiConfigured();
+  if (!useGemini && !isMyBuddyConfigured()) {
     return NextResponse.json(
       { error: `The AI assistant isn't configured yet. Please reach us at ${CONTACT_EMAIL}.` },
       { status: 503 }
@@ -126,8 +128,25 @@ export async function POST(req: Request) {
   const earlier = history.slice(0, -1);
   const topics = detectTopics(history.filter((m) => m.role === "user").map((m) => m.content));
 
-  // Each request runs in a fresh MyBuddy conversation, so earlier turns ride along in the instructions.
   let system = await buildSystemPrompt(topics);
+
+  if (useGemini) {
+    try {
+      const { stream } = await streamGeminiReply(system, history, req.signal);
+      return new Response(stream, {
+        headers: { "Content-Type": "text/plain; charset=utf-8", "Cache-Control": "no-store" },
+      });
+    } catch (error) {
+      console.error("Gemini error:", error);
+      const friendly =
+        error instanceof GeminiError && error.kind === "auth"
+          ? "The AI assistant's API key is invalid. Please contact us instead."
+          : "The AI assistant is temporarily unavailable. Please try again in a moment.";
+      return NextResponse.json({ error: `${friendly} Email: ${CONTACT_EMAIL}` }, { status: 502 });
+    }
+  }
+
+  // Each MyBuddy request runs in a fresh conversation, so earlier turns ride along in the instructions.
   if (earlier.length > 0) {
     const transcript = earlier.map((m) => `${m.role === "user" ? "User" : "Assistant"}: ${m.content}`).join("\n");
     system += `\n\nConversation so far (for context only):\n${transcript}`;
