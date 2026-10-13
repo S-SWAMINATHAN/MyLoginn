@@ -5,16 +5,13 @@ import { Controller, useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useRouter } from "next/navigation";
 import { AnimatePresence, motion } from "framer-motion";
-import {
-  ArrowLeft, ArrowRight, BadgeCheck, Check, CheckCircle2,
-  Mail, ShieldCheck, Smartphone, UserPlus,
-} from "lucide-react";
+import { BadgeCheck, Check, Mail, ShieldCheck, Smartphone, UserPlus } from "lucide-react";
 import { signupSchema, type SignupInput } from "@/lib/validation";
 import { formatPhoneDisplay } from "@/lib/whatsapp";
 import { cn } from "@/lib/cn";
 import { Input } from "@/components/ui/Input";
 import { Select } from "@/components/ui/Select";
-import { Button } from "@/components/ui/Button";
+import { AuthButton } from "@/components/auth/AuthButton";
 import { AuthShell } from "@/components/auth/AuthShell";
 import { PhoneInput } from "@/components/ui/PhoneInput";
 import { OtpInput } from "@/components/ui/OtpInput";
@@ -154,38 +151,45 @@ export default function SignupPage() {
 
   return (
     <AuthShell mode="signup">
-          {!success && <div className="mb-5">
-            <div className="mb-2 flex items-center justify-between gap-3">
-              <p className="text-xs font-semibold uppercase tracking-[0.16em] text-brand-600 dark:text-brand-300">Step {step} of 3</p>
+          {!success && <div className="mb-6">
+            <div className="mb-3 flex items-center justify-between gap-3">
+              <span className="story-eyebrow">Step {step} of 3</span>
               <p className="text-xs text-muted">{steps[step - 1].caption}</p>
             </div>
-            <div className="grid grid-cols-3 gap-2" aria-label={`Signup step ${step} of 3`}>
+            <ol className="grid grid-cols-3 gap-2" aria-label={`Signup step ${step} of 3`}>
               {steps.map((item, index) => {
                 const StepIcon = item.icon;
                 const active = index + 1 === step;
                 const complete = index + 1 < step;
-                return <div key={item.title} className="min-w-0">
-                  <div className={cn("h-1.5 rounded-full transition-colors", index + 1 <= step ? "brand-gradient-bg" : "bg-surface-2")} />
+                return <li key={item.title} className="min-w-0">
+                  <div className="h-1.5 overflow-hidden rounded-full bg-story-mist">
+                    <motion.div className="h-full rounded-full bg-story-royal" initial={false} animate={{ width: index + 1 <= step ? "100%" : "0%" }} transition={{ duration: 0.45, ease: [0.16, 1, 0.3, 1] }} />
+                  </div>
                   <div className={cn("mt-2 flex items-center gap-1.5 text-[11px] sm:text-xs", active ? "font-semibold text-foreground" : "text-muted")}>
-                    {complete ? <Check className="h-3.5 w-3.5 shrink-0 text-success" /> : <StepIcon className="h-3.5 w-3.5 shrink-0" />}
+                    {complete ? <Check className="h-3.5 w-3.5 shrink-0 text-emerald-500" /> : <StepIcon className="h-3.5 w-3.5 shrink-0" />}
                     <span className="truncate">{item.title}</span>
                   </div>
-                </div>;
+                </li>;
               })}
-            </div>
+            </ol>
           </div>}
 
           <AnimatePresence mode="wait">
             {success ? (
               <motion.div key="success" initial={{ opacity: 0, y: 12 }} animate={{ opacity: 1, y: 0 }} className="flex min-h-72 flex-col items-center justify-center text-center">
-                <span className="flex h-20 w-20 items-center justify-center rounded-full bg-success/10 text-success"><CheckCircle2 className="h-11 w-11" /></span>
-                <h1 className="mt-6 text-2xl font-bold sm:text-3xl">You&apos;re all set!</h1>
+                <span className="relative grid h-20 w-20 place-items-center rounded-full bg-emerald-500/10">
+                  <svg viewBox="0 0 52 52" className="h-12 w-12" fill="none" aria-hidden>
+                    <motion.circle cx="26" cy="26" r="23" stroke="#059669" strokeWidth="3" initial={{ pathLength: 0 }} animate={{ pathLength: 1 }} transition={{ duration: 0.6 }} />
+                    <motion.path d="M15 27l8 8 14-16" stroke="#059669" strokeWidth="3.5" strokeLinecap="round" strokeLinejoin="round" initial={{ pathLength: 0 }} animate={{ pathLength: 1 }} transition={{ duration: 0.5, delay: 0.5 }} />
+                  </svg>
+                </span>
+                <h1 className="mt-6 text-2xl font-bold text-story-navy sm:text-3xl dark:text-foreground">You&apos;re all set!</h1>
                 <p className="mt-2 text-sm text-muted">Your account is ready. Taking you to your dashboard…</p>
               </motion.div>
             ) : step < 3 ? (
               <motion.div key={`step-${step}`} initial={{ opacity: 0, x: 12 }} animate={{ opacity: 1, x: 0 }} exit={{ opacity: 0, x: -12 }} transition={{ duration: 0.22 }}>
                 <div className="mb-4">
-                  <h1 className="text-2xl font-bold tracking-tight sm:text-3xl">{step === 1 ? "Create your account" : "Secure your account"}</h1>
+                  <h1 className="text-3xl font-bold tracking-tight text-story-navy dark:text-foreground">{step === 1 ? "Create your account" : "Secure your account"}</h1>
                   <p className="mt-2 text-sm leading-6 text-muted">{step === 1 ? "Start with your name and the contact details you’ll use to sign in." : "Choose a strong password and tell us how you’ll use MyLoginn."}</p>
                 </div>
 
@@ -195,7 +199,7 @@ export default function SignupPage() {
                   <Controller control={control} name="phone" render={({ field }) => (
                     <PhoneInput label="Phone number" hint="We’ll send a one-time verification code by SMS." value={field.value} onChange={field.onChange} onBlur={field.onBlur} onCountryChange={(country) => setValue("country", country)} error={errors.phone?.message} />
                   )} />
-                  <Button type="button" size="lg" className="mt-2 w-full" onClick={goToAccountStep} icon={<ArrowRight className="h-5 w-5" />}>Continue</Button>
+                  <AuthButton onClick={goToAccountStep} className="mt-2">Continue</AuthButton>
                 </div> : <form onSubmit={handleSubmit(onDetailsSubmit)} className="space-y-3">
                   <PasswordInput label="Password" placeholder="At least 8 characters" autoComplete="new-password" {...register("password")} error={errors.password?.message} />
                   <PasswordInput label="Confirm password" placeholder="Enter your password again" autoComplete="new-password" {...register("confirmPassword")} error={errors.confirmPassword?.message} />
@@ -203,8 +207,8 @@ export default function SignupPage() {
                   <p className="rounded-xl bg-surface-2 px-4 py-3 text-xs leading-5 text-muted">Use at least 8 characters, including one uppercase letter and one number.</p>
                   {serverError && <p role="alert" className="rounded-lg bg-danger/10 px-3 py-2 text-sm text-danger">{serverError}</p>}
                   <div className="flex flex-col-reverse gap-3 pt-1 sm:flex-row">
-                    <Button type="button" variant="outline" size="lg" className="w-full sm:w-auto" onClick={() => setStep(1)} icon={<ArrowLeft className="h-4 w-4" />}>Back</Button>
-                    <Button type="submit" size="lg" className="w-full flex-1" disabled={submitting} icon={<ArrowRight className="h-5 w-5" />}>{submitting ? "Creating account…" : "Create account"}</Button>
+                    <AuthButton variant="outline" back onClick={() => setStep(1)} className="w-full sm:w-auto">Back</AuthButton>
+                    <AuthButton type="submit" disabled={submitting} className="flex-1">{submitting ? "Creating account…" : "Create account"}</AuthButton>
                   </div>
                 </form>}
 
@@ -212,8 +216,8 @@ export default function SignupPage() {
             ) : (
               <motion.div key="verify" initial={{ opacity: 0, x: 12 }} animate={{ opacity: 1, x: 0 }} exit={{ opacity: 0, x: -12 }} transition={{ duration: 0.22 }}>
                 <div className="flex items-center gap-3">
-                  <span className="flex h-12 w-12 shrink-0 items-center justify-center rounded-2xl bg-brand-500/10 text-brand-600 dark:text-brand-300">{channel === "phone" ? <Smartphone className="h-6 w-6" /> : <Mail className="h-6 w-6" />}</span>
-                  <div><h1 className="text-2xl font-bold tracking-tight sm:text-3xl">Verify your {channel}</h1><p className="mt-1 text-sm text-muted">One last step to activate your account.</p></div>
+                  <span className="flex h-12 w-12 shrink-0 items-center justify-center rounded-full bg-story-mist text-story-royal">{channel === "phone" ? <Smartphone className="h-6 w-6" /> : <Mail className="h-6 w-6" />}</span>
+                  <div><h1 className="text-2xl font-bold tracking-tight text-story-navy sm:text-3xl dark:text-foreground">Verify your {channel}</h1><p className="mt-1 text-sm text-muted">One last step to activate your account.</p></div>
                 </div>
                 <p className="mt-5 text-sm leading-6 text-muted">Enter the 6-digit code sent to <strong className="break-all text-foreground">{channel === "phone" ? formatPhoneDisplay(phone) : email}</strong>.</p>
                 {requesting && <p className="mt-4 rounded-xl bg-surface-2 px-4 py-3 text-sm text-muted">Sending your verification code…</p>}
@@ -221,10 +225,10 @@ export default function SignupPage() {
                 {otpError && <p role="alert" className="mt-4 rounded-xl bg-danger/10 px-4 py-3 text-sm text-danger">{otpError}</p>}
                 <div className="mt-7 space-y-5">
                   <OtpInput value={otp} onChange={setOtp} onComplete={verifyCode} error={otpError ?? undefined} disabled={verifying} />
-                  <Button size="lg" className="w-full" onClick={() => verifyCode(otp)} disabled={otp.length !== 6 || verifying}>{verifying ? "Verifying…" : "Verify and finish"}</Button>
+                  <AuthButton onClick={() => verifyCode(otp)} disabled={otp.length !== 6 || verifying}>{verifying ? "Verifying…" : "Verify and finish"}</AuthButton>
                   <div className="flex flex-col gap-3 text-center text-sm sm:flex-row sm:justify-between sm:text-left">
-                    <button type="button" onClick={switchChannel} className="font-medium text-brand-600 hover:underline dark:text-brand-300">Verify by {channel === "phone" ? "email" : "phone"} instead</button>
-                    <button type="button" onClick={() => void requestCode(channel, identifier)} disabled={cooldown > 0 || requesting} className="font-medium text-brand-600 disabled:cursor-not-allowed disabled:opacity-50 dark:text-brand-300">{cooldown > 0 ? `Resend code in ${cooldown}s` : "Resend code"}</button>
+                    <button type="button" onClick={switchChannel} className="font-semibold text-story-royal hover:underline">Verify by {channel === "phone" ? "email" : "phone"} instead</button>
+                    <button type="button" onClick={() => void requestCode(channel, identifier)} disabled={cooldown > 0 || requesting} className="font-semibold text-story-royal disabled:cursor-not-allowed disabled:opacity-50">{cooldown > 0 ? `Resend code in ${cooldown}s` : "Resend code"}</button>
                   </div>
                 </div>
               </motion.div>

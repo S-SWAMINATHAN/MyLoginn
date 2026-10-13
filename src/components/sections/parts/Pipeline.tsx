@@ -1,19 +1,19 @@
 "use client";
 
 import type { CSSProperties } from "react";
+import { motion } from "framer-motion";
 import { cn } from "@/lib/cn";
 import { useReducedMotion } from "@/lib/useReducedMotion";
 
-const SECONDS_PER_STEP = 2.6;
+const SECONDS_PER_STEP = 4.8;
 
-function Node({ label, index, live, delay }: { label: string; index: number; live: boolean; delay: string }) {
+function Node({ label, index, live }: { label: string; index: number; live: boolean }) {
   const color = live ? "var(--story-cyan)" : "var(--border-soft)";
   return (
     <div className="relative flex min-w-[5.5rem] flex-1 basis-0 flex-col items-center gap-2.5 px-1 text-center">
       {/* The coupling to the next carriage; the last one reaches into the next copy so the line never breaks. */}
       <span aria-hidden className="absolute left-1/2 top-5 z-0 h-[3px] w-full -translate-y-1/2">
         <span className="block h-full w-full rounded-full" style={{ background: color, opacity: live ? 0.55 : 1 }} />
-        {live && <span className="animate-flow-dot absolute top-1/2 h-2 w-2 -translate-y-1/2 rounded-full bg-story-cyan" style={{ boxShadow: "0 0 10px 3px rgba(34,211,238,0.7)", animationDelay: delay }} />}
       </span>
       <span
         className={cn(
@@ -31,27 +31,40 @@ function Node({ label, index, live, delay }: { label: string; index: number; liv
 function Carriages({ steps, offset, liveLimit, hidden }: { steps: string[]; offset: number; liveLimit: number; hidden?: boolean }) {
   return (
     <div aria-hidden={hidden || undefined} className="flex min-w-[100cqw] shrink-0 items-start">
-      {steps.map((step, i) => <Node key={step} label={step} index={offset + i} live={offset + i <= liveLimit} delay={`${(offset + i) * 0.35}s`} />)}
+      {steps.map((step, i) => <Node key={step} label={step} index={offset + i} live={offset + i <= liveLimit} />)}
     </div>
   );
 }
 
 /** One line of steps that glides sideways on its own, like a train passing through: two copies loop seamlessly. */
-function Train({ steps, offset, liveLimit, animate }: { steps: string[]; offset: number; liveLimit: number; animate: boolean }) {
-  const duration = `${Math.max(12, steps.length * SECONDS_PER_STEP)}s`;
+function Train({ steps, offset, liveLimit, animate, dot }: { steps: string[]; offset: number; liveLimit: number; animate: boolean; dot?: boolean }) {
+  const duration = `${Math.max(24, steps.length * SECONDS_PER_STEP)}s`;
   return (
-    <div
-      role="list"
-      aria-label="Process steps"
-      className="no-scrollbar w-full min-w-0 max-w-full overflow-x-auto py-2 [container-type:inline-size] [mask-image:linear-gradient(90deg,transparent,#000_2rem,#000_calc(100%-2rem),transparent)]"
-    >
+    <div className="relative w-full min-w-0 max-w-full">
       <div
-        className={cn("flex w-max", animate && "pipe-train hover:[animation-play-state:paused]")}
-        style={{ "--pipe-duration": duration } as CSSProperties}
+        role="list"
+        aria-label="Process steps"
+        className="no-scrollbar relative z-10 w-full min-w-0 max-w-full overflow-x-auto py-2 [container-type:inline-size] [mask-image:linear-gradient(90deg,transparent,#000_2rem,#000_calc(100%-2rem),transparent)]"
       >
-        <Carriages steps={steps} offset={offset} liveLimit={liveLimit} />
-        {animate && <Carriages steps={steps} offset={offset} liveLimit={liveLimit} hidden />}
+        <div
+          className={cn("flex w-max", animate && "pipe-train hover:[animation-play-state:paused]")}
+          style={{ "--pipe-duration": duration } as CSSProperties}
+        >
+          <Carriages steps={steps} offset={offset} liveLimit={liveLimit} />
+          {animate && <Carriages steps={steps} offset={offset} liveLimit={liveLimit} hidden />}
+        </div>
       </div>
+      {/* One dot travels along the whole line, passing behind the numbered steps so it never covers them. */}
+      {dot && animate && (
+        <motion.span
+          aria-hidden
+          className="pointer-events-none absolute top-7 z-0 h-2 w-2 -translate-y-1/2 rounded-full bg-story-cyan"
+          style={{ boxShadow: "0 0 10px 3px rgba(34,211,238,0.7)" }}
+          initial={{ left: "0%", opacity: 0 }}
+          animate={{ left: ["2%", "98%"], opacity: [0, 1, 1, 0] }}
+          transition={{ duration: 7, ease: "easeInOut", repeat: Infinity, repeatDelay: 1.2, times: [0, 0.1, 0.9, 1] }}
+        />
+      )}
     </div>
   );
 }
@@ -65,12 +78,6 @@ function BranchDrop({ live }: { live: boolean }) {
         className="relative h-6 w-px"
         style={{ backgroundImage: `repeating-linear-gradient(180deg, ${color} 0, ${color} 5px, transparent 5px, transparent 10px)` }}
       >
-        {live && (
-          <span
-            className="animate-flow-dot absolute left-1/2 h-2 w-2 -translate-x-1/2 rounded-full bg-story-cyan"
-            style={{ boxShadow: "0 0 10px 3px rgba(34,211,238,0.7)", top: "-2px" }}
-          />
-        )}
       </span>
     </div>
   );
@@ -98,7 +105,7 @@ export function Pipeline({
   const liveLimit = activeIndex ?? total - 1;
   return (
     <div className={cn("flex w-full min-w-0 max-w-full flex-col", className)}>
-      <Train steps={steps} offset={0} liveLimit={liveLimit} animate={animate} />
+      <Train steps={steps} offset={0} liveLimit={liveLimit} animate={animate} dot />
       {branch && branch.length > 0 && (
         <>
           <BranchDrop live={liveLimit >= steps.length} />

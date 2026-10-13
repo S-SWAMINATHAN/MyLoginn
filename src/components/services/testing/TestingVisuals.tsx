@@ -1,5 +1,6 @@
 "use client";
 
+import Image, { type StaticImageData } from "next/image";
 import { useEffect, useState, type ReactNode } from "react";
 import { AnimatePresence, motion } from "framer-motion";
 import { cn } from "@/lib/cn";
@@ -91,10 +92,21 @@ export function Chip({ active, onClick, children }: { active?: boolean; onClick:
 
 /* ---------- Device frames (same look as the home page stories) ---------- */
 
-export function MonitorFrame({ children, label, pill, title, ariaLabel, controls, interactive, tall }: { children: ReactNode; label: string; pill: string; title: string; ariaLabel: string; controls?: ReactNode; interactive?: boolean; tall?: boolean }) {
+export function MonitorFrame({ children, label, pill, title, ariaLabel, controls, interactive, tall, accent }: { children: ReactNode; label: string; pill: string; title: string; ariaLabel: string; controls?: ReactNode; interactive?: boolean; tall?: boolean; accent?: StaticImageData }) {
   const reduced = useReducedMotion();
   return (
     <div className="relative mx-auto flex w-full max-w-sm flex-col items-center sm:max-w-md">
+      {accent && (
+        <motion.div
+          aria-hidden
+          className="pointer-events-none absolute right-0 top-0 z-20 w-14 -translate-y-1/3 translate-x-[12%] select-none min-[420px]:w-[4.5rem] sm:w-28 sm:translate-x-1/2"
+          initial={{ opacity: 0, scale: 0.8 }}
+          animate={{ opacity: 1, scale: 1, y: [0, -5, 0] }}
+          transition={{ opacity: { duration: 0.5, delay: 0.4 }, scale: { duration: 0.5, delay: 0.4 }, y: { duration: 4.5, delay: 1, repeat: Infinity, ease: "easeInOut" } }}
+        >
+          <Image src={accent} alt="" sizes="112px" className="h-auto w-full object-contain drop-shadow-[0_10px_16px_rgba(11,31,77,0.22)]" />
+        </motion.div>
+      )}
       <div role={interactive ? "group" : "img"} aria-label={ariaLabel} className="relative w-full overflow-hidden rounded-2xl bg-white shadow-[var(--shadow-lift)] dark:bg-surface" style={{ border: "6px solid var(--story-navy)" }}>
         <div className="flex items-center gap-1.5 border-b px-3 py-2" style={{ borderColor: "var(--story-mist)" }}>
           <span className="h-2 w-2 rounded-full" style={{ background: "var(--story-cyan)" }} />
@@ -102,11 +114,14 @@ export function MonitorFrame({ children, label, pill, title, ariaLabel, controls
           <span className="h-2 w-2 rounded-full" style={{ background: "var(--story-navy)" }} />
           <span className="ml-2 flex-1 truncate rounded-full px-3 py-0.5 font-mono text-[10px] text-muted" style={{ background: "var(--story-mist)" }}>{title}</span>
         </div>
-        <div className={cn("w-full p-4", tall ? "h-[300px] sm:h-[320px]" : "h-[230px] sm:h-[250px]")}>{children}</div>
+        <div className={cn("w-full p-4", tall ? "h-[300px] sm:h-[320px]" : "h-[230px] sm:h-[250px]")}>
+          {children}
+        </div>
       </div>
-      {controls && <div className="mt-4 flex flex-wrap justify-center gap-2">{controls}</div>}
-      <div className="mt-3 h-4 w-16" style={{ background: "var(--story-navy)", clipPath: "polygon(30% 0, 70% 0, 90% 100%, 10% 100%)" }} />
+      {/* The stand attaches straight to the screen; any controls sit below the whole device. */}
+      <div className="h-4 w-16" style={{ background: "var(--story-navy)", clipPath: "polygon(30% 0, 70% 0, 90% 100%, 10% 100%)" }} />
       <div className="h-1.5 w-28 rounded-full" style={{ background: "var(--story-navy)" }} />
+      {controls && <div className="mt-5 flex flex-wrap justify-center gap-2">{controls}</div>}
       <Caption label={label} pill={pill} reduced={reduced} />
     </div>
   );

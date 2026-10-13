@@ -56,7 +56,7 @@ export function CoursesExplorer({
           <div className="flex items-center gap-2">
             <h2 className="text-lg font-semibold">Featured courses</h2>
           </div>
-          <div className="mt-5 grid grid-cols-1 gap-6 sm:grid-cols-2 sm:gap-7 lg:grid-cols-3">
+          <div className="mt-5 grid grid-cols-1 gap-5 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
             {recommended.slice(0, 3).map((course, i) => (
               <CourseCard
                 key={course.id}
@@ -129,7 +129,7 @@ export function CoursesExplorer({
       </div>
       </div>
 
-      <motion.div layout className="mt-8 grid grid-cols-1 gap-6 sm:grid-cols-2 sm:gap-7 lg:grid-cols-3">
+      <motion.div layout className="mt-8 grid grid-cols-1 gap-5 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
         <AnimatePresence mode="popLayout">
           {filtered.map((course, i) => (
             <CourseCard

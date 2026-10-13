@@ -76,7 +76,7 @@ export function InternshipCard({
             />
 
             {/* Illustrated banner header */}
-            <div className="relative h-28 shrink-0 overflow-hidden">
+            <div className="relative h-24 shrink-0 overflow-hidden">
               <span
                 aria-hidden
                 className="absolute inset-0 transition-transform duration-500 group-hover:scale-105 [&>svg]:h-full [&>svg]:w-full"
@@ -95,17 +95,17 @@ export function InternshipCard({
               </span>
             </div>
 
-            <div className="relative z-10 flex flex-1 flex-col p-6">
+            <div className="relative z-10 flex flex-1 flex-col p-4 sm:p-5">
               <div className="flex items-start justify-between gap-3">
                 <div>
                   <div className="flex items-center gap-1.5 text-xs font-semibold uppercase tracking-wide text-brand-500">
                     <ContentIcon keyword={`${internship.type} ${internship.title}`} className="h-4.5 w-4.5" />
                     {internship.type}
                   </div>
-                  <h3 className="mt-1.5 text-base font-semibold leading-snug transition-colors duration-300 group-hover:text-brand-500">
+                  <h3 className="mt-1 text-[15px] font-semibold leading-snug transition-colors duration-300 group-hover:text-brand-500">
                     {internship.title}
                   </h3>
-                  <p className="mt-1 text-sm text-muted">{internship.company}</p>
+                  <p className="mt-0.5 text-[13px] text-muted">{internship.company}</p>
                 </div>
                 {applied && (
                   <span className="inline-flex shrink-0 items-center gap-1 rounded-full bg-success/10 px-2.5 py-1 text-[11px] font-medium text-success">
@@ -115,7 +115,7 @@ export function InternshipCard({
                 )}
               </div>
 
-              <div className="mt-4 flex flex-wrap gap-x-4 gap-y-2 text-xs text-muted">
+              <div className="mt-3 flex flex-wrap gap-x-3 gap-y-1.5 text-[11px] text-muted">
                 <span className="flex items-center gap-1.5">
                   <AnimatedMapPin className="h-4.5 w-4.5" /> {internship.location}
                 </span>
@@ -128,7 +128,7 @@ export function InternshipCard({
                 </span>
               </div>
 
-              <div className="mt-5 border-t border-border-soft pt-4">
+              <div className="mt-4 border-t border-border-soft pt-3">
                 {/* Deadline progress */}
                 <div className="h-1 w-full overflow-hidden rounded-full bg-surface-2">
                   <motion.div
@@ -139,11 +139,11 @@ export function InternshipCard({
                     transition={{ duration: 1, delay: 0.3, ease: [0.16, 1, 0.3, 1] }}
                   />
                 </div>
-                <div className="mt-3 flex items-center justify-between">
+                <div className="mt-2.5 flex items-center justify-between">
                   <span className="text-xs text-muted">
                     {daysLeft > 0 ? `${daysLeft} days left to apply` : "Deadline passed"}
                   </span>
-                  <span className="inline-flex items-center gap-1 rounded-full brand-gradient-bg px-3.5 py-1.5 text-xs font-medium text-white shadow-[var(--shadow-soft)] transition-transform duration-300 group-hover:scale-105">
+                  <span className="inline-flex items-center gap-1 rounded-full brand-gradient-bg px-3 py-1 text-[11px] font-medium text-white shadow-[var(--shadow-soft)] transition-transform duration-300 group-hover:scale-105">
                     View Details
                     <AnimatedArrow className="h-4 w-4" />
                   </span>

@@ -4,8 +4,7 @@ import { useEffect, useRef, useState, type ReactNode } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { motion, AnimatePresence } from "framer-motion";
-import { LayoutDashboard, Settings, Camera, LogOut } from "lucide-react";
-import { AnimatedUser } from "@/components/ui/icons/AnimatedUser";
+import { LayoutDashboard, Settings, Camera, LogOut, CircleUserRound } from "lucide-react";
 import { AnimatedShield } from "@/components/ui/icons/AnimatedShield";
 import { Avatar } from "@/components/ui/Avatar";
 import { AvatarUploadModal } from "./AvatarUploadModal";
@@ -60,7 +59,7 @@ export function ProfileMenu({ user, onOpen }: { user: ProfileUser; onOpen?: () =
             transition={{ duration: 0.18, ease: [0.16, 1, 0.3, 1] }}
             className="absolute right-0 top-full mt-2 w-56 rounded-2xl border border-border-soft bg-surface p-1.5 shadow-[var(--shadow-lift)]"
           >
-            <MenuLink href="/profile" icon={<AnimatedUser className="h-5 w-5 transition-transform duration-300 group-hover:scale-110" />} label="My Profile" onClick={() => setOpen(false)} />
+            <MenuLink href="/profile" icon={<CircleUserRound className="h-5 w-5 transition-transform duration-300 group-hover:scale-110" />} label="My Profile" onClick={() => setOpen(false)} />
             <MenuLink href="/dashboard" icon={<LayoutDashboard className="h-5 w-5 transition-transform duration-300 group-hover:scale-110" />} label="Dashboard" onClick={() => setOpen(false)} />
             <MenuLink
               href="/profile#account-settings-title"

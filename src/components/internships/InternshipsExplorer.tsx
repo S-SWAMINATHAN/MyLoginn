@@ -160,7 +160,7 @@ export function InternshipsExplorer({
               View all internships →
             </button>
           </motion.div>
-          <div className="mt-6 grid grid-cols-1 gap-6 sm:grid-cols-2 sm:gap-7 lg:grid-cols-3">
+          <div className="mt-6 grid grid-cols-1 gap-5 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
             {featured.slice(0, 3).map((internship, i) => (
               <InternshipCard
                 key={internship.id}
@@ -190,7 +190,7 @@ export function InternshipsExplorer({
           </AnimatePresence>
         </div>
 
-        <motion.div layout className="mt-5 grid grid-cols-1 gap-6 sm:grid-cols-2 sm:gap-7 lg:grid-cols-3">
+        <motion.div layout className="mt-5 grid grid-cols-1 gap-5 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
           <AnimatePresence mode="popLayout">
             {filtered.map((internship, i) => (
               <InternshipCard

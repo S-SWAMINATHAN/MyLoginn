@@ -39,6 +39,8 @@ export type CourseIconKey =
   | "cpp"
   | "php"
   | "react"
+  | "mobile"
+  | "software"
   | "default";
 
 export type CourseIconInfo = {
@@ -81,6 +83,8 @@ const GRAD: Record<CourseIconKey, string> = {
   cpp: "linear-gradient(145deg,#0b0a2e,#312e81,#6366f1)",
   php: "linear-gradient(145deg,#0f0a2e,#3730a3,#7c83e8)",
   react: "linear-gradient(145deg,#021a22,#155e75,#06b6d4)",
+  mobile: "linear-gradient(145deg,#02142b,#0b4f8a,#22d3ee)",
+  software: "linear-gradient(145deg,#0b0a2e,#312e81,#6366f1)",
   default: "linear-gradient(145deg,#12003a,#4c1d95,#7c3aed)",
 };
 
@@ -117,6 +121,8 @@ const ACCENT: Record<CourseIconKey, string> = {
   cpp: "#6366f1",
   php: "#7c83e8",
   react: "#22d3ee",
+  mobile: "#22d3ee",
+  software: "#6366f1",
   default: "#7c3aed",
 };
 
@@ -1370,6 +1376,111 @@ function svgReact(p: string) {
 </svg>`;
 }
 
+function svgMobile(p: string) {
+  return `<svg viewBox="0 0 64 64" fill="none" xmlns="http://www.w3.org/2000/svg">
+<defs>
+  <linearGradient id="${p}m1" x1="0" y1="0" x2="1" y2="1">
+    <stop offset="0%" stop-color="#67e8f9"/>
+    <stop offset="100%" stop-color="#2563eb"/>
+  </linearGradient>
+  <radialGradient id="${p}mbg" cx="50%" cy="50%" r="55%">
+    <stop offset="0%" stop-color="#22d3ee" stop-opacity=".28"/>
+    <stop offset="100%" stop-color="#0b4f8a" stop-opacity="0"/>
+  </radialGradient>
+  <filter id="${p}mglow">
+    <feGaussianBlur stdDeviation="2" result="b"/>
+    <feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge>
+  </filter>
+</defs>
+<circle cx="32" cy="32" r="30" fill="url(#${p}mbg)"/>
+<g>
+  <animateTransform attributeName="transform" type="translate" values="0,0;0,-2.5;0,0" dur="3s" repeatCount="indefinite" calcMode="spline" keySplines=".4 0 .6 1;.4 0 .6 1"/>
+  <rect x="19" y="7" width="26" height="50" rx="6" fill="#0c1f4d" stroke="url(#${p}m1)" stroke-width="1.8"/>
+  <rect x="22" y="14" width="20" height="34" rx="2.5" fill="#12306b"/>
+  <rect x="27" y="9.5" width="10" height="2" rx="1" fill="#1e3a8a"/>
+  <circle cx="32" cy="52.5" r="1.8" fill="#1e3a8a"/>
+  <g filter="url(#${p}mglow)">
+    <rect x="24.5" y="17.5" width="6" height="6" rx="1.6" fill="#22d3ee">
+      <animate attributeName="opacity" values="1;.45;1" dur="2.4s" repeatCount="indefinite"/>
+    </rect>
+    <rect x="33.5" y="17.5" width="6" height="6" rx="1.6" fill="#60a5fa">
+      <animate attributeName="opacity" values=".5;1;.5" dur="2.4s" repeatCount="indefinite"/>
+    </rect>
+    <rect x="24.5" y="26.5" width="6" height="6" rx="1.6" fill="#818cf8">
+      <animate attributeName="opacity" values=".6;1;.6" dur="2.4s" begin=".4s" repeatCount="indefinite"/>
+    </rect>
+    <rect x="33.5" y="26.5" width="6" height="6" rx="1.6" fill="#22d3ee">
+      <animate attributeName="opacity" values="1;.5;1" dur="2.4s" begin=".8s" repeatCount="indefinite"/>
+    </rect>
+  </g>
+  <rect x="24.5" y="36" width="15" height="2.4" rx="1.2" fill="#3b82f6" opacity=".7"/>
+  <rect x="24.5" y="41" width="9" height="2.4" rx="1.2" fill="#3b82f6" opacity=".45"/>
+</g>
+<g stroke="#22d3ee" stroke-width="2" stroke-linecap="round" fill="none">
+  <path d="M50 22 Q54 27 50 32">
+    <animate attributeName="opacity" values="0;1;0" dur="2s" repeatCount="indefinite"/>
+  </path>
+  <path d="M54 18 Q60 27 54 36">
+    <animate attributeName="opacity" values="0;1;0" dur="2s" begin=".35s" repeatCount="indefinite"/>
+  </path>
+  <path d="M14 22 Q10 27 14 32">
+    <animate attributeName="opacity" values="0;1;0" dur="2s" begin=".7s" repeatCount="indefinite"/>
+  </path>
+</g>
+<circle cx="44" cy="11" r="3.2" fill="#f43f5e">
+  <animate attributeName="r" values="3.2;4.2;3.2" dur="1.8s" repeatCount="indefinite"/>
+</circle>
+</svg>`;
+}
+
+function svgSoftware(p: string) {
+  return `<svg viewBox="0 0 64 64" fill="none" xmlns="http://www.w3.org/2000/svg">
+<defs>
+  <linearGradient id="${p}s1" x1="0" y1="0" x2="1" y2="1">
+    <stop offset="0%" stop-color="#a5b4fc"/>
+    <stop offset="100%" stop-color="#4f46e5"/>
+  </linearGradient>
+  <radialGradient id="${p}sbg" cx="50%" cy="50%" r="55%">
+    <stop offset="0%" stop-color="#818cf8" stop-opacity=".25"/>
+    <stop offset="100%" stop-color="#312e81" stop-opacity="0"/>
+  </radialGradient>
+  <filter id="${p}sglow">
+    <feGaussianBlur stdDeviation="2" result="b"/>
+    <feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge>
+  </filter>
+</defs>
+<circle cx="32" cy="32" r="30" fill="url(#${p}sbg)"/>
+<rect x="7" y="12" width="40" height="32" rx="4" fill="#1e1b4b" stroke="url(#${p}s1)" stroke-width="1.5"/>
+<rect x="7" y="12" width="40" height="7" rx="4" fill="#312e81"/>
+<rect x="7" y="15" width="40" height="4" fill="#312e81"/>
+<circle cx="13" cy="15.5" r="1.8" fill="#ef4444"/>
+<circle cx="18.5" cy="15.5" r="1.8" fill="#f59e0b"/>
+<circle cx="24" cy="15.5" r="1.8" fill="#22c55e"/>
+<g filter="url(#${p}sglow)" stroke="url(#${p}s1)" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round" fill="none">
+  <path d="M19 26 L14 31 L19 36">
+    <animateTransform attributeName="transform" type="translate" values="0,0;-1.5,0;0,0" dur="2.4s" repeatCount="indefinite"/>
+  </path>
+  <path d="M35 26 L40 31 L35 36">
+    <animateTransform attributeName="transform" type="translate" values="0,0;1.5,0;0,0" dur="2.4s" repeatCount="indefinite"/>
+  </path>
+  <path d="M29 24 L25 38" stroke="#c7d2fe" stroke-width="2.2">
+    <animate attributeName="opacity" values="1;.35;1" dur="2.4s" repeatCount="indefinite"/>
+  </path>
+</g>
+<g transform="translate(46 44)">
+  <g>
+    <animateTransform attributeName="transform" type="rotate" from="0" to="360" dur="8s" repeatCount="indefinite"/>
+    <circle r="10" fill="#312e81" stroke="url(#${p}s1)" stroke-width="2.2"/>
+    <g stroke="url(#${p}s1)" stroke-width="3.2" stroke-linecap="round">
+      <path d="M0 -13 V-10"/><path d="M0 13 V10"/><path d="M-13 0 H-10"/><path d="M13 0 H10"/>
+      <path d="M-9.2 -9.2 L-7 -7"/><path d="M9.2 9.2 L7 7"/><path d="M-9.2 9.2 L-7 7"/><path d="M9.2 -9.2 L7 -7"/>
+    </g>
+    <circle r="3.6" fill="#1e1b4b" stroke="#a5b4fc" stroke-width="1.5"/>
+  </g>
+</g>
+</svg>`;
+}
+
 function svgDefault(p: string) {
   return svgML(p);
 }
@@ -1406,6 +1517,8 @@ const BASE_SVGS: Record<CourseIconKey, (p: string) => string> = {
   cpp: svgCpp,
   php: svgPhp,
   react: svgReact,
+  mobile: svgMobile,
+  software: svgSoftware,
   default: svgDefault,
 };
 

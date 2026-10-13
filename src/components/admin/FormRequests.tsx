@@ -301,7 +301,7 @@ export function FormRequests() {
               onClick={() => setSection(t.id)}
               className={cn(
                 "shrink-0 cursor-pointer rounded-xl px-3.5 py-2 text-sm font-medium transition-all duration-200",
-                section === t.id ? "brand-gradient-bg text-white shadow" : "text-foreground/70 hover:bg-surface-2"
+                section === t.id ? "bg-story-royal text-white shadow" : "text-foreground/70 hover:bg-surface-2"
               )}
             >
               {t.label} <span className="ml-1 text-xs opacity-80">{t.count}</span>

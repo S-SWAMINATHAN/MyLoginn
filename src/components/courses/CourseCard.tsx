@@ -77,7 +77,7 @@ export function CourseCard({
         style={{ rotateX, rotateY }}
         className="group h-full"
       >
-          <Card onClick={openDetails} className="relative flex h-full cursor-pointer flex-col items-center overflow-hidden p-6 text-center transition-shadow duration-300 group-hover:shadow-[var(--shadow-lift)] group-hover:-translate-y-1.5">
+          <Card onClick={openDetails} className="relative flex h-full cursor-pointer flex-col items-center overflow-hidden p-4 text-center sm:p-5 transition-shadow duration-300 group-hover:shadow-[var(--shadow-lift)] group-hover:-translate-y-1.5">
             <motion.div
               className="pointer-events-none absolute inset-0 opacity-0 transition-opacity duration-300 group-hover:opacity-100"
               style={{ background: spotlightBg }}
@@ -95,21 +95,21 @@ export function CourseCard({
               category={course.category}
               title={displayTitle}
               variant="round"
-              className="relative z-10 mt-4 h-20 w-20 shrink-0 transition-transform duration-300 group-hover:scale-105 sm:h-24 sm:w-24"
+              className="relative z-10 mt-9 h-16 w-16 shrink-0 transition-transform duration-300 group-hover:scale-105 sm:mt-8 sm:h-[4.5rem] sm:w-[4.5rem]"
             />
 
-            <p className="relative z-10 mt-4 text-xs font-semibold uppercase tracking-wide text-brand-500">{course.category}</p>
-            <h3 className="relative z-10 mt-1.5 line-clamp-2 text-base font-semibold leading-snug"><Link href={`/courses/${course.slug}`} className="rounded-sm hover:text-brand-600 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-400">{displayTitle}</Link></h3>
-            <p className="relative z-10 mt-2 line-clamp-2 flex-1 text-sm text-muted">{course.description}</p>
+            <p className="relative z-10 mt-3 text-[11px] font-semibold uppercase tracking-wide text-brand-500">{course.category}</p>
+            <h3 className="relative z-10 mt-1 line-clamp-2 text-[15px] font-semibold leading-snug"><Link href={`/courses/${course.slug}`} className="rounded-sm hover:text-brand-600 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-400">{displayTitle}</Link></h3>
+            <p className="relative z-10 mt-1.5 line-clamp-2 flex-1 text-[13px] leading-5 text-muted">{course.description}</p>
 
-            <div className="relative z-10 mt-4 flex flex-wrap items-center justify-center gap-x-4 gap-y-2 text-xs text-muted">
+            <div className="relative z-10 mt-3 flex flex-wrap items-center justify-center gap-x-3 gap-y-1.5 text-[11px] text-muted">
               <span className="flex items-center gap-1">
                 <AnimatedClock className="h-5 w-5 transition-transform duration-300 group-hover:scale-125" /> {course.durationWeeks} {course.durationWeeks === 1 ? "week" : "weeks"}
               </span>
               <span className="truncate">Instructor: {course.instructor}</span>
             </div>
 
-            {course.price === 0 ? <div className="relative z-10 mt-4 flex w-full items-center justify-between border-t border-border-soft pt-3 text-xs">
+            {course.price === 0 ? <div className="relative z-10 mt-3 flex w-full items-center justify-between border-t border-border-soft pt-2.5 text-[11px]">
               <span className="font-medium uppercase tracking-wider text-muted">Course access</span>
               <span className="inline-flex items-center gap-1.5 rounded-full bg-emerald-50 px-2.5 py-1 font-bold tracking-wide text-emerald-700 ring-1 ring-emerald-200 dark:bg-emerald-400/10 dark:text-emerald-300 dark:ring-emerald-400/25"><span aria-hidden="true" className="h-1.5 w-1.5 rounded-full bg-emerald-500" />FREE</span>
             </div> : <div className="relative z-10 mt-5 flex w-full flex-col items-center border-t border-border-soft pt-4">
@@ -129,7 +129,7 @@ export function CourseCard({
               )}
             </div>}
 
-            {course.price === 0 ? <div className="relative z-10 mt-4 w-full">
+            {course.price === 0 ? <div className="relative z-10 mt-3 w-full">
               {enrolled && <div className="mb-3 text-left"><div className="mb-1 flex justify-between text-xs"><span className="text-muted">Course progress</span><span className="font-semibold text-brand-700">{course.progress}%</span></div><div className="h-1.5 overflow-hidden rounded-full bg-surface-2"><div className="h-full rounded-full bg-brand-500 transition-[width]" style={{ width: `${course.progress}%` }} /></div></div>}
               <FreeEnrollButton slug={course.slug} loggedIn={loggedIn} enrolled={enrolled} />
             </div> : enrolled ? <span className="relative z-10 mt-3 inline-flex items-center gap-1.5 rounded-full bg-success/10 px-3.5 py-1.5 text-xs font-medium text-success"><AnimatedSuccess className="h-4.5 w-4.5" /> Enrolled</span> : <Link href={`/courses/${course.slug}`} className="relative z-10 mt-4 inline-flex w-full items-center justify-center rounded-full border border-brand-200 px-4 py-3 text-sm font-semibold text-brand-700 transition hover:bg-brand-50">View course details</Link>}

@@ -58,7 +58,7 @@ export default function AboutPage() {
               <strong className="font-semibold text-foreground">MYLOGINN TECH</strong> is a next-generation digital platform focused on learning, innovation and real-world growth. We help individuals and businesses build skills, create opportunities and achieve more through technology and practical experience.
             </p>
           </Reveal>
-          <Reveal direction="up" delay={0.25} className="mt-7 flex flex-wrap items-center gap-3">
+          <Reveal direction="up" delay={0.25} className="mt-7 flex flex-wrap items-center justify-center gap-3 lg:justify-start">
             <ArrowLink href="#who-we-are">Our mission</ArrowLink>
             <Link href="/services" className="rounded-full border border-border-soft bg-surface px-6 py-3 text-sm font-semibold transition-all duration-300 hover:-translate-y-1 hover:border-story-royal hover:text-story-royal active:scale-95">
               Explore services

@@ -5,12 +5,12 @@ import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useRouter } from "next/navigation";
 import { motion, AnimatePresence } from "framer-motion";
-import { ArrowRight, KeyRound, LogIn, Mail, Smartphone } from "lucide-react";
+import { KeyRound, LogIn, Mail, Smartphone } from "lucide-react";
 import { loginSchema, type LoginInput } from "@/lib/validation";
 import { formatPhoneDisplay } from "@/lib/whatsapp";
 import { cn } from "@/lib/cn";
 import { Input } from "@/components/ui/Input";
-import { Button } from "@/components/ui/Button";
+import { AuthButton } from "@/components/auth/AuthButton";
 import { AuthShell } from "@/components/auth/AuthShell";
 import { PhoneInput } from "@/components/ui/PhoneInput";
 import { OtpInput } from "@/components/ui/OtpInput";
@@ -146,30 +146,32 @@ export default function LoginPage() {
 
   return (
     <AuthShell mode="login">
-          <div className="mb-5">
-            <span className="mb-3 flex h-10 w-10 items-center justify-center rounded-xl bg-brand-50 text-brand-600 ring-1 ring-brand-100 dark:bg-brand-900/30 dark:text-brand-300 dark:ring-brand-700/40">
-              {mode === "password" ? <LogIn className="h-6 w-6" /> : <KeyRound className="h-6 w-6" />}
-            </span>
-            <p className="text-xs font-semibold uppercase tracking-[.16em] text-brand-600 dark:text-brand-300">MyLoginn account</p>
-            <h1 className="mt-1 text-2xl font-bold tracking-tight sm:text-3xl">Welcome back</h1>
-            <p className="mt-1.5 text-sm leading-5 text-muted">Sign in to continue your learning and pick up where you left off.</p>
+          <div className="mb-6">
+            <AnimatePresence mode="wait" initial={false}>
+              <motion.span key={mode} initial={{ scale: 0.6, rotate: -20, opacity: 0 }} animate={{ scale: 1, rotate: 0, opacity: 1 }} exit={{ scale: 0.6, opacity: 0 }} transition={{ type: "spring", stiffness: 320, damping: 18 }} className="mb-3 grid h-12 w-12 place-items-center rounded-full bg-story-mist text-story-royal">
+                {mode === "password" ? <LogIn className="h-5 w-5" /> : <KeyRound className="h-5 w-5" />}
+              </motion.span>
+            </AnimatePresence>
+            <span className="story-eyebrow">MyLoginn account</span>
+            <h1 className="mt-2 text-3xl font-bold tracking-tight text-story-navy dark:text-foreground">Welcome back</h1>
+            <p className="mt-1.5 text-sm leading-6 text-muted">Sign in to continue your learning and pick up where you left off.</p>
           </div>
 
-          <div className="flex gap-1 rounded-xl border border-border-soft bg-surface-2 p-1.5">
+          <div className="flex gap-1 rounded-full bg-story-mist p-1">
             {(["password", "otp"] as Mode[]).map((m) => (
               <button
                 key={m}
                 type="button"
                 onClick={() => switchMode(m)}
                 className={cn(
-                  "relative flex-1 cursor-pointer rounded-lg px-3 py-2.5 text-sm font-semibold transition-colors duration-200",
+                  "relative flex-1 cursor-pointer rounded-full px-3 py-2 text-sm font-semibold transition-colors duration-200",
                   mode === m ? "text-white" : "text-muted hover:text-foreground"
                 )}
               >
                 {mode === m && (
                   <motion.span
                     layoutId="login-mode-pill"
-                    className="brand-gradient-bg absolute inset-0 rounded-lg shadow-sm"
+                    className="absolute inset-0 rounded-full bg-story-royal shadow-[0_8px_18px_-10px_rgba(31,86,214,0.8)]"
                     transition={{ type: "spring", stiffness: 350, damping: 28 }}
                   />
                 )}
@@ -196,10 +198,10 @@ export default function LoginPage() {
                     <p className="rounded-lg bg-danger/10 px-3 py-2 text-sm text-danger">{serverError}</p>
                   )}
 
-                  <Button type="submit" size="lg" className="mt-1 w-full" disabled={submitting} icon={<ArrowRight className="h-5.5 w-5.5" />}>
+                  <AuthButton type="submit" disabled={submitting} className="mt-1">
                     {submitting ? "Logging in…" : "Log in"}
-                  </Button>
-                  <a href="/reset-password" className="self-end text-sm font-medium text-brand-600 hover:underline">Forgot password?</a>
+                  </AuthButton>
+                  <a href="/reset-password" className="self-end text-sm font-semibold text-story-royal hover:underline">Forgot password?</a>
                 </form>
 
               </motion.div>
@@ -234,10 +236,10 @@ export default function LoginPage() {
                               setOtpError(null);
                             }}
                             className={cn(
-                              "group flex flex-1 cursor-pointer items-center justify-center gap-1.5 rounded-xl border px-3 py-2 text-sm font-medium transition-all duration-200",
+                              "group flex flex-1 cursor-pointer items-center justify-center gap-1.5 rounded-full border px-3 py-2 text-sm font-semibold transition-all duration-200",
                               channel === c
-                                ? "border-brand-400 bg-brand-50 text-brand-600 dark:bg-brand-900/20 dark:text-brand-300"
-                                : "border-border-soft text-muted hover:border-brand-300"
+                                ? "border-story-royal bg-story-royal/10 text-story-royal"
+                                : "border-border-soft text-muted hover:border-story-royal/50 hover:text-story-royal"
                             )}
                           >
                             {c === "phone" ? (
@@ -268,15 +270,9 @@ export default function LoginPage() {
                         />
                       )}
 
-                      <Button
-                        size="lg"
-                        className="w-full"
-                        onClick={requestLoginCode}
-                        disabled={requesting}
-                        icon={<ArrowRight className="h-5.5 w-5.5" />}
-                      >
+                      <AuthButton onClick={requestLoginCode} disabled={requesting}>
                         {requesting ? "Sending code…" : "Send code"}
-                      </Button>
+                      </AuthButton>
                     </motion.div>
                   ) : (
                     <motion.div
@@ -306,23 +302,18 @@ export default function LoginPage() {
                         error={otpError ?? undefined}
                         disabled={verifying}
                       />
-                      <Button
-                        size="lg"
-                        className="w-full"
-                        onClick={() => verifyLoginCode(otp)}
-                        disabled={otp.length !== 6 || verifying}
-                      >
+                      <AuthButton onClick={() => verifyLoginCode(otp)} disabled={otp.length !== 6 || verifying}>
                         {verifying ? "Verifying…" : "Verify & log in"}
-                      </Button>
+                      </AuthButton>
                       <div className="flex items-center justify-between text-sm">
-                        <button type="button" onClick={() => setOtpStep("enter")} className="cursor-pointer font-medium text-brand-500">
+                        <button type="button" onClick={() => setOtpStep("enter")} className="cursor-pointer font-semibold text-story-royal">
                           Change contact
                         </button>
                         <button
                           type="button"
                           onClick={requestLoginCode}
                           disabled={cooldown > 0 || requesting}
-                          className="cursor-pointer font-medium text-brand-500 disabled:cursor-not-allowed disabled:opacity-50"
+                          className="cursor-pointer font-semibold text-story-royal disabled:cursor-not-allowed disabled:opacity-50"
                         >
                           {cooldown > 0 ? `Resend in ${cooldown}s` : "Resend code"}
                         </button>

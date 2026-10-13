@@ -113,7 +113,7 @@ function FieldControl({
           aria-checked={Boolean(value)}
           onClick={() => onChange(!value)}
           className={`relative h-6 w-11 shrink-0 cursor-pointer rounded-full transition-colors duration-300 ${
-            value ? "brand-gradient-bg" : "bg-surface-2 border border-border-soft"
+            value ? "bg-story-royal" : "bg-surface-2 border border-border-soft"
           }`}
         >
           <span

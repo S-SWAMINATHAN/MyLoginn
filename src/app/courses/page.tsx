@@ -2,15 +2,17 @@
 import { localKeywords } from "@/lib/localSeo";
 import { prisma } from "@/lib/prisma";
 import { getCurrentUser } from "@/lib/auth";
-import { Section, Container, Eyebrow } from "@/components/ui/Section";
+import { Section, Container } from "@/components/ui/Section";
 import { CoursesExplorer } from "@/components/courses/CoursesExplorer";
 import type { CourseCardData } from "@/components/courses/CourseCard";
-import Image from "next/image";
-import courseHeader from "@/images/Course header.png";
-import { ReferenceStatIcon } from "@/components/ui/ReferenceStatIcon";
-import { GraduationCap } from "lucide-react";
 import { JsonLd } from "@/components/seo/JsonLd";
 import { FaqAccordion } from "@/components/ui/FaqAccordion";
+import { Reveal } from "@/components/ui/Reveal";
+import { PillTicker } from "@/components/ui/PillTicker";
+import { SplitHeadline } from "@/components/experience/SplitHeadline";
+import { ArrowLink } from "@/components/ui/ArrowLink";
+import { CoursesHeroVisual } from "@/components/pages/PageHeroVisuals";
+import Link from "next/link";
 
 const courseFaqs = [
   { question: "Which courses are available?", answer: "The course listings on this page show the current topics and levels. Open a course to review its description and outline." },
@@ -72,48 +74,32 @@ export default async function CoursesPage() {
     : [];
 
   return (
-    <Section className="mobile-page-glow overflow-hidden pt-3 sm:pt-5">
+    <Section className="overflow-hidden pt-6 sm:pt-10">
       <Container className="max-w-[1480px]">
-        <div className="relative block min-h-0 items-center gap-5 rounded-[2rem] bg-[radial-gradient(ellipse_at_75%_45%,rgba(117,177,255,.25),transparent_45%),radial-gradient(ellipse_at_58%_65%,rgba(221,174,255,.2),transparent_42%)] py-3 md:min-h-[340px] md:grid md:grid-cols-[1.1fr_.9fr] md:py-5">
-          <div className="relative float-right ml-3 mb-2 block h-24 w-32 max-w-none max-md:mb-0 max-md:h-auto max-md:aspect-[4/3] max-md:w-[clamp(8rem,40vw,9.5rem)] md:order-2 md:float-none md:ml-auto md:mb-0 md:h-[390px] md:w-full md:max-w-lg">
-            <Image src={courseHeader} alt="Illustration for online technology courses" fill preload className="object-contain object-right md:scale-110 md:object-center" sizes="(max-width: 767px) 152px, 45vw" />
+        <div className="mx-auto grid w-full min-w-0 max-w-6xl items-center gap-12 lg:grid-cols-2 lg:gap-16">
+          <div className="min-w-0">
+            <Reveal><span className="story-eyebrow">Upgrade your skills</span></Reveal>
+            <SplitHeadline as="h1" text="Master skills for your future" className="mt-4 max-w-xl text-4xl font-bold leading-[1.08] tracking-tight text-story-navy sm:text-5xl dark:text-foreground" />
+            <Reveal direction="up" delay={0.15}>
+              <p className="mt-5 max-w-lg text-base leading-8 text-muted sm:text-lg">Explore current course topics, levels, duration, fees, and enrolment details in the listings below.</p>
+              <p className="mt-3 max-w-lg text-sm leading-6 text-muted">MyLoginn offers mentor-led AI and technology learning for learners everywhere. Browse current courses and contact us to ask about coaching options.</p>
+            </Reveal>
+            <Reveal direction="up" delay={0.25} className="mt-7 flex flex-wrap items-center justify-center gap-3 lg:justify-start">
+              <ArrowLink href="#courses-list">Browse courses</ArrowLink>
+              <Link href="/contact" className="rounded-full border border-border-soft bg-surface px-6 py-2.5 text-sm font-semibold transition-all duration-300 hover:-translate-y-1 hover:border-story-royal hover:text-story-royal active:scale-95">Ask about coaching</Link>
+            </Reveal>
+            <Reveal direction="up" delay={0.35} className="mt-8"><PillTicker items={["Explore all", "Top rated", "Expert-led", "Fast enquiry"]} /></Reveal>
           </div>
-          <div className="relative z-10 max-w-2xl md:order-1">
-            <Eyebrow className="max-md:gap-1 max-md:px-1 max-md:text-[9px] max-md:tracking-normal"><GraduationCap className="h-4 w-4" /> Upgrade your skills</Eyebrow>
-            <h1 className="mt-5 text-4xl font-bold leading-[1.08] tracking-tight max-md:mt-1 max-md:text-[1.625rem] sm:text-5xl">Master skills for <span className="brand-gradient-text">your future</span></h1>
-            <p className="mt-4 max-w-xl text-base text-muted max-md:mt-2 max-md:text-sm sm:text-lg">Explore current course topics, levels, duration, fees, and enrolment details in the listings below.</p>
-            <p className="mt-3 max-w-xl text-sm leading-6 text-muted">MyLoginn offers mentor-led AI and technology learning for learners everywhere. Browse current courses and contact us to ask about coaching options.</p>
-            <div className="mt-7 clear-both grid max-w-2xl grid-cols-2 gap-3 max-md:mt-3 sm:grid-cols-4">
-              {[
-                { icon: "course-total", value: "Explore All", label: "View full selection" },
-                { icon: "course-certified", value: "Top Rated", label: "Highest scoring courses" },
-                { icon: "course-mentors", value: "Expert-Lead", label: "Industry specialist mentors" },
-                { icon: "course-hours", value: "Fast Enquiry", label: "Quick contact details" },
-              ].map(({ icon, value, label }) => (
-                <div
-                  key={label}
-                  className="flex min-h-32 flex-col justify-between rounded-2xl border border-border-soft bg-surface/85 p-3 shadow-[var(--shadow-soft)] sm:min-h-28 sm:p-4"
-                >
-                  <ReferenceStatIcon
-                    name={icon as "course-total" | "course-certified" | "course-mentors" | "course-hours"}
-                    className="h-11 w-11 shrink-0 sm:h-8 sm:w-8"
-                  />
-                  <div className="mt-3 sm:mt-4">
-                    <div className="min-h-12 break-words text-xl font-semibold leading-6 sm:text-lg md:text-xl">{value}</div>
-                    <div className="mt-1 min-h-8 text-sm leading-5 text-muted sm:text-xs sm:leading-4">{label}</div>
-                  </div>
-                </div>
-              ))}
-            </div>
-          </div>
+          <Reveal direction="left" delay={0.15} className="min-w-0"><CoursesHeroVisual /></Reveal>
         </div>
-        <div className="mt-5 rounded-3xl border border-border-soft bg-surface/70 p-4 sm:p-6">
+        <div id="courses-list" className="mt-14 scroll-mt-24 rounded-3xl border border-border-soft bg-surface/70 p-4 sm:p-6">
           <CoursesExplorer courses={cards} enrolledIds={enrolledIds} recommendedIds={recommendedIds} isLoggedIn={!!user} />
         </div>
         <section aria-labelledby="courses-faq" className="mt-16">
           <JsonLd data={{ "@context": "https://schema.org", "@type": "FAQPage", mainEntity: courseFaqs.map(({ question, answer }) => ({ "@type": "Question", name: question, acceptedAnswer: { "@type": "Answer", text: answer } })) }} />
-          <h2 id="courses-faq" className="text-2xl font-semibold tracking-tight sm:text-3xl">Course FAQs</h2>
-          <FaqAccordion items={courseFaqs} className="mt-5" />
+          <span className="story-eyebrow">FAQ</span>
+          <h2 id="courses-faq" className="story-subheading mt-3 text-story-navy dark:text-foreground">Course FAQs</h2>
+          <FaqAccordion items={courseFaqs} className="mt-8" />
         </section>
       </Container>
     </Section>

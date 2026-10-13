@@ -1,4 +1,6 @@
 import { prisma } from "@/lib/prisma";
+import { access } from "fs/promises";
+import { resumeExtension, resumeFilePath } from "@/lib/resumeStorage";
 import { hashPassword } from "@/lib/auth";
 import { z } from "zod";
 
@@ -418,16 +420,23 @@ export const adminEntities: Record<string, EntityDef> = {
           internship: { select: { title: true, company: true } },
         },
       });
-      return rows.map((a) => ({
-        id: a.id,
-        applicant: a.user.name,
-        email: a.user.email,
-        internship: a.internship.title,
-        company: a.internship.company,
-        status: a.status,
-        coverNote: a.coverNote,
-        appliedAt: iso(a.appliedAt),
-      }));
+      return Promise.all(
+        rows.map(async (a) => {
+          const ext = a.resumeName ? resumeExtension(a.resumeName) : null;
+          const hasResume = ext ? await access(resumeFilePath(a.id, ext)).then(() => true, () => false) : false;
+          return {
+            id: a.id,
+            applicant: a.user.name,
+            email: a.user.email,
+            internship: a.internship.title,
+            company: a.internship.company,
+            status: a.status,
+            coverNote: a.coverNote,
+            hasResume,
+            appliedAt: iso(a.appliedAt),
+          };
+        })
+      );
     },
     update: async (id, body) => {
       const data = applicationUpdate.parse(body);

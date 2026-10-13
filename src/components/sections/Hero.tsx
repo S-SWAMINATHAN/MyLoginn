@@ -1,101 +1,61 @@
 "use client";
 
-import Image from "next/image";
-import { motion } from "framer-motion";
+import Link from "next/link";
 import { Chapter } from "@/components/experience/Chapter";
-import { HeroOrbitIcons } from "@/components/experience/HeroOrbitIcons";
-import { Button } from "@/components/ui/Button";
-import { AnimatedSparkle } from "@/components/ui/icons/AnimatedSparkle";
-import { AnimatedArrow } from "@/components/ui/icons/AnimatedArrow";
-import { AnimatedExploreCourses } from "@/components/ui/icons/AnimatedExploreCourses";
-import { Eyebrow } from "@/components/ui/Section";
-import { RotatingHeadline } from "@/components/ui/RotatingHeadline";
-import heroImage from "@/images/Hero Section images/15.png";
+import { ArrowLink } from "@/components/ui/ArrowLink";
+import { Reveal } from "@/components/ui/Reveal";
+import { PillTicker } from "@/components/ui/PillTicker";
+import { HeroHeadline } from "@/components/sections/HeroHeadline";
+import { HeroPlatformMonitor } from "@/components/sections/HeroPlatformMonitor";
 
-const heroPhrases = [
-  "AI, Web & Mobile Solutions for Modern Businesses",
-  "Where Potential Meets Opportunity",
-  "Elevating Learning, Empowering Careers",
-  "Learning with Direction. Careers with Impact.",
-  "From Aspiration to Achievement",
-  "A Smarter Path to Professional Growth",
+// Every phrase is exactly two short lines so the headline always takes the same height (no gaps, nothing below moves).
+const heroPhrases: [string, string][] = [
+  ["AI, Web & Mobile Solutions", "for Modern Businesses"],
+  ["Where Potential", "Meets Opportunity"],
+  ["Elevating Learning,", "Empowering Careers"],
+  ["Learning with Direction.", "Careers with Impact."],
+  ["From Aspiration", "to Achievement"],
+  ["A Smarter Path to", "Professional Growth"],
 ];
 
+const pills = ["AI/ML courses", "Real internships", "Growth services"];
+
 /**
- * The original site's hero, restored as-is (same copy, same layout, same
- * AI-agent-and-orbiting-icons artwork) — only re-wired to sit inside the
- * new <Chapter> shell so it still has a slot in the scroll-progress
- * registry. It sits on its own solid white backdrop — opaque, not just
- * low-opacity — which fully hides the persistent 3D canvas, scroll-progress
- * grid texture and dust particles that run behind every other chapter, so
- * this section reads exactly as it did originally with nothing bleeding
- * through from the newer scroll world underneath it.
+ * Home hero in the same flat, animated, interactive style as the service pages: copy and calls to action on the
+ * left, a live platform preview on the right. It keeps an opaque background so the persistent 3D scene behind the
+ * other chapters never shows through.
  */
 export function Hero() {
   return (
     <Chapter formation="stream" variant="hero" title="MyLoginn — where potential meets opportunity" className="!min-h-0 !py-0">
       <div className="relative overflow-hidden bg-background">
-        <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(60%_50%_at_50%_0%,var(--brand-100),transparent_70%)]" />
+        <div className="relative mx-auto grid max-w-6xl items-center gap-12 px-5 pb-12 pt-10 sm:px-8 sm:pt-14 lg:grid-cols-[1.2fr_1fr] lg:gap-12 lg:pb-16 lg:pt-20">
+          <div className="relative z-10 min-w-0 text-center lg:text-left">
+            <Reveal><span className="story-eyebrow justify-center lg:justify-start">AI Agent · Live now</span></Reveal>
 
-        <div className="relative mx-auto block max-w-[85rem] items-center gap-5 px-5 pt-14 pb-10 sm:px-8 sm:pt-20 lg:grid lg:grid-cols-[1fr_1.5fr] lg:gap-8 lg:pt-24">
-          <motion.div
-            initial={{ opacity: 0, scale: 0.92, y: 0 }}
-            animate={{ opacity: 1, scale: 1, y: [0, -14, 0] }}
-            transition={{
-              opacity: { duration: 1, delay: 0.3, ease: [0.16, 1, 0.3, 1] },
-              scale: { duration: 1, delay: 0.3, ease: [0.16, 1, 0.3, 1] },
-              y: { duration: 6, delay: 1.3, repeat: Infinity, ease: "easeInOut" },
-            }}
-            className="relative hidden lg:order-2 lg:float-none lg:mb-0 lg:block lg:h-auto lg:w-[118%] lg:max-w-none"
-          >
-            <Image src={heroImage} alt="An AI agent holding a connected digital globe" preload sizes="(min-width: 1024px) 720px, 128px" className="relative z-10 h-full w-full object-contain object-right select-none lg:h-auto" />
-            <HeroOrbitIcons />
-          </motion.div>
-          <div className="relative z-10 text-center lg:order-1 lg:text-left">
-            <motion.div
-              initial={{ opacity: 0, y: 12 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.6 }}
-              className="flex justify-center lg:justify-start"
-            >
-              <Eyebrow>
-                <AnimatedSparkle className="h-4.5 w-4.5" />
-                AI Agent · Live Now
-              </Eyebrow>
-            </motion.div>
-
-            <h1 className="mt-6 text-4xl font-semibold leading-[1.08] tracking-tight sm:text-5xl lg:text-6xl">
-              <RotatingHeadline phrases={heroPhrases} gradientClassName="brand-gradient-text" />
+            <h1 className="mx-auto mt-5 max-w-[40rem] text-2xl font-bold leading-[1.12] tracking-tight text-story-navy min-[400px]:text-[1.7rem] sm:text-4xl lg:mx-0 dark:text-foreground">
+              <HeroHeadline phrases={heroPhrases} highlightClassName="text-story-royal" />
             </h1>
 
-            <motion.p
-              initial={{ opacity: 0, y: 16 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.7, delay: 0.75 }}
-              className="mx-auto mt-6 max-w-xl text-base text-muted sm:text-lg lg:mx-0"
-            >
-              Advanced AI/ML &amp; digital marketing courses, real
-              internships, and AI-driven growth services &mdash;
-              all on one premium platform. Supporting businesses and learners across
-              India and worldwide.
-            </motion.p>
+            <Reveal direction="up" delay={0.15}>
+              <p className="mx-auto mt-5 max-w-lg text-base leading-8 text-muted sm:text-lg lg:mx-0">
+                Advanced AI/ML &amp; digital marketing courses, real internships, and AI-driven growth services &mdash; all on one premium platform. Supporting businesses and learners across India and worldwide.
+              </p>
+            </Reveal>
 
-            <motion.div
-              initial={{ opacity: 0, y: 16 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.7, delay: 0.95 }}
-              className="mt-9 flex flex-col items-center justify-center gap-3 sm:flex-row lg:justify-start"
-            >
-              <Button href="/signup" size="lg" icon={<AnimatedArrow className="h-5 w-5" />}>
-                Get started free
-              </Button>
-              <Button href="/courses" size="lg" variant="secondary" icon={<AnimatedExploreCourses className="h-5 w-5" />}>
+            <Reveal direction="up" delay={0.25} className="mt-7 flex flex-wrap items-center justify-center gap-3 lg:justify-start">
+              <ArrowLink href="/signup">Get started free</ArrowLink>
+              <Link href="/courses" className="rounded-full border border-border-soft bg-surface px-6 py-2.5 text-sm font-semibold transition-all duration-300 hover:-translate-y-1 hover:border-story-royal hover:text-story-royal active:scale-95">
                 Explore courses
-              </Button>
-            </motion.div>
+              </Link>
+            </Reveal>
 
+            <Reveal direction="up" delay={0.35} className="mt-8"><PillTicker items={pills} /></Reveal>
           </div>
 
+          <Reveal direction="left" delay={0.15} className="min-w-0">
+            <HeroPlatformMonitor />
+          </Reveal>
         </div>
       </div>
     </Chapter>

@@ -15,26 +15,37 @@ import { TestingEnquiryForm, type NeedOption } from "@/components/services/testi
 
 export type AreaItem = { title: string; text: string; icon: string };
 
-/** Capability cards with the app's animated, topic-matched icons (same set as the course cards). */
+const CARD_ACCENTS = ["#2563eb", "#7c3aed", "#059669", "#d97706", "#e11d48"];
+
+/**
+ * Capability cards with the app's animated, topic-matched icons. Eight items lay out as a tidy 2 x 4 grid on large
+ * screens; other counts use three columns.
+ */
 export function AreaGrid({ areas }: { areas: AreaItem[] }) {
+  const cols = areas.length % 4 === 0 ? "lg:grid-cols-4" : "lg:grid-cols-3";
   return (
-    <RevealGroup className="mt-8 grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
-      {areas.map((a, i) => (
-        <RevealItem key={a.title}>
-          <article className="group relative h-full overflow-hidden rounded-2xl border border-border-soft bg-surface p-6 transition-all duration-300 hover:-translate-y-1 hover:border-story-royal hover:shadow-[var(--shadow-lift)]">
-            <div className="flex items-start justify-between gap-4">
-              <div className="min-w-0 flex-1">
-                <h3 className="text-base font-semibold sm:text-lg">{a.title}</h3>
-                <p className="mt-2 text-sm leading-6 text-muted">{a.text}</p>
+    <RevealGroup className={`mt-8 grid gap-4 sm:grid-cols-2 ${cols}`}>
+      {areas.map((a, i) => {
+        const c = CARD_ACCENTS[i % CARD_ACCENTS.length];
+        return (
+          <RevealItem key={a.title} className="h-full">
+            <article
+              style={{ "--c": c } as React.CSSProperties}
+              className="group relative flex h-full flex-col overflow-hidden rounded-3xl border border-border-soft bg-surface p-5 transition-all duration-300 hover:-translate-y-1.5 hover:border-[var(--c)] hover:shadow-[0_20px_40px_-24px_var(--c)]"
+            >
+              <span aria-hidden className="absolute inset-x-0 top-0 h-1 origin-left scale-x-0 bg-[var(--c)] transition-transform duration-500 group-hover:scale-x-100" />
+              <div className="flex items-start justify-between">
+                <span className="relative grid h-14 w-14 place-items-center">
+                  <IconBadge size="sm" delay={i * 0.05} className="!h-12 !w-12"><ContentIcon keyword={a.icon} className="h-10 w-10" /></IconBadge>
+                </span>
+                <span aria-hidden className="font-mono text-xs font-bold tabular-nums text-muted/60 transition-colors group-hover:text-[var(--c)]">0{i + 1}</span>
               </div>
-              <IconBadge size="md" className="shrink-0" delay={i * 0.05}>
-                <ContentIcon keyword={a.icon} className="h-13 w-13" />
-              </IconBadge>
-            </div>
-            <span aria-hidden className="absolute bottom-0 left-0 h-0.5 w-0 bg-story-royal transition-all duration-500 group-hover:w-full" />
-          </article>
-        </RevealItem>
-      ))}
+              <h3 className="mt-4 text-[15px] font-semibold leading-snug">{a.title}</h3>
+              <p className="mt-2 flex-1 text-[13px] leading-5 text-muted">{a.text}</p>
+            </article>
+          </RevealItem>
+        );
+      })}
     </RevealGroup>
   );
 }
@@ -98,7 +109,7 @@ export function StoryLanding(p: StoryLandingProps) {
             <p className="mt-5 max-w-lg text-base leading-8 text-muted sm:text-lg">{p.intro}</p>
             {p.extraIntro && <p className="mt-3 max-w-lg text-sm leading-6 text-muted">{p.extraIntro}</p>}
           </Reveal>
-          <Reveal direction="up" delay={0.25} className="mt-7 flex flex-wrap items-center gap-3">
+          <Reveal direction="up" delay={0.25} className="mt-7 flex flex-wrap items-center justify-center gap-3 lg:justify-start">
             {p.cta}
             <a href="#enquiry" className="rounded-full border border-border-soft bg-surface px-6 py-3 text-sm font-semibold transition-all duration-300 hover:-translate-y-1 hover:border-story-royal hover:text-story-royal active:scale-95">
               {p.secondaryLabel}

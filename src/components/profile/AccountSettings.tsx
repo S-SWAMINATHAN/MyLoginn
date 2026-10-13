@@ -4,7 +4,6 @@ import { useRouter } from "next/navigation";
 import { useState } from "react";
 import { BadgeCheck, Check, LoaderCircle, Mail, Pencil, Phone, ShieldCheck, X } from "lucide-react";
 import { Button } from "@/components/ui/Button";
-import { Card } from "@/components/ui/Card";
 import { Input } from "@/components/ui/Input";
 import { OtpInput } from "@/components/ui/OtpInput";
 
@@ -110,10 +109,10 @@ export function AccountSettings({ email: initialEmail, emailVerified: initialEma
     const activeEdit = editing === field;
     const activePending = pending?.field === field;
 
-    return <Card key={field} className="p-5 sm:p-6">
+    return <div key={field} className="rounded-3xl border border-border-soft bg-surface p-5 transition-all duration-300 hover:border-story-royal/30 hover:shadow-[var(--shadow-soft)] sm:p-6">
       <div className="flex flex-wrap items-start justify-between gap-4">
         <div className="flex min-w-0 items-start gap-3">
-          <span className="grid h-10 w-10 shrink-0 place-items-center rounded-xl bg-brand-500/10 text-brand-600 dark:text-brand-300"><Icon className="h-5 w-5" /></span>
+          <span className="grid h-10 w-10 shrink-0 place-items-center rounded-full bg-story-mist text-story-royal"><Icon className="h-5 w-5" /></span>
           <div className="min-w-0">
             <p className="text-xs text-muted">{title}</p>
             <p className="mt-1 break-all text-sm font-semibold">{value || "Not added"}</p>
@@ -157,12 +156,13 @@ export function AccountSettings({ email: initialEmail, emailVerified: initialEma
       </div>}
 
       {error && !activePending && !activeEdit && <p role="alert" className="mt-3 text-xs font-medium text-danger">{error}</p>}
-    </Card>;
+    </div>;
   }
 
-  return <section className="mt-8" aria-labelledby="account-settings-title">
+  return <section className="mt-2" aria-labelledby="account-settings-title">
     <div className="mb-4">
-      <h2 id="account-settings-title" className="text-xl font-semibold">Account settings</h2>
+      <span className="story-eyebrow">Security</span>
+      <h2 id="account-settings-title" className="mt-2 text-xl font-bold text-story-navy dark:text-foreground">Account settings</h2>
       <p className="mt-1 text-sm text-muted">Edit your email or phone. New contact details take effect after OTP verification.</p>
     </div>
     <div className="grid gap-4 sm:grid-cols-2">{contactCard("email")}{contactCard("phone")}</div>

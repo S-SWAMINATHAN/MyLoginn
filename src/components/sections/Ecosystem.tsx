@@ -1,22 +1,24 @@
 "use client";
 
-import { motion } from "framer-motion";
+import { AnimatePresence, motion } from "framer-motion";
 import { useState } from "react";
 import { Chapter } from "@/components/experience/Chapter";
 import { SplitHeadline } from "@/components/experience/SplitHeadline";
 import { Reveal, RevealGroup, RevealItem } from "@/components/ui/Reveal";
+import { ContentIcon } from "@/components/ui/ContentIcon";
+import { useReducedMotion } from "@/lib/useReducedMotion";
 import { cn } from "@/lib/cn";
 import { useTiltSpotlight } from "@/hooks/useTiltSpotlight";
 
 const NODES = [
-  { label: "Web Development", desc: "Sites & platforms" },
-  { label: "Mobile Apps", desc: "iOS & Android" },
-  { label: "Custom Software", desc: "Software shaped to fit" },
-  { label: "Digital Marketing", desc: "Growth & visibility" },
-  { label: "Automation Testing", desc: "Quality engineering" },
-  { label: "Mentoring", desc: "Guidance that compounds" },
-  { label: "Placement Support", desc: "From skills to opportunity" },
-  { label: "AI Solutions", desc: "Agents & automation" },
+  { label: "Web Development", desc: "Sites & platforms", icon: "webdev" },
+  { label: "Mobile Apps", desc: "iOS & Android", icon: "mobile" },
+  { label: "Custom Software", desc: "Software shaped to fit", icon: "software" },
+  { label: "Digital Marketing", desc: "Growth & visibility", icon: "marketing" },
+  { label: "Automation Testing", desc: "Quality engineering", icon: "testing" },
+  { label: "Mentoring", desc: "Guidance that compounds", icon: "leader" },
+  { label: "Placement Support", desc: "From skills to opportunity", icon: "career" },
+  { label: "AI Solutions", desc: "Agents & automation", icon: "ai" },
 ];
 
 export function Ecosystem() {
@@ -58,7 +60,8 @@ export function Ecosystem() {
   );
 }
 
-function NodeChip({ label, desc, className }: { label: string; desc: string; className?: string }) {
+function NodeChip({ label, desc, icon, className }: { label: string; desc: string; icon: string; className?: string }) {
+  const reduced = useReducedMotion();
   const { rotateX, rotateY, spotlightBg, onMouseMove, onMouseLeave } = useTiltSpotlight();
   const [hovered, setHovered] = useState(false);
   return (
@@ -72,8 +75,33 @@ function NodeChip({ label, desc, className }: { label: string; desc: string; cla
       )}
     >
       <motion.span aria-hidden className="pointer-events-none absolute inset-0" style={{ backgroundImage: spotlightBg, opacity: hovered ? 1 : 0 }} transition={{ duration: 0.22 }} />
-      <span className="relative z-10 text-sm font-semibold text-foreground sm:text-base">{label}</span>
-      <span className="relative z-10 mt-1 text-[10.5px] text-muted sm:text-xs">{desc}</span>
+      <motion.div
+        className="relative z-10 flex flex-col items-center"
+        animate={{ x: hovered && !reduced ? -20 : 0 }}
+        transition={{ type: "spring", stiffness: 260, damping: 24 }}
+      >
+        <span className="text-sm font-semibold text-foreground sm:text-base">{label}</span>
+        <span className="mt-1 text-[10.5px] text-muted sm:text-xs">{desc}</span>
+      </motion.div>
+
+      {/* Related animated icon: springs in from the right on hover, with a soft halo and a gentle float. */}
+      <AnimatePresence>
+        {hovered && !reduced && (
+          <motion.span
+            aria-hidden
+            className="pointer-events-none absolute right-3 top-1/2 z-10 hidden h-12 w-12 -translate-y-1/2 place-items-center sm:grid"
+            initial={{ opacity: 0, scale: 0.3, x: 24, rotate: -25 }}
+            animate={{ opacity: 1, scale: 1, x: 0, rotate: 0 }}
+            exit={{ opacity: 0, scale: 0.4, x: 16, rotate: 15 }}
+            transition={{ type: "spring", stiffness: 300, damping: 18 }}
+          >
+            <motion.span className="absolute inset-0 rounded-full bg-brand-100/70 dark:bg-brand-900/40" initial={{ scale: 0.6 }} animate={{ scale: [1, 1.12, 1] }} transition={{ duration: 2.2, repeat: Infinity, ease: "easeInOut" }} />
+            <motion.span className="relative h-9 w-9" animate={{ y: [0, -3, 0] }} transition={{ duration: 2.2, repeat: Infinity, ease: "easeInOut" }}>
+              <ContentIcon keyword={icon} className="h-9 w-9" />
+            </motion.span>
+          </motion.span>
+        )}
+      </AnimatePresence>
     </motion.article>
   );
 }

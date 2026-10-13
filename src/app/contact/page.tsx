@@ -1,13 +1,19 @@
-import Image from "next/image";
 import Link from "next/link";
-import { ArrowUpRight, Mail, Phone, ShieldCheck } from "lucide-react";
-import ContactArtwork from "@/images/Contact us header.png";
+import { ShieldCheck } from "lucide-react";
 import { createPageMetadata } from "@/lib/seo";
 import { ContactEnquiryTabs } from "@/components/services/ContactEnquiryTabs";
 import { JsonLd } from "@/components/seo/JsonLd";
 import { FaqAccordion } from "@/components/ui/FaqAccordion";
 import { toWhatsAppLink } from "@/lib/whatsapp";
-import { CONTACT_EMAIL, CONTACT_PHONES, WHATSAPP_PHONE } from "@/lib/contactInfo";
+import { Reveal, RevealGroup, RevealItem } from "@/components/ui/Reveal";
+import { IconBadge } from "@/components/ui/IconBadge";
+import { ContentIcon } from "@/components/ui/ContentIcon";
+import { ContactInfoCard } from "@/components/pages/ContactInfoCard";
+import { SplitHeadline } from "@/components/experience/SplitHeadline";
+import { ArrowLink } from "@/components/ui/ArrowLink";
+import { ContactHeroVisual } from "@/components/pages/PageHeroVisuals";
+import contactArtwork from "@/images/Contact us header.png";
+import { CONTACT_EMAIL, CONTACT_HOURS, CONTACT_PHONES, WHATSAPP_PHONE } from "@/lib/contactInfo";
 
 export const metadata = createPageMetadata({
   title: "Contact",
@@ -24,11 +30,18 @@ const contactFaqs = [
 ];
 
 const phoneLink = (phone: string) => `tel:${phone.replace(/[^+\d]/g, "")}`;
+const supportAreas = [
+  { label: "Course guidance", value: "Learning paths", icon: "student" },
+  { label: "Career support", value: "Internships", icon: "career" },
+  { label: "Business enquiries", value: "Project services", icon: "business" },
+  { label: "Personal learning", value: "Mentoring", icon: "leader" },
+];
+
 const quickLinks = [
-  { title: "Explore courses", description: "Browse learning paths and course details.", href: "/courses", tone: "blue" },
-  { title: "Create an account", description: "Set up your MyLoginn learner profile.", href: "/signup", tone: "mint" },
-  { title: "Find an internship", description: "Explore current internship opportunities.", href: "/internships", tone: "violet" },
-  { title: "Discuss a project", description: "Tell us about a product or marketing need.", href: "/services", tone: "blue" },
+  { title: "Explore courses", description: "Browse learning paths and course details.", href: "/courses", icon: "student", color: "#2563eb", cta: "Browse courses" },
+  { title: "Create an account", description: "Set up your MyLoginn learner profile.", href: "/signup", icon: "comm", color: "#059669", cta: "Sign up free" },
+  { title: "Find an internship", description: "Explore current internship opportunities.", href: "/internships", icon: "career", color: "#7c3aed", cta: "See internships" },
+  { title: "Discuss a project", description: "Tell us about a product or marketing need.", href: "/services", icon: "webdev", color: "#d97706", cta: "View services" },
 ];
 
 export default function ContactPage() {
@@ -38,92 +51,98 @@ export default function ContactPage() {
 
       <div className="relative mx-auto w-full max-w-[1160px] px-5 py-4 sm:px-8 sm:py-11 lg:px-0">
         <div aria-hidden="true" className="pointer-events-none absolute -right-40 top-10 -z-0 h-[36rem] w-[36rem] rounded-full bg-[radial-gradient(circle,rgba(91,157,255,.11),rgba(255,255,255,0)_70%)]" />
-        <header className="relative z-10 block items-center gap-5 md:grid md:grid-cols-[1fr_auto] md:gap-8">
-          <div className="relative float-right ml-3 mb-2 block h-24 w-32 max-w-none max-md:mb-0 max-md:h-auto max-md:aspect-[4/3] max-md:w-[clamp(8.5rem,40vw,9.5rem)] md:order-2 md:float-none md:ml-0 md:mb-0 md:h-36 md:w-40 lg:h-44 lg:w-48">
-            <Image src={ContactArtwork} alt="Message envelope and paper plane" fill preload className="object-contain object-right md:object-center" sizes="(max-width: 767px) 152px, 12rem" />
+        <header className="relative z-10 grid items-center gap-10 py-4 sm:py-6 lg:grid-cols-2 lg:gap-14">
+          <div className="min-w-0">
+            <Reveal><span className="story-eyebrow">Contact &amp; Support</span></Reveal>
+            <SplitHeadline as="h1" text="We're here to help you" className="mt-4 max-w-xl text-4xl font-bold leading-[1.08] tracking-tight text-story-navy sm:text-5xl" />
+            <Reveal direction="up" delay={0.15}>
+              <p className="mt-5 max-w-lg text-base leading-8 text-[#62708d] sm:text-lg">Course questions, project ideas, or internships — tell us what you need and we&apos;ll point you in the right direction.</p>
+            </Reveal>
+            <Reveal direction="up" delay={0.25} className="mt-7 flex justify-center lg:justify-start">
+              <ArrowLink href="#contact-form">Send an enquiry</ArrowLink>
+            </Reveal>
           </div>
-          <div className="max-w-2xl">
-            <span className="inline-flex items-center gap-2 rounded-full bg-[#eff5ff] px-3.5 py-2 text-[11px] font-semibold uppercase tracking-wide text-[#145bea] max-md:gap-1 max-md:px-1.5 max-md:text-[9px] max-md:tracking-normal"><span className="h-2 w-2 rounded-full bg-[#2164f5]" /> Contact &amp; Support</span>
-            <h1 className="mt-4 text-[2rem] font-semibold leading-[1.08] max-md:mt-1 max-md:text-[1.625rem] sm:text-[2.8rem]">We&apos;re here to <span className="text-[#2164f5]">help you</span></h1>
-            <p className="mt-3 max-w-xl text-sm leading-6 text-[#62708d] sm:text-base">Course questions, project ideas, or internships — tell us what you need and we&apos;ll point you in the right direction.</p>
-          </div>
+          <Reveal direction="left" delay={0.15} className="min-w-0">
+            <ContactHeroVisual
+              email={CONTACT_EMAIL}
+              phones={CONTACT_PHONES.map((p) => ({ display: p.display, tel: phoneLink(p.tel) .replace("tel:", "") }))}
+              whatsappHref={toWhatsAppLink(WHATSAPP_PHONE, "Hi MyLoginn team! I have a question.") ?? "#contact-form"}
+              hours={CONTACT_HOURS}
+              accent={contactArtwork}
+            />
+          </Reveal>
         </header>
 
-        <section aria-label="MyLoginn support" className="relative z-10 mt-7 grid grid-cols-2 overflow-hidden rounded-xl border border-[#e5ebf6] bg-white sm:grid-cols-4">
-          {[
-            { label: "Course guidance", value: "Learning paths" },
-            { label: "Career support", value: "Internships" },
-            { label: "Business enquiries", value: "Project services" },
-            { label: "Personal learning", value: "Mentoring" },
-          ].map(({ label, value }, index) => (
-            <div key={label} className={`px-4 py-4 sm:px-5 ${index % 2 === 1 ? "border-l border-[#edf0f5] sm:border-l" : ""} ${index > 1 ? "border-t border-[#edf0f5] sm:border-t-0" : ""} ${index === 2 ? "sm:border-l" : ""}`}>
-              <p className="text-[10px] font-semibold uppercase tracking-wide text-[#74819a]">{label}</p>
-              <p className="mt-1 text-sm font-semibold text-[#23304a]">{value}</p>
-            </div>
-          ))}
-        </section>
-
-        <section className="relative z-10 mt-7 grid items-start gap-5 lg:grid-cols-[1.1fr_.9fr] lg:gap-7">
-          <div id="contact-form" className="scroll-mt-24 rounded-[1.1rem] border border-[#e8ecf3] bg-white p-4 shadow-[0_16px_48px_rgba(28,48,84,.08)] sm:p-6 lg:p-7 [&_button[type=submit]]:mt-1 [&_button[type=submit]]:rounded-lg [&_button[type=submit]]:bg-[#2164f5] [&_button[type=submit]]:py-3 [&_button[type=submit]]:text-sm [&_button[type=submit]]:shadow-[0_7px_18px_rgba(33,100,245,.2)] [&_form]:gap-3.5 [&_textarea]:rounded-lg">
-            <ContactEnquiryTabs />
-            <div className="mt-4 flex items-center gap-2 border-t border-[#edf0f5] pt-3 text-xs text-[#697692]"><ShieldCheck className="h-4 w-4 shrink-0 text-[#3973f6]" /> Your contact details are used only to respond to your enquiry.</div>
-          </div>
-
-          <aside className="grid gap-5">
-            <section aria-labelledby="contact-information" className="rounded-[1.1rem] border border-[#e8ecf3] bg-white p-5 sm:p-6">
-              <h2 id="contact-information" className="text-lg font-semibold">Contact information</h2>
-              <div className="mt-4 divide-y divide-[#edf0f5]">
-                <div className="flex gap-3 py-3 first:pt-0">
-                  <span aria-hidden="true" className="grid h-8 w-8 shrink-0 place-items-center rounded-lg bg-[#eff5ff] text-[#2164f5]"><Mail className="h-4 w-4" /></span>
-                  <div className="min-w-0">
-                    <p className="text-[11px] font-semibold uppercase tracking-wide text-[#74819a]">Email</p>
-                    <a href={`mailto:${CONTACT_EMAIL}`} className="mt-1 inline-flex max-w-full items-center gap-2 break-all text-sm font-medium text-[#075bf5] hover:underline">{CONTACT_EMAIL}<ArrowUpRight className="h-3.5 w-3.5 shrink-0" /></a>
-                  </div>
-                </div>
-                <div className="flex gap-3 py-3">
-                  <span aria-hidden="true" className="grid h-8 w-8 shrink-0 place-items-center rounded-lg bg-[#edfbf7] text-[#13866b]"><Phone className="h-4 w-4" /></span>
-                  <div className="min-w-0">
-                    <p className="text-[11px] font-semibold uppercase tracking-wide text-[#74819a]">Call us</p>
-                    <div className="mt-1 flex flex-wrap gap-x-4 gap-y-1">
-                      {CONTACT_PHONES.map((phone) => <a key={phone.tel} href={phoneLink(phone.tel)} className="text-sm font-medium text-[#075bf5] hover:underline">{phone.display}</a>)}
-                    </div>
-                  </div>
-                </div>
-                <div className="flex gap-3 py-3 pb-0">
-                  <span aria-hidden="true" className="grid h-8 w-8 shrink-0 place-items-center rounded-lg bg-[#edfbf7]">
-                    <Image src="/contact-icons/whatsapp.png" alt="" width={24} height={24} className="h-5 w-5 object-contain" />
-                  </span>
-                  <div className="min-w-0">
-                    <p className="text-[11px] font-semibold uppercase tracking-wide text-[#74819a]">WhatsApp</p>
-                    <a href={toWhatsAppLink(WHATSAPP_PHONE, "Hi MyLoginn team! I have a question.") ?? "#contact-form"} target="_blank" rel="noopener noreferrer" className="mt-1 inline-flex items-center gap-2 text-sm font-medium text-[#075bf5] hover:underline">Start a chat<ArrowUpRight className="h-3.5 w-3.5" /></a>
-                  </div>
+        <RevealGroup className="relative z-10 mt-8 grid grid-cols-2 gap-3 sm:grid-cols-4" stagger={0.07}>
+          {supportAreas.map(({ label, value, icon }, i) => (
+            <RevealItem key={label}>
+              <div className="group flex h-full items-center gap-3 rounded-2xl border border-border-soft bg-surface p-3 transition-all duration-300 hover:-translate-y-1 hover:border-story-royal/50 hover:shadow-[var(--shadow-soft)] sm:p-4">
+                <IconBadge size="sm" delay={i * 0.05} className="!h-11 !w-11"><ContentIcon keyword={icon} className="h-9 w-9" /></IconBadge>
+                <div className="min-w-0">
+                  <p className="truncate text-[10px] font-semibold uppercase tracking-wide text-muted">{label}</p>
+                  <p className="mt-0.5 truncate text-sm font-semibold text-story-navy">{value}</p>
                 </div>
               </div>
-            </section>
+            </RevealItem>
+          ))}
+        </RevealGroup>
 
-            <section aria-labelledby="contact-faq" className="rounded-[1.1rem] border border-[#e8ecf3] bg-[#f9fbff] p-5 sm:p-6">
-              <p className="text-[11px] font-semibold uppercase tracking-wide text-[#3569df]">Quick answers</p>
-              <h2 id="contact-faq" className="mt-1 text-lg font-semibold">Before you get in touch</h2>
-              <FaqAccordion items={contactFaqs} className="mt-3" />
+        <section className="relative z-10 mt-8 grid items-start gap-6 lg:grid-cols-[1.1fr_.9fr] lg:gap-8">
+          <div id="contact-form" className="scroll-mt-24 min-w-0">
+            <ContactEnquiryTabs />
+            <div className="mt-4 flex items-center gap-2 px-1 text-xs text-muted"><ShieldCheck className="h-4 w-4 shrink-0 text-story-royal" /> Your contact details are used only to respond to your enquiry.</div>
+          </div>
+
+          <aside className="grid gap-6">
+            <ContactInfoCard
+              email={CONTACT_EMAIL}
+              phones={CONTACT_PHONES.map((p) => ({ display: p.display, tel: phoneLink(p.tel).replace("tel:", "") }))}
+              whatsappHref={toWhatsAppLink(WHATSAPP_PHONE, "Hi MyLoginn team! I have a question.") ?? "#contact-form"}
+              hours={CONTACT_HOURS}
+            />
+
+            <section aria-labelledby="contact-faq" className="rounded-3xl border border-border-soft bg-story-mist/60 p-5 sm:p-6">
+              <span className="story-eyebrow">Quick answers</span>
+              <h2 id="contact-faq" className="mt-2 text-xl font-semibold tracking-tight text-story-navy">Before you get in touch</h2>
+              <FaqAccordion items={contactFaqs} className="mt-4" />
             </section>
           </aside>
         </section>
 
-        <section aria-labelledby="quick-access" className="relative z-10 mt-12 border-t border-[#e9edf4] pt-8 sm:mt-14">
-          <div className="max-w-xl">
-            <p className="text-[11px] font-semibold uppercase tracking-wide text-[#3569df]">Quick access</p>
-            <h2 id="quick-access" className="mt-2 text-2xl font-semibold tracking-tight">Choose your next step</h2>
-            <p className="mt-2 text-sm leading-6 text-[#697692]">Go straight to the MyLoginn area that matches what you&apos;re looking for.</p>
-          </div>
-          <div className="mt-5 grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
-            {quickLinks.map(({ title, description, href, tone }) => (
-              <Link key={title} href={href} className="group flex min-h-32 flex-col rounded-xl border border-[#e7ebf3] bg-white p-4 transition hover:-translate-y-0.5 hover:border-[#c8d7f6] hover:shadow-[0_10px_28px_rgba(28,48,84,.08)]">
-                <span className={`grid h-8 w-8 place-items-center rounded-lg ${tone === "blue" ? "bg-[#eff5ff] text-[#2164f5]" : tone === "mint" ? "bg-[#edfbf7] text-[#13866b]" : "bg-[#f6f1ff] text-[#7350b5]"}`}><ArrowUpRight className="h-4 w-4" /></span>
-                <span className="mt-3 text-sm font-semibold text-[#23304a]">{title}</span>
-                <span className="mt-1 text-xs leading-5 text-[#697692]">{description}</span>
-              </Link>
+        <section aria-labelledby="quick-access" className="relative z-10 mt-20 sm:mt-24">
+          <Reveal><span className="story-eyebrow">Quick access</span></Reveal>
+          <h2 id="quick-access" className="story-subheading mt-3 text-story-navy">Choose your next step</h2>
+          <p className="mt-3 max-w-xl text-sm leading-7 text-muted sm:text-base">Go straight to the MyLoginn area that matches what you&apos;re looking for.</p>
+          <RevealGroup className="mt-8 grid gap-4 sm:grid-cols-2 lg:grid-cols-4" stagger={0.08}>
+            {quickLinks.map(({ title, description, href, icon, color, cta }, i) => (
+              <RevealItem key={title} className="h-full">
+                <Link
+                  href={href}
+                  style={{ "--c": color } as React.CSSProperties}
+                  className="group relative flex h-full flex-col overflow-hidden rounded-3xl border border-border-soft bg-surface p-5 transition-all duration-300 hover:-translate-y-1.5 hover:border-[var(--c)] hover:shadow-[0_18px_36px_-22px_var(--c)]"
+                >
+                  <span className="flex flex-1 items-start justify-between gap-3">
+                    <span className="min-w-0">
+                      <span className="block text-base font-semibold text-story-navy">{title}</span>
+                      <span className="mt-1 block text-sm leading-6 text-muted">{description}</span>
+                    </span>
+                    <IconBadge size="sm" delay={i * 0.05} className="!h-12 !w-12 shrink-0"><ContentIcon keyword={icon} className="h-10 w-10" /></IconBadge>
+                  </span>
+                  <span className="mt-5 flex items-center justify-between border-t border-border-soft pt-3.5">
+                    <span className="text-sm font-semibold text-[var(--c)]">{cta}</span>
+                    <span aria-hidden className="relative grid h-9 w-9 place-items-center overflow-hidden rounded-full bg-[color-mix(in_srgb,var(--c)_12%,transparent)] text-[var(--c)] transition-colors duration-300 group-hover:bg-[var(--c)] group-hover:text-white">
+                      <svg width="16" height="16" viewBox="0 0 16 16" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="transition-transform duration-500 ease-[cubic-bezier(.16,1,.3,1)] group-hover:translate-x-[180%]">
+                        <path d="M3 8h10M9 4l4 4-4 4" />
+                      </svg>
+                      <svg width="16" height="16" viewBox="0 0 16 16" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="absolute -translate-x-[180%] transition-transform duration-500 ease-[cubic-bezier(.16,1,.3,1)] group-hover:translate-x-0">
+                        <path d="M3 8h10M9 4l4 4-4 4" />
+                      </svg>
+                    </span>
+                  </span>
+                </Link>
+              </RevealItem>
             ))}
-          </div>
+          </RevealGroup>
         </section>
       </div>
     </div>

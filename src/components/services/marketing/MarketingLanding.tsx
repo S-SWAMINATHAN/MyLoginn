@@ -50,7 +50,7 @@ export function MarketingLanding({ areas, faqs }: { areas: Area[]; faqs: Faq[] }
               For SMEs, startups and established businesses looking to scale online &mdash; we run performance marketing powered by AI, with WhatsApp built into the customer journey.
             </p>
           </Reveal>
-          <Reveal direction="up" delay={0.25} className="mt-7 flex flex-wrap items-center gap-3">
+          <Reveal direction="up" delay={0.25} className="mt-7 flex flex-wrap items-center justify-center gap-3 lg:justify-start">
             <PlanMarketingButton />
             <a href="#enquiry" className="rounded-full border border-border-soft bg-surface px-6 py-3 text-sm font-semibold transition-all duration-300 hover:-translate-y-1 hover:border-story-royal hover:text-story-royal active:scale-95">
               Get a proposal

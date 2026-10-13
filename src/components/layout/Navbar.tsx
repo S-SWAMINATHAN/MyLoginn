@@ -23,7 +23,6 @@ import { AnimatedCode } from "@/components/ui/icons/AnimatedCode";
 import { AnimatedMail } from "@/components/ui/icons/AnimatedMail";
 import { AnimatedUser } from "@/components/ui/icons/AnimatedUser";
 import { AnimatedBuilding } from "@/components/ui/icons/AnimatedBuilding";
-import { AiAssistantButton } from "./AiAssistantButton";
 import { ProfileMenu, type ProfileUser } from "./ProfileMenu";
 import { Button } from "@/components/ui/Button";
 import { LogoLockup } from "@/components/ui/LogoBadge";
@@ -213,7 +212,6 @@ export function Navbar({ user }: { user: NavUser }) {
         </div>
 
         <div className="hidden lg:flex items-center gap-3">
-          <AiAssistantButton />
           {user ? (
             <ProfileMenu user={user} />
           ) : (

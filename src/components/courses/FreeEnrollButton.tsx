@@ -32,7 +32,7 @@ export function FreeEnrollButton({ slug, loggedIn, enrolled }: { slug: string; l
   return (
     <div>
       {enrolled ? <Button type="button" onClick={() => { window.location.assign(`/courses/${slug}/learn`); }} variant="secondary" className="w-full">Continue learning</Button> : (
-        <Button type="button" onClick={enroll} disabled={busy} className="w-full" size="lg">{busy ? "Enrolling…" : "Enroll free"}</Button>
+        <Button type="button" onClick={enroll} disabled={busy} className="w-full" size="md">{busy ? "Enrolling…" : "Enroll free"}</Button>
       )}
       {error && <p role="alert" className="mt-2 text-center text-xs text-danger">{error}</p>}
     </div>

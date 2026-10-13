@@ -1,7 +1,9 @@
-import { AdminOverview } from "@/components/admin/AdminOverview";
+import { getCurrentUser } from "@/lib/auth";
+import { AdminHome } from "@/components/admin/AdminHome";
 
 export const metadata = { title: "Dashboard — MyLoginn Admin" };
 
-export default function AdminDashboardPage() {
-  return <AdminOverview />;
+export default async function AdminDashboardPage() {
+  const user = await getCurrentUser();
+  return <AdminHome name={user?.name ?? "Admin"} />;
 }

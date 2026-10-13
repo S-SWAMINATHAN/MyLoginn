@@ -43,7 +43,7 @@ const progressCell = (key: string) => (row: Row) => {
   return (
     <div className="flex min-w-24 items-center gap-2">
       <div className="h-1.5 flex-1 overflow-hidden rounded-full bg-surface-2">
-        <div className="h-full rounded-full brand-gradient-bg transition-all duration-500" style={{ width: `${value}%` }} />
+        <div className="h-full rounded-full bg-story-royal transition-all duration-500" style={{ width: `${value}%` }} />
       </div>
       <span className="w-9 text-right text-xs tabular-nums text-muted">{value}%</span>
     </div>
@@ -365,6 +365,19 @@ export const applicationConfig: EntityConfig = {
     { key: "internship", label: "Internship" },
     { key: "company", label: "Company", hideBelow: "md" },
     { key: "status", label: "Status", render: statusCell("status") },
+    {
+      key: "hasResume",
+      label: "Resume",
+      filterable: false,
+      render: (row: Row) =>
+        row.hasResume ? (
+          <a href={`/api/admin/internships/applications/${row.id}/resume`} onClick={(e) => e.stopPropagation()} className="inline-flex items-center gap-1 rounded-full bg-story-royal/10 px-2.5 py-1 text-[11px] font-semibold text-story-royal transition-colors hover:bg-story-royal hover:text-white">
+            Download
+          </a>
+        ) : (
+          <span className="text-muted">—</span>
+        ),
+    },
     { key: "appliedAt", label: "Applied", hideBelow: "md", render: dateCell("appliedAt") },
   ] as Column[],
   editFields: [

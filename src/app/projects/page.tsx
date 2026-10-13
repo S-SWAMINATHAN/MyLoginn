@@ -1,14 +1,16 @@
 ﻿import { createPageMetadata } from "@/lib/seo";
-import { Section, Container, Eyebrow } from "@/components/ui/Section";
+import { Section, Container } from "@/components/ui/Section";
 import { prisma } from "@/lib/prisma";
 import type { ShowcaseProject } from "@/lib/showcaseProjects";
 import { clientProjects } from "@/lib/clientProjects";
-import { ProjectsHero } from "@/components/projects/ProjectsHero";
+import { Reveal } from "@/components/ui/Reveal";
+import { SplitHeadline } from "@/components/experience/SplitHeadline";
+import { ArrowLink } from "@/components/ui/ArrowLink";
+import { ProjectsHeroVisual } from "@/components/pages/PageHeroVisuals";
+import Link from "next/link";
 import { ClientProjectCard } from "@/components/projects/ClientProjectCard";
 import { ProjectsExplorer } from "@/components/projects/ProjectsExplorer";
 import { ProjectsCtaBanner } from "@/components/projects/ProjectsCtaBanner";
-import { AnimatedRocket } from "@/components/ui/icons/AnimatedRocket";
-import { AnimatedGraduation } from "@/components/ui/icons/AnimatedGraduation";
 
 export const metadata = createPageMetadata({
   title: "Student Projects & Portfolio",
@@ -45,42 +47,47 @@ export default async function ProjectsPage() {
   const industryCount = new Set(clientProjects.map((p) => p.category)).size;
 
   return (
-    <Section className="mobile-page-glow pt-3 sm:pt-5">
+    <Section className="pt-6 sm:pt-10">
       <Container className="max-w-[1480px]">
-        <ProjectsHero
-          projectCount={projectCount}
-          liveCount={liveCount}
-          industryCount={industryCount}
-        />
+        <div className="mx-auto grid w-full min-w-0 max-w-6xl items-center gap-12 lg:grid-cols-2 lg:gap-16">
+          <div className="min-w-0">
+            <Reveal><span className="story-eyebrow">Built by learners. Backed by mentors.</span></Reveal>
+            <SplitHeadline as="h1" text="Real Projects. Real Impact." className="mt-4 max-w-xl text-4xl font-bold leading-[1.08] tracking-tight text-story-navy sm:text-5xl dark:text-foreground" />
+            <Reveal direction="up" delay={0.15}>
+              <p className="mt-5 max-w-lg text-base leading-8 text-muted sm:text-lg">Explore capstone projects built by MyLoginn learners with guidance from industry mentors.</p>
+            </Reveal>
+            <Reveal direction="up" delay={0.25} className="mt-7 flex flex-wrap items-center justify-center gap-3 lg:justify-start">
+              <ArrowLink href="#client-work">See our work</ArrowLink>
+              <Link href="/contact" className="rounded-full border border-border-soft bg-surface px-6 py-2.5 text-sm font-semibold transition-all duration-300 hover:-translate-y-1 hover:border-story-royal hover:text-story-royal active:scale-95">Discuss a project</Link>
+            </Reveal>
+          </div>
+          <Reveal direction="left" delay={0.15} className="min-w-0">
+            <ProjectsHeroVisual projectCount={projectCount} liveCount={liveCount} industryCount={industryCount} />
+          </Reveal>
+        </div>
 
-        <div className="mt-14 sm:mt-16">
-          <Eyebrow className="gap-2">
-            <AnimatedRocket className="h-4.5 w-4.5" />
-            Real client work
-          </Eyebrow>
-          <h2 className="mt-3 text-2xl font-semibold tracking-tight sm:text-3xl">Projects we&apos;ve shipped</h2>
-          <p className="mt-2 max-w-xl text-sm text-muted sm:text-base">
+        <div id="client-work" className="mt-20 scroll-mt-24 sm:mt-24">
+          <Reveal><span className="story-eyebrow">Real client work</span></Reveal>
+          <h2 className="story-subheading mt-3 text-story-navy dark:text-foreground">Projects we&apos;ve shipped</h2>
+          <p className="mt-3 max-w-xl text-sm leading-7 text-muted sm:text-base">
             Live websites and products MyLoginn has built and continues to run for real businesses.
           </p>
 
-          <div className="mt-6 grid grid-cols-1 gap-6 sm:grid-cols-2 sm:gap-7 lg:grid-cols-4">
+          <div className="mt-8 grid grid-cols-1 gap-6 sm:grid-cols-2 sm:gap-7 lg:grid-cols-4">
             {clientProjects.map((project, i) => (
               <ClientProjectCard key={project.slug} project={project} index={i} />
             ))}
           </div>
         </div>
 
-        <div className="mt-14 sm:mt-16">
-          <Eyebrow className="gap-2">
-            <AnimatedGraduation className="h-4.5 w-4.5" />
-            Learner showcase
-          </Eyebrow>
-          <h2 className="mt-3 text-2xl font-semibold tracking-tight sm:text-3xl">Student capstone projects</h2>
-          <p className="mt-2 max-w-xl text-sm text-muted sm:text-base">
+        <div className="mt-20 sm:mt-24">
+          <Reveal><span className="story-eyebrow">Learner showcase</span></Reveal>
+          <h2 className="story-subheading mt-3 text-story-navy dark:text-foreground">Student capstone projects</h2>
+          <p className="mt-3 max-w-xl text-sm leading-7 text-muted sm:text-base">
             Capstone projects built by MyLoginn learners with guidance from industry mentors.
           </p>
 
-          <div className="mt-6">
+          <div className="mt-8">
             <ProjectsExplorer projects={showcaseProjects} />
           </div>
         </div>

@@ -28,11 +28,11 @@ export function StatCard({
   loading?: boolean;
 }) {
   const accents: Record<string, { top: string; chip: string }> = {
-    brand: { top: "from-brand-500 to-brand-700", chip: "bg-brand-50 dark:bg-brand-900/25" },
-    cyan: { top: "from-accent-400 to-accent-600", chip: "bg-accent-500/10" },
-    amber: { top: "from-amber-400 to-amber-600", chip: "bg-amber-500/10" },
-    green: { top: "from-emerald-400 to-emerald-600", chip: "bg-emerald-500/10" },
-    rose: { top: "from-rose-400 to-rose-600", chip: "bg-rose-500/10" },
+    brand: { top: "bg-story-royal", chip: "bg-brand-50 dark:bg-brand-900/25" },
+    cyan: { top: "bg-cyan-500", chip: "bg-accent-500/10" },
+    amber: { top: "bg-amber-500", chip: "bg-amber-500/10" },
+    green: { top: "bg-emerald-500", chip: "bg-emerald-500/10" },
+    rose: { top: "bg-rose-500", chip: "bg-rose-500/10" },
   };
   const a = accents[accent];
 
@@ -46,7 +46,7 @@ export function StatCard({
         href && "cursor-pointer hover:-translate-y-1 hover:shadow-[var(--shadow-lift)]"
       )}
     >
-      <span className={cn("absolute inset-x-0 top-0 h-1 bg-gradient-to-r", a.top)} />
+      <span className={cn("absolute inset-x-0 top-0 h-1", a.top)} />
       <div className="flex items-start justify-between gap-3">
         <span className={cn("flex h-11 w-11 items-center justify-center rounded-xl", a.chip)}>{icon}</span>
         {href && (

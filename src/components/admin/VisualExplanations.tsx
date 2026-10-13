@@ -132,7 +132,7 @@ export function VisualExplanations() {
           <input id="visual-topic" required minLength={2} maxLength={100} value={topic} onChange={(e) => setTopic(e.target.value)} placeholder="e.g. How a for loop works" className="mb-4 w-full rounded-xl border border-border-soft bg-background px-3 py-2.5 text-sm" />
           <label className="mb-1.5 block text-sm font-medium" htmlFor="visual-context">Lesson notes <span className="font-normal text-muted">(optional)</span></label>
           <textarea id="visual-context" maxLength={1200} rows={4} value={context} onChange={(e) => setContext(e.target.value)} placeholder="Key details or a short code example to include" className="mb-4 w-full resize-y rounded-xl border border-border-soft bg-background px-3 py-2.5 text-sm" />
-          <button disabled={busy || !courses.length || !topic.trim()} className="flex w-full items-center justify-center gap-2 rounded-xl brand-gradient-bg px-4 py-3 text-sm font-semibold text-white disabled:cursor-not-allowed disabled:opacity-55">
+          <button disabled={busy || !courses.length || !topic.trim()} className="flex w-full items-center justify-center gap-2 rounded-xl bg-story-royal px-4 py-3 text-sm font-semibold text-white disabled:cursor-not-allowed disabled:opacity-55">
             {busy ? <><LoaderCircle className="h-4 w-4 animate-spin" />Creating storyboard…</> : <><Sparkles className="h-4 w-4" />Generate explanation</>}
           </button>
           {!courses.length && <p className="mt-3 text-xs text-muted">Create a course first to generate its visual lesson.</p>}

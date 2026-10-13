@@ -31,7 +31,7 @@ export function ClientProjectCard({ project, index = 0 }: { project: ClientProje
               style={{ background: spotlightBg }}
             />
 
-            <div className="relative flex h-40 shrink-0 items-end overflow-hidden">
+            <div className="relative flex h-32 shrink-0 items-end overflow-hidden">
               <span
                 aria-hidden
                 className="absolute inset-0 transition-transform duration-500 group-hover:scale-105 [&>svg]:h-full [&>svg]:w-full"
@@ -51,19 +51,19 @@ export function ClientProjectCard({ project, index = 0 }: { project: ClientProje
                   </>
                 )}
               </span>
-              <p className="relative z-10 min-w-0 line-clamp-2 px-5 pb-4 text-lg font-semibold leading-snug text-white [text-shadow:0_1px_6px_rgba(0,0,0,.45)]">
+              <p className="relative z-10 min-w-0 line-clamp-2 px-4 pb-3 text-base font-semibold leading-snug text-white [text-shadow:0_1px_6px_rgba(0,0,0,.45)]">
                 {project.name}
               </p>
             </div>
 
-            <div className="relative z-10 flex flex-1 flex-col p-6">
+            <div className="relative z-10 flex flex-1 flex-col p-4 sm:p-5">
               <span className="inline-flex w-fit items-center gap-1.5 rounded-full bg-brand-50 px-2.5 py-1 text-[11px] font-semibold text-brand-600 dark:bg-brand-900/30 dark:text-brand-300">
                 {project.category}
               </span>
-              <p className="mt-3 flex-1 text-sm text-muted">{project.description}</p>
+              <p className="mt-2 flex-1 text-[13px] leading-5 text-muted">{project.description}</p>
 
               {project.highlights.length > 0 && (
-                <ul className="mt-4 flex flex-col gap-1.5 text-xs text-muted">
+                <ul className="mt-3 flex flex-col gap-1 text-xs text-muted">
                   {project.highlights.slice(0, 2).map((h) => (
                     <li key={h} className="flex items-start gap-1.5">
                       <span className="mt-1 h-1 w-1 shrink-0 rounded-full bg-brand-400" />
@@ -73,7 +73,7 @@ export function ClientProjectCard({ project, index = 0 }: { project: ClientProje
                 </ul>
               )}
 
-              <span className="mt-5 inline-flex items-center gap-1.5 text-sm font-semibold text-brand-600 transition-transform duration-300 group-hover:translate-x-1">
+              <span className="mt-4 inline-flex items-center gap-1.5 text-sm font-semibold text-brand-600 transition-transform duration-300 group-hover:translate-x-1">
                 View details →
               </span>
             </div>

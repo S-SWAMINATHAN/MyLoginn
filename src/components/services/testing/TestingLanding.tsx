@@ -48,7 +48,7 @@ export function TestingLanding(p: ServiceLandingProps) {
           <Reveal direction="up" delay={0.15}>
             <p className="mt-5 max-w-lg text-base leading-8 text-muted sm:text-lg">{p.intro}</p>
           </Reveal>
-          <Reveal direction="up" delay={0.25} className="mt-7 flex flex-wrap gap-3">
+          <Reveal direction="up" delay={0.25} className="mt-7 flex flex-wrap items-center justify-center gap-3 lg:justify-start">
             <a href="#enquiry" className="rounded-full px-6 py-3 text-sm font-semibold text-white transition-all duration-300 hover:-translate-y-1 hover:shadow-[var(--shadow-lift)] active:scale-95" style={{ background: "var(--story-royal)" }}>
               Request a test scope
             </a>

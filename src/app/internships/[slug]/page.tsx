@@ -1,14 +1,13 @@
-﻿import { notFound } from "next/navigation";
+import { notFound } from "next/navigation";
 import type { Metadata } from "next";
 import { createPageMetadata } from "@/lib/seo";
 import { prisma } from "@/lib/prisma";
 import { getCurrentUser } from "@/lib/auth";
-import { Section, Container, Eyebrow } from "@/components/ui/Section";
+import { Section, Container } from "@/components/ui/Section";
+import { Reveal, RevealGroup, RevealItem } from "@/components/ui/Reveal";
 import { CourseIconThumb } from "@/components/courses/CourseIconThumb";
 import { InternshipApplyPanel } from "@/components/internships/InternshipApplyPanel";
-import { AnimatedMapPin } from "@/components/ui/icons/AnimatedMapPin";
-import { AnimatedClock } from "@/components/ui/icons/AnimatedClock";
-import { AnimatedRupee } from "@/components/ui/icons/AnimatedRupee";
+import { InternshipFacts } from "@/components/internships/InternshipFacts";
 import { AnimatedCrown } from "@/components/ui/icons/AnimatedCrown";
 import { AnimatedMail } from "@/components/ui/icons/AnimatedMail";
 
@@ -53,99 +52,103 @@ export default async function InternshipDetailPage({
   const requirements = internship.requirements.split("\n").map((r) => r.trim()).filter(Boolean);
   const responsibilities = internship.responsibilities.split("\n").map((r) => r.trim()).filter(Boolean);
 
+  const initials = internship.mentorName.split(/\s+/).map((w) => w[0]).slice(0, 2).join("").toUpperCase();
+
   return (
-    <Section className="mobile-page-glow pt-14">
-      <Container>
-        <div className="grid grid-cols-1 gap-10 lg:grid-cols-3">
-          <div className="lg:col-span-2">
-            <div className="flex items-center gap-4">
-              <CourseIconThumb
-                category={internship.type}
-                title={internship.title}
-                variant="round"
-                className="h-16 w-16 shrink-0"
-              />
-              <div>
-                <div className="flex items-center gap-2">
-                  <Eyebrow>{internship.type}</Eyebrow>
-                  {internship.featured && (
-                    <span className="inline-flex items-center gap-1 text-xs font-medium text-brand-500">
-                      <AnimatedCrown className="h-4.5 w-4.5" /> Featured
-                    </span>
-                  )}
+    <Section className="pt-8 sm:pt-12">
+      <Container className="max-w-6xl">
+        <div className="grid grid-cols-1 gap-10 lg:grid-cols-[minmax(0,1fr)_22rem] lg:gap-12">
+          <div className="min-w-0">
+            {/* Header */}
+            <Reveal>
+              <div className="flex items-center gap-4 sm:gap-5">
+                <CourseIconThumb category={internship.type} title={internship.title} variant="round" className="h-20 w-20 shrink-0 sm:h-24 sm:w-24" />
+                <div className="min-w-0">
+                  <div className="flex flex-wrap items-center gap-x-3 gap-y-1">
+                    <span className="story-eyebrow">{internship.type}</span>
+                    {internship.featured && (
+                      <span className="inline-flex items-center gap-1 rounded-full bg-amber-50 px-2.5 py-0.5 text-[11px] font-semibold text-amber-700 dark:bg-amber-400/10 dark:text-amber-300">
+                        <AnimatedCrown className="h-4 w-4" /> Featured
+                      </span>
+                    )}
+                  </div>
+                  <h1 className="mt-2 text-2xl font-bold leading-[1.1] tracking-tight text-story-navy sm:text-4xl dark:text-foreground">{internship.title}</h1>
+                  <p className="mt-2 text-sm text-muted">{internship.company}</p>
                 </div>
-                <h1 className="mt-2 text-2xl font-semibold tracking-tight sm:text-3xl">{internship.title}</h1>
               </div>
-            </div>
+            </Reveal>
 
-            <p className="mt-4 text-sm text-muted">{internship.company}</p>
+            <InternshipFacts type={internship.type} location={internship.location} weeks={internship.durationWeeks} />
 
-            <div className="mt-6 flex flex-wrap gap-4 text-sm text-muted">
-              <span className="flex items-center gap-1.5">
-                <AnimatedMapPin className="h-5 w-5" /> {internship.location}
-              </span>
-              <span className="flex items-center gap-1.5">
-                <AnimatedClock className="h-5 w-5" /> {internship.durationWeeks} weeks
-              </span>
-              <span className="flex items-center gap-1.5">
-                <AnimatedRupee className="h-5 w-5" />{" "}
-                {internship.paid ? `${internship.stipend?.toLocaleString()} / month` : "Unpaid"}
-              </span>
-            </div>
-
-            <p className="mt-8 leading-relaxed text-foreground/90">{internship.description}</p>
+            <Reveal direction="up" delay={0.1}>
+              <p className="mt-7 text-base leading-8 text-foreground/90">{internship.description}</p>
+            </Reveal>
 
             {responsibilities.length > 0 && (
-              <div className="mt-8">
-                <h2 className="font-semibold">Responsibilities</h2>
-                <ul className="mt-3 flex flex-col gap-2 text-sm text-muted">
+              <section className="mt-12" aria-labelledby="responsibilities">
+                <Reveal><span className="story-eyebrow">The role</span></Reveal>
+                <h2 id="responsibilities" className="story-subheading mt-3 text-story-navy dark:text-foreground">Responsibilities</h2>
+                <ol className="relative mt-6 space-y-3">
+                  <span aria-hidden className="absolute bottom-5 left-[17px] top-5 w-px bg-border-soft" />
                   {responsibilities.map((item, i) => (
-                    <li key={i} className="flex items-start gap-2.5">
-                      <span className="mt-0.5 flex h-5 w-5 shrink-0 items-center justify-center rounded-full bg-brand-50 text-[11px] font-semibold text-brand-600 dark:bg-brand-900/40 dark:text-brand-300">
-                        {i + 1}
-                      </span>
-                      {item}
+                    <li key={i}>
+                      <Reveal direction="right" delay={i * 0.06}>
+                        <div className="group relative flex items-center gap-3.5">
+                          <span className="relative z-10 grid h-9 w-9 shrink-0 place-items-center rounded-full bg-story-royal text-xs font-bold text-white shadow-[0_8px_16px_-8px_rgba(31,86,214,0.9)]">{i + 1}</span>
+                          <p className="flex-1 py-2 text-sm font-medium transition-all duration-300 group-hover:translate-x-1 group-hover:text-story-royal">{item}</p>
+                        </div>
+                      </Reveal>
                     </li>
                   ))}
-                </ul>
-              </div>
+                </ol>
+              </section>
             )}
 
             {requirements.length > 0 && (
-              <div className="mt-8">
-                <h2 className="font-semibold">Requirements</h2>
-                <ul className="mt-3 flex flex-col gap-2 text-sm text-muted">
+              <section className="mt-12" aria-labelledby="requirements">
+                <Reveal><span className="story-eyebrow">What you need</span></Reveal>
+                <h2 id="requirements" className="story-subheading mt-3 text-story-navy dark:text-foreground">Requirements</h2>
+                <RevealGroup className="mt-6 flex flex-wrap gap-x-7 gap-y-3" stagger={0.06}>
                   {requirements.map((item, i) => (
-                    <li key={i} className="flex items-start gap-2.5">
-                      <span className="mt-1.5 h-1.5 w-1.5 shrink-0 rounded-full bg-brand-400" />
-                      {item}
-                    </li>
+                    <RevealItem key={i}>
+                      <span className="inline-flex items-center gap-2.5 text-sm font-medium transition-all duration-200 hover:translate-x-0.5 hover:text-story-royal">
+                        <span aria-hidden className="grid h-6 w-6 place-items-center rounded-full bg-story-royal text-[11px] font-bold text-white">✓</span>
+                        {item}
+                      </span>
+                    </RevealItem>
                   ))}
-                </ul>
-              </div>
+                </RevealGroup>
+              </section>
             )}
 
-            <div className="mt-8 flex flex-wrap items-center gap-x-2 gap-y-1 rounded-2xl border border-border-soft bg-surface-2 p-5 text-sm text-muted">
-              <span>Mentor: <span className="font-medium text-foreground">{internship.mentorName}</span></span>
-              <a href={`mailto:${internship.mentorEmail}`} className="inline-flex items-center gap-1.5 font-medium text-brand-600 hover:underline dark:text-brand-300">
-                <AnimatedMail className="h-5 w-5" />
-                {internship.mentorEmail}
-              </a>
-            </div>
+            {/* Mentor */}
+            <Reveal className="mt-12">
+              <div className="flex flex-wrap items-center gap-4 border-t border-border-soft pt-6">
+                <span className="grid h-14 w-14 shrink-0 place-items-center rounded-full bg-story-royal text-base font-bold text-white">{initials}</span>
+                <div className="min-w-0 flex-1">
+                  <p className="text-[10px] font-bold uppercase tracking-[0.14em] text-muted">Your mentor</p>
+                  <p className="mt-0.5 text-base font-semibold text-story-navy dark:text-foreground">{internship.mentorName}</p>
+                </div>
+                <a href={`mailto:${internship.mentorEmail}`} className="group inline-flex items-center gap-2 text-sm font-semibold text-story-royal hover:underline">
+                  <AnimatedMail className="h-5 w-5" />
+                  <span className="break-all">{internship.mentorEmail}</span>
+                </a>
+              </div>
+            </Reveal>
           </div>
 
-          <div>
+          <aside>
             <div className="lg:sticky lg:top-24">
-              <InternshipApplyPanel
-                internshipId={internship.id}
-                paid={internship.paid}
-                stipend={internship.stipend}
-                applyDeadline={internship.applyDeadline.toISOString()}
-                loggedIn={Boolean(user)}
-                applicationStatus={application?.status ?? null}
-              />
+              <Reveal direction="left" delay={0.1}>
+                <InternshipApplyPanel
+                  internshipId={internship.id}
+                  applyDeadline={internship.applyDeadline.toISOString()}
+                  loggedIn={Boolean(user)}
+                  applicationStatus={application?.status ?? null}
+                />
+              </Reveal>
             </div>
-          </div>
+          </aside>
         </div>
       </Container>
     </Section>

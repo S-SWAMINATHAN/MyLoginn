@@ -19,7 +19,7 @@ const SUGGESTIONS = [
 ];
 
 const GREETING =
-  "Hi! I'm the MyLoginn AI agent. Ask me anything about our courses, internships, or services â€” I'm happy to help!";
+  "Hi! I'm the MyLoginn AI agent. Ask me anything about our courses, internships, or services — I'm happy to help!";
 
 export function AiAgentWidget() {
   const [open, setOpen] = useState(false);
@@ -112,7 +112,7 @@ export function AiAgentWidget() {
 
   return (
     <>
-      {/* Chat panel â€” anchored to the bottom-right corner on every breakpoint */}
+      {/* Chat panel — anchored to the bottom-right corner on every breakpoint */}
       <AnimatePresence>
         {open && (
           <motion.div
@@ -144,7 +144,7 @@ export function AiAgentWidget() {
                     <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-emerald-400 opacity-75" />
                     <span className="relative inline-flex h-1.5 w-1.5 rounded-full bg-emerald-500" />
                   </span>
-                  Online â€” ask anything about MyLoginn
+                  Online — ask anything about MyLoginn
                 </p>
               </div>
               <button
@@ -205,7 +205,7 @@ export function AiAgentWidget() {
                   value={input}
                   onChange={(e) => setInput(e.target.value)}
                   maxLength={2000}
-                  placeholder="Ask about courses, internshipsâ€¦"
+                  placeholder="Ask about courses, internships…"
                   className="h-9 min-w-0 flex-1 bg-transparent text-sm outline-none placeholder:text-muted"
                 />
                 <button
@@ -222,7 +222,7 @@ export function AiAgentWidget() {
         )}
       </AnimatePresence>
 
-      {/* Floating launcher â€” bottom-right end corner; lifted above the mobile bottom nav */}
+      {/* Floating launcher — bottom-right end corner; lifted above the mobile bottom nav */}
       <motion.button
         onClick={() => setOpen((o) => !o)}
         aria-label={open ? "Close AI agent chat" : "Open AI agent chat"}

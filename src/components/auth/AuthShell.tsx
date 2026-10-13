@@ -1,73 +1,137 @@
-import type { ReactNode } from "react";
+"use client";
+
+import { useEffect, useState, type ReactNode } from "react";
 import Link from "next/link";
-import { ArrowUpRight, BookOpen, BriefcaseBusiness, Check, Hammer } from "lucide-react";
+import { AnimatePresence, motion } from "framer-motion";
+import { ShieldCheck } from "lucide-react";
+import { ContentIcon } from "@/components/ui/ContentIcon";
+import { AnimatedFlame } from "@/components/ui/icons/AnimatedFlame";
+import { AnimatedReward } from "@/components/ui/icons/AnimatedReward";
+import { useReducedMotion } from "@/lib/useReducedMotion";
+
+const EASE = [0.16, 1, 0.3, 1] as const;
+
+/** Signup side panel: Learn, Build and Grow take turns being highlighted on a connected timeline. */
+function JourneyPanel() {
+  const reduced = useReducedMotion();
+  const [i, setI] = useState(0);
+  const items = [
+    { icon: "student", title: "Learn", text: "Practical courses with mentors" },
+    { icon: "webdev", title: "Build", text: "Real projects for your portfolio" },
+    { icon: "career", title: "Grow", text: "Internships and new opportunities" },
+  ];
+
+  useEffect(() => {
+    if (reduced) return;
+    const id = window.setInterval(() => setI((x) => (x + 1) % items.length), 2600);
+    return () => window.clearInterval(id);
+  }, [reduced, items.length]);
+
+  return (
+    <ol className="relative space-y-3">
+      <span aria-hidden className="absolute bottom-6 left-[1.7rem] top-6 w-px bg-border-soft" />
+      {items.map((it, idx) => {
+        const on = idx === i;
+        return (
+          <motion.li key={it.title} onMouseEnter={() => setI(idx)} animate={{ x: on ? 6 : 0 }} transition={{ type: "spring", stiffness: 300, damping: 24 }} className="relative flex cursor-default items-center gap-4 rounded-2xl bg-surface p-3 shadow-sm">
+            <motion.span animate={{ scale: on ? 1.08 : 1 }} className="relative z-10 grid h-12 w-12 shrink-0 place-items-center rounded-full bg-story-mist">
+              <ContentIcon keyword={it.icon} className="h-8 w-8" />
+            </motion.span>
+            <div className="min-w-0">
+              <p className="text-sm font-bold" style={{ color: on ? "var(--story-royal)" : undefined }}>{it.title}</p>
+              <p className="text-xs text-muted">{it.text}</p>
+            </div>
+            <motion.span aria-hidden className="ml-auto h-2 w-2 shrink-0 rounded-full bg-story-royal" animate={{ opacity: on ? 1 : 0, scale: on ? 1 : 0.4 }} />
+          </motion.li>
+        );
+      })}
+    </ol>
+  );
+}
+
+/** Login side panel: three small cards that float gently, showing what is waiting after signing in. */
+function WaitingPanel() {
+  const reduced = useReducedMotion();
+  const float = () => (reduced ? undefined : { y: [0, -6, 0] });
+  const floatT = (delay: number) => ({ duration: 4.5, repeat: Infinity, ease: "easeInOut" as const, delay });
+  return (
+    <div className="relative space-y-3">
+      <motion.div animate={float()} transition={floatT(0)} className="flex items-center gap-4 rounded-2xl bg-surface p-4 shadow-sm">
+        <span className="grid h-12 w-12 shrink-0 place-items-center rounded-full bg-orange-500/10"><AnimatedFlame className="h-9 w-9" /></span>
+        <div><p className="text-sm font-bold">Keep your streak alive</p><p className="text-xs text-muted">Log in every day to build momentum</p></div>
+      </motion.div>
+
+      <motion.div animate={float()} transition={floatT(0.6)} className="ml-6 rounded-2xl bg-surface p-4 shadow-sm">
+        <div className="flex items-center gap-3">
+          <span className="grid h-12 w-12 shrink-0 place-items-center rounded-full bg-story-mist"><ContentIcon keyword="student" className="h-8 w-8" /></span>
+          <p className="text-sm font-bold">Pick up where you left off</p>
+        </div>
+        <div className="mt-3 h-1.5 overflow-hidden rounded-full bg-story-mist">
+          <motion.div className="h-full rounded-full bg-story-royal" initial={{ width: 0 }} animate={{ width: "68%" }} transition={{ duration: 1.4, delay: 0.4, ease: EASE }} />
+        </div>
+      </motion.div>
+
+      <motion.div animate={float()} transition={floatT(1.2)} className="flex items-center gap-4 rounded-2xl bg-surface p-4 shadow-sm">
+        <span className="grid h-12 w-12 shrink-0 place-items-center rounded-full bg-story-royal/10"><AnimatedReward className="h-9 w-9" /></span>
+        <div><p className="text-sm font-bold">Earn points and badges</p><p className="text-xs text-muted">Climb the learning leaderboard</p></div>
+      </motion.div>
+    </div>
+  );
+}
 
 export function AuthShell({ mode, children }: { mode: "login" | "signup"; children: ReactNode }) {
   const signup = mode === "signup";
 
   return (
-    <section className="auth-stage relative isolate flex min-h-[calc(100svh-4rem)] items-center overflow-hidden bg-[#f6f8fc] px-3 py-2 dark:bg-[#080d19] sm:px-5 sm:py-3 lg:px-8 lg:py-3">
-      <div aria-hidden className="pointer-events-none absolute inset-0 -z-10 overflow-hidden">
-        <div className="absolute -left-40 top-10 h-80 w-80 rounded-full bg-blue-300/20 blur-[100px] dark:bg-blue-600/10" />
-        <div className="absolute -right-36 bottom-0 h-96 w-96 rounded-full bg-cyan-200/30 blur-[110px] dark:bg-cyan-500/10" />
-        <div className="absolute inset-0 opacity-[.24] [background-image:radial-gradient(#7b8dad_0.7px,transparent_0.7px)] [background-size:22px_22px] dark:opacity-[.1]" />
+    <section className="relative isolate flex min-h-[calc(100svh-4rem)] items-center justify-center overflow-hidden px-4 py-8 sm:px-6 sm:py-10">
+      <div aria-hidden className="pointer-events-none absolute inset-0 -z-10">
+        <div className="absolute inset-0 opacity-[.35] [background-image:radial-gradient(var(--story-line)_1px,transparent_1px)] [background-size:24px_24px] [mask-image:radial-gradient(60%_60%_at_50%_45%,#000,transparent)]" />
       </div>
 
-      <div className={`mx-auto grid w-full overflow-hidden rounded-[1.25rem] border border-white/80 bg-white/80 shadow-[0_32px_100px_-48px_rgba(15,33,75,.34)] backdrop-blur-xl dark:border-white/10 dark:bg-[#0d1423]/90 ${signup ? "max-w-[min(96vw,56rem)] lg:min-h-[clamp(19rem,calc(100svh-26rem),25rem)] lg:grid-cols-[.88fr_1.12fr]" : "max-w-[min(94vw,48rem)] lg:min-h-0 lg:grid-cols-[.82fr_1.18fr]"}`}>
-        <aside className="relative isolate flex min-h-[170px] flex-col justify-between overflow-hidden bg-[#10234d] px-5 py-5 text-white sm:min-h-[190px] sm:px-7 sm:py-7 lg:min-h-full lg:px-8 lg:py-8">
-          <div aria-hidden className="absolute inset-0 -z-10 bg-[radial-gradient(ellipse_at_0%_0%,rgba(84,121,255,.72),transparent_48%),radial-gradient(ellipse_at_100%_100%,rgba(4,192,205,.42),transparent_42%),linear-gradient(145deg,#142653,#09152f_76%)]" />
-          <div aria-hidden className="absolute -right-28 top-32 hidden h-[28rem] w-[28rem] rounded-full border border-white/10 lg:block" />
-          <div aria-hidden className="absolute -right-10 top-52 hidden h-[20rem] w-[20rem] rounded-full border border-white/10 lg:block" />
-
-          <div className="relative z-10">
-            <span className="inline-flex items-center gap-2 rounded-full border border-white/15 bg-white/[.08] px-3.5 py-2 text-[10px] font-bold uppercase tracking-[.17em] text-cyan-100 sm:text-xs">
-              Your next chapter
-            </span>
-            <h2 className="mt-3 max-w-xl text-[1.7rem] font-semibold leading-[1.03] tracking-[-.045em] sm:mt-5 sm:text-3xl lg:mt-7 lg:text-[2.5rem]">
-              {signup ? <>Make room for <span className="text-cyan-200">what&apos;s next.</span></> : <>Good to have you <span className="text-cyan-200">back.</span></>}
+      <motion.div initial={{ opacity: 0, y: 18 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.5, ease: EASE }} className="grid w-full max-w-5xl overflow-hidden rounded-[2rem] border border-border-soft bg-surface shadow-[0_30px_80px_-40px_rgba(11,31,77,0.35)] lg:grid-cols-[0.95fr_1.05fr]">
+        {/* side panel (large screens) */}
+        <aside className="relative hidden flex-col justify-between gap-8 bg-story-mist p-10 lg:flex">
+          <div>
+            <span className="story-eyebrow">Your next chapter</span>
+            <h2 className="mt-4 text-4xl font-bold leading-[1.08] tracking-tight text-story-navy">
+              {signup ? <>Make room for <span className="text-story-royal">what&apos;s next.</span></> : <>Good to have you <span className="text-story-royal">back.</span></>}
             </h2>
-            <p className="mt-3 max-w-md text-sm leading-5 text-indigo-100/80 sm:leading-6">
-              {signup
-                ? "One account brings your learning, expert guidance and new opportunities together."
-                : "Your courses, progress and next opportunity are right where you left them."}
+            <p className="mt-4 max-w-sm text-sm leading-6 text-muted">
+              {signup ? "One account brings your learning, expert guidance and new opportunities together." : "Your courses, progress and next opportunity are right where you left them."}
             </p>
           </div>
 
-          {signup && <div className="relative z-10 mt-5 hidden max-w-md lg:block">
-            <div className="rounded-2xl border border-white/15 bg-white/[.08] p-4 backdrop-blur-md">
-              <div className="flex items-center justify-between">
-                <p className="text-sm font-semibold text-white/90">A path that moves with you</p>
-              </div>
-              <div className="mt-3 grid grid-cols-3 gap-2">
-                <JourneyTile icon={<BookOpen className="h-4 w-4" />} label="Learn" />
-                <JourneyTile icon={<Hammer className="h-4 w-4" />} label="Build" />
-                <JourneyTile icon={<BriefcaseBusiness className="h-4 w-4" />} label="Grow" />
-              </div>
-              <p className="mt-3 text-xs leading-5 text-indigo-100/65">Small steps. Real progress. New possibilities.</p>
-            </div>
-            <p className="mt-5 text-xs font-medium text-indigo-100/60">MyLoginn <span className="px-1 text-cyan-200">·</span> Learn, create and move forward.</p>
-          </div>}
+          <AnimatePresence mode="wait" initial={false}>
+            <motion.div key={mode} initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0 }} transition={{ duration: 0.3 }}>
+              {signup ? <JourneyPanel /> : <WaitingPanel />}
+            </motion.div>
+          </AnimatePresence>
+
+          <p className="text-xs font-medium text-muted">MyLoginn <span className="px-1 text-story-royal">·</span> Learn, create and move forward.</p>
         </aside>
 
-        <div className="flex min-w-0 items-center justify-center px-4 py-3 sm:px-6 sm:py-4 lg:px-7 lg:py-3">
+        {/* form panel */}
+        <div className="relative flex min-w-0 items-center justify-center px-5 py-8 sm:px-10 sm:py-10">
+          <span aria-hidden className="absolute inset-x-0 top-0 flex h-1 lg:hidden">
+            {["#2563eb", "#7c3aed", "#059669", "#d97706", "#e11d48"].map((c) => <i key={c} className="flex-1" style={{ background: c }} />)}
+          </span>
           <div className="w-full max-w-[400px]">
             {children}
-            <div className="mt-5 border-t border-slate-200/80 pt-4 text-center text-sm text-slate-500 dark:border-white/10 dark:text-slate-400">
+            <div className="mt-6 border-t border-border-soft pt-4 text-center text-sm text-muted">
               {signup ? "Already have an account?" : "New to MyLoginn?"}{" "}
-              <Link href={signup ? "/login" : "/signup"} className="inline-flex items-center font-semibold text-brand-600 transition-colors hover:text-brand-500 dark:text-brand-300">
-                {signup ? "Log in" : "Create an account"}<ArrowUpRight className="ml-0.5 h-4 w-4" />
+              <Link href={signup ? "/login" : "/signup"} className="group inline-flex items-center gap-1 font-semibold text-story-royal">
+                {signup ? "Log in" : "Create an account"}
+                <span aria-hidden className="transition-transform duration-300 group-hover:translate-x-1">→</span>
               </Link>
             </div>
-            {signup && <p className="mt-3 flex items-center justify-center gap-1.5 text-center text-xs text-slate-400 dark:text-slate-500">
-              <Check className="h-3.5 w-3.5 text-emerald-500" /> Your details are protected and kept private.
-            </p>}
+            {signup && (
+              <p className="mt-3 flex items-center justify-center gap-1.5 text-center text-xs text-muted">
+                <ShieldCheck className="h-3.5 w-3.5 text-emerald-500" /> Your details are protected and kept private.
+              </p>
+            )}
           </div>
         </div>
-      </div>
+      </motion.div>
     </section>
   );
-}
-
-function JourneyTile({ icon, label }: { icon: ReactNode; label: string }) {
-  return <div className="flex items-center gap-2 rounded-xl border border-white/10 bg-white/[.06] px-3 py-3 text-xs font-medium text-indigo-50/85"><span className="text-cyan-200">{icon}</span>{label}</div>;
 }

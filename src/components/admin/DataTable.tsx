@@ -43,7 +43,7 @@ function Checkbox({ checked, onChange, label }: { checked: boolean; onChange: ()
       onClick={onChange}
       className={cn(
         "flex h-5 w-5 shrink-0 cursor-pointer items-center justify-center rounded-md border transition-all duration-200 active:scale-90",
-        checked ? "brand-gradient-bg border-transparent" : "border-border-soft bg-surface hover:border-brand-400"
+        checked ? "border-transparent bg-story-royal" : "border-border-soft bg-surface hover:border-brand-400"
       )}
     >
       <motion.svg
