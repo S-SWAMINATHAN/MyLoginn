@@ -26,7 +26,7 @@ export function StatTile({ label, value, hint }: { label: string; value: string 
 
 export function EmptyState({ title, body, cta }: { title: string; body: string; cta?: React.ReactNode }) {
   return (
-    <div className="rounded-2xl border border-dashed border-border-soft px-6 py-10 text-center">
+    <div className="rounded-3xl border border-dashed border-border-soft px-6 py-10 text-center">
       <p className="font-semibold">{title}</p>
       <p className="mx-auto mt-1 max-w-md text-sm text-muted">{body}</p>
       {cta ? <div className="mt-4">{cta}</div> : null}

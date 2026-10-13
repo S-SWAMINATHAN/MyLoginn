@@ -1,4 +1,4 @@
-import { executeOnce, type ExecResult } from "./executor";
+import { executeMany, type ExecResult } from "./executor";
 
 export type JudgeCase = { id: string; input: string; expected: string; isPublic: boolean; isEdge: boolean; label: string | null };
 export type CaseOutcome = { id: string; passed: boolean; isPublic: boolean; isEdge: boolean; label: string | null; timeMs: number; verdict: string };
@@ -30,14 +30,8 @@ export type JudgeReport = {
 
 /** Runs every case server-side (a few at a time) and returns a report that is safe to send to the browser. */
 export async function judge(language: string, source: string, cases: JudgeCase[]): Promise<JudgeReport> {
-  const results: { c: JudgeCase; r: ExecResult }[] = [];
-  const CONCURRENCY = 4;
-  for (let i = 0; i < cases.length; i += CONCURRENCY) {
-    const batch = cases.slice(i, i + CONCURRENCY);
-    results.push(...(await Promise.all(batch.map(async (c) => ({ c, r: await executeOnce(language, source, c.input) })))));
-    // A compile error repeats identically for every case.
-    if (results.some(({ r }) => r.compileError)) break;
-  }
+  const runs = await executeMany(language, source, cases.map((c) => c.input));
+  const results: { c: JudgeCase; r: ExecResult }[] = cases.map((c, i) => ({ c, r: runs[i] }));
 
   const outcomes: CaseOutcome[] = results.map(({ c, r }) => {
     const verdict = classify(r, c.expected);

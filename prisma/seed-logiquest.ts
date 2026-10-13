@@ -12,7 +12,8 @@ import { mkdtempSync, writeFileSync, rmSync } from "node:fs";
 import { tmpdir } from "node:os";
 import { join } from "node:path";
 import { challenges, type Seed } from "./logiquest-content";
-import { questions } from "./logiquest-questions";
+import { bank as questions } from "./logiquest-bank";
+import { validateBank } from "./validate-questions";
 
 const prisma = new PrismaClient();
 const XP = { EASY: 10, MEDIUM: 20, HARD: 40 } as const;
@@ -30,15 +31,34 @@ const STARTERS: Record<string, string> = {
   kotlin: `fun main() {\n    // Write your solution here and print the answer\n}\n`,
 };
 
+/**
+ * Deterministic option shuffle (seeded by the prompt, so re-seeding never changes the order). Authors tend to put the
+ * right answer first or second, which learners would learn to exploit. Questions whose options refer to each other
+ * ("both", "all of these", "only I follows") keep the written order.
+ */
+function shuffleOptions(prompt: string, options: string[], correct: number): { options: string[]; correct: number } {
+  const refersToOthers = (o: string) =>
+    /\b(all of|none of|both|neither|cannot be determined|even both)\b/i.test(o) || /\b(only|both) (I|II|III|IV)\b|\b(I|II|III|IV) alone\b/.test(o) || /^no error/i.test(o);
+  if (options.some(refersToOthers)) return { options, correct };
+  let h = 2166136261;
+  for (const ch of prompt) h = Math.imul(h ^ ch.charCodeAt(0), 16777619) >>> 0;
+  const rand = () => ((h = (Math.imul(h, 1664525) + 1013904223) >>> 0) / 4294967296);
+  const order = options.map((_, i) => i);
+  for (let i = order.length - 1; i > 0; i--) { const j = Math.floor(rand() * (i + 1)); [order[i], order[j]] = [order[j], order[i]]; }
+  return { options: order.map((i) => options[i]), correct: order.indexOf(correct) };
+}
+
 function runReference(dir: string, code: string, input: string) {
   const file = join(dir, "ref.py");
   writeFileSync(file, code);
-  const r = spawnSync(process.env.PYTHON ?? "python", ["-I", file], { input: input.endsWith("\n") ? input : `${input}\n`, encoding: "utf8", timeout: 20000, maxBuffer: 64 * 1024 * 1024 });
+  const r = spawnSync(process.env.PYTHON ?? "python", ["-I", file], { input, encoding: "utf8", timeout: 20000, maxBuffer: 64 * 1024 * 1024 });
   if (r.status !== 0) throw new Error(`reference failed: ${r.stderr?.slice(0, 300) || r.error}`);
   return r.stdout.replace(/\r\n/g, "\n").replace(/\s+$/, "");
 }
 
 async function main() {
+  const problems = validateBank();
+  if (problems.length) throw new Error(`Question bank failed validation:\n - ${problems.join("\n - ")}`);
   const dir = mkdtempSync(join(tmpdir(), "lq-seed-"));
   try {
     for (const c of challenges as Seed[]) {
@@ -48,8 +68,10 @@ async function main() {
         ...c.examples.map((e, i) => ({ input: e.input, isPublic: true, isEdge: false, label: `Example ${i + 1}` })),
         ...c.hidden.map((h) => ({ input: h.input, isPublic: false, isEdge: Boolean(h.edge), label: h.label ?? null })),
       ].map((t, position) => {
-        const expected = runReference(dir, c.ref, t.input);
-        return { ...t, position, expected };
+        // Every input line is newline-terminated, so a trailing empty line (e.g. an empty word) is a real line.
+        const stdin = `${t.input}\n`;
+        const expected = runReference(dir, c.ref, stdin);
+        return { ...t, input: stdin, position, expected };
       });
       for (const t of cases) if (!t.expected) throw new Error(`${c.slug}: reference printed nothing for a test case`);
 
@@ -71,10 +93,19 @@ async function main() {
       await prisma.lqTestCase.createMany({ data: cases.map((t) => ({ challengeId: row.id, position: t.position, input: t.input, expected: t.expected, isPublic: t.isPublic, isEdge: t.isEdge, label: t.label })) });
       console.log(`✔ ${c.difficulty.padEnd(6)} ${c.slug} (${cases.length} tests)`);
     }
-    for (const [category, difficulty, topic, prompt, options, correctIndex, explanation] of questions) {
+    const usedSlugs = new Set<string>();
+    for (const [category, difficulty, topic, prompt, rawOptions, rawCorrect, explanation] of questions) {
+      const { options, correct: correctIndex } = shuffleOptions(prompt, rawOptions, rawCorrect);
       if (correctIndex < 0 || correctIndex >= options.length || new Set(options).size !== options.length) throw new Error(`bad question: ${prompt.slice(0, 40)}`);
-      const slug = `${category.toLowerCase().replace(/_/g, "-")}-${prompt.toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/^-|-$/g, "").slice(0, 60)}`;
-      const data = { category, difficulty, topic, prompt, options, correctIndex, explanation, xp: XP[difficulty], status: "PUBLISHED" as const };
+      let slug = `${category.toLowerCase().replace(/_/g, "-")}-${prompt.toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/^-|-$/g, "").slice(0, 60)}`;
+      if (usedSlugs.has(slug)) {
+        // Two prompts can slugify identically (for example "7 // 2" and "-7 // 2"); never let one overwrite the other.
+        let h = 5381;
+        for (const ch of prompt) h = (Math.imul(h, 33) + ch.charCodeAt(0)) >>> 0;
+        slug = `${slug}-${h.toString(36)}`;
+      }
+      usedSlugs.add(slug);
+      const data ={ category, difficulty, topic, prompt, options, correctIndex, explanation, xp: XP[difficulty], status: "PUBLISHED" as const };
       await prisma.lqQuestion.upsert({ where: { slug }, create: { slug, ...data }, update: data });
     }
     console.log(`✔ ${questions.length} practice questions`);

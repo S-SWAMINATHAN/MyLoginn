@@ -14,10 +14,10 @@ export function LockedPanel({ ctx }: { ctx: LmsContext }) {
       <h1 className="mt-2 text-xl font-bold">{structure.course.title}</h1>
       <p className="mt-2 text-sm text-muted" role="status">{access.message}</p>
       <div className="mt-5">
-        {!user && <Link href={`/login?next=/courses/${slug}`} className="inline-block rounded-full bg-brand-600 px-6 py-2.5 text-sm font-semibold text-white">Log in to continue</Link>}
+        {!user && <Link href={`/login?next=/courses/${slug}`} className="inline-block rounded-full bg-story-royal px-6 py-2.5 text-sm font-semibold text-white">Log in to continue</Link>}
         {user && access.reason === "not_enrolled" && <LmsEnrollButton slug={slug} />}
         {user && (access.reason === "needs_purchase" || access.reason === "expired") && (
-          <Link href={paidCourseHref(slug)} className="inline-block rounded-full bg-brand-600 px-6 py-2.5 text-sm font-semibold text-white">
+          <Link href={paidCourseHref(slug)} className="inline-block rounded-full bg-story-royal px-6 py-2.5 text-sm font-semibold text-white">
             {access.reason === "expired" ? "Renew" : "Buy"} for ₹{price.toLocaleString("en-IN")}
           </Link>
         )}

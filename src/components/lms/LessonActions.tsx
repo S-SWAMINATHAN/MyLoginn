@@ -121,7 +121,7 @@ export function ReadButton({ lessonId, alreadyRead, waitSeconds }: { lessonId: s
   if (done) return <p className="text-sm font-semibold text-success">Lesson read ✓</p>;
   return (
     <div>
-      <button type="button" onClick={mark} disabled={busy || left > 0} className="rounded-full bg-brand-600 px-6 py-2.5 text-sm font-semibold text-white disabled:opacity-50">
+      <button type="button" onClick={mark} disabled={busy || left > 0} className="rounded-full bg-story-royal px-6 py-2.5 text-sm font-semibold text-white disabled:opacity-50">
         {left > 0 ? `Keep reading (${left}s)` : busy ? "Saving…" : "I've read this lesson"}
       </button>
       {error && <p role="alert" className="mt-2 text-sm text-danger">{error}</p>}

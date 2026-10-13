@@ -56,3 +56,6 @@ astrology/.venv/
 
 # applicant resumes (private, never served from public/)
 /private-uploads/
+
+# LogiQuest code runner (separate Vercel project)
+/exec-service/node_modules

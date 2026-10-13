@@ -2,7 +2,8 @@
 
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import Link from "next/link";
-import { Bookmark, CheckCircle2, Clock, Lightbulb, Play, RotateCcw, Send, XCircle } from "lucide-react";
+import { motion } from "framer-motion";
+import { Bookmark, CheckCircle2, Clock, Lightbulb, Loader2, Play, RotateCcw, Send, Target, XCircle, Zap } from "lucide-react";
 import { cn } from "@/lib/cn";
 import { DifficultyBadge } from "./ui";
 
@@ -152,7 +153,8 @@ export function ChallengeWorkspace(p: WorkspaceProps) {
 
   const lines = useMemo(() => Math.max(code.split("\n").length, 18), [code]);
   const solutionLocked = !solved && attempts < p.unlockAttempts;
-  const stagePanel = "rounded-2xl border border-border-soft bg-surface shadow-[var(--shadow-soft)]";
+  const stagePanel = "rounded-3xl border border-border-soft bg-surface";
+  const ghostBtn = "inline-flex items-center gap-1.5 rounded-full border border-border-soft px-3.5 py-2 text-sm font-semibold transition-all duration-200 hover:border-story-royal hover:text-story-royal active:scale-95 disabled:opacity-60";
 
   return (
     <div className="grid gap-5 lg:grid-cols-2">
@@ -161,31 +163,41 @@ export function ChallengeWorkspace(p: WorkspaceProps) {
         <div className="border-b border-border-soft p-5">
           <div className="flex flex-wrap items-center gap-2">
             <DifficultyBadge difficulty={p.difficulty} />
-            <span className="rounded-full bg-surface-2 px-2.5 py-0.5 text-xs font-semibold">{p.topic}{p.subtopic ? ` · ${p.subtopic}` : ""}</span>
-            {p.style ? <span className="rounded-full bg-brand-50 px-2.5 py-0.5 text-xs font-semibold text-brand-700 dark:bg-brand-900/30 dark:text-brand-200">{p.style}</span> : null}
+            <span className="rounded-full bg-story-mist px-2.5 py-0.5 text-xs font-semibold text-story-navy dark:text-foreground">{p.topic}{p.subtopic ? ` · ${p.subtopic}` : ""}</span>
+            {p.style ? <span className="rounded-full bg-story-royal/10 px-2.5 py-0.5 text-xs font-semibold text-story-royal">{p.style}</span> : null}
             {solved ? <span className="inline-flex items-center gap-1 text-xs font-bold text-emerald-600"><CheckCircle2 className="h-4 w-4" />Solved</span> : null}
           </div>
           <div className="mt-3 flex items-start justify-between gap-3">
-            <h1 className="text-xl font-bold sm:text-2xl">{p.title}</h1>
-            <button onClick={toggleBookmark} aria-pressed={bookmarked} aria-label={bookmarked ? "Remove bookmark" : "Bookmark this challenge"} className="rounded-lg p-2 text-muted hover:bg-surface-2 hover:text-brand-600 focus-visible:outline focus-visible:outline-2 focus-visible:outline-brand-500">
-              <Bookmark className={cn("h-5 w-5", bookmarked && "fill-brand-600 text-brand-600")} />
+            <h1 className="text-xl font-bold tracking-tight text-story-navy sm:text-2xl dark:text-foreground">{p.title}</h1>
+            <button onClick={toggleBookmark} aria-pressed={bookmarked} aria-label={bookmarked ? "Remove bookmark" : "Bookmark this challenge"} className="grid h-10 w-10 shrink-0 place-items-center rounded-full text-muted transition-all hover:bg-story-mist hover:text-story-royal active:scale-90">
+              <Bookmark className={cn("h-5 w-5 transition-transform", bookmarked && "scale-110 fill-story-royal text-story-royal")} />
             </button>
           </div>
-          <dl className="mt-3 flex flex-wrap gap-x-5 gap-y-1 text-xs text-muted">
-            <div className="flex items-center gap-1"><Clock className="h-3.5 w-3.5" /><dt className="sr-only">Estimated time</dt><dd>{p.estimatedMinutes} min</dd></div>
-            <div><dt className="inline">XP </dt><dd className="inline font-semibold text-foreground">{p.xp}</dd></div>
-            <div><dt className="inline">Attempts </dt><dd className="inline font-semibold text-foreground">{p.attemptCount}</dd></div>
-            <div><dt className="inline">Success rate </dt><dd className="inline font-semibold text-foreground">{p.successRate === null ? "—" : `${p.successRate}%`}</dd></div>
+          <dl className="mt-4 grid grid-cols-2 gap-2 sm:grid-cols-4">
+            {[
+              { Icon: Clock, k: "Time", v: `${p.estimatedMinutes} min`, c: "#2563eb" },
+              { Icon: Zap, k: "XP", v: String(p.xp), c: "#d97706" },
+              { Icon: Send, k: "Attempts", v: String(p.attemptCount), c: "#7c3aed" },
+              { Icon: Target, k: "Success", v: p.successRate === null ? "—" : `${p.successRate}%`, c: "#059669" },
+            ].map(({ Icon, k, v, c }, i) => (
+              <motion.div key={k} initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.1 + i * 0.06 }} className="flex items-center gap-2 rounded-2xl bg-story-mist px-3 py-2">
+                <span className="grid h-7 w-7 shrink-0 place-items-center rounded-full" style={{ background: `color-mix(in srgb, ${c} 16%, transparent)`, color: c }}><Icon className="h-3.5 w-3.5" /></span>
+                <div className="min-w-0"><dt className="text-[10px] font-semibold uppercase tracking-wider text-muted">{k}</dt><dd className="text-sm font-bold tabular-nums">{v}</dd></div>
+              </motion.div>
+            ))}
           </dl>
         </div>
 
-        <div role="tablist" aria-label="Challenge sections" className="flex gap-1 overflow-x-auto border-b border-border-soft px-3">
+        <div role="tablist" aria-label="Challenge sections" className="no-scrollbar flex gap-1 overflow-x-auto border-b border-border-soft px-3 py-2">
           {TABS.map((t) => (
-            <button key={t} role="tab" aria-selected={tab === t} onClick={() => setTab(t)} className={cn("whitespace-nowrap border-b-2 px-3 py-3 text-sm font-semibold transition-colors focus-visible:outline focus-visible:outline-2 focus-visible:outline-brand-500", tab === t ? "border-brand-600 text-brand-700 dark:text-brand-200" : "border-transparent text-muted hover:text-foreground")}>{t}</button>
+            <button key={t} role="tab" aria-selected={tab === t} onClick={() => setTab(t)} className={cn("relative whitespace-nowrap rounded-full px-4 py-2 text-sm font-semibold transition-colors", tab === t ? "text-white" : "text-muted hover:text-story-royal")}>
+              {tab === t && <motion.span layoutId="lq-tab" className="absolute inset-0 rounded-full bg-story-royal" transition={{ type: "spring", stiffness: 420, damping: 34 }} />}
+              <span className="relative">{t}</span>
+            </button>
           ))}
         </div>
 
-        <div role="tabpanel" className="space-y-5 p-5 text-sm leading-6">
+        <motion.div key={tab} role="tabpanel" initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.25 }} className="space-y-5 p-5 text-sm leading-6">
           {tab === "Problem" && (<>
             <p className="whitespace-pre-line">{p.statement}</p>
             {p.scenario ? <Block title="Real-world scenario"><p className="whitespace-pre-line">{p.scenario}</p></Block> : null}
@@ -208,7 +220,7 @@ export function ChallengeWorkspace(p: WorkspaceProps) {
             <p className="text-muted">Hints go from a gentle nudge to an implementation outline. Each hint you open reduces the XP for solving this challenge by 10% (up to 30%).</p>
             {hints.map((h, i) => <Block key={i} title={`Hint ${i + 1}`}><p>{h}</p></Block>)}
             {hints.length < p.hintTotal ? (
-              <button onClick={showHint} className="inline-flex items-center gap-2 rounded-xl border border-border-soft px-4 py-2 font-semibold hover:bg-surface-2"><Lightbulb className="h-4 w-4" />Show hint {hints.length + 1} of {p.hintTotal}</button>
+              <button onClick={showHint} className="inline-flex items-center gap-2 rounded-full border border-border-soft px-4 py-2 font-semibold transition-all hover:border-story-royal hover:text-story-royal active:scale-95"><Lightbulb className="h-4 w-4 text-amber-500" />Show hint {hints.length + 1} of {p.hintTotal}</button>
             ) : p.hintTotal === 0 ? <p className="text-muted">This challenge has no hints.</p> : <p className="text-muted">All hints shown.</p>}
             {hintError ? <p role="alert" className="text-rose-600">{hintError}</p> : null}
           </>)}
@@ -218,7 +230,7 @@ export function ChallengeWorkspace(p: WorkspaceProps) {
               <SolutionView solution={solution} lang={lang} videoUrl={videoUrl} languages={p.languages} />
             ) : (<>
               <p className="text-muted">{solutionLocked ? `Try it first. The official solution unlocks after you solve this challenge or make ${p.unlockAttempts} attempts (${attempts}/${p.unlockAttempts} so far).` : "You can now view the official solution, the line-by-line explanation and the video."}</p>
-              <button disabled={solutionLocked} onClick={loadSolution} className="rounded-xl bg-brand-600 px-4 py-2 font-semibold text-white disabled:cursor-not-allowed disabled:opacity-50 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand-500">View official solution</button>
+              <button disabled={solutionLocked} onClick={loadSolution} className="rounded-full bg-story-royal px-5 py-2.5 font-semibold text-white transition-transform hover:-translate-y-0.5 disabled:cursor-not-allowed disabled:opacity-50">View official solution</button>
               {solutionError ? <p role="alert" className="text-rose-600">{solutionError}</p> : null}
             </>)}
           </>)}
@@ -248,28 +260,32 @@ export function ChallengeWorkspace(p: WorkspaceProps) {
 
           {tab === "Notes" && (<>
             <label htmlFor="lq-note" className="font-semibold">My approach <span className="font-normal text-muted">(private — only you can see this)</span></label>
-            <textarea id="lq-note" value={note} onChange={(e) => onNote(e.target.value)} rows={8} maxLength={5000} placeholder="My approach: use a hash map because…" className="w-full rounded-xl border border-border-soft bg-background p-3 focus-visible:outline focus-visible:outline-2 focus-visible:outline-brand-500" />
+            <textarea id="lq-note" value={note} onChange={(e) => onNote(e.target.value)} rows={8} maxLength={5000} placeholder="My approach: use a hash map because…" className="w-full rounded-2xl border border-border-soft bg-background p-3 focus-visible:border-story-royal focus-visible:outline-none" />
             <p className="text-xs text-muted" aria-live="polite">{noteState === "saving" ? "Saving…" : noteState === "saved" ? "Saved" : ""}</p>
           </>)}
-        </div>
+        </motion.div>
       </section>
 
       {/* RIGHT: IDE + results */}
       <section className="min-w-0 space-y-4" aria-label="Code editor">
         <div className={cn(stagePanel, "overflow-hidden")}>
+          <div className="flex items-center gap-2 border-b border-border-soft bg-story-mist px-4 py-2.5">
+            <span className="h-2.5 w-2.5 rounded-full bg-rose-400" /><span className="h-2.5 w-2.5 rounded-full bg-amber-400" /><span className="h-2.5 w-2.5 rounded-full bg-emerald-400" />
+            <span className="ml-2 font-mono text-[11px] font-semibold text-muted">{p.languages.find((l) => l.id === lang)?.label ?? lang} editor</span>
+            <span className="ml-auto text-[11px] text-muted" aria-live="polite">{saveState === "saving" ? "Saving draft…" : saveState === "saved" ? "Draft saved ✓" : resumed && code === p.drafts[lang] ? "Continuing where you left off" : ""}</span>
+          </div>
           <div className="flex flex-wrap items-center gap-2 border-b border-border-soft p-3">
             <label htmlFor="lq-lang" className="sr-only">Language</label>
-            <select id="lq-lang" value={lang} onChange={(e) => setLang(e.target.value)} className="rounded-lg border border-border-soft bg-background px-3 py-2 text-sm font-semibold focus-visible:outline focus-visible:outline-2 focus-visible:outline-brand-500">
+            <select id="lq-lang" value={lang} onChange={(e) => setLang(e.target.value)} className="rounded-full border border-border-soft bg-background px-4 py-2 text-sm font-semibold outline-none transition-colors hover:border-story-royal focus-visible:border-story-royal">
               {p.languages.map((l) => <option key={l.id} value={l.id}>{l.label}</option>)}
             </select>
-            <span className="text-xs text-muted" aria-live="polite">{saveState === "saving" ? "Saving draft…" : saveState === "saved" ? "Draft saved" : resumed && code === p.drafts[lang] ? "Continuing where you left off" : ""}</span>
             <div className="ml-auto flex gap-2">
-              <button onClick={reset} className="inline-flex items-center gap-1.5 rounded-lg border border-border-soft px-3 py-2 text-sm font-semibold hover:bg-surface-2"><RotateCcw className="h-4 w-4" /><span className="hidden sm:inline">Reset</span><span className="sr-only sm:hidden">Reset code</span></button>
-              <button onClick={() => execute("run")} disabled={busy !== null} className="inline-flex items-center gap-1.5 rounded-lg border border-border-soft px-3 py-2 text-sm font-semibold hover:bg-surface-2 disabled:opacity-60"><Play className="h-4 w-4" />{busy === "run" ? "Running…" : "Run"}</button>
-              <button onClick={() => execute("submit")} disabled={busy !== null} className="inline-flex items-center gap-1.5 rounded-lg bg-brand-600 px-3.5 py-2 text-sm font-semibold text-white hover:bg-brand-700 disabled:opacity-60"><Send className="h-4 w-4" />{busy === "submit" ? "Judging…" : "Submit"}</button>
+              <button onClick={reset} className={ghostBtn}><RotateCcw className="h-4 w-4" /><span className="hidden sm:inline">Reset</span><span className="sr-only sm:hidden">Reset code</span></button>
+              <button onClick={() => execute("run")} disabled={busy !== null} className={ghostBtn}>{busy === "run" ? <Loader2 className="h-4 w-4 animate-spin" /> : <Play className="h-4 w-4" />}{busy === "run" ? "Running…" : "Run"}</button>
+              <motion.button whileHover={{ y: -2 }} whileTap={{ scale: 0.96 }} onClick={() => execute("submit")} disabled={busy !== null} className="inline-flex items-center gap-1.5 rounded-full bg-story-royal px-4 py-2 text-sm font-semibold text-white shadow-[0_8px_20px_-10px_rgba(31,86,214,0.8)] disabled:opacity-60">{busy === "submit" ? <Loader2 className="h-4 w-4 animate-spin" /> : <Send className="h-4 w-4" />}{busy === "submit" ? "Judging…" : "Submit"}</motion.button>
             </div>
           </div>
-          <div className="flex bg-surface-2/40 font-mono text-[13px] leading-6">
+          <div className="flex bg-background font-mono text-[13px] leading-6">
             <div aria-hidden className="select-none border-r border-border-soft px-3 py-3 text-right text-muted">
               {Array.from({ length: lines }, (_, i) => <div key={i}>{i + 1}</div>)}
             </div>
@@ -278,15 +294,15 @@ export function ChallengeWorkspace(p: WorkspaceProps) {
               value={code} onChange={(e) => edit(e.target.value)} onKeyDown={onKeyDown}
               spellCheck={false} autoCapitalize="off" autoCorrect="off" wrap="off"
               style={{ height: `${lines * 24 + 24}px`, minHeight: 440, maxHeight: 640 }}
-              className="w-full flex-1 resize-none overflow-auto bg-transparent px-3 py-3 outline-none focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-brand-500"
+              className="w-full flex-1 resize-none overflow-auto bg-transparent px-3 py-3 outline-none focus-visible:bg-story-mist/40"
             />
           </div>
         </div>
 
         <div className={cn(stagePanel, "p-5")} aria-live="polite">
-          <h2 className="text-sm font-bold">Test results</h2>
-          {busy ? <div className="mt-3 space-y-2" aria-busy><div className="h-4 w-1/2 animate-pulse rounded bg-surface-2" /><div className="h-4 w-2/3 animate-pulse rounded bg-surface-2" /><div className="h-4 w-1/3 animate-pulse rounded bg-surface-2" /></div> : error ? (
-            <div role="alert" className="mt-3 rounded-xl bg-rose-50 p-4 text-sm text-rose-800 dark:bg-rose-900/20 dark:text-rose-200">
+          <h2 className="text-sm font-bold text-story-navy dark:text-foreground">Test results</h2>
+          {busy ? <div className="mt-3 space-y-2" aria-busy><div className="h-4 w-1/2 animate-pulse rounded-full bg-story-mist" /><div className="h-4 w-2/3 animate-pulse rounded-full bg-story-mist" /><div className="h-4 w-1/3 animate-pulse rounded-full bg-story-mist" /></div> : error ? (
+            <div role="alert" className="mt-3 rounded-2xl bg-rose-50 p-4 text-sm text-rose-800 dark:bg-rose-900/20 dark:text-rose-200">
               <p className="font-semibold">Your code could not be executed.</p>
               <p className="mt-1">{error}</p>
               <p className="mt-1 text-xs opacity-80">Possible reason: the execution service is busy or you are sending requests too quickly. Wait a moment and retry.</p>
@@ -304,16 +320,16 @@ function Block({ title, children }: { title: string; children: React.ReactNode }
   return <div><h3 className="mb-1.5 text-xs font-bold uppercase tracking-wider text-muted">{title}</h3>{children}</div>;
 }
 function Pre({ label, children }: { label: string; children: string }) {
-  return <div><p className="mb-1 text-xs text-muted">{label}</p><pre className="overflow-x-auto rounded-lg bg-surface-2 p-3 font-mono text-[13px] leading-5">{children}</pre></div>;
+  return <div><p className="mb-1 text-xs text-muted">{label}</p><pre className="overflow-x-auto rounded-2xl bg-story-mist p-3 font-mono text-[13px] leading-5">{children}</pre></div>;
 }
 
 function ReportView({ report }: { report: Report & { kind: "run" | "submit" } }) {
   const ok = report.verdict === "ACCEPTED";
   return (
-    <div className="mt-3 space-y-3">
-      <div className={cn("rounded-xl p-4", ok ? "bg-emerald-50 dark:bg-emerald-900/20" : "bg-rose-50 dark:bg-rose-900/20")}>
+    <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.35 }} className="mt-3 space-y-3">
+      <div className={cn("rounded-2xl p-4", ok ? "bg-emerald-50 dark:bg-emerald-900/20" : "bg-rose-50 dark:bg-rose-900/20")}>
         <p className={cn("flex items-center gap-2 font-bold", ok ? "text-emerald-700 dark:text-emerald-300" : "text-rose-700 dark:text-rose-300")}>
-          {ok ? <CheckCircle2 className="h-5 w-5" /> : <XCircle className="h-5 w-5" />}
+          <motion.span initial={{ scale: 0, rotate: -40 }} animate={{ scale: 1, rotate: 0 }} transition={{ type: "spring", stiffness: 380, damping: 16 }} className="inline-flex">{ok ? <CheckCircle2 className="h-5 w-5" /> : <XCircle className="h-5 w-5" />}</motion.span>
           {report.kind === "run" && ok ? "Examples passed" : VERDICT_TEXT[report.verdict] ?? report.verdict}
         </p>
         <p className="mt-1 text-sm">{report.passed} / {report.total} test cases passed · {report.timeMs} ms</p>
@@ -321,7 +337,7 @@ function ReportView({ report }: { report: Report & { kind: "run" | "submit" } })
         {report.kind === "submit" && ok && !report.firstSolve ? <p className="mt-2 text-sm text-muted">Already solved — XP is only awarded for the first solve.</p> : null}
         {report.kind === "run" && ok ? <p className="mt-2 text-sm text-muted">Press Submit to judge against the hidden tests and earn XP.</p> : null}
       </div>
-      {report.message ? <pre className="max-h-48 overflow-auto rounded-lg bg-surface-2 p-3 font-mono text-xs text-rose-700 dark:text-rose-300">{report.message}</pre> : null}
+      {report.message ? <pre className="max-h-48 overflow-auto rounded-2xl bg-story-mist p-3 font-mono text-xs text-rose-700 dark:text-rose-300">{report.message}</pre> : null}
       {report.firstFailure ? (
         <div className="grid gap-2 sm:grid-cols-3">
           <Pre label="Input">{report.firstFailure.input}</Pre>
@@ -331,13 +347,13 @@ function ReportView({ report }: { report: Report & { kind: "run" | "submit" } })
       ) : null}
       <ul className="grid gap-1.5 sm:grid-cols-2">
         {report.cases.map((c, i) => (
-          <li key={i} className="flex items-center justify-between rounded-lg border border-border-soft px-3 py-2 text-xs">
+          <motion.li key={i} initial={{ opacity: 0, scale: 0.9 }} animate={{ opacity: 1, scale: 1 }} transition={{ delay: Math.min(i, 14) * 0.04 }} className="flex items-center justify-between rounded-full border border-border-soft px-3.5 py-2 text-xs">
             <span className="flex items-center gap-1.5">{c.passed ? <CheckCircle2 className="h-4 w-4 text-emerald-600" /> : <XCircle className="h-4 w-4 text-rose-600" />}{c.label}</span>
             <span className="text-muted">{c.timeMs} ms</span>
-          </li>
+          </motion.li>
         ))}
       </ul>
-    </div>
+    </motion.div>
   );
 }
 
@@ -354,9 +370,9 @@ function SolutionView({ solution, lang, videoUrl, languages }: { solution: Solut
       {available.length ? (
         <Block title="Code">
           <div className="mb-2 flex flex-wrap gap-1.5" role="tablist" aria-label="Solution language">
-            {available.map((l) => <button key={l.id} role="tab" aria-selected={shown === l.id} onClick={() => setShown(l.id)} className={cn("rounded-full border px-3 py-1 text-xs font-semibold", shown === l.id ? "border-brand-600 bg-brand-50 text-brand-700 dark:bg-brand-900/30 dark:text-brand-200" : "border-border-soft text-muted")}>{l.label}</button>)}
+            {available.map((l) => <button key={l.id} role="tab" aria-selected={shown === l.id} onClick={() => setShown(l.id)} className={cn("rounded-full border px-3 py-1 text-xs font-semibold", shown === l.id ? "border-story-royal bg-story-royal text-white" : "border-border-soft text-muted")}>{l.label}</button>)}
           </div>
-          {src ? <pre className="overflow-x-auto rounded-lg bg-surface-2 p-3 font-mono text-[13px] leading-6">{src.split("\n").map((l, i) => <div key={i}><span aria-hidden className="mr-3 inline-block w-5 select-none text-right text-muted">{i + 1}</span>{l}</div>)}</pre> : null}
+          {src ? <pre className="overflow-x-auto rounded-2xl bg-story-mist p-3 font-mono text-[13px] leading-6">{src.split("\n").map((l, i) => <div key={i}><span aria-hidden className="mr-3 inline-block w-5 select-none text-right text-muted">{i + 1}</span>{l}</div>)}</pre> : null}
         </Block>
       ) : null}
       {explained?.length ? <Block title="Line-by-line explanation"><ol className="list-decimal space-y-1 pl-5">{explained.map((l, i) => <li key={i}>{l}</li>)}</ol></Block> : null}
@@ -366,7 +382,7 @@ function SolutionView({ solution, lang, videoUrl, languages }: { solution: Solut
       </div>
       {solution.alternative ? <Block title="Alternative approach"><p className="whitespace-pre-line">{solution.alternative}</p></Block> : null}
       {solution.edgeCases ? <Block title="Edge cases"><p className="whitespace-pre-line">{solution.edgeCases}</p></Block> : null}
-      {videoUrl ? <Block title="Video explanation">{/\.(mp4|webm)(\?|$)/i.test(videoUrl) ? <video src={videoUrl} controls preload="none" className="w-full rounded-xl" /> : <Link href={videoUrl} target="_blank" rel="noopener noreferrer" className="font-semibold text-brand-600 underline">Watch the video explanation</Link>}</Block> : null}
+      {videoUrl ? <Block title="Video explanation">{/\.(mp4|webm)(\?|$)/i.test(videoUrl) ? <video src={videoUrl} controls preload="none" className="w-full rounded-xl" /> : <Link href={videoUrl} target="_blank" rel="noopener noreferrer" className="font-semibold text-story-royal underline">Watch the video explanation</Link>}</Block> : null}
     </div>
   );
 }

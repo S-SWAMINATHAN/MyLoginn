@@ -48,7 +48,7 @@ export function CoachPanel({ courseSlug, lessonId }: { courseSlug: string; lesso
   }
 
   return (
-    <section className="rounded-2xl border border-brand-200 bg-brand-50/40 p-5 sm:p-6 dark:bg-brand-900/10" aria-labelledby="coach-title">
+    <section className="rounded-2xl border border-story-royal/30 bg-story-mist p-5 sm:p-6" aria-labelledby="coach-title">
       <div className="flex flex-wrap items-center justify-between gap-3">
         <h2 id="coach-title" className="text-lg font-bold">AI Teaching Coach</h2>
         <div className="flex items-center gap-2 text-xs">
@@ -64,11 +64,11 @@ export function CoachPanel({ courseSlug, lessonId }: { courseSlug: string; lesso
       </div>
       <p className="mt-1 text-xs text-muted">It explains from this lesson only. It can&apos;t see your marks or payments, and gives hints before answers.</p>
       <label htmlFor="coach-q" className="mt-4 block text-sm font-semibold">Your question or answer</label>
-      <textarea id="coach-q" value={message} onChange={(e) => setMessage(e.target.value)} rows={2} maxLength={1500} className="mt-1 w-full rounded-xl border border-border-soft bg-background p-3 text-sm outline-none focus:border-brand-500" />
+      <textarea id="coach-q" value={message} onChange={(e) => setMessage(e.target.value)} rows={2} maxLength={1500} className="mt-1 w-full rounded-xl border border-border-soft bg-background p-3 text-sm outline-none focus:border-story-royal" />
       <label htmlFor="coach-code" className="mt-3 block text-sm font-semibold">Code (optional)</label>
-      <textarea id="coach-code" value={code} onChange={(e) => setCode(e.target.value)} rows={4} maxLength={4000} spellCheck={false} className="mt-1 w-full rounded-xl border border-border-soft bg-background p-3 font-mono text-xs outline-none focus:border-brand-500" />
+      <textarea id="coach-code" value={code} onChange={(e) => setCode(e.target.value)} rows={4} maxLength={4000} spellCheck={false} className="mt-1 w-full rounded-xl border border-border-soft bg-background p-3 font-mono text-xs outline-none focus:border-story-royal" />
       <div className="mt-3 flex flex-wrap gap-2">
-        {ACTIONS.map((a) => <button key={a.mode} type="button" disabled={busy} onClick={() => ask(a.mode, a.needsText)} className="rounded-full border border-brand-300 bg-background px-3.5 py-1.5 text-xs font-semibold text-brand-700 hover:bg-brand-50 disabled:opacity-50">{a.label}</button>)}
+        {ACTIONS.map((a) => <button key={a.mode} type="button" disabled={busy} onClick={() => ask(a.mode, a.needsText)} className="rounded-full border border-story-royal/40 bg-background px-3.5 py-1.5 text-xs font-semibold text-story-royal hover:bg-story-mist disabled:opacity-50">{a.label}</button>)}
       </div>
       {error && <p role="alert" className="mt-3 rounded-lg bg-danger/10 px-3 py-2 text-sm text-danger">{error}</p>}
       {(answer || busy) && <div className="mt-4 whitespace-pre-wrap rounded-xl bg-background p-4 text-sm leading-6" aria-live="polite">{answer || "Thinking…"}</div>}

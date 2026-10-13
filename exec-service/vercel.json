@@ -1,0 +1,9 @@
+{
+  "functions": {
+    "api/v2/execute.js": {
+      "maxDuration": 60,
+      "memory": 1024,
+      "includeFiles": "{lib/**,node_modules/pyodide/**}"
+    }
+  }
+}

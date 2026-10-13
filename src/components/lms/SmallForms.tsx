@@ -2,9 +2,13 @@
 
 import { useState } from "react";
 import { useRouter } from "next/navigation";
+import { motion } from "framer-motion";
+import { GlideArrow } from "@/components/ui/PlanButton";
+import { useReducedMotion } from "@/lib/useReducedMotion";
 
 export function LmsEnrollButton({ slug, label = "Enroll free" }: { slug: string; label?: string }) {
   const router = useRouter();
+  const reduced = useReducedMotion();
   const [busy, setBusy] = useState(false);
   const [error, setError] = useState<string | null>(null);
   async function enroll() {
@@ -20,7 +24,20 @@ export function LmsEnrollButton({ slug, label = "Enroll free" }: { slug: string;
   }
   return (
     <div>
-      <button type="button" onClick={enroll} disabled={busy} className="w-full rounded-full bg-gradient-to-r from-brand-600 to-cyan-500 px-6 py-3 text-sm font-semibold text-white disabled:opacity-60">{busy ? "Enrolling…" : label}</button>
+      <motion.button
+        type="button"
+        onClick={enroll}
+        disabled={busy}
+        initial="rest"
+        whileHover="hover"
+        whileTap={{ scale: 0.97 }}
+        variants={{ rest: { y: 0 }, hover: { y: -2 } }}
+        transition={{ duration: 0.35, ease: [0.22, 1, 0.36, 1] }}
+        className="group inline-flex h-11 w-full select-none items-center justify-between gap-3 rounded-full bg-story-royal py-1.5 pl-5 pr-1.5 text-sm font-medium text-white shadow-[0_10px_24px_-12px_rgba(11,31,77,0.55)] disabled:opacity-60"
+      >
+        <span>{busy ? "Enrolling…" : label}</span>
+        <span aria-hidden className="grid h-8 w-14 shrink-0 place-items-center overflow-hidden rounded-full bg-white/15 text-white transition-colors group-hover:bg-white/25"><GlideArrow reduced={reduced} /></span>
+      </motion.button>
       {error && <p role="alert" className="mt-2 text-sm text-danger">{error}</p>}
     </div>
   );
@@ -52,11 +69,11 @@ export function AssignmentForm({ assignmentId, status, feedback, initialContent,
       {feedback && <p className="rounded-lg bg-amber-50 px-3 py-2 text-sm text-amber-900">Reviewer feedback: {feedback}</p>}
       <label className="block text-sm font-semibold" htmlFor={`as-${assignmentId}`}>Your work</label>
       <textarea id={`as-${assignmentId}`} value={content} onChange={(e) => setContent(e.target.value)} rows={6} disabled={locked} required minLength={20} maxLength={10000}
-        className="w-full rounded-xl border border-border-soft bg-background p-3 text-sm outline-none focus:border-brand-500 disabled:opacity-60" />
+        className="w-full rounded-xl border border-border-soft bg-background p-3 text-sm outline-none focus:border-story-royal disabled:opacity-60" />
       <label className="block text-sm font-semibold" htmlFor={`al-${assignmentId}`}>Link (optional, e.g. a GitHub repository)</label>
-      <input id={`al-${assignmentId}`} type="url" value={link} onChange={(e) => setLink(e.target.value)} disabled={locked} placeholder="https://" className="w-full rounded-xl border border-border-soft bg-background p-3 text-sm outline-none focus:border-brand-500 disabled:opacity-60" />
+      <input id={`al-${assignmentId}`} type="url" value={link} onChange={(e) => setLink(e.target.value)} disabled={locked} placeholder="https://" className="w-full rounded-xl border border-border-soft bg-background p-3 text-sm outline-none focus:border-story-royal disabled:opacity-60" />
       {msg && <p role="status" className={`text-sm ${msg.ok ? "text-success" : "text-danger"}`}>{msg.text}</p>}
-      {!locked && <button type="submit" disabled={busy} className="rounded-full bg-brand-600 px-6 py-2.5 text-sm font-semibold text-white disabled:opacity-50">{busy ? "Submitting…" : status ? "Resubmit" : "Submit for review"}</button>}
+      {!locked && <button type="submit" disabled={busy} className="rounded-full bg-story-royal px-6 py-2.5 text-sm font-semibold text-white disabled:opacity-50">{busy ? "Submitting…" : status ? "Resubmit" : "Submit for review"}</button>}
     </form>
   );
 }
@@ -94,7 +111,7 @@ export function CertificateDownload({ slug, defaultName }: { slug: string; defau
         <select value={style} onChange={(e) => setStyle(e.target.value)} className="mt-1 w-full rounded-xl border border-border-soft bg-background p-2.5 text-sm font-normal">{STYLES.map(([v, l]) => <option key={v} value={v}>{l}</option>)}</select>
       </label>
       {error && <p role="alert" className="text-sm text-danger sm:col-span-2">{error}</p>}
-      <button type="submit" disabled={busy} className="rounded-full bg-brand-600 px-6 py-2.5 text-sm font-semibold text-white disabled:opacity-50 sm:col-span-2">{busy ? "Preparing…" : "Download certificate (PDF)"}</button>
+      <button type="submit" disabled={busy} className="rounded-full bg-story-royal px-6 py-2.5 text-sm font-semibold text-white disabled:opacity-50 sm:col-span-2">{busy ? "Preparing…" : "Download certificate (PDF)"}</button>
     </form>
   );
 }

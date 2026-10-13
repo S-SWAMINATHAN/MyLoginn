@@ -97,7 +97,7 @@ export function QuizRunner({ quizId, label, intro, bestPercent, passed }: Props)
             </li>
           ))}
         </ul>
-        <button type="button" onClick={start} disabled={busy} className="mt-5 rounded-full border border-border-soft px-5 py-2 text-sm font-semibold hover:border-brand-500 disabled:opacity-50">
+        <button type="button" onClick={start} disabled={busy} className="mt-5 rounded-full border border-border-soft px-5 py-2 text-sm font-semibold hover:border-story-royal disabled:opacity-50">
           {result.passed ? "Retake for practice" : "Try again"}
         </button>
       </section>
@@ -106,12 +106,12 @@ export function QuizRunner({ quizId, label, intro, bestPercent, passed }: Props)
 
   if (!started) {
     return (
-      <section className="rounded-2xl border border-brand-200 bg-brand-50/50 p-5 sm:p-6 dark:bg-brand-900/10">
+      <section className="rounded-2xl border border-story-royal/30 bg-story-mist p-5 sm:p-6">
         <h2 className="text-lg font-bold">{label}</h2>
         {intro && <p className="mt-1 text-sm text-muted">{intro}</p>}
         {bestPercent !== null && bestPercent !== undefined && <p className="mt-2 text-sm">Best score so far: <strong>{bestPercent}%</strong>{passed ? " (passed)" : ""}</p>}
         {error && <p role="alert" className="mt-3 rounded-lg bg-danger/10 px-3 py-2 text-sm text-danger">{error}</p>}
-        <button type="button" onClick={start} disabled={busy} className="mt-4 rounded-full bg-brand-600 px-6 py-2.5 text-sm font-semibold text-white disabled:opacity-50">{busy ? "Starting…" : bestPercent !== null && bestPercent !== undefined ? "Start another attempt" : "Start"}</button>
+        <button type="button" onClick={start} disabled={busy} className="mt-4 rounded-full bg-story-royal px-6 py-2.5 text-sm font-semibold text-white disabled:opacity-50">{busy ? "Starting…" : bestPercent !== null && bestPercent !== undefined ? "Start another attempt" : "Start"}</button>
       </section>
     );
   }
@@ -122,8 +122,8 @@ export function QuizRunner({ quizId, label, intro, bestPercent, passed }: Props)
       <div className="flex flex-wrap items-center justify-between gap-2">
         <h2 className="text-lg font-bold">{started.title}</h2>
         <div className="flex items-center gap-2 text-xs font-semibold">
-          <span className="rounded-full bg-brand-50 px-3 py-1 text-brand-700">{answered}/{started.questions.length} answered</span>
-          {mm && <span className={`rounded-full px-3 py-1 ${secondsLeft! < 60 ? "bg-danger/10 text-danger" : "bg-brand-50 text-brand-700"}`} role="timer">{mm}</span>}
+          <span className="rounded-full bg-story-mist px-3 py-1 text-story-royal">{answered}/{started.questions.length} answered</span>
+          {mm && <span className={`rounded-full px-3 py-1 ${secondsLeft! < 60 ? "bg-danger/10 text-danger" : "bg-story-mist text-story-royal"}`} role="timer">{mm}</span>}
         </div>
       </div>
       <p className="mt-1 text-xs text-muted">Pass mark {started.passPercent}%.</p>
@@ -136,7 +136,7 @@ export function QuizRunner({ quizId, label, intro, bestPercent, passed }: Props)
                 {q.options.map((o) => {
                   const on = (answers[q.id] ?? []).includes(o.id);
                   return (
-                    <label key={o.id} className={`flex cursor-pointer items-start gap-3 rounded-xl border px-3.5 py-2.5 text-sm transition-colors ${on ? "border-brand-500 bg-brand-50 dark:bg-brand-900/20" : "border-border-soft hover:border-brand-300"}`}>
+                    <label key={o.id} className={`flex cursor-pointer items-start gap-3 rounded-xl border px-3.5 py-2.5 text-sm transition-colors ${on ? "border-story-royal bg-story-mist" : "border-border-soft hover:border-story-royal/40"}`}>
                       <input type={q.type === "multiple" ? "checkbox" : "radio"} name={q.id} checked={on} onChange={() => toggle(q, o.id)} className="mt-1" />
                       <span>{o.text}</span>
                     </label>
@@ -148,7 +148,7 @@ export function QuizRunner({ quizId, label, intro, bestPercent, passed }: Props)
         ))}
       </ol>
       {error && <p role="alert" className="mt-4 rounded-lg bg-danger/10 px-3 py-2 text-sm text-danger">{error}</p>}
-      <button type="button" onClick={() => submit()} disabled={busy} className="mt-6 rounded-full bg-brand-600 px-6 py-2.5 text-sm font-semibold text-white disabled:opacity-50">{busy ? "Submitting…" : "Submit answers"}</button>
+      <button type="button" onClick={() => submit()} disabled={busy} className="mt-6 rounded-full bg-story-royal px-6 py-2.5 text-sm font-semibold text-white disabled:opacity-50">{busy ? "Submitting…" : "Submit answers"}</button>
     </section>
   );
 }

@@ -6,6 +6,7 @@ import { prisma } from "@/lib/prisma";
 import { Section, Container } from "@/components/ui/Section";
 import { ChallengeWorkspace } from "@/components/logiquest/ChallengeWorkspace";
 import { LANGUAGES, SOLUTION_UNLOCK_ATTEMPTS } from "@/lib/logiquest/constants";
+import { availableLanguages } from "@/lib/logiquest/executor";
 import { getChallengeForPage } from "@/lib/logiquest/queries";
 
 type Params = { params: Promise<{ slug: string }> };
@@ -26,12 +27,12 @@ export default async function ChallengePage({ params }: Params) {
 
   const examples = Array.isArray(c.examples) ? (c.examples as { input: string; output: string; explanation?: string }[]) : [];
   const starter = (c.starterCode && typeof c.starterCode === "object" ? c.starterCode : {}) as Record<string, string>;
-  const languages = c.languages.filter((l) => LANGUAGES[l]).map((l) => ({ id: l, label: LANGUAGES[l].label }));
+  const languages = c.languages.filter((l) => LANGUAGES[l] && availableLanguages().includes(l)).map((l) => ({ id: l, label: LANGUAGES[l].label }));
 
   return (
     <Section className="py-6 sm:py-10">
       <Container>
-        <Link href="/logiquest/coding" className="mb-4 inline-flex items-center gap-1 text-sm font-semibold text-muted hover:text-foreground"><ChevronLeft className="h-4 w-4" />All coding challenges</Link>
+        <Link href="/logiquest/coding" className="mb-4 inline-flex items-center gap-1 rounded-full border border-border-soft bg-surface px-4 py-2 text-sm font-semibold text-muted transition-all hover:border-story-royal hover:text-story-royal"><ChevronLeft className="h-4 w-4" />All coding challenges</Link>
         <ChallengeWorkspace
           slug={c.slug} title={c.title} difficulty={c.difficulty} topic={c.topic} subtopic={c.subtopic} style={c.style}
           statement={c.statement} scenario={c.scenario} constraints={c.constraints} inputFormat={c.inputFormat} outputFormat={c.outputFormat}

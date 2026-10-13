@@ -1,18 +1,36 @@
 import Link from "next/link";
-import { ArrowRight, Flame } from "lucide-react";
+import { CalendarCheck } from "lucide-react";
 import { getCurrentUser } from "@/lib/auth";
 import { Section, Container } from "@/components/ui/Section";
-import { DifficultyBadge, EmptyState, StatTile } from "@/components/logiquest/ui";
+import { Reveal, RevealGroup, RevealItem } from "@/components/ui/Reveal";
+import { SplitHeadline } from "@/components/experience/SplitHeadline";
+import { ArrowLink } from "@/components/ui/ArrowLink";
+import { PillTicker } from "@/components/ui/PillTicker";
+import { DifficultyBadge, EmptyState } from "@/components/logiquest/ui";
+import { ActivityHeatmap, BoardList, CategoryGrid, LogiQuestHeroVisual, StatCard } from "@/components/logiquest/LogiQuestVisuals";
 import { LQ_CATEGORIES } from "@/lib/logiquest/constants";
 import { dayKey } from "@/lib/logiquest/progress";
 import { getDailyChallenge, getRecommendations, getUserOverview } from "@/lib/logiquest/queries";
 import { getLogiQuestLeaderboard } from "@/lib/logiquest/leaderboard";
-import { cn } from "@/lib/cn";
 
 export const metadata = {
   title: "LogiQuest — Practice Coding, Logic & IT Skills",
   description: "Practice real-world coding problems in a built-in IDE, earn XP, build a streak and climb the LogiQuest leaderboard.",
 };
+
+const rowCls = "group flex items-center justify-between gap-3 rounded-2xl border border-border-soft bg-surface p-4 transition-all duration-300 hover:-translate-y-1 hover:border-story-royal/40 hover:shadow-[var(--shadow-soft)]";
+
+function SectionTitle({ eyebrow, title, action }: { eyebrow: string; title: React.ReactNode; action?: React.ReactNode }) {
+  return (
+    <div className="mb-5 flex flex-wrap items-end justify-between gap-3">
+      <div>
+        <span className="story-eyebrow">{eyebrow}</span>
+        <h2 className="mt-2 text-xl font-bold tracking-tight text-story-navy sm:text-2xl dark:text-foreground">{title}</h2>
+      </div>
+      {action}
+    </div>
+  );
+}
 
 export default async function LogiQuestHome() {
   const user = await getCurrentUser();
@@ -23,117 +41,105 @@ export default async function LogiQuestHome() {
     user ? getRecommendations(user.id) : null,
   ]);
 
+  const weeks = 17;
+  const end = new Date();
+  const start = new Date(end.getTime() - (weeks * 7 - 1) * 24 * 3600_000);
+  const cells = overview
+    ? Array.from({ length: weeks * 7 }, (_, i) => {
+        const key = dayKey(new Date(start.getTime() + i * 24 * 3600_000));
+        return { key, n: overview.activity[key] ?? 0 };
+      })
+    : [];
+
   return (
     <>
-      <Section className="pb-8 pt-10 sm:pt-16">
+      <Section className="overflow-hidden pb-6 pt-6 sm:pt-10">
         <Container>
-          <p className="text-xs font-bold uppercase tracking-[0.18em] text-brand-600">LogiQuest</p>
-          <h1 className="mt-2 max-w-3xl text-3xl font-bold leading-tight sm:text-5xl">Master the skills. Solve real problems. Build your future.</h1>
-          <p className="mt-3 text-lg font-medium brand-gradient-text">Think. Code. Solve. Communicate. Grow.</p>
-          <p className="mt-3 max-w-2xl text-muted">Practice real-world problems in a built-in IDE, earn XP for every first solve, keep a daily streak and see where you stand.</p>
-          <div className="mt-6 flex flex-wrap gap-3">
-            <Link href="/logiquest/coding" className="inline-flex items-center gap-2 rounded-xl bg-brand-600 px-5 py-3 font-semibold text-white hover:bg-brand-700">Start practicing <ArrowRight className="h-4 w-4" /></Link>
-            {daily ? <Link href={`/logiquest/challenges/${daily.slug}`} className="rounded-xl border border-border-soft bg-surface px-5 py-3 font-semibold hover:bg-surface-2">Daily challenge</Link> : null}
+          <div className="mx-auto grid w-full min-w-0 max-w-6xl items-center gap-12 lg:grid-cols-2 lg:gap-16">
+            <div className="min-w-0">
+              <Reveal><span className="story-eyebrow">LogiQuest</span></Reveal>
+              <SplitHeadline as="h1" text="Master the skills. Solve real problems." className="mt-4 max-w-xl text-4xl font-bold leading-[1.08] tracking-tight text-story-navy sm:text-5xl dark:text-foreground" />
+              <Reveal direction="up" delay={0.15}>
+                <p className="mt-5 max-w-lg text-base leading-8 text-muted sm:text-lg">Practice real-world problems in a built-in IDE, earn XP for every first solve, keep a daily streak and see where you stand.</p>
+              </Reveal>
+              <Reveal direction="up" delay={0.25} className="mt-7 flex flex-wrap items-center gap-3">
+                <ArrowLink href="/logiquest/coding">Start practicing</ArrowLink>
+                {daily && <Link href={`/logiquest/challenges/${daily.slug}`} className="rounded-full border border-border-soft bg-surface px-6 py-2.5 text-sm font-semibold transition-all duration-300 hover:-translate-y-1 hover:border-story-royal hover:text-story-royal active:scale-95">Daily challenge</Link>}
+              </Reveal>
+              <Reveal direction="up" delay={0.35} className="mt-8"><PillTicker items={["Think", "Code", "Solve", "Communicate", "Grow"]} /></Reveal>
+            </div>
+            <Reveal direction="left" delay={0.15} className="min-w-0 px-3 pb-4"><LogiQuestHeroVisual /></Reveal>
           </div>
         </Container>
       </Section>
 
-      <Section className="py-6">
-        <Container className="space-y-10">
+      <Section className="py-8 sm:py-10">
+        <Container className="max-w-6xl space-y-14">
           {overview ? (
             <div>
-              <h2 className="mb-3 text-lg font-bold">Your progress</h2>
-              <div className="grid grid-cols-2 gap-3 lg:grid-cols-4">
-                <StatTile label="XP" value={overview.xp.toLocaleString("en-IN")} />
-                <StatTile label="Solved" value={overview.solved} />
-                <StatTile label="Accuracy" value={overview.accuracy === null ? "—" : `${overview.accuracy}%`} hint={`${overview.submissions} submissions`} />
-                <StatTile label="Streak" value={overview.streak ? `🔥 ${overview.streak}` : "0"} hint={`Longest ${overview.longestStreak} days`} />
-              </div>
-              <Heatmap activity={overview.activity} />
+              <SectionTitle eyebrow="Your progress" title="Keep the momentum going" />
+              <RevealGroup className="grid grid-cols-1 gap-3 min-[480px]:grid-cols-2 lg:grid-cols-4 lg:gap-4">
+                <RevealItem><StatCard label="XP earned" value={overview.xp} icon="xp" color="#2563eb" /></RevealItem>
+                <RevealItem><StatCard label="Solved" value={overview.solved} icon="solved" color="#059669" /></RevealItem>
+                <RevealItem><StatCard label="Accuracy" value={overview.accuracy ?? 0} text={overview.accuracy === null ? "—" : `${overview.accuracy}%`} hint={`${overview.submissions} submissions`} icon="accuracy" color="#7c3aed" /></RevealItem>
+                <RevealItem><StatCard label="Day streak" value={overview.streak} hint={`Longest ${overview.longestStreak} days`} icon="streak" color="#ea580c" /></RevealItem>
+              </RevealGroup>
+              <ActivityHeatmap cells={cells} weeks={weeks} />
             </div>
           ) : (
-            <div className="rounded-2xl border border-border-soft bg-surface p-5 text-sm"><Link href="/login?next=%2Flogiquest" className="font-semibold text-brand-600">Log in</Link> to track XP, streaks and submissions.</div>
+            <Reveal className="flex flex-wrap items-center justify-between gap-3 rounded-3xl border border-border-soft bg-story-mist p-5 text-sm">
+              <span className="font-medium">Log in to track XP, streaks and submissions.</span>
+              <Link href="/login?next=%2Flogiquest" className="rounded-full bg-story-royal px-5 py-2 text-sm font-semibold text-white transition-transform hover:-translate-y-0.5">Log in</Link>
+            </Reveal>
           )}
 
           <div>
-            <h2 className="mb-3 text-lg font-bold">Categories</h2>
-            <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
-              {LQ_CATEGORIES.map((c) => {
-                const body = (<><p className="font-semibold">{c.label}</p><p className="mt-1 text-sm text-muted">{c.desc}</p>{!c.live ? <p className="mt-3 inline-block rounded-full bg-surface-2 px-2.5 py-0.5 text-xs font-semibold text-muted">In development</p> : <p className="mt-3 text-sm font-semibold text-brand-600">Practice now →</p>}</>);
-                return c.live
-                  ? <Link key={c.id} href={`/logiquest/${c.slug}`} className="rounded-2xl border border-border-soft bg-surface p-5 shadow-[var(--shadow-soft)] transition hover:-translate-y-0.5 hover:border-brand-300">{body}</Link>
-                  : <div key={c.id} aria-disabled className="rounded-2xl border border-border-soft bg-surface p-5 opacity-70">{body}</div>;
-              })}
-            </div>
+            <SectionTitle eyebrow="Choose your path" title="Practice categories" />
+            <CategoryGrid items={LQ_CATEGORIES.map((c) => ({ id: c.id, slug: c.slug, label: c.label, desc: c.desc, live: c.live }))} />
           </div>
 
-          <div className="grid gap-6 lg:grid-cols-2">
-            <div>
-              <h2 className="mb-3 text-lg font-bold">Daily challenge <span className="text-xs font-normal text-muted">· {dayKey()}</span></h2>
+          <div className="grid gap-8 lg:grid-cols-2">
+            <Reveal>
+              <SectionTitle eyebrow={dayKey()} title="Daily challenge" />
               {daily ? (
-                <Link href={`/logiquest/challenges/${daily.slug}`} className="block rounded-2xl border border-brand-200 bg-brand-50/60 p-5 transition hover:border-brand-400 dark:bg-brand-900/10">
-                  <div className="flex items-center gap-2"><DifficultyBadge difficulty={daily.difficulty} /><span className="text-xs text-muted">{daily.topic} · {daily.estimatedMinutes} min · {daily.xp} XP</span></div>
-                  <p className="mt-2 text-lg font-semibold">{daily.title}</p>
+                <Link href={`/logiquest/challenges/${daily.slug}`} className="group block rounded-3xl bg-story-royal p-6 text-white transition-all duration-300 hover:-translate-y-1.5 hover:shadow-[var(--shadow-lift)]">
+                  <div className="flex items-center gap-3">
+                    <span className="grid h-11 w-11 place-items-center rounded-full bg-white/15"><CalendarCheck className="h-5 w-5" /></span>
+                    <DifficultyBadge difficulty={daily.difficulty} className="border-white/30 bg-white/15 text-white dark:border-white/30 dark:bg-white/15 dark:text-white" />
+                  </div>
+                  <p className="mt-5 text-xl font-bold">{daily.title}</p>
+                  <p className="mt-1 text-sm text-white/80">{daily.topic} · {daily.estimatedMinutes} min · {daily.xp} XP</p>
+                  <span className="mt-5 inline-block text-sm font-semibold transition-transform duration-300 group-hover:translate-x-1">Solve it now →</span>
                 </Link>
               ) : <EmptyState title="No challenges published yet" body="Challenges appear here once an administrator publishes them." />}
-            </div>
+            </Reveal>
 
-            <div>
-              <h2 className="mb-3 text-lg font-bold">{overview?.inProgress.length ? "Continue practicing" : "Recommended for you"}</h2>
+            <Reveal delay={0.1}>
+              <SectionTitle eyebrow="For you" title={overview?.inProgress.length ? "Continue practicing" : "Recommended for you"} />
               {overview?.inProgress.length ? (
-                <div className="space-y-2">{overview.inProgress.map((p) => (
-                  <Link key={p.challenge.id} href={`/logiquest/challenges/${p.challenge.slug}`} className="flex items-center justify-between gap-3 rounded-xl border border-border-soft bg-surface p-4 hover:border-brand-300">
+                <div className="space-y-3">{overview.inProgress.map((p) => (
+                  <Link key={p.challenge.id} href={`/logiquest/challenges/${p.challenge.slug}`} className={rowCls}>
                     <span><span className="font-semibold">{p.challenge.title}</span><span className="block text-xs text-muted">{p.attempts} attempt{p.attempts === 1 ? "" : "s"} · best {p.bestPassed} tests passed</span></span>
                     <DifficultyBadge difficulty={p.challenge.difficulty} />
                   </Link>))}</div>
               ) : recs?.length ? (
-                <div className="space-y-2">{recs.map((r) => (
-                  <Link key={r.id} href={`/logiquest/challenges/${r.slug}`} className="flex items-center justify-between gap-3 rounded-xl border border-border-soft bg-surface p-4 hover:border-brand-300">
+                <div className="space-y-3">{recs.map((r) => (
+                  <Link key={r.id} href={`/logiquest/challenges/${r.slug}`} className={rowCls}>
                     <span><span className="font-semibold">{r.title}</span><span className="block text-xs text-muted">{r.reason} · {r.topic} · ~{r.estimatedMinutes} min</span></span>
                     <DifficultyBadge difficulty={r.difficulty} />
                   </Link>))}</div>
-              ) : <EmptyState title="No challenges completed yet" body="Pick a challenge and write your first solution." cta={<Link href="/logiquest/coding" className="font-semibold text-brand-600">Start your first challenge</Link>} />}
-            </div>
+              ) : <EmptyState title="No challenges completed yet" body="Pick a challenge and write your first solution." cta={<Link href="/logiquest/coding" className="font-semibold text-story-royal">Start your first challenge</Link>} />}
+            </Reveal>
           </div>
 
-          <div>
-            <div className="mb-3 flex items-center justify-between"><h2 className="text-lg font-bold">Top learners this week</h2><Link href="/logiquest/leaderboard" className="text-sm font-semibold text-brand-600">Full leaderboard</Link></div>
+          <Reveal>
+            <SectionTitle eyebrow="This week" title="Top learners" action={<Link href="/logiquest/leaderboard" className="text-sm font-semibold text-story-royal hover:underline">Full leaderboard →</Link>} />
             {board.top.length ? (
-              <ol className="divide-y divide-border-soft overflow-hidden rounded-2xl border border-border-soft bg-surface">
-                {board.top.map((e) => (
-                  <li key={e.userId} className={cn("flex items-center gap-4 px-4 py-3", e.isYou && "bg-brand-50/60 dark:bg-brand-900/10")}>
-                    <span className="w-6 font-bold tabular-nums">{e.rank}</span>
-                    <span className="flex-1 truncate font-semibold">{e.name}</span>
-                    {e.streak > 0 ? <span className="inline-flex items-center gap-1 text-xs text-muted"><Flame className="h-3.5 w-3.5 text-orange-500" />{e.streak}</span> : null}
-                    <span className="text-sm font-bold tabular-nums text-brand-700 dark:text-brand-200">{e.score} pts</span>
-                  </li>))}
-              </ol>
+              <BoardList rows={board.top} />
             ) : <EmptyState title="Nobody has ranked this week" body="Solve a challenge to take the first spot." />}
-          </div>
+          </Reveal>
         </Container>
       </Section>
     </>
-  );
-}
-
-/** GitHub-style activity grid for the last 17 weeks, from real submissions. */
-function Heatmap({ activity }: { activity: Record<string, number> }) {
-  const weeks = 17;
-  const end = new Date();
-  const start = new Date(end.getTime() - (weeks * 7 - 1) * 24 * 3600_000);
-  const cells = Array.from({ length: weeks * 7 }, (_, i) => {
-    const key = dayKey(new Date(start.getTime() + i * 24 * 3600_000));
-    return { key, n: activity[key] ?? 0 };
-  });
-  const shade = (n: number) => (n === 0 ? "bg-surface-2" : n < 3 ? "bg-brand-200" : n < 6 ? "bg-brand-400" : "bg-brand-600");
-  return (
-    <div className="mt-4 rounded-2xl border border-border-soft bg-surface p-4">
-      <p className="mb-2 text-xs font-semibold uppercase tracking-wider text-muted">Activity · last {weeks} weeks</p>
-      <div className="overflow-x-auto">
-        <div role="img" aria-label="Submission activity heatmap" className="grid w-max grid-flow-col grid-rows-7 gap-1">
-          {cells.map((c) => <span key={c.key} title={`${c.key}: ${c.n} submission${c.n === 1 ? "" : "s"}`} className={cn("h-3 w-3 rounded-sm", shade(c.n))} />)}
-        </div>
-      </div>
-    </div>
   );
 }
