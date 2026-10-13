@@ -4,9 +4,10 @@ import { useState, type FormEvent } from "react";
 import { Download } from "lucide-react";
 import type { CertificateStyle } from "@/lib/createCourseCertificatePdf";
 
-export function DownloadCertificate({ courseSlug, courseTitle }: { courseSlug: string; courseTitle: string }) {
-  const [firstName, setFirstName] = useState("");
-  const [lastName, setLastName] = useState("");
+export function DownloadCertificate({ courseSlug, courseTitle, defaultName = "" }: { courseSlug: string; courseTitle: string; defaultName?: string }) {
+  const [first, ...rest] = defaultName.trim().split(/\s+/);
+  const [firstName, setFirstName] = useState(first ?? "");
+  const [lastName, setLastName] = useState(rest.join(" "));
   const [style, setStyle] = useState<CertificateStyle>("classic-seal");
   const [busy, setBusy] = useState(false);
   const [error, setError] = useState("");

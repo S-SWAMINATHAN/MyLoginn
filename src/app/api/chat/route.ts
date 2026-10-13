@@ -31,6 +31,7 @@ async function buildSystemPrompt(topics: Set<ChatTopic>) {
   const noRows = Promise.resolve([] as never[]);
   const [courses, internships, tutors] = await Promise.all([
     !wants("courses") ? noRows : prisma.course.findMany({
+      where: { status: "published" },
       select: { title: true, category: true, level: true, durationWeeks: true, price: true, description: true },
       orderBy: [{ featured: "desc" }, { studentsCount: "desc" }],
     }),
@@ -69,6 +70,31 @@ async function buildSystemPrompt(topics: Set<ChatTopic>) {
     );
   if (wants("tutoring"))
     sections.push(`Tutors:\n${tutorList || "- (tutor list is being updated — direct the user to /tutoring)"}`);
+  // Core focus: business services are always in the prompt, whatever the topic.
+  sections.push(`Business services (MyLoginn's main offering; India-based team serving businesses across India, Coimbatore, Tamil Nadu and internationally, working remotely):
+1. Software, web & app development (/services/app-web-development): business websites and landing pages; web applications, dashboards and internal tools; Android, iOS and cross-platform apps; UI/UX implementation; backend, APIs and integrations; database design and authentication; cloud deployment; testing, maintenance and performance. Can also work on an existing product. Technology stack is chosen per project; scope and deliverables are agreed before work begins.
+2. Digital marketing & SEO (/services/digital-marketing): search and content strategy (SEO), social media on Instagram, Facebook, YouTube and LinkedIn, paid campaign planning and setup for Google Ads and Meta Ads (ad spend and account access agreed separately), lead-generation paths, analytics and performance review. Never guarantee leads, rankings or return on ad spend.
+3. AI development (/services/ai-development): generative AI features, chatbots and support assistants that answer from your own documents (RAG), AI agents and workflow automation, integration into existing software/CRM/ERP. NDA available before discussing an idea; ownership is set out in the project agreement.
+4. Software testing & automation (/services/testing-automation): manual functional and regression testing, API testing, Playwright browser automation, CI/CD integration; can test applications MyLoginn did not build.
+- Pricing is quoted per project after understanding requirements; never state a price or timeline for these services. To get a quote or proposal, use the enquiry form on the relevant service page or contact the team (/contact). Tamil Nadu businesses: /locations/tamil-nadu`);
+  if (wants("projects"))
+    sections.push(`Student projects:
+- Browse portfolio-building projects at /projects (each has its own page, e.g. /projects/<name>). Logged-in students track their assigned projects, mentor feedback and progress in /dashboard.`);
+  if (wants("astrology"))
+    sections.push(`Astrology services (Tamil/English, no account needed to buy; pay securely via Razorpay):
+- Overview and Kanitha Jathagam (computed horoscope report): /services/astrology
+- Horoscope: /services/astrology/horoscope; KP report: /services/astrology/kp-report; Kalai report: /services/astrology/kalai-report
+- Horoscope matching: /services/astrology/porutham, /services/astrology/kalai-matching, /services/astrology/match-finder, /services/astrology/star-match
+- Auspicious timing: /services/astrology/muhurtha
+- Baby names by star: /services/astrology/baby-names and /services/astrology/kalai-baby-names; other tools: /services/astrology/kalai-utilities
+- Printable/downloadable report unlock prices (base): single-page horoscope Rs 20, full horoscope Rs 499, horoscope matching Rs 299. Final price is shown at checkout.
+- Do not give astrological predictions yourself; send the user to the right tool page.`);
+  if (wants("platform"))
+    sections.push(`Learning platform features:
+- Sign up at /signup, log in at /login; students get a personal /dashboard and /profile.
+- Course learning pages include lessons, practice challenges, SQL practice, progress tracking and downloadable certificates.
+- Students earn reward points and daily login streaks; ranks are shown on /leaderboard.
+- Company information: /about. Policies: /privacy and /terms.`);
   if (wants("contact") || sections.length === 0)
     sections.push(`Contact:
 - Email: ${CONTACT_EMAIL}

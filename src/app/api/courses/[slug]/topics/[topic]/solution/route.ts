@@ -11,7 +11,7 @@ type RouteContext = { params: Promise<{ slug: string; topic: string }> };
 async function resolveChallenge({ params }: RouteContext) {
   const { slug, topic } = await params;
   const course = await prisma.course.findUnique({ where: { slug } });
-  if (!course || course.price !== 0) return null;
+  if (!course || course.price !== 0 || course.engine !== "legacy") return null;
   const topics = flattenCourseModules(getCourseModules(course.slug, JSON.parse(course.syllabus) as string[]));
   const title = topics.find((item) => toTopicSlug(item) === topic);
   if (!title) return null;

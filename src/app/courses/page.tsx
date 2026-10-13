@@ -40,7 +40,7 @@ export const dynamic = "force-dynamic";
 export default async function CoursesPage() {
   const [user, courses] = await Promise.all([
     getCurrentUser(),
-    prisma.course.findMany({ orderBy: { createdAt: "desc" } }),
+    prisma.course.findMany({ where: { status: "published" }, orderBy: { createdAt: "desc" } }),
   ]);
 
   const enrollments = user

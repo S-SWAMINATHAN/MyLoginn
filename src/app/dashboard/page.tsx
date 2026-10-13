@@ -186,7 +186,7 @@ export default async function DashboardPage() {
                           <span aria-hidden className="grid h-8 w-8 shrink-0 place-items-center rounded-full bg-story-mist text-story-royal transition-all duration-300 group-hover:translate-x-1 group-hover:bg-story-royal group-hover:text-white"><ArrowRight className="h-4 w-4" /></span>
                         </div>
                       </Link>
-                      {e.course.price === 0 && e.progress >= 100 && <DownloadCertificate courseSlug={e.course.slug} courseTitle={e.course.title} />}
+                      {e.course.price === 0 && e.course.engine === "legacy" && e.progress >= 100 && <DownloadCertificate courseSlug={e.course.slug} courseTitle={e.course.title} defaultName={user.name} />}
                     </div>
                   );
                 })}

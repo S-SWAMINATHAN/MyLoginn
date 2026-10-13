@@ -13,6 +13,8 @@ import { AnimatedLayers } from "@/components/ui/icons/AnimatedLayers";
 import { AnimatedGraduation } from "@/components/ui/icons/AnimatedGraduation";
 import { AnimatedMegaphone } from "@/components/ui/icons/AnimatedMegaphone";
 import { AnimatedCode } from "@/components/ui/icons/AnimatedCode";
+import { AnimatedAi } from "@/components/ui/icons/AnimatedAi";
+import { AnimatedShield } from "@/components/ui/icons/AnimatedShield";
 import { AnimatedSparkle } from "@/components/ui/icons/AnimatedSparkle";
 import { AnimatedMail } from "@/components/ui/icons/AnimatedMail";
 import { cn } from "@/lib/cn";
@@ -32,13 +34,17 @@ const servicesPopupLinks: { href: string; label: string; desc: string; icon: Ico
   { href: "/projects", label: "Project", desc: "Build your portfolio", icon: AnimatedFolder },
   { href: "/services/digital-marketing", label: "Digital Marketing", desc: "AI-driven growth campaigns", icon: AnimatedMegaphone },
   { href: "/services/app-web-development", label: "App & Web Development", desc: "Full-stack builds, premium UX", icon: AnimatedCode },
+  { href: "/services/ai-development", label: "AI Development", desc: "Generative AI & AI agents", icon: AnimatedAi },
+  { href: "/services/testing-automation", label: "Testing & Automation", desc: "QA, API and Playwright testing", icon: AnimatedShield },
 ];
 
 const learnPopupLinks: { href: string; label: string; desc: string; icon: IconComponent }[] = [
   { href: "/courses", label: "Courses", desc: "Learn job-ready skills", icon: AnimatedBook },
+  { href: "/logiquest", label: "LogiQuest", desc: "Practice coding, logic and more", icon: AnimatedBook },
+  { href: "/logiquest/leaderboard", label: "Leaderboard", desc: "Top LogiQuest learners", icon: AnimatedBook },
 ];
 
-const isLearnPath = (p: string) => p.startsWith("/courses") || p === "/tutoring";
+const isLearnPath = (p: string) => p.startsWith("/courses") || p.startsWith("/logiquest") || p === "/tutoring";
 const isServicesPath = (p: string) => p.startsWith("/services") || p.startsWith("/internships") || p.startsWith("/projects");
 
 export function MobileBottomNav() {
@@ -78,7 +84,7 @@ export function MobileBottomNav() {
               animate={{ opacity: 1, y: 0, scale: 1 }}
               exit={{ opacity: 0, y: 18, scale: 0.97, transition: { duration: 0.18 } }}
               transition={{ type: "spring", stiffness: 380, damping: 32 }}
-              className="fixed inset-x-3 z-50 origin-bottom overflow-hidden rounded-3xl border border-border-soft bg-surface p-2 shadow-[var(--shadow-lift)]"
+              className="fixed inset-x-3 z-50 origin-bottom overflow-hidden max-h-[calc(100dvh-7.5rem)] overflow-y-auto rounded-3xl border border-border-soft bg-surface p-2 shadow-[var(--shadow-lift)]"
               style={{ bottom: "calc(5rem + env(safe-area-inset-bottom))" }}
             >
               <div className="pointer-events-none absolute -top-20 -right-16 h-44 w-44 rounded-full bg-[radial-gradient(circle,rgba(31,86,214,0.2),transparent_70%)]" />

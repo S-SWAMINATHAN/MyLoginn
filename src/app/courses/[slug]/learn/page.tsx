@@ -3,10 +3,12 @@ import { prisma } from "@/lib/prisma";
 import { getCurrentUser } from "@/lib/auth";
 import { buildTutorialLesson, toTopicSlug } from "@/lib/freeCourseTutorial";
 import { flattenCourseModules, getCourseModules } from "@/lib/freeCourseCurriculum";
+import { LmsLearnHub } from "@/components/lms/LmsPages";
 
 export default async function CourseLearnIndex({ params }: { params: Promise<{ slug: string }> }) {
   const { slug } = await params;
-  const course = await prisma.course.findUnique({ where: { slug }, select: { id: true, price: true, syllabus: true } });
+  const course = await prisma.course.findUnique({ where: { slug }, select: { id: true, price: true, syllabus: true, engine: true } });
+  if (course?.engine === "lms") return <LmsLearnHub slug={slug} />;
   if (!course || course.price !== 0) notFound();
   const topics = flattenCourseModules(getCourseModules(slug, JSON.parse(course.syllabus) as string[]));
   if (!topics.length) redirect(`/courses/${slug}`);

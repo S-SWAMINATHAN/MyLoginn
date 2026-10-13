@@ -6,7 +6,7 @@ import { usePathname, useRouter } from "next/navigation";
 import { AnimatePresence, motion } from "framer-motion";
 import {
   BarChart3, Bell, BookOpen, Briefcase, CalendarDays, ChevronsLeft, CircleUserRound, CreditCard, ExternalLink, FolderKanban, GraduationCap,
-  Inbox, Layers, LayoutDashboard, LogOut, Mail, Menu, Search, Settings, Sparkles, Trophy, UserCog, Users, X, type LucideIcon,
+  Code2, Inbox, Layers, LayoutDashboard, LogOut, Mail, Menu, Search, Settings, Sparkles, Trophy, UserCog, Users, X, type LucideIcon,
 } from "lucide-react";
 import { cn } from "@/lib/cn";
 import { Avatar } from "@/components/ui/Avatar";
@@ -25,6 +25,7 @@ const NAV_GROUPS: { label: string; items: NavItem[] }[] = [
       { href: "/admin/visual-explanations", label: "Visual Explanations", icon: Sparkles },
       { href: "/admin/categories", label: "Categories", icon: Layers },
       { href: "/admin/enrollments", label: "Enrollments", icon: BookOpen },
+      { href: "/admin/logiquest", label: "LogiQuest", icon: Code2, keywords: "challenges questions practice coding" },
       { href: "/admin/rewards", label: "Rewards", icon: Trophy, keywords: "points leaderboard badges streak" },
     ],
   },

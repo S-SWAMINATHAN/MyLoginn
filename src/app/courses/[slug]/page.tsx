@@ -18,15 +18,16 @@ import { getCourseModules } from "@/lib/freeCourseCurriculum";
 import { getCourseDisplayTitle, getFreeCourseTerm } from "@/lib/freeCourseTitles";
 import { JsonLd } from "@/components/seo/JsonLd";
 import { siteUrl } from "@/lib/site";
+import { LmsCourseDetail } from "@/components/lms/CourseDetail";
 
 export async function generateMetadata({ params }: { params: Promise<{ slug: string }> }): Promise<Metadata> {
   const { slug } = await params;
   const course = await prisma.course.findUnique({
     where: { slug },
-    select: { title: true, description: true, slug: true, category: true, level: true },
+    select: { title: true, description: true, slug: true, category: true, level: true, status: true },
   });
 
-  if (!course) return {};
+  if (!course || course.status !== "published") return { robots: { index: false, follow: false } };
 
   const displayTitle = getCourseDisplayTitle(course.slug, course.title);
 
@@ -45,12 +46,17 @@ export async function generateMetadata({ params }: { params: Promise<{ slug: str
 
 export default async function CourseDetailPage({
   params,
+  searchParams,
 }: {
   params: Promise<{ slug: string }>;
+  searchParams: Promise<{ enrolled?: string }>;
 }) {
   const { slug } = await params;
+  const { enrolled: justEnrolled } = await searchParams;
   const course = await prisma.course.findUnique({ where: { slug } });
   if (!course) notFound();
+  // DB-driven LMS courses have their own detail page (real syllabus, validity, renewal terms, access state).
+  if (course.engine === "lms") return <LmsCourseDetail slug={slug} justEnrolled={justEnrolled === "1"} />;
 
   const user = await getCurrentUser();
   const enrollment = user
@@ -235,7 +241,7 @@ export default async function CourseDetailPage({
                     <div className="mt-4 rounded-2xl border border-story-royal/30 bg-story-mist p-4">
                       <p className="mb-1 text-sm font-semibold">Course completed</p>
                       <p className="text-xs text-muted">Add the name you want printed on your certificate.</p>
-                      <DownloadCertificate courseSlug={course.slug} courseTitle={displayTitle} />
+                      <DownloadCertificate courseSlug={course.slug} courseTitle={displayTitle} defaultName={user?.name ?? ""} />
                     </div>
                   )}
 

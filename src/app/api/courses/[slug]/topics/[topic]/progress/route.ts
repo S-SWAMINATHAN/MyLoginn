@@ -14,7 +14,7 @@ async function updateTopicProgress(request: Request, { params }: RouteContext) {
 
   const { slug, topic } = await params;
   const course = await prisma.course.findUnique({ where: { slug } });
-  if (!course || course.price !== 0) return NextResponse.json({ error: "Free course not found." }, { status: 404 });
+  if (!course || course.price !== 0 || course.engine !== "legacy") return NextResponse.json({ error: "Free course not found." }, { status: 404 });
   const topics = flattenCourseModules(getCourseModules(course.slug, JSON.parse(course.syllabus) as string[]));
   const topicTitle = topics.find((item) => toTopicSlug(item) === topic);
   if (!topicTitle) return NextResponse.json({ error: "Topic not found." }, { status: 404 });

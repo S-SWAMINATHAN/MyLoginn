@@ -6,12 +6,14 @@ import { buildTutorialLesson, toTopicSlug } from "@/lib/freeCourseTutorial";
 import { CourseTutorial } from "@/components/courses/CourseTutorial";
 import { flattenCourseModules, getCourseModules } from "@/lib/freeCourseCurriculum";
 import { getCourseDisplayTitle } from "@/lib/freeCourseTitles";
+import { LmsLessonView } from "@/components/lms/LmsPages";
 
 export const metadata: Metadata = { robots: { index: false, follow: false } };
 
 export default async function CourseTopicPage({ params }: { params: Promise<{ slug: string; topic: string }> }) {
   const { slug, topic } = await params;
   const course = await prisma.course.findUnique({ where: { slug } });
+  if (course?.engine === "lms") return <LmsLessonView slug={slug} lessonSlug={topic} />;
   if (!course || course.price !== 0) notFound();
 
   const syllabus = flattenCourseModules(getCourseModules(course.slug, JSON.parse(course.syllabus) as string[]));

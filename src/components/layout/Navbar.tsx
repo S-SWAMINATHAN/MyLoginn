@@ -20,6 +20,8 @@ import { AnimatedBriefcase } from "@/components/ui/icons/AnimatedBriefcase";
 import { AnimatedFolder } from "@/components/ui/icons/AnimatedFolder";
 import { AnimatedMegaphone } from "@/components/ui/icons/AnimatedMegaphone";
 import { AnimatedCode } from "@/components/ui/icons/AnimatedCode";
+import { AnimatedAi } from "@/components/ui/icons/AnimatedAi";
+import { AnimatedShield } from "@/components/ui/icons/AnimatedShield";
 import { AnimatedMail } from "@/components/ui/icons/AnimatedMail";
 import { AnimatedUser } from "@/components/ui/icons/AnimatedUser";
 import { AnimatedBuilding } from "@/components/ui/icons/AnimatedBuilding";
@@ -39,6 +41,8 @@ const serviceLinks = [
 
 const learnLinks = [
   { href: "/courses", label: "Courses", desc: "Learn job-ready skills" },
+  { href: "/logiquest", label: "LogiQuest", desc: "Think. Code. Solve. Communicate. Grow." },
+  { href: "/logiquest/leaderboard", label: "Leaderboard", desc: "Top LogiQuest learners" },
 ];
 
 type MobileLink = {
@@ -51,6 +55,8 @@ type MobileLink = {
 const mobileMainLinks: MobileLink[] = [
   { href: "/", label: "Home", desc: "Back to the start", icon: AnimatedHome },
   { href: "/courses", label: "Courses", desc: "Learn job-ready skills", icon: AnimatedBook },
+  { href: "/logiquest", label: "LogiQuest", desc: "Practice coding, logic and more", icon: AnimatedBook },
+  { href: "/logiquest/leaderboard", label: "Leaderboard", desc: "Top LogiQuest learners", icon: AnimatedBook },
 ];
 
 const mobileServiceLinks: MobileLink[] = [
@@ -66,6 +72,8 @@ const mobileServiceLinks: MobileLink[] = [
     desc: "Full-stack builds, premium UX",
     icon: AnimatedCode,
   },
+  { href: "/services/ai-development", label: "AI Development", desc: "Generative AI & AI agents", icon: AnimatedAi },
+  { href: "/services/testing-automation", label: "Testing & Automation", desc: "QA, API and Playwright testing", icon: AnimatedShield },
 ];
 
 const mobileAfterServices: MobileLink[] = [

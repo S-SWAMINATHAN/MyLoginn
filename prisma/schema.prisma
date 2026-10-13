@@ -47,6 +47,22 @@ model User {
   solutionUnlocks        SolutionUnlock[]
   courseTopicProgress    CourseTopicProgress[]
   astrologyPurchases     AstrologyPurchase[]
+  lessonProgress         LessonProgress[]
+  quizAttempts           QuizAttempt[]
+  challengeSubmissions   ChallengeSubmission[]
+  assignmentSubmissions  AssignmentSubmission[]
+  entitlements           CourseEntitlement[]
+  certificates           Certificate[]
+  userBadges             UserBadge[]
+  aiCoachUsage           AiCoachUsage[]
+  lqStat                 LqUserStat?
+  lqSubmissions          LqSubmission[]
+  lqProgress             LqProgress[]
+  lqBookmarks            LqBookmark[]
+  lqNotes                LqNote[]
+  lqDrafts               LqDraft[]
+  lqXpEvents             LqXpEvent[]
+  lqQuestionProgress     LqQuestionProgress[]
 }
 
 model DailyActivity {
@@ -67,6 +83,8 @@ model PointsTransaction {
   amount    Int
   reason    String
   label     String
+  /// Idempotency key for LMS rewards (e.g. "lesson:<userId>:<lessonId>"). Null for legacy rows.
+  dedupeKey String?  @unique
   createdAt DateTime @default(now())
 
   user User @relation(fields: [userId], references: [id])
@@ -139,11 +157,47 @@ model Course {
   createdAt       DateTime @default(now())
   updatedAt       DateTime @updatedAt
 
+  // --- LMS engine (all additive; defaults keep every existing course behaving as before) ---
+  /// "legacy" = code-driven course (freeCourseCurriculum etc.), "lms" = DB-driven modules/lessons.
+  engine            String    @default("legacy")
+  /// draft | published | archived. Existing courses default to published.
+  status            String    @default("published")
+  /// Curriculum area, e.g. "software-testing". Used for the module filter.
+  track             String?
+  /// Programming language filter value, e.g. "python".
+  languageTag       String?
+  /// Days of access granted per purchase. Null = lifetime.
+  validityDays      Int?
+  /// Price (rupees) to renew after expiry. Null = same as price.
+  renewalPrice      Int?
+  /// Final-assessment pass mark, percent.
+  passPercent       Int       @default(60)
+  aiCoachEnabled    Boolean   @default(true)
+  sequential        Boolean   @default(true)
+  audience          String?
+  prerequisitesText String?
+  objectives        Json      @default("[]")
+  prerequisiteSlugs Json      @default("[]")
+  relatedSlugs      Json      @default("[]")
+  archivedAt        DateTime?
+
   enrollments        Enrollment[]
   payments           Payment[]
   visualExplanations VisualExplanation[]
   topicProgress      CourseTopicProgress[]
   solutionUnlocks    SolutionUnlock[]
+  modules            CourseModule[]
+  lessons            Lesson[]
+  quizzes            Quiz[]
+  challenges         CodingChallenge[]
+  assignments        CourseAssignment[]
+  lessonProgress     LessonProgress[]
+  entitlements       CourseEntitlement[]
+  certificates       Certificate[]
+  pathCourses        LearningPathCourse[]
+
+  @@index([status, engine])
+  @@index([track, level])
 }
 
 model VisualExplanation {
@@ -161,12 +215,12 @@ model VisualExplanation {
 }
 
 model Enrollment {
-  id         String   @id @default(cuid())
-  userId     String
-  courseId   String
-  progress   Int      @default(0)
-  status     String   @default("active")
-  enrolledAt DateTime @default(now())
+  id          String    @id @default(cuid())
+  userId      String
+  courseId    String
+  progress    Int       @default(0)
+  status      String    @default("active")
+  enrolledAt  DateTime  @default(now())
   completedAt DateTime?
 
   user   User   @relation(fields: [userId], references: [id])
@@ -176,13 +230,13 @@ model Enrollment {
 }
 
 model CourseTopicProgress {
-  id          String   @id @default(cuid())
-  userId      String
-  courseId    String
-  topicSlug   String
-  challengePassed Boolean @default(false)
-  completedAt DateTime @default(now())
-  createdAt   DateTime @default(now())
+  id              String   @id @default(cuid())
+  userId          String
+  courseId        String
+  topicSlug       String
+  challengePassed Boolean  @default(false)
+  completedAt     DateTime @default(now())
+  createdAt       DateTime @default(now())
 
   user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
   course Course @relation(fields: [courseId], references: [id], onDelete: Cascade)
@@ -193,22 +247,31 @@ model CourseTopicProgress {
 }
 
 model Payment {
-  id                String   @id @default(cuid())
+  id                String    @id @default(cuid())
   userId            String
   courseId          String
-  razorpayOrderId   String   @unique
+  razorpayOrderId   String    @unique
   razorpayPaymentId String?
   razorpaySignature String?
   amount            Int
-  currency          String   @default("INR")
-  status            String   @default("created")
-  createdAt         DateTime @default(now())
-  updatedAt         DateTime @updatedAt
+  currency          String    @default("INR")
+  /// created | pending | paid | failed | cancelled | refunded
+  status            String    @default("created")
+  /// purchase | renewal
+  kind              String    @default("purchase")
+  /// Access days this payment grants (copied from the course at order time). Null = lifetime.
+  validityDays      Int?
+  failureReason     String?
+  verifiedAt        DateTime?
+  refundedAt        DateTime?
+  createdAt         DateTime  @default(now())
+  updatedAt         DateTime  @updatedAt
 
   user   User   @relation(fields: [userId], references: [id])
   course Course @relation(fields: [courseId], references: [id])
 
   @@index([userId])
+  @@index([courseId, status])
 }
 
 // One-time unlock of printing / downloading for one astrology report.
@@ -373,4 +436,643 @@ model Notification {
   createdAt DateTime @default(now())
 
   user User @relation(fields: [userId], references: [id])
+}
+
+// ============================================================================
+// LMS engine: DB-driven modules, lessons, assessments, access and certificates.
+// Structure rows cascade from Course; learner rows RESTRICT so a content edit or
+// delete can never erase progress, attempts, entitlements or certificates.
+// ============================================================================
+
+model CourseModule {
+  id         String    @id @default(cuid())
+  courseId   String
+  title      String
+  summary    String?
+  position   Int
+  required   Boolean   @default(true)
+  archivedAt DateTime?
+  createdAt  DateTime  @default(now())
+  updatedAt  DateTime  @updatedAt
+
+  course  Course   @relation(fields: [courseId], references: [id], onDelete: Cascade)
+  lessons Lesson[]
+
+  @@index([courseId, position])
+}
+
+model Lesson {
+  id                   String    @id @default(cuid())
+  courseId             String
+  moduleId             String
+  slug                 String
+  title                String
+  summary              String?
+  position             Int
+  /// Markdown body (rendered with the safe renderer in lib/lms/markdown.ts).
+  contentMd            String    @default("")
+  /// Optional external/hosted video. When empty the generated narrated explainer is used.
+  videoUrl             String?
+  videoMinPercent      Int       @default(90)
+  /// Script for the generated narrated explainer video: { simple, analogy, nodes[], summary, steps[], output, takeaways[], mistake }
+  explainer            Json?
+  /// Admin-entered video length; the server trusts this over the player's claim when set.
+  videoDurationSeconds Int?
+  estimatedMinutes     Int       @default(10)
+  required             Boolean   @default(true)
+  /// Completion rules: { read: bool, video: bool, quiz: bool, code: bool, assignment: bool }
+  rules                Json      @default("{\"read\":true}")
+  archivedAt           DateTime?
+  createdAt            DateTime  @default(now())
+  updatedAt            DateTime  @updatedAt
+
+  course        Course               @relation(fields: [courseId], references: [id], onDelete: Cascade)
+  module        CourseModule         @relation(fields: [moduleId], references: [id], onDelete: Cascade)
+  prerequisites LessonPrerequisite[] @relation("LessonPrereqOwner")
+  requiredBy    LessonPrerequisite[] @relation("LessonPrereqTarget")
+  quizzes       Quiz[]
+  challenges    CodingChallenge[]
+  assignments   CourseAssignment[]
+  progress      LessonProgress[]
+
+  @@unique([courseId, slug])
+  @@index([moduleId, position])
+}
+
+model LessonPrerequisite {
+  id               String @id @default(cuid())
+  lessonId         String
+  requiresLessonId String
+
+  lesson   Lesson @relation("LessonPrereqOwner", fields: [lessonId], references: [id], onDelete: Cascade)
+  requires Lesson @relation("LessonPrereqTarget", fields: [requiresLessonId], references: [id], onDelete: Cascade)
+
+  @@unique([lessonId, requiresLessonId])
+}
+
+model Quiz {
+  id               String    @id @default(cuid())
+  courseId         String
+  lessonId         String?
+  /// lesson | module | final
+  kind             String    @default("lesson")
+  title            String
+  /// Lesson/module quizzes use this; the final assessment uses Course.passPercent.
+  passPercent      Int       @default(60)
+  /// Draw this many questions from the bank per attempt. Null = all.
+  questionCount    Int?
+  timeLimitMinutes Int?
+  /// Null = unlimited attempts.
+  maxAttempts      Int?
+  cooldownMinutes  Int       @default(0)
+  archivedAt       DateTime?
+  createdAt        DateTime  @default(now())
+  updatedAt        DateTime  @updatedAt
+
+  course    Course         @relation(fields: [courseId], references: [id], onDelete: Cascade)
+  lesson    Lesson?        @relation(fields: [lessonId], references: [id], onDelete: Cascade)
+  questions QuizQuestion[]
+  attempts  QuizAttempt[]
+
+  @@index([courseId, kind])
+  @@index([lessonId])
+}
+
+model QuizQuestion {
+  id          String    @id @default(cuid())
+  quizId      String
+  /// single | multiple | truefalse
+  type        String    @default("single")
+  prompt      String
+  /// [{ id: string, text: string }]
+  options     Json
+  /// SERVER ONLY. Array of correct option ids. Never serialised to the client before submission.
+  correct     Json
+  explanation String?
+  points      Int       @default(1)
+  position    Int       @default(0)
+  archivedAt  DateTime?
+
+  quiz Quiz @relation(fields: [quizId], references: [id], onDelete: Cascade)
+
+  @@index([quizId, position])
+}
+
+model QuizAttempt {
+  id          String    @id @default(cuid())
+  userId      String
+  quizId      String
+  courseId    String
+  /// Question ids served for this attempt (grading only considers these).
+  questionIds Json
+  answers     Json      @default("{}")
+  scorePoints Int       @default(0)
+  maxPoints   Int       @default(0)
+  percent     Int       @default(0)
+  passed      Boolean   @default(false)
+  /// in_progress | submitted | expired
+  status      String    @default("in_progress")
+  startedAt   DateTime  @default(now())
+  submittedAt DateTime?
+
+  user User @relation(fields: [userId], references: [id], onDelete: Restrict)
+  quiz Quiz @relation(fields: [quizId], references: [id], onDelete: Restrict)
+
+  @@index([userId, quizId, startedAt])
+  @@index([courseId, userId])
+}
+
+model CodingChallenge {
+  id                  String    @id @default(cuid())
+  courseId            String
+  lessonId            String?
+  title               String
+  language            String
+  /// easy | medium | hard
+  difficulty          String    @default("easy")
+  statement           String
+  starterCode         String    @default("")
+  /// [{ input: string, expected: string, hidden: boolean }]. Hidden rows are never sent to clients.
+  tests               Json      @default("[]")
+  /// Server-side requirement checks: [{ label: string, pattern: string, flags?: string }]
+  checks              Json      @default("[]")
+  hints               Json      @default("[]")
+  /// SERVER ONLY until the learner has passed.
+  solutionCode        String?
+  solutionExplanation String?
+  points              Int       @default(20)
+  required            Boolean   @default(true)
+  position            Int       @default(0)
+  archivedAt          DateTime?
+  createdAt           DateTime  @default(now())
+
+  course      Course                @relation(fields: [courseId], references: [id], onDelete: Cascade)
+  lesson      Lesson?               @relation(fields: [lessonId], references: [id], onDelete: Cascade)
+  submissions ChallengeSubmission[]
+
+  @@index([courseId, position])
+  @@index([lessonId])
+}
+
+model ChallengeSubmission {
+  id          String   @id @default(cuid())
+  userId      String
+  challengeId String
+  source      String
+  output      String?
+  passed      Boolean  @default(false)
+  runtimeMs   Int?
+  feedback    String?
+  createdAt   DateTime @default(now())
+
+  user      User            @relation(fields: [userId], references: [id], onDelete: Restrict)
+  challenge CodingChallenge @relation(fields: [challengeId], references: [id], onDelete: Restrict)
+
+  @@index([userId, challengeId, createdAt])
+}
+
+model CourseAssignment {
+  id         String    @id @default(cuid())
+  courseId   String
+  lessonId   String?
+  /// assignment | project
+  kind       String    @default("assignment")
+  title      String
+  brief      String
+  rubric     String?
+  required   Boolean   @default(true)
+  position   Int       @default(0)
+  archivedAt DateTime?
+
+  course      Course                 @relation(fields: [courseId], references: [id], onDelete: Cascade)
+  lesson      Lesson?                @relation(fields: [lessonId], references: [id], onDelete: Cascade)
+  submissions AssignmentSubmission[]
+
+  @@index([courseId, position])
+}
+
+model AssignmentSubmission {
+  id           String    @id @default(cuid())
+  userId       String
+  assignmentId String
+  content      String
+  linkUrl      String?
+  /// submitted | approved | rejected
+  status       String    @default("submitted")
+  score        Int?
+  feedback     String?
+  reviewedById String?
+  createdAt    DateTime  @default(now())
+  reviewedAt   DateTime?
+
+  user       User             @relation(fields: [userId], references: [id], onDelete: Restrict)
+  assignment CourseAssignment @relation(fields: [assignmentId], references: [id], onDelete: Restrict)
+
+  @@unique([userId, assignmentId])
+}
+
+model LessonProgress {
+  id                   String    @id @default(cuid())
+  userId               String
+  courseId             String
+  lessonId             String
+  readAt               DateTime?
+  videoSeconds         Int       @default(0)
+  videoPercent         Int       @default(0)
+  videoLastReportAt    DateTime?
+  quizPassedAt         DateTime?
+  codePassedAt         DateTime?
+  assignmentApprovedAt DateTime?
+  /// Set once, never cleared: later rule changes by an admin do not un-complete a lesson.
+  completedAt          DateTime?
+  startedAt            DateTime  @default(now())
+  updatedAt            DateTime  @updatedAt
+
+  user   User   @relation(fields: [userId], references: [id], onDelete: Restrict)
+  course Course @relation(fields: [courseId], references: [id], onDelete: Restrict)
+  lesson Lesson @relation(fields: [lessonId], references: [id], onDelete: Restrict)
+
+  @@unique([userId, lessonId])
+  @@index([userId, courseId])
+}
+
+/// Access to a paid course. Payment history stays in Payment; this row only answers "may they learn now?".
+model CourseEntitlement {
+  id           String    @id @default(cuid())
+  userId       String
+  courseId     String
+  /// active | revoked
+  status       String    @default("active")
+  /// payment | admin | legacy
+  source       String    @default("payment")
+  paymentId    String?
+  startsAt     DateTime  @default(now())
+  /// Null = lifetime.
+  expiresAt    DateTime?
+  renewedCount Int       @default(0)
+  createdAt    DateTime  @default(now())
+  updatedAt    DateTime  @updatedAt
+
+  user   User   @relation(fields: [userId], references: [id], onDelete: Restrict)
+  course Course @relation(fields: [courseId], references: [id], onDelete: Restrict)
+
+  @@unique([userId, courseId])
+  @@index([courseId, status])
+}
+
+model Certificate {
+  id           String   @id @default(cuid())
+  userId       String
+  courseId     String
+  serial       String   @unique
+  learnerName  String
+  finalPercent Int
+  issuedAt     DateTime @default(now())
+
+  user   User   @relation(fields: [userId], references: [id], onDelete: Restrict)
+  course Course @relation(fields: [courseId], references: [id], onDelete: Restrict)
+
+  @@unique([userId, courseId])
+}
+
+model Badge {
+  id          String   @id @default(cuid())
+  key         String   @unique
+  name        String
+  description String
+  icon        String   @default("award")
+  /// { type: "lessons_completed" | "courses_completed" | "streak" | "points" | "perfect_quiz", threshold: number }
+  rule        Json
+  active      Boolean  @default(true)
+  createdAt   DateTime @default(now())
+
+  holders UserBadge[]
+}
+
+model UserBadge {
+  id        String   @id @default(cuid())
+  userId    String
+  badgeId   String
+  awardedAt DateTime @default(now())
+
+  user  User  @relation(fields: [userId], references: [id], onDelete: Cascade)
+  badge Badge @relation(fields: [badgeId], references: [id], onDelete: Cascade)
+
+  @@unique([userId, badgeId])
+}
+
+model LearningPath {
+  id          String  @id @default(cuid())
+  slug        String  @unique
+  title       String
+  roleTitle   String
+  description String
+  position    Int     @default(0)
+  published   Boolean @default(true)
+
+  courses LearningPathCourse[]
+}
+
+model LearningPathCourse {
+  id       String @id @default(cuid())
+  pathId   String
+  courseId String
+  position Int
+
+  path   LearningPath @relation(fields: [pathId], references: [id], onDelete: Cascade)
+  course Course       @relation(fields: [courseId], references: [id], onDelete: Cascade)
+
+  @@unique([pathId, courseId])
+}
+
+model AiCoachUsage {
+  id        String   @id @default(cuid())
+  userId    String
+  courseId  String?
+  lessonId  String?
+  mode      String
+  language  String   @default("en")
+  ok        Boolean  @default(true)
+  createdAt DateTime @default(now())
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId, createdAt])
+}
+
+model AuditLog {
+  id        String   @id @default(cuid())
+  actorId   String
+  action    String
+  entity    String
+  entityId  String?
+  meta      Json?
+  createdAt DateTime @default(now())
+
+  @@index([entity, entityId])
+  @@index([actorId, createdAt])
+}
+
+/// Admin-tunable values: reward points, AI limits, etc. Read through lib/lms/settings.ts (which supplies defaults).
+model LmsSetting {
+  key       String   @id
+  value     Json
+  updatedAt DateTime @updatedAt
+}
+
+// ───────────────────────── LogiQuest (practice platform) ─────────────────────────
+
+enum LqCategory {
+  CODING
+  PROBLEM_SOLVING
+  LOGIC
+  MATH
+  COMMUNICATION
+  KNOWLEDGE
+}
+
+enum LqDifficulty {
+  EASY
+  MEDIUM
+  HARD
+}
+
+enum LqStatus {
+  DRAFT
+  REVIEW
+  PUBLISHED
+  ARCHIVED
+}
+
+enum LqAccess {
+  FREE
+  PREMIUM
+}
+
+model LqChallenge {
+  id               String       @id @default(cuid())
+  slug             String       @unique
+  title            String
+  category         LqCategory   @default(CODING)
+  difficulty       LqDifficulty
+  topic            String
+  subtopic         String?
+  tags             String[]
+  /// e.g. "Product Company Style", "Backend Developer Style". Never a claim about a real company.
+  style            String?
+  statement        String
+  scenario         String?
+  constraints      String?
+  inputFormat      String?
+  outputFormat     String?
+  notes            String?
+  /// [{ input, output, explanation }] shown to learners.
+  examples         Json         @default("[]")
+  estimatedMinutes Int          @default(15)
+  xp               Int          @default(10)
+  points           Int          @default(100)
+  access           LqAccess     @default(FREE)
+  status           LqStatus     @default(DRAFT)
+  /// Languages learners may pick, e.g. ["python","java"].
+  languages        String[]
+  /// { python: "def solve():...", java: "..." }
+  starterCode      Json         @default("{}")
+  /// Progressive hints, weakest first.
+  hints            String[]
+  /// SERVER ONLY until unlocked: { explanation, approach, algorithm, timeComplexity, spaceComplexity, alternative, edgeCases, code: {lang: src}, lineByLine: {lang: string[]} }
+  solution         Json?
+  videoUrl         String?
+  attemptCount     Int          @default(0)
+  solvedCount      Int          @default(0)
+  publishedAt      DateTime?
+  createdAt        DateTime     @default(now())
+  updatedAt        DateTime     @updatedAt
+
+  testCases   LqTestCase[]
+  submissions LqSubmission[]
+  progress    LqProgress[]
+  bookmarks   LqBookmark[]
+  notesList   LqNote[]
+  drafts      LqDraft[]
+
+  @@index([status, category, difficulty])
+  @@index([status, publishedAt])
+  @@index([topic])
+}
+
+model LqTestCase {
+  id          String  @id @default(cuid())
+  challengeId String
+  position    Int     @default(0)
+  input       String
+  expected    String
+  /// Public cases are shown to learners; hidden cases are never sent to the browser.
+  isPublic    Boolean @default(false)
+  isEdge      Boolean @default(false)
+  label       String?
+
+  challenge LqChallenge @relation(fields: [challengeId], references: [id], onDelete: Cascade)
+
+  @@index([challengeId, position])
+}
+
+model LqSubmission {
+  id          String   @id @default(cuid())
+  userId      String
+  challengeId String
+  language    String
+  source      String
+  /// ACCEPTED | WRONG_ANSWER | RUNTIME_ERROR | TIME_LIMIT | COMPILE_ERROR | INTERNAL_ERROR
+  verdict     String
+  passed      Int      @default(0)
+  total       Int      @default(0)
+  timeMs      Int?
+  memoryKb    Int?
+  attemptNo   Int      @default(1)
+  xpAwarded   Int      @default(0)
+  createdAt   DateTime @default(now())
+
+  user      User        @relation(fields: [userId], references: [id], onDelete: Cascade)
+  challenge LqChallenge @relation(fields: [challengeId], references: [id], onDelete: Cascade)
+
+  @@index([userId, challengeId, createdAt])
+  @@index([userId, createdAt])
+  @@index([challengeId, verdict])
+}
+
+model LqProgress {
+  id             String    @id @default(cuid())
+  userId         String
+  challengeId    String
+  solved         Boolean   @default(false)
+  attempts       Int       @default(0)
+  hintsUsed      Int       @default(0)
+  bestPassed     Int       @default(0)
+  solutionViewed Boolean   @default(false)
+  solvedAt       DateTime?
+  updatedAt      DateTime  @updatedAt
+
+  user      User        @relation(fields: [userId], references: [id], onDelete: Cascade)
+  challenge LqChallenge @relation(fields: [challengeId], references: [id], onDelete: Cascade)
+
+  @@unique([userId, challengeId])
+  @@index([userId, solved])
+}
+
+model LqDraft {
+  id          String   @id @default(cuid())
+  userId      String
+  challengeId String
+  language    String
+  source      String
+  updatedAt   DateTime @updatedAt
+
+  user      User        @relation(fields: [userId], references: [id], onDelete: Cascade)
+  challenge LqChallenge @relation(fields: [challengeId], references: [id], onDelete: Cascade)
+
+  @@unique([userId, challengeId, language])
+}
+
+model LqBookmark {
+  id          String   @id @default(cuid())
+  userId      String
+  challengeId String
+  /// SAVED | REVIEW_LATER | DIFFICULT
+  kind        String   @default("SAVED")
+  createdAt   DateTime @default(now())
+
+  user      User        @relation(fields: [userId], references: [id], onDelete: Cascade)
+  challenge LqChallenge @relation(fields: [challengeId], references: [id], onDelete: Cascade)
+
+  @@unique([userId, challengeId, kind])
+  @@index([userId, kind])
+}
+
+model LqNote {
+  id          String   @id @default(cuid())
+  userId      String
+  challengeId String
+  body        String
+  updatedAt   DateTime @updatedAt
+
+  user      User        @relation(fields: [userId], references: [id], onDelete: Cascade)
+  challenge LqChallenge @relation(fields: [challengeId], references: [id], onDelete: Cascade)
+
+  @@unique([userId, challengeId])
+}
+
+/// Append-only XP ledger. The leaderboard and the weekly/monthly windows are computed from it.
+model LqXpEvent {
+  id          String   @id @default(cuid())
+  userId      String
+  amount      Int
+  /// FIRST_SOLVE | DAILY_BONUS | STREAK_MILESTONE
+  reason      String
+  challengeId String?
+  /// Idempotency key, e.g. "solve:<userId>:<challengeId>".
+  eventKey    String   @unique
+  createdAt   DateTime @default(now())
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId, createdAt])
+  @@index([createdAt, userId])
+}
+
+model LqUserStat {
+  userId        String   @id
+  xp            Int      @default(0)
+  solved        Int      @default(0)
+  currentStreak Int      @default(0)
+  longestStreak Int      @default(0)
+  /// UTC calendar day (YYYY-MM-DD) of the last qualifying activity.
+  lastActiveDay String?
+  /// Privacy: hide name/avatar on public leaderboards.
+  hideProfile   Boolean  @default(false)
+  updatedAt     DateTime @updatedAt
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([xp])
+}
+
+/// Multiple-choice practice for Problem Solving, Logic, Math, Communication and Knowledge.
+model LqQuestion {
+  id           String       @id @default(cuid())
+  slug         String       @unique
+  category     LqCategory
+  difficulty   LqDifficulty
+  topic        String
+  prompt       String
+  options      String[]
+  /// SERVER ONLY: revealed only after the learner answers.
+  correctIndex Int
+  explanation  String
+  xp           Int          @default(10)
+  access       LqAccess     @default(FREE)
+  status       LqStatus     @default(DRAFT)
+  attemptCount Int          @default(0)
+  solvedCount  Int          @default(0)
+  createdAt    DateTime     @default(now())
+
+  progress LqQuestionProgress[]
+
+  @@index([status, category, difficulty])
+}
+
+model LqQuestionProgress {
+  id           String   @id @default(cuid())
+  userId       String
+  questionId   String
+  attempts     Int      @default(0)
+  /// Was the very first answer correct (the only one that earns XP)?
+  firstCorrect Boolean  @default(false)
+  everCorrect  Boolean  @default(false)
+  updatedAt    DateTime @updatedAt
+
+  user     User       @relation(fields: [userId], references: [id], onDelete: Cascade)
+  question LqQuestion @relation(fields: [questionId], references: [id], onDelete: Cascade)
+
+  @@unique([userId, questionId])
+  @@index([userId])
 }
