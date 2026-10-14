@@ -15,7 +15,10 @@ export const organizationStructuredData = {
     "MyLoginn Tech Private Limited is an India-based technology company building web, mobile, custom software, AI, automation and digital solutions for businesses worldwide, and teaching practical technology skills.",
   email: CONTACT_EMAIL,
   telephone: CONTACT_PHONES[0].tel,
-  sameAs: ["https://www.instagram.com/myloginntech/"],
+  sameAs: [
+    "https://www.instagram.com/myloginntech/",
+    "https://www.facebook.com/p/MyLoginn-Tech-61592248317142/",
+  ],
   contactPoint: CONTACT_PHONES.map((phone) => ({
     "@type": "ContactPoint",
     telephone: phone.tel,
