@@ -10,7 +10,7 @@ import { RelatedLinks } from "@/components/services/story/RelatedLinks";
 import { ServicesExplorer, type ServiceItem } from "@/components/pages/ServicesExplorer";
 
 export const metadata = createPageMetadata({
-  title: "Web, Mobile, AI & Software Services",
+  title: "Services",
   description: "Web and mobile app development, custom software, AI and AI agents, software testing and automation, and digital marketing from India-based MyLoginn Tech.",
   path: "/services",
   keywords: [

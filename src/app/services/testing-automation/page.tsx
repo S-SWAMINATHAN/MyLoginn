@@ -3,7 +3,7 @@ import { regionalKeywords } from "@/lib/localSeo";
 import { TestingLanding } from "@/components/services/testing/TestingLanding";
 
 export const metadata = createPageMetadata({
-  title: "Software Testing & Test Automation Services",
+  title: "Automation Testing",
   description:
     "Manual and automated QA for web applications, including API testing and Playwright test automation, from the India-based MyLoginn team.",
   path: "/services/testing-automation",

@@ -13,7 +13,7 @@ import { ProjectsExplorer } from "@/components/projects/ProjectsExplorer";
 import { ProjectsCtaBanner } from "@/components/projects/ProjectsCtaBanner";
 
 export const metadata = createPageMetadata({
-  title: "Student Projects & Portfolio",
+  title: "Projects",
   description: "Explore software and technology projects built by MyLoginn learners with guidance from experienced mentors.",
   path: "/projects",
   keywords: [

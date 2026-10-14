@@ -3,6 +3,7 @@ import { prisma } from "@/lib/prisma";
 import { CONTACT_EMAIL, CONTACT_PHONES, CONTACT_HOURS, WHATSAPP_PHONE } from "@/lib/contactInfo";
 import { MyBuddyError, isMyBuddyConfigured, streamMyBuddyReply } from "@/lib/mybuddy";
 import { GeminiError, isGeminiConfigured, streamGeminiReply } from "@/lib/gemini";
+import { HIDE_TUTORING } from "@/lib/hiddenSections";
 import { REQUEST_SCOPED_STYLE, currentDateTimeContext, detectTopics, type ChatTopic } from "@/lib/chatIntent";
 
 export const runtime = "nodejs";
@@ -27,7 +28,7 @@ function isChatTurn(value: unknown): value is ChatTurn {
 async function buildSystemPrompt(topics: Set<ChatTopic>) {
   // Auto-route by request: an unrecognised request gets everything, a recognised one only what it needs.
   const all = topics.size === 0;
-  const wants = (t: ChatTopic) => all || topics.has(t);
+  const wants = (t: ChatTopic) => !(HIDE_TUTORING && t === "tutoring") && (all || topics.has(t));
   const noRows = Promise.resolve([] as never[]);
   const [courses, internships, tutors] = await Promise.all([
     !wants("courses") ? noRows : prisma.course.findMany({
@@ -111,15 +112,15 @@ What MyLoginn offers:
 1. Courses — advanced digital marketing and AI/ML courses (page: /courses)
 2. Internships — real-world experience with mentors (page: /internships)
 3. Student projects — portfolio-building with mentor feedback (page: /projects)
-4. Tutoring — 1:1 mentor sessions and live classes for CBSE/State Board students (page: /tutoring)
-5. Services for businesses — AI-driven digital marketing (/services/digital-marketing) and app & web development (/services/app-web-development)
+4. Services for businesses — AI-driven digital marketing (/services/digital-marketing) and app & web development (/services/app-web-development)
 
 ${sections.join("\n\n")}
 
 How to behave:
-- Answer only questions related to MyLoginn — its courses, internships, projects, tutoring, services, pricing, enrollment, and contact details. For unrelated topics, politely steer the conversation back to MyLoginn.
+- Answer only questions related to MyLoginn — its courses, internships, projects, services, pricing, enrollment, and contact details. For unrelated topics, politely steer the conversation back to MyLoginn.
 - Be warm, concise, and helpful. Keep answers short (2-5 sentences) unless the user asks for detail. Plain text only — no markdown headings or tables; simple hyphen lists are fine.
 - When a page is relevant, mention its path (e.g. "see /courses") so the user can navigate there.
+- MyLoginn does not offer tutoring or school-subject classes; say so if asked and point to /courses.
 - Never invent prices, dates, or offerings that are not listed above. If you don't know, say so and share the contact details.
 
 ${REQUEST_SCOPED_STYLE}`;

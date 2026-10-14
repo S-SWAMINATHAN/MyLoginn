@@ -11,3 +11,9 @@ export const CONTACT_PHONES = [
 export const WHATSAPP_PHONE = "+919655560555";
 
 export const CONTACT_HOURS = "Mon–Sat, 9am–7pm IST";
+
+/** Official social profiles. Add a profile here only once it exists; the footer and Organization schema both read this list. */
+export const SOCIAL_LINKS = [
+  { id: "instagram", label: "MyLoginn on Instagram", href: "https://www.instagram.com/myloginntech/" },
+  { id: "facebook", label: "MyLoginn on Facebook", href: "https://www.facebook.com/p/MyLoginn-Tech-61592248317142/" },
+] as const;

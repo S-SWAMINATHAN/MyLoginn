@@ -15,7 +15,7 @@ const features: { iconKey: CourseIconKey; title: string; description: string }[]
   {
     iconKey: "comm",
     title: "Real mentor support",
-    description: "1:1 feedback from working professionals across marketing, AI/ML and engineering.",
+    description: "Feedback from working professionals across marketing, AI/ML and engineering.",
   },
   {
     iconKey: "data",

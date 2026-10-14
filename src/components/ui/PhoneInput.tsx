@@ -5,6 +5,7 @@ import {
   AsYouType,
   getCountries,
   getCountryCallingCode,
+  isValidPhoneNumber,
   parsePhoneNumberWithError,
   type CountryCode,
 } from "libphonenumber-js";
@@ -67,7 +68,6 @@ export function PhoneInput({ label, hint, error, valid, value, onChange, onCount
   const shellRef = useRef<HTMLDivElement>(null);
   const popRef = useRef<HTMLDivElement>(null);
   const listRef = useRef<HTMLDivElement>(null);
-  const initialized = useRef(false);
   const [placement, setPlacement] = useState<Placement | null>(null);
   const [active, setActive] = useState(0);
   const [mounted, setMounted] = useState(false);
@@ -77,19 +77,23 @@ export function PhoneInput({ label, hint, error, valid, value, onChange, onCount
     onCountryChange?.(next);
   }
 
+  // Follow value changes made from outside (form reset, "same as phone"), not only the first one.
   useEffect(() => {
-    if (initialized.current || !value) return;
-    initialized.current = true;
-
+    const emitted = national ? `+${getCountryCallingCode(country)}${national}` : "";
+    if (value === emitted) return;
+    if (!value) {
+      // eslint-disable-next-line react-hooks/set-state-in-effect
+      setNational("");
+      return;
+    }
     try {
       const parsed = parsePhoneNumberWithError(value);
       if (parsed.country) {
-        // eslint-disable-next-line react-hooks/set-state-in-effect
         setCountry(parsed.country);
         setNational(parsed.nationalNumber);
       }
     } catch {
-      // keep the default country if the existing value can't be parsed
+      // keep what the learner typed if the outside value can't be parsed
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [value]);
@@ -201,6 +205,12 @@ export function PhoneInput({ label, hint, error, valid, value, onChange, onCount
     return typer.input(national);
   }, [country, national]);
 
+  const complete = Boolean(value) && isValidPhoneNumber(value);
+  const pretty = useMemo(() => {
+    if (!complete) return "";
+    try { return parsePhoneNumberWithError(value).formatInternational(); } catch { return value; }
+  }, [complete, value]);
+
   function emit(nextCountry: CountryCode, nextNational: string) {
     const digits = nextNational.replace(/\D/g, "");
     onChange(digits ? `+${getCountryCallingCode(nextCountry)}${digits}` : "");
@@ -215,16 +225,16 @@ export function PhoneInput({ label, hint, error, valid, value, onChange, onCount
           "field-shell flex min-h-12 items-stretch"
         )}
         data-invalid={error ? "true" : undefined}
-        data-valid={valid && !error ? "true" : undefined}
+        data-valid={(valid || complete) && !error ? "true" : undefined}
       >
         <button
           type="button"
           onClick={() => (open ? close() : setOpen(true))}
           aria-haspopup="dialog"
           aria-expanded={open}
-          className="flex shrink-0 cursor-pointer items-center gap-1.5 rounded-l-[0.8rem] border-r border-border-soft px-3.5 text-sm font-medium transition-colors hover:bg-brand-50 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-brand-500"
+          className="flex shrink-0 cursor-pointer items-center gap-1.5 rounded-l-[0.8rem] border-r border-border-soft px-3.5 text-sm font-medium transition-colors hover:bg-story-mist focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-story-royal"
         >
-          <span className="rounded-md bg-brand-50 px-1.5 py-0.5 font-mono text-[11px] font-bold text-brand-700">{country}</span>
+          <span className="rounded-md bg-story-royal/10 px-1.5 py-0.5 font-mono text-[11px] font-bold text-story-royal">{country}</span>
           <span className="text-muted">+{getCountryCallingCode(country)}</span>
           <motion.span animate={{ rotate: open ? 180 : 0 }} transition={{ duration: 0.25 }}>
             <ChevronDown className="h-4 w-4 text-muted" />
@@ -232,6 +242,9 @@ export function PhoneInput({ label, hint, error, valid, value, onChange, onCount
         </button>
         <input
           inputMode="tel"
+          type="tel"
+          autoComplete="tel-national"
+          aria-invalid={error ? true : undefined}
           placeholder="98765 43210"
           value={formatted}
           onChange={(e) => {
@@ -242,7 +255,29 @@ export function PhoneInput({ label, hint, error, valid, value, onChange, onCount
           onBlur={onBlur}
           className="w-full min-w-0 rounded-r-[0.8rem] bg-transparent px-4 py-2.5 text-[0.9375rem] text-foreground placeholder:text-muted/70 outline-none"
         />
-        {valid && !error && <CheckCircle2 aria-hidden="true" className="mr-3.5 h-4 w-4 shrink-0 self-center text-success" />}
+        <div className="mr-3 flex shrink-0 items-center gap-1.5 self-center">
+          <AnimatePresence initial={false} mode="popLayout">
+            {national && !complete && (
+              <motion.button
+                key="clear"
+                type="button"
+                onClick={() => { setNational(""); onChange(""); }}
+                aria-label="Clear phone number"
+                initial={{ opacity: 0, scale: 0.6 }}
+                animate={{ opacity: 1, scale: 1 }}
+                exit={{ opacity: 0, scale: 0.6 }}
+                className="grid h-6 w-6 place-items-center rounded-full text-muted transition-colors hover:bg-story-mist hover:text-story-royal"
+              >
+                <X className="h-3.5 w-3.5" />
+              </motion.button>
+            )}
+            {(complete || valid) && !error && (
+              <motion.span key="ok" initial={{ opacity: 0, scale: 0.4, rotate: -30 }} animate={{ opacity: 1, scale: 1, rotate: 0 }} exit={{ opacity: 0, scale: 0.4 }} transition={{ type: "spring", stiffness: 420, damping: 16 }}>
+                <CheckCircle2 aria-hidden="true" className="h-5 w-5 text-success" />
+              </motion.span>
+            )}
+          </AnimatePresence>
+        </div>
       </div>
 
       {mounted &&
@@ -278,7 +313,7 @@ export function PhoneInput({ label, hint, error, valid, value, onChange, onCount
                 >
                   {placement.sheet && <span aria-hidden className="mx-auto mt-2 h-1 w-10 shrink-0 rounded-full bg-border-soft" />}
                   <div className="flex shrink-0 items-center gap-2 p-3">
-                    <div className="flex flex-1 items-center gap-2 rounded-xl border-2 border-transparent bg-surface-2 px-3 py-2 transition-colors focus-within:border-brand-500 focus-within:bg-surface">
+                    <div className="flex flex-1 items-center gap-2 rounded-xl border-2 border-transparent bg-surface-2 px-3 py-2 transition-colors focus-within:border-story-royal focus-within:bg-surface">
                       <Search className="h-4 w-4 shrink-0 text-muted" aria-hidden />
                       <input
                         autoFocus
@@ -296,7 +331,7 @@ export function PhoneInput({ label, hint, error, valid, value, onChange, onCount
                       )}
                     </div>
                     {placement.sheet && (
-                      <button type="button" onClick={close} className="rounded-lg px-2 py-1.5 text-sm font-semibold text-brand-600">Done</button>
+                      <button type="button" onClick={close} className="rounded-lg px-2 py-1.5 text-sm font-semibold text-story-royal">Done</button>
                     )}
                   </div>
 
@@ -317,13 +352,13 @@ export function PhoneInput({ label, hint, error, valid, value, onChange, onCount
                             className={cn(
                               "flex w-full cursor-pointer items-center gap-3 rounded-xl px-2.5 py-2 text-left text-sm transition-colors",
                               i === active && "bg-surface-2",
-                              selected && "bg-brand-50 dark:bg-brand-900/20"
+                              selected && "bg-story-royal/10"
                             )}
                           >
-                            <span className={cn("grid h-7 w-9 shrink-0 place-items-center rounded-md font-mono text-[11px] font-bold", selected ? "bg-brand-600 text-white" : "bg-brand-50 text-brand-700")}>{c.code}</span>
+                            <span className={cn("grid h-7 w-9 shrink-0 place-items-center rounded-md font-mono text-[11px] font-bold", selected ? "bg-story-royal text-white" : "bg-story-royal/10 text-story-royal")}>{c.code}</span>
                             <span className="min-w-0 flex-1 truncate font-medium">{c.name}</span>
                             <span className="shrink-0 font-mono text-xs tabular-nums text-muted">+{c.calling}</span>
-                            {selected && <Check className="h-4 w-4 shrink-0 text-brand-600" aria-hidden />}
+                            {selected && <Check className="h-4 w-4 shrink-0 text-story-royal" aria-hidden />}
                           </button>
                         </div>
                       );
@@ -339,11 +374,15 @@ export function PhoneInput({ label, hint, error, valid, value, onChange, onCount
           document.body
         )}
 
-      {error ? (
-        <span role="alert" className="field-message font-medium text-danger"><AlertCircle className="h-3.5 w-3.5 shrink-0" aria-hidden="true" />{error}</span>
-      ) : hint ? (
-        <span className="field-message text-muted">{hint}</span>
-      ) : null}
+      <AnimatePresence initial={false} mode="wait">
+        {error ? (
+          <motion.span key="err" initial={{ opacity: 0, y: -4 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0 }} role="alert" className="field-message font-medium text-danger"><AlertCircle className="h-3.5 w-3.5 shrink-0" aria-hidden="true" />{error}</motion.span>
+        ) : complete ? (
+          <motion.span key="ok" initial={{ opacity: 0, y: -4 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0 }} className="field-message font-medium text-success"><CheckCircle2 className="h-3.5 w-3.5 shrink-0" aria-hidden="true" />Looks good · {pretty}</motion.span>
+        ) : hint ? (
+          <motion.span key="hint" initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} className="field-message text-muted">{hint}</motion.span>
+        ) : null}
+      </AnimatePresence>
     </div>
   );
 }

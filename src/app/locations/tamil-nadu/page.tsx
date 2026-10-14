@@ -7,7 +7,7 @@ import { faqStructuredData } from "@/lib/structuredData";
 import { CONTACT_EMAIL, CONTACT_PHONES } from "@/lib/contactInfo";
 
 export const metadata = createPageMetadata({
-  title: "Software, AI & Digital Services for Tamil Nadu Businesses",
+  title: "Services in Tamil Nadu",
   description:
     "MyLoginn builds websites, mobile apps, AI solutions and digital marketing for businesses across Tamil Nadu, and offers courses and internships.",
   path: "/locations/tamil-nadu",

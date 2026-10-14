@@ -10,7 +10,7 @@ import { AnimatedChat } from "@/components/ui/icons/AnimatedChat";
 import { AnimatedRocket } from "@/components/ui/icons/AnimatedRocket";
 import { LogoBadge } from "@/components/ui/LogoBadge";
 import { toWhatsAppLink } from "@/lib/whatsapp";
-import { CONTACT_EMAIL, CONTACT_PHONES, WHATSAPP_PHONE } from "@/lib/contactInfo";
+import { CONTACT_EMAIL, CONTACT_PHONES, SOCIAL_LINKS, WHATSAPP_PHONE } from "@/lib/contactInfo";
 import { openProjectRequest } from "@/components/services/ProjectRequestModal";
 
 const PILLARS = ["Intelligence", "Innovation", "Integrity", "Impact"];
@@ -19,30 +19,31 @@ const PILLARS = ["Intelligence", "Innovation", "Integrity", "Impact"];
 
 const columns = [
   {
-    title: "Explore",
+    title: "Company",
     links: [
       { href: "/", label: "Home" },
       { href: "/about", label: "About MyLoginn" },
-      { href: "/#ecosystem", label: "What we build" },
       { href: "/projects", label: "Projects" },
+      { href: "/internships", label: "Internships" },
       { href: "/contact", label: "Contact us" },
-    ],
-  },
-  {
-    title: "Technology",
-    links: [
-      { href: "/#ai", label: "AI & AI agents" },
-      { href: "/courses", label: "Courses" },
     ],
   },
   {
     title: "Services",
     links: [
+      { href: "/services", label: "All services" },
       { href: "/services/app-web-development", label: "App & web development" },
       { href: "/services/ai-development", label: "AI development & agents" },
       { href: "/services/testing-automation", label: "Software testing & automation" },
       { href: "/services/digital-marketing", label: "Digital marketing" },
-      { href: "/internships", label: "Internships" },
+    ],
+  },
+  {
+    title: "Learn",
+    links: [
+      { href: "/courses", label: "Courses" },
+      { href: "/logiquest", label: "LogiQuest" },
+      { href: "/logiquest/leaderboard", label: "Leaderboard" },
     ],
   },
   {
@@ -54,6 +55,11 @@ const columns = [
     ],
   },
 ];
+
+const SOCIAL_ICONS: Record<string, string> = {
+  instagram: "M7.5 2h9A5.5 5.5 0 0 1 22 7.5v9a5.5 5.5 0 0 1-5.5 5.5h-9A5.5 5.5 0 0 1 2 16.5v-9A5.5 5.5 0 0 1 7.5 2Zm0 2A3.5 3.5 0 0 0 4 7.5v9A3.5 3.5 0 0 0 7.5 20h9a3.5 3.5 0 0 0 3.5-3.5v-9A3.5 3.5 0 0 0 16.5 4h-9ZM12 7a5 5 0 1 1 0 10 5 5 0 0 1 0-10Zm0 2a3 3 0 1 0 0 6 3 3 0 0 0 0-6Zm5.25-3.25a1.25 1.25 0 1 1 0 2.5 1.25 1.25 0 0 1 0-2.5Z",
+  facebook: "M13.5 22v-8.2h2.8l.5-3.3h-3.3V8.4c0-.95.4-1.7 1.8-1.7H17V3.8C16.6 3.7 15.6 3.6 14.5 3.6c-2.6 0-4.3 1.6-4.3 4.4v2.5H7.5v3.3h2.7V22h3.3Z",
+};
 
 /** Routes that already end in their own page-specific CTA banner —
  * showing the generic one again here would just duplicate it. */
@@ -152,6 +158,22 @@ export function Footer() {
                   >
                     <c.Icon className="h-5 w-5 transition-transform duration-300 group-hover:scale-125 group-hover:-rotate-6" />
                     <span>{c.label}</span>
+                  </a>
+                </li>
+              ))}
+            </ul>
+
+            <ul className="mt-5 flex items-center gap-3" aria-label="MyLoginn on social media">
+              {SOCIAL_LINKS.map((s) => (
+                <li key={s.id}>
+                  <a
+                    href={s.href}
+                    target="_blank"
+                    rel="noopener noreferrer me"
+                    aria-label={s.label}
+                    className="grid h-9 w-9 place-items-center rounded-full border border-border-soft bg-surface text-muted transition-all duration-300 hover:-translate-y-0.5 hover:border-brand-500 hover:text-brand-500 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-500"
+                  >
+                    <svg viewBox="0 0 24 24" className="h-4 w-4" fill="currentColor" aria-hidden="true"><path d={SOCIAL_ICONS[s.id]} /></svg>
                   </a>
                 </li>
               ))}

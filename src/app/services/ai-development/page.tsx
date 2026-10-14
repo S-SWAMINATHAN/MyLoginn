@@ -4,7 +4,7 @@ import { StoryLanding } from "@/components/services/story/StoryLanding";
 import { PlanCta, AgentRunMonitor, DocQaMonitor, WorkflowMonitor, SupportChatPhone } from "@/components/services/story/StoryVisuals";
 
 export const metadata = createPageMetadata({
-  title: "AI Development & AI Agent Development Services",
+  title: "AI Solutions",
   description:
     "MyLoginn builds generative AI features, AI agents and workflow automation, and integrates them into your existing software. India-based team serving businesses worldwide.",
   path: "/services/ai-development",

@@ -25,7 +25,7 @@ const developmentFaqs = [
 const stack = ["Next.js", "React Native", "Node.js", "PostgreSQL", "Prisma", "Three.js", "Tailwind CSS", "AWS / Vercel"];
 
 export const metadata = createPageMetadata({
-  title: "Web, Mobile App & Custom Software Development",
+  title: "Web & App Development",
   description: "Secure, scalable websites, web applications, Android and iOS apps and custom software from MyLoginn, an India-based team serving businesses across India, including Coimbatore and Tamil Nadu, and abroad.",
   path: "/services/app-web-development",
   keywords: [

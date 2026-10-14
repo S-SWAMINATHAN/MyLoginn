@@ -37,7 +37,7 @@ const internshipFaqs = [
 ];
 
 export const metadata = createPageMetadata({
-  title: "Technology Internships in India with Real Projects",
+  title: "Internships",
   description: "Explore practical MyLoginn technology internships with real projects and mentor guidance for students across India, including Tamil Nadu.",
   path: "/internships",
   keywords: [

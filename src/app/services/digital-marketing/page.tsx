@@ -20,7 +20,7 @@ const marketingFaqs = [
 ];
 
 export const metadata = createPageMetadata({
-  title: "Digital Marketing & SEO Services",
+  title: "Digital Marketing",
   description: "SEO, paid campaigns, social media, content and analytics from MyLoginn, an India-based team supporting businesses across India, including Coimbatore and Tamil Nadu, and internationally.",
   path: "/services/digital-marketing",
   keywords: [
