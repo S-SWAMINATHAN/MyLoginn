@@ -12,16 +12,19 @@ export function createPageMetadata({
   description,
   path,
   keywords = [],
+  absoluteTitle = false,
 }: {
   title: string;
   description: string;
   path: string;
   keywords?: string[];
+  /** Use the title exactly as written, without the "| MyLoginn" suffix from the root layout template. */
+  absoluteTitle?: boolean;
 }): Metadata {
   const url = new URL(path, siteUrl).toString();
 
   return {
-    title,
+    title: absoluteTitle ? { absolute: title } : title,
     description,
     // Keep only brand identity terms global; service/course intent belongs to
     // the page where that content is actually covered.

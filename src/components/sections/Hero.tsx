@@ -33,9 +33,10 @@ export function Hero() {
           <div className="relative z-10 min-w-0 text-center lg:text-left">
             <Reveal><span className="story-eyebrow justify-center lg:justify-start">AI Agent · Live now</span></Reveal>
 
-            <h1 className="mx-auto mt-5 max-w-[40rem] text-2xl font-bold leading-[1.12] tracking-tight text-story-navy min-[400px]:text-[1.7rem] sm:text-4xl lg:mx-0 dark:text-foreground">
+            <h1 className="mt-4 text-lg font-bold tracking-tight text-story-royal sm:text-xl">MyLoginn</h1>
+            <p className="mx-auto mt-2 max-w-[40rem] text-2xl font-bold leading-[1.12] tracking-tight text-story-navy min-[400px]:text-[1.7rem] sm:text-4xl lg:mx-0 dark:text-foreground">
               <HeroHeadline phrases={heroPhrases} highlightClassName="text-story-royal" />
-            </h1>
+            </p>
 
             <Reveal direction="up" delay={0.15}>
               <p className="mx-auto mt-5 max-w-lg text-base leading-8 text-muted sm:text-lg lg:mx-0">

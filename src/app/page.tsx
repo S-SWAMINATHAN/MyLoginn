@@ -35,7 +35,8 @@ const FinalCta = dynamic(() => import("@/components/sections/FinalCta").then((mo
 });
 
 export const metadata = createPageMetadata({
-  title: "AI, Web, Mobile & Software Development Company",
+  title: "MyLoginn",
+  absoluteTitle: true,
   description:
     "MyLoginn Tech Private Limited is an India-based technology company building web, mobile, custom software, AI and automation solutions for businesses worldwide, including Coimbatore and Tamil Nadu.",
   path: "/",

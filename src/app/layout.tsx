@@ -35,7 +35,7 @@ const fontMono = JetBrains_Mono({
 export const metadata: Metadata = {
   metadataBase: new URL(siteUrl),
   title: {
-    default: "MyLoginn | AI, Web, Mobile & Software Development Company",
+    default: "MyLoginn",
     template: "%s | MyLoginn",
   },
   description:
@@ -52,13 +52,13 @@ export const metadata: Metadata = {
     type: "website",
     locale: "en_IN",
     siteName: "MyLoginn",
-    title: "MyLoginn | AI, Web, Mobile & Software Development Company",
+    title: "MyLoginn",
     description:
       "India-based technology company building web, mobile, custom software, AI and automation solutions for businesses worldwide.",
   },
   twitter: {
     card: "summary_large_image",
-    title: "MyLoginn | AI, Web, Mobile & Software Development Company",
+    title: "MyLoginn",
     description:
       "India-based technology company building web, mobile, custom software, AI and automation solutions for businesses worldwide.",
   },

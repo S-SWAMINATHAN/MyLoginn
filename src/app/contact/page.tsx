@@ -16,7 +16,8 @@ import contactArtwork from "@/images/Contact us header.png";
 import { CONTACT_EMAIL, CONTACT_HOURS, CONTACT_PHONES, WHATSAPP_PHONE } from "@/lib/contactInfo";
 
 export const metadata = createPageMetadata({
-  title: "Contact",
+  title: "Contact MyLoginn",
+  absoluteTitle: true,
   description: "Contact MyLoginn Tech Private Limited about software development, AI, digital marketing, courses and internships.",
   path: "/contact",
   keywords: ["contact MyLoginn", "MyLoginn contact", "software development enquiry", "digital marketing enquiry"],

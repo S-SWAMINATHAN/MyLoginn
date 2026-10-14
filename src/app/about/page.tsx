@@ -14,7 +14,8 @@ import { CONTACT_EMAIL } from "@/lib/contactInfo";
 import { createPageMetadata } from "@/lib/seo";
 
 export const metadata = createPageMetadata({
-  title: "About the Company",
+  title: "About MyLoginn",
+  absoluteTitle: true,
   description:
     "Learn about MyLoginn Tech Private Limited, the company behind MyLoginn, and its web and mobile development, AI, digital marketing, courses, and internships.",
   path: "/about",
