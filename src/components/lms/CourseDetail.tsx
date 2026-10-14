@@ -1,6 +1,6 @@
 import Link from "next/link";
 import { notFound } from "next/navigation";
-import { Award, ChevronDown, Infinity as InfinityIcon, ListChecks, Lock, Percent, Sparkles } from "lucide-react";
+import { Award, ChevronDown, Infinity as InfinityIcon, ListChecks, Percent, Sparkles } from "lucide-react";
 import { prisma } from "@/lib/prisma";
 import { Section, Container } from "@/components/ui/Section";
 import { ArrowLink } from "@/components/ui/ArrowLink";
@@ -8,6 +8,7 @@ import { Reveal, RevealGroup, RevealItem } from "@/components/ui/Reveal";
 import { AnimatedClock } from "@/components/ui/icons/AnimatedClock";
 import { CourseIconThumb } from "@/components/courses/CourseIconThumb";
 import { CourseProgressRing } from "@/components/courses/CourseProgressRing";
+import { ModuleTopics } from "@/components/courses/ModuleTopics";
 import { loadLmsContext } from "@/lib/lms/context";
 import { LmsEnrollButton } from "./SmallForms";
 import { JsonLd } from "@/components/seo/JsonLd";
@@ -46,7 +47,7 @@ export async function LmsCourseDetail({ slug, justEnrolled }: { slug: string; ju
   const stats: [string, string][] = [
     ["Level", course.level],
     ["Modules", String(structure.modules.length)],
-    ["Lessons", String(structure.lessons.length)],
+    ["Topics", String(structure.lessons.length)],
     ["Duration", `${course.durationWeeks} weeks`],
   ];
 
@@ -79,7 +80,7 @@ export async function LmsCourseDetail({ slug, justEnrolled }: { slug: string; ju
                 <span className="group inline-flex shrink-0 items-center gap-1.5 rounded-full border border-border-soft bg-surface px-3 py-1.5 text-xs font-semibold">
                   <AnimatedClock className="h-4 w-4 transition-transform duration-300 group-hover:scale-125" /> {course.durationWeeks} weeks
                 </span>
-                <span className="shrink-0 rounded-full border border-border-soft bg-surface px-3 py-1.5 text-xs font-semibold">{structure.modules.length} modules · {structure.lessons.length} lessons</span>
+                <span className="shrink-0 rounded-full border border-border-soft bg-surface px-3 py-1.5 text-xs font-semibold">{structure.modules.length} modules · {structure.lessons.length} subtopics</span>
                 <span className="shrink-0 rounded-full border border-border-soft bg-surface px-3 py-1.5 text-xs font-semibold">≈ {Math.max(1, Math.round(totalMinutes / 60))} h of content</span>
                 {tags.map((t) => <span key={t} className="shrink-0 rounded-full bg-story-mist px-3 py-1.5 text-xs font-semibold text-story-royal">{t}</span>)}
               </div>
@@ -146,34 +147,17 @@ export async function LmsCourseDetail({ slug, justEnrolled }: { slug: string; ju
                           <div className="min-w-0 flex-1">
                             <div className="flex flex-wrap items-center justify-between gap-x-3 gap-y-1">
                               <span className="font-semibold">{m.title}</span>
-                              <span className="font-mono text-[11px] tabular-nums text-muted">{state ? `${doneCount}/${lessons.length} lessons · ${percent}%` : `${lessons.length} lessons`}</span>
+                              <span className="font-mono text-[11px] tabular-nums text-muted">{state ? `${doneCount}/${lessons.length} topics · ${percent}%` : `${lessons.length} topics`}</span>
                             </div>
                             <div className="mt-2.5 h-1.5 overflow-hidden rounded-full bg-story-mist"><div className="h-full rounded-full bg-story-royal transition-[width] duration-700" style={{ width: `${percent}%` }} /></div>
                           </div>
                           <span aria-hidden className="grid h-7 w-7 shrink-0 place-items-center rounded-full bg-story-mist text-story-royal transition-transform duration-300 group-open:rotate-180"><ChevronDown className="h-4 w-4" /></span>
                         </summary>
                         {m.summary && <p className="px-4 pb-1 text-sm text-muted">{m.summary}</p>}
-                        <ol className="space-y-1 border-t border-border-soft p-3 text-sm">
-                          {lessons.map((l, li) => {
-                            const v = lessonView.get(l.id);
-                            const done = v?.status === "completed";
-                            const locked = v?.status === "locked";
-                            const row = (
-                              <>
-                                <span className={`grid h-7 w-7 shrink-0 place-items-center rounded-full text-[11px] font-bold ${done ? "bg-story-royal text-white" : "bg-story-mist text-story-royal"}`}>{done ? "✓" : locked ? <Lock className="h-3 w-3" /> : li + 1}</span>
-                                <span className="min-w-0 flex-1 truncate">{l.title}</span>
-                                <span className="shrink-0 text-xs text-muted">{l.estimatedMinutes} min</span>
-                              </>
-                            );
-                            return (
-                              <li key={l.id}>
-                                {access.allowed && !locked
-                                  ? <Link href={`${learnHref}/${l.slug}`} className="flex items-center gap-3 rounded-xl px-2 py-2 transition-colors hover:bg-story-mist">{row}</Link>
-                                  : <div className="flex items-center gap-3 px-2 py-2">{row}</div>}
-                              </li>
-                            );
-                          })}
-                        </ol>
+                        <ModuleTopics
+                          courseSlug={slug}
+                          topics={lessons.map((l) => ({ title: l.title, slug: l.slug, number: structure.lessons.findIndex((x) => x.id === l.id) + 1, done: lessonView.get(l.id)?.status === "completed" }))}
+                        />
                       </details>
                     </li>
                   );
@@ -203,7 +187,7 @@ export async function LmsCourseDetail({ slug, justEnrolled }: { slug: string; ju
 
                   {state && (
                     <div className="mt-5 rounded-2xl bg-story-mist p-4">
-                      <CourseProgressRing percent={state.view.percent} label="Your progress" sublabel={`${state.view.requiredDone} of ${state.view.requiredTotal} lessons done`} />
+                      <CourseProgressRing percent={state.view.percent} label="Your progress" sublabel={`${state.view.requiredDone} of ${state.view.requiredTotal} topics done`} />
                     </div>
                   )}
 

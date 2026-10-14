@@ -70,7 +70,7 @@ function Shell({ ctx, children, activeLessonId, wide = true, card = false, crumb
 
         <div className={`mt-5 grid gap-6 ${wide ? "lg:grid-cols-[19rem_minmax(0,1fr)]" : ""}`}>
           <aside className="order-2 rounded-3xl border border-border-soft bg-surface p-4 sm:p-5 lg:order-1 lg:sticky lg:top-24 lg:max-h-[calc(100vh-7rem)] lg:self-start lg:overflow-y-auto">
-            <p className="mb-4 border-b border-border-soft pb-3 text-base font-bold text-story-navy dark:text-foreground">{structure.course.title}</p>
+            <p className="mb-3 px-3 text-base font-bold text-story-navy dark:text-foreground">{structure.course.title}</p>
             <Outline structure={structure} view={state?.view ?? null} activeLessonId={activeLessonId} />
             <FinalRow ctx={ctx} />
           </aside>
