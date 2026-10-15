@@ -142,7 +142,7 @@ export function TestingLanding(p: ServiceLandingProps) {
       {/* FAQ + form */}
       <Container className="mt-24 max-w-6xl sm:mt-32">
         <div className="grid gap-12 lg:grid-cols-5">
-          <div className="lg:col-span-3">
+          <div className="min-w-0 lg:col-span-3">
             <section aria-labelledby="svc-faq">
               <Reveal><span className="story-eyebrow">FAQ</span></Reveal>
               <h2 id="svc-faq" className="story-subheading mt-3 text-story-navy dark:text-foreground">Frequently asked questions</h2>

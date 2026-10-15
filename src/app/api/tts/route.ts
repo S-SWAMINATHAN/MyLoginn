@@ -4,7 +4,7 @@ import type { NextRequest } from "next/server";
 export const runtime = "nodejs";
 
 // Neural voices that sound like a real presenter. The client may only pick from this list.
-const VOICES = new Set(["en-US-AriaNeural", "en-US-JennyNeural", "en-US-GuyNeural", "en-IN-NeerjaNeural", "en-IN-PrabhatNeural", "en-GB-SoniaNeural"]);
+const VOICES = new Set(["en-US-AvaMultilingualNeural", "en-US-EmmaMultilingualNeural", "en-US-AriaNeural", "en-US-JennyNeural", "en-US-GuyNeural", "en-IN-NeerjaNeural", "en-IN-PrabhatNeural", "en-GB-SoniaNeural"]);
 const MAX_CHARS = 700;
 
 // In-memory cache so repeated plays of the same line do not hit the speech service again.
@@ -22,20 +22,27 @@ function collect(stream: NodeJS.ReadableStream) {
 
 export async function GET(request: NextRequest) {
   const text = (request.nextUrl.searchParams.get("t") ?? "").replace(/\s+/g, " ").trim();
-  const voice = request.nextUrl.searchParams.get("v") ?? "en-US-AriaNeural";
+  const voice = request.nextUrl.searchParams.get("v") ?? "en-US-AvaMultilingualNeural";
   if (!text || text.length > MAX_CHARS || !VOICES.has(voice)) return Response.json({ error: "Invalid text or voice." }, { status: 400 });
 
   const key = `${voice}|${text}`;
   let audio = cache.get(key);
   if (!audio) {
+    const tts = new MsEdgeTTS();
+    let timer: ReturnType<typeof setTimeout> | undefined;
     try {
-      const tts = new MsEdgeTTS();
-      await tts.setMetadata(voice, OUTPUT_FORMAT.AUDIO_24KHZ_96KBITRATE_MONO_MP3);
-      const { audioStream } = tts.toStream(text);
-      audio = await collect(audioStream);
-      tts.close();
+      // Never let a stalled speech socket hang the request: the player falls back to the browser voice on error.
+      const timeout = new Promise<never>((_, reject) => { timer = setTimeout(() => reject(new Error("timeout")), 15000); });
+      audio = await Promise.race([(async () => {
+        await tts.setMetadata(voice, OUTPUT_FORMAT.AUDIO_24KHZ_96KBITRATE_MONO_MP3);
+        const { audioStream } = tts.toStream(text);
+        return collect(audioStream);
+      })(), timeout]);
     } catch {
       return Response.json({ error: "Voice service unavailable." }, { status: 502 });
+    } finally {
+      clearTimeout(timer);
+      try { tts.close(); } catch { /* socket already closed */ }
     }
     if (!audio.length) return Response.json({ error: "No audio produced." }, { status: 502 });
     if (cache.size > 400) cache.clear();

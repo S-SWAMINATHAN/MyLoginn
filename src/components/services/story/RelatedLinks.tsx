@@ -37,7 +37,7 @@ export function RelatedLinks({ related, wide }: { related: { href: string; label
         {related.map((r, i) => {
           const m = metaFor(r.href, i);
           return (
-            <RevealItem key={r.href} className="h-full">
+            <RevealItem key={r.href} className="h-full min-w-0">
               <Link
                 href={r.href}
                 style={{ "--c": m.color } as CSSProperties}

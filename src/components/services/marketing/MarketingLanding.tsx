@@ -104,7 +104,7 @@ export function MarketingLanding({ areas, faqs }: { areas: Area[]; faqs: Faq[] }
       {/* FAQ + form */}
       <Container className="mt-24 max-w-6xl sm:mt-32">
         <div className="grid gap-12 lg:grid-cols-5">
-          <section aria-labelledby="marketing-faq" className="lg:col-span-3">
+          <section aria-labelledby="marketing-faq" className="min-w-0 lg:col-span-3">
             <Reveal><span className="story-eyebrow">FAQ</span></Reveal>
             <h2 id="marketing-faq" className="story-subheading mt-3 text-story-navy dark:text-foreground">Digital marketing FAQs</h2>
             <FaqAccordion items={faqs} className="mt-8" />

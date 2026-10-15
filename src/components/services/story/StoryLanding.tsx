@@ -140,7 +140,7 @@ export function StoryLanding(p: StoryLandingProps) {
 
       <Container className="mt-24 max-w-6xl sm:mt-32">
         <div className="grid gap-12 lg:grid-cols-5">
-          <section aria-labelledby={p.faqId} className="lg:col-span-3">
+          <section aria-labelledby={p.faqId} className="min-w-0 lg:col-span-3">
             <Reveal><span className="story-eyebrow">FAQ</span></Reveal>
             <h2 id={p.faqId} className="story-subheading mt-3 text-story-navy dark:text-foreground">{p.faqTitle}</h2>
             <FaqAccordion items={p.faqs} className="mt-8" />

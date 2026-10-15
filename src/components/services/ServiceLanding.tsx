@@ -31,7 +31,7 @@ export function ServiceLanding(p: ServiceLandingProps) {
         <h1 className="mt-5 max-w-4xl text-4xl font-bold leading-[1.1] tracking-tight sm:text-5xl">{p.h1}</h1>
         <p className="mt-4 max-w-3xl text-lg leading-8 text-muted">{p.intro}</p>
         <div className="mt-12 grid grid-cols-1 gap-12 lg:grid-cols-5">
-          <div className="lg:col-span-3">
+          <div className="min-w-0 lg:col-span-3">
             <section aria-labelledby="svc-areas">
               <h2 id="svc-areas" className="text-2xl font-semibold tracking-tight">What we can build and deliver</h2>
               <div className="mt-5 grid gap-4 sm:grid-cols-2">
