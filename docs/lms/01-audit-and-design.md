@@ -89,5 +89,5 @@ Per the product decision, lessons use the existing generated, narrated explainer
 1. Take a database backup (Prisma Postgres snapshot or `pg_dump`) before deploy.
 2. `npm run build` already runs `prisma db push --skip-generate`. The change set is additive, so `db push` applies it without data loss. **Run `prisma db push --dry-run`-equivalent first** (`prisma migrate diff --from-url ... --to-schema-datamodel prisma/schema.prisma --script`) and confirm it contains only `CREATE TABLE` / `ADD COLUMN` / `CREATE INDEX`.
 3. Deploy. Existing courses are unaffected (`engine="legacy"`, `status="published"`).
-4. Optional: `npm run lms:seed` loads authored course content; `npm run lms:import` imports an admin-exported JSON file.
+4. Optional: `npm run lms:import` imports an admin-exported JSON file.
 5. Rollback = redeploy previous build; the new tables/columns are simply unused.

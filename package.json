@@ -12,8 +12,7 @@
     "db:seed:free-courses": "tsx prisma/seed-free-courses.ts",
     "db:seed:logiquest": "tsx prisma/seed-logiquest.ts",
     "lq:validate": "tsx prisma/validate-questions.ts",
-    "test:lms": "tsx --require ./tests/setup.cjs --test tests/lms/*.test.ts",
-    "lms:seed": "tsx --require ./tests/setup.cjs scripts/lms-seed.ts"
+    "test:lms": "tsx --require ./tests/setup.cjs --test tests/lms/*.test.ts"
   },
   "prisma": {
     "seed": "tsx prisma/seed.ts"
