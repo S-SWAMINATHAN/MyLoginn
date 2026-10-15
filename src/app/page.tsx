@@ -2,7 +2,6 @@ import dynamic from "next/dynamic";
 import { createPageMetadata } from "@/lib/seo";
 import { localKeywords, regionalKeywords } from "@/lib/localSeo";
 import { StoryStage } from "@/components/experience/StoryStage";
-import { ScrollToSection } from "@/components/experience/ScrollToSection";
 import { JsonLd } from "@/components/seo/JsonLd";
 import { organizationStructuredData, websiteStructuredData } from "@/lib/structuredData";
 
@@ -58,7 +57,6 @@ export default function Home() {
         "@context": "https://schema.org",
         "@graph": [organizationStructuredData, websiteStructuredData],
       }} />
-      <ScrollToSection id="ecosystem" />
       <StoryStage>
         <Hero />
         <Ecosystem />
