@@ -22,6 +22,7 @@ import { ArrowRight } from "lucide-react";
 import type { CourseIconKey } from "@/lib/courseIcons";
 import { recordDailyActivity, getStreakSummary, toDayKey } from "@/lib/streak";
 import { DownloadCertificate } from "@/components/courses/DownloadCertificate";
+import { isStepByStepCourse } from "@/lib/freeCourseCurriculum";
 
 export const metadata = { title: "Dashboard", robots: { index: false, follow: false } };
 
@@ -36,7 +37,7 @@ export default async function DashboardPage() {
   const streak = await getStreakSummary(user.id);
   const [leaderboardWeek, leaderboardAll] = await Promise.all([getLeaderboard(user.id, 7), getLeaderboard(user.id)]);
   const [enrollments, applications, projects, bookings] = await Promise.all([
-    prisma.enrollment.findMany({ where: { userId: user.id, status: { not: "cancelled" } }, include: { course: true }, orderBy: { enrolledAt: "desc" } }),
+    prisma.enrollment.findMany({ where: { userId: user.id, status: { not: "cancelled" }, course: { status: "published", engine: "legacy" } }, include: { course: true }, orderBy: { enrolledAt: "desc" } }),
     prisma.internshipApplication.findMany({ where: { userId: user.id, status: "accepted" }, include: { internship: true }, orderBy: { appliedAt: "desc" } }),
     prisma.project.findMany({ where: { userId: user.id }, include: { mentor: true }, orderBy: { updatedAt: "desc" } }),
     prisma.tutoringBooking.findMany({ where: { userId: user.id }, include: { tutor: true }, orderBy: { createdAt: "desc" } }),
@@ -186,7 +187,7 @@ export default async function DashboardPage() {
                           <span aria-hidden className="grid h-8 w-8 shrink-0 place-items-center rounded-full bg-story-mist text-story-royal transition-all duration-300 group-hover:translate-x-1 group-hover:bg-story-royal group-hover:text-white"><ArrowRight className="h-4 w-4" /></span>
                         </div>
                       </Link>
-                      {e.course.price === 0 && e.course.engine === "legacy" && e.progress >= 100 && <DownloadCertificate courseSlug={e.course.slug} courseTitle={e.course.title} defaultName={user.name} />}
+                      {isStepByStepCourse(e.course) && e.progress >= 100 && <DownloadCertificate courseSlug={e.course.slug} courseTitle={e.course.title} defaultName={user.name} />}
                     </div>
                   );
                 })}

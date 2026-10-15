@@ -2,7 +2,7 @@ import { NextResponse } from "next/server";
 import { getCurrentUser } from "@/lib/auth";
 import { prisma } from "@/lib/prisma";
 import { buildTutorialLesson, toTopicSlug } from "@/lib/freeCourseTutorial";
-import { flattenCourseModules, getCourseModules } from "@/lib/freeCourseCurriculum";
+import { flattenCourseModules, getCourseModules, isStepByStepCourse } from "@/lib/freeCourseCurriculum";
 import { comparePracticeSql } from "@/lib/freeCoursePracticeDb";
 import { deriveChecks, evaluateChecks } from "@/lib/challengeChecks";
 
@@ -14,7 +14,7 @@ async function updateTopicProgress(request: Request, { params }: RouteContext) {
 
   const { slug, topic } = await params;
   const course = await prisma.course.findUnique({ where: { slug } });
-  if (!course || course.price !== 0 || course.engine !== "legacy") return NextResponse.json({ error: "Free course not found." }, { status: 404 });
+  if (!course || course.status !== "published" || !isStepByStepCourse(course)) return NextResponse.json({ error: "Course not found." }, { status: 404 });
   const topics = flattenCourseModules(getCourseModules(course.slug, JSON.parse(course.syllabus) as string[]));
   const topicTitle = topics.find((item) => toTopicSlug(item) === topic);
   if (!topicTitle) return NextResponse.json({ error: "Topic not found." }, { status: 404 });

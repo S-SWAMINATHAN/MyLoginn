@@ -8,17 +8,17 @@ import { ArrowLink } from "@/components/ui/ArrowLink";
 import { Reveal, RevealGroup, RevealItem } from "@/components/ui/Reveal";
 import { CourseProgressRing } from "@/components/courses/CourseProgressRing";
 import { ModuleTopics } from "@/components/courses/ModuleTopics";
-import { Percent, ListChecks, Infinity as InfinityIcon, Award, ChevronDown } from "lucide-react";
+import { Percent, ListChecks, Infinity as InfinityIcon, Award, ChevronDown, FileDown } from "lucide-react";
 import { AnimatedClock } from "@/components/ui/icons/AnimatedClock";
 import { AnimatedSuccess } from "@/components/ui/icons/AnimatedSuccess";
 import { CourseIconThumb } from "@/components/courses/CourseIconThumb";
 import { FreeEnrollButton } from "@/components/courses/FreeEnrollButton";
 import { DownloadCertificate } from "@/components/courses/DownloadCertificate";
-import { getCourseModules } from "@/lib/freeCourseCurriculum";
+import { DownloadCourseMaterials } from "@/components/courses/DownloadCourseMaterials";
+import { getCourseModules, isStepByStepCourse } from "@/lib/freeCourseCurriculum";
 import { getCourseDisplayTitle, getFreeCourseTerm } from "@/lib/freeCourseTitles";
 import { JsonLd } from "@/components/seo/JsonLd";
 import { siteUrl } from "@/lib/site";
-import { LmsCourseDetail } from "@/components/lms/CourseDetail";
 
 export async function generateMetadata({ params }: { params: Promise<{ slug: string }> }): Promise<Metadata> {
   const { slug } = await params;
@@ -44,19 +44,12 @@ export async function generateMetadata({ params }: { params: Promise<{ slug: str
   });
 }
 
-export default async function CourseDetailPage({
-  params,
-  searchParams,
-}: {
-  params: Promise<{ slug: string }>;
-  searchParams: Promise<{ enrolled?: string }>;
-}) {
+export default async function CourseDetailPage({ params }: { params: Promise<{ slug: string }> }) {
   const { slug } = await params;
-  const { enrolled: justEnrolled } = await searchParams;
   const course = await prisma.course.findUnique({ where: { slug } });
-  if (!course) notFound();
-  // DB-driven LMS courses have their own detail page (real syllabus, validity, renewal terms, access state).
-  if (course.engine === "lms") return <LmsCourseDetail slug={slug} justEnrolled={justEnrolled === "1"} />;
+  // Archived or draft courses, and anything outside the standard course engine, are not part of the catalog.
+  if (!course || course.status !== "published" || course.engine !== "legacy") notFound();
+  const stepByStep = isStepByStepCourse(course);
 
   const user = await getCurrentUser();
   const enrollment = user
@@ -70,9 +63,9 @@ export default async function CourseDetailPage({
   const courseTerm = getFreeCourseTerm(course.slug);
   const displayTags = tags.map((tag) => tag.toLowerCase() === "fundamentals" && courseTerm ? courseTerm : tag);
   const syllabus = JSON.parse(course.syllabus) as string[];
-  const modules = course.price === 0 ? getCourseModules(course.slug, syllabus) : [{ title: "Course syllabus", topics: syllabus }];
+  const modules = stepByStep ? getCourseModules(course.slug, syllabus) : [{ title: "Course syllabus", topics: syllabus }];
   const topicCount = modules.reduce((count, module) => count + module.topics.length, 0);
-  const completedTopics = enrollment && course.price === 0
+  const completedTopics = enrollment && stepByStep
     ? await prisma.courseTopicProgress.findMany({ where: { userId: user!.id, courseId: course.id, challengePassed: true }, select: { topicSlug: true } })
     : [];
   const activeTopicSlugs = new Set(modules.flatMap((module) => module.topics).map((topic) => topic.toLowerCase().trim().replace(/[^a-z0-9]+/g, "-").replace(/^-|-$/g, "")));
@@ -84,10 +77,11 @@ export default async function CourseDetailPage({
 
   const toSlug = (item: string) => item.toLowerCase().trim().replace(/[^a-z0-9]+/g, "-").replace(/^-|-$/g, "");
   const allTopics = modules.flatMap((module) => module.topics);
-  const courseDone = course.price === 0 && enrollment && topicCount > 0 && completedTopicSlugs.size >= topicCount;
+  const courseDone = stepByStep && enrollment && topicCount > 0 && completedTopicSlugs.size >= topicCount;
 
-  const stats = course.price === 0
-    ? [["Level", courseTerm ?? course.level], ["Modules", String(modules.length)], ["Topics", String(topicCount)], ["Duration", `${course.durationWeeks} weeks`]]
+  const nextTopic = allTopics.find((item) => !completedTopicSlugs.has(toSlug(item)));
+  const stats = stepByStep
+    ? [["Level", course.price === 0 ? courseTerm ?? course.level : course.level], ["Modules", String(modules.length)], ["Topics", String(topicCount)], ["Duration", `${course.durationWeeks} weeks`]]
     : [["Level", course.level], ["Modules", String(modules.length)], ["Subtopics", String(topicCount)], ["Duration", `${course.durationWeeks} weeks`]];
 
   return (
@@ -127,7 +121,8 @@ export default async function CourseDetailPage({
                 <span className="group inline-flex shrink-0 items-center gap-1.5 rounded-full border border-border-soft bg-surface px-3 py-1.5 text-xs font-semibold">
                   <AnimatedClock className="h-4 w-4 transition-transform duration-300 group-hover:scale-125" /> {course.durationWeeks} weeks
                 </span>
-                {course.price === 0 && <span className="shrink-0 rounded-full border border-border-soft bg-surface px-3 py-1.5 text-xs font-semibold">{modules.length} modules · {topicCount} subtopics</span>}
+                {course.price > 0 && <span className="shrink-0 rounded-full bg-amber-50 px-3 py-1.5 text-xs font-semibold text-amber-700 ring-1 ring-amber-200 dark:bg-amber-400/10 dark:text-amber-300 dark:ring-amber-400/25">Paid course</span>}
+                {stepByStep && <span className="shrink-0 rounded-full border border-border-soft bg-surface px-3 py-1.5 text-xs font-semibold">{modules.length} modules · {topicCount} subtopics</span>}
                 {displayTags.map((t) => (
                   <span key={t} className="shrink-0 rounded-full bg-story-mist px-3 py-1.5 text-xs font-semibold text-story-royal">{t}</span>
                 ))}
@@ -150,12 +145,13 @@ export default async function CourseDetailPage({
               ))}
             </RevealGroup>
 
-            {/* Roadmap (free) */}
-            {course.price === 0 && (
+            {/* Roadmap (step-by-step courses) */}
+            {stepByStep && (
               <section className="mt-12" aria-labelledby="course-roadmap">
                 <Reveal><span className="story-eyebrow">Course roadmap</span></Reveal>
                 <h2 id="course-roadmap" className="story-subheading mt-3 text-story-navy dark:text-foreground">A clear path through the material</h2>
                 <p className="mt-2 max-w-xl text-sm leading-6 text-muted">Build your understanding one focused lesson at a time, from core ideas to practical programming.</p>
+                {!enrollment && <p className="mt-3 inline-flex items-center gap-2 rounded-full bg-story-mist px-3.5 py-1.5 text-xs font-semibold text-story-royal">{course.price === 0 ? "Enroll free to unlock the lessons." : "Enroll in this course to unlock the lessons."}</p>}
                 <ol className="relative mt-8 space-y-4">
                   <span aria-hidden className="absolute bottom-6 left-[19px] top-6 w-px bg-border-soft" />
                   {modules.map((module, moduleIndex) => {
@@ -180,6 +176,8 @@ export default async function CourseDetailPage({
                           <ModuleTopics
                             courseSlug={course.slug}
                             topics={module.topics.map((item) => ({ title: item, slug: toSlug(item), number: allTopics.indexOf(item) + 1, done: completedTopicSlugs.has(toSlug(item)) }))}
+                            nextSlug={nextTopic ? toSlug(nextTopic) : undefined}
+                            locked={!enrollment}
                           />
                         </details>
                       </li>
@@ -189,8 +187,8 @@ export default async function CourseDetailPage({
               </section>
             )}
 
-            {/* Syllabus (paid) */}
-            {course.price !== 0 && (
+            {/* Syllabus (paid courses without a step-by-step curriculum) */}
+            {!stepByStep && (
               <section className="mt-12" aria-labelledby="course-syllabus">
                 <Reveal><span className="story-eyebrow">Syllabus</span></Reveal>
                 <h2 id="course-syllabus" className="story-subheading mt-3 flex items-center gap-2 text-story-navy dark:text-foreground">
@@ -216,7 +214,7 @@ export default async function CourseDetailPage({
 
           {/* Enrolment card */}
           <aside>
-            <div className="lg:sticky lg:top-24">
+            <div className="lg:sticky lg:top-24 lg:max-h-[calc(100vh-7rem)] lg:overflow-y-auto lg:overscroll-contain lg:rounded-3xl [scrollbar-width:thin]">
               <Reveal direction="left" delay={0.1}>
                 <div className="rounded-3xl border border-border-soft bg-surface p-6 shadow-[var(--shadow-soft)]">
                   <div className="flex flex-wrap items-baseline gap-x-3 gap-y-1">
@@ -231,7 +229,7 @@ export default async function CourseDetailPage({
                     </span>
                   )}
 
-                  {course.price === 0 && enrollment && (
+                  {stepByStep && enrollment && (
                     <div className="mt-5 rounded-2xl bg-story-mist p-4">
                       <CourseProgressRing percent={enrollment.progress} label="Your progress" sublabel={`${completedTopicSlugs.size} of ${topicCount} topics done`} />
                     </div>
@@ -245,7 +243,7 @@ export default async function CourseDetailPage({
                     </div>
                   )}
 
-                  {course.price === 0 && enrollment && !courseDone && (
+                  {stepByStep && enrollment && !courseDone && (
                     <p className="mt-4 rounded-xl bg-story-mist px-3.5 py-2.5 text-xs leading-5 text-muted">Complete every topic to earn a verified certificate with a unique certificate ID. Choose from three designs.</p>
                   )}
 
@@ -253,7 +251,9 @@ export default async function CourseDetailPage({
                     {course.price === 0 ? (
                       <FreeEnrollButton slug={course.slug} loggedIn={!!user} enrolled={!!enrollment} />
                     ) : !user ? (
-                      <ArrowLink href="/login" className="w-full justify-between">Log in to enroll</ArrowLink>
+                      <ArrowLink href={`/login?next=${encodeURIComponent(`/courses/${course.slug}`)}`} className="w-full justify-between">Log in to enroll</ArrowLink>
+                    ) : enrollment && stepByStep ? (
+                      <FreeEnrollButton slug={course.slug} loggedIn enrolled />
                     ) : enrollment ? (
                       <div className="flex flex-col items-center gap-2 text-center">
                         <AnimatedSuccess className="h-10.5 w-10.5" />
@@ -265,9 +265,12 @@ export default async function CourseDetailPage({
                     )}
                   </div>
 
+                  {stepByStep && enrollment && <div className="mt-3"><DownloadCourseMaterials slug={course.slug} /></div>}
+
                   <ul className="mt-5 space-y-2.5 border-t border-border-soft pt-4 text-[13px] font-medium">
                     <li className="flex items-center gap-2.5"><span aria-hidden className="grid h-7 w-7 place-items-center rounded-full bg-story-mist text-story-royal"><InfinityIcon className="h-4 w-4" /></span>Lifetime access</li>
                     <li className="flex items-center gap-2.5"><span aria-hidden className="grid h-7 w-7 place-items-center rounded-full bg-story-mist text-story-royal"><Award className="h-4 w-4" /></span>Certificate on completion</li>
+                    {stepByStep && <li className="flex items-center gap-2.5"><span aria-hidden className="grid h-7 w-7 place-items-center rounded-full bg-story-mist text-story-royal"><FileDown className="h-4 w-4" /></span>Downloadable course materials (PDF)</li>}
                   </ul>
                 </div>
               </Reveal>

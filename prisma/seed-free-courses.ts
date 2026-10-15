@@ -6,7 +6,12 @@ loadEnvConfig(process.cwd());
 
 const prisma = new PrismaClient();
 
-const courses = [
+type SeedCourse = {
+  title: string; slug: string; category: string; description: string; durationWeeks: number; imageColor: string; tags: string[]; syllabus: string[];
+  pricing?: { price: number; originalPrice?: number; level: string; instructor?: string };
+};
+
+const courses: SeedCourse[] = [
   {
     title: "Python Essentials", slug: "python-fundamentals", category: "Programming Languages",
     description: "Learn Python from the beginning with clear explanations, small programs, and practical examples.",
@@ -79,7 +84,8 @@ const courses = [
 for (const course of extraCourses) {
   courses.push({
     title: course.title.replace(/ Fundamentals$/, ` ${course.term}`), slug: course.slug, category: course.category, description: course.description,
-    durationWeeks: course.durationWeeks, imageColor: course.imageColor, tags: ["FREE", "Fundamentals", course.languageName, "Beginner"], syllabus: course.syllabus,
+    durationWeeks: course.durationWeeks, imageColor: course.imageColor, syllabus: course.syllabus, pricing: course.pricing,
+    tags: course.pricing ? ["Paid", course.languageName, course.pricing.level] : ["FREE", "Fundamentals", course.languageName, "Beginner"],
   });
 }
 
@@ -88,13 +94,15 @@ async function main() {
   for (const item of courses) {
     const existing = await prisma.course.findUnique({ where: { slug: item.slug }, select: { id: true } });
     if (existing) continue;
+    const { pricing, ...fields } = item;
     await prisma.course.create({
       data: {
-        ...item,
-        level: "Fundamentals",
-        instructor: "MyLoginn Learning Team",
-        instructorTitle: "Free beginner course",
-        price: 0,
+        ...fields,
+        level: pricing?.level ?? "Fundamentals",
+        instructor: pricing?.instructor ?? "MyLoginn Learning Team",
+        instructorTitle: pricing ? null : "Free beginner course",
+        price: pricing?.price ?? 0,
+        originalPrice: pricing?.originalPrice ?? null,
         rating: 0,
         studentsCount: 0,
         tags: JSON.stringify(item.tags),
@@ -104,7 +112,7 @@ async function main() {
     });
     added += 1;
   }
-  console.log(`Free fundamentals courses added: ${added}; already present: ${courses.length - added}.`);
+  console.log(`Tutorial courses added: ${added}; already present: ${courses.length - added}.`);
 }
 
 main().catch((error) => {

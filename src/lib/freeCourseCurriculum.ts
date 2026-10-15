@@ -228,3 +228,16 @@ function removeDuplicateTopics(modules: CourseModule[]): CourseModule[] {
 export function flattenCourseModules(modules: CourseModule[]) {
   return modules.flatMap((module) => module.topics);
 }
+
+/** True when the course has a hand-defined, step-by-step topic curriculum (not one inferred from stored syllabus text). */
+export function hasTutorialCurriculum(courseSlug: string) {
+  return courseSlug === "python-fundamentals" || courseSlug in expandedCourseModules || courseSlug in courseModules;
+}
+
+/**
+ * Courses taught through the lesson-by-lesson tutorial (roadmap, challenges, Next button, certificate): every free course,
+ * plus paid courses with a defined curriculum such as Generative AI. Paid ones still need a purchased enrollment.
+ */
+export function isStepByStepCourse(course: { slug: string; price: number; engine: string }) {
+  return course.engine === "legacy" && (course.price === 0 || hasTutorialCurriculum(course.slug));
+}

@@ -12,7 +12,7 @@ type Family = "html" | "css" | "sql" | "python" | "php" | "c-like" | "lines";
 const familyOf = (courseSlug: string): Family => {
   if (["html-fundamentals", "bootstrap-fundamentals", "xml-fundamentals", "angularjs-fundamentals"].includes(courseSlug)) return "html";
   if (courseSlug === "git-fundamentals" || courseSlug === "excel-fundamentals") return "lines";
-  if (["django-fundamentals", "numpy-fundamentals", "pandas-fundamentals", "dsa-fundamentals"].includes(courseSlug)) return "python";
+  if (["django-fundamentals", "numpy-fundamentals", "pandas-fundamentals", "dsa-fundamentals", "data-analytics-fundamentals", "gen-ai-get-ready-for-future"].includes(courseSlug)) return "python";
   if (courseSlug === "postgresql-fundamentals") return "sql";
   if (courseSlug === "css-fundamentals") return "css";
   if (courseSlug === "sql-fundamentals" || courseSlug === "mysql-fundamentals") return "sql";

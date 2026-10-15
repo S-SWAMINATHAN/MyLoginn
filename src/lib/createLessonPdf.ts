@@ -76,7 +76,7 @@ export async function downloadLessonPdf({ courseTitle, title, lesson, logoData }
   }
 
   writeParagraph(title, { size: 23, bold: true, color: [15, 23, 42], gap: 1 });
-  writeParagraph(`${courseTitle} | Free course lesson notes`, { size: 9, color: [100, 116, 139], gap: 5 });
+  writeParagraph(`${courseTitle} | Lesson notes`, { size: 9, color: [100, 116, 139], gap: 5 });
   writeHeading("Lesson overview");
   writeParagraph(lesson.overview);
   writeHeading("Clear definition");

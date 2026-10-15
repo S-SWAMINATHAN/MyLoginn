@@ -2,16 +2,18 @@ import { NextResponse } from "next/server";
 import { getCurrentUser } from "@/lib/auth";
 import { prisma } from "@/lib/prisma";
 import { buildTutorialLesson, toTopicSlug } from "@/lib/freeCourseTutorial";
-import { flattenCourseModules, getCourseModules } from "@/lib/freeCourseCurriculum";
+import { flattenCourseModules, getCourseModules, isStepByStepCourse } from "@/lib/freeCourseCurriculum";
 
 const SOLUTION_COST = 8;
 
 type RouteContext = { params: Promise<{ slug: string; topic: string }> };
 
-async function resolveChallenge({ params }: RouteContext) {
+async function resolveChallenge({ params }: RouteContext, userId: string) {
   const { slug, topic } = await params;
   const course = await prisma.course.findUnique({ where: { slug } });
-  if (!course || course.price !== 0 || course.engine !== "legacy") return null;
+  if (!course || !isStepByStepCourse(course)) return null;
+  // Paid course solutions are part of the paid content: only enrolled learners may see or unlock them.
+  if (course.price > 0 && !(await prisma.enrollment.findUnique({ where: { userId_courseId: { userId, courseId: course.id } }, select: { id: true } }))) return null;
   const topics = flattenCourseModules(getCourseModules(course.slug, JSON.parse(course.syllabus) as string[]));
   const title = topics.find((item) => toTopicSlug(item) === topic);
   if (!title) return null;
@@ -24,7 +26,7 @@ async function resolveChallenge({ params }: RouteContext) {
 export async function GET(_request: Request, context: RouteContext) {
   const user = await getCurrentUser();
   if (!user) return NextResponse.json({ loggedIn: false, unlocked: false, cost: SOLUTION_COST, points: 0 });
-  const challenge = await resolveChallenge(context);
+  const challenge = await resolveChallenge(context, user.id);
   if (!challenge) return NextResponse.json({ error: "Challenge not found." }, { status: 404 });
 
   const [unlock, fresh] = await Promise.all([
@@ -38,7 +40,7 @@ export async function GET(_request: Request, context: RouteContext) {
 export async function POST(_request: Request, context: RouteContext) {
   const user = await getCurrentUser();
   if (!user) return NextResponse.json({ error: "Log in to unlock solutions with reward points." }, { status: 401 });
-  const challenge = await resolveChallenge(context);
+  const challenge = await resolveChallenge(context, user.id);
   if (!challenge) return NextResponse.json({ error: "Challenge not found." }, { status: 404 });
 
   const enrollment = await prisma.enrollment.findUnique({

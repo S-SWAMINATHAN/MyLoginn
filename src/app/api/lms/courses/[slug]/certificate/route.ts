@@ -41,12 +41,14 @@ export async function POST(request: Request, { params }: { params: Promise<{ slu
   const enrollment = await prisma.enrollment.findUnique({ where: { userId_courseId: { userId: user.id, courseId: structure.course.id } }, select: { enrolledAt: true } });
   const credits = structure.lessons.filter((l) => l.required).length;
   const [logoData, wordmarkData] = await Promise.all([asset("myloginn-logo.png"), asset("myloginn-wordmark.png")]);
-  const learnerName = `${firstName} ${lastName}`;
+  // Once the learner has confirmed an official name in the certificate studio, every format prints that name.
+  const confirmed = await prisma.certificate.findUnique({ where: { serial: issued.certificate.serial }, select: { learnerName: true, nameConfirmedAt: true } });
+  const learnerName = confirmed?.nameConfirmedAt ? confirmed.learnerName : `${firstName} ${lastName}`;
   const buffer = await createCourseCertificatePdf({
     learnerName, courseTitle: structure.course.title, completedAt: issued.certificate.issuedAt, enrolledAt: enrollment?.enrolledAt ?? issued.certificate.issuedAt,
     issuedAt: issued.certificate.issuedAt, credits, certificateId: issued.certificate.serial, logoData, wordmarkData, style: style as CertificateStyle,
   });
-  const filename = `${safeFilename(structure.course.title)}_${safeFilename(`${firstName}_${lastName}`)}.pdf`;
+  const filename = `${safeFilename(structure.course.title)}_${safeFilename(learnerName)}.pdf`;
   return new Response(buffer, {
     headers: { "Content-Type": "application/pdf", "Content-Disposition": `attachment; filename="${filename}"`, "Cache-Control": "private, no-store", "Content-Length": String(buffer.byteLength), "X-Certificate-Serial": issued.certificate.serial },
   });

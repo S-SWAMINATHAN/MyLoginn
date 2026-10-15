@@ -9,6 +9,7 @@ import { AnimatedClock } from "@/components/ui/icons/AnimatedClock";
 import { AnimatedSuccess } from "@/components/ui/icons/AnimatedSuccess";
 import { useTiltSpotlight } from "@/hooks/useTiltSpotlight";
 import { getCourseDisplayTitle } from "@/lib/freeCourseTitles";
+import { hasTutorialCurriculum } from "@/lib/freeCourseCurriculum";
 import { CourseIconThumb } from "./CourseIconThumb";
 import { FreeEnrollButton } from "./FreeEnrollButton";
 
@@ -53,6 +54,8 @@ export function CourseCard({
   const { rotateX, rotateY, spotlightBg, onMouseMove, onMouseLeave } = useTiltSpotlight();
   const router = useRouter();
   const detailsHref = `/courses/${course.slug}`;
+  // A purchased paid course with a lesson-by-lesson curriculum behaves like a free one: progress bar and Continue.
+  const paidStepByStep = course.price > 0 && enrolled && hasTutorialCurriculum(course.slug);
 
   // The whole card opens the course page; real links and buttons inside (enroll, continue, title) keep their own behaviour.
   function openDetails(event: React.MouseEvent<HTMLElement>) {
@@ -87,9 +90,11 @@ export function CourseCard({
               {recommended && <span className="text-[11px] font-semibold text-brand-600 dark:text-brand-300">Featured</span>}
               <span className="inline-flex items-center gap-1 rounded-full bg-amber-50 px-2.5 py-1 text-[11px] font-semibold text-amber-700 ring-1 ring-amber-200 dark:bg-amber-400/10 dark:text-amber-300 dark:ring-amber-400/25"><Award className="h-3.5 w-3.5" aria-hidden="true" />Certificate</span>
             </div>
-            <span className="absolute right-4 top-4 z-10 rounded-full bg-surface-2 px-2.5 py-1 text-[11px] font-semibold uppercase tracking-wide text-foreground/70">
-              {course.price === 0 ? `FREE · ${courseKeyword}` : course.level}
-            </span>
+            {course.price === 0 ? (
+              <span className="absolute right-4 top-4 z-10 rounded-full bg-surface-2 px-2.5 py-1 text-[11px] font-semibold uppercase tracking-wide text-foreground/70">FREE · {courseKeyword}</span>
+            ) : (
+              <span className="absolute right-4 top-4 z-10 rounded-full bg-brand-50 px-2.5 py-1 text-[11px] font-semibold uppercase tracking-wide text-brand-700 ring-1 ring-brand-200 dark:bg-brand-400/10 dark:text-brand-300 dark:ring-brand-400/25">Paid course</span>
+            )}
 
             <CourseIconThumb
               category={course.category}
@@ -132,7 +137,10 @@ export function CourseCard({
             {course.price === 0 ? <div className="relative z-10 mt-3 w-full">
               {enrolled && <div className="mb-3 text-left"><div className="mb-1 flex justify-between text-xs"><span className="text-muted">Course progress</span><span className="font-semibold text-brand-700">{course.progress}%</span></div><div className="h-1.5 overflow-hidden rounded-full bg-surface-2"><div className="h-full rounded-full bg-brand-500 transition-[width]" style={{ width: `${course.progress}%` }} /></div></div>}
               <FreeEnrollButton slug={course.slug} loggedIn={loggedIn} enrolled={enrolled} />
-            </div> : enrolled ? <span className="relative z-10 mt-3 inline-flex items-center gap-1.5 rounded-full bg-success/10 px-3.5 py-1.5 text-xs font-medium text-success"><AnimatedSuccess className="h-4.5 w-4.5" /> Enrolled</span> : <Link href={`/courses/${course.slug}`} className="relative z-10 mt-4 inline-flex w-full items-center justify-center rounded-full border border-brand-200 px-4 py-3 text-sm font-semibold text-brand-700 transition hover:bg-brand-50">View course details</Link>}
+            </div> : paidStepByStep ? <div className="relative z-10 mt-3 w-full">
+              <div className="mb-3 text-left"><div className="mb-1 flex justify-between text-xs"><span className="text-muted">Course progress</span><span className="font-semibold text-brand-700">{course.progress}%</span></div><div className="h-1.5 overflow-hidden rounded-full bg-surface-2"><div className="h-full rounded-full bg-brand-500 transition-[width]" style={{ width: `${course.progress}%` }} /></div></div>
+              <FreeEnrollButton slug={course.slug} loggedIn={loggedIn} enrolled />
+            </div> : enrolled ? <span className="relative z-10 mt-3 inline-flex items-center gap-1.5 rounded-full bg-success/10 px-3.5 py-1.5 text-xs font-medium text-success"><AnimatedSuccess className="h-4.5 w-4.5" /> Enrolled</span> : <Link href={`/courses/${course.slug}`} className="relative z-10 mt-4 inline-flex w-full items-center justify-center rounded-full border border-brand-200 px-4 py-3 text-sm font-semibold text-brand-700 transition hover:bg-brand-50">Enroll now</Link>}
           </Card>
       </motion.div>
     </motion.div>

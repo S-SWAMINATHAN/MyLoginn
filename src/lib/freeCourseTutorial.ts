@@ -2,6 +2,7 @@ import { getFreeCourseChallenge, getFreeCourseChallengePrompt } from "@/lib/free
 import { deriveChecks } from "@/lib/challengeChecks";
 import { plainDefinitions, type PlainDefinition } from "@/lib/lessonPlainDefinitions";
 import { extraCourses, extraTopicPrefix, getExtraCourse } from "@/lib/extra-courses";
+import type { ExtraTopicLesson } from "@/lib/extra-courses/types";
 export type LessonKind =
   | "intro" | "setup" | "hello" | "structure" | "output" | "comments" | "variables" | "types"
   | "numbers" | "strings" | "operators" | "condition" | "loop" | "function" | "collection"
@@ -518,16 +519,7 @@ type TopicCopy = {
   visual: TutorialLesson["visual"];
 };
 
-type TopicSpecificLesson = {
-  definition: string;
-  overview: string;
-  explanation: string;
-  code: string;
-  output: string;
-  exampleTitle: string;
-  takeaways: string[];
-  challenge: string;
-};
+type TopicSpecificLesson = ExtraTopicLesson;
 
 // HTML lessons need distinct, runnable markup instead of falling back to the
 // same generic "intro" sample for every unclassified title.
@@ -675,8 +667,10 @@ const htmlTopicLessons: Record<string, TopicSpecificLesson> = {
 };
 
 function getTopicSpecificLesson(courseSlug: string, title: string): TopicSpecificLesson | undefined {
-  if (courseSlug !== "html-fundamentals") return undefined;
   const slug = toTopicSlug(title);
+  const extraLessons = getExtraCourse(courseSlug)?.lessons;
+  if (extraLessons) return Object.entries(extraLessons).find(([topic]) => toTopicSlug(topic) === slug)?.[1];
+  if (courseSlug !== "html-fundamentals") return undefined;
   const direct = htmlTopicLessons[slug];
   if (direct) return direct;
   if (/html-(?:classes|ids?|div|block-inline)$/.test(slug)) return {
@@ -1091,7 +1085,7 @@ function getTopicCopy(courseSlug: string, title: string, kind: LessonKind, langu
       { label: "CONCEPT", value: specific.definition },
       { label: "RULE", value: specific.explanation },
       { label: "RESULT", value: specific.output },
-    ], summary: `${specific.overview} The example shows the result in a browser.` },
+    ], summary: `${specific.overview} The example shows the result${courseSlug === "html-fundamentals" ? " in a browser" : ""}.` },
   };
   const courseIntro = courseIntroCopy[courseSlug];
   if (courseIntro && /history/.test(normalized)) return {
@@ -1367,7 +1361,7 @@ export function buildTutorialLesson(courseSlug: string, title: string, index: nu
     overview,
     keyPoints,
     exampleTitle: specific?.exampleTitle ?? (pythonIntro ? "Hello World Program" : `${title} Example`),
-    exampleIntroduction: specific ? `${specific.explanation} Read the markup, then match it to the browser result.` : pythonIntro ? "The Hello World program demonstrates the basic structure of a Python program and shows how to display text." : `This small example demonstrates ${title.toLowerCase()} in ${languageName}. Read the code, predict its result, then compare your prediction with the output.`,
+    exampleIntroduction: specific ? `${specific.explanation} ${courseSlug === "html-fundamentals" ? "Read the markup, then match it to the browser result." : "Read the code, then match it to the result."}` : pythonIntro ? "The Hello World program demonstrates the basic structure of a Python program and shows how to display text." : `This small example demonstrates ${title.toLowerCase()} in ${languageName}. Read the code, predict its result, then compare your prediction with the output.`,
     quiz,
     plain: pythonInstallation ? { simple: "Installing Python puts the translator on your computer that understands Python code.", analogy: "Like installing a language pack so your computer can read a new language." } : pythonIntro ? { simple: "Python is a beginner-friendly language that reads almost like English.", analogy: "Like a friendly translator between you and the computer." } : plainDefinitions[kind],
     definition: pythonIntro ? "Python is a high-level, general-purpose programming language with readable syntax. A Python interpreter executes Python code, and the language provides features for procedural, object-oriented, and functional programming." : topicCopy.definition,
@@ -1397,7 +1391,7 @@ export function buildTutorialLesson(courseSlug: string, title: string, index: nu
       requirements.length ? `Start with: ${requirements[0]}${requirements[1] ? `, then: ${requirements[1]}` : ""}.` : `Apply the ${title.toLowerCase()} syntax to the scenario in the task instead of copying the lesson example.`,
       `Run it and compare your result with the expected output: ${challengeSolution.output.split("\n")[0].slice(0, 80)}${challengeSolution.output.includes("\n") ? " …" : ""}`,
     ],
-    keywords: specific ? [title.toLowerCase(), "HTML", "element", "attribute", "browser"] : pythonIntro ? ["high-level", "interpreter", "syntax", "indentation"] : keywordsByKind[kind] ?? [title.toLowerCase(), "syntax", "example"],
+    keywords: specific ? (courseSlug === "html-fundamentals" ? [title.toLowerCase(), "HTML", "element", "attribute", "browser"] : [title.toLowerCase(), languageName, "example", "result"]) : pythonIntro ? ["high-level", "interpreter", "syntax", "indentation"] : keywordsByKind[kind] ?? [title.toLowerCase(), "syntax", "example"],
     steps: code.split("\n").filter((line) => line.trim()).map((line) => ({ code: line, explanation: explainCodeLine(line) })),
   };
 }

@@ -3,7 +3,7 @@
 import { useMemo, useState } from "react";
 import Link from "next/link";
 import { AnimatePresence, motion } from "framer-motion";
-import { Search, X } from "lucide-react";
+import { Lock, Search, X } from "lucide-react";
 
 export type ModuleTopic = { title: string; slug: string; number: number; done: boolean };
 
@@ -11,13 +11,13 @@ const PREVIEW = 12;
 
 /**
  * Topic list for one module. Long modules show a preview with a "Show all" control and a search box; every topic is a
- * card that nudges and reveals an arrow on hover, and the first unfinished topic is marked as the next one to take.
+ * card that nudges and reveals an arrow on hover. `nextSlug` is the one topic to take next across the whole course (so only
+ * one module shows "Next up"), and `locked` shows the topics as a read-only outline until the learner is enrolled.
  */
-export function ModuleTopics({ courseSlug, topics }: { courseSlug: string; topics: ModuleTopic[] }) {
+export function ModuleTopics({ courseSlug, topics, nextSlug, locked = false }: { courseSlug: string; topics: ModuleTopic[]; nextSlug?: string; locked?: boolean }) {
   const [query, setQuery] = useState("");
   const [expanded, setExpanded] = useState(false);
 
-  const nextSlug = topics.find((t) => !t.done)?.slug;
   const q = query.trim().toLowerCase();
   const filtered = useMemo(() => (q ? topics.filter((t) => t.title.toLowerCase().includes(q)) : topics), [topics, q]);
   const long = topics.length > PREVIEW;
@@ -48,7 +48,7 @@ export function ModuleTopics({ courseSlug, topics }: { courseSlug: string; topic
       <motion.ul layout className="flex flex-wrap gap-2">
         <AnimatePresence initial={false} mode="popLayout">
           {visible.map((t, i) => {
-            const next = t.slug === nextSlug;
+            const next = !locked && t.slug === nextSlug;
             const tone = t.done
               ? "bg-story-royal/12 text-story-royal hover:bg-story-royal hover:text-white"
               : next
@@ -64,15 +64,27 @@ export function ModuleTopics({ courseSlug, topics }: { courseSlug: string; topic
                 exit={{ opacity: 0, scale: 0.85 }}
                 transition={{ type: "spring", stiffness: 380, damping: 26, delay: Math.min(i, 14) * 0.02 }}
               >
-                <Link
-                  href={`/courses/${courseSlug}/learn/${t.slug}`}
-                  style={next ? undefined : { color: "var(--foreground)" }}
-                  className={`group inline-flex items-center gap-2 rounded-full py-1.5 pl-1.5 pr-3.5 text-[13px] font-medium transition-all duration-200 hover:-translate-y-0.5 active:scale-95 ${tone}`}
-                >
-                  <span className={`grid h-6 min-w-6 place-items-center rounded-full px-1 text-[10px] font-bold transition-colors ${badge}`}>{t.done ? "✓" : t.number}</span>
-                  <span>{t.title}</span>
-                  {next && <span className="rounded-full bg-white px-1.5 py-0.5 text-[9px] font-bold uppercase tracking-wide text-story-royal">Next up</span>}
-                </Link>
+                {locked ? (
+                  <span
+                    title="Enroll to open this lesson"
+                    style={{ color: "var(--foreground)" }}
+                    className="inline-flex cursor-default items-center gap-2 rounded-full bg-story-mist py-1.5 pl-1.5 pr-3.5 text-[13px] font-medium opacity-80"
+                  >
+                    <span className="grid h-6 min-w-6 place-items-center rounded-full bg-surface px-1 text-[10px] font-bold text-muted">{t.number}</span>
+                    <span>{t.title}</span>
+                    <Lock aria-label="Locked" className="h-3.5 w-3.5 text-muted" />
+                  </span>
+                ) : (
+                  <Link
+                    href={`/courses/${courseSlug}/learn/${t.slug}`}
+                    style={next ? undefined : { color: "var(--foreground)" }}
+                    className={`group inline-flex items-center gap-2 rounded-full py-1.5 pl-1.5 pr-3.5 text-[13px] font-medium transition-all duration-200 hover:-translate-y-0.5 active:scale-95 ${tone}`}
+                  >
+                    <span className={`grid h-6 min-w-6 place-items-center rounded-full px-1 text-[10px] font-bold transition-colors ${badge}`}>{t.done ? "✓" : t.number}</span>
+                    <span>{t.title}</span>
+                    {next && <span className="rounded-full bg-white px-1.5 py-0.5 text-[9px] font-bold uppercase tracking-wide text-story-royal">Next up</span>}
+                  </Link>
+                )}
               </motion.li>
             );
           })}

@@ -35,6 +35,22 @@ export type ExtraCourse = {
   challenges: ChallengeEntry[];
   /** Fallback challenge for any topic without an authored one. */
   practice: { code: string; output: string; task: string };
+  /** Hand-written lesson copy and worked example by exact topic title; topics without one use the generated copy. */
+  lessons?: Record<string, ExtraTopicLesson>;
+  /** Paid courses only. Omitted means a free beginner course (price 0, level "Fundamentals"). */
+  pricing?: { price: number; originalPrice?: number; level: string; instructor?: string };
+};
+
+/** A fully written lesson for one topic (same shape the HTML course uses for its topic-specific lessons). */
+export type ExtraTopicLesson = {
+  definition: string;
+  overview: string;
+  explanation: string;
+  code: string;
+  output: string;
+  exampleTitle: string;
+  takeaways: string[];
+  challenge: string;
 };
 
 export const entry = (title: string, task: string, code: string, output: string): ChallengeEntry => [title, task, code, output];

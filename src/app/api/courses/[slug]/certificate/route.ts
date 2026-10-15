@@ -3,7 +3,7 @@ import { readFile } from "node:fs/promises";
 import path from "node:path";
 import { getCurrentUser } from "@/lib/auth";
 import { prisma } from "@/lib/prisma";
-import { flattenCourseModules, getCourseModules } from "@/lib/freeCourseCurriculum";
+import { flattenCourseModules, getCourseModules, isStepByStepCourse } from "@/lib/freeCourseCurriculum";
 import { toTopicSlug } from "@/lib/freeCourseTutorial";
 import { getCourseDisplayTitle } from "@/lib/freeCourseTitles";
 import { createCertificateId, createCourseCertificatePdf, type CertificateStyle } from "@/lib/createCourseCertificatePdf";
@@ -19,8 +19,7 @@ export async function POST(request: Request, { params }: RouteContext) {
   if (!user) return NextResponse.json({ error: "Log in to download your certificate." }, { status: 401 });
   const { slug } = await params;
   const course = await prisma.course.findUnique({ where: { slug } });
-  // LMS courses issue certificates only through /api/lms (final assessment >= pass mark).
-  if (!course || course.price !== 0 || course.engine !== "legacy") return NextResponse.json({ error: "Course not found." }, { status: 404 });
+  if (!course || !isStepByStepCourse(course)) return NextResponse.json({ error: "Course not found." }, { status: 404 });
 
   let body: { firstName?: unknown; lastName?: unknown; style?: unknown };
   try { body = await request.json(); } catch { return NextResponse.json({ error: "Enter your first and last name." }, { status: 400 }); }

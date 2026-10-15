@@ -19,7 +19,7 @@ import { LockedPanel } from "./LockedPanel";
 import { QuizRunner } from "./QuizRunner";
 import { ChallengeRunner } from "./ChallengeRunner";
 import { ReadButton, VideoTracker, youTubeId } from "./LessonActions";
-import { AssignmentForm, CertificateDownload } from "./SmallForms";
+import { AssignmentForm } from "./SmallForms";
 import { CoachPanel } from "./CoachPanel";
 
 async function requireContext(slug: string, nextPath: string) {
@@ -189,7 +189,7 @@ export async function LmsLearnHub({ slug }: { slug: string }) {
         {(done || ctx.preview) && structure.finalQuizId && <ArrowLink href={`/courses/${slug}/assessment`}>{state?.view.finalPassed ? "Certificate and results" : "Take the final assessment"}</ArrowLink>}
       </Reveal>
       {state && !state.view.certificateEligible && <p className="mt-5 flex items-start gap-3 rounded-2xl bg-story-mist p-4 text-sm"><Award className="mt-0.5 h-5 w-5 shrink-0 text-story-royal" />{state.view.certificateLockReason}</p>}
-      {state?.view.certificateEligible && <p className="mt-5 flex items-start gap-3 rounded-2xl bg-success/10 p-4 text-sm text-success"><Award className="mt-0.5 h-5 w-5 shrink-0" /><span>All requirements met. <Link className="font-semibold underline" href={`/courses/${slug}/assessment`}>Download your certificate.</Link></span></p>}
+      {state?.view.certificateEligible && <p className="mt-5 flex items-start gap-3 rounded-2xl bg-success/10 p-4 text-sm text-success"><Award className="mt-0.5 h-5 w-5 shrink-0" /><span>All requirements met. <Link className="font-semibold underline" href={`/certificate?course=${slug}`}>Get your certificate.</Link></span></p>}
     </Shell>
   );
 }
@@ -360,8 +360,8 @@ export async function LmsAssessmentView({ slug }: { slug: string }) {
           <h2 className="text-lg font-bold">Certificate</h2>
           {state.view.certificateEligible || cert ? (
             <>
-              <p className="mt-1 text-sm text-success">Requirements met{cert ? ` · serial ${cert.serial}` : ""}. Enter your name as it should appear.</p>
-              <CertificateDownload slug={slug} defaultName={user!.name} />
+              <p className="mt-1 text-sm text-success">Requirements met{cert ? ` · credential ${cert.serial}` : ""}. Confirm your official name, choose a design and download.</p>
+              <Link href={`/certificate?course=${slug}`} className="mt-4 inline-flex items-center gap-2 rounded-full bg-story-royal px-6 py-2.5 text-sm font-semibold text-white">Open certificate <ArrowRight className="h-4 w-4" /></Link>
             </>
           ) : (
             <p className="mt-1 text-sm text-muted" role="status">{state.view.certificateLockReason}</p>

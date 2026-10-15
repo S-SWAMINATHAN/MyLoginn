@@ -14,13 +14,16 @@ import { gitCourse } from "./git";
 import { postgresqlCourse } from "./postgresql";
 import { mongodbCourse } from "./mongodb";
 import { aspCourse } from "./asp";
+import { dataAnalyticsCourse } from "./data-analytics";
+import { generativeAiCourse } from "./generative-ai";
 
 export type { ExtraCourse } from "./types";
 
-/** Free W3Schools-style tutorial courses added on top of the original eleven fundamentals courses. */
+/** W3Schools-style tutorial courses added on top of the original eleven fundamentals courses (free unless `pricing` is set). */
 export const extraCourses: ExtraCourse[] = [
   bootstrapCourse, jqueryCourse, excelCourse, xmlCourse, djangoCourse, numpyCourse, pandasCourse, nodejsCourse,
   dsaCourse, typescriptCourse, angularjsCourse, gitCourse, postgresqlCourse, mongodbCourse, aspCourse,
+  dataAnalyticsCourse, generativeAiCourse,
 ];
 
 const bySlug = new Map(extraCourses.map((course) => [course.slug, course]));
