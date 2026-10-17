@@ -46,6 +46,14 @@
   --story-cyan: #22d3ee;
   --story-mist: #f4f8ff;
   --story-line: rgba(11, 31, 77, 0.1);
+
+  /* LogiQuest data-interpretation chart series (validated categorical order, light steps) */
+  --lq-s1: #2a78d6;
+  --lq-s2: #eb6834;
+  --lq-s3: #1baf7a;
+  --lq-s4: #eda100;
+  --lq-s5: #e87ba4;
+  --lq-s6: #008300;
 }
 
 :root[data-theme="dark"] {
@@ -65,6 +73,12 @@
   --link-line: var(--brand-300);
   --story-mist: #0c1630;
   --story-line: rgba(134, 176, 255, 0.14);
+  --lq-s1: #3987e5;
+  --lq-s2: #d95926;
+  --lq-s3: #199e70;
+  --lq-s4: #c98500;
+  --lq-s5: #d55181;
+  --lq-s6: #008300;
 }
 
 @media (prefers-color-scheme: dark) {
@@ -82,6 +96,12 @@
     --link-line: var(--brand-300);
     --story-mist: #0c1630;
     --story-line: rgba(134, 176, 255, 0.14);
+    --lq-s1: #3987e5;
+    --lq-s2: #d95926;
+    --lq-s3: #199e70;
+    --lq-s4: #c98500;
+    --lq-s5: #d55181;
+    --lq-s6: #008300;
   }
 }
 
@@ -792,3 +812,23 @@ h1, h2, h3 {
 .field-shell { border-radius: 0.75rem; border: 1px solid color-mix(in srgb, var(--foreground) 16%, transparent); background: var(--surface); box-shadow: 0 1px 2px rgba(15, 23, 42, 0.05); transition: border-color 160ms ease, box-shadow 160ms ease; }
 textarea.field-control { min-height: 7rem; resize: vertical; }
 .field-message { display: flex; align-items: center; gap: 0.35rem; font-size: 0.75rem; line-height: 1.3; }
+
+/* ── Button hover: a colour fill sweeps in from the left. No lifting or scaling. ─────────────────────────────── */
+.btn-sweep,
+.btn-sweep-navy {
+  background-repeat: no-repeat;
+  background-position: left center;
+  background-size: 0% 100%;
+  transition: background-size 0.5s cubic-bezier(0.22, 1, 0.36, 1), color 0.3s ease, border-color 0.3s ease, box-shadow 0.3s ease;
+}
+.btn-sweep { background-image: linear-gradient(var(--story-royal), var(--story-royal)); }
+.btn-sweep-navy { background-image: linear-gradient(var(--story-navy), var(--story-navy)); }
+.btn-sweep:hover,
+.btn-sweep:focus-visible { background-size: 100% 100%; color: #fff; border-color: var(--story-royal); }
+.btn-sweep-navy:hover,
+.btn-sweep-navy:focus-visible { background-size: 100% 100%; }
+
+/* Pill-shaped buttons and links never lift or scale on hover (this overrides per-component hover:-translate / scale). */
+@media (hover: hover) {
+  :is(a, button).rounded-full:hover { translate: none !important; scale: none !important; transform: none !important; }
+}

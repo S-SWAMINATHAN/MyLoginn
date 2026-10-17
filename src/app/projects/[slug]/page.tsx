@@ -1,7 +1,7 @@
 import { notFound } from "next/navigation";
 import type { Metadata } from "next";
 import Link from "next/link";
-import { ArrowLeft, ArrowUpRight, Check, Construction, ExternalLink, Smartphone } from "lucide-react";
+import { ArrowUpRight, Check, Construction, ExternalLink, Smartphone } from "lucide-react";
 import { createPageMetadata } from "@/lib/seo";
 import { prisma } from "@/lib/prisma";
 import { clientProjects, getClientProject } from "@/lib/clientProjects";
@@ -63,17 +63,6 @@ export default async function ProjectDetailPage({ params }: { params: Promise<{ 
   );
 }
 
-function BackLink() {
-  return (
-    <Link
-      href="/projects"
-      className="inline-flex items-center gap-1.5 text-sm font-medium text-muted transition-colors hover:text-foreground"
-    >
-      <ArrowLeft className="h-4 w-4" /> Back to all projects
-    </Link>
-  );
-}
-
 /* ── Real client/company work ───────────────────────────────────────── */
 const accents: Record<string, { from: string; to: string; glow: string }> = {
   ecommerce: { from: "#7e22ce", to: "#db2777", glow: "rgba(219,39,119,.35)" },
@@ -101,29 +90,26 @@ function ClientProjectDetail({ project }: { project: ClientProject }) {
     <div className="relative overflow-hidden">
       {/* Full-bleed hero */}
       <section className="relative isolate text-white" style={{ backgroundColor: gradient }}>
-        <div className="mx-auto grid max-w-[1480px] items-center gap-10 px-4 pb-16 pt-8 sm:px-6 lg:grid-cols-[1fr_1.1fr] lg:gap-14 lg:px-10 lg:pb-24 lg:pt-10">
+        <div className="mx-auto grid max-w-[1480px] items-center gap-10 px-4 pb-14 pt-5 sm:px-6 sm:pt-6 lg:grid-cols-[1fr_1.1fr] lg:gap-14 lg:px-10 lg:pb-20 lg:pt-8">
           <div>
-            <Link href="/projects" className="inline-flex items-center gap-1.5 rounded-full bg-white/10 px-3.5 py-1.5 text-sm font-medium text-white/90 ring-1 ring-white/20 backdrop-blur transition hover:bg-white/20">
-              <ArrowLeft className="h-4 w-4" /> All projects
-            </Link>
-            <div className="mt-6 flex flex-wrap items-center gap-2">
+            <div className="flex flex-wrap items-center gap-2">
               <span className="rounded-full bg-white/15 px-3.5 py-1.5 text-xs font-semibold uppercase tracking-wider ring-1 ring-white/25 backdrop-blur">{project.category}</span>
               <span className="inline-flex items-center gap-1.5 rounded-full bg-black/25 px-3.5 py-1.5 text-xs font-semibold ring-1 ring-white/15 backdrop-blur">
                 <span className={`h-2 w-2 rounded-full ${isLive ? "animate-pulse bg-emerald-300" : "bg-amber-300"}`} />
                 {isLive ? "Live project" : "Coming soon"}
               </span>
             </div>
-            <h1 className="mt-5 text-5xl font-semibold leading-[1.02] tracking-tight sm:text-6xl lg:text-7xl">{project.name}</h1>
-            <p className="mt-5 max-w-2xl text-lg leading-relaxed text-white/85 sm:text-xl">{project.longDescription}</p>
-            <div className="mt-8 flex flex-wrap items-center gap-3">
+            <h1 className="mt-4 text-4xl font-semibold leading-[1.05] tracking-tight sm:mt-5 sm:text-6xl sm:leading-[1.02] lg:text-7xl">{project.name}</h1>
+            <p className="mt-4 max-w-2xl text-base leading-7 text-white/85 sm:mt-5 sm:text-xl sm:leading-relaxed">{project.longDescription}</p>
+            <div className="mt-7 grid gap-3 sm:mt-8 sm:flex sm:flex-wrap sm:items-center">
               {isLive ? (
-                <a href={project.url} target="_blank" rel="noreferrer" className="inline-flex items-center gap-2 rounded-full bg-white px-7 py-3.5 text-sm font-semibold text-slate-900 shadow-xl shadow-black/20 transition hover:-translate-y-0.5 hover:shadow-2xl">
+                <a href={project.url} target="_blank" rel="noreferrer" className="inline-flex items-center justify-center gap-2 rounded-full bg-white px-7 py-3.5 text-sm font-semibold text-slate-900 shadow-xl shadow-black/20 transition hover:-translate-y-0.5 hover:shadow-2xl">
                   <ExternalLink className="h-4 w-4" /> Visit live website
                 </a>
               ) : (
-                <span className="inline-flex items-center gap-2 rounded-full bg-white/15 px-6 py-3.5 text-sm font-semibold ring-1 ring-white/25 backdrop-blur"><Construction className="h-4 w-4" /> Public preview coming soon</span>
+                <span className="inline-flex items-center justify-center gap-2 rounded-full bg-white/15 px-6 py-3.5 text-sm font-semibold ring-1 ring-white/25 backdrop-blur"><Construction className="h-4 w-4" /> Public preview coming soon</span>
               )}
-              <Link href="/contact" className="inline-flex items-center gap-2 rounded-full px-6 py-3.5 text-sm font-semibold ring-1 ring-white/40 transition hover:bg-white/10">
+              <Link href="/contact" className="inline-flex items-center justify-center gap-2 rounded-full px-6 py-3.5 text-sm font-semibold ring-1 ring-white/40 transition hover:bg-white/10">
                 Build something similar <ArrowUpRight className="h-4 w-4" />
               </Link>
             </div>
@@ -284,11 +270,9 @@ function StudentProjectDetail({ project: p }: { project: StudentProjectView }) {
   const art = getProjectCardArt(primaryTag, `detail-art-${p.title}`);
 
   return (
-    <Section className="mobile-page-glow pt-14">
+    <Section className="mobile-page-glow pt-5 sm:pt-6">
       <Container className="max-w-4xl">
-        <BackLink />
-
-        <div className="relative mt-6 h-56 overflow-hidden rounded-2xl sm:h-64">
+        <div className="relative h-56 overflow-hidden rounded-2xl sm:h-64">
           <CardArtAnimation svg={art.svg} />
           <div className="pointer-events-none absolute inset-x-0 bottom-0 h-28 bg-gradient-to-t from-black/65 via-black/15 to-transparent" />
           <h1 className="absolute inset-x-0 bottom-0 px-6 pb-5 text-2xl font-semibold leading-snug text-white [text-shadow:0_1px_6px_rgba(0,0,0,.45)] sm:text-3xl">

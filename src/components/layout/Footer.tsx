@@ -59,7 +59,11 @@ const columns = [
 const SOCIAL_ICONS: Record<string, string> = {
   instagram: "M7.5 2h9A5.5 5.5 0 0 1 22 7.5v9a5.5 5.5 0 0 1-5.5 5.5h-9A5.5 5.5 0 0 1 2 16.5v-9A5.5 5.5 0 0 1 7.5 2Zm0 2A3.5 3.5 0 0 0 4 7.5v9A3.5 3.5 0 0 0 7.5 20h9a3.5 3.5 0 0 0 3.5-3.5v-9A3.5 3.5 0 0 0 16.5 4h-9ZM12 7a5 5 0 1 1 0 10 5 5 0 0 1 0-10Zm0 2a3 3 0 1 0 0 6 3 3 0 0 0 0-6Zm5.25-3.25a1.25 1.25 0 1 1 0 2.5 1.25 1.25 0 0 1 0-2.5Z",
   facebook: "M13.5 22v-8.2h2.8l.5-3.3h-3.3V8.4c0-.95.4-1.7 1.8-1.7H17V3.8C16.6 3.7 15.6 3.6 14.5 3.6c-2.6 0-4.3 1.6-4.3 4.4v2.5H7.5v3.3h2.7V22h3.3Z",
+  linkedin: "M20.447 20.452h-3.554v-5.569c0-1.328-.027-3.037-1.852-3.037-1.853 0-2.136 1.445-2.136 2.939v5.667H9.351V9h3.414v1.561h.046c.477-.9 1.637-1.85 3.37-1.85 3.601 0 4.267 2.37 4.267 5.455v6.286ZM5.337 7.433a2.062 2.062 0 0 1-2.063-2.065 2.064 2.064 0 1 1 2.063 2.065Zm1.782 13.019H3.555V9h3.564v11.452Z",
+  youtube: "M23.498 6.186a3.016 3.016 0 0 0-2.122-2.136C19.505 3.545 12 3.545 12 3.545s-7.505 0-9.377.505A3.017 3.017 0 0 0 .502 6.186C0 8.07 0 12 0 12s0 3.93.502 5.814a3.016 3.016 0 0 0 2.122 2.136c1.871.505 9.376.505 9.376.505s7.505 0 9.377-.505a3.015 3.015 0 0 0 2.122-2.136C24 15.93 24 12 24 12s0-3.93-.502-5.814ZM9.545 15.568V8.432L15.818 12l-6.273 3.568Z",
 };
+
+const SOCIAL_NAMES: Record<string, string> = { instagram: "Instagram", facebook: "Facebook", linkedin: "LinkedIn", youtube: "YouTube" };
 
 /** Routes that already end in their own page-specific CTA banner —
  * showing the generic one again here would just duplicate it. */
@@ -83,7 +87,7 @@ export function Footer() {
   const showCta = !ROUTES_WITH_OWN_CTA.includes(pathname);
 
   return (
-    <footer className="relative mt-20 overflow-hidden">
+    <footer className="relative mt-8 overflow-hidden sm:mt-20">
       {/* Gradient hairline */}
       <div className="h-px w-full brand-gradient-bg opacity-70" />
 
@@ -105,11 +109,11 @@ export function Footer() {
                     <p className="mt-1 text-sm text-white/80">Have an idea or a business challenge? Let&apos;s talk.</p>
                   </div>
                 </div>
-                <motion.div whileHover={{ scale: 1.04 }} whileTap={{ scale: 0.96 }} className="shrink-0">
+                <motion.div whileTap={{ scale: 0.97 }} className="shrink-0">
                   <button
                     type="button"
                     onClick={() => openProjectRequest("software")}
-                    className="inline-flex items-center gap-2 rounded-full bg-white px-6 py-3 text-sm font-semibold text-brand-600 shadow-lg transition-shadow duration-300 hover:shadow-xl focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-white"
+                    className="btn-sweep-navy inline-flex items-center gap-2 rounded-full bg-white px-6 py-3 text-sm font-semibold text-brand-600 shadow-lg hover:text-white focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-white"
                   >
                     Start a project
                   </button>
@@ -148,13 +152,13 @@ export function Footer() {
               move forward.
             </p>
 
-            <ul className="mt-6 flex flex-col gap-3">
+            <ul className="mt-6 grid gap-2.5 sm:flex sm:flex-col sm:gap-3">
               {contactLinks.map((c) => (
                 <li key={c.label}>
                   <a
                     href={c.href}
                     {...(c.external ? { target: "_blank", rel: "noopener noreferrer" } : {})}
-                    className="group inline-flex items-center gap-2.5 text-sm font-medium text-muted transition-colors duration-200 hover:text-brand-500"
+                    className="group flex w-full items-center gap-3 rounded-2xl border border-border-soft bg-surface px-3.5 py-3 text-sm font-medium text-muted transition-all duration-200 hover:border-brand-500 hover:text-brand-500 sm:inline-flex sm:w-auto sm:gap-2.5 sm:rounded-none sm:border-0 sm:bg-transparent sm:p-0"
                   >
                     <c.Icon className="h-5 w-5 transition-transform duration-300 group-hover:scale-125 group-hover:-rotate-6" />
                     <span>{c.label}</span>
@@ -163,7 +167,7 @@ export function Footer() {
               ))}
             </ul>
 
-            <ul className="mt-5 flex items-center gap-3" aria-label="MyLoginn on social media">
+            <ul className="mt-5 grid grid-cols-[repeat(auto-fit,minmax(4.25rem,1fr))] gap-2.5 sm:flex sm:items-center sm:gap-3" aria-label="MyLoginn on social media">
               {SOCIAL_LINKS.map((s) => (
                 <li key={s.id}>
                   <a
@@ -171,9 +175,10 @@ export function Footer() {
                     target="_blank"
                     rel="noopener noreferrer me"
                     aria-label={s.label}
-                    className="grid h-9 w-9 place-items-center rounded-full border border-border-soft bg-surface text-muted transition-all duration-300 hover:-translate-y-0.5 hover:border-brand-500 hover:text-brand-500 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-500"
+                    className="flex h-16 w-full flex-col items-center justify-center gap-1 rounded-2xl border border-border-soft btn-sweep bg-surface text-muted focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-500 sm:grid sm:h-9 sm:w-9 sm:place-items-center sm:rounded-full"
                   >
-                    <svg viewBox="0 0 24 24" className="h-4 w-4" fill="currentColor" aria-hidden="true"><path d={SOCIAL_ICONS[s.id]} /></svg>
+                    <svg viewBox="0 0 24 24" className="h-5 w-5 sm:h-4 sm:w-4" fill="currentColor" aria-hidden="true"><path d={SOCIAL_ICONS[s.id]} /></svg>
+                    <span className="text-[10px] font-semibold sm:hidden">{SOCIAL_NAMES[s.id] ?? s.id}</span>
                   </a>
                 </li>
               ))}

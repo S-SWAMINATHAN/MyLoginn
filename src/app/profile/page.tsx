@@ -44,8 +44,7 @@ export default async function ProfilePage() {
           </Reveal>
 
           <div className="text-right">
-            <Reveal><span className="story-eyebrow justify-end">Account</span></Reveal>
-            <SplitHeadline as="h1" text="My profile" className="mt-2 text-3xl font-bold leading-[1.08] tracking-tight text-story-navy sm:text-4xl dark:text-foreground" />
+            <SplitHeadline as="h1" text="My profile" className="mt-0 text-3xl font-bold leading-[1.08] tracking-tight text-story-navy sm:text-4xl dark:text-foreground" />
             <Reveal direction="up" delay={0.15}>
               <p className="ml-auto mt-2 max-w-xl text-sm leading-6 text-muted sm:text-base">Your personal details and learning profile.</p>
             </Reveal>

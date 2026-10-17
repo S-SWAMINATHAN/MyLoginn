@@ -152,8 +152,7 @@ export default function LoginPage() {
                 {mode === "password" ? <LogIn className="h-5 w-5" /> : <KeyRound className="h-5 w-5" />}
               </motion.span>
             </AnimatePresence>
-            <span className="story-eyebrow">MyLoginn account</span>
-            <h1 className="mt-2 text-3xl font-bold tracking-tight text-story-navy dark:text-foreground">Welcome back</h1>
+            <h1 className="mt-0 text-3xl font-bold tracking-tight text-story-navy dark:text-foreground">Welcome back</h1>
             <p className="mt-1.5 text-sm leading-6 text-muted">Sign in to continue your learning and pick up where you left off.</p>
           </div>
 

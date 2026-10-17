@@ -21,14 +21,13 @@ export default async function LeaderboardPage({ searchParams }: { searchParams: 
   const rest = top.slice(3);
 
   return (
-    <Section className="overflow-hidden pt-6 sm:pt-10">
+    <Section className="overflow-hidden pb-16 pt-6 sm:pt-10">
       <Container className="max-w-4xl">
         <div className="text-center">
-          <Reveal><Link href="/logiquest" className="story-eyebrow justify-center">LogiQuest</Link></Reveal>
-          <SplitHeadline as="h1" text="Leaderboard" className="mt-4 text-4xl font-bold tracking-tight text-story-navy sm:text-5xl dark:text-foreground" />
+          <SplitHeadline as="h1" text="Leaderboard" className="mt-0 text-4xl font-bold tracking-tight text-story-navy sm:text-5xl dark:text-foreground" />
           <Reveal direction="up" delay={0.15}>
             <p className="mx-auto mt-4 max-w-xl text-sm leading-7 text-muted sm:text-base">
-              Ranked by skill score: XP from first solves (harder challenges are worth more), plus a bonus for topic variety and accuracy. Re-submitting a solved challenge earns nothing, so volume alone cannot climb the board.
+              Ranked by skill score: XP from correct first answers (harder questions are worth more) and online tests, plus a bonus for topic variety and accuracy. Only your first answer to a question counts, so re-answering cannot climb the board.
             </p>
           </Reveal>
           <Reveal direction="up" delay={0.25} className="mt-6 flex justify-center"><PeriodTabs active={period} /></Reveal>
@@ -41,7 +40,7 @@ export default async function LeaderboardPage({ searchParams }: { searchParams: 
               {(rest.length > 0 || (me && !meInTop)) && <BoardList rows={rest} me={me && !meInTop ? me : null} showHeader />}
             </>
           ) : (
-            <EmptyState title="No ranked learners yet" body="Solve a challenge to earn XP and appear here." cta={<Link href="/logiquest/coding" className="font-semibold text-story-royal">Start your first challenge</Link>} />
+            <EmptyState title="No ranked learners yet" body="Answer questions correctly to earn XP and appear here." cta={<Link href="/logiquest" className="font-semibold text-story-royal">Start practising</Link>} />
           )}
         </div>
 

@@ -1,6 +1,6 @@
 import Link from "next/link";
 import { createPageMetadata } from "@/lib/seo";
-import { Section, Container, Eyebrow } from "@/components/ui/Section";
+import { Section, Container } from "@/components/ui/Section";
 import { JsonLd } from "@/components/seo/JsonLd";
 import { FaqAccordion } from "@/components/ui/FaqAccordion";
 import { faqStructuredData } from "@/lib/structuredData";
@@ -37,8 +37,7 @@ export default function TamilNaduPage() {
     <Section className="py-14 sm:py-20">
       <JsonLd data={faqStructuredData(faqs)} />
       <Container className="max-w-4xl">
-        <Eyebrow>Tamil Nadu</Eyebrow>
-        <h1 className="mt-5 text-4xl font-bold leading-[1.1] tracking-tight sm:text-5xl">Software, AI and digital services for Tamil Nadu businesses</h1>
+        <h1 className="mt-0 text-4xl font-bold leading-[1.1] tracking-tight sm:text-5xl">Software, AI and digital services for Tamil Nadu businesses</h1>
         <p className="mt-4 text-lg leading-8 text-muted">MyLoginn Tech Private Limited is an India-based technology company. We help businesses across Tamil Nadu, including Coimbatore, Pollachi, Udumalpet and Erode, build and grow with web, mobile, AI and marketing solutions, and we help students learn practical technology skills.</p>
 
         <section aria-labelledby="tn-services" className="mt-12">

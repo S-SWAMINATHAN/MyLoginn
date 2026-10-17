@@ -56,13 +56,12 @@ model User {
   userBadges             UserBadge[]
   aiCoachUsage           AiCoachUsage[]
   lqStat                 LqUserStat?
-  lqSubmissions          LqSubmission[]
-  lqProgress             LqProgress[]
-  lqBookmarks            LqBookmark[]
-  lqNotes                LqNote[]
-  lqDrafts               LqDraft[]
+  lqAnswers              LqAnswer[]
+  lqSaved                LqSaved[]
+  lqComments             LqComment[]
+  lqReports              LqReport[]
+  lqTestAttempts         LqTestAttempt[]
   lqXpEvents             LqXpEvent[]
-  lqQuestionProgress     LqQuestionProgress[]
 }
 
 model DailyActivity {
@@ -822,198 +821,117 @@ model LmsSetting {
   updatedAt DateTime @updatedAt
 }
 
-// ───────────────────────── LogiQuest (practice platform) ─────────────────────────
+// ───────────────────────── LogiQuest (IndiaBix-style practice platform) ─────────────────────────
+// Questions, topics and tests are defined in code (src/lib/logiquest/content). The database only stores what learners do.
+// A question id ("qid") is "<subject>.<topic>.<hash>", stable as long as the question text does not change.
 
-enum LqCategory {
-  CODING
-  PROBLEM_SOLVING
-  LOGIC
-  MATH
-  COMMUNICATION
-  KNOWLEDGE
+/// One row per learner per question answered in practice mode. Only the FIRST answer can earn XP.
+model LqAnswer {
+  id           String   @id @default(cuid())
+  userId       String
+  qid          String
+  subject      String
+  topic        String
+  attempts     Int      @default(1)
+  firstCorrect Boolean
+  everCorrect  Boolean
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([userId, qid])
+  @@index([userId, subject, topic])
+  @@index([qid])
+  @@index([createdAt])
 }
 
-enum LqDifficulty {
-  EASY
-  MEDIUM
-  HARD
-}
+/// Bookmarked questions ("Save for later").
+model LqSaved {
+  id        String   @id @default(cuid())
+  userId    String
+  qid       String
+  createdAt DateTime @default(now())
 
-enum LqStatus {
-  DRAFT
-  REVIEW
-  PUBLISHED
-  ARCHIVED
-}
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
 
-enum LqAccess {
-  FREE
-  PREMIUM
-}
-
-model LqChallenge {
-  id               String       @id @default(cuid())
-  slug             String       @unique
-  title            String
-  category         LqCategory   @default(CODING)
-  difficulty       LqDifficulty
-  topic            String
-  subtopic         String?
-  tags             String[]
-  /// e.g. "Product Company Style", "Backend Developer Style". Never a claim about a real company.
-  style            String?
-  statement        String
-  scenario         String?
-  constraints      String?
-  inputFormat      String?
-  outputFormat     String?
-  notes            String?
-  /// [{ input, output, explanation }] shown to learners.
-  examples         Json         @default("[]")
-  estimatedMinutes Int          @default(15)
-  xp               Int          @default(10)
-  points           Int          @default(100)
-  access           LqAccess     @default(FREE)
-  status           LqStatus     @default(DRAFT)
-  /// Languages learners may pick, e.g. ["python","java"].
-  languages        String[]
-  /// { python: "def solve():...", java: "..." }
-  starterCode      Json         @default("{}")
-  /// Progressive hints, weakest first.
-  hints            String[]
-  /// SERVER ONLY until unlocked: { explanation, approach, algorithm, timeComplexity, spaceComplexity, alternative, edgeCases, code: {lang: src}, lineByLine: {lang: string[]} }
-  solution         Json?
-  videoUrl         String?
-  attemptCount     Int          @default(0)
-  solvedCount      Int          @default(0)
-  publishedAt      DateTime?
-  createdAt        DateTime     @default(now())
-  updatedAt        DateTime     @updatedAt
-
-  testCases   LqTestCase[]
-  submissions LqSubmission[]
-  progress    LqProgress[]
-  bookmarks   LqBookmark[]
-  notesList   LqNote[]
-  drafts      LqDraft[]
-
-  @@index([status, category, difficulty])
-  @@index([status, publishedAt])
-  @@index([topic])
-}
-
-model LqTestCase {
-  id          String  @id @default(cuid())
-  challengeId String
-  position    Int     @default(0)
-  input       String
-  expected    String
-  /// Public cases are shown to learners; hidden cases are never sent to the browser.
-  isPublic    Boolean @default(false)
-  isEdge      Boolean @default(false)
-  label       String?
-
-  challenge LqChallenge @relation(fields: [challengeId], references: [id], onDelete: Cascade)
-
-  @@index([challengeId, position])
-}
-
-model LqSubmission {
-  id          String   @id @default(cuid())
-  userId      String
-  challengeId String
-  language    String
-  source      String
-  /// ACCEPTED | WRONG_ANSWER | RUNTIME_ERROR | TIME_LIMIT | COMPILE_ERROR | INTERNAL_ERROR
-  verdict     String
-  passed      Int      @default(0)
-  total       Int      @default(0)
-  timeMs      Int?
-  memoryKb    Int?
-  attemptNo   Int      @default(1)
-  xpAwarded   Int      @default(0)
-  createdAt   DateTime @default(now())
-
-  user      User        @relation(fields: [userId], references: [id], onDelete: Cascade)
-  challenge LqChallenge @relation(fields: [challengeId], references: [id], onDelete: Cascade)
-
-  @@index([userId, challengeId, createdAt])
+  @@unique([userId, qid])
   @@index([userId, createdAt])
-  @@index([challengeId, verdict])
 }
 
-model LqProgress {
-  id             String    @id @default(cuid())
-  userId         String
-  challengeId    String
-  solved         Boolean   @default(false)
-  attempts       Int       @default(0)
-  hintsUsed      Int       @default(0)
-  bestPassed     Int       @default(0)
-  solutionViewed Boolean   @default(false)
-  solvedAt       DateTime?
-  updatedAt      DateTime  @updatedAt
+/// Per-question discussion thread.
+model LqComment {
+  id        String   @id @default(cuid())
+  qid       String
+  userId    String
+  body      String
+  hidden    Boolean  @default(false)
+  createdAt DateTime @default(now())
 
-  user      User        @relation(fields: [userId], references: [id], onDelete: Cascade)
-  challenge LqChallenge @relation(fields: [challengeId], references: [id], onDelete: Cascade)
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
 
-  @@unique([userId, challengeId])
-  @@index([userId, solved])
+  @@index([qid, createdAt])
+  @@index([userId, createdAt])
 }
 
-model LqDraft {
+/// "Report an error" on a question. Anonymous reports are allowed.
+model LqReport {
+  id        String   @id @default(cuid())
+  qid       String
+  userId    String?
+  /// WRONG_ANSWER | WRONG_EXPLANATION | TYPO | UNCLEAR | OTHER
+  reason    String
+  details   String?
+  /// OPEN | RESOLVED | DISMISSED
+  status    String   @default("OPEN")
+  createdAt DateTime @default(now())
+
+  user User? @relation(fields: [userId], references: [id], onDelete: SetNull)
+
+  @@index([status, createdAt])
+  @@index([qid])
+}
+
+/// Admin override that hides a question from learners without a code change.
+model LqHidden {
+  qid       String   @id
+  note      String?
+  createdAt DateTime @default(now())
+}
+
+/// A submitted online test. Questions are graded on the server from the signed attempt token.
+model LqTestAttempt {
   id          String   @id @default(cuid())
   userId      String
-  challengeId String
-  language    String
-  source      String
-  updatedAt   DateTime @updatedAt
+  test        String
+  qids        String[]
+  /// Selected option per question, -1 = not answered.
+  answers     Int[]
+  correct     Int
+  wrong       Int
+  total       Int
+  timeTakenS  Int
+  startedAt   DateTime
+  submittedAt DateTime @default(now())
 
-  user      User        @relation(fields: [userId], references: [id], onDelete: Cascade)
-  challenge LqChallenge @relation(fields: [challengeId], references: [id], onDelete: Cascade)
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
 
-  @@unique([userId, challengeId, language])
-}
-
-model LqBookmark {
-  id          String   @id @default(cuid())
-  userId      String
-  challengeId String
-  /// SAVED | REVIEW_LATER | DIFFICULT
-  kind        String   @default("SAVED")
-  createdAt   DateTime @default(now())
-
-  user      User        @relation(fields: [userId], references: [id], onDelete: Cascade)
-  challenge LqChallenge @relation(fields: [challengeId], references: [id], onDelete: Cascade)
-
-  @@unique([userId, challengeId, kind])
-  @@index([userId, kind])
-}
-
-model LqNote {
-  id          String   @id @default(cuid())
-  userId      String
-  challengeId String
-  body        String
-  updatedAt   DateTime @updatedAt
-
-  user      User        @relation(fields: [userId], references: [id], onDelete: Cascade)
-  challenge LqChallenge @relation(fields: [challengeId], references: [id], onDelete: Cascade)
-
-  @@unique([userId, challengeId])
+  @@index([userId, submittedAt])
+  @@index([test, submittedAt])
 }
 
 /// Append-only XP ledger. The leaderboard and the weekly/monthly windows are computed from it.
 model LqXpEvent {
-  id          String   @id @default(cuid())
-  userId      String
-  amount      Int
-  /// FIRST_SOLVE | DAILY_BONUS | STREAK_MILESTONE
-  reason      String
-  challengeId String?
-  /// Idempotency key, e.g. "solve:<userId>:<challengeId>".
-  eventKey    String   @unique
-  createdAt   DateTime @default(now())
+  id        String   @id @default(cuid())
+  userId    String
+  amount    Int
+  /// FIRST_CORRECT | ONLINE_TEST | STREAK_MILESTONE
+  reason    String
+  /// The qid or test slug that earned it.
+  ref       String?
+  /// Idempotency key, e.g. "q:<userId>:<qid>".
+  eventKey  String   @unique
+  createdAt DateTime @default(now())
 
   user User @relation(fields: [userId], references: [id], onDelete: Cascade)
 
@@ -1027,7 +945,7 @@ model LqUserStat {
   solved        Int      @default(0)
   currentStreak Int      @default(0)
   longestStreak Int      @default(0)
-  /// UTC calendar day (YYYY-MM-DD) of the last qualifying activity.
+  /// IST calendar day (YYYY-MM-DD) of the last qualifying activity.
   lastActiveDay String?
   /// Privacy: hide name/avatar on public leaderboards.
   hideProfile   Boolean  @default(false)
@@ -1036,45 +954,4 @@ model LqUserStat {
   user User @relation(fields: [userId], references: [id], onDelete: Cascade)
 
   @@index([xp])
-}
-
-/// Multiple-choice practice for Problem Solving, Logic, Math, Communication and Knowledge.
-model LqQuestion {
-  id           String       @id @default(cuid())
-  slug         String       @unique
-  category     LqCategory
-  difficulty   LqDifficulty
-  topic        String
-  prompt       String
-  options      String[]
-  /// SERVER ONLY: revealed only after the learner answers.
-  correctIndex Int
-  explanation  String
-  xp           Int          @default(10)
-  access       LqAccess     @default(FREE)
-  status       LqStatus     @default(DRAFT)
-  attemptCount Int          @default(0)
-  solvedCount  Int          @default(0)
-  createdAt    DateTime     @default(now())
-
-  progress LqQuestionProgress[]
-
-  @@index([status, category, difficulty])
-}
-
-model LqQuestionProgress {
-  id           String   @id @default(cuid())
-  userId       String
-  questionId   String
-  attempts     Int      @default(0)
-  /// Was the very first answer correct (the only one that earns XP)?
-  firstCorrect Boolean  @default(false)
-  everCorrect  Boolean  @default(false)
-  updatedAt    DateTime @updatedAt
-
-  user     User       @relation(fields: [userId], references: [id], onDelete: Cascade)
-  question LqQuestion @relation(fields: [questionId], references: [id], onDelete: Cascade)
-
-  @@unique([userId, questionId])
-  @@index([userId])
 }

@@ -33,14 +33,13 @@ export default function ServicesPage() {
       {/* Hero */}
       <div className="mx-auto grid w-full min-w-0 max-w-6xl items-center gap-12 px-5 sm:px-8 lg:grid-cols-2 lg:gap-16">
         <div className="min-w-0">
-          <Reveal><span className="story-eyebrow">MyLoginn Tech Private Limited</span></Reveal>
-          <SplitHeadline as="h1" text="IT and technology services" className="mt-4 max-w-xl text-4xl font-bold leading-[1.08] tracking-tight text-story-navy sm:text-5xl dark:text-foreground" />
+          <SplitHeadline as="h1" text="IT and technology services" className="mt-0 max-w-xl text-4xl font-bold leading-[1.08] tracking-tight text-story-navy sm:text-5xl dark:text-foreground" />
           <Reveal direction="up" delay={0.15}>
             <p className="mt-5 max-w-lg text-base leading-8 text-muted sm:text-lg">MyLoginn provides website and app development, custom software, AI-driven technology solutions, UI/UX, and digital marketing. Explore our service areas and contact the team to discuss a project.</p>
           </Reveal>
           <Reveal direction="up" delay={0.25} className="mt-7 flex flex-wrap items-center justify-center gap-3 lg:justify-start">
             <ArrowLink href="/contact">Discuss a project</ArrowLink>
-            <Link href="#all-services" className="rounded-full border border-border-soft bg-surface px-6 py-2.5 text-sm font-semibold transition-all duration-300 hover:-translate-y-1 hover:border-story-royal hover:text-story-royal active:scale-95">See all services</Link>
+            <Link href="#all-services" className="btn-sweep rounded-full border border-border-soft bg-surface px-6 py-2.5 text-sm font-semibold active:scale-95">See all services</Link>
           </Reveal>
         </div>
         <Reveal direction="left" delay={0.15} className="min-w-0"><ServicesExplorer services={services} /></Reveal>

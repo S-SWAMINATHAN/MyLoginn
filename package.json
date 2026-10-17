@@ -10,8 +10,7 @@
     "postinstall": "prisma generate && node scripts/copy-pyodide.mjs",
     "db:seed": "tsx prisma/seed.ts",
     "db:seed:free-courses": "tsx prisma/seed-free-courses.ts",
-    "db:seed:logiquest": "tsx prisma/seed-logiquest.ts",
-    "lq:validate": "tsx prisma/validate-questions.ts",
+    "lq:validate": "tsx scripts/lq-validate.ts",
     "test:lms": "tsx --require ./tests/setup.cjs --test tests/lms/*.test.ts"
   },
   "prisma": {

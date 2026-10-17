@@ -51,14 +51,13 @@ export default async function ProjectsPage() {
       <Container className="max-w-[1480px]">
         <div className="mx-auto grid w-full min-w-0 max-w-6xl items-center gap-12 lg:grid-cols-2 lg:gap-16">
           <div className="min-w-0">
-            <Reveal><span className="story-eyebrow">Built by learners. Backed by mentors.</span></Reveal>
             <SplitHeadline as="h1" text="Real Projects. Real Impact." className="mt-4 max-w-xl text-4xl font-bold leading-[1.08] tracking-tight text-story-navy sm:text-5xl dark:text-foreground" />
             <Reveal direction="up" delay={0.15}>
               <p className="mt-5 max-w-lg text-base leading-8 text-muted sm:text-lg">Explore capstone projects built by MyLoginn learners with guidance from industry mentors.</p>
             </Reveal>
             <Reveal direction="up" delay={0.25} className="mt-7 flex flex-wrap items-center justify-center gap-3 lg:justify-start">
               <ArrowLink href="#client-work">See our work</ArrowLink>
-              <Link href="/contact" className="rounded-full border border-border-soft bg-surface px-6 py-2.5 text-sm font-semibold transition-all duration-300 hover:-translate-y-1 hover:border-story-royal hover:text-story-royal active:scale-95">Discuss a project</Link>
+              <Link href="/contact" className="btn-sweep rounded-full border border-border-soft bg-surface px-6 py-2.5 text-sm font-semibold active:scale-95">Discuss a project</Link>
             </Reveal>
           </div>
           <Reveal direction="left" delay={0.15} className="min-w-0">

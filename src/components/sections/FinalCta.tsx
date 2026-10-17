@@ -7,7 +7,7 @@ import { Chapter } from "@/components/experience/Chapter";
 import { SplitHeadline } from "@/components/experience/SplitHeadline";
 import { Reveal } from "@/components/ui/Reveal";
 import { PlanButton } from "@/components/ui/PlanButton";
-import { ContentIcon } from "@/components/ui/ContentIcon";
+import { ServiceGlyph, type GlyphName } from "@/components/ui/ServiceGlyph";
 import { toWhatsAppLink } from "@/lib/whatsapp";
 import { WHATSAPP_PHONE } from "@/lib/contactInfo";
 import { openProjectRequest } from "@/components/services/ProjectRequestModal";
@@ -125,7 +125,7 @@ export function FinalCta() {
             <div className="min-w-0">
               <div className="relative">
                 {/* track behind the circles, filled up to the selected one */}
-                <div aria-hidden className="absolute left-[10%] right-[10%] top-[1.375rem] h-0.5 sm:top-[1.625rem]">
+                <div aria-hidden className="absolute left-[10%] right-[10%] top-6 h-0.5 sm:top-7">
                   <div className="absolute inset-0 rounded-full border-t-2 border-dashed border-border-soft" />
                   <motion.div className="absolute inset-y-0 left-0 rounded-full bg-story-royal" initial={false} animate={{ width: `${(picked / (OPTIONS.length - 1)) * 100}%` }} transition={{ type: "spring", stiffness: 160, damping: 22 }} />
                 </div>
@@ -135,13 +135,14 @@ export function FinalCta() {
                     const on = i === picked;
                     return (
                       <button key={o.key} type="button" role="radio" aria-checked={on} onClick={() => setPicked(i)} className="group flex flex-col items-center gap-2 outline-none">
-                        <span className="relative grid h-11 w-11 place-items-center rounded-full sm:h-[3.25rem] sm:w-[3.25rem]">
+                        <span className="relative grid h-12 w-12 place-items-center rounded-full sm:h-14 sm:w-14">
                           <motion.span
-                            className="absolute inset-0 rounded-full border bg-surface"
-                            animate={{ scale: 1, borderColor: "rgba(0,0,0,0)", backgroundColor: on ? "#e3edff" : "#f6f9ff" }}
-                            transition={{ duration: 0.25 }}
+                            className="absolute inset-0 rounded-full"
+                            initial={false}
+                            animate={{ backgroundColor: on ? "#1f56d6" : "#eaf1ff", boxShadow: on ? "0 10px 22px -10px rgba(31,86,214,0.85)" : "0 0 0 rgba(0,0,0,0)" }}
+                            transition={{ duration: 0.3 }}
                           />
-                          <ContentIcon keyword={o.icon} className="relative h-6 w-6 sm:h-8 sm:w-8" />
+                          <ServiceGlyph name={o.key as GlyphName} active={on} className="relative h-7 w-7 sm:h-9 sm:w-9" />
                         </span>
                         <span className={cn("text-[10px] font-semibold transition-colors sm:text-xs", on ? "text-story-royal" : "text-muted group-hover:text-foreground")}>{o.label}</span>
                       </button>

@@ -67,13 +67,15 @@ export function InternshipsExplorer({
         transition={{ duration: 0.55, ease: [0.16, 1, 0.3, 1] }}
         className="glass-panel sticky top-20 z-20 flex flex-col gap-3.5 rounded-2xl p-3.5 sm:flex-row sm:items-center sm:justify-between sm:gap-4 sm:p-4"
       >
-        <div className="flex flex-wrap items-center gap-2">
+        <div className="flex flex-col gap-2 sm:flex-row sm:flex-wrap sm:items-center">
+          <div className="no-scrollbar -mx-1 flex items-center gap-2 overflow-x-auto px-1 py-1 sm:contents">
+          <span className="shrink-0 text-[10px] font-bold uppercase tracking-wider text-muted sm:hidden">Type</span>
           {types.map((t) => (
             <motion.button
               key={t}
               onClick={() => setType(t)}
               whileTap={{ scale: 0.94 }}
-              className={`relative cursor-pointer rounded-full px-3.5 py-1.5 text-sm font-medium transition-colors duration-200 sm:px-4 sm:py-2 ${
+              className={`relative shrink-0 cursor-pointer rounded-full px-3.5 py-1.5 text-sm font-medium transition-colors duration-200 sm:px-4 sm:py-2 ${
                 type === t ? "text-white" : "text-foreground/80 hover:text-foreground"
               }`}
             >
@@ -89,13 +91,16 @@ export function InternshipsExplorer({
               {t}
             </motion.button>
           ))}
+          </div>
           <span className="mx-1 hidden h-5 w-px bg-border-soft sm:block" />
+          <div className="no-scrollbar -mx-1 flex items-center gap-2 overflow-x-auto px-1 py-1 sm:contents">
+          <span className="shrink-0 text-[10px] font-bold uppercase tracking-wider text-muted sm:hidden">Pay</span>
           {(["all", "paid", "unpaid"] as PayFilter[]).map((p) => (
             <motion.button
               key={p}
               onClick={() => setPay(p)}
               whileTap={{ scale: 0.94 }}
-              className={`relative cursor-pointer rounded-full px-3.5 py-1.5 text-sm font-medium capitalize transition-colors duration-200 sm:px-4 sm:py-2 ${
+              className={`relative shrink-0 cursor-pointer rounded-full px-3.5 py-1.5 text-sm font-medium capitalize transition-colors duration-200 sm:px-4 sm:py-2 ${
                 pay === p ? "text-background" : "text-foreground/80 hover:text-foreground"
               }`}
             >
@@ -111,6 +116,7 @@ export function InternshipsExplorer({
               {p}
             </motion.button>
           ))}
+          </div>
         </div>
 
         <div className="flex items-center gap-2.5">
@@ -216,10 +222,9 @@ export function InternshipsExplorer({
               <p className="mt-1 text-xs text-muted">Try a different keyword or clear the filters.</p>
             </div>
             <motion.button
-              whileHover={{ scale: 1.04 }}
-              whileTap={{ scale: 0.96 }}
+              whileTap={{ scale: 0.97 }}
               onClick={clearFilters}
-              className="cursor-pointer rounded-full brand-gradient-bg px-5 py-2 text-sm font-medium text-white shadow-[var(--shadow-soft)]"
+              className="btn-sweep-navy cursor-pointer rounded-full bg-story-royal px-5 py-2 text-sm font-medium text-white shadow-[var(--shadow-soft)]"
             >
               Clear filters
             </motion.button>

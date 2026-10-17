@@ -87,8 +87,7 @@ export default async function DashboardPage() {
           <div className="flex items-center gap-4">
             <Avatar name={user.name} avatarColor={user.avatarColor} avatarUrl={user.avatarUrl} size={64} className="rounded-full text-xl shadow-md" />
             <div className="min-w-0">
-              <span className="story-eyebrow">Dashboard</span>
-              <h1 className="mt-1 text-2xl font-bold tracking-tight text-story-navy sm:text-3xl dark:text-foreground">Welcome back, {firstName}</h1>
+              <h1 className="mt-0 text-2xl font-bold tracking-tight text-story-navy sm:text-3xl dark:text-foreground">Welcome back, {firstName}</h1>
               <p className="truncate text-sm text-muted">{user.email}</p>
             </div>
           </div>

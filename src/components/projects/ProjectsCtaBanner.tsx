@@ -28,11 +28,11 @@ export function ProjectsCtaBanner() {
             </div>
           </div>
 
-          <motion.div whileHover={{ scale: 1.04 }} whileTap={{ scale: 0.96 }} className="shrink-0">
+          <motion.div whileTap={{ scale: 0.97 }} className="shrink-0">
             <button
               type="button"
               onClick={() => openProjectRequest("software")}
-              className="group inline-flex items-center gap-2 rounded-full bg-white px-6 py-3 text-sm font-semibold text-brand-600 shadow-lg transition-shadow duration-300 hover:shadow-xl"
+              className="group btn-sweep-navy inline-flex items-center gap-2 rounded-full bg-white px-6 py-3 text-sm font-semibold text-brand-600 shadow-lg hover:text-white"
             >
               Start a Project
               <AnimatedArrow className="h-4.5 w-4.5 transition-transform duration-300 group-hover:translate-x-1" />

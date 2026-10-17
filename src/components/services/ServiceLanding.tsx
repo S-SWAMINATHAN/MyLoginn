@@ -1,5 +1,5 @@
 import Link from "next/link";
-import { Section, Container, Eyebrow } from "@/components/ui/Section";
+import { Section, Container } from "@/components/ui/Section";
 import { LeadForm } from "@/components/services/LeadForm";
 import { JsonLd } from "@/components/seo/JsonLd";
 import { FaqAccordion } from "@/components/ui/FaqAccordion";
@@ -27,8 +27,7 @@ export function ServiceLanding(p: ServiceLandingProps) {
       <JsonLd data={serviceStructuredData({ name: p.schemaName, description: p.intro, path: p.path, serviceType: p.serviceType })} />
       <JsonLd data={faqStructuredData(p.faqs)} />
       <Container className="max-w-7xl">
-        <Eyebrow>{p.eyebrow}</Eyebrow>
-        <h1 className="mt-5 max-w-4xl text-4xl font-bold leading-[1.1] tracking-tight sm:text-5xl">{p.h1}</h1>
+        <h1 className="mt-0 max-w-4xl text-4xl font-bold leading-[1.1] tracking-tight sm:text-5xl">{p.h1}</h1>
         <p className="mt-4 max-w-3xl text-lg leading-8 text-muted">{p.intro}</p>
         <div className="mt-12 grid grid-cols-1 gap-12 lg:grid-cols-5">
           <div className="min-w-0 lg:col-span-3">

@@ -16,6 +16,7 @@ import {
 import type { ComponentType, CSSProperties } from "react";
 import { AnimatedHome } from "@/components/ui/icons/AnimatedHome";
 import { AnimatedBook } from "@/components/ui/icons/AnimatedBook";
+import { AnimatedCrown } from "@/components/ui/icons/AnimatedCrown";
 import { AnimatedBriefcase } from "@/components/ui/icons/AnimatedBriefcase";
 import { AnimatedFolder } from "@/components/ui/icons/AnimatedFolder";
 import { AnimatedMegaphone } from "@/components/ui/icons/AnimatedMegaphone";
@@ -41,7 +42,7 @@ const serviceLinks = [
 
 const learnLinks = [
   { href: "/courses", label: "Courses", desc: "Learn job-ready skills" },
-  { href: "/logiquest", label: "LogiQuest", desc: "Think. Code. Solve. Communicate. Grow." },
+  { href: "/logiquest", label: "LogiQuest", desc: "Aptitude, reasoning, programming & interview Q&A" },
   { href: "/logiquest/leaderboard", label: "Leaderboard", desc: "Top LogiQuest learners" },
 ];
 
@@ -55,8 +56,8 @@ type MobileLink = {
 const mobileMainLinks: MobileLink[] = [
   { href: "/", label: "Home", desc: "Back to the start", icon: AnimatedHome },
   { href: "/courses", label: "Courses", desc: "Learn job-ready skills", icon: AnimatedBook },
-  { href: "/logiquest", label: "LogiQuest", desc: "Practice coding, logic and more", icon: AnimatedBook },
-  { href: "/logiquest/leaderboard", label: "Leaderboard", desc: "Top LogiQuest learners", icon: AnimatedBook },
+  { href: "/logiquest", label: "LogiQuest", desc: "Aptitude, reasoning, programming & interview Q&A", icon: AnimatedCode },
+  { href: "/logiquest/leaderboard", label: "Leaderboard", desc: "Top LogiQuest learners", icon: AnimatedCrown },
 ];
 
 const mobileServiceLinks: MobileLink[] = [

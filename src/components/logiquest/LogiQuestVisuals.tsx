@@ -3,13 +3,10 @@
 import Link from "next/link";
 import { useEffect, useRef, useState } from "react";
 import { animate, motion, useInView } from "framer-motion";
-import { ArrowUpRight, Check, CheckCircle2, Flame, Target, Trophy, Zap } from "lucide-react";
+import { CheckCircle2, Flame, Target, Trophy, Zap } from "lucide-react";
 import { cn } from "@/lib/cn";
-import { ContentIcon } from "@/components/ui/ContentIcon";
-import { RevealGroup, RevealItem } from "@/components/ui/Reveal";
 import { useReducedMotion } from "@/lib/useReducedMotion";
 
-const ACCENTS = ["#2563eb", "#7c3aed", "#059669", "#d97706", "#e11d48", "#0891b2"];
 const EASE = [0.22, 1, 0.36, 1] as const;
 
 /** Number that counts up once when it scrolls into view. */
@@ -24,126 +21,6 @@ export function CountUp({ value, className }: { value: number; className?: strin
     return () => controls.stop();
   }, [inView, value, reduced]);
   return <span ref={ref} className={className}>{(reduced ? value : shown).toLocaleString("en-IN")}</span>;
-}
-
-/** Flat code-editor preview with typing lines, a passing test run and floating XP / streak chips. */
-export function LogiQuestHeroVisual() {
-  const reduced = useReducedMotion();
-  const lines = [
-    { w: "46%", c: "#7c3aed", indent: 0 },
-    { w: "62%", c: "#2563eb", indent: 1 },
-    { w: "38%", c: "#059669", indent: 1 },
-    { w: "54%", c: "#2563eb", indent: 2 },
-    { w: "30%", c: "#d97706", indent: 1 },
-    { w: "42%", c: "#7c3aed", indent: 0 },
-  ];
-  return (
-    <div className="relative mx-auto w-full max-w-md">
-      <motion.div
-        animate={reduced ? undefined : { y: [0, -6, 0] }}
-        transition={{ duration: 6, repeat: Infinity, ease: "easeInOut" }}
-        className="overflow-hidden rounded-3xl border border-border-soft bg-surface shadow-[var(--shadow-lift)]"
-      >
-        <div className="flex items-center gap-2 border-b border-border-soft bg-story-mist px-4 py-3">
-          <span className="h-2.5 w-2.5 rounded-full bg-rose-400" /><span className="h-2.5 w-2.5 rounded-full bg-amber-400" /><span className="h-2.5 w-2.5 rounded-full bg-emerald-400" />
-          <span className="ml-2 text-[11px] font-semibold text-muted">two_sum.py</span>
-        </div>
-        <div className="space-y-3 px-5 py-5">
-          {lines.map((l, i) => (
-            <div key={i} className="flex items-center gap-3" style={{ paddingLeft: l.indent * 18 }}>
-              <span className="w-3 text-[10px] tabular-nums text-muted">{i + 1}</span>
-              <motion.span
-                className="h-2.5 rounded-full"
-                style={{ background: l.c, opacity: 0.85 }}
-                initial={{ width: 0 }}
-                animate={{ width: l.w }}
-                transition={{ delay: 0.3 + i * 0.18, duration: 0.7, ease: EASE }}
-              />
-            </div>
-          ))}
-        </div>
-        <div className="flex items-center justify-between gap-3 border-t border-border-soft px-5 py-3.5">
-          <div className="flex gap-1.5">
-            {[0, 1, 2, 3, 4].map((i) => (
-              <motion.span
-                key={i}
-                className="grid h-6 w-6 place-items-center rounded-full bg-emerald-500 text-white"
-                initial={{ scale: 0 }}
-                animate={{ scale: 1 }}
-                transition={{ delay: 1.6 + i * 0.12, type: "spring", stiffness: 420, damping: 18 }}
-              >
-                <Check className="h-3.5 w-3.5" strokeWidth={3} />
-              </motion.span>
-            ))}
-          </div>
-          <span className="text-xs font-bold text-emerald-600">5 / 5 tests passed</span>
-        </div>
-      </motion.div>
-
-      <motion.span
-        className="absolute -right-2 -top-4 inline-flex items-center gap-1.5 rounded-full bg-story-royal px-3.5 py-2 text-xs font-bold text-white shadow-[var(--shadow-lift)] sm:-right-5"
-        animate={reduced ? undefined : { y: [0, -7, 0] }}
-        transition={{ duration: 4.2, repeat: Infinity, ease: "easeInOut" }}
-      >
-        <Zap className="h-3.5 w-3.5" /> +20 XP
-      </motion.span>
-      <motion.span
-        className="absolute -bottom-4 -left-2 inline-flex items-center gap-1.5 rounded-full border border-border-soft bg-surface px-3.5 py-2 text-xs font-bold text-story-navy shadow-[var(--shadow-lift)] sm:-left-5 dark:text-foreground"
-        animate={reduced ? undefined : { y: [0, 7, 0] }}
-        transition={{ duration: 4.8, repeat: Infinity, ease: "easeInOut" }}
-      >
-        <Flame className="h-3.5 w-3.5 text-orange-500" /> 7 day streak
-      </motion.span>
-    </div>
-  );
-}
-
-const CATEGORY_ICON: Record<string, string> = {
-  coding: "python",
-  "problem-solving": "testing",
-  logic: "ai",
-  math: "math",
-  communication: "comm",
-  knowledge: "business",
-};
-
-export type CategoryItem = { id: string; slug: string; label: string; desc: string; live: boolean };
-
-/** Practice categories as animated cards with the same icon set used on course cards. */
-export function CategoryGrid({ items }: { items: CategoryItem[] }) {
-  return (
-    <RevealGroup className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3" stagger={0.07}>
-      {items.map((c, i) => {
-        const color = ACCENTS[i % ACCENTS.length];
-        const body = (
-          <>
-            <span className="grid h-14 w-14 place-items-center">
-              <ContentIcon keyword={CATEGORY_ICON[c.slug] ?? "default"} className="h-full w-full" />
-            </span>
-            <p className="mt-4 text-base font-bold text-story-navy dark:text-foreground">{c.label}</p>
-            <p className="mt-1 text-sm leading-6 text-muted">{c.desc}</p>
-            {c.live ? (
-              <span className="mt-4 inline-flex items-center gap-1 text-sm font-semibold" style={{ color }}>
-                Practice now <ArrowUpRight className="h-4 w-4" />
-              </span>
-            ) : (
-              <span className="mt-4 inline-block rounded-full bg-story-mist px-3 py-1 text-xs font-semibold text-muted">In development</span>
-            )}
-          </>
-        );
-        const cls = "group block h-full rounded-3xl border border-border-soft bg-surface p-5 outline-none focus-visible:border-story-royal focus-visible:ring-2 focus-visible:ring-story-royal/30";
-        return (
-          <RevealItem key={c.id}>
-            {c.live ? (
-              <Link href={`/logiquest/${c.slug}`} className={cls}>{body}</Link>
-            ) : (
-              <div aria-disabled className={cn(cls, "opacity-70")}>{body}</div>
-            )}
-          </RevealItem>
-        );
-      })}
-    </RevealGroup>
-  );
 }
 
 const STAT_ICONS = { xp: Zap, solved: CheckCircle2, accuracy: Target, streak: Flame };
@@ -172,11 +49,11 @@ export function ActivityHeatmap({ cells, weeks }: { cells: { key: string; n: num
     <div className="mt-4 rounded-3xl border border-border-soft bg-surface p-4 sm:p-5">
       <p className="mb-3 text-xs font-bold uppercase tracking-wider text-muted">Activity · last {weeks} weeks</p>
       <div className="no-scrollbar overflow-x-auto pb-1">
-        <div role="img" aria-label="Submission activity heatmap" className="grid w-max grid-flow-col grid-rows-7 gap-1">
+        <div role="img" aria-label="Practice activity heatmap" className="grid w-max grid-flow-col grid-rows-7 gap-1">
           {cells.map((c, i) => (
             <motion.span
               key={c.key}
-              title={`${c.key}: ${c.n} submission${c.n === 1 ? "" : "s"}`}
+              title={`${c.key}: ${c.n} answer${c.n === 1 ? "" : "s"}`}
               className={cn("h-3.5 w-3.5 rounded-[4px]", shade(c.n))}
               initial={{ opacity: 0, scale: 0.4 }}
               whileInView={{ opacity: 1, scale: 1 }}

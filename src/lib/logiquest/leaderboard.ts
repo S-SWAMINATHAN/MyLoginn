@@ -29,8 +29,8 @@ function since(period: Period) {
 
 /**
  * Balanced skill score, computed on the server from real activity:
- *   score = XP (difficulty-weighted) + 15 x distinct topics solved (diversity) + accuracy% x 1.5 (only once 5+ submissions)
- * Spamming submissions cannot raise XP (first solve only) or accuracy (wrong attempts lower it).
+ *   score = XP (level-weighted) + 15 x distinct topics with a correct answer + accuracy% x 1.5 (only once 5+ answers)
+ * Only a learner's first answer to a question counts, so re-answering cannot raise XP or accuracy.
  */
 export function skillScore(xp: number, topics: number, accuracy: number, submissions: number) {
   return Math.round(xp + topics * 15 + (submissions >= 5 ? accuracy * 1.5 : 0));
@@ -48,26 +48,23 @@ export async function getLogiQuestLeaderboard(currentUserId: string | null, peri
   if (!sums.length) return { top: [], me: null };
   const ids = sums.map((s) => s.userId);
 
-  const [users, stats, subs, solves] = await Promise.all([
+  const [users, stats, answers] = await Promise.all([
     prisma.user.findMany({ where: { id: { in: ids } }, select: { id: true, name: true, avatarColor: true, avatarUrl: true } }),
     prisma.lqUserStat.findMany({ where: { userId: { in: ids } }, select: { userId: true, currentStreak: true, hideProfile: true } }),
-    prisma.lqSubmission.groupBy({ by: ["userId", "verdict"], where: { userId: { in: ids }, ...(from ? { createdAt: { gte: from } } : {}) }, _count: { _all: true } }),
-    prisma.lqProgress.findMany({ where: { userId: { in: ids }, solved: true, ...(from ? { solvedAt: { gte: from } } : {}) }, select: { userId: true, challenge: { select: { topic: true } } } }),
+    prisma.lqAnswer.groupBy({ by: ["userId", "subject", "topic", "firstCorrect"], where: { userId: { in: ids }, ...(from ? { createdAt: { gte: from } } : {}) }, _count: { _all: true } }),
   ]);
   const userById = new Map(users.map((u) => [u.id, u]));
   const statById = new Map(stats.map((s) => [s.userId, s]));
   const counts = new Map<string, { all: number; ok: number }>();
-  for (const row of subs) {
+  const topics = new Map<string, Set<string>>();
+  for (const row of answers) {
     const c = counts.get(row.userId) ?? { all: 0, ok: 0 };
     c.all += row._count._all;
-    if (row.verdict === "ACCEPTED") c.ok += row._count._all;
+    if (row.firstCorrect) {
+      c.ok += row._count._all;
+      (topics.get(row.userId) ?? topics.set(row.userId, new Set()).get(row.userId)!).add(`${row.subject}/${row.topic}`);
+    }
     counts.set(row.userId, c);
-  }
-  const topics = new Map<string, Set<string>>();
-  const solvedCount = new Map<string, number>();
-  for (const p of solves) {
-    (topics.get(p.userId) ?? topics.set(p.userId, new Set()).get(p.userId)!).add(p.challenge.topic);
-    solvedCount.set(p.userId, (solvedCount.get(p.userId) ?? 0) + 1);
   }
 
   const entries: Omit<LqLeaderEntry, "rank">[] = [];
@@ -85,7 +82,7 @@ export async function getLogiQuestLeaderboard(currentUserId: string | null, peri
       avatarColor: hidden ? null : u.avatarColor,
       avatarUrl: hidden ? null : u.avatarUrl,
       xp,
-      solved: solvedCount.get(s.userId) ?? 0,
+      solved: c.ok,
       accuracy,
       streak: st?.currentStreak ?? 0,
       score: skillScore(xp, topics.get(s.userId)?.size ?? 0, accuracy, c.all),

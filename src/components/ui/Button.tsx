@@ -7,14 +7,14 @@ type Size = "sm" | "md" | "lg";
 
 const variantClasses: Record<Variant, string> = {
   primary:
-    "card-shine brand-gradient-bg text-white shadow-[var(--shadow-lift)] hover:brightness-110 hover:-translate-y-1 hover:shadow-[0_18px_36px_-8px_rgba(31,86,214,0.5)]",
+    "bg-story-royal btn-sweep-navy text-white shadow-[var(--shadow-soft)]",
   secondary:
-    "card-shine bg-surface-2 text-foreground border border-border-soft hover:border-brand-400 hover:-translate-y-1 hover:shadow-[var(--shadow-soft)]",
-  ghost: "text-foreground hover:bg-surface-2 hover:-translate-y-0.5",
+    "btn-sweep bg-surface-2 text-foreground border border-border-soft",
+  ghost: "text-foreground hover:bg-surface-2",
   outline:
-    "card-shine bg-surface/60 backdrop-blur-sm border border-brand-400/60 text-brand-500 hover:bg-brand-50 hover:-translate-y-1 hover:border-brand-400 hover:shadow-[var(--shadow-soft)] dark:hover:bg-brand-900/20",
-  danger: "card-shine bg-danger text-white hover:brightness-110 hover:-translate-y-1",
-  cancel: "bg-danger/10 text-danger border border-danger/30 hover:bg-danger hover:text-white hover:border-danger hover:-translate-y-0.5",
+    "btn-sweep bg-surface/60 backdrop-blur-sm border border-story-royal/50 text-story-royal",
+  danger: "bg-danger text-white hover:brightness-110",
+  cancel: "bg-danger/10 text-danger border border-danger/30 hover:bg-danger hover:text-white hover:border-danger",
 };
 
 const sizeClasses: Record<Size, string> = {
@@ -24,7 +24,7 @@ const sizeClasses: Record<Size, string> = {
 };
 
 const base =
-  "group relative isolate inline-flex items-center justify-center overflow-hidden rounded-full font-medium transition-all duration-300 ease-out hover:scale-[1.02] active:scale-[0.96] disabled:opacity-50 disabled:pointer-events-none cursor-pointer select-none focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-300 focus-visible:ring-offset-2 focus-visible:ring-offset-background";
+  "group relative isolate inline-flex items-center justify-center overflow-hidden rounded-full font-medium transition-[color,background-color,border-color,box-shadow,filter] duration-300 ease-out active:scale-[0.97] disabled:opacity-50 disabled:pointer-events-none cursor-pointer select-none focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-300 focus-visible:ring-offset-2 focus-visible:ring-offset-background";
 
 function ButtonIcon({ icon }: { icon: ReactNode }) {
   if (!icon) return null;

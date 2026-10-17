@@ -13,7 +13,6 @@ const eslintConfig = defineConfig([
     "build/**",
     "public/pyodide/**",
     // Separate plain-Node Vercel project (CommonJS), not part of the Next.js app.
-    "exec-service/**",
     "next-env.d.ts",
   ]),
 ]);

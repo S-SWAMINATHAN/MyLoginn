@@ -142,7 +142,7 @@ export function AdminRewards() {
               <label htmlFor="rw-label" className="mb-1.5 block text-[13px] font-semibold">Reason</label>
               <input id="rw-label" required maxLength={80} value={label} onChange={(e) => setLabel(e.target.value)} placeholder="e.g. Workshop attendance bonus" className={inputCls} />
             </div>
-            <motion.button type="submit" disabled={busy} whileHover={{ y: -2 }} whileTap={{ scale: 0.98 }} className="inline-flex h-11 w-full items-center justify-center gap-2 rounded-full bg-story-royal text-sm font-semibold text-white shadow-[0_10px_24px_-12px_rgba(31,86,214,0.8)] disabled:opacity-60">
+            <motion.button type="submit" disabled={busy} whileTap={{ scale: 0.98 }} className="btn-sweep-navy inline-flex h-11 w-full items-center justify-center gap-2 rounded-full bg-story-royal text-sm font-semibold text-white shadow-[0_10px_24px_-12px_rgba(31,86,214,0.8)] disabled:opacity-60">
               <Send className="h-4 w-4" /> {busy ? "Saving…" : sign > 0 ? "Award points" : "Deduct points"}
             </motion.button>
           </form>

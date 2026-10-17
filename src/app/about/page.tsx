@@ -52,8 +52,7 @@ export default function AboutPage() {
       {/* Hero */}
       <div className="mx-auto grid w-full min-w-0 max-w-6xl items-center gap-12 px-5 sm:px-8 lg:grid-cols-2 lg:gap-16">
         <div className="min-w-0">
-          <Reveal><span className="story-eyebrow">About MYLOGINN</span></Reveal>
-          <SplitHeadline as="h1" text="Turning Ideas Into Digital Success" className="mt-4 max-w-xl text-4xl font-bold leading-[1.08] tracking-tight text-story-navy sm:text-5xl dark:text-foreground" />
+          <SplitHeadline as="h1" text="Turning Ideas Into Digital Success" className="mt-0 max-w-xl text-4xl font-bold leading-[1.08] tracking-tight text-story-navy sm:text-5xl dark:text-foreground" />
           <Reveal direction="up" delay={0.15}>
             <p className="mt-5 max-w-lg text-base leading-8 text-muted sm:text-lg">
               <strong className="font-semibold text-foreground">MYLOGINN TECH</strong> is a next-generation digital platform focused on learning, innovation and real-world growth. We help individuals and businesses build skills, create opportunities and achieve more through technology and practical experience.
@@ -61,7 +60,7 @@ export default function AboutPage() {
           </Reveal>
           <Reveal direction="up" delay={0.25} className="mt-7 flex flex-wrap items-center justify-center gap-3 lg:justify-start">
             <ArrowLink href="#who-we-are">Our mission</ArrowLink>
-            <Link href="/services" className="rounded-full border border-border-soft bg-surface px-6 py-3 text-sm font-semibold transition-all duration-300 hover:-translate-y-1 hover:border-story-royal hover:text-story-royal active:scale-95">
+            <Link href="/services" className="btn-sweep rounded-full border border-border-soft bg-surface px-6 py-3 text-sm font-semibold active:scale-95">
               Explore services
             </Link>
           </Reveal>

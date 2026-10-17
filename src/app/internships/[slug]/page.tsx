@@ -129,7 +129,7 @@ export default async function InternshipDetailPage({
                   <p className="text-[10px] font-bold uppercase tracking-[0.14em] text-muted">Your mentor</p>
                   <p className="mt-0.5 text-base font-semibold text-story-navy dark:text-foreground">{internship.mentorName}</p>
                 </div>
-                <a href={`mailto:${internship.mentorEmail}`} className="group inline-flex items-center gap-2 text-sm font-semibold text-story-royal hover:underline">
+                <a href={`mailto:${internship.mentorEmail}`} className="group inline-flex w-full items-center gap-2 pl-[4.5rem] text-sm font-semibold text-story-royal hover:underline sm:w-auto sm:pl-0">
                   <AnimatedMail className="h-5 w-5" />
                   <span className="break-all">{internship.mentorEmail}</span>
                 </a>

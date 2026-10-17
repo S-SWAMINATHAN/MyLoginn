@@ -7,6 +7,7 @@ import { motion, AnimatePresence } from "framer-motion";
 import type { ComponentType, CSSProperties } from "react";
 import { AnimatedHome } from "@/components/ui/icons/AnimatedHome";
 import { AnimatedBook } from "@/components/ui/icons/AnimatedBook";
+import { AnimatedCrown } from "@/components/ui/icons/AnimatedCrown";
 import { AnimatedBriefcase } from "@/components/ui/icons/AnimatedBriefcase";
 import { AnimatedFolder } from "@/components/ui/icons/AnimatedFolder";
 import { AnimatedLayers } from "@/components/ui/icons/AnimatedLayers";
@@ -40,8 +41,8 @@ const servicesPopupLinks: { href: string; label: string; desc: string; icon: Ico
 
 const learnPopupLinks: { href: string; label: string; desc: string; icon: IconComponent }[] = [
   { href: "/courses", label: "Courses", desc: "Learn job-ready skills", icon: AnimatedBook },
-  { href: "/logiquest", label: "LogiQuest", desc: "Practice coding, logic and more", icon: AnimatedBook },
-  { href: "/logiquest/leaderboard", label: "Leaderboard", desc: "Top LogiQuest learners", icon: AnimatedBook },
+  { href: "/logiquest", label: "LogiQuest", desc: "Aptitude, reasoning, programming & interview Q&A", icon: AnimatedCode },
+  { href: "/logiquest/leaderboard", label: "Leaderboard", desc: "Top LogiQuest learners", icon: AnimatedCrown },
 ];
 
 const isLearnPath = (p: string) => p.startsWith("/courses") || p.startsWith("/logiquest") || p === "/tutoring";

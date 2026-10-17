@@ -86,15 +86,14 @@ export default async function InternshipsPage() {
         {/* Hero */}
         <div className="mx-auto grid w-full min-w-0 max-w-6xl items-center gap-12 lg:grid-cols-2 lg:gap-16">
           <div className="min-w-0">
-            <Reveal><span className="story-eyebrow">Launch your career</span></Reveal>
-            <SplitHeadline as="h1" text="Explore current internship opportunities" className="mt-4 max-w-xl text-4xl font-bold leading-[1.08] tracking-tight text-story-navy sm:text-5xl dark:text-foreground" />
+            <SplitHeadline as="h1" text="Explore current internship opportunities" className="mt-0 max-w-xl text-4xl font-bold leading-[1.08] tracking-tight text-story-navy sm:text-5xl dark:text-foreground" />
             <Reveal direction="up" delay={0.15}>
               <p className="mt-5 max-w-lg text-base leading-8 text-muted sm:text-lg">Review the current openings, program requirements, responsibilities and application details below.</p>
               <p className="mt-3 max-w-lg text-sm leading-6 text-muted">Students can explore current technology internship listings. Check each role for its location, format, eligibility, and application details.</p>
             </Reveal>
             <Reveal direction="up" delay={0.25} className="mt-7 flex flex-wrap items-center justify-center gap-3 lg:justify-start">
               <ArrowLink href="#all-internships">Browse internships</ArrowLink>
-              <Link href="#how-it-works" className="rounded-full border border-border-soft bg-surface px-6 py-2.5 text-sm font-semibold transition-all duration-300 hover:-translate-y-1 hover:border-story-royal hover:text-story-royal active:scale-95">How it works</Link>
+              <Link href="#how-it-works" className="btn-sweep rounded-full border border-border-soft bg-surface px-6 py-2.5 text-sm font-semibold active:scale-95">How it works</Link>
             </Reveal>
           </div>
           <Reveal direction="left" delay={0.15} className="min-w-0">

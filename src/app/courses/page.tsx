@@ -78,15 +78,14 @@ export default async function CoursesPage() {
       <Container className="max-w-[1480px]">
         <div className="mx-auto grid w-full min-w-0 max-w-6xl items-center gap-12 lg:grid-cols-2 lg:gap-16">
           <div className="min-w-0">
-            <Reveal><span className="story-eyebrow">Upgrade your skills</span></Reveal>
-            <SplitHeadline as="h1" text="Master skills for your future" className="mt-4 max-w-xl text-4xl font-bold leading-[1.08] tracking-tight text-story-navy sm:text-5xl dark:text-foreground" />
+            <SplitHeadline as="h1" text="Master skills for your future" className="mt-0 max-w-xl text-4xl font-bold leading-[1.08] tracking-tight text-story-navy sm:text-5xl dark:text-foreground" />
             <Reveal direction="up" delay={0.15}>
               <p className="mt-5 max-w-lg text-base leading-8 text-muted sm:text-lg">Explore current course topics, levels, duration, fees, and enrolment details in the listings below.</p>
               <p className="mt-3 max-w-lg text-sm leading-6 text-muted">MyLoginn offers mentor-led AI and technology learning for learners everywhere. Browse current courses and contact us if you have any questions.</p>
             </Reveal>
             <Reveal direction="up" delay={0.25} className="mt-7 flex flex-wrap items-center justify-center gap-3 lg:justify-start">
               <ArrowLink href="#courses-list">Browse courses</ArrowLink>
-              <Link href="/contact" className="rounded-full border border-border-soft bg-surface px-6 py-2.5 text-sm font-semibold transition-all duration-300 hover:-translate-y-1 hover:border-story-royal hover:text-story-royal active:scale-95">Ask about courses</Link>
+              <Link href="/contact" className="btn-sweep rounded-full border border-border-soft bg-surface px-6 py-2.5 text-sm font-semibold active:scale-95">Ask about courses</Link>
             </Reveal>
             <Reveal direction="up" delay={0.35} className="mt-8"><PillTicker items={["Explore all", "Top rated", "Expert-led", "Fast enquiry"]} /></Reveal>
           </div>

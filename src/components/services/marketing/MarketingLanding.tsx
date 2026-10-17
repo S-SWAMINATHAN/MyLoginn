@@ -43,8 +43,7 @@ export function MarketingLanding({ areas, faqs }: { areas: Area[]; faqs: Faq[] }
       {/* Hero */}
       <div className="mx-auto grid w-full min-w-0 max-w-6xl items-center gap-12 px-5 sm:px-8 lg:grid-cols-2 lg:gap-16">
         <div className="min-w-0">
-          <Reveal><span className="story-eyebrow">Growth Marketing</span></Reveal>
-          <SplitHeadline as="h1" text="Scale your business with data-driven digital marketing" className="mt-4 max-w-xl text-4xl font-bold leading-[1.08] tracking-tight text-story-navy sm:text-5xl dark:text-foreground" />
+          <SplitHeadline as="h1" text="Scale your business with data-driven digital marketing" className="mt-0 max-w-xl text-4xl font-bold leading-[1.08] tracking-tight text-story-navy sm:text-5xl dark:text-foreground" />
           <Reveal direction="up" delay={0.15}>
             <p className="mt-5 max-w-lg text-base leading-8 text-muted sm:text-lg">
               For SMEs, startups and established businesses looking to scale online &mdash; we run performance marketing powered by AI, with WhatsApp built into the customer journey.
@@ -52,7 +51,7 @@ export function MarketingLanding({ areas, faqs }: { areas: Area[]; faqs: Faq[] }
           </Reveal>
           <Reveal direction="up" delay={0.25} className="mt-7 flex flex-wrap items-center justify-center gap-3 lg:justify-start">
             <PlanMarketingButton />
-            <a href="#enquiry" className="rounded-full border border-border-soft bg-surface px-6 py-3 text-sm font-semibold transition-all duration-300 hover:-translate-y-1 hover:border-story-royal hover:text-story-royal active:scale-95">
+            <a href="#enquiry" className="btn-sweep rounded-full border border-border-soft bg-surface px-6 py-3 text-sm font-semibold active:scale-95">
               Get a proposal
             </a>
           </Reveal>

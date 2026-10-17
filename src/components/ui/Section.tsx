@@ -3,7 +3,7 @@ import type { HTMLAttributes } from "react";
 
 export function Section({ className, ...rest }: HTMLAttributes<HTMLElement>) {
   return (
-    <section className={cn("relative py-20 sm:py-28", className)} {...rest} />
+    <section className={cn("relative py-12 sm:py-28", className)} {...rest} />
   );
 }
 

@@ -54,8 +54,7 @@ export default function ContactPage() {
         <div aria-hidden="true" className="pointer-events-none absolute -right-40 top-10 -z-0 h-[36rem] w-[36rem] rounded-full bg-[radial-gradient(circle,rgba(91,157,255,.11),rgba(255,255,255,0)_70%)]" />
         <header className="relative z-10 grid items-center gap-10 py-4 sm:py-6 lg:grid-cols-2 lg:gap-14">
           <div className="min-w-0">
-            <Reveal><span className="story-eyebrow">Contact &amp; Support</span></Reveal>
-            <SplitHeadline as="h1" text="We're here to help you" className="mt-4 max-w-xl text-4xl font-bold leading-[1.08] tracking-tight text-story-navy sm:text-5xl" />
+            <SplitHeadline as="h1" text="We're here to help you" className="mt-0 max-w-xl text-4xl font-bold leading-[1.08] tracking-tight text-story-navy sm:text-5xl" />
             <Reveal direction="up" delay={0.15}>
               <p className="mt-5 max-w-lg text-base leading-8 text-[#62708d] sm:text-lg">Course questions, project ideas, or internships — tell us what you need and we&apos;ll point you in the right direction.</p>
             </Reveal>
