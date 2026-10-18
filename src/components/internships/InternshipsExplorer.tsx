@@ -224,7 +224,7 @@ export function InternshipsExplorer({
             <motion.button
               whileTap={{ scale: 0.97 }}
               onClick={clearFilters}
-              className="btn-sweep-navy cursor-pointer rounded-full bg-story-royal px-5 py-2 text-sm font-medium text-white shadow-[var(--shadow-soft)]"
+              className="cursor-pointer rounded-full bg-story-royal px-5 py-2 text-sm font-medium text-white shadow-[var(--shadow-soft)]"
             >
               Clear filters
             </motion.button>

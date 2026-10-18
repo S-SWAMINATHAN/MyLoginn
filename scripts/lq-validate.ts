@@ -14,7 +14,7 @@ import { LOADERS } from "../src/lib/logiquest/content";
 import { finalizeSubject } from "../src/lib/logiquest/content/build";
 import type { Question } from "../src/lib/logiquest/types";
 
-const MIN = 5;
+const MIN = 20;
 /** Scratch space for compiled checks: on the project drive, inside node_modules (git-ignored). */
 const WORK = join(process.cwd(), "node_modules", ".cache", "lq-tools");
 const LOCAL_ZIG = join(WORK, "venv", "Scripts", "python.exe");

@@ -1,0 +1,1004 @@
+{
+ "two-sum": [
+  {
+   "input": "4\n2 7 11 15\n9",
+   "output": "0 1"
+  },
+  {
+   "input": "3\n3 2 4\n6",
+   "output": "1 2"
+  },
+  {
+   "input": "2\n3 3\n6",
+   "output": "0 1"
+  },
+  {
+   "input": "5\n-1 -2 -3 -4 -5\n-8",
+   "output": "2 4"
+  },
+  {
+   "input": "6\n1 5 9 13 2 8\n21",
+   "output": "3 5"
+  },
+  {
+   "input": "5\n0 4 3 0 7\n0",
+   "output": "0 3"
+  }
+ ],
+ "maximum-subarray": [
+  {
+   "input": "9\n-2 1 -3 4 -1 2 1 -5 4",
+   "output": "6"
+  },
+  {
+   "input": "1\n1",
+   "output": "1"
+  },
+  {
+   "input": "5\n5 4 -1 7 8",
+   "output": "23"
+  },
+  {
+   "input": "4\n-3 -1 -2 -5",
+   "output": "-1"
+  },
+  {
+   "input": "6\n2 -1 2 -1 2 -1",
+   "output": "4"
+  },
+  {
+   "input": "7\n-1 3 -2 5 -6 1 4",
+   "output": "6"
+  }
+ ],
+ "binary-search": [
+  {
+   "input": "6\n-1 0 3 5 9 12\n9",
+   "output": "4"
+  },
+  {
+   "input": "6\n-1 0 3 5 9 12\n2",
+   "output": "-1"
+  },
+  {
+   "input": "1\n5\n5",
+   "output": "0"
+  },
+  {
+   "input": "5\n1 3 5 7 9\n1",
+   "output": "0"
+  },
+  {
+   "input": "5\n1 3 5 7 9\n9",
+   "output": "4"
+  },
+  {
+   "input": "4\n10 20 30 40\n45",
+   "output": "-1"
+  }
+ ],
+ "climbing-stairs": [
+  {
+   "input": "2",
+   "output": "2"
+  },
+  {
+   "input": "3",
+   "output": "3"
+  },
+  {
+   "input": "1",
+   "output": "1"
+  },
+  {
+   "input": "5",
+   "output": "8"
+  },
+  {
+   "input": "10",
+   "output": "89"
+  },
+  {
+   "input": "45",
+   "output": "1836311903"
+  },
+  {
+   "input": "80",
+   "output": "37889062373143906"
+  }
+ ],
+ "coin-change": [
+  {
+   "input": "3\n1 2 5\n11",
+   "output": "3"
+  },
+  {
+   "input": "1\n2\n3",
+   "output": "-1"
+  },
+  {
+   "input": "1\n1\n0",
+   "output": "0"
+  },
+  {
+   "input": "3\n2 5 10\n27",
+   "output": "4"
+  },
+  {
+   "input": "4\n186 419 83 408\n6249",
+   "output": "20"
+  },
+  {
+   "input": "2\n7 3\n25",
+   "output": "7"
+  }
+ ],
+ "longest-increasing-subsequence": [
+  {
+   "input": "8\n10 9 2 5 3 7 101 18",
+   "output": "4"
+  },
+  {
+   "input": "6\n0 1 0 3 2 3",
+   "output": "4"
+  },
+  {
+   "input": "7\n7 7 7 7 7 7 7",
+   "output": "1"
+  },
+  {
+   "input": "1\n42",
+   "output": "1"
+  },
+  {
+   "input": "6\n1 2 3 4 5 6",
+   "output": "6"
+  },
+  {
+   "input": "6\n6 5 4 3 2 1",
+   "output": "1"
+  }
+ ],
+ "activity-selection": [
+  {
+   "input": "6\n1 2\n3 4\n0 6\n5 7\n8 9\n5 9",
+   "output": "4"
+  },
+  {
+   "input": "3\n1 4\n2 3\n3 5",
+   "output": "2"
+  },
+  {
+   "input": "1\n0 1",
+   "output": "1"
+  },
+  {
+   "input": "4\n1 10\n2 3\n3 4\n4 5",
+   "output": "3"
+  },
+  {
+   "input": "5\n1 2\n1 2\n1 2\n2 3\n2 3",
+   "output": "2"
+  }
+ ],
+ "longest-common-subsequence": [
+  {
+   "input": "abcde\nace",
+   "output": "3"
+  },
+  {
+   "input": "abc\nabc",
+   "output": "3"
+  },
+  {
+   "input": "abc\ndef",
+   "output": "0"
+  },
+  {
+   "input": "aggtab\ngxtxayb",
+   "output": "4"
+  },
+  {
+   "input": "a\na",
+   "output": "1"
+  },
+  {
+   "input": "abcdefghij\njihgfedcba",
+   "output": "1"
+  }
+ ],
+ "edit-distance": [
+  {
+   "input": "horse\nros",
+   "output": "3"
+  },
+  {
+   "input": "intention\nexecution",
+   "output": "5"
+  },
+  {
+   "input": "abc\nabc",
+   "output": "0"
+  },
+  {
+   "input": "\nabc",
+   "output": "3"
+  },
+  {
+   "input": "kitten\nsitting",
+   "output": "3"
+  },
+  {
+   "input": "a\nb",
+   "output": "1"
+  }
+ ],
+ "knapsack": [
+  {
+   "input": "3 50\n10 60\n20 100\n30 120",
+   "output": "220"
+  },
+  {
+   "input": "4 7\n1 1\n3 4\n4 5\n5 7",
+   "output": "9"
+  },
+  {
+   "input": "1 5\n6 10",
+   "output": "0"
+  },
+  {
+   "input": "5 10\n5 10\n4 40\n6 30\n3 50\n2 15",
+   "output": "105"
+  },
+  {
+   "input": "3 6\n2 3\n2 3\n2 3",
+   "output": "9"
+  }
+ ],
+ "n-queens": [
+  {
+   "input": "4",
+   "output": "2"
+  },
+  {
+   "input": "1",
+   "output": "1"
+  },
+  {
+   "input": "8",
+   "output": "92"
+  },
+  {
+   "input": "2",
+   "output": "0"
+  },
+  {
+   "input": "6",
+   "output": "4"
+  },
+  {
+   "input": "9",
+   "output": "352"
+  }
+ ],
+ "valid-parentheses": [
+  {
+   "input": "()[]{}",
+   "output": "YES"
+  },
+  {
+   "input": "(]",
+   "output": "NO"
+  },
+  {
+   "input": "([{}])",
+   "output": "YES"
+  },
+  {
+   "input": "((",
+   "output": "NO"
+  },
+  {
+   "input": "]",
+   "output": "NO"
+  },
+  {
+   "input": "{[()()]}",
+   "output": "YES"
+  },
+  {
+   "input": "([)]",
+   "output": "NO"
+  }
+ ],
+ "next-greater-element": [
+  {
+   "input": "4\n4 5 2 25",
+   "output": "5 25 25 -1"
+  },
+  {
+   "input": "4\n13 7 6 12",
+   "output": "-1 12 12 -1"
+  },
+  {
+   "input": "1\n5",
+   "output": "-1"
+  },
+  {
+   "input": "5\n1 2 3 4 5",
+   "output": "2 3 4 5 -1"
+  },
+  {
+   "input": "5\n5 4 3 2 1",
+   "output": "-1 -1 -1 -1 -1"
+  },
+  {
+   "input": "6\n2 7 3 5 4 6",
+   "output": "7 -1 5 6 6 -1"
+  }
+ ],
+ "sliding-window-maximum": [
+  {
+   "input": "8 3\n1 3 -1 -3 5 3 6 7",
+   "output": "3 3 5 5 6 7"
+  },
+  {
+   "input": "1 1\n1",
+   "output": "1"
+  },
+  {
+   "input": "5 2\n9 8 7 6 5",
+   "output": "9 8 7 6"
+  },
+  {
+   "input": "5 5\n1 5 2 4 3",
+   "output": "5"
+  },
+  {
+   "input": "6 1\n4 2 12 3 8 1",
+   "output": "4 2 12 3 8 1"
+  }
+ ],
+ "element-frequency": [
+  {
+   "input": "7\n3 1 3 2 1 3 4",
+   "output": "3 3\n1 2\n2 1\n4 1"
+  },
+  {
+   "input": "1\n9",
+   "output": "9 1"
+  },
+  {
+   "input": "5\n5 5 5 5 5",
+   "output": "5 5"
+  },
+  {
+   "input": "6\n-1 2 -1 2 0 0",
+   "output": "-1 2\n2 2\n0 2"
+  }
+ ],
+ "shortest-path-bfs": [
+  {
+   "input": "5 5\n1 2\n2 3\n3 4\n4 5\n1 5\n1 4",
+   "output": "2"
+  },
+  {
+   "input": "4 2\n1 2\n3 4\n1 4",
+   "output": "-1"
+  },
+  {
+   "input": "1 0\n1 1",
+   "output": "0"
+  },
+  {
+   "input": "6 7\n1 2\n1 3\n2 4\n3 4\n4 5\n5 6\n2 6\n1 6",
+   "output": "2"
+  }
+ ],
+ "number-of-islands": [
+  {
+   "input": "4 5\n11110\n11010\n11000\n00000",
+   "output": "1"
+  },
+  {
+   "input": "4 5\n11000\n11000\n00100\n00011",
+   "output": "3"
+  },
+  {
+   "input": "1 1\n0",
+   "output": "0"
+  },
+  {
+   "input": "3 3\n101\n010\n101",
+   "output": "5"
+  },
+  {
+   "input": "2 4\n1111\n1111",
+   "output": "1"
+  }
+ ],
+ "merge-intervals": [
+  {
+   "input": "4\n1 3\n2 6\n8 10\n15 18",
+   "output": "1 6\n8 10\n15 18"
+  },
+  {
+   "input": "2\n1 4\n4 5",
+   "output": "1 5"
+  },
+  {
+   "input": "1\n5 7",
+   "output": "5 7"
+  },
+  {
+   "input": "3\n1 10\n2 3\n4 8",
+   "output": "1 10"
+  },
+  {
+   "input": "3\n6 8\n1 2\n3 5",
+   "output": "1 2\n3 5\n6 8"
+  }
+ ],
+ "top-k-frequent": [
+  {
+   "input": "6 2\n1 1 1 2 2 3",
+   "output": "1 2"
+  },
+  {
+   "input": "1 1\n1",
+   "output": "1"
+  },
+  {
+   "input": "8 3\n4 4 5 5 6 6 7 1",
+   "output": "4 5 6"
+  },
+  {
+   "input": "5 2\n-1 -1 2 2 3",
+   "output": "-1 2"
+  }
+ ],
+ "sum-of-digits": [
+  {
+   "input": "12345",
+   "output": "15"
+  },
+  {
+   "input": "0",
+   "output": "0"
+  },
+  {
+   "input": "9999999999999999999999",
+   "output": "198"
+  },
+  {
+   "input": "100000",
+   "output": "1"
+  },
+  {
+   "input": "7",
+   "output": "7"
+  }
+ ],
+ "gcd-and-lcm": [
+  {
+   "input": "12 18",
+   "output": "6 36"
+  },
+  {
+   "input": "7 13",
+   "output": "1 91"
+  },
+  {
+   "input": "1 1",
+   "output": "1 1"
+  },
+  {
+   "input": "1000000000 999999999",
+   "output": "1 999999999000000000"
+  },
+  {
+   "input": "48 180",
+   "output": "12 720"
+  }
+ ],
+ "prime-check": [
+  {
+   "input": "3\n2\n15\n17",
+   "output": "YES\nNO\nYES"
+  },
+  {
+   "input": "4\n1\n97\n100\n999983",
+   "output": "NO\nYES\nNO\nYES"
+  },
+  {
+   "input": "2\n999999000001\n1000000007",
+   "output": "YES\nYES"
+  }
+ ],
+ "count-primes": [
+  {
+   "input": "10",
+   "output": "4"
+  },
+  {
+   "input": "0",
+   "output": "0"
+  },
+  {
+   "input": "2",
+   "output": "1"
+  },
+  {
+   "input": "100",
+   "output": "25"
+  },
+  {
+   "input": "1000000",
+   "output": "78498"
+  },
+  {
+   "input": "2000000",
+   "output": "148933"
+  }
+ ],
+ "trailing-zeros": [
+  {
+   "input": "5",
+   "output": "1"
+  },
+  {
+   "input": "0",
+   "output": "0"
+  },
+  {
+   "input": "25",
+   "output": "6"
+  },
+  {
+   "input": "100",
+   "output": "24"
+  },
+  {
+   "input": "1000000000000000000",
+   "output": "249999999999999995"
+  }
+ ],
+ "pascals-triangle": [
+  {
+   "input": "5",
+   "output": "1\n1 1\n1 2 1\n1 3 3 1\n1 4 6 4 1"
+  },
+  {
+   "input": "1",
+   "output": "1"
+  },
+  {
+   "input": "2",
+   "output": "1\n1 1"
+  },
+  {
+   "input": "10",
+   "output": "1\n1 1\n1 2 1\n1 3 3 1\n1 4 6 4 1\n1 5 10 10 5 1\n1 6 15 20 15 6 1\n1 7 21 35 35 21 7 1\n1 8 28 56 70 56 28 8 1\n1 9 36 84 126 126 84 36 9 1"
+  }
+ ],
+ "ncr-mod": [
+  {
+   "input": "3\n5 2\n10 0\n10 10",
+   "output": "10\n1\n1"
+  },
+  {
+   "input": "2\n1000 500\n100 50",
+   "output": "159835829\n538992043"
+  },
+  {
+   "input": "1\n30 15",
+   "output": "155117520"
+  }
+ ],
+ "palindrome-check": [
+  {
+   "input": "A man, a plan, a canal: Panama",
+   "output": "YES"
+  },
+  {
+   "input": "race a car",
+   "output": "NO"
+  },
+  {
+   "input": " ",
+   "output": "YES"
+  },
+  {
+   "input": "No 'x' in Nixon",
+   "output": "YES"
+  },
+  {
+   "input": "12321",
+   "output": "YES"
+  },
+  {
+   "input": "ab",
+   "output": "NO"
+  }
+ ],
+ "valid-anagram": [
+  {
+   "input": "anagram\nnagaram",
+   "output": "YES"
+  },
+  {
+   "input": "rat\ncar",
+   "output": "NO"
+  },
+  {
+   "input": "a\na",
+   "output": "YES"
+  },
+  {
+   "input": "listen\nsilent",
+   "output": "YES"
+  },
+  {
+   "input": "aab\nabb",
+   "output": "NO"
+  }
+ ],
+ "reverse-words": [
+  {
+   "input": "the sky is blue",
+   "output": "blue is sky the"
+  },
+  {
+   "input": "  hello world  ",
+   "output": "world hello"
+  },
+  {
+   "input": "a good   example",
+   "output": "example good a"
+  },
+  {
+   "input": "single",
+   "output": "single"
+  }
+ ],
+ "string-compression": [
+  {
+   "input": "aaabbc",
+   "output": "a3b2c1"
+  },
+  {
+   "input": "abc",
+   "output": "a1b1c1"
+  },
+  {
+   "input": "a",
+   "output": "a1"
+  },
+  {
+   "input": "zzzzzzzzzzzz",
+   "output": "z12"
+  },
+  {
+   "input": "aabbaa",
+   "output": "a2b2a2"
+  }
+ ],
+ "caesar-cipher": [
+  {
+   "input": "Hello, World!\n3",
+   "output": "Khoor, Zruog!"
+  },
+  {
+   "input": "xyz\n2",
+   "output": "zab"
+  },
+  {
+   "input": "abc\n0",
+   "output": "abc"
+  },
+  {
+   "input": "Zebra-123\n27",
+   "output": "Afcsb-123"
+  }
+ ],
+ "first-unique-character": [
+  {
+   "input": "leetcode",
+   "output": "0"
+  },
+  {
+   "input": "loveleetcode",
+   "output": "2"
+  },
+  {
+   "input": "aabb",
+   "output": "-1"
+  },
+  {
+   "input": "z",
+   "output": "0"
+  },
+  {
+   "input": "abcabcd",
+   "output": "6"
+  }
+ ],
+ "longest-palindromic-substring": [
+  {
+   "input": "babad",
+   "output": "3"
+  },
+  {
+   "input": "cbbd",
+   "output": "2"
+  },
+  {
+   "input": "a",
+   "output": "1"
+  },
+  {
+   "input": "forgeeksskeegfor",
+   "output": "10"
+  },
+  {
+   "input": "abcde",
+   "output": "1"
+  },
+  {
+   "input": "aaaa",
+   "output": "4"
+  }
+ ],
+ "vowel-count": [
+  {
+   "input": "Hello World",
+   "output": "3 7"
+  },
+  {
+   "input": "AEIOU xyz",
+   "output": "5 3"
+  },
+  {
+   "input": "12345 !!",
+   "output": "0 0"
+  },
+  {
+   "input": "Programming in Python",
+   "output": "5 14"
+  }
+ ],
+ "fizzbuzz": [
+  {
+   "input": "15",
+   "output": "1\n2\nFizz\n4\nBuzz\nFizz\n7\n8\nFizz\nBuzz\n11\nFizz\n13\n14\nFizzBuzz"
+  },
+  {
+   "input": "1",
+   "output": "1"
+  },
+  {
+   "input": "5",
+   "output": "1\n2\nFizz\n4\nBuzz"
+  },
+  {
+   "input": "30",
+   "output": "1\n2\nFizz\n4\nBuzz\nFizz\n7\n8\nFizz\nBuzz\n11\nFizz\n13\n14\nFizzBuzz\n16\n17\nFizz\n19\nBuzz\nFizz\n22\n23\nFizz\nBuzz\n26\nFizz\n28\n29\nFizzBuzz"
+  }
+ ],
+ "best-time-to-buy-stock": [
+  {
+   "input": "6\n7 1 5 3 6 4",
+   "output": "5"
+  },
+  {
+   "input": "5\n7 6 4 3 1",
+   "output": "0"
+  },
+  {
+   "input": "1\n5",
+   "output": "0"
+  },
+  {
+   "input": "4\n2 4 1 7",
+   "output": "6"
+  },
+  {
+   "input": "3\n3 3 3",
+   "output": "0"
+  }
+ ],
+ "majority-element": [
+  {
+   "input": "3\n3 2 3",
+   "output": "3"
+  },
+  {
+   "input": "7\n2 2 1 1 1 2 2",
+   "output": "2"
+  },
+  {
+   "input": "1\n9",
+   "output": "9"
+  },
+  {
+   "input": "5\n-1 -1 -1 4 5",
+   "output": "-1"
+  }
+ ],
+ "move-zeroes": [
+  {
+   "input": "5\n0 1 0 3 12",
+   "output": "1 3 12 0 0"
+  },
+  {
+   "input": "1\n0",
+   "output": "0"
+  },
+  {
+   "input": "4\n1 2 3 4",
+   "output": "1 2 3 4"
+  },
+  {
+   "input": "6\n0 0 1 0 0 2",
+   "output": "1 2 0 0 0 0"
+  }
+ ],
+ "rotate-array": [
+  {
+   "input": "7 3\n1 2 3 4 5 6 7",
+   "output": "5 6 7 1 2 3 4"
+  },
+  {
+   "input": "4 2\n-1 -100 3 99",
+   "output": "3 99 -1 -100"
+  },
+  {
+   "input": "1 5\n7",
+   "output": "7"
+  },
+  {
+   "input": "3 3\n1 2 3",
+   "output": "1 2 3"
+  },
+  {
+   "input": "5 7\n1 2 3 4 5",
+   "output": "4 5 1 2 3"
+  }
+ ],
+ "trapping-rain-water": [
+  {
+   "input": "12\n0 1 0 2 1 0 1 3 2 1 2 1",
+   "output": "6"
+  },
+  {
+   "input": "6\n4 2 0 3 2 5",
+   "output": "9"
+  },
+  {
+   "input": "1\n5",
+   "output": "0"
+  },
+  {
+   "input": "3\n3 0 3",
+   "output": "3"
+  },
+  {
+   "input": "5\n1 2 3 4 5",
+   "output": "0"
+  }
+ ],
+ "product-except-self": [
+  {
+   "input": "4\n1 2 3 4",
+   "output": "24 12 8 6"
+  },
+  {
+   "input": "5\n-1 1 0 -3 3",
+   "output": "0 0 9 0 0"
+  },
+  {
+   "input": "2\n5 6",
+   "output": "6 5"
+  },
+  {
+   "input": "4\n2 2 2 2",
+   "output": "8 8 8 8"
+  }
+ ],
+ "missing-number": [
+  {
+   "input": "3\n3 0 1",
+   "output": "2"
+  },
+  {
+   "input": "2\n0 1",
+   "output": "2"
+  },
+  {
+   "input": "9\n9 6 4 2 3 5 7 0 1",
+   "output": "8"
+  },
+  {
+   "input": "1\n1",
+   "output": "0"
+  }
+ ],
+ "word-frequency": [
+  {
+   "input": "the cat and the hat",
+   "output": "the 2\nand 1\ncat 1\nhat 1"
+  },
+  {
+   "input": "Apple apple APPLE banana",
+   "output": "apple 3\nbanana 1"
+  },
+  {
+   "input": "one",
+   "output": "one 1"
+  },
+  {
+   "input": "b a c b a b",
+   "output": "b 3\na 2\nc 1"
+  }
+ ],
+ "set-operations": [
+  {
+   "input": "1 2 3 4\n3 4 5",
+   "output": "1 2 3 4 5\n3 4\n1 2"
+  },
+  {
+   "input": "1 1 2\n2 2 3",
+   "output": "1 2 3\n2\n1"
+  },
+  {
+   "input": "5\n5",
+   "output": "5\n5"
+  },
+  {
+   "input": "7 8\n1 2",
+   "output": "1 2 7 8\n\n7 8"
+  }
+ ],
+ "top-student": [
+  {
+   "input": "3\nasha 90 85 80\nravi 70 95 90\nmeena 60 70 80",
+   "output": "asha ravi\n85.00"
+  },
+  {
+   "input": "2\nb 50 50 50\na 50 50 50",
+   "output": "a b\n50.00"
+  },
+  {
+   "input": "1\nzoe 100 99 98",
+   "output": "zoe\n99.00"
+  }
+ ],
+ "snake-to-camel": [
+  {
+   "input": "3\nuser_name\nis_logged_in\nid",
+   "output": "userName\nisLoggedIn\nid"
+  },
+  {
+   "input": "2\nhttp_status_code\na_b_c",
+   "output": "httpStatusCode\naBC"
+  },
+  {
+   "input": "1\nalready",
+   "output": "already"
+  }
+ ],
+ "chunk-array": [
+  {
+   "input": "5 2\n1 2 3 4 5",
+   "output": "1 2\n3 4\n5"
+  },
+  {
+   "input": "4 4\n1 2 3 4",
+   "output": "1 2 3 4"
+  },
+  {
+   "input": "3 1\n7 8 9",
+   "output": "7\n8\n9"
+  }
+ ]
+}

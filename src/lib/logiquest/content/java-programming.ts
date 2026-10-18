@@ -1,6 +1,6 @@
 /** Java Programming. Every "What is the output?" program is compiled and run by `npm run lq:validate`. */
 import type { RawQ, RawSubject } from "../types";
-import { m, m2, m3, topic } from "./build";
+import { m, topic } from "./build";
 
 /** Wraps statements in a Main class unless the snippet already declares one. The first option must be the exact output. */
 const prog = (code: string, imports = "") =>

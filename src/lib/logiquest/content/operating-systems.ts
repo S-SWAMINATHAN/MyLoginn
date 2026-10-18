@@ -1,5 +1,5 @@
 import type { RawQ, RawSubject } from "../types";
-import { m, m2, m3, topic } from "./build";
+import { m, m2, topic } from "./build";
 import { cpuScheduling, diskScheduling, pageReplacement } from "./technical/generated";
 
 const basics: RawQ[] = [

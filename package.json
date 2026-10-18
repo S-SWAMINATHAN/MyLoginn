@@ -11,6 +11,7 @@
     "db:seed": "tsx prisma/seed.ts",
     "db:seed:free-courses": "tsx prisma/seed-free-courses.ts",
     "lq:validate": "tsx scripts/lq-validate.ts",
+    "lq:coding": "tsx scripts/lq-coding-gen.ts",
     "test:lms": "tsx --require ./tests/setup.cjs --test tests/lms/*.test.ts"
   },
   "prisma": {

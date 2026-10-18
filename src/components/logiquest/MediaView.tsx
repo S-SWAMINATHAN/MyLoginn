@@ -88,19 +88,19 @@ function XYChart({ media }: { media: Extract<Media, { type: "bar" | "line" }> })
 
 function Pie({ media }: { media: Extract<Media, { type: "pie" }> }) {
   const total = media.slices.reduce((a, s) => a + s.value, 0);
-  let angle = -90;
+  const sweeps = media.slices.map((s) => (s.value / total) * 360);
+  const starts = sweeps.map((_, i) => -90 + sweeps.slice(0, i).reduce((a, b) => a + b, 0));
   const R = 90, cx = 120, cy = 110;
   const point = (deg: number, r: number) => [cx + r * Math.cos((deg * Math.PI) / 180), cy + r * Math.sin((deg * Math.PI) / 180)];
   return (
     <div className="flex flex-col items-center gap-4 sm:flex-row sm:justify-center">
       <svg viewBox="0 0 240 220" className="w-56 shrink-0" role="img" aria-label={media.caption ?? "Pie chart"}>
         {media.slices.map((s, i) => {
-          const sweep = (s.value / total) * 360;
+          const sweep = sweeps[i], angle = starts[i];
           const [x1, y1] = point(angle, R);
           const [x2, y2] = point(angle + sweep, R);
           const [lx, ly] = point(angle + sweep / 2, R * 0.66);
           const d = `M ${cx} ${cy} L ${x1} ${y1} A ${R} ${R} 0 ${sweep > 180 ? 1 : 0} 1 ${x2} ${y2} Z`;
-          angle += sweep;
           return (
             <g key={s.label}>
               <title>{`${s.label}: ${n(s.value)}`}</title>

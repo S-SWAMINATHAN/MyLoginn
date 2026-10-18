@@ -152,7 +152,7 @@ export function frac(n: number, d: number): string {
 
 // ───────────── finalize ─────────────
 
-const REFERS_TO_OTHERS = /\b(all of|none of|both|neither|cannot be determined|even both|either)\b|\b(only|both) (I|II|III|IV)\b|\b(I|II|III|IV) (alone|and)\b|^no error|^none\b/i;
+export const REFERS_TO_OTHERS = /\b(all of|none of|both|neither|cannot be determined|even both|either)\b|\b(only|both) (I|II|III|IV)\b|\b(I|II|III|IV) (alone|and)\b|^no error|^none\b/i;
 
 function finalizeOptions(raw: RawQ): { o: string[]; a: number } {
   const o = raw.o ?? [];

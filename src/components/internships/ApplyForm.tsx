@@ -187,7 +187,7 @@ export function ApplyForm({ internshipId }: { internshipId: string }) {
         type="submit"
         disabled={submitting}
         whileTap={{ scale: 0.98 }}
-        className="group btn-sweep-navy inline-flex h-12 w-full items-center justify-between gap-3 rounded-full bg-story-royal py-1.5 pl-6 pr-1.5 text-sm font-semibold text-white shadow-[0_10px_24px_-12px_rgba(31,86,214,0.8)] transition-shadow hover:shadow-[0_16px_30px_-12px_rgba(31,86,214,0.85)] disabled:opacity-60"
+        className="group inline-flex h-12 w-full items-center justify-between gap-3 rounded-full bg-story-royal py-1.5 pl-6 pr-1.5 text-sm font-semibold text-white shadow-[0_10px_24px_-12px_rgba(31,86,214,0.8)] transition-shadow hover:shadow-[0_16px_30px_-12px_rgba(31,86,214,0.85)] disabled:opacity-60"
       >
         <span>{submitting ? (file ? `Uploading… ${progress}%` : "Submitting…") : "Submit application"}</span>
         <span aria-hidden className="relative grid h-9 w-14 place-items-center overflow-hidden rounded-full bg-white/15">

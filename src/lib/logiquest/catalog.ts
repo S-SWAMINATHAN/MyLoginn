@@ -27,7 +27,6 @@ export const GROUPS: GroupMeta[] = [
   { slug: "interview", nav: "Interview", title: "Interview", desc: "HR, technical short answers and group discussion preparation.", icon: "business" },
   { slug: "gk", nav: "GK", title: "General Knowledge", desc: "General knowledge and general science.", icon: "business" },
   { slug: "engineering", nav: "Engineering", title: "Engineering", desc: "Mechanical, civil, electronics, electrical, chemical and computer science.", icon: "testing" },
-  { slug: "medical", nav: "Medical", title: "Medical Science", desc: "Microbiology, biochemistry, biotechnology and biochemical engineering.", icon: "testing" },
   { slug: "puzzles", nav: "Puzzles", title: "Puzzles", desc: "Number, letter, clock and logic puzzles, plus Sudoku.", icon: "ai" },
 ];
 
@@ -127,16 +126,6 @@ export const SUBJECTS: SubjectMeta[] = [
     "Process Calculations", "Fluid Mechanics", "Heat Transfer", "Mass Transfer", "Chemical Engineering Thermodynamics", "Chemical Reaction Engineering", "Mechanical Operations", "Process Control", "Petroleum Refining", "Plant Economics")),
   S("computer-science-engineering", "Computer Science Engineering", "engineering", "CSE", "Theory of computation, compilers, computer organization, algorithms and discrete mathematics.", t(
     "Theory of Computation", "Compiler Design", "Computer Organization and Architecture", "Design and Analysis of Algorithms", "Discrete Mathematics", "Computer Graphics")),
-
-  // ───────── Medical Science ─────────
-  S("microbiology", "Microbiology", "medical", "Microbiology", "Microscopy, bacterial structure and growth, sterilization, genetics, immunology, virology, mycology and parasitology.", t(
-    "History of Microbiology", "Microscopy and Staining", "Bacterial Cell Structure", "Microbial Growth and Nutrition", "Sterilization and Disinfection", "Microbial Genetics", "Immunology", "Virology", "Mycology", "Parasitology", "Medical Microbiology", "Industrial and Environmental Microbiology")),
-  S("biochemistry", "Biochemistry", "medical", "Biochemistry", "Biomolecules, enzymes, vitamins, metabolism, bioenergetics and hormones.", t(
-    "Carbohydrates", "Proteins and Amino Acids", "Lipids", "Nucleic Acids", "Enzymes", "Vitamins and Minerals", "Carbohydrate Metabolism", "Lipid and Protein Metabolism", "Bioenergetics", "Hormones")),
-  S("biotechnology", "Biotechnology", "medical", "Biotechnology", "Recombinant DNA, PCR, cell culture, plant and medical biotechnology, fermentation and bioinformatics.", t(
-    "Introduction to Biotechnology", "Recombinant DNA Technology", "PCR and DNA Sequencing", "Plant Biotechnology", "Animal Cell Culture", "Fermentation Technology", "Bioinformatics", "Genomics and Proteomics", "Medical Biotechnology", "Bioethics and Biosafety")),
-  S("biochemical-engineering", "Biochemical Engineering", "medical", "Biochemical Engineering", "Microbial and enzyme kinetics, bioreactors, sterilization, mass transfer and downstream processing.", t(
-    "Microbial Growth Kinetics", "Enzyme Kinetics", "Bioreactor Design", "Sterilization of Media and Air", "Oxygen Transfer", "Fermentation Processes", "Downstream Processing", "Bioprocess Control")),
 
   // ───────── Puzzles ─────────
   S("puzzles", "Puzzles", "puzzles", "Puzzles", "Brain teasers: number and letter puzzles, clock puzzles and classic logic puzzles. Try Sudoku too.", t(

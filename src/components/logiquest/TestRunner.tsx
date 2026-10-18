@@ -2,8 +2,8 @@
 
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import Link from "next/link";
-import { motion } from "framer-motion";
-import { AlertTriangle, CheckCircle2, ChevronLeft, ChevronRight, Clock, Flag, Loader2, RotateCcw, Send, Trophy, XCircle, Zap } from "lucide-react";
+import { AnimatePresence, motion } from "framer-motion";
+import { AlertTriangle, CheckCircle2, ChevronLeft, ChevronRight, Clock, Flag, ListChecks, Loader2, RotateCcw, Send, ShieldCheck, Trophy, XCircle, Zap } from "lucide-react";
 import { cn } from "@/lib/cn";
 import type { TestQuestion } from "@/lib/logiquest/bank";
 import type { TestResult } from "@/lib/logiquest/tests";
@@ -11,10 +11,31 @@ import { FigTile } from "./Figure";
 import { MediaView } from "./MediaView";
 import { RichText } from "./RichText";
 import { LETTERS } from "./QuestionCard";
+import { TEST_MINUTES, TEST_SIZE } from "@/lib/logiquest/constants";
 
 type Started = { token: string; minutes: number; startedAt: number; questions: TestQuestion[] };
 
 const mmss = (s: number) => `${String(Math.floor(s / 60)).padStart(2, "0")}:${String(s % 60).padStart(2, "0")}`;
+
+/** Countdown as a ring that drains, with the time left beside it. It turns amber, then red, as time runs low. */
+function TimerRing({ left, total }: { left: number; total: number }) {
+  const r = 16;
+  const c = 2 * Math.PI * r;
+  const frac = total ? Math.max(0, Math.min(1, left / total)) : 0;
+  const color = left < 60 ? "#e11d48" : left < 300 ? "#d97706" : "var(--story-royal)";
+  return (
+    <span className="inline-flex items-center gap-2" role="timer" aria-live="off">
+      <span className="relative grid h-10 w-10 place-items-center">
+        <svg viewBox="0 0 40 40" className="absolute inset-0 h-full w-full -rotate-90" aria-hidden>
+          <circle cx="20" cy="20" r={r} fill="none" strokeWidth="3.5" className="stroke-story-mist" />
+          <circle cx="20" cy="20" r={r} fill="none" strokeWidth="3.5" strokeLinecap="round" stroke={color} strokeDasharray={c} strokeDashoffset={c * (1 - frac)} style={{ transition: "stroke-dashoffset 1s linear, stroke 0.4s" }} />
+        </svg>
+        <Clock className="relative h-4 w-4" style={{ color }} />
+      </span>
+      <span className={cn("font-mono text-lg font-bold tabular-nums", left < 60 ? "text-rose-600" : left < 300 ? "text-amber-600" : "text-story-navy dark:text-foreground")}>{mmss(left)}</span>
+    </span>
+  );
+}
 
 /** A timed online test: start → answer with a question palette → submit (or auto-submit) → score and review. */
 export function TestRunner({ subject, topic, title, loggedIn, backHref }: { subject: string; topic: string | null; title: string; loggedIn: boolean; backHref: string }) {
@@ -49,7 +70,9 @@ export function TestRunner({ subject, topic, title, loggedIn, backHref }: { subj
   }, [test]);
 
   const answersRef = useRef(answers);
-  answersRef.current = answers;
+  useEffect(() => {
+    answersRef.current = answers;
+  }, [answers]);
   useEffect(() => {
     if (phase !== "running" || !test) return;
     const deadline = test.startedAt + test.minutes * 60_000;
@@ -72,22 +95,38 @@ export function TestRunner({ subject, topic, title, loggedIn, backHref }: { subj
 
   if (phase === "intro" || phase === "loading") {
     return (
-      <div className="rounded-3xl border border-border-soft bg-surface p-6 sm:p-8">
-        <h2 className="text-xl font-bold">Instructions</h2>
-        <ul className="mt-3 list-disc space-y-1.5 pl-5 text-sm leading-6 text-muted">
-          <li>The test has up to <strong className="text-foreground">20 questions</strong> picked at random{topic ? " from this topic" : " from across the subject"}. You get <strong className="text-foreground">30 minutes</strong> (less for shorter tests).</li>
-          <li>Each correct answer scores 1 mark. There is no negative marking.</li>
-          <li>Use the question palette to jump between questions, and <em>Mark for review</em> to come back later.</li>
-          <li>The test submits automatically when the timer reaches zero.</li>
-          <li>After submitting you get your score, the correct answers and explanations for every question.</li>
-          {!loggedIn ? <li>You are not logged in, so your result will not be saved and no XP is awarded.</li> : <li>Your result is saved to your history; your first test of the day on this {topic ? "topic" : "subject"} earns XP.</li>}
+      <div className="rounded-3xl border border-border-soft bg-surface p-5 sm:p-8">
+        <div className="grid gap-3 sm:grid-cols-3">
+          {[
+            { Icon: ListChecks, k: `Up to ${TEST_SIZE}`, v: "random questions", c: "#2563eb" },
+            { Icon: Clock, k: `${TEST_MINUTES} minutes`, v: "auto-submits at zero", c: "#d97706" },
+            { Icon: ShieldCheck, k: "No negative", v: "marking", c: "#059669" },
+          ].map(({ Icon, k, v, c }, i) => (
+            <motion.div key={k} initial={{ opacity: 0, y: 12 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: i * 0.07 }} className="flex items-center gap-3 rounded-2xl bg-story-mist p-4">
+              <span className="grid h-11 w-11 shrink-0 place-items-center rounded-full" style={{ background: `color-mix(in srgb, ${c} 16%, transparent)`, color: c }}><Icon className="h-5 w-5" /></span>
+              <span><span className="block text-base font-bold text-story-navy dark:text-foreground">{k}</span><span className="block text-xs text-muted">{v}</span></span>
+            </motion.div>
+          ))}
+        </div>
+        <h2 className="mt-6 text-lg font-bold">Instructions</h2>
+        <ul className="mt-3 space-y-2 text-sm leading-6 text-muted">
+          {[
+            <>The test has up to <strong className="text-foreground">20 questions</strong> picked at random{topic ? " from this topic" : " from across the subject"}. You get <strong className="text-foreground">30 minutes</strong> (less for shorter tests).</>,
+            <>Each correct answer scores 1 mark. There is no negative marking.</>,
+            <>Use the question palette to jump between questions, and <em>Mark for review</em> to come back later.</>,
+            <>The test submits automatically when the timer reaches zero.</>,
+            <>After submitting you get your score, the correct answers and explanations for every question.</>,
+            !loggedIn ? <>You are not logged in, so your result will not be saved and no XP is awarded.</> : <>Your result is saved to your history; your first test of the day on this {topic ? "topic" : "subject"} earns XP.</>,
+          ].map((line, i) => (
+            <li key={i} className="flex gap-2.5"><span aria-hidden className="mt-1 grid h-4 w-4 shrink-0 place-items-center rounded-full bg-story-royal text-[9px] font-bold text-white">✓</span><span>{line}</span></li>
+          ))}
         </ul>
         {error ? <p role="alert" className="mt-4 text-sm text-rose-600">{error}</p> : null}
         <div className="mt-6 flex flex-wrap gap-3">
-          <button onClick={start} disabled={phase === "loading"} className="inline-flex items-center gap-2 rounded-full bg-story-royal px-6 py-2.5 text-sm font-semibold text-white transition-transform hover:-translate-y-0.5 disabled:opacity-60">
+          <button onClick={start} disabled={phase === "loading"} className="inline-flex items-center gap-2 rounded-full bg-story-royal px-7 py-3 text-sm font-semibold text-white disabled:opacity-60">
             {phase === "loading" ? <Loader2 className="h-4 w-4 animate-spin" /> : <Clock className="h-4 w-4" />}Start Test
           </button>
-          {!loggedIn ? <Link href={`/login?next=${encodeURIComponent(backHref)}`} className="rounded-full border border-border-soft px-6 py-2.5 text-sm font-semibold hover:border-story-royal hover:text-story-royal">Log in first</Link> : null}
+          {!loggedIn ? <Link href={`/login?next=${encodeURIComponent(backHref)}`} className="btn-sweep rounded-full border border-border-soft px-6 py-3 text-sm font-semibold">Log in first</Link> : null}
         </div>
       </div>
     );
@@ -104,41 +143,47 @@ export function TestRunner({ subject, topic, title, loggedIn, backHref }: { subj
   return (
     <div className="grid gap-5 lg:grid-cols-[1fr_16rem]">
       <div className="min-w-0 rounded-3xl border border-border-soft bg-surface p-5 sm:p-7">
-        <div className="mb-4 flex flex-wrap items-center gap-3 text-sm">
-          <span className="rounded-full bg-story-royal/10 px-3 py-1 font-bold text-story-royal">Question {current + 1} of {test.questions.length}</span>
-          <span className={cn("ml-auto inline-flex items-center gap-1.5 rounded-full px-3 py-1 font-mono font-bold tabular-nums", left < 60 ? "bg-rose-500/15 text-rose-600" : left < 300 ? "bg-amber-500/15 text-amber-700 dark:text-amber-300" : "bg-story-mist")} role="timer" aria-live="off">
-            <Clock className="h-4 w-4" />{mmss(left)}
-          </span>
+        <div className="mb-3 flex flex-wrap items-center gap-3 text-sm">
+          <span className="rounded-full bg-story-royal/10 px-3.5 py-1.5 font-bold text-story-royal">Question {current + 1} of {test.questions.length}</span>
+          <span className="ml-auto"><TimerRing left={left} total={test.minutes * 60} /></span>
         </div>
-        {q.passage ? <div className="mb-4 rounded-xl bg-story-mist p-4 text-sm"><RichText text={q.passage} /></div> : null}
-        {q.media && q.media.type !== "figs" ? <MediaView media={q.media} /> : null}
-        <RichText text={q.q} className="text-base font-medium text-story-navy dark:text-foreground" />
-        {q.media?.type === "figs" ? <MediaView media={q.media} /> : null}
+        <div className="mb-5 h-1.5 overflow-hidden rounded-full bg-story-mist" role="progressbar" aria-valuemin={0} aria-valuemax={test.questions.length} aria-valuenow={answeredCount} aria-label="Questions answered">
+          <motion.div className="h-full rounded-full bg-story-royal" initial={false} animate={{ width: `${(answeredCount / test.questions.length) * 100}%` }} transition={{ type: "spring", stiffness: 140, damping: 22 }} />
+        </div>
 
-        <div role="radiogroup" aria-label="Options" className={cn("mt-4", figOptions ? "flex flex-wrap gap-3" : "grid gap-2")}>
-          {(figOptions ?? q.o).map((opt, i) => {
-            const on = answers[current] === i;
-            return (
-              <button key={i} role="radio" aria-checked={on} onClick={() => setAnswer(i)} className={cn("flex items-start gap-3 rounded-xl border-2 px-3 py-2.5 text-left text-sm transition-colors", on ? "border-story-royal bg-story-royal/[0.07]" : "border-border-soft hover:border-story-royal/50")}>
-                {typeof opt === "string" ? (
-                  <>
-                    <span className={cn("grid h-6 w-6 shrink-0 place-items-center rounded-full text-xs font-bold", on ? "bg-story-royal text-white" : "bg-story-mist text-story-royal")}>{LETTERS[i]}</span>
-                    <span className="min-w-0 flex-1 pt-0.5"><RichText text={opt} className="leading-6" /></span>
-                  </>
-                ) : <FigTile fig={opt} label={LETTERS[i]} size={72} />}
-              </button>
-            );
-          })}
-        </div>
+        <AnimatePresence mode="wait" initial={false}>
+          <motion.div key={current} initial={{ opacity: 0, x: 22 }} animate={{ opacity: 1, x: 0 }} exit={{ opacity: 0, x: -22 }} transition={{ duration: 0.25, ease: [0.22, 1, 0.36, 1] }}>
+            {q.passage ? <div className="mb-4 rounded-2xl bg-story-mist p-4 text-sm"><RichText text={q.passage} /></div> : null}
+            {q.media && q.media.type !== "figs" ? <MediaView media={q.media} /> : null}
+            <RichText text={q.q} className="text-base font-medium text-story-navy dark:text-foreground" />
+            {q.media?.type === "figs" ? <MediaView media={q.media} /> : null}
+
+            <div role="radiogroup" aria-label="Options" className={cn("mt-4", figOptions ? "flex flex-wrap gap-3" : "grid gap-2")}>
+              {(figOptions ?? q.o).map((opt, i) => {
+                const on = answers[current] === i;
+                return (
+                  <motion.button key={i} role="radio" aria-checked={on} onClick={() => setAnswer(i)} whileTap={{ scale: 0.99 }} className={cn("flex items-start gap-3 rounded-2xl border-2 px-3 py-2.5 text-left text-sm transition-colors", on ? "border-story-royal bg-story-royal/[0.07]" : "border-border-soft hover:border-story-royal/50")}>
+                    {typeof opt === "string" ? (
+                      <>
+                        <span className={cn("grid h-7 w-7 shrink-0 place-items-center rounded-full text-xs font-bold transition-colors", on ? "bg-story-royal text-white" : "bg-story-mist text-story-royal")}>{LETTERS[i]}</span>
+                        <span className="min-w-0 flex-1 pt-0.5"><RichText text={opt} className="leading-6" /></span>
+                      </>
+                    ) : <FigTile fig={opt} label={LETTERS[i]} size={72} />}
+                  </motion.button>
+                );
+              })}
+            </div>
+          </motion.div>
+        </AnimatePresence>
 
         {error ? <p role="alert" className="mt-3 text-sm text-rose-600">{error}</p> : null}
         <div className="mt-6 flex flex-wrap items-center gap-2">
-          <button onClick={() => setCurrent((c) => Math.max(0, c - 1))} disabled={current === 0} className="inline-flex items-center gap-1 rounded-full border border-border-soft px-4 py-2 text-sm font-semibold disabled:opacity-40"><ChevronLeft className="h-4 w-4" />Previous</button>
-          <button onClick={() => setMarked((m) => m.map((x, k) => (k === current ? !x : x)))} className={cn("inline-flex items-center gap-1 rounded-full px-4 py-2 text-sm font-semibold", marked[current] ? "bg-violet-500/15 text-violet-700 dark:text-violet-300" : "border border-border-soft")}><Flag className="h-4 w-4" />{marked[current] ? "Marked" : "Mark for review"}</button>
+          <button onClick={() => setCurrent((c) => Math.max(0, c - 1))} disabled={current === 0} className="btn-sweep inline-flex items-center gap-1 rounded-full border border-border-soft px-4 py-2 text-sm font-semibold disabled:opacity-40"><ChevronLeft className="h-4 w-4" />Previous</button>
+          <button onClick={() => setMarked((m) => m.map((x, k) => (k === current ? !x : x)))} className={cn("inline-flex items-center gap-1 rounded-full px-4 py-2 text-sm font-semibold transition-colors", marked[current] ? "bg-violet-500/15 text-violet-700 dark:text-violet-300" : "border border-border-soft hover:border-violet-400 hover:text-violet-600")}><Flag className="h-4 w-4" />{marked[current] ? "Marked" : "Mark for review"}</button>
           {current < test.questions.length - 1 ? (
             <button onClick={() => setCurrent((c) => c + 1)} className="ml-auto inline-flex items-center gap-1 rounded-full bg-story-royal px-5 py-2 text-sm font-semibold text-white">Next<ChevronRight className="h-4 w-4" /></button>
           ) : (
-            <button onClick={() => setConfirm(true)} className="ml-auto inline-flex items-center gap-1.5 rounded-full bg-emerald-600 px-5 py-2 text-sm font-semibold text-white"><Send className="h-4 w-4" />Submit test</button>
+            <button onClick={() => setConfirm(true)} className="ml-auto inline-flex items-center gap-1.5 rounded-full bg-emerald-600 px-5 py-2 text-sm font-semibold text-white transition-colors hover:bg-emerald-700"><Send className="h-4 w-4" />Submit test</button>
           )}
         </div>
       </div>
@@ -148,10 +193,10 @@ export function TestRunner({ subject, topic, title, loggedIn, backHref }: { subj
         <p className="mt-0.5 text-xs text-muted">{answeredCount} of {test.questions.length} answered</p>
         <div className="mt-3 grid grid-cols-5 gap-1.5">
           {test.questions.map((_, i) => (
-            <button key={i} onClick={() => setCurrent(i)} aria-label={`Question ${i + 1}${answers[i] >= 0 ? ", answered" : ""}${marked[i] ? ", marked" : ""}`} className={cn("relative grid h-9 place-items-center rounded-lg text-xs font-bold transition-colors", i === current && "ring-2 ring-story-royal ring-offset-1 ring-offset-surface", answers[i] >= 0 ? "bg-emerald-500 text-white" : "bg-story-mist text-muted hover:text-story-royal")}>
+            <motion.button key={i} whileTap={{ scale: 0.92 }} onClick={() => setCurrent(i)} aria-label={`Question ${i + 1}${answers[i] >= 0 ? ", answered" : ""}${marked[i] ? ", marked" : ""}`} className={cn("relative grid h-9 place-items-center rounded-xl text-xs font-bold transition-colors", i === current && "ring-2 ring-story-royal ring-offset-1 ring-offset-surface", answers[i] >= 0 ? "bg-emerald-500 text-white" : "bg-story-mist text-muted hover:text-story-royal")}>
               {i + 1}
               {marked[i] ? <span className="absolute -right-0.5 -top-0.5 h-2.5 w-2.5 rounded-full border-2 border-surface bg-violet-500" /> : null}
-            </button>
+            </motion.button>
           ))}
         </div>
         <ul className="mt-3 space-y-1 text-[11px] text-muted">
@@ -159,23 +204,25 @@ export function TestRunner({ subject, topic, title, loggedIn, backHref }: { subj
           <li className="flex items-center gap-2"><span className="h-3 w-3 rounded bg-story-mist ring-1 ring-border-soft" />Not answered</li>
           <li className="flex items-center gap-2"><span className="h-3 w-3 rounded-full bg-violet-500" />Marked for review</li>
         </ul>
-        <button onClick={() => setConfirm(true)} disabled={phase === "submitting"} className="mt-4 inline-flex w-full items-center justify-center gap-2 rounded-full bg-emerald-600 px-4 py-2.5 text-sm font-semibold text-white disabled:opacity-60">
+        <button onClick={() => setConfirm(true)} disabled={phase === "submitting"} className="mt-4 inline-flex w-full items-center justify-center gap-2 rounded-full bg-emerald-600 px-4 py-2.5 text-sm font-semibold text-white transition-colors hover:bg-emerald-700 disabled:opacity-60">
           {phase === "submitting" ? <Loader2 className="h-4 w-4 animate-spin" /> : <Send className="h-4 w-4" />}Submit test
         </button>
       </aside>
 
-      {confirm ? (
-        <div role="dialog" aria-modal="true" aria-labelledby="confirm-title" className="fixed inset-0 z-[60] grid place-items-center bg-black/50 p-4" onClick={() => setConfirm(false)}>
-          <div className="w-full max-w-sm rounded-3xl bg-surface p-6 shadow-[var(--shadow-lift)]" onClick={(e) => e.stopPropagation()}>
-            <h3 id="confirm-title" className="flex items-center gap-2 text-lg font-bold"><AlertTriangle className="h-5 w-5 text-amber-500" />Submit the test?</h3>
-            <p className="mt-2 text-sm text-muted">You have answered {answeredCount} of {test.questions.length} questions{marked.some(Boolean) ? ` and marked ${marked.filter(Boolean).length} for review` : ""}. You cannot change answers after submitting.</p>
-            <div className="mt-5 flex justify-end gap-2">
-              <button onClick={() => setConfirm(false)} className="rounded-full px-4 py-2 text-sm font-semibold text-muted hover:text-story-royal">Keep going</button>
-              <button onClick={() => submit(answers)} className="rounded-full bg-emerald-600 px-5 py-2 text-sm font-semibold text-white">Submit</button>
-            </div>
-          </div>
-        </div>
-      ) : null}
+      <AnimatePresence>
+        {confirm ? (
+          <motion.div key="confirm" initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} role="dialog" aria-modal="true" aria-labelledby="confirm-title" className="fixed inset-0 z-[60] grid place-items-center bg-black/50 p-4" onClick={() => setConfirm(false)}>
+            <motion.div initial={{ opacity: 0, y: 16, scale: 0.97 }} animate={{ opacity: 1, y: 0, scale: 1 }} exit={{ opacity: 0, y: 10, scale: 0.98 }} transition={{ duration: 0.22 }} className="w-full max-w-sm rounded-3xl bg-surface p-6 shadow-[var(--shadow-lift)]" onClick={(e) => e.stopPropagation()}>
+              <h3 id="confirm-title" className="flex items-center gap-2 text-lg font-bold"><AlertTriangle className="h-5 w-5 text-amber-500" />Submit the test?</h3>
+              <p className="mt-2 text-sm text-muted">You have answered {answeredCount} of {test.questions.length} questions{marked.some(Boolean) ? ` and marked ${marked.filter(Boolean).length} for review` : ""}. You cannot change answers after submitting.</p>
+              <div className="mt-5 flex justify-end gap-2">
+                <button onClick={() => setConfirm(false)} className="rounded-full px-4 py-2 text-sm font-semibold text-muted hover:text-story-royal">Keep going</button>
+                <button onClick={() => submit(answers)} className="rounded-full bg-emerald-600 px-5 py-2 text-sm font-semibold text-white transition-colors hover:bg-emerald-700">Submit</button>
+              </div>
+            </motion.div>
+          </motion.div>
+        ) : null}
+      </AnimatePresence>
     </div>
   );
 }

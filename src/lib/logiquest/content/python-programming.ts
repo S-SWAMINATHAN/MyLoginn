@@ -1,6 +1,6 @@
 /** Python Programming. Every "What is the output?" question is executed by `npm run lq:validate`. */
 import type { RawQ, RawSubject } from "../types";
-import { m, m2, m3, topic } from "./build";
+import { m, topic } from "./build";
 
 /** Output question: the first option must be exactly what the program prints. */
 const out = (code: string, o: string[], e: string, d: 1 | 2 | 3 = 1): RawQ =>

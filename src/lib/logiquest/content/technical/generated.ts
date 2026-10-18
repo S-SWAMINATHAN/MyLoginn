@@ -7,7 +7,7 @@ const ipStr = (n: number) => [24, 16, 8, 0].map((s) => (n >>> s) & 255).join("."
 const maskOf = (p: number) => (p === 0 ? 0 : (0xffffffff << (32 - p)) >>> 0);
 function randomIp(r: Rng) { return ((r.int(10, 223) << 24) | (r.int(0, 255) << 16) | (r.int(0, 255) << 8) | r.int(1, 254)) >>> 0; }
 
-export const subnetting: RawQ[] = gen("net-subnet", 36, (r, i) =>
+export const subnetting: RawQ[] = gen("net-subnet", 72, (r, i) =>
   cycle<RawQ | null>(i, r, [
     (r) => { const p = r.int(16, 30), ip = randomIp(r), net = (ip & maskOf(p)) >>> 0; return { q: `What is the network address of the host ${ipStr(ip)}/${p}?`, ...textOptions(r, ipStr(net), [ipStr((net + (1 << (32 - p))) >>> 0), ipStr((net | (~maskOf(p) >>> 0)) >>> 0), ipStr((ip & maskOf(p - 1 || 1)) >>> 0), ipStr((ip & maskOf(Math.min(31, p + 1))) >>> 0)]), e: `Mask /${p} = ${ipStr(maskOf(p))}. AND the address with the mask: ${ipStr(ip)} AND ${ipStr(maskOf(p))} = **${ipStr(net)}**.`, d: 2 }; },
     (r) => { const p = r.int(16, 30), ip = randomIp(r), bc = ((ip & maskOf(p)) | (~maskOf(p) >>> 0)) >>> 0; return { q: `What is the broadcast address of the subnet containing ${ipStr(ip)}/${p}?`, ...textOptions(r, ipStr(bc), [ipStr((ip & maskOf(p)) >>> 0), ipStr((bc - 1) >>> 0), ipStr(((ip & maskOf(p - 1)) | (~maskOf(p - 1) >>> 0)) >>> 0), ipStr(((ip & maskOf(Math.min(31, p + 1))) | (~maskOf(Math.min(31, p + 1)) >>> 0)) >>> 0)]), e: `The broadcast address has all host bits set to 1. Network = ${ipStr((ip & maskOf(p)) >>> 0)}; with the last ${32 - p} bits set it becomes **${ipStr(bc)}**.`, d: 2 }; },
@@ -37,7 +37,7 @@ function rr(ps: Proc[], q: number) {
   return ps.map((p, k) => fin[k] - p.bt);
 }
 const table = (ps: Proc[], arrival: boolean) => `\`\`\`\nProcess  ${arrival ? "Arrival  " : ""}Burst\n${ps.map((p) => `${p.id.padEnd(9)}${arrival ? String(p.at).padEnd(9) : ""}${p.bt}`).join("\n")}\n\`\`\``;
-export const cpuScheduling: RawQ[] = gen("os-sched", 30, (r, i) => {
+export const cpuScheduling: RawQ[] = gen("os-sched", 60, (r, i) => {
   const n = r.int(3, 4), arrival = i % 3 === 1;
   const ps: Proc[] = Array.from({ length: n }, (_, k) => ({ id: `P${k + 1}`, at: arrival ? k * r.int(0, 2) : 0, bt: r.int(2, 10) }));
   const alg = ["FCFS", "SJF (non-preemptive)", "Round Robin (quantum 2)"][i % 3];
@@ -66,7 +66,7 @@ function faults(refs: number[], frames: number, alg: "FIFO" | "LRU" | "Optimal")
   });
   return f;
 }
-export const pageReplacement: RawQ[] = gen("os-pages", 30, (r, i) => {
+export const pageReplacement: RawQ[] = gen("os-pages", 60, (r, i) => {
   const alg = (["FIFO", "LRU", "Optimal"] as const)[i % 3], frames = r.pick([3, 3, 4]);
   const refs = Array.from({ length: r.int(10, 14) }, () => r.int(0, 6));
   const f = faults(refs, frames, alg);
@@ -74,7 +74,7 @@ export const pageReplacement: RawQ[] = gen("os-pages", 30, (r, i) => {
 });
 
 // ───────────── OS: disk scheduling ─────────────
-export const diskScheduling: RawQ[] = gen("os-disk", 24, (r, i) => {
+export const diskScheduling: RawQ[] = gen("os-disk", 48, (r, i) => {
   const head = r.int(30, 150), reqs = Array.from({ length: r.int(5, 7) }, () => r.int(0, 199));
   if (new Set(reqs).size < reqs.length || reqs.includes(head)) return null;
   const alg = i % 2 ? "SSTF" : "FCFS";
@@ -86,7 +86,7 @@ export const diskScheduling: RawQ[] = gen("os-disk", 24, (r, i) => {
 });
 
 // ───────────── Number systems ─────────────
-export const numberSystems: RawQ[] = gen("num-systems", 40, (r, i) =>
+export const numberSystems: RawQ[] = gen("num-systems", 80, (r, i) =>
   cycle<RawQ | null>(i, r, [
     (r) => { const n = r.int(10, 255); return { q: `Convert the decimal number ${n} to binary.`, ...textOptions(r, n.toString(2), [(n + 1).toString(2), (n - 1).toString(2), (n ^ 4).toString(2), n.toString(2).split("").reverse().join("")]), e: `Divide by 2 repeatedly and read the remainders upwards: ${n}₁₀ = **${n.toString(2)}₂**.`, d: 1 }; },
     (r) => { const n = r.int(16, 1023); const b = n.toString(2); return { q: `Convert the binary number ${b} to decimal.`, ...numOptions(r, n, { wrong: [n + 2 ** r.int(0, 3), n - 1, parseInt(b.split("").reverse().join(""), 2)], step: 4 }), e: `Add the place values of the 1-bits: ${b.split("").map((c, k) => (c === "1" ? `2^${b.length - 1 - k}^` : "")).filter(Boolean).join(" + ")} = **${n}**.`, d: 1 }; },
@@ -99,7 +99,7 @@ export const numberSystems: RawQ[] = gen("num-systems", 40, (r, i) =>
 );
 
 // ───────────── Boolean algebra evaluation ─────────────
-export const booleanEval: RawQ[] = gen("bool-eval", 24, (r) => {
+export const booleanEval: RawQ[] = gen("bool-eval", 48, (r) => {
   const A = r.int(0, 1), B = r.int(0, 1), C = r.int(0, 1);
   const exprs: [string, (a: number, b: number, c: number) => number][] = [
     ["A·B + C", (a, b, c) => (a & b) | c],
@@ -137,7 +137,7 @@ const ino = (n?: Node): number[] => (n ? [...ino(n.l), n.k, ...ino(n.rt)] : []);
 const height = (n?: Node): number => (n ? 1 + Math.max(height(n.l), height(n.rt)) : 0);
 
 export const dsGenerated = {
-  stacks: gen("ds-stack", 20, (r, i) => {
+  stacks: gen("ds-stack", 40, (r, i) => {
     if (i % 2) {
       const t = r.pick(INFIX), pf = toPostfix([...t]);
       const wrong = [toPostfix([...t.replace(/\(|\)/g, "")]), pf.split("").reverse().join(""), t.replace(/[()]/g, "")];
@@ -149,20 +149,20 @@ export const dsGenerated = {
     const top = st.length ? String(st[st.length - 1]) : "Stack is empty";
     return { q: `Starting with an empty stack, these operations are performed: ${ops.join(", ")}. What is at the top of the stack now?`, ...textOptions(r, top, ["Stack is empty", ...st.slice(0, -1).map(String), ...popped.map(String), "0"].filter((x) => x !== top)), e: `Tracing the stack (last in, first out), its contents from bottom to top are [${st.join(", ")}]. The top is **${top}**.`, d: 1 };
   }),
-  queues: gen("ds-queue", 16, (r) => {
+  queues: gen("ds-queue", 32, (r) => {
     const ops: string[] = [], q: number[] = [];
     for (let k = 0; k < 7; k++) { if (q.length && r.chance(0.4)) { q.shift(); ops.push("dequeue()"); } else { const v = r.int(1, 9); q.push(v); ops.push(`enqueue(${v})`); } }
     const front = q.length ? String(q[0]) : "Queue is empty";
     return { q: `Starting with an empty queue: ${ops.join(", ")}. Which element is at the front?`, ...textOptions(r, front, ["Queue is empty", ...q.slice(1).map(String), "0", "9"].filter((x) => x !== front)), e: `A queue is first in, first out. The remaining elements from front to rear are [${q.join(", ")}], so the front is **${front}**.`, d: 1 };
   }),
-  bst: gen("ds-bst", 24, (r, i) => {
+  bst: gen("ds-bst", 48, (r, i) => {
     const keys = BST_KEYS(r); let root: Node | undefined; for (const k of keys) root = insert(root, k);
     const kind = ["preorder", "postorder", "inorder", "height"][i % 4];
     if (kind === "height") return { q: `The keys ${keys.join(", ")} are inserted in this order into an empty binary search tree. What is the height of the tree (number of levels)?`, ...numOptions(r, height(root), { wrong: [Math.ceil(Math.log2(keys.length + 1)), keys.length, height(root) + 1], step: 1, dp: 0 }), e: `Building the tree level by level gives ${height(root)} levels (root at level 1).`, d: 2 };
     const seq = (kind === "preorder" ? pre(root) : kind === "postorder" ? post(root) : ino(root)).join(", ");
     return { q: `The keys ${keys.join(", ")} are inserted in this order into an empty binary search tree. What is its ${kind} traversal?`, ...textOptions(r, seq, [pre(root).join(", "), post(root).join(", "), ino(root).join(", "), keys.join(", ")].filter((x) => x !== seq)), e: `${kind === "inorder" ? "An inorder traversal of a BST always gives the keys in sorted order." : kind === "preorder" ? "Preorder visits root, left subtree, right subtree." : "Postorder visits left subtree, right subtree, root."} Result: **${seq}**.`, d: kind === "inorder" ? 1 : 2 };
   }),
-  postfixEval: gen("ds-postfix", 16, (r) => {
+  postfixEval: gen("ds-postfix", 32, (r) => {
     const a = r.int(2, 9), b = r.int(2, 9), c = r.int(2, 9), d = r.int(1, 5);
     const forms: [string, number, string][] = [
       [`${a} ${b} + ${c} *`, (a + b) * c, `(${a} + ${b}) × ${c}`],
@@ -173,7 +173,7 @@ export const dsGenerated = {
     const [expr, v, inf] = r.pick(forms);
     return { q: `Evaluate the postfix expression: ${expr}`, ...numOptions(r, v, { wrong: [v + c, v - 1, a * b * c], step: 2, min: -1e9 }), e: `Push operands; on each operator pop two values, apply it and push the result. The expression equals ${inf} = **${v}**.`, d: 2 };
   }),
-  trees: gen("ds-tree-props", 16, (r, i) =>
+  trees: gen("ds-tree-props", 32, (r, i) =>
     cycle<RawQ | null>(i, r, [
       (r) => { const l = r.int(2, 8); return { q: `What is the maximum number of nodes at level ${l} of a binary tree (root at level 0)?`, ...numOptions(r, 2 ** l, { wrong: [2 ** (l + 1) - 1, 2 * l, 2 ** (l - 1)], step: 2 }), e: `Each level can have twice as many nodes as the previous one: 2^${l}^ = **${2 ** l}**.`, d: 1 }; },
       (r) => { const h = r.int(3, 10); return { q: `What is the maximum number of nodes in a binary tree of height ${h} (a single node has height 1)?`, ...numOptions(r, 2 ** h - 1, { wrong: [2 ** h, 2 ** (h - 1), 2 * h], step: 4 }), e: `Maximum nodes = 2^h^ − 1 = 2^${h}^ − 1 = **${2 ** h - 1}**.`, d: 1 }; },
@@ -181,7 +181,7 @@ export const dsGenerated = {
       (r) => { const n = r.int(10, 100); return { q: `What is the minimum possible height of a binary tree with ${n} nodes (a single node has height 1)?`, ...numOptions(r, Math.ceil(Math.log2(n + 1)), { wrong: [Math.floor(Math.log2(n)), n, Math.ceil(n / 2)], step: 1, dp: 0 }), e: `Height h holds at most 2^h^ − 1 nodes, so the minimum height is ⌈log₂(${n} + 1)⌉ = **${Math.ceil(Math.log2(n + 1))}**.`, d: 2 }; },
     ])
   ),
-  hashing: gen("ds-hash", 16, (r) => {
+  hashing: gen("ds-hash", 32, (r) => {
     const size = r.pick([7, 10, 11, 13]), keys = Array.from({ length: 5 }, () => r.int(10, 99));
     if (new Set(keys).size < 5) return null;
     const slots: (number | null)[] = Array(size).fill(null);
@@ -189,7 +189,7 @@ export const dsGenerated = {
     const last = keys[4], pos = slots.indexOf(last);
     return { q: `The keys ${keys.join(", ")} are inserted in this order into a hash table of size ${size} using h(k) = k mod ${size} and linear probing. At which index is ${last} stored?`, ...numOptions(r, pos, { wrong: [last % size, (last % size + 1) % size, (pos + 1) % size], step: 1, dp: 0, min: -1 }), e: `h(${last}) = ${last} mod ${size} = ${last % size}. ${pos === last % size ? "That slot is free" : `Probing forward past occupied slots, the first free slot is ${pos}`}, so ${last} is stored at index **${pos}**.`, d: 2 };
   }),
-  binarySearch: gen("ds-bsearch", 12, (r) => {
+  binarySearch: gen("ds-bsearch", 24, (r) => {
     const n = r.int(8, 20), arr = Array.from({ length: n }, (_, k) => (k + 1) * r.int(2, 3) + k), target = arr[r.int(0, n - 1)];
     const sorted = [...new Set(arr)].sort((a, b) => a - b);
     let lo = 0, hi = sorted.length - 1, c = 0;

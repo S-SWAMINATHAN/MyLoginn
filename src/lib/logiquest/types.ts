@@ -75,6 +75,8 @@ export type Question = {
   passage?: string;
   media?: Media;
   check?: string;
+  /** Set when a practice page shuffled the options: displayed option i is canonical option order[i]. */
+  order?: number[];
 };
 
 export type Exercise = { slug: string; title: string; questions: Question[] };

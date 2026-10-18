@@ -3,7 +3,11 @@
 import Link from "next/link";
 import { useEffect, useRef, useState } from "react";
 import { animate, motion, useInView } from "framer-motion";
-import { CheckCircle2, Flame, Target, Trophy, Zap } from "lucide-react";
+import { AnimatedCrown } from "@/components/ui/icons/AnimatedCrown";
+import { AnimatedFlame } from "@/components/ui/icons/AnimatedFlame";
+import { AnimatedStar } from "@/components/ui/icons/AnimatedStar";
+import { AnimatedSuccess } from "@/components/ui/icons/AnimatedSuccess";
+import { AnimatedTrending } from "@/components/ui/icons/AnimatedTrending";
 import { cn } from "@/lib/cn";
 import { useReducedMotion } from "@/lib/useReducedMotion";
 
@@ -23,7 +27,7 @@ export function CountUp({ value, className }: { value: number; className?: strin
   return <span ref={ref} className={className}>{(reduced ? value : shown).toLocaleString("en-IN")}</span>;
 }
 
-const STAT_ICONS = { xp: Zap, solved: CheckCircle2, accuracy: Target, streak: Flame };
+const STAT_ICONS = { xp: AnimatedStar, solved: AnimatedSuccess, accuracy: AnimatedTrending, streak: AnimatedFlame };
 
 /** Stat tile with an icon and count-up value. */
 export function StatCard({ label, value, hint, icon, color, text }: { label: string; value: number; hint?: string; icon: keyof typeof STAT_ICONS; color: string; text?: string }) {
@@ -31,7 +35,7 @@ export function StatCard({ label, value, hint, icon, color, text }: { label: str
   return (
     <motion.div whileHover={{ y: -4 }} transition={{ type: "spring", stiffness: 400, damping: 26 }} className="flex items-center gap-3.5 rounded-3xl border border-border-soft bg-surface p-4 sm:p-5">
       <span className="grid h-12 w-12 shrink-0 place-items-center rounded-full" style={{ background: `color-mix(in srgb, ${color} 14%, transparent)`, color }}>
-        <Icon className="h-5 w-5" />
+        <Icon className="h-7 w-7" />
       </span>
       <div className="min-w-0">
         <p className="text-2xl font-bold tabular-nums text-story-navy dark:text-foreground">{text ?? <CountUp value={value} />}</p>
@@ -87,39 +91,43 @@ function Avatar({ e, size }: { e: BoardRow; size: number }) {
   );
 }
 
-/** Top three as a podium: blocks rise in sequence, the winner gets a crown-coloured block. */
+/**
+ * Top three as a podium. All three places are always drawn: an empty place shows a dashed "Open spot" so the podium looks
+ * complete (and invites the next learner) even when fewer than three people have scored. The winner wears an animated crown.
+ */
 export function Podium({ top }: { top: BoardRow[] }) {
   if (top.length === 0) return null;
+  const height: Record<number, number> = { 1: 112, 2: 84, 3: 64 };
   // visual order: 2nd, 1st, 3rd
-  const order = [top[1], top[0], top[2]].filter(Boolean) as BoardRow[];
-  const height: Record<number, number> = { 1: 132, 2: 100, 3: 78 };
+  const slots = [2, 1, 3].map((rank) => ({ rank, e: top.find((x) => x.rank === rank) }));
   return (
-    <div className="mb-6 flex items-end justify-center gap-2.5 sm:gap-4" role="list" aria-label="Top three learners">
-      {order.map((e, i) => (
-        <motion.div
-          key={e.userId}
-          role="listitem"
-          className="flex w-full max-w-[9.5rem] flex-col items-center"
-          initial={{ opacity: 0, y: 24 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ delay: 0.15 + i * 0.12, duration: 0.6, ease: EASE }}
-        >
-          <div className="relative">
-            <Avatar e={e} size={e.rank === 1 ? 64 : 52} />
-            <span className="absolute -bottom-1.5 -right-1.5 grid h-6 w-6 place-items-center rounded-full border-2 border-surface text-[11px] font-bold text-white" style={{ background: MEDAL[e.rank - 1] }}>{e.rank}</span>
-            {e.rank === 1 && <Trophy className="absolute -top-5 left-1/2 h-5 w-5 -translate-x-1/2" style={{ color: MEDAL[0] }} />}
-          </div>
-          <p className="mt-2.5 max-w-full truncate text-sm font-bold text-story-navy dark:text-foreground">{e.name}{e.isYou ? " (you)" : ""}</p>
-          <p className="text-xs font-semibold tabular-nums text-muted">{e.score.toLocaleString("en-IN")} pts</p>
-          <motion.div
-            className="mt-2 w-full rounded-t-2xl"
-            style={{ background: e.rank === 1 ? "var(--story-royal)" : "color-mix(in srgb, var(--story-royal) 18%, var(--surface))" }}
-            initial={{ height: 0 }}
-            animate={{ height: height[e.rank] }}
-            transition={{ delay: 0.3 + i * 0.12, duration: 0.8, ease: EASE }}
-          />
-        </motion.div>
-      ))}
+    <div className="mx-auto mb-8 grid max-w-xl grid-cols-3 items-end gap-2.5 sm:gap-4" role="list" aria-label="Top three learners">
+      {slots.map(({ rank, e }, i) => {
+        const size = rank === 1 ? 64 : 52;
+        return (
+          <motion.div key={rank} role="listitem" className="flex min-w-0 flex-col items-center" initial={{ opacity: 0, y: 24 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.12 + i * 0.1, duration: 0.6, ease: EASE }}>
+            <span className="mb-1 grid h-9 w-9 place-items-center">{rank === 1 && e ? <AnimatedCrown className="h-9 w-9" /> : null}</span>
+            {e ? (
+              <div className="relative">
+                <Avatar e={e} size={size} />
+                <span className="absolute -bottom-1.5 -right-1.5 grid h-6 w-6 place-items-center rounded-full border-2 border-surface text-[11px] font-bold text-white" style={{ background: MEDAL[rank - 1] }}>{rank}</span>
+              </div>
+            ) : (
+              <span className="grid place-items-center rounded-full border-2 border-dashed border-border-soft text-lg font-bold text-muted" style={{ width: size, height: size }} aria-hidden>?</span>
+            )}
+            <p className={cn("mt-2.5 max-w-full truncate text-sm font-bold", e ? "text-story-navy dark:text-foreground" : "text-muted")}>{e ? `${e.name}${e.isYou ? " (you)" : ""}` : "Open spot"}</p>
+            <p className="text-xs font-semibold tabular-nums text-muted">{e ? `${e.score.toLocaleString("en-IN")} pts` : `Be #${rank}`}</p>
+            <motion.div
+              className={cn("mt-2 grid w-full place-items-center rounded-t-2xl text-3xl font-black tabular-nums", e ? (rank === 1 ? "bg-story-royal text-white/90" : "bg-[color-mix(in_srgb,var(--story-royal)_16%,var(--surface))] text-story-royal/70") : "border-2 border-b-0 border-dashed border-border-soft bg-story-mist/60 text-muted/40")}
+              initial={{ height: 0 }}
+              animate={{ height: height[rank] }}
+              transition={{ delay: 0.3 + i * 0.1, duration: 0.8, ease: EASE }}
+            >
+              <span aria-hidden>{rank}</span>
+            </motion.div>
+          </motion.div>
+        );
+      })}
     </div>
   );
 }
@@ -143,7 +151,7 @@ function BoardLine({ e, i }: { e: BoardRow; i: number }) {
       <span className="hidden w-16 text-right text-xs tabular-nums text-muted sm:block">{e.solved} solved</span>
       <span className="hidden w-14 text-right text-xs tabular-nums text-muted md:block">{e.accuracy}%</span>
       <span className="inline-flex w-11 shrink-0 items-center justify-end gap-1 text-xs tabular-nums text-muted">
-        {e.streak > 0 ? <><Flame className="h-3.5 w-3.5 text-orange-500" />{e.streak}</> : "–"}
+        {e.streak > 0 ? <><AnimatedFlame className="h-4 w-4" />{e.streak}</> : "–"}
       </span>
       <span className="w-14 shrink-0 text-right text-sm font-bold tabular-nums text-story-royal">{e.score.toLocaleString("en-IN")}</span>
     </motion.li>

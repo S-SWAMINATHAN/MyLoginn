@@ -12,12 +12,18 @@ import { dayKey, topicProgress } from "@/lib/logiquest/progress";
 
 export const metadata = { title: "My progress · LogiQuest", robots: { index: false } };
 
+const DAY = 24 * 3600_000;
+/** Start of the activity window (the request time is read here, not during render). */
+function daysAgo(days: number) {
+  return new Date(Date.now() - days * DAY);
+}
+
 export default async function MyProgress() {
   const user = await getCurrentUser();
   if (!user) redirect("/login?next=%2Flogiquest%2Fme");
 
   const weeks = 17;
-  const from = new Date(Date.now() - weeks * 7 * 24 * 3600_000);
+  const from = daysAgo(weeks * 7);
   const [stat, progress, saved, tests, recent] = await Promise.all([
     prisma.lqUserStat.findUnique({ where: { userId: user.id } }),
     topicProgress(user.id),
@@ -39,8 +45,8 @@ export default async function MyProgress() {
 
   const activity: Record<string, number> = {};
   for (const r of recent) activity[dayKey(r.createdAt)] = (activity[dayKey(r.createdAt)] ?? 0) + 1;
-  const start = new Date(Date.now() - (weeks * 7 - 1) * 24 * 3600_000);
-  const cells = Array.from({ length: weeks * 7 }, (_, i) => { const key = dayKey(new Date(start.getTime() + i * 24 * 3600_000)); return { key, n: activity[key] ?? 0 }; });
+  const start = daysAgo(weeks * 7 - 1);
+  const cells = Array.from({ length: weeks * 7 }, (_, i) => { const key = dayKey(new Date(start.getTime() + i * DAY)); return { key, n: activity[key] ?? 0 }; });
 
   return (
     <Container className="max-w-6xl py-6 sm:py-8">

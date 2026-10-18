@@ -1,6 +1,7 @@
 import type { MetadataRoute } from "next";
 import { prisma } from "@/lib/prisma";
 import { siteUrl } from "@/lib/site";
+import { SUBJECTS } from "@/lib/logiquest/catalog";
 
 const publicRoutes = [
   { path: "", priority: 1, changeFrequency: "weekly" as const },
@@ -13,6 +14,8 @@ const publicRoutes = [
   { path: "/privacy", priority: 0.3, changeFrequency: "yearly" as const },
   { path: "/terms", priority: 0.3, changeFrequency: "yearly" as const },
   { path: "/contact", priority: 0.6, changeFrequency: "monthly" as const },
+  { path: "/logiquest", priority: 0.9, changeFrequency: "weekly" as const },
+  { path: "/logiquest/online-test", priority: 0.7, changeFrequency: "monthly" as const },
   { path: "/services/app-web-development", priority: 0.8, changeFrequency: "monthly" as const },
   { path: "/services/ai-development", priority: 0.8, changeFrequency: "monthly" as const },
   { path: "/services/testing-automation", priority: 0.8, changeFrequency: "monthly" as const },
@@ -47,5 +50,10 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
       changeFrequency: "daily" as const,
       priority: 0.8,
     })),
+    // LogiQuest subject and topic pages (public question banks).
+    ...SUBJECTS.flatMap((s) => [
+      { url: `${siteUrl}/logiquest/${s.slug}`, changeFrequency: "monthly" as const, priority: 0.7 },
+      ...s.topics.map((t) => ({ url: `${siteUrl}/logiquest/${s.slug}/${t.slug}`, changeFrequency: "monthly" as const, priority: 0.6 })),
+    ]),
   ];
 }

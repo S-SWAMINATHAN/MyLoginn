@@ -52,9 +52,10 @@ const mmss = (s: number) => `${String(Math.floor(s / 60)).padStart(2, "0")}:${St
 
 export function Sudoku() {
   const [level, setLevel] = useState<Level>("easy");
-  const [game, setGame] = useState<{ puzzle: number[]; solution: number[] } | null>(null);
-  const [cells, setCells] = useState<number[]>([]);
-  const [notes, setNotes] = useState<number[][]>([]);
+  // Rendered client-only (see SudokuClient), so a random puzzle can be generated during the first render.
+  const [game, setGame] = useState<{ puzzle: number[]; solution: number[] } | null>(() => makePuzzle("easy"));
+  const [cells, setCells] = useState<number[]>(() => (game ? [...game.puzzle] : []));
+  const [notes, setNotes] = useState<number[][]>(() => Array.from({ length: 81 }, () => []));
   const [sel, setSel] = useState<number | null>(null);
   const [noteMode, setNoteMode] = useState(false);
   const [check, setCheck] = useState(false);
@@ -65,7 +66,6 @@ export function Sudoku() {
     const g = makePuzzle(lv);
     setGame(g); setCells([...g.puzzle]); setNotes(Array.from({ length: 81 }, () => [])); setSel(null); setSeconds(0); setHints(0); setCheck(false);
   }, []);
-  useEffect(() => { newGame("easy"); }, [newGame]);
 
   const solved = useMemo(() => Boolean(game && cells.length && cells.every((v, i) => v === game.solution[i])), [cells, game]);
   useEffect(() => {

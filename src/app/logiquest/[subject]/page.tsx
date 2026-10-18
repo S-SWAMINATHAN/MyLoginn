@@ -1,11 +1,12 @@
-import Link from "next/link";
 import { notFound } from "next/navigation";
 import { Timer } from "lucide-react";
 import { getCurrentUser } from "@/lib/auth";
 import { Container } from "@/components/ui/Section";
-import { Breadcrumbs, PageTitle, SubjectSidebar } from "@/components/logiquest/ui";
+import { ArrowLink } from "@/components/ui/ArrowLink";
+import { PageTitle, StatChips, SubjectSidebar } from "@/components/logiquest/ui";
 import { TopicGrid } from "@/components/logiquest/TopicGrid";
 import { GROUP_BY_SLUG, getSubjectMeta } from "@/lib/logiquest/catalog";
+import { GROUP_COLOR } from "@/components/logiquest/subjectStyle";
 import { topicCounts } from "@/lib/logiquest/bank";
 import { topicProgress } from "@/lib/logiquest/progress";
 
@@ -25,20 +26,26 @@ export default async function SubjectPage({ params }: Props) {
   const [counts, progress] = await Promise.all([topicCounts(subject), user ? topicProgress(user.id, subject) : ({} as Awaited<ReturnType<typeof topicProgress>>)]);
   const group = GROUP_BY_SLUG.get(s.group);
   const total = Object.values(counts).reduce((a, b) => a + b, 0);
+  const answered = s.topics.reduce((n, t) => n + (progress[`${s.slug}/${t.slug}`]?.answered ?? 0), 0);
 
   return (
     <Container className="max-w-7xl py-6 sm:py-8">
-      <Breadcrumbs items={[{ label: group?.title ?? "" }, { label: s.title }]} />
-      <PageTitle title={s.heading} sub={s.desc}>
-        {s.kind === "mcq" ? (
-          <Link href={`/logiquest/online-test/${s.slug}`} className="inline-flex items-center gap-2 rounded-full bg-story-royal px-5 py-2.5 text-sm font-semibold text-white transition-transform hover:-translate-y-0.5"><Timer className="h-4 w-4" />Take {s.short} Test</Link>
-        ) : null}
+      <PageTitle title={s.heading} sub={s.desc} icon={group?.icon}>
+        {s.kind === "mcq" ? <ArrowLink href={`/logiquest/online-test/${s.slug}`}><Timer className="mr-1 inline h-4 w-4" />Take {s.short} Test</ArrowLink> : null}
       </PageTitle>
-      <p className="mt-2 text-xs text-muted">{s.topics.length} topics · {total.toLocaleString("en-IN")} questions with answers and explanations</p>
+      <StatChips
+        items={[
+          { label: "topics", value: String(s.topics.length) },
+          { label: s.kind === "qa" ? "answers" : "questions", value: total.toLocaleString("en-IN") },
+          ...(user ? [{ label: "answered by you", value: answered.toLocaleString("en-IN") }] : []),
+        ]}
+      />
 
       <div className="mt-6 grid gap-6 lg:grid-cols-[1fr_17rem]">
         <TopicGrid
           subject={s.slug}
+          color={GROUP_COLOR[s.group]}
+          showTest={s.kind === "mcq"}
           topics={s.topics.map((t) => ({ slug: t.slug, title: t.title, count: counts[t.slug] ?? 0, answered: progress[`${s.slug}/${t.slug}`]?.answered, correct: progress[`${s.slug}/${t.slug}`]?.correct }))}
           extra={s.slug === "puzzles" ? [{ href: "/logiquest/sudoku", title: "Sudoku", note: "Interactive" }] : undefined}
         />

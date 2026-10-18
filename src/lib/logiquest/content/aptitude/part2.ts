@@ -2,7 +2,7 @@
 import type { RawQ, RawSubject } from "../../types";
 import { cycle, fmt, frac, gcd, gen, lcm, numOptions, ord, textOptions, topic } from "../build";
 
-const N = 30;
+const N = 60;
 const fact = (n: number): number => (n <= 1 ? 1 : n * fact(n - 1));
 const nCr = (n: number, k: number) => Math.round(fact(n) / (fact(k) * fact(n - k)));
 const nPr = (n: number, k: number) => Math.round(fact(n) / fact(n - k));

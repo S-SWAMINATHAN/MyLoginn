@@ -1,6 +1,6 @@
 /** Generated Verbal Reasoning items with computed answers. */
 import type { Fig, RawQ } from "../../types";
-import { cycle, gen, numOptions, ord, textOptions, type Rng } from "../build";
+import { cycle, gen, numOptions, ord, textOptions } from "../build";
 
 const L = (n: number) => String.fromCharCode(65 + ((((n % 26) + 26) % 26)));
 const pos = (c: string) => c.charCodeAt(0) - 64;
@@ -15,7 +15,7 @@ function bearing(dx: number, dy: number) {
   const ew = dx > 0 ? "East" : dx < 0 ? "West" : "";
   return ns && ew ? `${ns}-${ew}` : ns || ew;
 }
-export const directionSense: RawQ[] = gen("vr-direction", 36, (r, i) => {
+export const directionSense: RawQ[] = gen("vr-direction", 72, (r, i) => {
   const name = r.pick(NAMES), steps = r.int(3, 5);
   let d = r.int(0, 3), x = 0, y = 0;
   const parts: string[] = [];
@@ -41,7 +41,7 @@ export const directionSense: RawQ[] = gen("vr-direction", 36, (r, i) => {
 // ───────────── Coding Decoding ─────────────
 const WORDS = ["CAT", "DOG", "MILK", "BOOK", "PEN", "LAMP", "TREE", "FISH", "GOLD", "RAIN", "STAR", "CODE", "DATA", "LOGIC", "TABLE", "MOUSE", "PLANE", "WATER", "LIGHT", "SMART", "BRAIN", "CLOUD", "HOUSE", "PAPER"];
 const shiftWord = (w: string, k: number) => [...w].map((c) => L(pos(c) - 1 + k)).join("");
-export const codingDecoding: RawQ[] = gen("vr-coding", 40, (r, i) =>
+export const codingDecoding: RawQ[] = gen("vr-coding", 80, (r, i) =>
   cycle<RawQ | null>(i, r, [
     (r) => {
       const [a, b] = r.shuffle(WORDS).slice(0, 2), k = r.pick([1, 2, 3, -1, -2]);
@@ -67,7 +67,7 @@ export const codingDecoding: RawQ[] = gen("vr-coding", 40, (r, i) =>
 );
 
 // ───────────── Ranking and Order ─────────────
-export const rankingOrder: RawQ[] = gen("vr-ranking", 32, (r, i) =>
+export const rankingOrder: RawQ[] = gen("vr-ranking", 64, (r, i) =>
   cycle<RawQ | null>(i, r, [
     (r) => { const left = r.int(5, 25), right = r.int(5, 25), n = r.pick(NAMES); return { q: `${n} is ${ord(left)} from the left end and ${ord(right)} from the right end of a row of students. How many students are there in the row?`, ...numOptions(r, left + right - 1, { wrong: [left + right, left + right - 2, left + right + 1], step: 1 }), e: `Total = (position from left) + (position from right) − 1 = ${left} + ${right} − 1 = **${left + right - 1}**.\n(${n} is counted in both positions, so subtract 1.)`, d: 1 }; },
     (r) => { const total = r.int(20, 60), top = r.int(3, total - 3), n = r.pick(NAMES); return { q: `In a class of ${total} students, ${n} ranks ${ord(top)} from the top. What is ${n}'s rank from the bottom?`, ...numOptions(r, total - top + 1, { wrong: [total - top, total - top + 2], step: 1 }), e: `Rank from bottom = total − rank from top + 1 = ${total} − ${top} + 1 = **${total - top + 1}**.`, d: 1 }; },
@@ -78,7 +78,7 @@ export const rankingOrder: RawQ[] = gen("vr-ranking", 32, (r, i) =>
 );
 
 // ───────────── Cube and Cuboid ─────────────
-export const cubeCuboid: RawQ[] = gen("vr-cube", 30, (r, i) => {
+export const cubeCuboid: RawQ[] = gen("vr-cube", 60, (r, i) => {
   const n = r.int(3, 8), kind = i % 5;
   const total = n ** 3, three = 8, two = 12 * (n - 2), one = 6 * (n - 2) ** 2, none = (n - 2) ** 3;
   const intro = `A cube of side ${n} cm is painted on all its faces and then cut into small cubes of side 1 cm.`;
@@ -102,7 +102,7 @@ const RULES: Rule[] = [
   { f: (a, b) => a * b + a, text: "third = first × second + first" },
   { f: (a, b) => a * a - b * b, text: "third = first² − second²" },
 ];
-export const characterPuzzles: RawQ[] = gen("vr-char", 30, (r) => {
+export const characterPuzzles: RawQ[] = gen("vr-char", 60, (r) => {
   const rule = r.pick(RULES), rows = Array.from({ length: 3 }, () => { const a = r.int(2, 9), b = r.int(1, a - 1); return [a, b, rule.f(a, b)]; });
   if (new Set(rows.map((x) => `${x[0]},${x[1]}`)).size < 3) return null;
   // Reject puzzles where another rule also fits the first two rows but gives a different answer.
@@ -113,7 +113,7 @@ export const characterPuzzles: RawQ[] = gen("vr-char", 30, (r) => {
 });
 
 // ───────────── Classification (letters and numbers) ─────────────
-export const classification: RawQ[] = gen("vr-classification", 30, (r, i) =>
+export const classification: RawQ[] = gen("vr-classification", 60, (r, i) =>
   cycle<RawQ | null>(i, r, [
     (r) => {
       const k = r.int(1, 3), starts = r.shuffle([0, 3, 6, 9, 12, 15, 18]).slice(0, 4);
@@ -139,7 +139,7 @@ export const classification: RawQ[] = gen("vr-classification", 30, (r, i) =>
 );
 
 // ───────────── Series Completion ─────────────
-export const seriesCompletion: RawQ[] = gen("vr-series", 30, (r, i) =>
+export const seriesCompletion: RawQ[] = gen("vr-series", 60, (r, i) =>
   cycle<RawQ | null>(i, r, [
     (r) => { const a = r.int(0, 10); const terms = Array.from({ length: 4 }, (_, j) => `${L(a + 2 * j)}${L(a + 2 * j + 1)}${L(a + 2 * j)}`); return { q: `Complete the series: ${terms.slice(0, 3).join(", ")}, ?`, ...textOptions(r, terms[3], [`${L(a + 6)}${L(a + 6)}${L(a + 7)}`, `${L(a + 7)}${L(a + 8)}${L(a + 7)}`, `${L(a + 6)}${L(a + 8)}${L(a + 6)}`]), e: `Each term is X Y X where X moves 2 letters and Y is the letter after X: ${terms.slice(0, 3).join(", ")} → **${terms[3]}**.`, d: 1 }; },
     (r) => { const a = r.int(1, 9), k = r.int(2, 5); const t = Array.from({ length: 5 }, (_, j) => `${L(a + j)}${a + k * j}`); return { q: `Complete the series: ${t.slice(0, 4).join(", ")}, ?`, ...textOptions(r, t[4], [`${L(a + 4)}${a + k * 4 + 1}`, `${L(a + 5)}${a + k * 4}`, `${L(a + 4)}${a + k * 5}`]), e: `The letters advance by one and the numbers increase by ${k}: so the next term is **${t[4]}**.`, d: 1 }; },
@@ -149,7 +149,7 @@ export const seriesCompletion: RawQ[] = gen("vr-series", 30, (r, i) =>
 );
 
 // ───────────── Arithmetic Reasoning ─────────────
-export const arithmeticReasoning: RawQ[] = gen("vr-arith", 30, (r, i) =>
+export const arithmeticReasoning: RawQ[] = gen("vr-arith", 60, (r, i) =>
   cycle<RawQ | null>(i, r, [
     (r) => { const hens = r.int(5, 40), cows = r.int(3, 30), heads = hens + cows, legs = 2 * hens + 4 * cows; return { q: `In a farm there are hens and cows. If the heads number ${heads} and the legs number ${legs}, how many hens are there?`, ...numOptions(r, hens, { wrong: [cows, heads / 2, legs / 4], step: 2 }), e: `If all ${heads} were hens there would be ${2 * heads} legs. Each cow adds 2 extra legs: (${legs} − ${2 * heads})/2 = ${cows} cows.\nHens = ${heads} − ${cows} = **${hens}**.`, d: 2 }; },
     (r) => { const n = r.int(10, 40), each = r.int(5, 20), extra = r.int(1, 9), total = n * each - extra; return { q: `A teacher has ${total} chocolates. If she gives ${each} chocolates to each student, she is ${extra} short. How many students are there?`, ...numOptions(r, n, { wrong: [n - 1, Math.floor(total / each), n + 1], step: 1 }), e: `${n} students × ${each} = ${n * each}, which is ${extra} more than ${total}. So there are **${n}** students.`, d: 1 }; },

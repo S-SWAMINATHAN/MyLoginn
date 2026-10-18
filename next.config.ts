@@ -3,6 +3,10 @@ import type { NextConfig } from "next";
 const nextConfig: NextConfig = {
   // Do not advertise the framework in the X-Powered-By response header.
   poweredByHeader: false,
+  // The LogiQuest SQL judge loads sql.js from node_modules by path inside a worker thread, which tracing cannot see.
+  outputFileTracingIncludes: {
+    "/api/logiquest/coding/[slug]/sql": ["./node_modules/sql.js/dist/sql-wasm.js", "./node_modules/sql.js/dist/sql-wasm.wasm"],
+  },
   experimental: {
     // Turbopack's on-disk dev cache has been corrupting itself in this
     // environment (stale cached module-resolution paths surviving a moved/

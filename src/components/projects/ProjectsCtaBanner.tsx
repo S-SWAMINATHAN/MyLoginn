@@ -32,7 +32,7 @@ export function ProjectsCtaBanner() {
             <button
               type="button"
               onClick={() => openProjectRequest("software")}
-              className="group btn-sweep-navy inline-flex items-center gap-2 rounded-full bg-white px-6 py-3 text-sm font-semibold text-brand-600 shadow-lg hover:text-white"
+              className="group inline-flex items-center gap-2 rounded-full bg-white px-6 py-3 text-sm font-semibold text-brand-600 shadow-lg transition-shadow duration-300 hover:shadow-xl"
             >
               Start a Project
               <AnimatedArrow className="h-4.5 w-4.5 transition-transform duration-300 group-hover:translate-x-1" />

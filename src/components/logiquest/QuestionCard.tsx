@@ -16,7 +16,9 @@ const EASE = [0.22, 1, 0.36, 1] as const;
 
 export type CardState = { answered?: boolean; correct?: boolean; saved?: boolean; comments?: number };
 
-const toolBtn = "inline-flex items-center gap-1.5 rounded-full px-3 py-1.5 text-xs font-semibold text-muted transition-colors hover:bg-story-mist hover:text-story-royal focus-visible:outline focus-visible:outline-2 focus-visible:outline-story-royal";
+const toolBtn = "inline-flex items-center gap-1.5 rounded-full border border-transparent px-3 py-1.5 text-xs font-semibold text-muted transition-colors hover:border-story-royal/30 hover:bg-story-mist hover:text-story-royal focus-visible:outline focus-visible:outline-2 focus-visible:outline-story-royal";
+
+const LEVEL_CHIP: Record<number, string> = { 1: "bg-emerald-500/10 text-emerald-700 dark:text-emerald-300", 2: "bg-amber-500/10 text-amber-700 dark:text-amber-300", 3: "bg-rose-500/10 text-rose-700 dark:text-rose-300" };
 
 /**
  * One practice question, IndiaBix style: pick an option to check it instantly, or press View Answer.
@@ -38,7 +40,7 @@ export function QuestionCard({ q, loggedIn, state = {}, showContext = true, disc
     setSelected(i);
     setRevealed(true);
     if (loggedIn && !peeked && !state.answered) {
-      fetch("/api/logiquest/answer", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ qid: q.id, selected: i }) })
+      fetch("/api/logiquest/answer", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ qid: q.id, selected: q.order ? q.order[i] : i }) })
         .then((r) => (r.ok ? r.json() : null))
         .then((j) => { if (j?.xpAwarded) setXp(j.xpAwarded + (j.streakBonus ?? 0)); })
         .catch(() => {});
@@ -54,9 +56,9 @@ export function QuestionCard({ q, loggedIn, state = {}, showContext = true, disc
   }
 
   return (
-    <article id={`q-${q.id}`} className="scroll-mt-32 rounded-2xl border border-border-soft bg-surface p-4 sm:p-6">
+    <article id={`q-${q.id}`} className="scroll-mt-32 rounded-3xl border border-border-soft bg-surface p-4 transition-colors duration-300 hover:border-story-royal/25 sm:p-6">
       {showContext && q.passage ? (
-        <div className="mb-4 rounded-xl bg-story-mist p-4 text-sm">
+        <div className="mb-4 rounded-2xl bg-story-mist p-4 text-sm">
           <p className="mb-1 text-[11px] font-bold uppercase tracking-wider text-muted">Read the following and answer the questions</p>
           <RichText text={q.passage} />
         </div>
@@ -64,7 +66,7 @@ export function QuestionCard({ q, loggedIn, state = {}, showContext = true, disc
       {showContext && q.media && q.media.type !== "figs" && !(q.passage && q.media.type === "clock") ? <MediaView media={q.media} /> : null}
 
       <div className="flex gap-3">
-        <span className="mt-0.5 shrink-0 text-base font-bold text-story-royal">{q.n}.</span>
+        <span className="mt-0.5 grid h-8 w-8 shrink-0 place-items-center rounded-full bg-story-royal text-xs font-bold text-white">{q.n}</span>
         <div className="min-w-0 flex-1">
           <RichText text={q.q} className="text-[15px] font-medium text-story-navy sm:text-base dark:text-foreground" />
           {q.media?.type === "figs" ? <MediaView media={q.media} /> : null}
@@ -76,7 +78,7 @@ export function QuestionCard({ q, loggedIn, state = {}, showContext = true, disc
                   const isRight = revealed && i === q.a;
                   const isWrong = selected === i && i !== q.a;
                   return (
-                    <button key={i} type="button" onClick={() => choose(i)} aria-label={`Option ${LETTERS[i]}`} className={cn("rounded-xl border-2 p-1 transition-colors", isRight ? "border-emerald-500 bg-emerald-500/10" : isWrong ? "border-rose-500 bg-rose-500/10" : "border-transparent hover:border-story-royal/40")}>
+                    <button key={i} type="button" onClick={() => choose(i)} aria-label={`Option ${LETTERS[i]}`} className={cn("rounded-2xl border-2 p-1 transition-colors", isRight ? "border-emerald-500 bg-emerald-500/10" : isWrong ? "border-rose-500 bg-rose-500/10" : "border-transparent hover:border-story-royal/40")}>
                       <FigTile fig={f} label={LETTERS[i]} size={76} />
                     </button>
                   );
@@ -95,14 +97,14 @@ export function QuestionCard({ q, loggedIn, state = {}, showContext = true, disc
                         animate={isWrong ? { x: [0, -6, 6, -4, 4, 0] } : { x: 0 }}
                         transition={{ duration: 0.35 }}
                         className={cn(
-                          "flex w-full items-start gap-3 rounded-xl border px-3 py-2.5 text-left text-sm transition-colors",
+                          "flex w-full items-start gap-3 rounded-2xl border-2 px-3 py-2.5 text-left text-sm transition-colors",
                           isRight ? "border-emerald-500 bg-emerald-500/10" : isWrong ? "border-rose-500 bg-rose-500/10" : "border-border-soft hover:border-story-royal/50 hover:bg-story-mist/60",
                           selected !== null && !isRight && !isWrong && "opacity-70"
                         )}
                       >
-                        <span className={cn("grid h-6 w-6 shrink-0 place-items-center rounded-full text-xs font-bold", isRight ? "bg-emerald-500 text-white" : isWrong ? "bg-rose-500 text-white" : "bg-story-mist text-story-royal")}>{LETTERS[i]}</span>
+                        <span className={cn("grid h-7 w-7 shrink-0 place-items-center rounded-full text-xs font-bold transition-colors", isRight ? "bg-emerald-500 text-white" : isWrong ? "bg-rose-500 text-white" : "bg-story-mist text-story-royal")}>{LETTERS[i]}</span>
                         <span className="min-w-0 flex-1 pt-0.5"><RichText text={opt} className="leading-6" /></span>
-                        {isRight ? <CheckCircle2 aria-label="Correct answer" className="mt-0.5 h-5 w-5 shrink-0 text-emerald-600" /> : isWrong ? <XCircle aria-label="Your answer" className="mt-0.5 h-5 w-5 shrink-0 text-rose-600" /> : null}
+                        {isRight ? <motion.span initial={{ scale: 0 }} animate={{ scale: 1 }} transition={{ type: "spring", stiffness: 420, damping: 15 }} className="mt-0.5 inline-flex"><CheckCircle2 aria-label="Correct answer" className="h-5 w-5 shrink-0 text-emerald-600" /></motion.span> : isWrong ? <motion.span initial={{ scale: 0 }} animate={{ scale: 1 }} transition={{ type: "spring", stiffness: 420, damping: 15 }} className="mt-0.5 inline-flex"><XCircle aria-label="Your answer" className="h-5 w-5 shrink-0 text-rose-600" /></motion.span> : null}
                       </motion.button>
                     </li>
                   );
@@ -125,7 +127,7 @@ export function QuestionCard({ q, loggedIn, state = {}, showContext = true, disc
             </button>
             <span className="ml-auto flex items-center gap-2 text-[11px] font-semibold text-muted">
               {state.answered ? <span className={state.correct ? "text-emerald-600" : "text-amber-600"}>{state.correct ? "✓ Solved" : "Attempted"}</span> : null}
-              {LEVEL_LABEL[q.d]}
+              <span className={cn("rounded-full px-2.5 py-0.5", LEVEL_CHIP[q.d])}>{LEVEL_LABEL[q.d]}</span>
             </span>
           </div>
           {msg ? <p className="mt-2 text-xs text-muted">{msg} <Link href={`/login?next=${encodeURIComponent(typeof window === "undefined" ? "/logiquest" : window.location.pathname + window.location.search)}`} className="font-semibold text-story-royal">Log in</Link></p> : null}
@@ -133,7 +135,7 @@ export function QuestionCard({ q, loggedIn, state = {}, showContext = true, disc
           <AnimatePresence initial={false}>
             {revealed ? (
               <motion.div key="ans" initial={{ opacity: 0, height: 0 }} animate={{ opacity: 1, height: "auto" }} exit={{ opacity: 0, height: 0 }} transition={{ duration: 0.3, ease: EASE }} className="overflow-hidden">
-                <div className="mt-3 rounded-xl border border-border-soft bg-story-mist/70 p-4 text-sm">
+                <div className="mt-3 rounded-2xl border border-border-soft border-l-4 border-l-story-royal bg-story-mist/70 p-4 text-sm">
                   {q.kind === "mcq" ? (
                     <p className="font-bold text-emerald-700 dark:text-emerald-300">
                       Answer: Option {LETTERS[q.a]}

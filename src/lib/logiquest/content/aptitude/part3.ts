@@ -2,7 +2,7 @@
 import type { RawQ, RawSubject } from "../../types";
 import { cycle, fmt, frac, fracOptions, gcd, gen, mixed, numOptions, textOptions, topic, type Rng } from "../build";
 
-const N = 30;
+const N = 60;
 const comb = (n: number, k: number) => { let v = 1; for (let i = 1; i <= k; i++) v = (v * (n - k + i)) / i; return Math.round(v); };
 
 // ───────────────────────── Chain Rule ─────────────────────────
@@ -191,7 +191,7 @@ const races = gen("races", N, (r, i) =>
 );
 
 // ───────────────────────── Stocks and Shares ─────────────────────────
-const stocks = gen("stocks", 24, (r, i) =>
+const stocks = gen("stocks", 48, (r, i) =>
   cycle<RawQ | null>(i, r, [
     (r) => {
       const rate = r.pick([4, 5, 6, 8, 9, 10, 12]), price = r.pick([80, 90, 96, 100, 104, 108, 112, 120, 125]), invest = price * 10 * r.int(5, 50), income = (invest * rate) / price;
@@ -244,7 +244,7 @@ const probability = gen("probability", N, (r, i) =>
 );
 
 // ───────────────────────── True Discount ─────────────────────────
-const trueDiscount = gen("true-discount", 24, (r, i) =>
+const trueDiscount = gen("true-discount", 48, (r, i) =>
   cycle<RawQ | null>(i, r, [
     (r) => {
       const R = r.pick([4, 5, 6, 8, 10, 12]), T = r.int(1, 4), PW = 100 * r.int(5, 60), A = PW * (1 + (R * T) / 100), TD = A - PW;
@@ -262,7 +262,7 @@ const trueDiscount = gen("true-discount", 24, (r, i) =>
 );
 
 // ───────────────────────── Banker's Discount ─────────────────────────
-const bankersDiscount = gen("bankers-discount", 24, (r, i) =>
+const bankersDiscount = gen("bankers-discount", 48, (r, i) =>
   cycle<RawQ | null>(i, r, [
     (r) => {
       const R = r.pick([4, 5, 6, 8, 10, 12]), months = r.pick([3, 4, 6, 8, 9, 12]), A = 100 * r.int(10, 200), BD = (A * R * months) / 1200;

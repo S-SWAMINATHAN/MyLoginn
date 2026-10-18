@@ -2,7 +2,7 @@
 import type { RawQ, RawSubject } from "../../types";
 import { cycle, fmt, fracOptions, gcd, gen, mixed, numOptions, textOptions, topic } from "../build";
 
-const N = 30;
+const N = 60;
 const kmh = (ms: number) => (ms * 18) / 5;
 
 // ───────────────────────── Problems on Trains ─────────────────────────
@@ -94,7 +94,7 @@ const timeDistance = gen("time-distance", N, (r, i) =>
 
 // ───────────────────────── Height and Distance ─────────────────────────
 const root3 = (k: number) => (k === 1 ? "√3" : `${k}√3`);
-const heightDistance = gen("height-distance", 24, (r, i) =>
+const heightDistance = gen("height-distance", 48, (r, i) =>
   cycle<RawQ | null>(i, r, [
     (r) => {
       const d = 10 * r.int(2, 12);
@@ -270,7 +270,7 @@ const profitLoss = gen("profit-loss", N, (r, i) =>
 );
 
 // ───────────────────────── Partnership ─────────────────────────
-const partnership = gen("partnership", 24, (r, i) =>
+const partnership = gen("partnership", 48, (r, i) =>
   cycle<RawQ | null>(i, r, [
     (r) => {
       const a = 1000 * r.int(2, 15), b = 1000 * r.int(2, 15), P = (a + b) / 1000 * 100 * r.int(2, 30), sb = (P * b) / (a + b);
@@ -330,7 +330,7 @@ const percentage = gen("percentage", N, (r, i) =>
 );
 
 // ───────────────────────── Problems on Ages ─────────────────────────
-const ages = gen("ages", 28, (r, i) =>
+const ages = gen("ages", 56, (r, i) =>
   cycle<RawQ | null>(i, r, [
     (r) => {
       for (let t = 0; t < 40; t++) {
@@ -418,7 +418,7 @@ function elevenths(total11: number) {
   const whole = Math.floor(total11 / 11), rem = total11 % 11;
   return rem ? `${whole} ${rem}/11` : `${whole}`;
 }
-const clock = gen("clock", 28, (r, i) =>
+const clock = gen("clock", 56, (r, i) =>
   cycle<RawQ | null>(i, r, [
     (r) => {
       const h = r.int(1, 12), mi = 5 * r.int(0, 11) + (r.chance(0.3) ? r.pick([2, 4, 6]) : 0), raw = Math.abs(30 * (h % 12) - 5.5 * mi), ang = Math.min(raw, 360 - raw);

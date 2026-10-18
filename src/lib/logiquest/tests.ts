@@ -8,6 +8,7 @@ import { SUBJECTS, getSubjectMeta } from "./catalog";
 import { forTest, getQuestions, hiddenIds, loadSubject } from "./bank";
 import { TEST_GRACE_SECONDS, TEST_MINUTES, TEST_SIZE, TEST_XP_PER_CORRECT } from "./constants";
 import { applyActivity, dayKey } from "./progress";
+import { shuffleOptions } from "./shuffle";
 import type { Question } from "./types";
 
 /** How subjects are grouped on the Online Tests page. */
@@ -16,14 +17,14 @@ export const TEST_GROUPS: { id: string; title: string; groups: string[] }[] = [
   { id: "programming", title: "Programming", groups: ["programming"] },
   { id: "technical", title: "Technical", groups: ["technical"] },
   { id: "engineering", title: "Engineering", groups: ["engineering"] },
-  { id: "medical", title: "Medical Science", groups: ["medical"] },
 ];
 
 export function testableSubjects() {
   return SUBJECTS.filter((s) => s.kind === "mcq");
 }
 
-type Claims = { jti: string; t: string; tp: string | null; q: string[]; s: number; m: number };
+/** `sd` seeds the option order shown in this attempt (older tokens without it used the stored order). */
+type Claims = { jti: string; t: string; tp: string | null; q: string[]; s: number; m: number; sd?: string };
 
 function secret() {
   return `${getRequiredServerEnv("JWT_SECRET")}:logiquest-test`;
@@ -50,12 +51,12 @@ export async function startTest(subject: string, topic: string | null, size = TE
   }
 
   const minutes = Math.max(5, Math.round((TEST_MINUTES * picked.length) / TEST_SIZE));
-  const claims: Claims = { jti: randomBytes(12).toString("hex"), t: subject, tp: topic, q: picked.map((q) => q.id), s: Date.now(), m: minutes };
+  const claims: Claims = { jti: randomBytes(12).toString("hex"), t: subject, tp: topic, q: picked.map((q) => q.id), s: Date.now(), m: minutes, sd: randomBytes(4).toString("hex") };
   const token = jwt.sign(claims, secret(), { expiresIn: `${minutes + 120}m` });
-  return { token, minutes, startedAt: claims.s, questions: picked.map(forTest) };
+  return { token, minutes, startedAt: claims.s, questions: picked.map((q) => forTest(shuffleOptions(q, claims.sd!))) };
 }
 
-export type GradedItem = { id: string; subject: string; topic: string; q: string; o: string[]; a: number; e: string; selected: number; correct: boolean; passage?: string; media?: Question["media"] };
+export type GradedItem = { id: string; subject: string; topic: string; q: string; o: string[]; a: number; e: string; selected: number; correct: boolean; passage?: string; media?: Question["media"]; order?: number[] };
 
 /** Grades a submitted test on the server, stores it for logged-in learners and awards XP once per test per day. */
 export async function submitTest(token: string, answers: unknown, userId: string | null) {
@@ -72,11 +73,12 @@ export async function submitTest(token: string, answers: unknown, userId: string
   const questions = await getQuestions(claims.q);
   const items: GradedItem[] = [];
   claims.q.forEach((id, i) => {
-    const q = questions.get(id);
-    if (!q) return; // removed from the bank since the test started
+    const stored = questions.get(id);
+    if (!stored) return; // removed from the bank since the test started
+    const q = claims.sd ? shuffleOptions(stored, claims.sd) : stored;
     // Answers given after the deadline are not counted.
     const selected = late ? -1 : (answers[i] as number);
-    items.push({ id, subject: q.subject, topic: q.topic, q: q.q, o: q.o, a: q.a, e: q.e, selected, correct: selected === q.a, passage: q.passage, media: q.media });
+    items.push({ id, subject: q.subject, topic: q.topic, q: q.q, o: q.o, a: q.a, e: q.e, selected, correct: selected === q.a, passage: q.passage, media: q.media, order: q.order });
   });
   const correct = items.filter((x) => x.correct).length;
   const wrong = items.filter((x) => x.selected >= 0 && !x.correct).length;
@@ -86,7 +88,8 @@ export async function submitTest(token: string, answers: unknown, userId: string
     try {
       await prisma.lqTestAttempt.create({
         data: {
-          id: claims.jti, userId, test: claims.tp ? `${claims.t}/${claims.tp}` : claims.t, qids: items.map((x) => x.id), answers: items.map((x) => x.selected),
+          // Answers are stored against the bank's option order, whatever order this attempt showed.
+          id: claims.jti, userId, test: claims.tp ? `${claims.t}/${claims.tp}` : claims.t, qids: items.map((x) => x.id), answers: items.map((x) => (x.selected >= 0 && x.order ? x.order[x.selected] : x.selected)),
           correct, wrong, total: items.length, timeTakenS: result.timeTakenS, startedAt: new Date(claims.s),
         },
       });

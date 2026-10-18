@@ -3,7 +3,7 @@
  * Programs avoid undefined and implementation-defined behaviour, so each has exactly one correct output.
  */
 import type { RawQ, RawSubject } from "../types";
-import { m, m2, m3, topic } from "./build";
+import { m, topic } from "./build";
 
 const prog = (code: string, headers = "#include <stdio.h>\n") =>
   code.includes("int main") ? `${headers}${code}` : `${headers}\nint main(void) {\n${code.split("\n").map((l) => `    ${l}`).join("\n")}\n    return 0;\n}`;

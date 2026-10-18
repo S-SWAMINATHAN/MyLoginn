@@ -1,6 +1,6 @@
 /** C++ Programming. Output programs are compiled and run by `npm run lq:validate` (with LQ_ZIG_PYTHON set). */
 import type { RawQ, RawSubject } from "../types";
-import { m, m2, m3, topic } from "./build";
+import { m, topic } from "./build";
 
 const H = "#include <iostream>\nusing namespace std;\n";
 const prog = (code: string, headers = H) =>

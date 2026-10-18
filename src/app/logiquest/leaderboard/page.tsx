@@ -3,6 +3,7 @@ import { getCurrentUser } from "@/lib/auth";
 import { Section, Container } from "@/components/ui/Section";
 import { Reveal } from "@/components/ui/Reveal";
 import { SplitHeadline } from "@/components/experience/SplitHeadline";
+import { AnimatedReward } from "@/components/ui/icons/AnimatedReward";
 import { EmptyState } from "@/components/logiquest/ui";
 import { BoardList, PeriodTabs, Podium } from "@/components/logiquest/LogiQuestVisuals";
 import { getLogiQuestLeaderboard, type Period } from "@/lib/logiquest/leaderboard";
@@ -24,6 +25,7 @@ export default async function LeaderboardPage({ searchParams }: { searchParams: 
     <Section className="overflow-hidden pb-16 pt-6 sm:pt-10">
       <Container className="max-w-4xl">
         <div className="text-center">
+          <Reveal scale><AnimatedReward className="mx-auto mb-3 h-16 w-16" /></Reveal>
           <SplitHeadline as="h1" text="Leaderboard" className="mt-0 text-4xl font-bold tracking-tight text-story-navy sm:text-5xl dark:text-foreground" />
           <Reveal direction="up" delay={0.15}>
             <p className="mx-auto mt-4 max-w-xl text-sm leading-7 text-muted sm:text-base">

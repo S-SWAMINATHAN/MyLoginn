@@ -31,7 +31,6 @@ function mirror(fig: Fig, axis: "h" | "v"): Fig {
     };
   });
 }
-const fillAll = (fig: Fig): Fig => fig.map((s) => (s.k === "dot" || s.k === "line" || s.k === "arrow" || s.k === "text" ? s : { ...s, fill: !s.fill }));
 
 /** A key describing how a figure LOOKS, used to guarantee options are distinct. */
 function look(fig: Fig): string {
@@ -113,7 +112,7 @@ const seriesMakers: Make[] = [
     return figQ("Which figure comes next?", `The arrow turns 90° ${step > 0 ? "clockwise" : "anticlockwise"} each time and the small circle is shaded in every other figure.`, [...[0, 1, 2, 3].map(tile), null], figOptions(r, tile(4), [tile(3), tile(5), [{ k: "arrow", r: 20, rot: norm(s0 + step * 4) }, { k: "circle", x: 80, y: 80, r: 8, fill: false }]]), 2);
   },
 ];
-const nvSeries = gen("nv-series", 30, (r, i) => seriesMakers[i % seriesMakers.length](r));
+const nvSeries = gen("nv-series", 60, (r, i) => seriesMakers[i % seriesMakers.length](r));
 
 // ───────────── Analogy ─────────────
 const TRANSFORMS: { name: string; f: (x: Fig) => Fig }[] = [
@@ -123,7 +122,7 @@ const TRANSFORMS: { name: string; f: (x: Fig) => Fig }[] = [
   { name: "mirrored left to right", f: (x) => mirror(x, "h") },
   { name: "flipped upside down (water image)", f: (x) => mirror(x, "v") },
 ];
-const nvAnalogy = gen("nv-analogy", 30, (r) => {
+const nvAnalogy = gen("nv-analogy", 60, (r) => {
   const t = r.pick(TRANSFORMS), A = composite(r), C = composite(r);
   if (look(A) === look(C)) return null;
   const B = t.f(A), D = t.f(C);
@@ -132,7 +131,7 @@ const nvAnalogy = gen("nv-analogy", 30, (r) => {
 });
 
 // ───────────── Classification (odd figure out) ─────────────
-const nvClassification = gen("nv-classification", 30, (r, i) => {
+const nvClassification = gen("nv-classification", 60, (r, i) => {
   if (i % 2 === 0) {
     const base = composite(r), oddPos = r.int(0, 3), turns = r.shuffle([0, 90, 180, 270]);
     const figs = turns.map((d, j) => (j === oddPos ? rotate(mirror(base, "h"), d) : rotate(base, d)));
@@ -150,7 +149,7 @@ const ASYM = "BCDEFGJKLNPQRSZ234567".split("");
 const ASYM_V = "AFGJLMNPQRTUVWYZ2457".split("");
 function word(r: Rng, chars: string[]) { return r.shuffle(chars).slice(0, r.int(4, 5)).join(""); }
 const txt = (t: string, flip?: Shape["flip"], glyphFlip?: boolean): Fig => [{ k: "text", t, r: 18, flip, glyphFlip }];
-const nvMirror = gen("nv-mirror", 30, (r, i) => {
+const nvMirror = gen("nv-mirror", 60, (r, i) => {
   if (i % 3 === 2) {
     const base = composite(r);
     return figQ("Choose the correct mirror image of the given figure when the mirror is placed vertically to its right.", "A vertical mirror swaps left and right but keeps top and bottom: every element moves to the opposite side horizontally.", [base], figOptions(r, mirror(base, "h"), [mirror(base, "v"), rotate(base, 180), rotate(base, 90), base]), 2);
@@ -158,7 +157,7 @@ const nvMirror = gen("nv-mirror", 30, (r, i) => {
   const w = word(r, ASYM);
   return figQ(`Choose the correct mirror image of the given combination when a mirror is placed vertically to its right.`, `In a mirror image the order of the characters is reversed and each character is laterally inverted, while top and bottom stay the same. The correct image is the whole of “${w}” flipped left to right.`, [txt(w)], figOptions(r, txt(w, "h"), [txt(w, "v"), txt(w, "hv"), txt(w, undefined, true)]), 2);
 });
-const nvWater = gen("nv-water", 30, (r, i) => {
+const nvWater = gen("nv-water", 60, (r, i) => {
   if (i % 3 === 2) {
     const base = composite(r);
     return figQ("Choose the correct water image of the given figure.", "A water image is the reflection in a horizontal surface: top and bottom are swapped while left and right stay the same.", [base], figOptions(r, mirror(base, "v"), [mirror(base, "h"), rotate(base, 180), rotate(base, 270), base]), 2);
@@ -168,7 +167,7 @@ const nvWater = gen("nv-water", 30, (r, i) => {
 });
 
 // ───────────── Figure Matrix (3 × 3) ─────────────
-const nvMatrix = gen("nv-matrix", 30, (r, i) => {
+const nvMatrix = gen("nv-matrix", 60, (r, i) => {
   const rowShapes = r.shuffle([...SHAPES]).slice(0, 3) as Shape["k"][];
   if (i % 2 === 0) {
     const start = r.int(1, 3), fill = r.chance(0.5);
@@ -185,7 +184,7 @@ const nvMatrix = gen("nv-matrix", 30, (r, i) => {
 });
 
 // ───────────── Pattern Completion (2 × 2 symmetry) ─────────────
-const nvPattern = gen("nv-pattern", 30, (r) => {
+const nvPattern = gen("nv-pattern", 60, (r) => {
   const tl = composite(r);
   const tr = mirror(tl, "h"), bl = mirror(tl, "v"), br = rotate(tl, 180);
   if (!distinct([tl, tr, bl, br])) return null;
@@ -198,7 +197,7 @@ const ROT_ASK = [
   { deg: 270, text: "90° anticlockwise" },
   { deg: 180, text: "180°" },
 ];
-const nvRotation = gen("nv-rotation", 30, (r) => {
+const nvRotation = gen("nv-rotation", 60, (r) => {
   const base = composite(r), ask = r.pick(ROT_ASK);
   const others = ROT_ASK.filter((x) => x !== ask).map((x) => rotate(base, x.deg));
   return figQ(`Which option shows the given figure rotated ${ask.text}?`, `Rotate every part of the figure together by ${ask.text}: the arrow turns by that angle and the dot and the small shape move to the corresponding positions. A mirror image is never a rotation.`, [base], figOptions(r, rotate(base, ask.deg), [...others, mirror(base, "h"), mirror(base, "v")]), 2);

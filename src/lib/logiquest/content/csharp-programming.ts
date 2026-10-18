@@ -3,7 +3,7 @@
  * simple, well-defined language behaviour and every answer is explained.
  */
 import type { RawQ, RawSubject } from "../types";
-import { m, m2, m3, topic } from "./build";
+import { m, topic } from "./build";
 
 const code = (src: string) => `\`\`\`csharp\n${src}\n\`\`\``;
 /**

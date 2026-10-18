@@ -61,6 +61,8 @@ model User {
   lqComments             LqComment[]
   lqReports              LqReport[]
   lqTestAttempts         LqTestAttempt[]
+  lqCodeProgress         LqCodeProgress[]
+  lqCodeSubmissions      LqCodeSubmission[]
   lqXpEvents             LqXpEvent[]
 }
 
@@ -954,4 +956,44 @@ model LqUserStat {
   user User @relation(fields: [userId], references: [id], onDelete: Cascade)
 
   @@index([xp])
+}
+
+/// Coding practice: one row per learner per problem (problems are defined in src/lib/logiquest/coding).
+model LqCodeProgress {
+  id         String    @id @default(cuid())
+  userId     String
+  slug       String
+  attempts   Int       @default(0)
+  solved     Boolean   @default(false)
+  bestPassed Int       @default(0)
+  /// Last submitted code per language: { python: "...", javascript: "..." }
+  drafts     Json      @default("{}")
+  solvedAt   DateTime?
+  updatedAt  DateTime  @updatedAt
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([userId, slug])
+  @@index([userId, solved])
+}
+
+/// A coding submission. SQL verdicts are computed on the server; Python/JavaScript verdicts are reported by the browser.
+model LqCodeSubmission {
+  id         String   @id @default(cuid())
+  userId     String
+  slug       String
+  language   String
+  source     String
+  /// ACCEPTED | WRONG_ANSWER | RUNTIME_ERROR | TIME_LIMIT
+  verdict    String
+  passed     Int
+  total      Int
+  /// true when the server judged it (SQL)
+  verified   Boolean  @default(false)
+  createdAt  DateTime @default(now())
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId, slug, createdAt])
+  @@index([slug, verdict])
 }

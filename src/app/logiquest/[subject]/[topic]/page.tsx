@@ -4,15 +4,18 @@ import { ChevronRight } from "lucide-react";
 import { getCurrentUser } from "@/lib/auth";
 import { prisma } from "@/lib/prisma";
 import { Container } from "@/components/ui/Section";
-import { Breadcrumbs, EmptyState, PageTitle, Pagination } from "@/components/logiquest/ui";
+import { EmptyState, PageTitle, Pagination, StatChips } from "@/components/logiquest/ui";
 import { QuestionCard, type CardState } from "@/components/logiquest/QuestionCard";
 import { TopicTabs } from "@/components/logiquest/TopicTabs";
 import { GROUP_BY_SLUG, getTopicMeta } from "@/lib/logiquest/catalog";
-import { getTopic } from "@/lib/logiquest/bank";
+import { getTopic, topicCounts } from "@/lib/logiquest/bank";
+import { topicProgress } from "@/lib/logiquest/progress";
+import { TopicNav } from "@/components/logiquest/TopicNav";
+import { GROUP_COLOR } from "@/components/logiquest/subjectStyle";
 import { PAGE_SIZE } from "@/lib/logiquest/constants";
-import { cn } from "@/lib/cn";
+import { practiceSeed, shuffleQuestions } from "@/lib/logiquest/shuffle";
 
-type Props = { params: Promise<{ subject: string; topic: string }>; searchParams: Promise<{ ex?: string; page?: string }> };
+type Props = { params: Promise<{ subject: string; topic: string }>; searchParams: Promise<{ ex?: string; page?: string; s?: string }> };
 
 export async function generateMetadata({ params, searchParams }: Props) {
   const { subject, topic } = await params;
@@ -38,9 +41,12 @@ export default async function TopicPage({ params, searchParams }: Props) {
   const exercise = content.exercises.find((e) => e.slug === (sp.ex ?? "general")) ?? content.exercises[0];
   if (!exercise && hasExplanation) redirect(`/logiquest/${subject}/${topic}/formulas`);
 
-  const pages = Math.max(1, Math.ceil((exercise?.questions.length ?? 0) / PAGE_SIZE));
+  // A new visit gets a new seed, so questions and options come in a fresh order every time.
+  const seed = practiceSeed(sp.s);
+  const ordered = shuffleQuestions(exercise?.questions ?? [], seed);
+  const pages = Math.max(1, Math.ceil(ordered.length / PAGE_SIZE));
   const page = Math.min(pages, Math.max(1, Math.floor(Number(sp.page)) || 1));
-  const questions = (exercise?.questions ?? []).slice((page - 1) * PAGE_SIZE, page * PAGE_SIZE);
+  const questions = ordered.slice((page - 1) * PAGE_SIZE, page * PAGE_SIZE);
   const ids = questions.map((q) => q.id);
 
   const user = await getCurrentUser();
@@ -60,17 +66,26 @@ export default async function TopicPage({ params, searchParams }: Props) {
     const q = new URLSearchParams();
     if (exercise && exercise.slug !== "general") q.set("ex", exercise.slug);
     if (p > 1) q.set("page", String(p));
+    q.set("s", seed);
     const s = q.toString();
     return s ? `${base}?${s}` : base;
   };
   const group = GROUP_BY_SLUG.get(meta.subject.group);
   const idx = meta.subject.topics.findIndex((t) => t.slug === topic);
   const nextTopic = meta.subject.topics[idx + 1];
+  const [counts, progress] = await Promise.all([topicCounts(subject), user ? topicProgress(user.id, subject) : ({} as Awaited<ReturnType<typeof topicProgress>>)]);
 
   return (
     <Container className="max-w-7xl py-6 sm:py-8">
-      <Breadcrumbs items={[{ label: group?.title ?? "" }, { label: meta.subject.title, href: `/logiquest/${subject}` }, { label: meta.topic.title, href: base }, ...(exercise ? [{ label: exercise.title }] : []), { label: `Page ${page} of ${pages}` }]} />
-      <PageTitle title={`${meta.topic.title}${exercise ? ` - ${exercise.title}` : ""}`} />
+      <PageTitle title={`${meta.topic.title}${exercise ? ` - ${exercise.title}` : ""}`} icon={group?.icon} />
+      <StatChips
+        items={[
+          { label: meta.subject.title, value: `${idx + 1}/${meta.subject.topics.length}` },
+          ...(exercise ? [{ label: "questions in this exercise", value: String(exercise.questions.length) }] : []),
+          ...(pages > 1 ? [{ label: "page", value: `${page} of ${pages}` }] : []),
+          ...(user && questions.length ? [{ label: "answered on this page", value: `${answers.length}/${questions.length}` }] : []),
+        ]}
+      />
       <TopicTabs subject={meta.subject} topic={topic} active={exercise?.slug ?? ""} hasExplanation={hasExplanation} exercises={content.exercises.map((e) => ({ slug: e.slug, title: e.title, count: e.questions.length }))} />
 
       <div className="mt-6 grid gap-6 lg:grid-cols-[1fr_17rem]">
@@ -86,27 +101,22 @@ export default async function TopicPage({ params, searchParams }: Props) {
           ) : (
             <EmptyState title="Questions are being prepared" body="This topic's questions are under review and will appear here soon." cta={hasExplanation ? <Link href={`${base}/formulas`} className="font-semibold text-story-royal">Read the explanation</Link> : undefined} />
           )}
-          <Pagination page={page} pages={pages} href={href} action={base} hidden={exercise && exercise.slug !== "general" ? { ex: exercise.slug } : undefined} />
+          <Pagination page={page} pages={pages} href={href} action={base} hidden={{ ...(exercise && exercise.slug !== "general" ? { ex: exercise.slug } : {}), s: seed }} />
           {page === pages && nextTopic ? (
-            <Link href={`/logiquest/${subject}/${nextTopic.slug}`} className="mt-2 flex items-center justify-between rounded-2xl border border-border-soft bg-surface p-4 text-sm font-semibold transition-colors hover:border-story-royal hover:text-story-royal">
+            <Link href={`/logiquest/${subject}/${nextTopic.slug}`} className="mt-2 flex items-center justify-between rounded-3xl border border-border-soft bg-surface p-5 text-sm font-semibold transition-colors hover:border-story-royal hover:text-story-royal">
               <span><span className="block text-xs font-normal text-muted">Next topic</span>{nextTopic.title}</span><ChevronRight className="h-5 w-5" />
             </Link>
           ) : null}
         </div>
 
         <aside className="hidden lg:block">
-          <div className="sticky top-32 max-h-[calc(100vh-9rem)] overflow-y-auto rounded-2xl border border-border-soft bg-surface p-3 text-sm">
-            <p className="mb-2 px-2 font-bold text-story-royal">{meta.subject.title}</p>
-            <ul>
-              {meta.subject.topics.map((t) => (
-                <li key={t.slug}>
-                  <Link href={`/logiquest/${subject}/${t.slug}`} className={cn("flex items-center gap-1.5 rounded-md px-2 py-1 text-[13px] transition-colors hover:bg-story-mist hover:text-story-royal", t.slug === topic ? "bg-story-mist font-semibold text-story-royal" : "text-muted")}>
-                    <ChevronRight className="h-3 w-3 shrink-0" />{t.title}
-                  </Link>
-                </li>
-              ))}
-            </ul>
-          </div>
+          <TopicNav
+            subject={subject}
+            subjectTitle={meta.subject.title}
+            current={topic}
+            color={GROUP_COLOR[meta.subject.group] ?? "#2563eb"}
+            topics={meta.subject.topics.map((x) => ({ slug: x.slug, title: x.title, count: counts[x.slug] ?? 0, answered: progress[`${subject}/${x.slug}`]?.answered }))}
+          />
         </aside>
       </div>
     </Container>

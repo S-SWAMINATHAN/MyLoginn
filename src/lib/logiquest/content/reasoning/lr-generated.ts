@@ -21,7 +21,7 @@ const numberPatterns: ((r: Rng) => Pattern | null)[] = [
   (r) => { const a = r.int(2, 9), m = r.int(2, 3), c = r.pick([1, -1, 2]); const s = [a]; for (let k = 0; k < 6; k++) s.push(s[k] * m + c); return { seq: s.slice(0, 6), next: s[6], rule: `Each number = previous × ${m} ${c >= 0 ? "+" : "−"} ${Math.abs(c)}.` }; },
   (r) => { const o = r.int(1, 6); const s = Array.from({ length: 7 }, (_, k) => (k + o) * (k + o + 1)); return { seq: s.slice(0, 6), next: s[6], rule: `The numbers are n(n + 1): ${o}×${o + 1}, ${o + 1}×${o + 2}, … so the next is ${o + 6}×${o + 7}.` }; },
 ];
-export const numberSeries: RawQ[] = gen("lr-number-series", 45, (r, i) => {
+export const numberSeries: RawQ[] = gen("lr-number-series", 90, (r, i) => {
   const p = numberPatterns[i % numberPatterns.length](r);
   if (!p) return null;
   const { seq, next, rule } = p;
@@ -36,7 +36,7 @@ export const numberSeries: RawQ[] = gen("lr-number-series", 45, (r, i) => {
 });
 
 // ───────────── Letter and Symbol Series ─────────────
-export const letterSeries: RawQ[] = gen("lr-letter-series", 36, (r, i) =>
+export const letterSeries: RawQ[] = gen("lr-letter-series", 72, (r, i) =>
   cycle<RawQ | null>(i, r, [
     (r) => { const a = r.int(0, 8), k = r.int(2, 4); const s = Array.from({ length: 6 }, (_, j) => L(a + k * j)); return { q: `What comes next? ${s.slice(0, 5).join(", ")}, …`, ...textOptions(r, s[5], [L(a + 5 * k + 1), L(a + 5 * k - 1), L(a + 4 * k + 1), L(a + 6 * k)]), e: `Each letter moves ${k} places forward: ${s.slice(0, 5).map((c, j) => `${c}${j < 4 ? ` (+${k})` : ""}`).join(" → ")} → **${s[5]}**.`, d: 1 }; },
     (r) => { const a = r.int(0, 5); const pairs = Array.from({ length: 5 }, (_, j) => `${L(a + j)}${L(25 - a - j)}`); return { q: `What comes next? ${pairs.slice(0, 4).join(", ")}, …`, ...textOptions(r, pairs[4], [`${L(a + 4)}${L(25 - a - 5)}`, `${L(a + 5)}${L(25 - a - 4)}`, `${L(25 - a - 4)}${L(a + 4)}`]), e: `The first letter moves forward (${pairs.map((p) => p[0]).slice(0, 4).join(", ")}…) and the second moves backward from the end of the alphabet (${pairs.map((p) => p[1]).slice(0, 4).join(", ")}…). The pairs are opposite letters, so the next is **${pairs[4]}**.`, d: 1 }; },
@@ -62,7 +62,7 @@ const ITEMS: { more: string; less: string; things: string[] }[] = [
   { more: "has more pages than", less: "has fewer pages than", things: ["The novel", "The atlas", "The dictionary", "The diary"] },
 ];
 const TFU = ["true", "false", "uncertain"];
-export const logicalProblems: RawQ[] = gen("lr-logical-problems", 36, (r, i) => {
+export const logicalProblems: RawQ[] = gen("lr-logical-problems", 72, (r, i) => {
   const useItems = r.chance(0.3);
   const pool = useItems ? r.pick(ITEMS) : null;
   const rel = pool ?? r.pick(RELS);
