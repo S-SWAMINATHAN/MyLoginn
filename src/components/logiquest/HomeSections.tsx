@@ -174,7 +174,7 @@ function SubjectCard({ g, s, match, i }: CardData & { i: number }) {
     >
       <div className={cn("relative h-48 overflow-hidden rounded-3xl border bg-surface transition-[border-color,box-shadow] duration-500", open ? "border-[color-mix(in_srgb,var(--c)_55%,transparent)] shadow-[0_18px_36px_-22px_var(--c)]" : "border-border-soft")}>
         {/* front */}
-        <button type="button" onClick={(e) => { const pt = (e.nativeEvent as PointerEvent).pointerType; if (pt === "touch" || pt === "pen") setOpen(true); }} className="flex h-full w-full flex-col items-center px-3 pb-3 pt-4 text-center outline-none" aria-expanded={open} aria-label={`${s.title}: show details`}>
+        <button type="button" onClick={() => setOpen(true)} className="flex h-full w-full flex-col items-center px-3 pb-3 pt-4 text-center outline-none" aria-expanded={open} aria-label={`${s.title}: show details`}>
           <span className="text-[9px] font-bold uppercase tracking-[0.14em] text-[var(--c)]">{g.nav}</span>
           <motion.span animate={reduced ? undefined : { scale: open ? 0.88 : 1, y: open ? -3 : 0, opacity: open ? 0.35 : 1 }} transition={{ duration: 0.45, ease: SMOOTH }} className="mt-2 grid h-[3.75rem] w-[3.75rem] shrink-0 place-items-center rounded-full bg-[color-mix(in_srgb,var(--c)_11%,transparent)]">
             <ContentIcon keyword={SUBJECT_ICON_KEY[s.slug] ?? "default"} className="h-11 w-11" />
@@ -273,7 +273,7 @@ export function SubjectExplorer({ groups }: { groups: ExplorerGroup[] }) {
                   </div>
                   <p className="text-xs font-semibold text-muted"><span style={{ color }}>{cards.length} {cards.length === 1 ? "subject" : "subjects"}</span> · {qs.toLocaleString("en-IN")} questions</p>
                 </div>
-                <motion.ul layout className="mt-5 grid grid-cols-2 gap-3 min-[560px]:grid-cols-3 md:grid-cols-4 xl:grid-cols-5 2xl:grid-cols-6">
+                <motion.ul layout className="mt-5 grid grid-cols-1 gap-3 min-[380px]:grid-cols-2 min-[560px]:grid-cols-3 md:grid-cols-4 xl:grid-cols-5 2xl:grid-cols-6">
                   <AnimatePresence initial={false} mode="popLayout">
                     {cards.map((c, i) => <SubjectCard key={c.s.slug} {...c} i={i} />)}
                   </AnimatePresence>
