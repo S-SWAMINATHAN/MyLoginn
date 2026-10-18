@@ -63,7 +63,6 @@ const SOCIAL_ICONS: Record<string, string> = {
   youtube: "M23.498 6.186a3.016 3.016 0 0 0-2.122-2.136C19.505 3.545 12 3.545 12 3.545s-7.505 0-9.377.505A3.017 3.017 0 0 0 .502 6.186C0 8.07 0 12 0 12s0 3.93.502 5.814a3.016 3.016 0 0 0 2.122 2.136c1.871.505 9.376.505 9.376.505s7.505 0 9.377-.505a3.015 3.015 0 0 0 2.122-2.136C24 15.93 24 12 24 12s0-3.93-.502-5.814ZM9.545 15.568V8.432L15.818 12l-6.273 3.568Z",
 };
 
-const SOCIAL_NAMES: Record<string, string> = { instagram: "Instagram", facebook: "Facebook", linkedin: "LinkedIn", youtube: "YouTube" };
 
 /** Routes that already end in their own page-specific CTA banner —
  * showing the generic one again here would just duplicate it. */
@@ -71,7 +70,7 @@ const ROUTES_WITH_OWN_CTA = ["/", "/projects", "/internships"];
 
 const contactLinks = [
   { label: CONTACT_EMAIL, href: `mailto:${CONTACT_EMAIL}`, Icon: AnimatedMail },
-  { label: `+91 ${CONTACT_PHONES[0].display}`, href: `tel:${CONTACT_PHONES[0].tel}`, Icon: AnimatedPhone },
+  ...CONTACT_PHONES.map((p) => ({ label: `+91 ${p.display}`, href: `tel:${p.tel}`, Icon: AnimatedPhone })),
   {
     label: "WhatsApp us",
     href: toWhatsAppLink(WHATSAPP_PHONE, "Hi MyLoginn team!") ?? "/contact",
@@ -152,13 +151,13 @@ export function Footer() {
               move forward.
             </p>
 
-            <ul className="mt-6 grid gap-2.5 sm:flex sm:flex-col sm:gap-3">
+            <ul className="mt-6 flex flex-col gap-3">
               {contactLinks.map((c) => (
                 <li key={c.label}>
                   <a
                     href={c.href}
                     {...(c.external ? { target: "_blank", rel: "noopener noreferrer" } : {})}
-                    className="group flex w-full items-center gap-3 rounded-2xl border border-border-soft bg-surface px-3.5 py-3 text-sm font-medium text-muted transition-all duration-200 hover:border-brand-500 hover:text-brand-500 sm:inline-flex sm:w-auto sm:gap-2.5 sm:rounded-none sm:border-0 sm:bg-transparent sm:p-0"
+                    className="group inline-flex items-center gap-2.5 text-sm font-medium text-muted transition-colors duration-200 hover:text-brand-500"
                   >
                     <c.Icon className="h-5 w-5 transition-transform duration-300 group-hover:scale-125 group-hover:-rotate-6" />
                     <span>{c.label}</span>
@@ -167,7 +166,7 @@ export function Footer() {
               ))}
             </ul>
 
-            <ul className="mt-5 grid grid-cols-[repeat(auto-fit,minmax(4.25rem,1fr))] gap-2.5 sm:flex sm:items-center sm:gap-3" aria-label="MyLoginn on social media">
+            <ul className="mt-5 flex items-center gap-3" aria-label="MyLoginn on social media">
               {SOCIAL_LINKS.map((s) => (
                 <li key={s.id}>
                   <a
@@ -175,10 +174,9 @@ export function Footer() {
                     target="_blank"
                     rel="noopener noreferrer me"
                     aria-label={s.label}
-                    className="flex h-16 w-full flex-col items-center justify-center gap-1 rounded-2xl border border-border-soft btn-sweep bg-surface text-muted focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-500 sm:grid sm:h-9 sm:w-9 sm:place-items-center sm:rounded-full"
+                    className="btn-sweep grid h-9 w-9 place-items-center rounded-full border border-border-soft bg-surface text-muted focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-500"
                   >
-                    <svg viewBox="0 0 24 24" className="h-5 w-5 sm:h-4 sm:w-4" fill="currentColor" aria-hidden="true"><path d={SOCIAL_ICONS[s.id]} /></svg>
-                    <span className="text-[10px] font-semibold sm:hidden">{SOCIAL_NAMES[s.id] ?? s.id}</span>
+                    <svg viewBox="0 0 24 24" className="h-4 w-4" fill="currentColor" aria-hidden="true"><path d={SOCIAL_ICONS[s.id]} /></svg>
                   </a>
                 </li>
               ))}

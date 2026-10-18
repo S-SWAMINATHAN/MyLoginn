@@ -42,6 +42,7 @@ const serviceLinks = [
 
 const learnLinks = [
   { href: "/courses", label: "Courses", desc: "Learn job-ready skills" },
+  { href: "/practice", label: "Practice", desc: "AI mock interviews, group discussion & speaking" },
   { href: "/logiquest", label: "LogiQuest", desc: "Aptitude, reasoning, programming & interview Q&A" },
   { href: "/logiquest/leaderboard", label: "Leaderboard", desc: "Top LogiQuest learners" },
 ];
@@ -56,6 +57,7 @@ type MobileLink = {
 const mobileMainLinks: MobileLink[] = [
   { href: "/", label: "Home", desc: "Back to the start", icon: AnimatedHome },
   { href: "/courses", label: "Courses", desc: "Learn job-ready skills", icon: AnimatedBook },
+  { href: "/practice", label: "Practice", desc: "AI mock interviews, group discussion & speaking", icon: AnimatedAi },
   { href: "/logiquest", label: "LogiQuest", desc: "Aptitude, reasoning, programming & interview Q&A", icon: AnimatedCode },
   { href: "/logiquest/leaderboard", label: "Leaderboard", desc: "Top LogiQuest learners", icon: AnimatedCrown },
 ];

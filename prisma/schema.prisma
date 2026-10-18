@@ -64,6 +64,9 @@ model User {
   lqCodeProgress         LqCodeProgress[]
   lqCodeSubmissions      LqCodeSubmission[]
   lqXpEvents             LqXpEvent[]
+  practiceSessions       PracticeSession[]
+  gdRoomsHosted          GdRoom[]                @relation("GdHost")
+  gdSeats                GdParticipant[]
 }
 
 model DailyActivity {
@@ -722,13 +725,13 @@ model CourseEntitlement {
 }
 
 model Certificate {
-  id           String   @id @default(cuid())
-  userId       String
-  courseId     String
-  serial       String   @unique
-  learnerName  String
-  finalPercent Int
-  issuedAt     DateTime @default(now())
+  id              String    @id @default(cuid())
+  userId          String
+  courseId        String
+  serial          String    @unique
+  learnerName     String
+  finalPercent    Int
+  issuedAt        DateTime  @default(now())
   /// Set when the learner confirms their official name in the certificate studio; learnerName is locked from then on.
   nameConfirmedAt DateTime?
 
@@ -823,7 +826,7 @@ model LmsSetting {
   updatedAt DateTime @updatedAt
 }
 
-// ───────────────────────── LogiQuest (IndiaBix-style practice platform) ─────────────────────────
+// â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ LogiQuest (IndiaBix-style practice platform) â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 // Questions, topics and tests are defined in code (src/lib/logiquest/content). The database only stores what learners do.
 // A question id ("qid") is "<subject>.<topic>.<hash>", stable as long as the question text does not change.
 
@@ -979,21 +982,190 @@ model LqCodeProgress {
 
 /// A coding submission. SQL verdicts are computed on the server; Python/JavaScript verdicts are reported by the browser.
 model LqCodeSubmission {
-  id         String   @id @default(cuid())
-  userId     String
-  slug       String
-  language   String
-  source     String
+  id        String   @id @default(cuid())
+  userId    String
+  slug      String
+  language  String
+  source    String
   /// ACCEPTED | WRONG_ANSWER | RUNTIME_ERROR | TIME_LIMIT
-  verdict    String
-  passed     Int
-  total      Int
+  verdict   String
+  passed    Int
+  total     Int
   /// true when the server judged it (SQL)
-  verified   Boolean  @default(false)
-  createdAt  DateTime @default(now())
+  verified  Boolean  @default(false)
+  createdAt DateTime @default(now())
 
   user User @relation(fields: [userId], references: [id], onDelete: Cascade)
 
   @@index([userId, slug, createdAt])
   @@index([slug, verdict])
+}
+
+// â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ Practice (AI interview, speaking lab, group discussion) â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+
+/// One practice run: an AI mock interview, a speaking-lab exercise set, or one learner's seat in a group discussion.
+/// Its report (JSON) is the source for the report page and the PDF.
+model PracticeSession {
+  id        String    @id @default(cuid())
+  userId    String
+  /// INTERVIEW | SPEAKING | GD
+  module    String
+  /// Interview type, speaking exercise kind, or "gd".
+  mode      String
+  title     String
+  /// Choices made at setup (difficulty, persona, exercise items...). Validated on the server.
+  config    Json      @default("{}")
+  /// Orchestrator memory between turns (rolling summary, stage, next prompt). Never sent to other users.
+  state     Json      @default("{}")
+  /// ACTIVE | COMPLETED | ABANDONED
+  status    String    @default("ACTIVE")
+  score     Int?
+  /// Dimension scores 0-100, e.g. { communication: 82, fluency: 76 }.
+  scores    Json?
+  report    Json?
+  /// Human-friendly report id printed on the PDF, e.g. ML-RPT-7K29QX.
+  reportNo  String?   @unique
+  gdRoomId  String?
+  durationS Int?
+  startedAt DateTime  @default(now())
+  endedAt   DateTime?
+
+  user  User           @relation(fields: [userId], references: [id], onDelete: Cascade)
+  turns PracticeTurn[]
+
+  @@index([userId, startedAt])
+  @@index([userId, module, status])
+  @@index([module, startedAt])
+  @@index([gdRoomId])
+}
+
+/// One answer within a session. (sessionId, index) is the idempotency key: a resubmitted answer returns the stored
+/// result instead of being processed again, and a second concurrent submission is rejected while one is in flight.
+model PracticeTurn {
+  id         String   @id @default(cuid())
+  sessionId  String
+  index      Int
+  /// PROCESSING | DONE
+  status     String   @default("PROCESSING")
+  /// What the learner was asked / shown (question, sentence, word list...).
+  prompt     String
+  /// Content item id for speaking exercises.
+  itemId     String?
+  transcript String?
+  /// Measured from the audio and transcript in code: duration, words per minute, pauses, fillers...
+  metrics    Json?
+  evaluation Json?
+  aiMs       Int?
+  createdAt  DateTime @default(now())
+
+  session PracticeSession @relation(fields: [sessionId], references: [id], onDelete: Cascade)
+
+  @@unique([sessionId, index])
+}
+
+/// A live group discussion. Audio flows peer to peer (WebRTC); this row is the shared state everyone polls.
+model GdRoom {
+  id              String    @id @default(cuid())
+  /// Join code, e.g. ML-GD-7K29.
+  code            String    @unique
+  hostId          String
+  topic           String
+  category        String
+  maxParticipants Int       @default(6)
+  prepS           Int       @default(120)
+  discussS        Int       @default(1800)
+  /// LOBBY | LIVE (preparation then discussion, told apart by liveAt) | EVALUATING | JUDGING | DONE | CANCELLED
+  status          String    @default("LOBBY")
+  prepAt          DateTime?
+  liveAt          DateTime?
+  endsAt          DateTime?
+  endedAt         DateTime?
+  /// Team-level evaluation, shared by every participant's report.
+  report          Json?
+  createdAt       DateTime  @default(now())
+  updatedAt       DateTime  @updatedAt
+
+  host         User            @relation("GdHost", fields: [hostId], references: [id], onDelete: Cascade)
+  participants GdParticipant[]
+  segments     GdSegment[]
+  signals      GdSignal[]
+
+  @@index([hostId, createdAt])
+  @@index([status, createdAt])
+}
+
+model GdParticipant {
+  id         String    @id @default(cuid())
+  roomId     String
+  userId     String
+  /// Random id of the browser tab currently connected; a new tab or reload gets a new one and peers reconnect.
+  peerId     String
+  muted      Boolean   @default(false)
+  joinedAt   DateTime  @default(now())
+  lastSeenAt DateTime  @default(now())
+  leftAt     DateTime?
+
+  room GdRoom @relation(fields: [roomId], references: [id], onDelete: Cascade)
+  user User   @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([roomId, userId])
+  @@index([userId, joinedAt])
+}
+
+/// WebRTC signalling mailbox (offer / answer). Rows are deleted once read.
+model GdSignal {
+  id        Int      @id @default(autoincrement())
+  roomId    String
+  fromPeer  String
+  toPeer    String
+  kind      String
+  payload   Json
+  createdAt DateTime @default(now())
+
+  room GdRoom @relation(fields: [roomId], references: [id], onDelete: Cascade)
+
+  @@index([roomId, toPeer, id])
+  @@index([createdAt])
+}
+
+/// A stretch of one participant's speech, recorded in their own browser and transcribed on the server.
+/// Times are milliseconds from the start of the discussion (server clock), so turns and overlaps can be measured.
+model GdSegment {
+  id         String   @id @default(cuid())
+  roomId     String
+  userId     String
+  seq        Int
+  startMs    Int
+  endMs      Int
+  transcript String?
+  /// Per-segment delivery notes from the transcriber (pronunciation, grammar slips).
+  notes      Json?
+  /// PENDING (being transcribed) | QUEUED (waiting for a retry) | DONE | DROPPED (gave up)
+  status     String   @default("PENDING")
+  /// The speech itself, kept only until it is transcribed (then cleared), so a rate-limited call loses nothing.
+  audio      Bytes?
+  attempts   Int      @default(0)
+  createdAt  DateTime @default(now())
+  updatedAt  DateTime @default(now()) @updatedAt
+
+  room GdRoom @relation(fields: [roomId], references: [id], onDelete: Cascade)
+
+  @@unique([roomId, userId, seq])
+  @@index([roomId, status])
+  @@index([roomId, startMs])
+}
+
+/// Latency and outcome of every AI / speech call, for the admin performance dashboard.
+model PracticeAiLog {
+  id        String   @id @default(cuid())
+  /// interview_turn | interview_report | speaking_turn | speaking_report | gd_segment | gd_judge
+  kind      String
+  ms        Int
+  ok        Boolean
+  /// timeout | unavailable | rate_limited | auth | invalid_output
+  error     String?
+  createdAt DateTime @default(now())
+
+  @@index([createdAt])
+  @@index([kind, createdAt])
 }

@@ -4,15 +4,17 @@
   "private": true,
   "scripts": {
     "dev": "next dev",
-    "build": "prisma db push --skip-generate && prisma generate && next build",
+    "build": "prisma db push --skip-generate && prisma generate && tsx scripts/lq-totals.ts && next build",
     "start": "next start",
     "lint": "eslint",
     "postinstall": "prisma generate && node scripts/copy-pyodide.mjs",
     "db:seed": "tsx prisma/seed.ts",
     "db:seed:free-courses": "tsx prisma/seed-free-courses.ts",
-    "lq:validate": "tsx scripts/lq-validate.ts",
+    "lq:validate": "tsx scripts/lq-validate.ts && tsx scripts/lq-totals.ts --check",
+    "lq:totals": "tsx scripts/lq-totals.ts",
     "lq:coding": "tsx scripts/lq-coding-gen.ts",
-    "test:lms": "tsx --require ./tests/setup.cjs --test tests/lms/*.test.ts"
+    "test:lms": "tsx --require ./tests/setup.cjs --test tests/lms/*.test.ts",
+    "test:practice": "tsx --require ./tests/setup.cjs --test tests/practice/*.test.ts"
   },
   "prisma": {
     "seed": "tsx prisma/seed.ts"

@@ -25,7 +25,7 @@ Sales | Revenue    | Mumbai
 Ops   | Operations | Delhi
 \`\`\``;
 /** Prints a single value, or one line per row with columns joined by ", ". */
-const sql = (query: string, o: string[], e: string, d: 1 | 2 | 3 = 2): RawQ => {
+export const sql = (query: string, o: string[], e: string, d: 1 | 2 | 3 = 2): RawQ => {
   const py = `import sqlite3\nc = sqlite3.connect(':memory:')\nc.executescript(${JSON.stringify(SETUP)})\nrows = c.execute(${JSON.stringify(query)}).fetchall()\nprint(rows[0][0] if len(rows) == 1 and len(rows[0]) == 1 else '\\n'.join(', '.join(str(v) for v in r) for r in rows))`;
   return m(`Using the tables below, what is the result of this query?\n${TABLES}\n\`\`\`sql\n${query}\n\`\`\``, o, e, { d, check: `py:${py}` });
 };

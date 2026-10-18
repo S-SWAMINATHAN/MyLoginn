@@ -1,0 +1,115 @@
+/** More Data Structures questions. */
+import { m, m2 } from "../build";
+import { pyOut as out } from "./code";
+import type { ExtraSubject } from "./merge";
+
+const extra: ExtraSubject = {
+  arrays: [
+    m("What is the time complexity of finding the maximum in an unsorted array of n elements?", ["O(n)", "O(1)", "O(log n)", "O(n²)"], "Every element must be examined once."),
+    m("Deleting the last element of an array takes:", ["O(1)", "O(n)", "O(log n)", "O(n log n)"], "No elements need to be shifted."),
+    m("Which technique finds the maximum-sum subarray in O(n)?", ["Kadane's algorithm", "Binary search", "Bubble sort", "Dijkstra's algorithm"], "It tracks the best sum ending at each position."),
+    m("A sparse matrix is one in which:", ["Most elements are zero", "All elements are equal", "It has no rows", "It is square"], "Storing only non-zero entries saves space."),
+    m("Prefix sums let you answer a range-sum query in:", ["O(1) after O(n) preprocessing", "O(n) each time", "O(log n) without preprocessing", "O(n²)"], "sum(l..r) = prefix[r + 1] − prefix[l]."),
+    m("The sliding window technique is useful for:", ["Problems on contiguous subarrays or substrings", "Sorting linked lists", "Graph colouring", "Hash collisions"], "e.g. the maximum sum of k consecutive elements."),
+    m("For a 2-D array stored in column-major order, which elements are adjacent in memory?", ["Elements of the same column", "Elements of the same row", "Diagonal elements", "None"], "Fortran uses column-major order; C uses row-major."),
+    m("Rotating an array of n elements by k positions can be done in O(n) time and O(1) space by:", ["Reversing parts of the array three times", "Sorting it", "Using a hash table", "Binary search"], "Reverse all, then reverse the two parts."),
+    out("a = [3, 8, 1, 9, 4]\nbest = a[0]\nfor x in a:\n    if x > best:\n        best = x\nprint(best)", ["9", "3", "8", "4"], "A single pass finds the maximum."),
+    out("a = [1, 2, 3, 4, 5]\nk = 2\nprint(a[-k:] + a[:-k])", ["[4, 5, 1, 2, 3]", "[3, 4, 5, 1, 2]", "[1, 2, 3, 4, 5]", "[5, 4, 3, 2, 1]"], "Rotating right by 2 moves the last two elements to the front.", 2),
+    out("a = [2, -1, 3, -4, 5]\nbest = cur = a[0]\nfor x in a[1:]:\n    cur = max(x, cur + x)\n    best = max(best, cur)\nprint(best)", ["5", "4", "6", "2"], "Kadane's algorithm: the best subarray sum is 5.", 3),
+    m2("For A[5][6] in row-major order with base address 2000 and 2-byte elements, the address of A[2][3] is:", ["2030", "2018", "2036", "2024"], "2000 + (2 × 6 + 3) × 2 = 2030."),
+  ],
+
+  "linked-lists": [
+    m("Deleting the last node of a singly linked list (with only a head pointer) takes:", ["O(n)", "O(1)", "O(log n)", "O(n²)"], "You must find the second-to-last node."),
+    m("Inserting at the end of a singly linked list with a tail pointer takes:", ["O(1)", "O(n)", "O(log n)", "O(n log n)"], "The tail pointer gives direct access."),
+    m("Each node of a doubly linked list contains:", ["Data, a next pointer and a previous pointer", "Data only", "Two data fields", "A next pointer only"], "Extra memory buys backward traversal."),
+    m("How do you find the middle of a linked list in one pass?", ["Use a slow pointer and a fast pointer", "Count nodes twice", "Sort it first", "Use binary search"], "When fast reaches the end, slow is in the middle."),
+    m("Reversing a singly linked list in place takes:", ["O(n) time and O(1) extra space", "O(n²) time", "O(log n) time", "O(n) extra space always"], "Reverse the next pointers one by one."),
+    m("A linked list is a good choice when:", ["Frequent insertions and deletions are needed in the middle", "Random access by index is needed", "Memory locality matters most", "The size is fixed and small"], "No shifting of elements is needed."),
+    m("A header (sentinel) node in a linked list:", ["Simplifies insertion and deletion at the front", "Stores the length only", "Makes the list circular", "Speeds up search to O(1)"], "Edge cases for an empty list disappear."),
+    m("Merging two sorted linked lists of lengths m and n takes:", ["O(m + n)", "O(m × n)", "O(log(m + n))", "O(1)"], "Repeatedly take the smaller head."),
+    m("A skip list adds:", ["Extra levels of forward pointers for faster search", "Backward pointers", "A hash table", "Array indexing"], "Expected search time is O(log n)."),
+    m("An XOR linked list stores in each node:", ["The XOR of the previous and next addresses", "Two full pointers", "No pointers", "A hash value"], "It saves memory in a doubly linked list."),
+    out("class Node:\n    def __init__(self, v, nxt=None):\n        self.v, self.next = v, nxt\nhead = Node(1, Node(2, Node(3)))\nprev, cur = None, head\nwhile cur:\n    cur.next, prev, cur = prev, cur, cur.next\nvals = []\nwhile prev:\n    vals.append(prev.v)\n    prev = prev.next\nprint(vals)", ["[3, 2, 1]", "[1, 2, 3]", "[3]", "[]"], "The loop reverses the next pointers.", 3),
+    m2("In a circular singly linked list with a pointer to the last node, inserting at the front takes:", ["O(1)", "O(n)", "O(log n)", "O(n²)"], "last.next is the head, so no traversal is needed."),
+  ],
+
+  heaps: [
+    m("In a min-heap, the smallest element is at the:", ["Root", "Last leaf", "Middle", "Leftmost leaf only"], "Every parent is smaller than or equal to its children."),
+    m("Removing the root of a binary heap takes:", ["O(log n)", "O(1)", "O(n)", "O(n log n)"], "The last element moves to the root and sifts down."),
+    m("Finding the minimum in a min-heap takes:", ["O(1)", "O(log n)", "O(n)", "O(n log n)"], "It is always at the root."),
+    m("Finding the maximum in a min-heap takes:", ["O(n)", "O(1)", "O(log n)", "O(n²)"], "It is in one of the leaves, which must all be checked."),
+    m("For a heap stored in an array with 0-based indexing, the children of index i are at:", ["2i + 1 and 2i + 2", "2i and 2i + 1", "i + 1 and i + 2", "i/2 and i/2 + 1"], "With 1-based indexing they are 2i and 2i + 1."),
+    m("Is heap sort stable?", ["No", "Yes", "Only for integers", "Only for small arrays"], "Swaps can reorder equal keys."),
+    m("Which algorithm uses a min-priority queue to pick the next closest vertex?", ["Dijkstra's algorithm", "Depth-first search", "Bubble sort", "Kruskal's algorithm only"], "Prim's algorithm also uses one."),
+    m("To find the k largest elements of a large stream efficiently, use:", ["A min-heap of size k", "A max-heap of all elements", "Sorting every time", "A stack"], "Pop the smallest when the heap exceeds k."),
+    m("A binary heap is always a:", ["Complete binary tree", "Binary search tree", "Full binary tree", "Balanced BST"], "All levels are full except possibly the last, filled from the left."),
+    m("The height of a binary heap with n elements is:", ["⌊log₂ n⌋", "n", "√n", "n/2"], "Its completeness keeps it short."),
+    out("import heapq\nh = []\nfor x in [5, 1, 8, 3, 2]:\n    heapq.heappush(h, x)\nprint([heapq.heappop(h) for _ in range(3)])", ["[1, 2, 3]", "[5, 1, 8]", "[8, 5, 3]", "[1, 3, 5]"], "heapq is a min-heap, so values pop in increasing order."),
+    out("import heapq\nprint(heapq.nlargest(2, [4, 9, 1, 7]))", ["[9, 7]", "[7, 9]", "[9, 4]", "[1, 4]"], "nlargest returns the k largest in descending order."),
+    m2("Inserting 5, 3, 8, 1 one by one into an empty min-heap (array form) gives:", ["[1, 3, 8, 5]", "[1, 3, 5, 8]", "[5, 3, 8, 1]", "[1, 5, 8, 3]"], "After 1 is inserted it sifts up past 3, and 3 moves down."),
+  ],
+
+  graphs: [
+    m("A graph with an edge between every pair of vertices is:", ["Complete", "Bipartite", "Acyclic", "Sparse"], "A complete graph with n vertices has n(n − 1)/2 edges."),
+    m("An adjacency list representation uses space:", ["O(V + E)", "O(V²)", "O(E²)", "O(V × E)"], "Good for sparse graphs."),
+    m("BFS on an unweighted graph finds:", ["Shortest paths in number of edges", "Minimum spanning trees", "Strongly connected components only", "Topological order only"], "It explores level by level."),
+    m("Kruskal's algorithm builds a minimum spanning tree by:", ["Adding the cheapest edges that do not form a cycle", "Growing from one vertex", "Using DFS only", "Removing the heaviest edges first"], "It uses a disjoint-set (union–find) structure."),
+    m("Prim's algorithm builds a minimum spanning tree by:", ["Growing a tree from a start vertex, adding the cheapest edge leaving it", "Sorting all edges first", "Using BFS levels", "Removing cycles"], "It uses a priority queue."),
+    m("Which algorithm finds shortest paths between all pairs of vertices?", ["Floyd–Warshall", "Dijkstra (once)", "Kruskal", "Prim"], "It runs in O(V³)."),
+    m("A graph is bipartite if:", ["Its vertices can be split into two sets with edges only between the sets", "It has two components", "It has exactly two edges", "It is a tree"], "Equivalently, it has no odd-length cycle."),
+    m("A directed graph with no cycles is called a:", ["DAG", "Tree always", "Complete graph", "Bipartite graph"], "Directed Acyclic Graph."),
+    m("Time complexity of BFS or DFS with an adjacency list is:", ["O(V + E)", "O(V²)", "O(E log V)", "O(V log V)"], "Each vertex and edge is processed once."),
+    m("Strongly connected components can be found with:", ["Kosaraju's or Tarjan's algorithm", "Prim's algorithm", "Binary search", "Heap sort"], "Both run in linear time."),
+    m("A Hamiltonian path visits:", ["Every vertex exactly once", "Every edge exactly once", "Only the start vertex twice", "The shortest route"], "An Eulerian path visits every edge exactly once."),
+    out("from collections import deque\ng = {1: [2, 3], 2: [4], 3: [4], 4: []}\nseen, q, order = {1}, deque([1]), []\nwhile q:\n    v = q.popleft()\n    order.append(v)\n    for w in g[v]:\n        if w not in seen:\n            seen.add(w)\n            q.append(w)\nprint(order)", ["[1, 2, 3, 4]", "[1, 2, 4, 3]", "[4, 3, 2, 1]", "[1, 3, 2, 4]"], "BFS visits 1, then its neighbours 2 and 3, then 4.", 2),
+    out("g = {1: [2, 3], 2: [4], 3: [4], 4: []}\norder = []\ndef dfs(v):\n    order.append(v)\n    for w in g[v]:\n        if w not in order:\n            dfs(w)\ndfs(1)\nprint(order)", ["[1, 2, 4, 3]", "[1, 2, 3, 4]", "[1, 3, 4, 2]", "[4, 2, 3, 1]"], "DFS goes deep through 2 to 4 before visiting 3.", 2),
+    m2("A complete graph with 7 vertices has how many edges?", ["21", "42", "14", "49"], "7 × 6 / 2 = 21."),
+  ],
+
+  searching: [
+    m("Binary search on n sorted elements runs in:", ["O(log n)", "O(n)", "O(1)", "O(n log n)"], "Each step halves the search range."),
+    m("Linear search is preferable to binary search when:", ["The data is small or unsorted", "The data is huge and sorted", "Elements are unique", "Memory is low"], "Sorting just to search once costs O(n log n)."),
+    m("Jump search on a sorted array uses a block size of about:", ["√n", "n/2", "log n", "1"], "Its time complexity is O(√n)."),
+    m("Exponential search is useful for:", ["Sorted arrays of unknown or unbounded size", "Unsorted arrays", "Linked lists only", "Graphs"], "It finds a range by doubling, then binary searches it."),
+    m("Ternary search is used to find:", ["The maximum or minimum of a unimodal function", "Duplicates in an array", "Shortest paths", "Hash collisions"], "It splits the range into three parts."),
+    out("def bsearch(a, x):\n    lo, hi = 0, len(a) - 1\n    while lo <= hi:\n        mid = (lo + hi) // 2\n        if a[mid] == x:\n            return mid\n        if a[mid] < x:\n            lo = mid + 1\n        else:\n            hi = mid - 1\n    return -1\nprint(bsearch([2, 5, 8, 12, 16, 23], 16), bsearch([2, 5, 8], 7))", ["4 -1", "3 -1", "4 2", "5 -1"], "16 is at index 4; 7 is not present.", 2),
+    out("import bisect\nprint(bisect.bisect_left([1, 3, 3, 5], 3), bisect.bisect_right([1, 3, 3, 5], 3))", ["1 3", "1 2", "2 3", "0 4"], "bisect_left gives the first position of 3; bisect_right the position after the last.", 3),
+    m2("The midpoint computed as lo + (hi − lo) / 2 instead of (lo + hi) / 2 avoids:", ["Integer overflow", "Infinite loops", "Off-by-one errors in all cases", "Slower division"], "lo + hi can overflow fixed-size integers."),
+  ],
+
+  sorting: [
+    m("Which sorting algorithm repeatedly swaps adjacent elements that are out of order?", ["Bubble sort", "Selection sort", "Merge sort", "Heap sort"], "Large elements 'bubble' to the end."),
+    m("Which sorting algorithm divides the array into halves, sorts them and merges?", ["Merge sort", "Quick sort", "Insertion sort", "Counting sort"], "It always runs in O(n log n)."),
+    m("Quick sort's average time complexity is:", ["O(n log n)", "O(n²)", "O(n)", "O(log n)"], "With good pivots, partitions are balanced."),
+    m("Insertion sort's best case (already sorted input) is:", ["O(n)", "O(n²)", "O(n log n)", "O(1)"], "Each element is compared only once."),
+    m("Counting sort runs in:", ["O(n + k), where k is the range of keys", "O(n log n)", "O(n²)", "O(log n)"], "It is efficient when k is small."),
+    m("Radix sort sorts numbers:", ["Digit by digit using a stable sort", "By choosing a pivot", "By building a heap", "By swapping neighbours"], "LSD radix sort starts from the least significant digit."),
+    m("Which of these sorts is stable?", ["Merge sort", "Quick sort (typical)", "Heap sort", "Selection sort"], "Stable sorts keep equal keys in their original order."),
+    m("Which sort is used by Python's sorted() and Java's object sorting?", ["Timsort", "Bubble sort", "Heap sort", "Shell sort"], "A hybrid of merge sort and insertion sort."),
+    m("An in-place sorting algorithm:", ["Uses only O(1) (or small) extra memory", "Never swaps elements", "Must be stable", "Needs a second array"], "Heap sort is in place; standard merge sort is not."),
+    m("Shell sort is a generalisation of:", ["Insertion sort", "Merge sort", "Quick sort", "Counting sort"], "It compares elements far apart first."),
+    out("a = [64, 25, 12, 22, 11]\nfor i in range(len(a)):\n    j = a.index(min(a[i:]), i)\n    a[i], a[j] = a[j], a[i]\n    if i == 1:\n        break\nprint(a)", ["[11, 12, 25, 22, 64]", "[11, 25, 12, 22, 64]", "[11, 12, 22, 25, 64]", "[25, 12, 22, 11, 64]"], "After two passes of selection sort, the two smallest are in place.", 3),
+    out("print(sorted([('b', 2), ('a', 2), ('c', 1)], key=lambda p: p[1]))", ["[('c', 1), ('b', 2), ('a', 2)]", "[('c', 1), ('a', 2), ('b', 2)]", "[('a', 2), ('b', 2), ('c', 1)]", "Error"], "Python's sort is stable, so ('b', 2) stays before ('a', 2).", 2),
+    m2("How many comparisons does bubble sort make in the worst case on 5 elements (without early exit)?", ["10", "25", "5", "20"], "4 + 3 + 2 + 1 = 10."),
+  ],
+
+  "complexity-analysis": [
+    m("Which complexity class is the fastest-growing among these?", ["O(2ⁿ)", "O(n³)", "O(n log n)", "O(n²)"], "Exponential growth outpaces any polynomial."),
+    m("Big-Omega (Ω) notation gives:", ["A lower bound", "An upper bound", "An exact bound", "The average case only"], "Big-Theta (Θ) gives a tight bound."),
+    m("The recurrence T(n) = 2T(n/2) + n solves to:", ["O(n log n)", "O(n)", "O(n²)", "O(log n)"], "This is merge sort's recurrence."),
+    m("The recurrence T(n) = T(n/2) + 1 solves to:", ["O(log n)", "O(n)", "O(1)", "O(n log n)"], "This is binary search's recurrence."),
+    m("The recurrence T(n) = T(n − 1) + n solves to:", ["O(n²)", "O(n)", "O(n log n)", "O(2ⁿ)"], "1 + 2 + … + n = n(n + 1)/2."),
+    m("The naive recursive Fibonacci function runs in:", ["Exponential time", "Linear time", "Logarithmic time", "Constant time"], "Memoisation reduces it to O(n)."),
+    m("Amortised analysis gives:", ["The average cost per operation over a sequence of operations", "The best case", "The space used", "The probability of failure"], "e.g. dynamic array appends are amortised O(1)."),
+    m("Which is true for large n?", ["log n < √n < n < n log n", "n < log n < √n", "n log n < n", "√n < log n"], "This ordering is worth memorising."),
+    m("The Master theorem is used to solve:", ["Divide-and-conquer recurrences", "Graph colouring problems", "Sorting stability", "Hash collisions"], "T(n) = aT(n/b) + f(n)."),
+    m("An algorithm that uses a fixed amount of extra memory regardless of input size has space complexity:", ["O(1)", "O(n)", "O(log n)", "O(n²)"], "In-place algorithms are often O(1)."),
+    m("Recursion depth n means the call stack uses:", ["O(n) space", "O(1) space", "O(log n) space", "No space"], "Each call adds a stack frame."),
+    out("count = 0\nn = 16\ni = n\nwhile i > 1:\n    i //= 2\n    count += 1\nprint(count)", ["4", "16", "8", "5"], "Halving 16 reaches 1 after log₂ 16 = 4 steps."),
+    out("count = 0\nn = 5\nfor i in range(n):\n    for j in range(i):\n        count += 1\nprint(count)", ["10", "25", "15", "5"], "0 + 1 + 2 + 3 + 4 = 10, which is n(n − 1)/2 — still O(n²)."),
+    m2("If an O(n²) algorithm takes 1 second for n = 1000, about how long for n = 3000?", ["9 seconds", "3 seconds", "6 seconds", "27 seconds"], "Tripling n multiplies n² by 9."),
+  ],
+};
+
+export default extra;

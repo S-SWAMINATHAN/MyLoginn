@@ -4,6 +4,9 @@ import { SUBJECTS, getTopicMeta } from "./catalog";
 import { LOADERS } from "./content";
 import { finalizeSubject } from "./content/build";
 import type { Question, SubjectContent, TopicContent } from "./types";
+import COUNTS from "./content/counts.generated.json";
+
+const PRECOMPUTED = COUNTS as Record<string, Record<string, number>>;
 
 const cache = new Map<string, Promise<SubjectContent>>();
 
@@ -46,7 +49,11 @@ export async function getTopic(subject: string, topic: string): Promise<TopicCon
   return { ...t, exercises: t.exercises.map((e) => ({ ...e, questions: e.questions.filter((q) => !hidden.has(q.id)) })) };
 }
 
+/** Questions per topic. Read from the build-time counts file, so listing pages never load a subject just to count it. */
 export async function topicCounts(subject: string): Promise<Record<string, number>> {
+  // Development counts live, so content being edited is never shown with stale totals; the build regenerates the file.
+  const known = process.env.NODE_ENV === "production" ? PRECOMPUTED[subject] : undefined;
+  if (known) return known;
   const content = await loadSubject(subject);
   return Object.fromEntries(Object.entries(content).map(([slug, t]) => [slug, t.exercises.reduce((n, e) => n + e.questions.length, 0)]));
 }

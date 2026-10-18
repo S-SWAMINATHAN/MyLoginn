@@ -28,7 +28,7 @@ function useAutoIndex(length: number, ms: number) {
 /* ---------- Hero: growth orbit ---------- */
 
 const ORBIT: { title: string; text: string; color: string; icon: string; Icon: ComponentType<{ className?: string }>; x: number; y: number }[] = [
-  { title: "Learn", text: "Skills that matter, taught practically.", color: BLUE, icon: "student", Icon: Lightbulb, x: 50, y: 9 },
+  { title: "Analysis", text: "Skills that matter, taught practically.", color: BLUE, icon: "student", Icon: Lightbulb, x: 50, y: 9 },
   { title: "Build", text: "Real-world projects for your portfolio.", color: VIOLET, icon: "webdev", Icon: Rocket, x: 91, y: 50 },
   { title: "Practice", text: "A hands-on approach to every topic.", color: GREEN, icon: "testing", Icon: ShieldCheck, x: 50, y: 91 },
   { title: "Grow", text: "A supportive community to grow with.", color: AMBER, icon: "career", Icon: Sparkles, x: 9, y: 50 },

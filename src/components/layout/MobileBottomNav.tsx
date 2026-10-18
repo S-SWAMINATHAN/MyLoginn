@@ -41,11 +41,12 @@ const servicesPopupLinks: { href: string; label: string; desc: string; icon: Ico
 
 const learnPopupLinks: { href: string; label: string; desc: string; icon: IconComponent }[] = [
   { href: "/courses", label: "Courses", desc: "Learn job-ready skills", icon: AnimatedBook },
+  { href: "/practice", label: "Practice", desc: "AI mock interviews, group discussion & speaking", icon: AnimatedAi },
   { href: "/logiquest", label: "LogiQuest", desc: "Aptitude, reasoning, programming & interview Q&A", icon: AnimatedCode },
   { href: "/logiquest/leaderboard", label: "Leaderboard", desc: "Top LogiQuest learners", icon: AnimatedCrown },
 ];
 
-const isLearnPath = (p: string) => p.startsWith("/courses") || p.startsWith("/logiquest") || p === "/tutoring";
+const isLearnPath = (p: string) => p.startsWith("/courses") || p.startsWith("/logiquest") || p.startsWith("/practice") || p === "/tutoring";
 const isServicesPath = (p: string) => p.startsWith("/services") || p.startsWith("/internships") || p.startsWith("/projects");
 
 export function MobileBottomNav() {

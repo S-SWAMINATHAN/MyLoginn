@@ -1,5 +1,5 @@
 import Link from "next/link";
-import { ChevronLeft, ChevronRight, Folder, Home } from "lucide-react";
+import { ChevronLeft, ChevronRight, Folder } from "lucide-react";
 import { cn } from "@/lib/cn";
 import { GROUPS, subjectsInGroup } from "@/lib/logiquest/catalog";
 import { ContentIcon } from "@/components/ui/ContentIcon";
@@ -29,21 +29,13 @@ export function EmptyState({ title, body, cta }: { title: string; body: string; 
 
 export type Crumb = { label: string; href?: string };
 
-/** Kept for pages that want an in-page trail. The LogiQuest pages rely on the site breadcrumb instead, to avoid a second one. */
-export function Breadcrumbs({ items }: { items: Crumb[] }) {
-  return (
-    <nav aria-label="Breadcrumb" className="text-[13px] text-muted">
-      <ol className="flex flex-wrap items-center gap-1">
-        <li><Link href="/logiquest" className="inline-flex items-center gap-1 hover:text-story-royal"><Home className="h-3.5 w-3.5" />LogiQuest</Link></li>
-        {items.map((c, i) => (
-          <li key={i} className="inline-flex items-center gap-1">
-            <ChevronRight className="h-3.5 w-3.5 opacity-60" aria-hidden />
-            {c.href ? <Link href={c.href} className="hover:text-story-royal">{c.label}</Link> : <span aria-current="page" className="font-semibold text-story-navy dark:text-foreground">{c.label}</span>}
-          </li>
-        ))}
-      </ol>
-    </nav>
-  );
+/**
+ * In-page trail, intentionally rendered as nothing: the site header already shows the breadcrumb for every LogiQuest page,
+ * so a second row would only repeat it. Pages may keep calling this; it is a no-op.
+ */
+export function Breadcrumbs(props: { items: Crumb[] }) {
+  void props;
+  return null;
 }
 
 /**
@@ -69,9 +61,9 @@ export function PageTitle({ title, sub, eyebrow, icon, children }: { title: stri
 /** A row of small facts, for example "12 topics · 480 questions". */
 export function StatChips({ items }: { items: { label: string; value: string }[] }) {
   return (
-    <ul className="mt-4 flex flex-wrap gap-2">
+    <ul className="no-scrollbar -mx-1 mt-4 flex gap-2 overflow-x-auto px-1 pb-1 sm:flex-wrap sm:overflow-visible sm:pb-0">
       {items.map((s) => (
-        <li key={s.label} className="inline-flex items-center gap-2 rounded-full border border-border-soft bg-surface px-3.5 py-1.5 text-xs">
+        <li key={s.label} className="inline-flex shrink-0 items-center gap-2 whitespace-nowrap rounded-full border border-border-soft bg-surface px-3.5 py-1.5 text-xs">
           <strong className="text-sm tabular-nums text-story-navy dark:text-foreground">{s.value}</strong>
           <span className="text-muted">{s.label}</span>
         </li>
@@ -80,32 +72,61 @@ export function StatChips({ items }: { items: { label: string; value: string }[]
   );
 }
 
-/** Prev · 1 2 … N · Next, plus a "Go to page" box (works without JavaScript). */
+/**
+ * Pagination: Previous / Next pills (disabled at the ends), round page numbers with the current page filled, a slim progress
+ * line, and a "Go to page" box that works without JavaScript. On phones the numbers collapse into "Page 3 of 12".
+ */
 export function Pagination({ page, pages, href, action, hidden }: { page: number; pages: number; href: (p: number) => string; action: string; hidden?: Record<string, string> }) {
   if (pages <= 1) return null;
-  const nums = new Set([1, pages, page - 1, page, page + 1, page - 2, page + 2].filter((p) => p >= 1 && p <= pages));
+  const nums = new Set([1, pages, page - 1, page, page + 1].filter((p) => p >= 1 && p <= pages));
   const list = [...nums].sort((a, b) => a - b);
-  const cell = "grid h-10 min-w-10 place-items-center rounded-full px-3 text-sm font-semibold transition-colors";
+  const pill = "inline-flex h-10 shrink-0 items-center gap-1.5 whitespace-nowrap rounded-full border px-4 text-sm font-semibold transition-colors duration-300";
+  const live = "border-border-soft text-story-navy hover:border-story-royal hover:bg-story-royal hover:text-white dark:text-foreground";
+  const off = "pointer-events-none border-transparent bg-story-mist text-muted/60";
+  const num = "grid h-10 w-10 place-items-center rounded-full text-sm font-semibold tabular-nums transition-colors duration-200";
   return (
-    <div className="mt-6 flex flex-wrap items-center justify-between gap-3 rounded-3xl border border-border-soft bg-surface p-3">
-      <nav aria-label="Pages" className="flex flex-wrap items-center gap-1">
-        {page > 1 ? <Link href={href(page - 1)} className={cn(cell, "text-muted hover:bg-story-mist hover:text-story-royal")}><ChevronLeft className="h-4 w-4" /><span className="sr-only">Previous</span></Link> : null}
-        {list.map((p, i) => (
-          <span key={p} className="flex items-center gap-1">
-            {i > 0 && p - list[i - 1] > 1 ? <span className="px-1 text-muted">…</span> : null}
-            {p === page ? <span aria-current="page" className={cn(cell, "bg-story-royal text-white")}>{p}</span> : <Link href={href(p)} className={cn(cell, "text-muted hover:bg-story-mist hover:text-story-royal")}>{p}</Link>}
-          </span>
-        ))}
-        {page < pages ? <Link href={href(page + 1)} className={cn(cell, "text-muted hover:bg-story-mist hover:text-story-royal")}><span className="mr-1">Next</span><ChevronRight className="h-4 w-4" /></Link> : null}
-      </nav>
-      <form action={action} className="flex items-center gap-2 text-sm">
-        {Object.entries(hidden ?? {}).map(([k, v]) => <input key={k} type="hidden" name={k} value={v} />)}
-        <label htmlFor="goto" className="text-muted">Page</label>
-        <input id="goto" name="page" type="number" min={1} max={pages} defaultValue={page} className="w-16 rounded-full border border-border-soft bg-background px-3 py-1.5 text-center outline-none focus:border-story-royal" />
-        <span className="text-muted">of {pages}</span>
-        <button className="rounded-full bg-story-mist px-4 py-1.5 font-semibold text-story-royal transition-colors hover:bg-story-royal hover:text-white">Go</button>
-      </form>
-    </div>
+    <nav aria-label="Pages" className="relative mt-6 overflow-hidden rounded-3xl border border-border-soft bg-surface p-3 pb-4 sm:px-4">
+      <div className="flex flex-wrap items-center justify-between gap-x-4 gap-y-3">
+        <div className="flex min-w-0 items-center gap-2">
+          {page > 1 ? (
+            <Link href={href(page - 1)} rel="prev" className={cn(pill, live)}><ChevronLeft className="h-4 w-4" /><span className="hidden min-[420px]:inline">Previous</span><span className="sr-only min-[420px]:hidden">Previous page</span></Link>
+          ) : (
+            <span aria-disabled="true" className={cn(pill, off)}><ChevronLeft className="h-4 w-4" /><span className="hidden min-[420px]:inline">Previous</span></span>
+          )}
+
+          <ol className="hidden items-center gap-1 sm:flex">
+            {list.map((p, i) => (
+              <li key={p} className="flex items-center gap-1">
+                {i > 0 && p - list[i - 1] > 1 ? <span aria-hidden className="px-1 text-muted">…</span> : null}
+                {p === page ? (
+                  <span aria-current="page" className={cn(num, "bg-story-royal text-white shadow-[0_8px_18px_-8px_rgba(31,86,214,0.8)]")}>{p}</span>
+                ) : (
+                  <Link href={href(p)} aria-label={`Page ${p}`} className={cn(num, "text-muted hover:bg-story-royal/10 hover:text-story-royal")}>{p}</Link>
+                )}
+              </li>
+            ))}
+          </ol>
+          <span className="px-2 text-sm font-semibold text-story-navy sm:hidden dark:text-foreground" aria-live="polite">Page {page} of {pages}</span>
+
+          {page < pages ? (
+            <Link href={href(page + 1)} rel="next" className={cn(pill, "border-story-royal bg-story-royal text-white hover:border-story-navy hover:bg-story-navy")}><span className="hidden min-[420px]:inline">Next</span><span className="sr-only min-[420px]:hidden">Next page</span><ChevronRight className="h-4 w-4" /></Link>
+          ) : (
+            <span aria-disabled="true" className={cn(pill, off)}><span className="hidden min-[420px]:inline">Next</span><ChevronRight className="h-4 w-4" /></span>
+          )}
+        </div>
+
+        <form action={action} className="flex items-center gap-2 text-sm">
+          {Object.entries(hidden ?? {}).map(([k, v]) => <input key={k} type="hidden" name={k} value={v} />)}
+          <label htmlFor="goto" className="hidden text-muted sm:block">Go to page</label>
+          <input id="goto" name="page" type="number" inputMode="numeric" min={1} max={pages} defaultValue={page} aria-label={`Go to page, 1 to ${pages}`} className="h-10 w-16 rounded-full border border-border-soft bg-background px-3 text-center tabular-nums outline-none transition-[border-color,box-shadow] focus:border-story-royal focus:shadow-[0_0_0_3px_rgba(31,86,214,0.14)]" />
+          <span className="text-muted">of {pages}</span>
+          <button className="h-10 rounded-full bg-story-mist px-4 font-semibold text-story-royal transition-colors duration-300 hover:bg-story-royal hover:text-white">Go</button>
+        </form>
+      </div>
+      <span aria-hidden className="absolute inset-x-0 bottom-0 h-1 bg-story-mist">
+        <span className="block h-full bg-story-royal transition-[width] duration-700" style={{ width: `${Math.round((page / pages) * 100)}%` }} />
+      </span>
+    </nav>
   );
 }
 

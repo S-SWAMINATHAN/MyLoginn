@@ -1000,5 +1000,9111 @@
    "input": "3 1\n7 8 9",
    "output": "7\n8\n9"
   }
+ ],
+ "array-sum": [
+  {
+   "input": "5\n1 2 3 4 5",
+   "output": "15"
+  },
+  {
+   "input": "3\n-1 -2 10",
+   "output": "7"
+  },
+  {
+   "input": "1\n7",
+   "output": "7"
+  },
+  {
+   "input": "40\n615598908 742131964 -502738888 395667788 861857990 -225027545 -613180647 -909225297 476562403 -979616172 -11455817 280159395 964338908 -621531959 -540698788 -679694080 362826059 -608833730 -299402211 -769077481 -926371934 -499771025 -810894494 -781086612 469793566 -480400704 -813843268 -195641718 -516600940 253518410 -444108650 -18736832 581790426 576720084 -914825534 672878902 124818607 -599997529 -808211744 -821257506",
+   "output": "-8013567695"
+  },
+  {
+   "input": "6\n106517729 -66053428 -139712019 422666993 -251658601 -129363076",
+   "output": "-57602402"
+  },
+  {
+   "input": "30\n516639220 -921752156 -457876794 -560717284 -885155142 -726754460 -445384765 222609984 347195348 -863299435 -51661763 -649851721 -753378097 129645404 559544278 -388232334 -728698764 -516050716 -715598043 -832429190 -589261277 -89575334 -220195881 765258553 564281741 -584107186 -509206519 318654778 910592481 270908972",
+   "output": "-6883856102"
+  }
+ ],
+ "array-min-max": [
+  {
+   "input": "5\n3 1 4 1 5",
+   "output": "1 5"
+  },
+  {
+   "input": "1\n-7",
+   "output": "-7 -7"
+  },
+  {
+   "input": "4\n-2 -9 -4 -1",
+   "output": "-9 -1"
+  },
+  {
+   "input": "22\n-598 948 592 -813 -771 919 -561 -352 -244 -193 247 -733 278 -278 680 580 69 80 -434 -217 257 99",
+   "output": "-813 948"
+  },
+  {
+   "input": "7\n717 318 349 -195 -767 -195 881",
+   "output": "-767 881"
+  },
+  {
+   "input": "26\n964 -886 -340 808 933 787 -512 -353 409 -120 320 -464 215 174 20 -592 374 93 -617 116 -720 865 299 -929 804 200",
+   "output": "-929 964"
+  }
+ ],
+ "reverse-array": [
+  {
+   "input": "4\n1 2 3 4",
+   "output": "4 3 2 1"
+  },
+  {
+   "input": "1\n9",
+   "output": "9"
+  },
+  {
+   "input": "5\n5 -1 0 3 3",
+   "output": "3 3 0 -1 5"
+  },
+  {
+   "input": "18\n33 -24 -20 -32 -18 -29 -8 40 -35 18 28 -24 -41 -5 28 13 -12 42",
+   "output": "42 -12 13 28 -5 -41 -24 28 18 -35 40 -8 -29 -18 -32 -20 -24 33"
+  },
+  {
+   "input": "20\n2 -14 4 50 -28 -2 -45 -34 16 -29 -23 -42 -23 -8 -18 22 -40 -43 45 -19",
+   "output": "-19 45 -43 -40 22 -18 -8 -23 -42 -23 -29 16 -34 -45 -2 -28 50 4 -14 2"
+  }
+ ],
+ "second-largest": [
+  {
+   "input": "5\n2 9 4 9 7",
+   "output": "7"
+  },
+  {
+   "input": "3\n5 5 5",
+   "output": "-1"
+  },
+  {
+   "input": "2\n1 2",
+   "output": "1"
+  },
+  {
+   "input": "1\n4",
+   "output": "-1"
+  },
+  {
+   "input": "8\n1 28 44 47 40 0 8 44",
+   "output": "44"
+  },
+  {
+   "input": "17\n0 15 13 24 11 18 8 0 4 5 22 2 47 25 17 36 22",
+   "output": "36"
+  }
+ ],
+ "count-even-odd": [
+  {
+   "input": "5\n1 2 3 4 5",
+   "output": "2 3"
+  },
+  {
+   "input": "3\n-2 0 7",
+   "output": "2 1"
+  },
+  {
+   "input": "1\n11",
+   "output": "0 1"
+  },
+  {
+   "input": "15\n-23 -91 -75 -93 48 -52 40 -12 -53 78 -70 -21 36 -21 8",
+   "output": "8 7"
+  },
+  {
+   "input": "23\n-85 27 47 -39 -73 -32 54 36 66 68 -17 81 79 -53 -46 -81 -56 56 88 -33 33 2 99",
+   "output": "10 13"
+  },
+  {
+   "input": "14\n-93 98 -56 -65 37 -74 -66 -43 68 82 -69 51 5 80",
+   "output": "7 7"
+  }
+ ],
+ "prefix-sums": [
+  {
+   "input": "4\n1 2 3 4",
+   "output": "1 3 6 10"
+  },
+  {
+   "input": "3\n5 -5 5",
+   "output": "5 0 5"
+  },
+  {
+   "input": "1\n0",
+   "output": "0"
+  },
+  {
+   "input": "20\n0 -24 -15 -38 -59 -93 -74 -51 -73 -65 -74 -31 -79 -49 21 -28 38 -6 -20 -66",
+   "output": "0 -24 -39 -77 -136 -229 -303 -354 -427 -492 -566 -597 -676 -725 -704 -732 -694 -700 -720 -786"
+  },
+  {
+   "input": "18\n75 96 93 6 -21 77 3 -9 82 -62 17 -44 -78 98 -10 73 -84 -70",
+   "output": "75 171 264 270 249 326 329 320 402 340 357 313 235 333 323 396 312 242"
+  },
+  {
+   "input": "16\n-71 44 -87 -92 10 -64 15 -40 -94 88 72 -11 97 51 -8 82",
+   "output": "-71 -27 -114 -206 -196 -260 -245 -285 -379 -291 -219 -230 -133 -82 -90 -8"
+  }
+ ],
+ "range-sum-queries": [
+  {
+   "input": "5\n1 2 3 4 5\n3\n1 5\n2 4\n3 3",
+   "output": "15\n9\n3"
+  },
+  {
+   "input": "3\n-1 4 -2\n2\n1 2\n2 3",
+   "output": "3\n2"
+  },
+  {
+   "input": "9\n0 -22 10 -29 14 -28 -19 -47 -47\n5\n7 8\n9 9\n4 5\n6 7\n5 6",
+   "output": "-66\n-47\n-15\n-47\n-14"
+  },
+  {
+   "input": "10\n-8 -43 -35 -20 45 -20 37 34 8 -25\n5\n7 9\n10 10\n8 10\n8 10\n5 7",
+   "output": "79\n-25\n17\n17\n62"
+  },
+  {
+   "input": "7\n28 -43 -39 9 17 -46 27\n3\n7 7\n2 2\n6 7",
+   "output": "27\n-43\n-19"
+  }
+ ],
+ "rotate-left": [
+  {
+   "input": "5 2\n1 2 3 4 5",
+   "output": "3 4 5 1 2"
+  },
+  {
+   "input": "3 3\n7 8 9",
+   "output": "7 8 9"
+  },
+  {
+   "input": "4 6\n1 2 3 4",
+   "output": "3 4 1 2"
+  },
+  {
+   "input": "1 5\n42",
+   "output": "42"
+  },
+  {
+   "input": "11 2\n90 11 64 89 15 60 26 96 24 54 52",
+   "output": "64 89 15 60 26 96 24 54 52 90 11"
+  },
+  {
+   "input": "4 14\n64 82 77 58",
+   "output": "77 58 64 82"
+  }
+ ],
+ "remove-duplicates-sorted": [
+  {
+   "input": "6\n1 1 2 3 3 3",
+   "output": "3\n1 2 3"
+  },
+  {
+   "input": "3\n5 5 5",
+   "output": "1\n5"
+  },
+  {
+   "input": "4\n-2 -1 0 1",
+   "output": "4\n-2 -1 0 1"
+  },
+  {
+   "input": "6\n0 1 1 4 5 5",
+   "output": "4\n0 1 4 5"
+  },
+  {
+   "input": "6\n1 1 2 4 7 7",
+   "output": "4\n1 2 4 7"
+  }
+ ],
+ "merge-sorted-arrays": [
+  {
+   "input": "3\n1 4 7\n4\n2 3 8 9",
+   "output": "1 2 3 4 7 8 9"
+  },
+  {
+   "input": "1\n5\n2\n1 5",
+   "output": "1 5 5"
+  },
+  {
+   "input": "2\n-3 0\n0\n",
+   "output": "-3 0"
+  },
+  {
+   "input": "4\n3 5 9 25\n6\n0 4 8 14 17 19",
+   "output": "0 3 4 5 8 9 14 17 19 25"
+  },
+  {
+   "input": "4\n0 7 10 34\n1\n5",
+   "output": "0 5 7 10 34"
+  }
+ ],
+ "move-negatives": [
+  {
+   "input": "6\n3 -1 4 -5 0 -2",
+   "output": "-1 -5 -2 3 4 0"
+  },
+  {
+   "input": "3\n1 2 3",
+   "output": "1 2 3"
+  },
+  {
+   "input": "3\n-1 -2 -3",
+   "output": "-1 -2 -3"
+  },
+  {
+   "input": "9\n-3 1 13 17 11 0 -9 19 14",
+   "output": "-3 -9 1 13 17 11 0 19 14"
+  },
+  {
+   "input": "6\n5 6 -15 19 20 19",
+   "output": "-15 5 6 19 20 19"
+  }
+ ],
+ "leaders-in-array": [
+  {
+   "input": "6\n16 17 4 3 5 2",
+   "output": "17 5 2"
+  },
+  {
+   "input": "4\n1 2 3 4",
+   "output": "4"
+  },
+  {
+   "input": "4\n4 3 2 1",
+   "output": "4 3 2 1"
+  },
+  {
+   "input": "19\n21 26 7 48 46 38 26 44 49 23 33 2 39 42 10 32 24 49 44",
+   "output": "49 44"
+  },
+  {
+   "input": "17\n22 38 19 47 50 9 21 44 25 19 28 36 22 24 8 45 25",
+   "output": "50 45 25"
+  }
+ ],
+ "equilibrium-index": [
+  {
+   "input": "7\n-7 1 5 2 -4 3 0",
+   "output": "3"
+  },
+  {
+   "input": "3\n1 2 3",
+   "output": "-1"
+  },
+  {
+   "input": "1\n5",
+   "output": "0"
+  },
+  {
+   "input": "5\n2 0 0 0 2",
+   "output": "1"
+  },
+  {
+   "input": "7\n-4 2 -5 3 0 3 -1",
+   "output": "-1"
+  },
+  {
+   "input": "15\n-1 2 3 -2 4 -3 0 -2 -1 4 4 -4 -2 2 -1",
+   "output": "-1"
+  }
+ ],
+ "max-consecutive-ones": [
+  {
+   "input": "6\n1 1 0 1 1 1",
+   "output": "3"
+  },
+  {
+   "input": "3\n0 0 0",
+   "output": "0"
+  },
+  {
+   "input": "1\n1",
+   "output": "1"
+  },
+  {
+   "input": "27\n1 1 1 0 1 0 0 0 0 0 0 0 0 0 1 1 1 1 1 0 1 1 1 0 1 0 1",
+   "output": "5"
+  },
+  {
+   "input": "25\n1 1 0 1 1 0 0 0 1 1 0 1 1 0 1 0 1 1 1 0 0 0 0 0 1",
+   "output": "3"
+  },
+  {
+   "input": "16\n0 0 0 1 0 0 0 1 1 1 0 0 0 1 1 1",
+   "output": "3"
+  }
+ ],
+ "missing-and-repeating": [
+  {
+   "input": "5\n3 1 2 5 3",
+   "output": "3 4"
+  },
+  {
+   "input": "2\n2 2",
+   "output": "2 1"
+  },
+  {
+   "input": "4\n1 1 3 4",
+   "output": "1 2"
+  },
+  {
+   "input": "5\n4 2 5 2 1",
+   "output": "2 3"
+  },
+  {
+   "input": "6\n6 1 3 4 3 5",
+   "output": "3 2"
+  },
+  {
+   "input": "7\n4 5 2 7 6 2 3",
+   "output": "2 1"
+  }
+ ],
+ "kadane-indices": [
+  {
+   "input": "5\n-2 3 -1 4 -5",
+   "output": "6 2 4"
+  },
+  {
+   "input": "3\n-3 -1 -2",
+   "output": "-1 2 2"
+  },
+  {
+   "input": "4\n1 -1 1 -1",
+   "output": "1 1 1"
+  },
+  {
+   "input": "12\n5 -1 -3 0 -4 10 10 10 2 -8 -8 -9",
+   "output": "32 6 9"
+  },
+  {
+   "input": "18\n0 -7 7 1 7 -5 -9 5 6 9 -3 -6 5 8 10 2 -1 -4",
+   "output": "37 3 16"
+  },
+  {
+   "input": "16\n-7 7 2 -1 -5 -3 10 6 5 2 -9 10 1 -6 4 6",
+   "output": "29 2 16"
+  }
+ ],
+ "product-of-array": [
+  {
+   "input": "3\n2 3 4",
+   "output": "24"
+  },
+  {
+   "input": "2\n-1 5",
+   "output": "1000000002"
+  },
+  {
+   "input": "4\n1000000000 1000000000 3 7",
+   "output": "1029"
+  },
+  {
+   "input": "16\n901005614 92697586 -370522019 349794629 -123286076 -616839572 133358304 787922810 369119756 199896064 255654654 -399163475 503709211 983966583 -715017132 -989942137",
+   "output": "629689915"
+  },
+  {
+   "input": "10\n936190853 -12133701 626986673 165951911 712783004 -470887763 -225856404 -171685771 74845296 486234297",
+   "output": "620589239"
+  },
+  {
+   "input": "10\n-779956710 -785815717 788328772 735481216 -719973501 405527183 495846549 -355286692 88091228 454033176",
+   "output": "614739979"
+  }
+ ],
+ "pair-with-difference": [
+  {
+   "input": "5 3\n1 5 2 8 4",
+   "output": "YES"
+  },
+  {
+   "input": "3 10\n1 2 3",
+   "output": "NO"
+  },
+  {
+   "input": "2 0\n7 7",
+   "output": "YES"
+  },
+  {
+   "input": "2 0\n7 8",
+   "output": "NO"
+  },
+  {
+   "input": "12 5\n27 6 10 19 24 0 9 14 21 3 1 16",
+   "output": "YES"
+  },
+  {
+   "input": "9 9\n5 13 16 10 15 15 13 16 5",
+   "output": "NO"
+  },
+  {
+   "input": "14 8\n7 3 0 16 7 17 2 24 17 30 7 10 11 5",
+   "output": "YES"
+  }
+ ],
+ "count-pairs-sum": [
+  {
+   "input": "4 6\n1 5 7 1",
+   "output": "2"
+  },
+  {
+   "input": "4 2\n1 1 1 1",
+   "output": "6"
+  },
+  {
+   "input": "3 100\n1 2 3",
+   "output": "0"
+  },
+  {
+   "input": "23 6\n4 0 0 7 4 4 4 1 6 4 3 8 1 2 4 6 5 7 2 8 1 7 4",
+   "output": "21"
+  },
+  {
+   "input": "6 4\n8 2 2 3 6 2",
+   "output": "3"
+  },
+  {
+   "input": "23 3\n6 6 4 5 7 5 3 2 1 8 1 2 4 0 1 5 2 7 5 1 2 1 7",
+   "output": "21"
+  }
+ ],
+ "subarray-sum-k": [
+  {
+   "input": "3 2\n1 1 1",
+   "output": "2"
+  },
+  {
+   "input": "3 3\n1 2 3",
+   "output": "2"
+  },
+  {
+   "input": "4 0\n1 -1 1 -1",
+   "output": "4"
+  },
+  {
+   "input": "6 3\n-1 1 1 0 1 3",
+   "output": "2"
+  },
+  {
+   "input": "6 -3\n4 1 0 4 2 3",
+   "output": "0"
+  },
+  {
+   "input": "20 1\n-3 1 -3 -3 4 -2 3 0 4 -2 0 -2 1 0 4 3 2 1 -1 4",
+   "output": "18"
+  }
+ ],
+ "longest-subarray-sum-k": [
+  {
+   "input": "6 15\n10 5 2 7 1 9",
+   "output": "4"
+  },
+  {
+   "input": "3 6\n-1 2 3",
+   "output": "0"
+  },
+  {
+   "input": "3 100\n1 2 3",
+   "output": "0"
+  },
+  {
+   "input": "13 4\n2 2 1 4 1 1 -2 3 0 -1 1 2 2",
+   "output": "7"
+  },
+  {
+   "input": "14 2\n0 2 1 -1 3 -3 2 -3 0 -1 3 -2 -2 0",
+   "output": "6"
+  },
+  {
+   "input": "20 4\n2 -2 -3 0 1 1 3 2 -1 -2 1 -2 1 1 -3 2 -2 1 -1 -1",
+   "output": "13"
+  }
+ ],
+ "max-sum-window": [
+  {
+   "input": "6 3\n2 1 5 1 3 2",
+   "output": "9"
+  },
+  {
+   "input": "4 4\n1 2 3 4",
+   "output": "10"
+  },
+  {
+   "input": "5 1\n-5 -2 -9 -1 -3",
+   "output": "-1"
+  },
+  {
+   "input": "10 4\n16 13 -1 19 -20 13 17 20 -1 -13",
+   "output": "49"
+  },
+  {
+   "input": "13 11\n-3 -11 3 -18 7 17 14 16 -6 -17 8 -5 10",
+   "output": "29"
+  },
+  {
+   "input": "23 18\n-7 18 3 -12 7 13 -12 -1 2 -2 -13 -15 -7 -17 15 17 17 17 16 5 -14 20 5",
+   "output": "48"
+  }
+ ],
+ "smallest-subarray-sum-at-least": [
+  {
+   "input": "6 7\n2 3 1 2 4 3",
+   "output": "2"
+  },
+  {
+   "input": "3 4\n1 4 4",
+   "output": "1"
+  },
+  {
+   "input": "8 11\n1 1 1 1 1 1 1 1",
+   "output": "0"
+  },
+  {
+   "input": "16 36\n2 2 10 10 10 3 8 5 3 10 9 7 1 3 3 8",
+   "output": "5"
+  },
+  {
+   "input": "7 24\n10 1 4 2 5 9 5",
+   "output": "5"
+  },
+  {
+   "input": "15 22\n9 8 5 1 5 3 9 9 10 6 5 1 2 2 7",
+   "output": "3"
+  }
+ ],
+ "count-inversions": [
+  {
+   "input": "5\n2 4 1 3 5",
+   "output": "3"
+  },
+  {
+   "input": "3\n1 2 3",
+   "output": "0"
+  },
+  {
+   "input": "4\n4 3 2 1",
+   "output": "6"
+  },
+  {
+   "input": "3\n2 2 2",
+   "output": "0"
+  },
+  {
+   "input": "60\n50 30 47 45 22 28 11 47 42 4 29 2 43 36 15 11 38 45 44 38 1 49 32 38 43 28 42 36 11 24 18 0 42 12 24 3 36 25 47 24 15 34 12 24 12 10 40 8 27 20 32 24 22 34 32 44 49 4 7 27",
+   "output": "1010"
+  },
+  {
+   "input": "16\n38 30 27 33 25 4 2 22 5 37 49 44 48 5 29 47",
+   "output": "52"
+  },
+  {
+   "input": "19\n5 22 23 9 17 21 24 4 12 44 39 42 1 31 27 47 22 48 3",
+   "output": "64"
+  }
+ ],
+ "majority-n-by-3": [
+  {
+   "input": "3\n3 2 3",
+   "output": "3"
+  },
+  {
+   "input": "1\n1",
+   "output": "1"
+  },
+  {
+   "input": "8\n1 2 3 1 2 3 1 2",
+   "output": "1 2"
+  },
+  {
+   "input": "6\n1 2 3 4 5 6",
+   "output": "-1"
+  },
+  {
+   "input": "17\n4 2 2 4 2 3 2 3 2 3 2 1 3 1 3 2 3",
+   "output": "2 3"
+  },
+  {
+   "input": "11\n2 2 2 3 2 1 1 3 3 2 3",
+   "output": "2 3"
+  }
+ ],
+ "stock-span": [
+  {
+   "input": "7\n100 80 60 70 60 75 85",
+   "output": "1 1 1 2 1 4 6"
+  },
+  {
+   "input": "3\n10 20 30",
+   "output": "1 2 3"
+  },
+  {
+   "input": "3\n30 20 10",
+   "output": "1 1 1"
+  },
+  {
+   "input": "19\n4 10 12 16 50 9 45 18 42 44 42 30 37 6 20 42 13 39 50",
+   "output": "1 2 3 4 5 1 2 1 2 3 1 1 2 1 2 6 1 2 19"
+  },
+  {
+   "input": "17\n41 43 11 24 32 49 36 29 20 46 6 28 4 6 44 34 46",
+   "output": "1 2 1 2 3 6 1 1 1 4 1 2 1 2 5 1 11"
+  },
+  {
+   "input": "17\n24 20 13 24 32 24 8 39 32 37 14 40 27 7 3 20 10",
+   "output": "1 1 1 4 5 1 1 8 1 2 1 12 1 1 1 3 1"
+  }
+ ],
+ "sort-012": [
+  {
+   "input": "6\n2 0 2 1 1 0",
+   "output": "0 0 1 1 2 2"
+  },
+  {
+   "input": "3\n2 1 0",
+   "output": "0 1 2"
+  },
+  {
+   "input": "1\n1",
+   "output": "1"
+  },
+  {
+   "input": "6\n0 2 0 2 0 1",
+   "output": "0 0 0 1 2 2"
+  },
+  {
+   "input": "18\n2 2 2 0 2 2 0 1 0 2 1 0 2 2 2 1 1 2",
+   "output": "0 0 0 0 1 1 1 1 2 2 2 2 2 2 2 2 2 2"
+  },
+  {
+   "input": "17\n1 2 1 0 0 1 0 0 1 0 0 0 2 2 2 2 1",
+   "output": "0 0 0 0 0 0 0 1 1 1 1 1 2 2 2 2 2"
+  }
+ ],
+ "next-permutation": [
+  {
+   "input": "3\n1 2 3",
+   "output": "1 3 2"
+  },
+  {
+   "input": "3\n3 2 1",
+   "output": "1 2 3"
+  },
+  {
+   "input": "3\n1 1 5",
+   "output": "1 5 1"
+  },
+  {
+   "input": "5\n1 3 5 4 2",
+   "output": "1 4 2 3 5"
+  },
+  {
+   "input": "10\n3 2 2 4 3 3 4 1 5 3",
+   "output": "3 2 2 4 3 3 4 3 1 5"
+  },
+  {
+   "input": "6\n5 2 3 5 6 3",
+   "output": "5 2 3 6 3 5"
+  }
+ ],
+ "rearrange-alternate": [
+  {
+   "input": "6\n3 1 -2 -5 2 -4",
+   "output": "3 -2 1 -5 2 -4"
+  },
+  {
+   "input": "2\n-1 1",
+   "output": "1 -1"
+  },
+  {
+   "input": "4\n-1 -2 3 4",
+   "output": "3 -1 4 -2"
+  },
+  {
+   "input": "14\n-3 7 -14 17 -5 -5 -1 4 -1 9 17 5 -3 4",
+   "output": "7 -3 17 -14 4 -5 9 -5 17 -1 5 -1 4 -3"
+  },
+  {
+   "input": "12\n-10 -16 17 9 7 15 -11 -11 12 -17 17 -10",
+   "output": "17 -10 9 -16 7 -11 15 -11 12 -17 17 -10"
+  }
+ ],
+ "find-peak": [
+  {
+   "input": "4\n1 2 3 1",
+   "output": "2"
+  },
+  {
+   "input": "7\n1 2 1 3 5 6 4",
+   "output": "1"
+  },
+  {
+   "input": "1\n5",
+   "output": "0"
+  },
+  {
+   "input": "3\n3 2 1",
+   "output": "0"
+  },
+  {
+   "input": "9\n2 3 4 0 4 9 7 9 0",
+   "output": "2"
+  },
+  {
+   "input": "11\n4 7 6 3 5 4 2 3 5 0 5",
+   "output": "1"
+  }
+ ],
+ "intersection-sorted": [
+  {
+   "input": "4\n1 2 2 1\n2\n2 2",
+   "output": "2"
+  },
+  {
+   "input": "3\n4 9 5\n5\n9 4 9 8 4",
+   "output": "4 9"
+  },
+  {
+   "input": "2\n1 2\n2\n3 4",
+   "output": "-1"
+  },
+  {
+   "input": "12\n11 5 7 9 2 12 2 4 2 6 3 8\n10\n6 4 13 0 0 14 2 15 3 13",
+   "output": "2 3 4 6"
+  },
+  {
+   "input": "11\n6 3 10 9 9 10 15 0 12 3 4\n11\n3 3 0 4 9 3 9 0 12 13 11",
+   "output": "0 3 4 9 12"
+  }
+ ],
+ "union-sorted": [
+  {
+   "input": "3\n1 2 3\n3\n2 3 4",
+   "output": "1 2 3 4"
+  },
+  {
+   "input": "2\n5 5\n1\n5",
+   "output": "5"
+  },
+  {
+   "input": "2\n-1 0\n2\n3 -4",
+   "output": "-4 -1 0 3"
+  },
+  {
+   "input": "4\n3 8 4 15\n11\n7 15 0 4 7 12 4 0 7 7 4",
+   "output": "0 3 4 7 8 12 15"
+  },
+  {
+   "input": "5\n3 3 13 1 5\n10\n11 3 10 10 0 14 3 14 2 9",
+   "output": "0 1 2 3 5 9 10 11 13 14"
+  }
+ ],
+ "frequency-sort": [
+  {
+   "input": "6\n2 5 2 8 5 6",
+   "output": "2 2 5 5 6 8"
+  },
+  {
+   "input": "5\n1 1 1 3 3",
+   "output": "1 1 1 3 3"
+  },
+  {
+   "input": "3\n3 2 1",
+   "output": "1 2 3"
+  },
+  {
+   "input": "21\n0 1 3 6 2 1 6 1 3 5 5 1 3 5 3 5 4 0 5 2 0",
+   "output": "5 5 5 5 5 1 1 1 1 3 3 3 3 0 0 0 2 2 6 6 4"
+  },
+  {
+   "input": "16\n0 4 6 3 4 6 3 0 2 2 5 4 0 3 0 5",
+   "output": "0 0 0 0 3 3 3 4 4 4 2 2 5 5 6 6"
+  },
+  {
+   "input": "16\n0 5 6 6 5 0 1 6 6 0 3 3 3 1 1 4",
+   "output": "6 6 6 6 0 0 0 1 1 1 3 3 3 5 5 4"
+  }
+ ],
+ "first-repeating": [
+  {
+   "input": "7\n10 5 3 4 3 5 6",
+   "output": "5"
+  },
+  {
+   "input": "3\n1 2 3",
+   "output": "-1"
+  },
+  {
+   "input": "2\n9 9",
+   "output": "9"
+  },
+  {
+   "input": "5\n11 20 6 13 7",
+   "output": "-1"
+  },
+  {
+   "input": "12\n10 19 20 10 11 10 20 0 1 6 8 0",
+   "output": "10"
+  },
+  {
+   "input": "7\n18 14 11 16 8 14 3",
+   "output": "14"
+  }
+ ],
+ "zigzag-array": [
+  {
+   "input": "7\n4 3 7 8 6 2 1",
+   "output": "3 7 4 8 2 6 1"
+  },
+  {
+   "input": "4\n1 4 3 2",
+   "output": "1 4 2 3"
+  },
+  {
+   "input": "1\n5",
+   "output": "5"
+  },
+  {
+   "input": "5\n7 13 10 4 1",
+   "output": "7 13 4 10 1"
+  },
+  {
+   "input": "11\n22 19 16 7 4 31 10 1 13 28 25",
+   "output": "19 22 7 16 4 31 1 13 10 28 25"
+  }
+ ],
+ "minimum-platforms": [
+  {
+   "input": "6\n900 940 950 1100 1500 1800\n910 1200 1120 1130 1900 2000",
+   "output": "3"
+  },
+  {
+   "input": "2\n900 1000\n1000 1100",
+   "output": "2"
+  },
+  {
+   "input": "3\n900 900 900\n930 940 950",
+   "output": "3"
+  },
+  {
+   "input": "7\n924 1474 1190 1834 1453 1642 2118\n980 1554 1244 1880 1569 1652 2210",
+   "output": "2"
+  },
+  {
+   "input": "6\n1504 675 1859 1904 2069 1378\n1608 742 1978 2012 2100 1408",
+   "output": "2"
+  }
+ ],
+ "chocolate-distribution": [
+  {
+   "input": "7 3\n7 3 2 4 9 12 56",
+   "output": "2"
+  },
+  {
+   "input": "5 5\n1 2 3 4 5",
+   "output": "4"
+  },
+  {
+   "input": "3 1\n9 4 7",
+   "output": "0"
+  },
+  {
+   "input": "20 14\n46 31 87 84 21 63 38 15 84 38 14 42 90 77 34 13 40 76 75 87",
+   "output": "52"
+  },
+  {
+   "input": "12 4\n30 87 66 1 29 56 52 68 61 66 48 67",
+   "output": "2"
+  },
+  {
+   "input": "8 8\n60 52 49 10 5 62 86 64",
+   "output": "81"
+  }
+ ],
+ "maximum-product-pair": [
+  {
+   "input": "5\n1 4 3 6 7",
+   "output": "42"
+  },
+  {
+   "input": "4\n-10 -3 5 6",
+   "output": "30"
+  },
+  {
+   "input": "3\n-1 -2 -3",
+   "output": "6"
+  },
+  {
+   "input": "2\n0 -5",
+   "output": "0"
+  },
+  {
+   "input": "20\n77 -54 -53 47 20 95 -11 96 -78 -40 85 73 -48 -84 -57 -64 -59 79 -40 -13",
+   "output": "9120"
+  },
+  {
+   "input": "12\n-100 15 -12 -34 7 5 26 -85 69 84 59 -28",
+   "output": "8500"
+  }
+ ],
+ "count-distinct-window": [
+  {
+   "input": "7 4\n1 2 1 3 4 2 3",
+   "output": "3 4 4 3"
+  },
+  {
+   "input": "3 1\n5 5 5",
+   "output": "1 1 1"
+  },
+  {
+   "input": "4 4\n1 2 3 1",
+   "output": "3"
+  },
+  {
+   "input": "20 7\n6 6 2 5 5 4 2 3 6 1 4 4 2 6 1 2 4 5 4 2",
+   "output": "4 5 5 6 6 5 5 5 4 4 4 5 5 5"
+  },
+  {
+   "input": "14 3\n4 6 4 6 5 2 5 1 1 2 6 3 1 2",
+   "output": "2 2 3 3 2 3 2 2 3 3 3 3"
+  },
+  {
+   "input": "9 4\n6 1 3 4 2 4 2 1 5",
+   "output": "4 4 3 2 3 4"
+  }
+ ],
+ "reverse-string": [
+  {
+   "input": "hello",
+   "output": "olleh"
+  },
+  {
+   "input": "a",
+   "output": "a"
+  },
+  {
+   "input": "racecar",
+   "output": "racecar"
+  },
+  {
+   "input": "Hello World",
+   "output": "dlroW olleH"
+  },
+  {
+   "input": "grdrjjkrimdoldba",
+   "output": "abdlodmirkjjrdrg"
+  },
+  {
+   "input": "eyafusb",
+   "output": "bsufaye"
+  }
+ ],
+ "count-characters": [
+  {
+   "input": "Hello World 123!",
+   "output": "10 3 2 1"
+  },
+  {
+   "input": "abc",
+   "output": "3 0 0 0"
+  },
+  {
+   "input": "2024-10-18 is a Friday.",
+   "output": "9 8 3 3"
+  },
+  {
+   "input": "   ",
+   "output": "0 0 3 0"
+  },
+  {
+   "input": "#$%&",
+   "output": "0 0 0 4"
+  }
+ ],
+ "toggle-case": [
+  {
+   "input": "Hello World",
+   "output": "hELLO wORLD"
+  },
+  {
+   "input": "abc",
+   "output": "ABC"
+  },
+  {
+   "input": "ABC123xyz",
+   "output": "abc123XYZ"
+  },
+  {
+   "input": "MyLoginn IDE!",
+   "output": "mYlOGINN ide!"
+  }
+ ],
+ "count-words": [
+  {
+   "input": "the quick brown fox",
+   "output": "4"
+  },
+  {
+   "input": "  hello   world  ",
+   "output": "2"
+  },
+  {
+   "input": "one",
+   "output": "1"
+  },
+  {
+   "input": "a b c d e f",
+   "output": "6"
+  }
+ ],
+ "capitalize-words": [
+  {
+   "input": "hello world",
+   "output": "Hello World"
+  },
+  {
+   "input": "mYlOGINN coding PRACTICE",
+   "output": "Myloginn Coding Practice"
+  },
+  {
+   "input": "a",
+   "output": "A"
+  },
+  {
+   "input": "python is fun",
+   "output": "Python Is Fun"
+  }
+ ],
+ "remove-vowels": [
+  {
+   "input": "Hello World",
+   "output": "Hll Wrld"
+  },
+  {
+   "input": "programming",
+   "output": "prgrmmng"
+  },
+  {
+   "input": "AEIOU xyz",
+   "output": " xyz"
+  },
+  {
+   "input": "rhythm",
+   "output": "rhythm"
+  }
+ ],
+ "character-frequency": [
+  {
+   "input": "banana",
+   "output": "a 3\nb 1\nn 2"
+  },
+  {
+   "input": "abc",
+   "output": "a 1\nb 1\nc 1"
+  },
+  {
+   "input": "zzz",
+   "output": "z 3"
+  },
+  {
+   "input": "dbbbcdaadbea",
+   "output": "a 3\nb 4\nc 1\nd 3\ne 1"
+  },
+  {
+   "input": "aacbbfebffaff",
+   "output": "a 3\nb 3\nc 1\ne 1\nf 5"
+  }
+ ],
+ "is-isogram": [
+  {
+   "input": "Dermatoglyphics",
+   "output": "YES"
+  },
+  {
+   "input": "hello",
+   "output": "NO"
+  },
+  {
+   "input": "Alpha",
+   "output": "NO"
+  },
+  {
+   "input": "x",
+   "output": "YES"
+  }
+ ],
+ "is-pangram": [
+  {
+   "input": "The quick brown fox jumps over the lazy dog",
+   "output": "YES"
+  },
+  {
+   "input": "Hello world",
+   "output": "NO"
+  },
+  {
+   "input": "Pack my box with five dozen liquor jugs",
+   "output": "YES"
+  },
+  {
+   "input": "abcdefghijklmnopqrstuvwxy",
+   "output": "NO"
+  }
+ ],
+ "longest-word": [
+  {
+   "input": "I love programming in Python",
+   "output": "programming"
+  },
+  {
+   "input": "a bb cc d",
+   "output": "bb"
+  },
+  {
+   "input": "hello",
+   "output": "hello"
+  },
+  {
+   "input": "the cat sat on the mat",
+   "output": "the"
+  }
+ ],
+ "string-rotation": [
+  {
+   "input": "waterbottle\nerbottlewat",
+   "output": "YES"
+  },
+  {
+   "input": "abc\nacb",
+   "output": "NO"
+  },
+  {
+   "input": "aa\naa",
+   "output": "YES"
+  },
+  {
+   "input": "abcd\nabc",
+   "output": "NO"
+  },
+  {
+   "input": "abcde\ncdeab",
+   "output": "YES"
+  }
+ ],
+ "run-length-decode": [
+  {
+   "input": "a3b2c1",
+   "output": "aaabbc"
+  },
+  {
+   "input": "x10",
+   "output": "xxxxxxxxxx"
+  },
+  {
+   "input": "a1b1c1",
+   "output": "abc"
+  },
+  {
+   "input": "z2y12x3",
+   "output": "zzyyyyyyyyyyyyxxx"
+  }
+ ],
+ "first-non-repeating-char": [
+  {
+   "input": "leetcode",
+   "output": "0"
+  },
+  {
+   "input": "loveleetcode",
+   "output": "2"
+  },
+  {
+   "input": "aabb",
+   "output": "-1"
+  },
+  {
+   "input": "z",
+   "output": "0"
+  },
+  {
+   "input": "edbebeabee",
+   "output": "1"
+  },
+  {
+   "input": "eecebcdadaa",
+   "output": "4"
+  }
+ ],
+ "longest-common-prefix": [
+  {
+   "input": "3\nflower\nflow\nflight",
+   "output": "fl"
+  },
+  {
+   "input": "3\ndog\nracecar\ncar",
+   "output": "-"
+  },
+  {
+   "input": "1\nalone",
+   "output": "alone"
+  },
+  {
+   "input": "2\ninterview\ninternet",
+   "output": "inter"
+  }
+ ],
+ "valid-palindrome-alnum": [
+  {
+   "input": "A man, a plan, a canal: Panama",
+   "output": "YES"
+  },
+  {
+   "input": "race a car",
+   "output": "NO"
+  },
+  {
+   "input": " ",
+   "output": "YES"
+  },
+  {
+   "input": "No 'x' in Nixon",
+   "output": "YES"
+  },
+  {
+   "input": "12321",
+   "output": "YES"
+  },
+  {
+   "input": "1231",
+   "output": "NO"
+  }
+ ],
+ "longest-substring-no-repeat": [
+  {
+   "input": "abcabcbb",
+   "output": "3"
+  },
+  {
+   "input": "bbbbb",
+   "output": "1"
+  },
+  {
+   "input": "pwwkew",
+   "output": "3"
+  },
+  {
+   "input": "a",
+   "output": "1"
+  },
+  {
+   "input": "ahdfhgagbhaca",
+   "output": "5"
+  },
+  {
+   "input": "babhegcdehbgcbdba",
+   "output": "7"
+  }
+ ],
+ "group-anagrams-count": [
+  {
+   "input": "6\neat tea tan ate nat bat",
+   "output": "3"
+  },
+  {
+   "input": "1\na",
+   "output": "1"
+  },
+  {
+   "input": "3\nabc def ghi",
+   "output": "3"
+  },
+  {
+   "input": "4\nab ba ab ba",
+   "output": "1"
+  }
+ ],
+ "balanced-string-split": [
+  {
+   "input": "RLRRLLRLRL",
+   "output": "4"
+  },
+  {
+   "input": "RLLLLRRRLR",
+   "output": "3"
+  },
+  {
+   "input": "LLLLRRRR",
+   "output": "1"
+  },
+  {
+   "input": "RL",
+   "output": "1"
+  }
+ ],
+ "string-to-integer": [
+  {
+   "input": "42",
+   "output": "42"
+  },
+  {
+   "input": "   -42",
+   "output": "-42"
+  },
+  {
+   "input": "4193 with words",
+   "output": "4193"
+  },
+  {
+   "input": "words and 987",
+   "output": "0"
+  },
+  {
+   "input": "-91283472332",
+   "output": "-2147483648"
+  },
+  {
+   "input": "+1",
+   "output": "1"
+  },
+  {
+   "input": "  +0 123",
+   "output": "0"
+  }
+ ],
+ "roman-to-integer": [
+  {
+   "input": "III",
+   "output": "3"
+  },
+  {
+   "input": "LVIII",
+   "output": "58"
+  },
+  {
+   "input": "MCMXCIV",
+   "output": "1994"
+  },
+  {
+   "input": "IX",
+   "output": "9"
+  },
+  {
+   "input": "MMMCMXCIX",
+   "output": "3999"
+  }
+ ],
+ "integer-to-roman": [
+  {
+   "input": "3",
+   "output": "III"
+  },
+  {
+   "input": "58",
+   "output": "LVIII"
+  },
+  {
+   "input": "1994",
+   "output": "MCMXCIV"
+  },
+  {
+   "input": "4",
+   "output": "IV"
+  },
+  {
+   "input": "3999",
+   "output": "MMMCMXCIX"
+  }
+ ],
+ "count-substrings-palindrome": [
+  {
+   "input": "abc",
+   "output": "3"
+  },
+  {
+   "input": "aaa",
+   "output": "6"
+  },
+  {
+   "input": "abba",
+   "output": "6"
+  },
+  {
+   "input": "a",
+   "output": "1"
+  },
+  {
+   "input": "bbccccabaab",
+   "output": "21"
+  },
+  {
+   "input": "bbccabacaabcbbbcc",
+   "output": "29"
+  }
+ ],
+ "string-compression-count": [
+  {
+   "input": "hello",
+   "output": "l 2"
+  },
+  {
+   "input": "aabbcc",
+   "output": "a 2"
+  },
+  {
+   "input": "z",
+   "output": "z 1"
+  },
+  {
+   "input": "eabbaebecdbbeaecacaaabaad",
+   "output": "a 9"
+  },
+  {
+   "input": "baddebeaedaceadbcceeaeecc",
+   "output": "e 8"
+  },
+  {
+   "input": "cdeeebacddbb",
+   "output": "b 3"
+  }
+ ],
+ "check-subsequence": [
+  {
+   "input": "abc\nahbgdc",
+   "output": "YES"
+  },
+  {
+   "input": "axc\nahbgdc",
+   "output": "NO"
+  },
+  {
+   "input": "a\na",
+   "output": "YES"
+  },
+  {
+   "input": "aaa\naa",
+   "output": "NO"
+  },
+  {
+   "input": "ace\nabcde",
+   "output": "YES"
+  }
+ ],
+ "reverse-vowels": [
+  {
+   "input": "hello",
+   "output": "holle"
+  },
+  {
+   "input": "leetcode",
+   "output": "leotcede"
+  },
+  {
+   "input": "AEIou",
+   "output": "uoIEA"
+  },
+  {
+   "input": "xyz",
+   "output": "xyz"
+  }
+ ],
+ "word-pattern": [
+  {
+   "input": "abba\ndog cat cat dog",
+   "output": "YES"
+  },
+  {
+   "input": "abba\ndog cat cat fish",
+   "output": "NO"
+  },
+  {
+   "input": "aaaa\ndog cat cat dog",
+   "output": "NO"
+  },
+  {
+   "input": "abba\ndog dog dog dog",
+   "output": "NO"
+  },
+  {
+   "input": "ab\nx y z",
+   "output": "NO"
+  }
+ ],
+ "isomorphic-strings": [
+  {
+   "input": "egg\nadd",
+   "output": "YES"
+  },
+  {
+   "input": "foo\nbar",
+   "output": "NO"
+  },
+  {
+   "input": "paper\ntitle",
+   "output": "YES"
+  },
+  {
+   "input": "ab\naa",
+   "output": "NO"
+  },
+  {
+   "input": "abc\nab",
+   "output": "NO"
+  }
+ ],
+ "minimum-deletions-anagram": [
+  {
+   "input": "cde\nabc",
+   "output": "4"
+  },
+  {
+   "input": "abc\nabc",
+   "output": "0"
+  },
+  {
+   "input": "aab\nb",
+   "output": "2"
+  },
+  {
+   "input": "hello\nbillion",
+   "output": "6"
+  }
+ ],
+ "caesar-decode": [
+  {
+   "input": "3\nKhoor, Zruog!",
+   "output": "Hello, World!"
+  },
+  {
+   "input": "1\nbcd",
+   "output": "abc"
+  },
+  {
+   "input": "26\nSame",
+   "output": "Same"
+  },
+  {
+   "input": "52\nAbc xyz",
+   "output": "Abc xyz"
+  }
+ ],
+ "longest-repeating-char-replacement": [
+  {
+   "input": "ABAB\n2",
+   "output": "4"
+  },
+  {
+   "input": "AABABBA\n1",
+   "output": "4"
+  },
+  {
+   "input": "AAAA\n0",
+   "output": "4"
+  },
+  {
+   "input": "ABCDE\n1",
+   "output": "2"
+  },
+  {
+   "input": "BAAAB\n2",
+   "output": "5"
+  }
+ ],
+ "minimum-window-substring-length": [
+  {
+   "input": "ADOBECODEBANC\nABC",
+   "output": "4"
+  },
+  {
+   "input": "a\na",
+   "output": "1"
+  },
+  {
+   "input": "a\naa",
+   "output": "0"
+  },
+  {
+   "input": "aaflslflsldkalskaaa\naaa",
+   "output": "3"
+  },
+  {
+   "input": "abc\ncba",
+   "output": "3"
+  }
+ ],
+ "decode-ways": [
+  {
+   "input": "12",
+   "output": "2"
+  },
+  {
+   "input": "226",
+   "output": "3"
+  },
+  {
+   "input": "06",
+   "output": "0"
+  },
+  {
+   "input": "10",
+   "output": "1"
+  },
+  {
+   "input": "11106",
+   "output": "2"
+  },
+  {
+   "input": "1111111111111111111111111111111111111111111111111111111111",
+   "output": "722019349"
+  }
+ ],
+ "edit-distance-one": [
+  {
+   "input": "pale\nple",
+   "output": "YES"
+  },
+  {
+   "input": "pales\npale",
+   "output": "YES"
+  },
+  {
+   "input": "pale\nbale",
+   "output": "YES"
+  },
+  {
+   "input": "pale\nbake",
+   "output": "NO"
+  },
+  {
+   "input": "abc\nabc",
+   "output": "NO"
+  },
+  {
+   "input": "a\nab",
+   "output": "YES"
+  }
+ ],
+ "zigzag-conversion": [
+  {
+   "input": "PAYPALISHIRING\n3",
+   "output": "PAHNAPLSIIGYIR"
+  },
+  {
+   "input": "PAYPALISHIRING\n4",
+   "output": "PINALSIGYAHRPI"
+  },
+  {
+   "input": "A\n1",
+   "output": "A"
+  },
+  {
+   "input": "ABCDE\n2",
+   "output": "ACEBD"
+  }
+ ],
+ "repeated-substring-pattern": [
+  {
+   "input": "abab",
+   "output": "YES"
+  },
+  {
+   "input": "aba",
+   "output": "NO"
+  },
+  {
+   "input": "abcabcabcabc",
+   "output": "YES"
+  },
+  {
+   "input": "a",
+   "output": "NO"
+  },
+  {
+   "input": "aaaa",
+   "output": "YES"
+  }
+ ],
+ "count-and-say": [
+  {
+   "input": "1",
+   "output": "1"
+  },
+  {
+   "input": "4",
+   "output": "1211"
+  },
+  {
+   "input": "5",
+   "output": "111221"
+  },
+  {
+   "input": "10",
+   "output": "13211311123113112211"
+  }
+ ],
+ "valid-shuffle": [
+  {
+   "input": "aabcc\ndbbca\naadbbcbcac",
+   "output": "YES"
+  },
+  {
+   "input": "aabcc\ndbbca\naadbbbaccc",
+   "output": "NO"
+  },
+  {
+   "input": "a\nb\nab",
+   "output": "YES"
+  },
+  {
+   "input": "ab\ncd\nacbd",
+   "output": "YES"
+  },
+  {
+   "input": "ab\ncd\nadcb",
+   "output": "NO"
+  }
+ ],
+ "count-binary-substrings": [
+  {
+   "input": "00110011",
+   "output": "6"
+  },
+  {
+   "input": "10101",
+   "output": "4"
+  },
+  {
+   "input": "0",
+   "output": "0"
+  },
+  {
+   "input": "000111",
+   "output": "3"
+  }
+ ],
+ "factorial-big": [
+  {
+   "input": "5",
+   "output": "120"
+  },
+  {
+   "input": "0",
+   "output": "1"
+  },
+  {
+   "input": "20",
+   "output": "2432902008176640000"
+  },
+  {
+   "input": "50",
+   "output": "30414093201713378043612608166064768844377641568960512000000000000"
+  },
+  {
+   "input": "100",
+   "output": "93326215443944152681699238856266700490715968264381621468592963895217599993229915608941463976156518286253697920827223758251185210916864000000000000000000000000"
+  }
+ ],
+ "fibonacci-mod": [
+  {
+   "input": "10",
+   "output": "55"
+  },
+  {
+   "input": "0",
+   "output": "0"
+  },
+  {
+   "input": "1",
+   "output": "1"
+  },
+  {
+   "input": "100",
+   "output": "687995182"
+  },
+  {
+   "input": "1000000000000000000",
+   "output": "209783453"
+  }
+ ],
+ "sieve-primes": [
+  {
+   "input": "10",
+   "output": "2 3 5 7"
+  },
+  {
+   "input": "1",
+   "output": "-1"
+  },
+  {
+   "input": "2",
+   "output": "2"
+  },
+  {
+   "input": "30",
+   "output": "2 3 5 7 11 13 17 19 23 29"
+  },
+  {
+   "input": "100",
+   "output": "2 3 5 7 11 13 17 19 23 29 31 37 41 43 47 53 59 61 67 71 73 79 83 89 97"
+  }
+ ],
+ "prime-factorization": [
+  {
+   "input": "12",
+   "output": "2 2 3"
+  },
+  {
+   "input": "97",
+   "output": "97"
+  },
+  {
+   "input": "360",
+   "output": "2 2 2 3 3 5"
+  },
+  {
+   "input": "1000000007",
+   "output": "1000000007"
+  },
+  {
+   "input": "999999999989",
+   "output": "999999999989"
+  },
+  {
+   "input": "1024",
+   "output": "2 2 2 2 2 2 2 2 2 2"
+  }
+ ],
+ "count-divisors": [
+  {
+   "input": "12",
+   "output": "6"
+  },
+  {
+   "input": "1",
+   "output": "1"
+  },
+  {
+   "input": "17",
+   "output": "2"
+  },
+  {
+   "input": "1000000",
+   "output": "49"
+  },
+  {
+   "input": "999999999999",
+   "output": "256"
+  }
+ ],
+ "sum-of-divisors": [
+  {
+   "input": "12",
+   "output": "28"
+  },
+  {
+   "input": "1",
+   "output": "1"
+  },
+  {
+   "input": "28",
+   "output": "56"
+  },
+  {
+   "input": "97",
+   "output": "98"
+  },
+  {
+   "input": "1000000",
+   "output": "2480437"
+  }
+ ],
+ "perfect-number": [
+  {
+   "input": "6",
+   "output": "YES"
+  },
+  {
+   "input": "28",
+   "output": "YES"
+  },
+  {
+   "input": "12",
+   "output": "NO"
+  },
+  {
+   "input": "1",
+   "output": "NO"
+  },
+  {
+   "input": "8128",
+   "output": "YES"
+  },
+  {
+   "input": "33550336",
+   "output": "YES"
+  }
+ ],
+ "armstrong-number": [
+  {
+   "input": "153",
+   "output": "YES"
+  },
+  {
+   "input": "370",
+   "output": "YES"
+  },
+  {
+   "input": "123",
+   "output": "NO"
+  },
+  {
+   "input": "9",
+   "output": "YES"
+  },
+  {
+   "input": "9474",
+   "output": "YES"
+  },
+  {
+   "input": "9475",
+   "output": "NO"
+  }
+ ],
+ "reverse-integer": [
+  {
+   "input": "123",
+   "output": "321"
+  },
+  {
+   "input": "-123",
+   "output": "-321"
+  },
+  {
+   "input": "120",
+   "output": "21"
+  },
+  {
+   "input": "0",
+   "output": "0"
+  },
+  {
+   "input": "1000000000000000000",
+   "output": "1"
+  }
+ ],
+ "palindrome-number": [
+  {
+   "input": "121",
+   "output": "YES"
+  },
+  {
+   "input": "-121",
+   "output": "NO"
+  },
+  {
+   "input": "10",
+   "output": "NO"
+  },
+  {
+   "input": "0",
+   "output": "YES"
+  },
+  {
+   "input": "1234321",
+   "output": "YES"
+  }
+ ],
+ "digital-root": [
+  {
+   "input": "38",
+   "output": "2"
+  },
+  {
+   "input": "0",
+   "output": "0"
+  },
+  {
+   "input": "9",
+   "output": "9"
+  },
+  {
+   "input": "123456789",
+   "output": "9"
+  },
+  {
+   "input": "99999999999999999999999999",
+   "output": "9"
+  }
+ ],
+ "lcm-of-array": [
+  {
+   "input": "3\n2 3 4",
+   "output": "12"
+  },
+  {
+   "input": "1\n7",
+   "output": "7"
+  },
+  {
+   "input": "4\n6 8 9 12",
+   "output": "72"
+  },
+  {
+   "input": "10\n1 2 3 4 5 6 7 8 9 10",
+   "output": "2520"
+  },
+  {
+   "input": "5\n97 89 83 79 73",
+   "output": "4132280413"
+  }
+ ],
+ "modular-exponentiation": [
+  {
+   "input": "2 10 1000",
+   "output": "24"
+  },
+  {
+   "input": "3 0 7",
+   "output": "1"
+  },
+  {
+   "input": "5 3 1",
+   "output": "0"
+  },
+  {
+   "input": "123456789 987654321 1000000007",
+   "output": "652541198"
+  },
+  {
+   "input": "1000000000000000000 1000000000000000000 999999937",
+   "output": "202779993"
+  }
+ ],
+ "modular-inverse": [
+  {
+   "input": "3 11",
+   "output": "4"
+  },
+  {
+   "input": "10 17",
+   "output": "12"
+  },
+  {
+   "input": "6 9",
+   "output": "-1"
+  },
+  {
+   "input": "1 1",
+   "output": "0"
+  },
+  {
+   "input": "7 1000000007",
+   "output": "142857144"
+  }
+ ],
+ "ncr-small": [
+  {
+   "input": "5 2",
+   "output": "10"
+  },
+  {
+   "input": "10 0",
+   "output": "1"
+  },
+  {
+   "input": "52 5",
+   "output": "2598960"
+  },
+  {
+   "input": "100 50",
+   "output": "100891344545564193334812497256"
+  },
+  {
+   "input": "7 7",
+   "output": "1"
+  }
+ ],
+ "catalan-number": [
+  {
+   "input": "3",
+   "output": "5"
+  },
+  {
+   "input": "0",
+   "output": "1"
+  },
+  {
+   "input": "1",
+   "output": "1"
+  },
+  {
+   "input": "10",
+   "output": "16796"
+  },
+  {
+   "input": "60",
+   "output": "1583850964596120042686772779038896"
+  }
+ ],
+ "digits-of-factorial": [
+  {
+   "input": "5",
+   "output": "3"
+  },
+  {
+   "input": "0",
+   "output": "1"
+  },
+  {
+   "input": "10",
+   "output": "7"
+  },
+  {
+   "input": "100",
+   "output": "158"
+  },
+  {
+   "input": "1000000",
+   "output": "5565709"
+  }
+ ],
+ "collatz-steps": [
+  {
+   "input": "6",
+   "output": "8"
+  },
+  {
+   "input": "1",
+   "output": "0"
+  },
+  {
+   "input": "27",
+   "output": "111"
+  },
+  {
+   "input": "97",
+   "output": "118"
+  },
+  {
+   "input": "837799",
+   "output": "524"
+  }
+ ],
+ "decimal-to-base": [
+  {
+   "input": "255 16",
+   "output": "FF"
+  },
+  {
+   "input": "10 2",
+   "output": "1010"
+  },
+  {
+   "input": "0 7",
+   "output": "0"
+  },
+  {
+   "input": "35 36",
+   "output": "Z"
+  },
+  {
+   "input": "1000000000000000000 36",
+   "output": "7LIEEXZX4KXS"
+  }
+ ],
+ "base-to-decimal": [
+  {
+   "input": "FF 16",
+   "output": "255"
+  },
+  {
+   "input": "1010 2",
+   "output": "10"
+  },
+  {
+   "input": "0 8",
+   "output": "0"
+  },
+  {
+   "input": "Z 36",
+   "output": "35"
+  },
+  {
+   "input": "7LIE1TP9U7K 36",
+   "output": "27777749219860016"
+  }
+ ],
+ "gcd-of-array": [
+  {
+   "input": "3\n12 18 24",
+   "output": "6"
+  },
+  {
+   "input": "2\n7 13",
+   "output": "1"
+  },
+  {
+   "input": "1\n100",
+   "output": "100"
+  },
+  {
+   "input": "4\n1000000000000000000 500000000000000000 250000000000000000 125000000000000000",
+   "output": "125000000000000000"
+  }
+ ],
+ "coprime-count": [
+  {
+   "input": "9",
+   "output": "6"
+  },
+  {
+   "input": "1",
+   "output": "1"
+  },
+  {
+   "input": "10",
+   "output": "4"
+  },
+  {
+   "input": "97",
+   "output": "96"
+  },
+  {
+   "input": "1000000000000",
+   "output": "400000000000"
+  }
+ ],
+ "sum-of-squares-check": [
+  {
+   "input": "5",
+   "output": "YES"
+  },
+  {
+   "input": "3",
+   "output": "NO"
+  },
+  {
+   "input": "0",
+   "output": "YES"
+  },
+  {
+   "input": "25",
+   "output": "YES"
+  },
+  {
+   "input": "999999999999",
+   "output": "NO"
+  },
+  {
+   "input": "1000000000000",
+   "output": "YES"
+  }
+ ],
+ "goldbach": [
+  {
+   "input": "4",
+   "output": "2 2"
+  },
+  {
+   "input": "28",
+   "output": "5 23"
+  },
+  {
+   "input": "100",
+   "output": "3 97"
+  },
+  {
+   "input": "1000000",
+   "output": "17 999983"
+  },
+  {
+   "input": "999998",
+   "output": "19 999979"
+  }
+ ],
+ "count-primes-range": [
+  {
+   "input": "3\n1 10\n11 19\n20 22",
+   "output": "4\n4\n0"
+  },
+  {
+   "input": "1\n1 1000000",
+   "output": "78498"
+  },
+  {
+   "input": "2\n2 2\n4 4",
+   "output": "1\n0"
+  },
+  {
+   "input": "5\n3540 3944\n3243 5233\n1690 1700\n316 467\n868 957",
+   "output": "52\n239\n3\n26\n12"
+  },
+  {
+   "input": "6\n4558 6244\n2540 3016\n97 4111\n3591 7927\n3751 5481\n2547 5292",
+   "output": "194\n61\n542\n499\n202\n329"
+  }
+ ],
+ "pythagorean-triplets": [
+  {
+   "input": "5",
+   "output": "1"
+  },
+  {
+   "input": "4",
+   "output": "0"
+  },
+  {
+   "input": "20",
+   "output": "6"
+  },
+  {
+   "input": "100",
+   "output": "52"
+  },
+  {
+   "input": "2000",
+   "output": "1981"
+  }
+ ],
+ "power-of-two": [
+  {
+   "input": "1",
+   "output": "YES"
+  },
+  {
+   "input": "16",
+   "output": "YES"
+  },
+  {
+   "input": "3",
+   "output": "NO"
+  },
+  {
+   "input": "0",
+   "output": "NO"
+  },
+  {
+   "input": "-8",
+   "output": "NO"
+  },
+  {
+   "input": "1152921504606846976",
+   "output": "YES"
+  }
+ ],
+ "happy-number": [
+  {
+   "input": "19",
+   "output": "YES"
+  },
+  {
+   "input": "2",
+   "output": "NO"
+  },
+  {
+   "input": "1",
+   "output": "YES"
+  },
+  {
+   "input": "7",
+   "output": "YES"
+  },
+  {
+   "input": "4",
+   "output": "NO"
+  }
+ ],
+ "ugly-number-nth": [
+  {
+   "input": "10",
+   "output": "12"
+  },
+  {
+   "input": "1",
+   "output": "1"
+  },
+  {
+   "input": "15",
+   "output": "24"
+  },
+  {
+   "input": "1690",
+   "output": "2123366400"
+  }
+ ],
+ "excel-column": [
+  {
+   "input": "1",
+   "output": "A"
+  },
+  {
+   "input": "28",
+   "output": "AB"
+  },
+  {
+   "input": "701",
+   "output": "ZY"
+  },
+  {
+   "input": "2147483647",
+   "output": "FXSHRXW"
+  },
+  {
+   "input": "52",
+   "output": "AZ"
+  }
+ ],
+ "excel-column-number": [
+  {
+   "input": "A",
+   "output": "1"
+  },
+  {
+   "input": "AB",
+   "output": "28"
+  },
+  {
+   "input": "ZY",
+   "output": "701"
+  },
+  {
+   "input": "FXSHRXW",
+   "output": "2147483647"
+  }
+ ],
+ "sqrt-floor": [
+  {
+   "input": "8",
+   "output": "2"
+  },
+  {
+   "input": "0",
+   "output": "0"
+  },
+  {
+   "input": "1",
+   "output": "1"
+  },
+  {
+   "input": "1000000000000000000",
+   "output": "1000000000"
+  },
+  {
+   "input": "999999999999999999",
+   "output": "999999999"
+  }
+ ],
+ "nth-root-integer": [
+  {
+   "input": "27 3",
+   "output": "3"
+  },
+  {
+   "input": "26 3",
+   "output": "2"
+  },
+  {
+   "input": "1000000000000000000 2",
+   "output": "1000000000"
+  },
+  {
+   "input": "1 60",
+   "output": "1"
+  },
+  {
+   "input": "1000000000000000000 60",
+   "output": "1"
+  }
+ ],
+ "sum-of-digits-range": [
+  {
+   "input": "12",
+   "output": "51"
+  },
+  {
+   "input": "1",
+   "output": "1"
+  },
+  {
+   "input": "100",
+   "output": "901"
+  },
+  {
+   "input": "999999",
+   "output": "27000000"
+  },
+  {
+   "input": "1000000000000000",
+   "output": "67500000000000001"
+  }
+ ],
+ "series-sum-mod": [
+  {
+   "input": "3",
+   "output": "14"
+  },
+  {
+   "input": "1",
+   "output": "1"
+  },
+  {
+   "input": "10",
+   "output": "385"
+  },
+  {
+   "input": "1000000000000000000",
+   "output": "40425"
+  }
+ ],
+ "leap-years-count": [
+  {
+   "input": "2000 2020",
+   "output": "6"
+  },
+  {
+   "input": "1900 1900",
+   "output": "0"
+  },
+  {
+   "input": "1 400",
+   "output": "97"
+  },
+  {
+   "input": "1999 1999",
+   "output": "0"
+  },
+  {
+   "input": "1 1000000000000000000",
+   "output": "242500000000000000"
+  }
+ ],
+ "angle-clock": [
+  {
+   "input": "3 15",
+   "output": "7.5"
+  },
+  {
+   "input": "12 0",
+   "output": "0.0"
+  },
+  {
+   "input": "6 0",
+   "output": "180.0"
+  },
+  {
+   "input": "9 45",
+   "output": "22.5"
+  },
+  {
+   "input": "11 59",
+   "output": "5.5"
+  }
+ ],
+ "triangle-type": [
+  {
+   "input": "3 3 3",
+   "output": "EQUILATERAL"
+  },
+  {
+   "input": "3 4 5",
+   "output": "SCALENE"
+  },
+  {
+   "input": "2 2 3",
+   "output": "ISOSCELES"
+  },
+  {
+   "input": "1 2 3",
+   "output": "INVALID"
+  },
+  {
+   "input": "10 1 1",
+   "output": "INVALID"
+  }
+ ],
+ "polygon-area": [
+  {
+   "input": "4\n0 0\n4 0\n4 3\n0 3",
+   "output": "24"
+  },
+  {
+   "input": "3\n0 0\n1 0\n0 1",
+   "output": "1"
+  },
+  {
+   "input": "5\n0 0\n2 0\n3 2\n1 3\n-1 1",
+   "output": "15"
+  },
+  {
+   "input": "3\n0 0\n1000000000 0\n0 1000000000",
+   "output": "1000000000000000000"
+  }
+ ],
+ "point-in-rectangle": [
+  {
+   "input": "0 0 4 3\n4\n1 1\n4 3\n5 1\n-1 0",
+   "output": "2"
+  },
+  {
+   "input": "2 2 0 0\n2\n1 1\n3 3",
+   "output": "1"
+  },
+  {
+   "input": "0 0 0 0\n1\n0 0",
+   "output": "1"
+  }
+ ],
+ "sort-array": [
+  {
+   "input": "5\n5 2 3 1 4",
+   "output": "1 2 3 4 5"
+  },
+  {
+   "input": "1\n0",
+   "output": "0"
+  },
+  {
+   "input": "6\n3 -1 3 0 -1 2",
+   "output": "-1 -1 0 2 3 3"
+  },
+  {
+   "input": "56\n-708 175 -98 103 -488 -928 -732 278 260 495 -817 -914 898 35 931 23 481 -658 -99 989 25 628 -412 967 -641 -950 -825 -176 -153 -37 -947 451 494 282 -229 594 -866 -61 386 796 -351 -509 -514 848 -634 517 -764 -727 -270 -737 491 184 -333 216 -976 -603",
+   "output": "-976 -950 -947 -928 -914 -866 -825 -817 -764 -737 -732 -727 -708 -658 -641 -634 -603 -514 -509 -488 -412 -351 -333 -270 -229 -176 -153 -99 -98 -61 -37 23 25 35 103 175 184 216 260 278 282 386 451 481 491 494 495 517 594 628 796 848 898 931 967 989"
+  },
+  {
+   "input": "45\n351 796 -609 525 -662 -279 639 100 -544 -677 817 269 -660 -77 480 -615 566 708 -145 959 -62 -602 -196 -508 -738 -350 -220 -34 -573 75 913 -738 460 69 60 -878 -364 12 -214 -92 659 731 -772 250 -642",
+   "output": "-878 -772 -738 -738 -677 -662 -660 -642 -615 -609 -602 -573 -544 -508 -364 -350 -279 -220 -214 -196 -145 -92 -77 -62 -34 12 60 69 75 100 250 269 351 460 480 525 566 639 659 708 731 796 817 913 959"
+  },
+  {
+   "input": "43\n486 -506 646 998 234 -743 -3 -824 -364 327 -336 -184 440 605 -94 198 392 388 -247 3 -711 -853 322 870 735 527 902 -9 797 466 -277 94 152 421 127 -860 -673 -195 278 292 35 -664 9",
+   "output": "-860 -853 -824 -743 -711 -673 -664 -506 -364 -336 -277 -247 -195 -184 -94 -9 -3 3 9 35 94 127 152 198 234 278 292 322 327 388 392 421 440 466 486 527 605 646 735 797 870 902 998"
+  }
+ ],
+ "sort-descending": [
+  {
+   "input": "4\n1 3 2 4",
+   "output": "4 3 2 1"
+  },
+  {
+   "input": "1\n5",
+   "output": "5"
+  },
+  {
+   "input": "3\n-1 -1 2",
+   "output": "2 -1 -1"
+  },
+  {
+   "input": "16\n47 -94 -87 46 97 12 -7 21 67 -34 36 26 28 -96 20 75",
+   "output": "97 75 67 47 46 36 28 26 21 20 12 -7 -34 -87 -94 -96"
+  },
+  {
+   "input": "25\n-2 1 7 -28 96 55 44 6 71 -42 -28 -44 -94 -27 -82 -68 -56 -46 93 32 79 87 11 89 51",
+   "output": "96 93 89 87 79 71 55 51 44 32 11 7 6 1 -2 -27 -28 -28 -42 -44 -46 -56 -68 -82 -94"
+  }
+ ],
+ "sort-by-abs": [
+  {
+   "input": "5\n-3 2 -1 3 1",
+   "output": "-1 1 2 -3 3"
+  },
+  {
+   "input": "2\n5 -5",
+   "output": "-5 5"
+  },
+  {
+   "input": "3\n0 -2 1",
+   "output": "0 1 -2"
+  },
+  {
+   "input": "5\n-7 -5 14 14 -5",
+   "output": "-5 -5 -7 14 14"
+  },
+  {
+   "input": "25\n-14 17 10 -15 -9 -5 13 17 9 -9 20 16 7 11 -8 -4 -7 7 -20 3 -2 17 2 14 -9",
+   "output": "-2 2 3 -4 -5 -7 7 7 -8 -9 -9 -9 9 10 11 13 -14 14 -15 16 17 17 17 -20 20"
+  }
+ ],
+ "sort-strings-length": [
+  {
+   "input": "5\nbanana kiwi apple fig date",
+   "output": "fig date kiwi apple banana"
+  },
+  {
+   "input": "1\nhello",
+   "output": "hello"
+  },
+  {
+   "input": "4\nbb aa b a",
+   "output": "a b aa bb"
+  },
+  {
+   "input": "8\ndbabed fb c fdddff cc fb ee bfe",
+   "output": "c cc ee fb fb bfe dbabed fdddff"
+  },
+  {
+   "input": "4\ndcbae bdbfd bcead faaebd",
+   "output": "bcead bdbfd dcbae faaebd"
+  }
+ ],
+ "lower-bound": [
+  {
+   "input": "5\n1 2 4 4 7\n4\n4 3 8 0",
+   "output": "2 2 5 0"
+  },
+  {
+   "input": "1\n5\n2\n5 6",
+   "output": "0 1"
+  },
+  {
+   "input": "12\n2 3 6 7 10 11 13 16 18 21 21 28\n3\n3 1 11",
+   "output": "1 0 5"
+  },
+  {
+   "input": "10\n0 7 10 16 18 20 25 25 30 30\n7\n4 27 13 24 22 16 19",
+   "output": "1 8 3 6 6 3 5"
+  },
+  {
+   "input": "9\n0 7 7 9 17 18 22 22 25\n8\n16 11 6 -1 28 31 -1 31",
+   "output": "4 4 1 0 9 9 0 9"
+  }
+ ],
+ "first-last-occurrence": [
+  {
+   "input": "6\n5 7 7 8 8 10\n8",
+   "output": "3 4"
+  },
+  {
+   "input": "6\n5 7 7 8 8 10\n6",
+   "output": "-1 -1"
+  },
+  {
+   "input": "1\n1\n1",
+   "output": "0 0"
+  },
+  {
+   "input": "5\n2 2 2 2 2\n2",
+   "output": "0 4"
+  }
+ ],
+ "search-rotated": [
+  {
+   "input": "7\n4 5 6 7 0 1 2\n0",
+   "output": "4"
+  },
+  {
+   "input": "7\n4 5 6 7 0 1 2\n3",
+   "output": "-1"
+  },
+  {
+   "input": "1\n1\n0",
+   "output": "-1"
+  },
+  {
+   "input": "2\n3 1\n1",
+   "output": "1"
+  },
+  {
+   "input": "5\n1 2 3 4 5\n4",
+   "output": "3"
+  }
+ ],
+ "find-min-rotated": [
+  {
+   "input": "5\n3 4 5 1 2",
+   "output": "1"
+  },
+  {
+   "input": "7\n4 5 6 7 0 1 2",
+   "output": "0"
+  },
+  {
+   "input": "4\n11 13 15 17",
+   "output": "11"
+  },
+  {
+   "input": "1\n9",
+   "output": "9"
+  }
+ ],
+ "kth-smallest": [
+  {
+   "input": "6 3\n7 10 4 3 20 15",
+   "output": "7"
+  },
+  {
+   "input": "3 1\n5 5 5",
+   "output": "5"
+  },
+  {
+   "input": "5 5\n1 2 3 4 5",
+   "output": "5"
+  },
+  {
+   "input": "18 8\n33 30 7 29 21 25 18 28 24 45 47 0 24 23 33 29 4 30",
+   "output": "24"
+  },
+  {
+   "input": "15 15\n38 19 9 6 0 10 20 33 3 47 49 22 32 17 30",
+   "output": "49"
+  }
+ ],
+ "aggressive-cows": [
+  {
+   "input": "5 3\n1 2 8 4 9",
+   "output": "3"
+  },
+  {
+   "input": "3 2\n1 2 3",
+   "output": "2"
+  },
+  {
+   "input": "4 4\n0 3 6 9",
+   "output": "3"
+  },
+  {
+   "input": "8 3\n6 53 22 33 39 15 11 44",
+   "output": "20"
+  },
+  {
+   "input": "6 2\n28 18 6 41 12 25",
+   "output": "35"
+  }
+ ],
+ "book-allocation": [
+  {
+   "input": "4 2\n12 34 67 90",
+   "output": "113"
+  },
+  {
+   "input": "3 3\n10 20 30",
+   "output": "30"
+  },
+  {
+   "input": "5 1\n1 2 3 4 5",
+   "output": "15"
+  },
+  {
+   "input": "14 11\n69 11 4 54 36 1 25 13 34 47 1 30 90 12",
+   "output": "90"
+  },
+  {
+   "input": "15 7\n97 96 16 87 80 65 47 31 84 19 68 37 90 47 32",
+   "output": "169"
+  }
+ ],
+ "koko-bananas": [
+  {
+   "input": "4 8\n3 6 7 11",
+   "output": "4"
+  },
+  {
+   "input": "5 5\n30 11 23 4 20",
+   "output": "30"
+  },
+  {
+   "input": "5 6\n30 11 23 4 20",
+   "output": "23"
+  },
+  {
+   "input": "1 1000000000\n1000000000",
+   "output": "1"
+  }
+ ],
+ "median-two-sorted": [
+  {
+   "input": "2\n1 3\n1\n2",
+   "output": "2.0"
+  },
+  {
+   "input": "2\n1 2\n2\n3 4",
+   "output": "2.5"
+  },
+  {
+   "input": "1\n5\n1\n5",
+   "output": "5.0"
+  },
+  {
+   "input": "3\n1 4 9\n4\n2 3 5 100",
+   "output": "4.0"
+  }
+ ],
+ "count-smaller-equal": [
+  {
+   "input": "5\n5 1 3 3 9\n3\n3 0 10",
+   "output": "3 0 5"
+  },
+  {
+   "input": "16\n14 1 19 26 17 23 8 23 16 1 26 4 11 18 19 16\n8\n13 16 20 30 23 4 10 6",
+   "output": "5 8 12 16 14 3 4 3"
+  },
+  {
+   "input": "16\n6 11 20 0 6 2 3 11 0 17 28 26 24 16 10 12\n3\n20 29 7",
+   "output": "13 16 6"
+  },
+  {
+   "input": "10\n16 26 25 3 8 20 14 7 29 26\n7\n29 7 10 26 0 22 -1",
+   "output": "10 2 3 9 0 6 0"
+  }
+ ],
+ "three-sum-zero": [
+  {
+   "input": "6\n-1 0 1 2 -1 -4",
+   "output": "2"
+  },
+  {
+   "input": "3\n0 1 1",
+   "output": "0"
+  },
+  {
+   "input": "3\n0 0 0",
+   "output": "1"
+  },
+  {
+   "input": "4\n0 0 0 0",
+   "output": "1"
+  },
+  {
+   "input": "25\n-4 2 5 5 7 7 -4 8 -9 -7 7 2 0 -2 -8 -3 2 10 1 4 10 -10 1 -3 -6",
+   "output": "24"
+  },
+  {
+   "input": "12\n-7 -5 3 4 4 6 -9 -7 -10 9 4 6",
+   "output": "3"
+  }
+ ],
+ "closest-pair-sum": [
+  {
+   "input": "5 54\n10 22 28 29 30",
+   "output": "52"
+  },
+  {
+   "input": "4 15\n1 3 4 7",
+   "output": "11"
+  },
+  {
+   "input": "2 0\n5 -5",
+   "output": "0"
+  },
+  {
+   "input": "8 12\n19 -17 38 28 18 16 14 21",
+   "output": "11"
+  },
+  {
+   "input": "10 52\n1 -4 4 28 11 -10 -5 13 29 2",
+   "output": "57"
+  }
+ ],
+ "contains-duplicate": [
+  {
+   "input": "4\n1 2 3 1",
+   "output": "YES"
+  },
+  {
+   "input": "4\n1 2 3 4",
+   "output": "NO"
+  },
+  {
+   "input": "1\n5",
+   "output": "NO"
+  },
+  {
+   "input": "8\n7 7 3 9 6 18 14 21",
+   "output": "YES"
+  },
+  {
+   "input": "17\n36 14 9 22 24 35 36 10 14 36 12 26 29 30 34 14 38",
+   "output": "YES"
+  }
+ ],
+ "contains-duplicate-k": [
+  {
+   "input": "4 3\n1 2 3 1",
+   "output": "YES"
+  },
+  {
+   "input": "4 1\n1 0 1 1",
+   "output": "YES"
+  },
+  {
+   "input": "6 2\n1 2 3 1 2 3",
+   "output": "NO"
+  },
+  {
+   "input": "2 0\n1 1",
+   "output": "NO"
+  }
+ ],
+ "longest-consecutive": [
+  {
+   "input": "6\n100 4 200 1 3 2",
+   "output": "4"
+  },
+  {
+   "input": "10\n0 3 7 2 5 8 4 6 0 1",
+   "output": "9"
+  },
+  {
+   "input": "1\n5",
+   "output": "1"
+  },
+  {
+   "input": "3\n1 1 1",
+   "output": "1"
+  },
+  {
+   "input": "18\n27 22 3 4 23 9 13 27 36 29 14 4 18 38 34 9 16 24",
+   "output": "3"
+  },
+  {
+   "input": "20\n16 23 8 38 5 13 36 3 28 38 1 9 35 0 11 10 22 39 30 14",
+   "output": "4"
+  }
+ ],
+ "top-frequent-words": [
+  {
+   "input": "6 2\ni love leetcode i love coding",
+   "output": "i love"
+  },
+  {
+   "input": "10 4\nthe day is sunny the the the sunny is is",
+   "output": "the is sunny day"
+  },
+  {
+   "input": "3 3\nc b a",
+   "output": "a b c"
+  }
+ ],
+ "valid-sudoku": [
+  {
+   "input": "53..7....\n6..195...\n.98....6.\n8...6...3\n4..8.3..1\n7...2...6\n.6....28.\n...419..5\n....8..79",
+   "output": "YES"
+  },
+  {
+   "input": "83..7....\n6..195...\n.98....6.\n8...6...3\n4..8.3..1\n7...2...6\n.6....28.\n...419..5\n....8..79",
+   "output": "NO"
+  },
+  {
+   "input": ".........\n.........\n.........\n.........\n.........\n.........\n.........\n.........\n.........",
+   "output": "YES"
+  },
+  {
+   "input": "1........\n.1.......\n.........\n.........\n.........\n.........\n.........\n.........\n.........",
+   "output": "NO"
+  }
+ ],
+ "subarray-zero-sum": [
+  {
+   "input": "5\n4 2 -3 1 6",
+   "output": "YES"
+  },
+  {
+   "input": "3\n4 2 0",
+   "output": "YES"
+  },
+  {
+   "input": "3\n1 2 3",
+   "output": "NO"
+  },
+  {
+   "input": "1\n-1",
+   "output": "NO"
+  },
+  {
+   "input": "13\n-2 -3 -5 4 5 1 -4 4 7 0 6 -5 6",
+   "output": "YES"
+  },
+  {
+   "input": "8\n7 -4 4 -1 -4 -3 4 6",
+   "output": "YES"
+  }
+ ],
+ "count-distinct": [
+  {
+   "input": "5\n1 2 2 3 3",
+   "output": "3"
+  },
+  {
+   "input": "1\n7",
+   "output": "1"
+  },
+  {
+   "input": "4\n-1 -1 -1 -1",
+   "output": "1"
+  },
+  {
+   "input": "30\n5 17 7 2 6 0 6 20 20 0 5 12 16 20 1 8 12 3 12 6 11 18 12 17 4 19 12 12 8 15",
+   "output": "17"
+  },
+  {
+   "input": "24\n1 2 15 20 15 4 5 18 18 12 3 0 7 6 8 16 11 13 1 20 9 5 6 6",
+   "output": "17"
+  },
+  {
+   "input": "27\n4 0 15 17 20 11 16 20 16 19 3 0 2 20 16 16 20 16 17 2 9 6 5 12 1 2 6",
+   "output": "15"
+  }
+ ],
+ "four-sum-count": [
+  {
+   "input": "2\n1 2\n-2 -1\n-1 2\n0 2",
+   "output": "2"
+  },
+  {
+   "input": "1\n0\n0\n0\n0",
+   "output": "1"
+  },
+  {
+   "input": "7\n-4 -3 3 1 4 -1 -3\n4 5 -1 -5 4 2 2\n2 -5 4 0 5 5 3\n3 -4 -1 -5 2 -5 -2",
+   "output": "140"
+  },
+  {
+   "input": "3\n-4 2 -4\n-4 -3 -2\n0 -5 -4\n-4 -5 -5",
+   "output": "0"
+  },
+  {
+   "input": "7\n0 5 0 0 -1 -1 4\n-5 3 3 5 -5 2 1\n-4 -5 -3 -2 -5 0 3\n2 -3 -4 3 0 4 0",
+   "output": "172"
+  }
+ ],
+ "isomorphic-groups-numbers": [
+  {
+   "input": "4\n18 43 36 13",
+   "output": "54"
+  },
+  {
+   "input": "3\n10 12 19",
+   "output": "-1"
+  },
+  {
+   "input": "2\n5 50",
+   "output": "55"
+  },
+  {
+   "input": "8\n467 300 207 160 85 23 472 272",
+   "output": "557"
+  },
+  {
+   "input": "13\n371 485 87 278 186 213 247 53 85 3 88 84 147",
+   "output": "763"
+  }
+ ],
+ "two-sum-count-distinct": [
+  {
+   "input": "6 6\n1 5 3 3 5 1",
+   "output": "2"
+  },
+  {
+   "input": "4 2\n1 1 1 1",
+   "output": "1"
+  },
+  {
+   "input": "3 10\n1 2 3",
+   "output": "0"
+  },
+  {
+   "input": "20 11\n6 10 8 10 0 8 8 5 0 5 6 2 0 10 0 4 3 0 2 10",
+   "output": "2"
+  },
+  {
+   "input": "18 10\n8 2 1 6 6 2 6 2 7 3 8 6 1 1 2 7 9 10",
+   "output": "3"
+  }
+ ],
+ "first-unique-number-stream": [
+  {
+   "input": "6\n2 3 5 2 3 5",
+   "output": "2 2 2 3 5 -1"
+  },
+  {
+   "input": "3\n1 1 1",
+   "output": "1 -1 -1"
+  },
+  {
+   "input": "4\n7 8 7 9",
+   "output": "7 7 8 8"
+  },
+  {
+   "input": "18\n3 3 6 6 1 5 1 5 2 5 4 5 4 2 4 4 4 3",
+   "output": "3 -1 6 -1 1 1 5 -1 2 2 2 2 2 -1 -1 -1 -1 -1"
+  },
+  {
+   "input": "17\n3 4 2 6 2 1 3 1 4 6 2 2 6 3 2 6 6",
+   "output": "3 3 3 3 3 3 4 4 6 -1 -1 -1 -1 -1 -1 -1 -1"
+  }
+ ],
+ "stack-operations": [
+  {
+   "input": "6\npush 3\npush 5\ntop\npop\npop\npop",
+   "output": "5\n5\n3\nEMPTY"
+  },
+  {
+   "input": "3\nsize\npush 1\nsize",
+   "output": "0\n1"
+  },
+  {
+   "input": "4\npop\ntop\npush -2\ntop",
+   "output": "EMPTY\nEMPTY\n-2"
+  }
+ ],
+ "queue-operations": [
+  {
+   "input": "6\nenqueue 3\nenqueue 5\nfront\ndequeue\ndequeue\ndequeue",
+   "output": "3\n3\n5\nEMPTY"
+  },
+  {
+   "input": "3\nsize\nenqueue 1\nsize",
+   "output": "0\n1"
+  },
+  {
+   "input": "4\nfront\nenqueue 9\nenqueue 8\nfront",
+   "output": "EMPTY\n9"
+  }
+ ],
+ "min-stack": [
+  {
+   "input": "7\npush 5\npush 3\nmin\npush 7\nmin\npop\nmin",
+   "output": "3\n3\n3"
+  },
+  {
+   "input": "4\nmin\npush 2\npush 2\nmin",
+   "output": "EMPTY\n2"
+  },
+  {
+   "input": "6\npush 1\npush 0\npop\npop\npop\nmin",
+   "output": "EMPTY"
+  }
+ ],
+ "evaluate-postfix": [
+  {
+   "input": "2 1 + 3 *",
+   "output": "9"
+  },
+  {
+   "input": "4 13 5 / +",
+   "output": "6"
+  },
+  {
+   "input": "10 6 9 3 + -11 * / * 17 + 5 +",
+   "output": "22"
+  },
+  {
+   "input": "-7 2 /",
+   "output": "-3"
+  }
+ ],
+ "infix-to-postfix": [
+  {
+   "input": "a+b*c",
+   "output": "abc*+"
+  },
+  {
+   "input": "(a+b)*c",
+   "output": "ab+c*"
+  },
+  {
+   "input": "a^b^c",
+   "output": "abc^^"
+  },
+  {
+   "input": "a+b*(c^d-e)^(f+g*h)-i",
+   "output": "abcd^e-fgh*+^*+i-"
+  },
+  {
+   "input": "a-b-c",
+   "output": "ab-c-"
+  }
+ ],
+ "next-greater-circular": [
+  {
+   "input": "3\n1 2 1",
+   "output": "2 -1 2"
+  },
+  {
+   "input": "5\n1 2 3 4 3",
+   "output": "2 3 4 -1 4"
+  },
+  {
+   "input": "1\n5",
+   "output": "-1"
+  },
+  {
+   "input": "6\n2 7 9 7 1 9",
+   "output": "7 9 -1 9 9 -1"
+  },
+  {
+   "input": "9\n4 6 0 0 4 8 8 6 5",
+   "output": "6 8 4 4 8 -1 -1 8 6"
+  }
+ ],
+ "largest-rectangle-histogram": [
+  {
+   "input": "6\n2 1 5 6 2 3",
+   "output": "10"
+  },
+  {
+   "input": "2\n2 4",
+   "output": "4"
+  },
+  {
+   "input": "1\n0",
+   "output": "0"
+  },
+  {
+   "input": "5\n5 5 5 5 5",
+   "output": "25"
+  },
+  {
+   "input": "16\n1 10 10 9 5 9 8 0 10 1 3 5 6 9 2 10",
+   "output": "30"
+  },
+  {
+   "input": "23\n5 4 1 0 7 5 7 1 5 2 0 3 1 3 0 4 1 3 8 6 4 2 5",
+   "output": "15"
+  }
+ ],
+ "remove-k-digits": [
+  {
+   "input": "1432219\n3",
+   "output": "1219"
+  },
+  {
+   "input": "10200\n1",
+   "output": "200"
+  },
+  {
+   "input": "10\n2",
+   "output": "0"
+  },
+  {
+   "input": "112\n1",
+   "output": "11"
+  },
+  {
+   "input": "9\n1",
+   "output": "0"
+  }
+ ],
+ "asteroid-collision": [
+  {
+   "input": "3\n5 10 -5",
+   "output": "5 10"
+  },
+  {
+   "input": "2\n8 -8",
+   "output": "EMPTY"
+  },
+  {
+   "input": "3\n10 2 -5",
+   "output": "10"
+  },
+  {
+   "input": "4\n-2 -1 1 2",
+   "output": "-2 -1 1 2"
+  },
+  {
+   "input": "4\n1 -2 -2 -2",
+   "output": "-2 -2 -2"
+  }
+ ],
+ "sliding-window-minimum": [
+  {
+   "input": "8 3\n1 3 -1 -3 5 3 6 7",
+   "output": "-1 -3 -3 -3 3 3"
+  },
+  {
+   "input": "1 1\n4",
+   "output": "4"
+  },
+  {
+   "input": "5 5\n3 1 2 5 4",
+   "output": "1"
+  },
+  {
+   "input": "18 5\n6 4 -5 2 3 8 0 5 5 3 4 7 -7 10 3 -9 2 -10",
+   "output": "-5 -5 -5 0 0 0 0 3 -7 -7 -7 -9 -9 -10"
+  },
+  {
+   "input": "6 6\n5 -5 -6 -2 1 10",
+   "output": "-6"
+  }
+ ],
+ "decode-string": [
+  {
+   "input": "3[a]2[bc]",
+   "output": "aaabcbc"
+  },
+  {
+   "input": "3[a2[c]]",
+   "output": "accaccacc"
+  },
+  {
+   "input": "2[abc]3[cd]ef",
+   "output": "abcabccdcdcdef"
+  },
+  {
+   "input": "abc",
+   "output": "abc"
+  },
+  {
+   "input": "10[x]",
+   "output": "xxxxxxxxxx"
+  }
+ ],
+ "simplify-path": [
+  {
+   "input": "/home/",
+   "output": "/home"
+  },
+  {
+   "input": "/../",
+   "output": "/"
+  },
+  {
+   "input": "/home//foo/",
+   "output": "/home/foo"
+  },
+  {
+   "input": "/a/./b/../../c/",
+   "output": "/c"
+  },
+  {
+   "input": "/a/../../b/../c//.//",
+   "output": "/c"
+  }
+ ],
+ "valid-brackets-min-add": [
+  {
+   "input": "())",
+   "output": "1"
+  },
+  {
+   "input": "(((",
+   "output": "3"
+  },
+  {
+   "input": "()",
+   "output": "0"
+  },
+  {
+   "input": "()))((",
+   "output": "4"
+  },
+  {
+   "input": ")(",
+   "output": "2"
+  }
+ ],
+ "longest-valid-parentheses": [
+  {
+   "input": "(()",
+   "output": "2"
+  },
+  {
+   "input": ")()())",
+   "output": "4"
+  },
+  {
+   "input": "()(())",
+   "output": "6"
+  },
+  {
+   "input": "((((",
+   "output": "0"
+  },
+  {
+   "input": "()(()",
+   "output": "2"
+  }
+ ],
+ "first-negative-window": [
+  {
+   "input": "8 3\n12 -1 -7 8 -15 30 16 28",
+   "output": "-1 -1 -7 -15 -15 0"
+  },
+  {
+   "input": "5 2\n-8 2 3 -6 10",
+   "output": "-8 0 -6 -6"
+  },
+  {
+   "input": "3 3\n1 2 3",
+   "output": "0"
+  }
+ ],
+ "generate-binary-numbers": [
+  {
+   "input": "5",
+   "output": "1 10 11 100 101"
+  },
+  {
+   "input": "1",
+   "output": "1"
+  },
+  {
+   "input": "10",
+   "output": "1 10 11 100 101 110 111 1000 1001 1010"
+  },
+  {
+   "input": "16",
+   "output": "1 10 11 100 101 110 111 1000 1001 1010 1011 1100 1101 1110 1111 10000"
+  }
+ ],
+ "celebrity-problem": [
+  {
+   "input": "3\n0 1 0\n0 0 0\n0 1 0",
+   "output": "1"
+  },
+  {
+   "input": "2\n0 1\n1 0",
+   "output": "-1"
+  },
+  {
+   "input": "1\n0",
+   "output": "0"
+  },
+  {
+   "input": "4\n0 0 1 0\n0 0 1 0\n0 0 0 0\n0 0 1 0",
+   "output": "2"
+  }
+ ],
+ "power-set": [
+  {
+   "input": "3\n1 2 3",
+   "output": "-\n1\n1 2\n1 2 3\n1 3\n2\n2 3\n3"
+  },
+  {
+   "input": "1\n5",
+   "output": "-\n5"
+  },
+  {
+   "input": "3\n3 -1 2",
+   "output": "-\n-1\n-1 2\n-1 2 3\n-1 3\n2\n2 3\n3"
+  }
+ ],
+ "permutations-distinct": [
+  {
+   "input": "3\n1 2 3",
+   "output": "1 2 3\n1 3 2\n2 1 3\n2 3 1\n3 1 2\n3 2 1"
+  },
+  {
+   "input": "1\n9",
+   "output": "9"
+  },
+  {
+   "input": "3\n3 1 2",
+   "output": "1 2 3\n1 3 2\n2 1 3\n2 3 1\n3 1 2\n3 2 1"
+  },
+  {
+   "input": "4\n4 3 2 1",
+   "output": "1 2 3 4\n1 2 4 3\n1 3 2 4\n1 3 4 2\n1 4 2 3\n1 4 3 2\n2 1 3 4\n2 1 4 3\n2 3 1 4\n2 3 4 1\n2 4 1 3\n2 4 3 1\n3 1 2 4\n3 1 4 2\n3 2 1 4\n3 2 4 1\n3 4 1 2\n3 4 2 1\n4 1 2 3\n4 1 3 2\n4 2 1 3\n4 2 3 1\n4 3 1 2\n4 3 2 1"
+  }
+ ],
+ "permutations-duplicates": [
+  {
+   "input": "3\n1 1 2",
+   "output": "1 1 2\n1 2 1\n2 1 1"
+  },
+  {
+   "input": "3\n2 2 2",
+   "output": "2 2 2"
+  },
+  {
+   "input": "4\n1 2 1 2",
+   "output": "1 1 2 2\n1 2 1 2\n1 2 2 1\n2 1 1 2\n2 1 2 1\n2 2 1 1"
+  }
+ ],
+ "combinations-k": [
+  {
+   "input": "4 2",
+   "output": "1 2\n1 3\n1 4\n2 3\n2 4\n3 4"
+  },
+  {
+   "input": "1 1",
+   "output": "1"
+  },
+  {
+   "input": "5 3",
+   "output": "1 2 3\n1 2 4\n1 2 5\n1 3 4\n1 3 5\n1 4 5\n2 3 4\n2 3 5\n2 4 5\n3 4 5"
+  },
+  {
+   "input": "3 3",
+   "output": "1 2 3"
+  }
+ ],
+ "combination-sum": [
+  {
+   "input": "4 7\n2 3 6 7",
+   "output": "2 2 3\n7"
+  },
+  {
+   "input": "3 8\n2 3 5",
+   "output": "2 2 2 2\n2 3 3\n3 5"
+  },
+  {
+   "input": "1 1\n2",
+   "output": "NONE"
+  },
+  {
+   "input": "2 6\n1 2",
+   "output": "1 1 1 1 1 1\n1 1 1 1 2\n1 1 2 2\n2 2 2"
+  }
+ ],
+ "subset-sum-exists": [
+  {
+   "input": "6 9\n3 34 4 12 5 2",
+   "output": "YES"
+  },
+  {
+   "input": "6 30\n3 34 4 12 5 2",
+   "output": "NO"
+  },
+  {
+   "input": "1 5\n5",
+   "output": "YES"
+  },
+  {
+   "input": "13 88\n17 43 46 38 7 26 8 49 37 35 5 43 46",
+   "output": "YES"
+  },
+  {
+   "input": "7 53\n16 45 34 20 47 27 1",
+   "output": "NO"
+  }
+ ],
+ "n-queens-count": [
+  {
+   "input": "4",
+   "output": "2"
+  },
+  {
+   "input": "1",
+   "output": "1"
+  },
+  {
+   "input": "2",
+   "output": "0"
+  },
+  {
+   "input": "8",
+   "output": "92"
+  },
+  {
+   "input": "10",
+   "output": "724"
+  }
+ ],
+ "word-search": [
+  {
+   "input": "3 4\nABCE\nSFCS\nADEE\nABCCED",
+   "output": "YES"
+  },
+  {
+   "input": "3 4\nABCE\nSFCS\nADEE\nSEE",
+   "output": "YES"
+  },
+  {
+   "input": "3 4\nABCE\nSFCS\nADEE\nABCB",
+   "output": "NO"
+  },
+  {
+   "input": "1 1\nA\nA",
+   "output": "YES"
+  }
+ ],
+ "letter-combinations-phone": [
+  {
+   "input": "23",
+   "output": "ad ae af bd be bf cd ce cf"
+  },
+  {
+   "input": "2",
+   "output": "a b c"
+  },
+  {
+   "input": "79",
+   "output": "pw px py pz qw qx qy qz rw rx ry rz sw sx sy sz"
+  },
+  {
+   "input": "234",
+   "output": "adg adh adi aeg aeh aei afg afh afi bdg bdh bdi beg beh bei bfg bfh bfi cdg cdh cdi ceg ceh cei cfg cfh cfi"
+  }
+ ],
+ "generate-parentheses": [
+  {
+   "input": "3",
+   "output": "((()))\n(()())\n(())()\n()(())\n()()()"
+  },
+  {
+   "input": "1",
+   "output": "()"
+  },
+  {
+   "input": "2",
+   "output": "(())\n()()"
+  },
+  {
+   "input": "4",
+   "output": "(((())))\n((()()))\n((())())\n((()))()\n(()(()))\n(()()())\n(()())()\n(())(())\n(())()()\n()((()))\n()(()())\n()(())()\n()()(())\n()()()()"
+  }
+ ],
+ "tower-of-hanoi": [
+  {
+   "input": "2",
+   "output": "1 A B\n2 A C\n1 B C"
+  },
+  {
+   "input": "1",
+   "output": "1 A C"
+  },
+  {
+   "input": "3",
+   "output": "1 A C\n2 A B\n1 C B\n3 A C\n1 B A\n2 B C\n1 A C"
+  }
+ ],
+ "count-paths-grid-recursion": [
+  {
+   "input": "3 3",
+   "output": "6"
+  },
+  {
+   "input": "1 1",
+   "output": "1"
+  },
+  {
+   "input": "3 7",
+   "output": "28"
+  },
+  {
+   "input": "30 30",
+   "output": "30067266499541040"
+  }
+ ],
+ "palindrome-partitioning": [
+  {
+   "input": "aab",
+   "output": "a a b\naa b"
+  },
+  {
+   "input": "a",
+   "output": "a"
+  },
+  {
+   "input": "abba",
+   "output": "a b b a\na bb a\nabba"
+  },
+  {
+   "input": "racecar",
+   "output": "r a c e c a r\nr a cec a r\nr aceca r\nracecar"
+  }
+ ],
+ "gray-code": [
+  {
+   "input": "2",
+   "output": "0 1 3 2"
+  },
+  {
+   "input": "1",
+   "output": "0 1"
+  },
+  {
+   "input": "3",
+   "output": "0 1 3 2 6 7 5 4"
+  },
+  {
+   "input": "4",
+   "output": "0 1 3 2 6 7 5 4 12 13 15 14 10 11 9 8"
+  }
+ ],
+ "sudoku-solver": [
+  {
+   "input": "53..7....\n6..195...\n.98....6.\n8...6...3\n4..8.3..1\n7...2...6\n.6....28.\n...419..5\n....8..79",
+   "output": "534678912\n672195348\n198342567\n859761423\n426853791\n713924856\n961537284\n287419635\n345286179"
+  },
+  {
+   "input": "..9748...\n7........\n.2.1.9...\n..7...24.\n.64.1.59.\n.98...3..\n...8.3.2.\n........6\n...2759..",
+   "output": "519748632\n783652419\n426139875\n357986241\n264317598\n198524367\n975863124\n832491756\n641275983"
+  },
+  {
+   "input": "...26.7.1\n68..7..9.\n19...45..\n82.1...4.\n..46.29..\n.5...3.28\n..93...74\n.4..5..36\n7.3.18...",
+   "output": "435269781\n682571493\n197834562\n826195347\n374682915\n951743628\n519326874\n248957136\n763418259"
+  }
+ ],
+ "rat-in-maze": [
+  {
+   "input": "4\n1 0 0 0\n1 1 0 1\n1 1 0 0\n0 1 1 1",
+   "output": "DDRDRR DRDDRR"
+  },
+  {
+   "input": "2\n1 0\n1 0",
+   "output": "-1"
+  },
+  {
+   "input": "3\n1 1 1\n1 0 1\n1 1 1",
+   "output": "DDRR RRDD"
+  }
+ ],
+ "house-robber": [
+  {
+   "input": "4\n1 2 3 1",
+   "output": "4"
+  },
+  {
+   "input": "5\n2 7 9 3 1",
+   "output": "12"
+  },
+  {
+   "input": "1\n5",
+   "output": "5"
+  },
+  {
+   "input": "2\n2 1",
+   "output": "2"
+  },
+  {
+   "input": "17\n36 8 18 8 13 16 6 16 25 7 12 24 33 50 44 1 28",
+   "output": "215"
+  },
+  {
+   "input": "24\n11 18 46 9 7 21 16 11 39 40 29 29 4 24 7 13 50 15 21 42 49 50 3 19",
+   "output": "343"
+  }
+ ],
+ "house-robber-circular": [
+  {
+   "input": "3\n2 3 2",
+   "output": "3"
+  },
+  {
+   "input": "4\n1 2 3 1",
+   "output": "4"
+  },
+  {
+   "input": "1\n7",
+   "output": "7"
+  },
+  {
+   "input": "2\n4 9",
+   "output": "9"
+  },
+  {
+   "input": "12\n30 13 3 0 34 35 22 10 47 26 9 39",
+   "output": "155"
+  },
+  {
+   "input": "16\n15 26 50 25 14 1 26 44 31 16 4 28 14 7 18 47",
+   "output": "206"
+  }
+ ],
+ "min-cost-climbing": [
+  {
+   "input": "3\n10 15 20",
+   "output": "15"
+  },
+  {
+   "input": "10\n1 100 1 1 1 100 1 1 100 1",
+   "output": "6"
+  },
+  {
+   "input": "2\n0 0",
+   "output": "0"
+  },
+  {
+   "input": "18\n11 26 29 23 9 1 0 23 7 26 2 11 1 21 19 26 13 16",
+   "output": "91"
+  },
+  {
+   "input": "7\n22 29 5 12 27 21 13",
+   "output": "60"
+  }
+ ],
+ "unique-paths-obstacles": [
+  {
+   "input": "3 3\n0 0 0\n0 1 0\n0 0 0",
+   "output": "2"
+  },
+  {
+   "input": "2 2\n0 1\n0 0",
+   "output": "1"
+  },
+  {
+   "input": "1 1\n1",
+   "output": "0"
+  },
+  {
+   "input": "1 3\n0 0 0",
+   "output": "1"
+  },
+  {
+   "input": "5 4\n0 0 0 1\n0 0 0 1\n0 1 0 0\n0 1 1 1\n0 1 0 0",
+   "output": "0"
+  },
+  {
+   "input": "6 4\n0 0 1 0\n1 0 0 0\n0 0 0 0\n0 1 0 0\n0 0 0 0\n0 0 0 0",
+   "output": "9"
+  }
+ ],
+ "min-path-sum": [
+  {
+   "input": "3 3\n1 3 1\n1 5 1\n4 2 1",
+   "output": "7"
+  },
+  {
+   "input": "2 3\n1 2 3\n4 5 6",
+   "output": "12"
+  },
+  {
+   "input": "1 1\n7",
+   "output": "7"
+  },
+  {
+   "input": "6 5\n7 4 4 2 0\n3 2 0 1 8\n6 4 6 1 7\n8 2 2 4 2\n7 3 5 6 1\n5 0 3 6 9",
+   "output": "30"
+  },
+  {
+   "input": "7 7\n0 0 5 2 0 4 0\n3 6 1 4 1 8 5\n8 5 3 7 7 7 6\n2 0 4 0 0 3 0\n2 2 5 4 5 7 2\n5 0 6 9 5 4 1\n2 7 9 4 7 2 7",
+   "output": "26"
+  }
+ ],
+ "triangle-min-path": [
+  {
+   "input": "4\n2\n3 4\n6 5 7\n4 1 8 3",
+   "output": "11"
+  },
+  {
+   "input": "1\n-10",
+   "output": "-10"
+  },
+  {
+   "input": "3\n1\n2 3\n4 5 6",
+   "output": "7"
+  }
+ ],
+ "zero-one-knapsack-small": [
+  {
+   "input": "3 50\n10 60\n20 100\n30 120",
+   "output": "220"
+  },
+  {
+   "input": "1 5\n6 100",
+   "output": "0"
+  },
+  {
+   "input": "4 7\n1 1\n3 4\n4 5\n5 7",
+   "output": "9"
+  },
+  {
+   "input": "15 41\n28 45\n16 24\n27 71\n23 68\n5 92\n10 7\n24 31\n25 35\n17 57\n1 24\n3 71\n22 40\n7 40\n22 97\n2 35",
+   "output": "359"
+  },
+  {
+   "input": "10 52\n5 37\n17 61\n5 81\n23 10\n7 1\n3 5\n6 100\n3 86\n9 49\n11 80",
+   "output": "457"
+  }
+ ],
+ "unbounded-knapsack": [
+  {
+   "input": "2 3\n1 1\n2 3",
+   "output": "4"
+  },
+  {
+   "input": "3 8\n1 10\n3 40\n4 50",
+   "output": "100"
+  },
+  {
+   "input": "1 1\n2 5",
+   "output": "0"
+  },
+  {
+   "input": "5 16\n9 50\n15 31\n9 49\n3 8\n7 41",
+   "output": "91"
+  },
+  {
+   "input": "3 33\n9 41\n15 10\n12 39",
+   "output": "123"
+  }
+ ],
+ "coin-change-ways": [
+  {
+   "input": "3 5\n1 2 5",
+   "output": "4"
+  },
+  {
+   "input": "1 3\n2",
+   "output": "0"
+  },
+  {
+   "input": "1 0\n7",
+   "output": "1"
+  },
+  {
+   "input": "4 100\n1 5 10 25",
+   "output": "242"
+  },
+  {
+   "input": "3 10000\n2 3 7",
+   "output": "1191905"
+  }
+ ],
+ "longest-common-substring": [
+  {
+   "input": "abcdxyz\nxyzabcd",
+   "output": "4"
+  },
+  {
+   "input": "zxabcdezy\nyzabcdezx",
+   "output": "6"
+  },
+  {
+   "input": "abc\ndef",
+   "output": "0"
+  },
+  {
+   "input": "aaaa\naa",
+   "output": "2"
+  },
+  {
+   "input": "cacacbcbacb\ncbbcbaaacacaabbacababaa",
+   "output": "4"
+  },
+  {
+   "input": "ccccaaababaccaabc\ncbccbcbaababcaacabc",
+   "output": "5"
+  }
+ ],
+ "longest-palindromic-subsequence": [
+  {
+   "input": "bbbab",
+   "output": "4"
+  },
+  {
+   "input": "cbbd",
+   "output": "2"
+  },
+  {
+   "input": "a",
+   "output": "1"
+  },
+  {
+   "input": "agbdba",
+   "output": "5"
+  },
+  {
+   "input": "dddbabcbabdbacbdab",
+   "output": "13"
+  },
+  {
+   "input": "cbbabacbbbbaacbdaddccabbacbccdccd",
+   "output": "17"
+  }
+ ],
+ "min-insertions-palindrome": [
+  {
+   "input": "zzazz",
+   "output": "0"
+  },
+  {
+   "input": "mbadm",
+   "output": "2"
+  },
+  {
+   "input": "leetcode",
+   "output": "5"
+  },
+  {
+   "input": "a",
+   "output": "0"
+  },
+  {
+   "input": "ab",
+   "output": "1"
+  }
+ ],
+ "word-break": [
+  {
+   "input": "leetcode\n2\nleet code",
+   "output": "YES"
+  },
+  {
+   "input": "applepenapple\n2\napple pen",
+   "output": "YES"
+  },
+  {
+   "input": "catsandog\n5\ncats dog sand and cat",
+   "output": "NO"
+  },
+  {
+   "input": "a\n1\nb",
+   "output": "NO"
+  },
+  {
+   "input": "aaaaaaa\n2\naaaa aaa",
+   "output": "YES"
+  }
+ ],
+ "partition-equal-subset": [
+  {
+   "input": "4\n1 5 11 5",
+   "output": "YES"
+  },
+  {
+   "input": "4\n1 2 3 5",
+   "output": "NO"
+  },
+  {
+   "input": "1\n2",
+   "output": "NO"
+  },
+  {
+   "input": "2\n7 7",
+   "output": "YES"
+  },
+  {
+   "input": "15\n29 9 4 28 17 1 25 27 16 8 20 15 17 19 10",
+   "output": "NO"
+  },
+  {
+   "input": "9\n21 12 3 18 20 16 10 15 6",
+   "output": "NO"
+  }
+ ],
+ "target-sum-signs": [
+  {
+   "input": "5 3\n1 1 1 1 1",
+   "output": "5"
+  },
+  {
+   "input": "1 1\n1",
+   "output": "1"
+  },
+  {
+   "input": "2 0\n0 0",
+   "output": "4"
+  },
+  {
+   "input": "3 10\n1 2 3",
+   "output": "0"
+  }
+ ],
+ "count-longest-increasing": [
+  {
+   "input": "5\n1 3 5 4 7",
+   "output": "2"
+  },
+  {
+   "input": "5\n2 2 2 2 2",
+   "output": "5"
+  },
+  {
+   "input": "1\n5",
+   "output": "1"
+  },
+  {
+   "input": "4\n1 2 3 4",
+   "output": "1"
+  },
+  {
+   "input": "11\n4 8 0 6 7 0 0 5 6 10 2",
+   "output": "6"
+  },
+  {
+   "input": "23\n9 6 3 6 0 3 8 1 0 9 3 0 4 1 3 5 3 9 5 0 3 8 3",
+   "output": "3"
+  }
+ ],
+ "max-product-subarray": [
+  {
+   "input": "4\n2 3 -2 4",
+   "output": "6"
+  },
+  {
+   "input": "3\n-2 0 -1",
+   "output": "0"
+  },
+  {
+   "input": "1\n-3",
+   "output": "-3"
+  },
+  {
+   "input": "4\n-2 3 -4 5",
+   "output": "120"
+  },
+  {
+   "input": "10\n5 0 -5 5 -4 5 -2 0 1 1",
+   "output": "500"
+  },
+  {
+   "input": "20\n4 -3 -1 5 -2 5 -2 -4 -2 3 1 -1 -4 5 -4 3 -4 -1 -1 -2",
+   "output": "27648000"
+  }
+ ],
+ "jump-game": [
+  {
+   "input": "5\n2 3 1 1 4",
+   "output": "YES"
+  },
+  {
+   "input": "5\n3 2 1 0 4",
+   "output": "NO"
+  },
+  {
+   "input": "1\n0",
+   "output": "YES"
+  },
+  {
+   "input": "2\n0 1",
+   "output": "NO"
+  },
+  {
+   "input": "12\n1 0 0 3 2 0 0 0 2 0 3 1",
+   "output": "NO"
+  },
+  {
+   "input": "7\n1 3 1 1 1 2 3",
+   "output": "YES"
+  }
+ ],
+ "jump-game-min": [
+  {
+   "input": "5\n2 3 1 1 4",
+   "output": "2"
+  },
+  {
+   "input": "5\n2 3 0 1 4",
+   "output": "2"
+  },
+  {
+   "input": "1\n0",
+   "output": "0"
+  },
+  {
+   "input": "3\n1 0 2",
+   "output": "-1"
+  },
+  {
+   "input": "20\n3 1 3 3 1 2 1 1 3 3 1 3 1 1 3 2 3 1 1 2",
+   "output": "8"
+  },
+  {
+   "input": "7\n2 1 3 2 3 1 1",
+   "output": "3"
+  }
+ ],
+ "rod-cutting": [
+  {
+   "input": "8\n1 5 8 9 10 17 17 20",
+   "output": "22"
+  },
+  {
+   "input": "8\n3 5 8 9 10 17 17 20",
+   "output": "24"
+  },
+  {
+   "input": "1\n4",
+   "output": "4"
+  },
+  {
+   "input": "4\n1 1 1 10",
+   "output": "10"
+  }
+ ],
+ "egg-drop": [
+  {
+   "input": "1 2",
+   "output": "2"
+  },
+  {
+   "input": "2 6",
+   "output": "3"
+  },
+  {
+   "input": "3 14",
+   "output": "4"
+  },
+  {
+   "input": "2 100",
+   "output": "14"
+  },
+  {
+   "input": "100 10000",
+   "output": "14"
+  }
+ ],
+ "matrix-chain": [
+  {
+   "input": "5\n40 20 30 10 30",
+   "output": "26000"
+  },
+  {
+   "input": "3\n10 20 30",
+   "output": "6000"
+  },
+  {
+   "input": "2\n5 5",
+   "output": "0"
+  },
+  {
+   "input": "7\n30 35 15 5 10 20 25",
+   "output": "15125"
+  }
+ ],
+ "expression-results": [
+  {
+   "input": "2-1-1",
+   "output": "2"
+  },
+  {
+   "input": "2*3-4*5",
+   "output": "4"
+  },
+  {
+   "input": "7",
+   "output": "1"
+  },
+  {
+   "input": "1+2*3",
+   "output": "2"
+  }
+ ],
+ "paint-fence": [
+  {
+   "input": "3 2",
+   "output": "6"
+  },
+  {
+   "input": "1 1",
+   "output": "1"
+  },
+  {
+   "input": "2 3",
+   "output": "9"
+  },
+  {
+   "input": "7 2",
+   "output": "42"
+  },
+  {
+   "input": "100000 100000",
+   "output": "948181920"
+  }
+ ],
+ "count-bsts": [
+  {
+   "input": "3",
+   "output": "5"
+  },
+  {
+   "input": "1",
+   "output": "1"
+  },
+  {
+   "input": "5",
+   "output": "42"
+  },
+  {
+   "input": "19",
+   "output": "767263183"
+  },
+  {
+   "input": "1000",
+   "output": "110961515"
+  }
+ ],
+ "dice-throw-ways": [
+  {
+   "input": "1 6 3",
+   "output": "1"
+  },
+  {
+   "input": "2 6 7",
+   "output": "6"
+  },
+  {
+   "input": "2 5 10",
+   "output": "1"
+  },
+  {
+   "input": "1 2 3",
+   "output": "0"
+  },
+  {
+   "input": "30 30 500",
+   "output": "222616187"
+  }
+ ],
+ "longest-bitonic": [
+  {
+   "input": "8\n1 11 2 10 4 5 2 1",
+   "output": "6"
+  },
+  {
+   "input": "6\n12 11 40 5 3 1",
+   "output": "5"
+  },
+  {
+   "input": "5\n80 60 30 40 20",
+   "output": "4"
+  },
+  {
+   "input": "1\n4",
+   "output": "1"
+  }
+ ],
+ "maximal-square": [
+  {
+   "input": "4 5\n1 0 1 0 0\n1 0 1 1 1\n1 1 1 1 1\n1 0 0 1 0",
+   "output": "4"
+  },
+  {
+   "input": "2 2\n0 1\n1 0",
+   "output": "1"
+  },
+  {
+   "input": "1 1\n0",
+   "output": "0"
+  },
+  {
+   "input": "3 3\n1 1 1\n1 1 1\n1 1 1",
+   "output": "9"
+  }
+ ],
+ "distinct-subsequences": [
+  {
+   "input": "rabbbit\nrabbit",
+   "output": "3"
+  },
+  {
+   "input": "babgbag\nbag",
+   "output": "5"
+  },
+  {
+   "input": "abc\nd",
+   "output": "0"
+  },
+  {
+   "input": "aaaa\naa",
+   "output": "6"
+  }
+ ],
+ "wildcard-matching": [
+  {
+   "input": "aa\na",
+   "output": "NO"
+  },
+  {
+   "input": "aa\n*",
+   "output": "YES"
+  },
+  {
+   "input": "cb\n?a",
+   "output": "NO"
+  },
+  {
+   "input": "adceb\n*a*b",
+   "output": "YES"
+  },
+  {
+   "input": "acdcb\na*c?b",
+   "output": "NO"
+  }
+ ],
+ "regex-matching": [
+  {
+   "input": "aa\na",
+   "output": "NO"
+  },
+  {
+   "input": "aa\na*",
+   "output": "YES"
+  },
+  {
+   "input": "ab\n.*",
+   "output": "YES"
+  },
+  {
+   "input": "aab\nc*a*b",
+   "output": "YES"
+  },
+  {
+   "input": "mississippi\nmis*is*p*.",
+   "output": "NO"
+  }
+ ],
+ "best-time-stock-cooldown": [
+  {
+   "input": "5\n1 2 3 0 2",
+   "output": "3"
+  },
+  {
+   "input": "1\n1",
+   "output": "0"
+  },
+  {
+   "input": "4\n4 3 2 1",
+   "output": "0"
+  },
+  {
+   "input": "13\n2 17 16 6 3 19 10 5 18 4 9 17 20",
+   "output": "55"
+  },
+  {
+   "input": "19\n5 2 6 3 17 2 6 15 5 13 4 17 17 8 12 1 14 1 18",
+   "output": "58"
+  }
+ ],
+ "best-time-stock-k": [
+  {
+   "input": "3 2\n2 4 1",
+   "output": "2"
+  },
+  {
+   "input": "6 2\n3 2 6 5 0 3",
+   "output": "7"
+  },
+  {
+   "input": "5 1\n7 1 5 3 6",
+   "output": "5"
+  },
+  {
+   "input": "4 3\n1 2 3 4",
+   "output": "3"
+  }
+ ],
+ "partition-min-difference": [
+  {
+   "input": "4\n1 6 11 5",
+   "output": "1"
+  },
+  {
+   "input": "2\n3 9",
+   "output": "6"
+  },
+  {
+   "input": "1\n7",
+   "output": "7"
+  },
+  {
+   "input": "15\n79 81 74 26 94 30 80 12 42 20 40 50 8 35 71",
+   "output": "0"
+  },
+  {
+   "input": "8\n25 86 27 100 75 44 92 61",
+   "output": "0"
+  }
+ ],
+ "count-subsets-sum": [
+  {
+   "input": "6 10\n2 3 5 6 8 10",
+   "output": "3"
+  },
+  {
+   "input": "5 3\n1 1 1 1 1",
+   "output": "10"
+  },
+  {
+   "input": "1 4\n5",
+   "output": "0"
+  },
+  {
+   "input": "3 6\n1 2 3",
+   "output": "1"
+  }
+ ],
+ "longest-arithmetic-subsequence": [
+  {
+   "input": "4\n3 6 9 12",
+   "output": "4"
+  },
+  {
+   "input": "5\n9 4 7 2 10",
+   "output": "3"
+  },
+  {
+   "input": "7\n20 1 15 3 10 5 8",
+   "output": "4"
+  },
+  {
+   "input": "2\n5 5",
+   "output": "2"
+  }
+ ],
+ "frog-jump-k": [
+  {
+   "input": "5 3\n10 30 40 50 20",
+   "output": "30"
+  },
+  {
+   "input": "3 1\n10 20 10",
+   "output": "20"
+  },
+  {
+   "input": "2 100\n10 10",
+   "output": "0"
+  },
+  {
+   "input": "11 3\n7 22 43 30 8 21 45 30 33 13 43",
+   "output": "54"
+  },
+  {
+   "input": "20 4\n29 30 10 10 46 9 39 1 5 4 20 8 19 50 5 31 26 15 44 8",
+   "output": "47"
+  }
+ ],
+ "vacation-activities": [
+  {
+   "input": "3\n10 40 70\n20 50 80\n30 60 90",
+   "output": "210"
+  },
+  {
+   "input": "1\n100 10 1",
+   "output": "100"
+  },
+  {
+   "input": "7\n6 7 8\n8 8 3\n2 5 2\n7 8 6\n4 6 8\n2 3 4\n7 5 1",
+   "output": "46"
+  }
+ ],
+ "perfect-squares": [
+  {
+   "input": "12",
+   "output": "3"
+  },
+  {
+   "input": "13",
+   "output": "2"
+  },
+  {
+   "input": "1",
+   "output": "1"
+  },
+  {
+   "input": "7",
+   "output": "4"
+  },
+  {
+   "input": "9999",
+   "output": "4"
+  }
+ ],
+ "unique-binary-strings": [
+  {
+   "input": "2",
+   "output": "3"
+  },
+  {
+   "input": "3",
+   "output": "5"
+  },
+  {
+   "input": "1",
+   "output": "2"
+  },
+  {
+   "input": "50",
+   "output": "951279875"
+  },
+  {
+   "input": "1000000",
+   "output": "452491922"
+  }
+ ],
+ "tiling-domino": [
+  {
+   "input": "1",
+   "output": "1"
+  },
+  {
+   "input": "2",
+   "output": "2"
+  },
+  {
+   "input": "3",
+   "output": "3"
+  },
+  {
+   "input": "10",
+   "output": "89"
+  },
+  {
+   "input": "1000000",
+   "output": "534400663"
+  }
+ ],
+ "max-sum-no-three-consecutive": [
+  {
+   "input": "5\n3000 2000 1000 3 10",
+   "output": "5013"
+  },
+  {
+   "input": "3\n1 2 3",
+   "output": "5"
+  },
+  {
+   "input": "8\n1 1 1 1 1 1 1 1",
+   "output": "6"
+  },
+  {
+   "input": "1\n9",
+   "output": "9"
+  }
+ ],
+ "activity-max-meetings": [
+  {
+   "input": "6\n1 2\n3 4\n0 6\n5 7\n8 9\n5 9",
+   "output": "4"
+  },
+  {
+   "input": "3\n10 20\n12 25\n20 30",
+   "output": "1"
+  },
+  {
+   "input": "1\n1 1",
+   "output": "1"
+  },
+  {
+   "input": "11\n5 10\n28 28\n27 33\n36 37\n14 25\n47 62\n27 36\n33 35\n15 26\n10 10\n35 42",
+   "output": "6"
+  },
+  {
+   "input": "9\n38 52\n36 40\n0 13\n19 28\n37 46\n28 30\n34 36\n17 22\n8 22",
+   "output": "5"
+  }
+ ],
+ "fractional-knapsack": [
+  {
+   "input": "3 50\n60 10\n100 20\n120 30",
+   "output": "240.00"
+  },
+  {
+   "input": "2 10\n500 30\n10 1",
+   "output": "166.67"
+  },
+  {
+   "input": "1 5\n10 5",
+   "output": "10.00"
+  }
+ ],
+ "minimum-coins-canonical": [
+  {
+   "input": "2786",
+   "output": "8"
+  },
+  {
+   "input": "1",
+   "output": "1"
+  },
+  {
+   "input": "3",
+   "output": "2"
+  },
+  {
+   "input": "4000",
+   "output": "2"
+  },
+  {
+   "input": "999999999",
+   "output": "500010"
+  }
+ ],
+ "job-sequencing": [
+  {
+   "input": "4\n4 20\n1 10\n1 40\n1 30",
+   "output": "2 60"
+  },
+  {
+   "input": "5\n2 100\n1 19\n2 27\n1 25\n1 15",
+   "output": "2 127"
+  },
+  {
+   "input": "1\n1 5",
+   "output": "1 5"
+  }
+ ],
+ "min-arrows-balloons": [
+  {
+   "input": "4\n10 16\n2 8\n1 6\n7 12",
+   "output": "2"
+  },
+  {
+   "input": "4\n1 2\n3 4\n5 6\n7 8",
+   "output": "4"
+  },
+  {
+   "input": "4\n1 2\n2 3\n3 4\n4 5",
+   "output": "2"
+  }
+ ],
+ "non-overlapping-intervals": [
+  {
+   "input": "4\n1 2\n2 3\n3 4\n1 3",
+   "output": "1"
+  },
+  {
+   "input": "3\n1 2\n1 2\n1 2",
+   "output": "2"
+  },
+  {
+   "input": "2\n1 2\n2 3",
+   "output": "0"
+  }
+ ],
+ "gas-station": [
+  {
+   "input": "5\n1 2 3 4 5\n3 4 5 1 2",
+   "output": "3"
+  },
+  {
+   "input": "3\n2 3 4\n3 4 3",
+   "output": "-1"
+  },
+  {
+   "input": "1\n5\n4",
+   "output": "0"
+  }
+ ],
+ "candy-distribution": [
+  {
+   "input": "3\n1 0 2",
+   "output": "5"
+  },
+  {
+   "input": "3\n1 2 2",
+   "output": "4"
+  },
+  {
+   "input": "5\n1 2 3 4 5",
+   "output": "15"
+  },
+  {
+   "input": "5\n5 4 3 2 1",
+   "output": "15"
+  },
+  {
+   "input": "8\n4 4 1 2 5 2 5 4",
+   "output": "13"
+  },
+  {
+   "input": "20\n3 5 1 4 2 3 2 3 3 0 1 3 1 5 1 5 2 3 1 1",
+   "output": "31"
+  }
+ ],
+ "assign-cookies": [
+  {
+   "input": "3 2\n1 2 3\n1 1",
+   "output": "1"
+  },
+  {
+   "input": "2 3\n1 2\n1 2 3",
+   "output": "2"
+  },
+  {
+   "input": "1 1\n5\n4",
+   "output": "0"
+  }
+ ],
+ "boats-to-save-people": [
+  {
+   "input": "2 3\n1 2",
+   "output": "1"
+  },
+  {
+   "input": "4 3\n3 2 2 1",
+   "output": "3"
+  },
+  {
+   "input": "4 5\n3 5 3 4",
+   "output": "4"
+  },
+  {
+   "input": "15 10\n8 9 3 1 3 3 9 1 5 3 2 8 4 2 7",
+   "output": "8"
+  },
+  {
+   "input": "6 10\n4 9 9 1 2 1",
+   "output": "3"
+  }
+ ],
+ "largest-number-concat": [
+  {
+   "input": "2\n10 2",
+   "output": "210"
+  },
+  {
+   "input": "5\n3 30 34 5 9",
+   "output": "9534330"
+  },
+  {
+   "input": "2\n0 0",
+   "output": "0"
+  },
+  {
+   "input": "3\n121 12 1",
+   "output": "121211"
+  }
+ ],
+ "minimum-sum-two-numbers": [
+  {
+   "input": "6\n6 8 4 5 2 3",
+   "output": "604"
+  },
+  {
+   "input": "5\n5 3 0 7 4",
+   "output": "82"
+  },
+  {
+   "input": "2\n9 1",
+   "output": "10"
+  }
+ ],
+ "bfs-shortest-unweighted": [
+  {
+   "input": "5 5\n1 2\n2 3\n3 5\n1 4\n4 5",
+   "output": "2"
+  },
+  {
+   "input": "3 1\n1 2",
+   "output": "-1"
+  },
+  {
+   "input": "2 1\n1 2",
+   "output": "1"
+  },
+  {
+   "input": "11 10\n1 2\n2 3\n3 4\n2 5\n4 6\n2 7\n2 8\n3 9\n5 10\n1 11",
+   "output": "1"
+  },
+  {
+   "input": "7 7\n1 2\n2 3\n1 4\n2 5\n3 6\n1 7\n3 1",
+   "output": "1"
+  }
+ ],
+ "count-components": [
+  {
+   "input": "5 3\n1 2\n2 3\n4 5",
+   "output": "2"
+  },
+  {
+   "input": "4 0",
+   "output": "4"
+  },
+  {
+   "input": "3 3\n1 2\n2 3\n3 1",
+   "output": "1"
+  },
+  {
+   "input": "17 6\n1 11\n14 11\n6 13\n4 17\n6 4\n10 14",
+   "output": "11"
+  },
+  {
+   "input": "18 6\n5 16\n8 16\n17 7\n17 15\n17 3\n10 7",
+   "output": "12"
+  }
+ ],
+ "detect-cycle-undirected": [
+  {
+   "input": "3 3\n1 2\n2 3\n3 1",
+   "output": "YES"
+  },
+  {
+   "input": "4 3\n1 2\n2 3\n3 4",
+   "output": "NO"
+  },
+  {
+   "input": "4 4\n1 2\n3 4\n2 3\n4 2",
+   "output": "YES"
+  },
+  {
+   "input": "1 0",
+   "output": "NO"
+  }
+ ],
+ "detect-cycle-directed": [
+  {
+   "input": "3 3\n1 2\n2 3\n3 1",
+   "output": "YES"
+  },
+  {
+   "input": "3 2\n1 2\n2 3",
+   "output": "NO"
+  },
+  {
+   "input": "4 4\n1 2\n1 3\n2 4\n3 4",
+   "output": "NO"
+  },
+  {
+   "input": "2 2\n1 2\n2 1",
+   "output": "YES"
+  }
+ ],
+ "topological-order": [
+  {
+   "input": "4 3\n1 2\n1 3\n3 4",
+   "output": "1 2 3 4"
+  },
+  {
+   "input": "3 0",
+   "output": "1 2 3"
+  },
+  {
+   "input": "5 4\n5 1\n4 1\n2 3\n3 1",
+   "output": "2 3 4 5 1"
+  },
+  {
+   "input": "6 6\n6 3\n6 1\n5 1\n5 2\n3 4\n4 2",
+   "output": "5 6 1 3 4 2"
+  }
+ ],
+ "dijkstra-shortest": [
+  {
+   "input": "5 6\n1 2 2\n1 3 4\n2 3 1\n2 4 7\n3 5 3\n4 5 1",
+   "output": "0 2 3 7 6"
+  },
+  {
+   "input": "3 1\n1 2 5",
+   "output": "0 5 -1"
+  },
+  {
+   "input": "1 0",
+   "output": "0"
+  },
+  {
+   "input": "4 4\n1 2 1\n2 3 1\n1 3 5\n3 4 2",
+   "output": "0 1 2 4"
+  }
+ ],
+ "mst-kruskal": [
+  {
+   "input": "4 5\n1 2 10\n1 3 6\n1 4 5\n2 4 15\n3 4 4",
+   "output": "19"
+  },
+  {
+   "input": "2 1\n1 2 7",
+   "output": "7"
+  },
+  {
+   "input": "1 0",
+   "output": "0"
+  },
+  {
+   "input": "3 3\n1 2 1\n2 3 1\n1 3 1",
+   "output": "2"
+  }
+ ],
+ "bipartite-check": [
+  {
+   "input": "4 4\n1 2\n2 3\n3 4\n4 1",
+   "output": "YES"
+  },
+  {
+   "input": "3 3\n1 2\n2 3\n3 1",
+   "output": "NO"
+  },
+  {
+   "input": "5 2\n1 2\n4 5",
+   "output": "YES"
+  },
+  {
+   "input": "1 0",
+   "output": "YES"
+  }
+ ],
+ "tree-diameter": [
+  {
+   "input": "5\n1 2\n1 3\n3 4\n3 5",
+   "output": "3"
+  },
+  {
+   "input": "1",
+   "output": "0"
+  },
+  {
+   "input": "4\n1 2\n2 3\n3 4",
+   "output": "3"
+  },
+  {
+   "input": "13\n1 2\n2 3\n3 4\n2 5\n3 6\n3 7\n2 8\n8 9\n1 10\n3 11\n1 12\n9 13",
+   "output": "5"
+  },
+  {
+   "input": "13\n1 2\n1 3\n1 4\n1 5\n2 6\n5 7\n4 8\n7 9\n6 10\n9 11\n3 12\n11 13",
+   "output": "8"
+  }
+ ],
+ "tree-height-parents": [
+  {
+   "input": "5\n-1 0 0 1 3",
+   "output": "3"
+  },
+  {
+   "input": "1\n-1",
+   "output": "0"
+  },
+  {
+   "input": "4\n1 2 3 -1",
+   "output": "3"
+  }
+ ],
+ "number-of-provinces-matrix": [
+  {
+   "input": "3\n1 1 0\n1 1 0\n0 0 1",
+   "output": "2"
+  },
+  {
+   "input": "3\n1 0 0\n0 1 0\n0 0 1",
+   "output": "3"
+  },
+  {
+   "input": "2\n1 1\n1 1",
+   "output": "1"
+  }
+ ],
+ "rotting-oranges": [
+  {
+   "input": "3 3\n2 1 1\n1 1 0\n0 1 1",
+   "output": "4"
+  },
+  {
+   "input": "3 3\n2 1 1\n0 1 1\n1 0 1",
+   "output": "-1"
+  },
+  {
+   "input": "1 2\n0 2",
+   "output": "0"
+  },
+  {
+   "input": "1 1\n1",
+   "output": "-1"
+  }
+ ],
+ "flood-fill-count-regions": [
+  {
+   "input": "3 4\naabb\nabbb\nccca",
+   "output": "4"
+  },
+  {
+   "input": "1 1\nz",
+   "output": "1"
+  },
+  {
+   "input": "2 2\nab\nba",
+   "output": "4"
+  }
+ ],
+ "word-ladder-length": [
+  {
+   "input": "hit cog\n6\nhot dot dog lot log cog",
+   "output": "5"
+  },
+  {
+   "input": "hit cog\n5\nhot dot dog lot log",
+   "output": "0"
+  },
+  {
+   "input": "a c\n3\na b c",
+   "output": "2"
+  }
+ ],
+ "lca-binary-lifting": [
+  {
+   "input": "7\n1 2\n1 3\n2 4\n2 5\n3 6\n3 7\n4\n4 5\n4 6\n6 7\n2 4",
+   "output": "2\n1\n3\n2"
+  },
+  {
+   "input": "1\n1\n1 1",
+   "output": "1"
+  },
+  {
+   "input": "4\n1 2\n2 3\n3 4\n2\n4 2\n3 4",
+   "output": "2\n3"
+  }
+ ],
+ "number-of-paths-dag": [
+  {
+   "input": "4 5\n1 2\n1 3\n2 4\n3 4\n2 3",
+   "output": "3"
+  },
+  {
+   "input": "3 1\n1 2",
+   "output": "0"
+  },
+  {
+   "input": "2 1\n1 2",
+   "output": "1"
+  },
+  {
+   "input": "5 7\n1 2\n1 3\n2 3\n2 4\n3 4\n3 5\n4 5",
+   "output": "5"
+  }
+ ],
+ "knight-moves": [
+  {
+   "input": "8\n1 1 8 8",
+   "output": "6"
+  },
+  {
+   "input": "3\n1 1 2 2",
+   "output": "-1"
+  },
+  {
+   "input": "8\n4 5 4 5",
+   "output": "0"
+  },
+  {
+   "input": "2\n1 1 2 2",
+   "output": "-1"
+  },
+  {
+   "input": "100\n1 1 100 100",
+   "output": "66"
+  }
+ ],
+ "matrix-transpose": [
+  {
+   "input": "2 3\n1 2 3\n4 5 6",
+   "output": "1 4\n2 5\n3 6"
+  },
+  {
+   "input": "1 1\n7",
+   "output": "7"
+  },
+  {
+   "input": "4 4\n7 7 6 3\n-3 -2 -7 -9\n3 2 9 3\n-7 -4 4 -2",
+   "output": "7 -3 3 -7\n7 -2 2 -4\n6 -7 9 4\n3 -9 3 -2"
+  },
+  {
+   "input": "4 5\n-1 7 -2 4 4\n-9 8 -1 9 -5\n0 -1 -3 4 -5\n8 6 7 -7 7",
+   "output": "-1 -9 0 8\n7 8 -1 6\n-2 -1 -3 7\n4 9 4 -7\n4 -5 -5 7"
+  },
+  {
+   "input": "3 3\n-6 -4 -4\n4 4 -9\n4 5 -7",
+   "output": "-6 4 4\n-4 4 5\n-4 -9 -7"
+  }
+ ],
+ "matrix-add": [
+  {
+   "input": "2 2\n1 2\n3 4\n5 6\n7 8",
+   "output": "6 8\n10 12"
+  },
+  {
+   "input": "1 3\n1 1 1\n-1 0 1",
+   "output": "0 1 2"
+  },
+  {
+   "input": "4 4\n-8 -1 -2 -4\n-8 -6 2 2\n0 -1 -1 2\n0 -9 -7 -7\n7 -6 4 -5\n-6 6 -2 -5\n3 8 7 -2\n6 7 4 4",
+   "output": "-1 -7 2 -9\n-14 0 0 -3\n3 7 6 0\n6 -2 -3 -3"
+  },
+  {
+   "input": "5 2\n3 9\n5 7\n-9 0\n-2 6\n-5 2\n-1 4\n-9 -2\n1 9\n8 -1\n-2 9",
+   "output": "2 13\n-4 5\n-8 9\n6 5\n-7 11"
+  }
+ ],
+ "matrix-multiply": [
+  {
+   "input": "2 3 2\n1 2 3\n4 5 6\n7 8\n9 10\n11 12",
+   "output": "58 64\n139 154"
+  },
+  {
+   "input": "1 1 1\n3\n4",
+   "output": "12"
+  },
+  {
+   "input": "3 3 3\n3 3 0\n-4 4 3\n-2 -4 -2\n0 4 0\n-1 -3 1\n2 5 -3",
+   "output": "-3 3 3\n2 -13 -5\n0 -6 2"
+  },
+  {
+   "input": "2 2 3\n-3 -5\n1 5\n-1 -1 -4\n5 -4 -2",
+   "output": "-22 23 22\n24 -21 -14"
+  }
+ ],
+ "rotate-matrix-90": [
+  {
+   "input": "3 3\n1 2 3\n4 5 6\n7 8 9",
+   "output": "7 4 1\n8 5 2\n9 6 3"
+  },
+  {
+   "input": "1 1\n5",
+   "output": "5"
+  },
+  {
+   "input": "4 4\n1 -8 -9 4\n-2 6 4 -2\n6 -3 -1 -9\n-4 -6 -3 -5",
+   "output": "-4 6 -2 1\n-6 -3 6 -8\n-3 -1 4 -9\n-5 -9 -2 4"
+  },
+  {
+   "input": "2 2\n-7 0\n-4 -6",
+   "output": "-4 -7\n-6 0"
+  },
+  {
+   "input": "5 5\n-2 5 -2 -9 -3\n-5 4 6 -6 2\n-7 6 7 -6 4\n3 1 0 -9 -8\n-4 -5 8 -4 9",
+   "output": "-4 3 -7 -5 -2\n-5 1 6 4 5\n8 0 7 6 -2\n-4 -9 -6 -6 -9\n9 -8 4 2 -3"
+  }
+ ],
+ "spiral-order": [
+  {
+   "input": "3 3\n1 2 3\n4 5 6\n7 8 9",
+   "output": "1 2 3 6 9 8 7 4 5"
+  },
+  {
+   "input": "3 4\n1 2 3 4\n5 6 7 8\n9 10 11 12",
+   "output": "1 2 3 4 8 12 11 10 9 5 6 7"
+  },
+  {
+   "input": "1 1\n1",
+   "output": "1"
+  },
+  {
+   "input": "4 1\n1\n2\n3\n4",
+   "output": "1 2 3 4"
+  },
+  {
+   "input": "3 2\n4 -5\n6 8\n-4 1",
+   "output": "4 -5 8 1 -4 6"
+  },
+  {
+   "input": "4 4\n5 8 -5 5\n1 -6 8 2\n-9 6 -4 -9\n-2 -5 -9 -9",
+   "output": "5 8 -5 5 2 -9 -9 -9 -5 -2 -9 1 -6 8 -4 6"
+  }
+ ],
+ "generate-spiral": [
+  {
+   "input": "3",
+   "output": "1 2 3\n8 9 4\n7 6 5"
+  },
+  {
+   "input": "1",
+   "output": "1"
+  },
+  {
+   "input": "4",
+   "output": "1 2 3 4\n12 13 14 5\n11 16 15 6\n10 9 8 7"
+  },
+  {
+   "input": "5",
+   "output": "1 2 3 4 5\n16 17 18 19 6\n15 24 25 20 7\n14 23 22 21 8\n13 12 11 10 9"
+  }
+ ],
+ "diagonal-sums": [
+  {
+   "input": "3 3\n11 2 4\n4 5 6\n10 8 -12",
+   "output": "15"
+  },
+  {
+   "input": "1 1\n5",
+   "output": "0"
+  },
+  {
+   "input": "6 6\n2 9 2 -4 8 1\n4 9 -7 4 4 -9\n0 -6 -9 -5 -7 8\n4 9 2 9 -5 -8\n5 8 -4 2 3 3\n6 1 -8 -6 8 7",
+   "output": "5"
+  },
+  {
+   "input": "6 6\n-1 -5 -4 -1 -9 3\n5 9 5 4 1 6\n-8 -7 2 -3 9 2\n3 -6 1 4 8 -1\n9 -5 -8 -4 2 1\n3 -2 -9 -2 2 5",
+   "output": "21"
+  },
+  {
+   "input": "2 2\n-5 -2\n6 -3",
+   "output": "12"
+  }
+ ],
+ "row-max-sum": [
+  {
+   "input": "3 3\n1 2 3\n4 5 6\n7 8 9",
+   "output": "3 24"
+  },
+  {
+   "input": "2 2\n5 5\n6 4",
+   "output": "1 10"
+  },
+  {
+   "input": "5 2\n-8 -2\n7 5\n-8 4\n-5 -9\n-1 -1",
+   "output": "2 12"
+  },
+  {
+   "input": "6 2\n7 -6\n-6 -9\n9 -2\n6 7\n-6 -4\n9 -4",
+   "output": "4 13"
+  },
+  {
+   "input": "2 4\n-9 -3 3 -2\n2 -4 -8 5",
+   "output": "2 -5"
+  }
+ ],
+ "set-matrix-zeroes": [
+  {
+   "input": "3 3\n1 1 1\n1 0 1\n1 1 1",
+   "output": "1 0 1\n0 0 0\n1 0 1"
+  },
+  {
+   "input": "3 4\n0 1 2 0\n3 4 5 2\n1 3 1 5",
+   "output": "0 0 0 0\n0 4 5 0\n0 3 1 0"
+  },
+  {
+   "input": "4 6\n4 0 3 4 0 4\n2 0 0 4 4 1\n3 2 2 1 0 4\n2 0 1 0 1 4",
+   "output": "0 0 0 0 0 0\n0 0 0 0 0 0\n0 0 0 0 0 0\n0 0 0 0 0 0"
+  },
+  {
+   "input": "2 6\n4 4 1 2 2 4\n4 3 4 4 2 3",
+   "output": "4 4 1 2 2 4\n4 3 4 4 2 3"
+  }
+ ],
+ "search-2d-matrix": [
+  {
+   "input": "5 5\n1 4 7 11 15\n2 5 8 12 19\n3 6 9 16 22\n10 13 14 17 24\n18 21 23 26 30\n5",
+   "output": "YES"
+  },
+  {
+   "input": "5 5\n1 4 7 11 15\n2 5 8 12 19\n3 6 9 16 22\n10 13 14 17 24\n18 21 23 26 30\n20",
+   "output": "NO"
+  },
+  {
+   "input": "1 1\n3\n3",
+   "output": "YES"
+  }
+ ],
+ "matrix-2d-prefix": [
+  {
+   "input": "3 3\n1 2 3\n4 5 6\n7 8 9\n3\n1 1 3 3\n2 2 3 3\n1 2 2 3",
+   "output": "45\n28\n16"
+  },
+  {
+   "input": "1 1\n5\n1\n1 1 1 1",
+   "output": "5"
+  },
+  {
+   "input": "6 3\n-1 -5 -7\n-5 6 -6\n4 3 3\n0 -5 -9\n-1 4 -8\n-6 -7 0\n2\n5 2 5 3\n6 1 6 2",
+   "output": "-4\n-13"
+  },
+  {
+   "input": "4 6\n3 7 9 0 6 -3\n2 -6 -3 -4 -4 5\n8 -9 -6 7 -7 -7\n3 2 7 9 -4 -3\n4\n1 2 3 3\n3 1 3 1\n3 6 4 6\n2 5 2 6",
+   "output": "-8\n8\n-10\n1"
+  }
+ ],
+ "island-perimeter": [
+  {
+   "input": "4 4\n0 1 0 0\n1 1 1 0\n0 1 0 0\n1 1 0 0",
+   "output": "16"
+  },
+  {
+   "input": "1 1\n1",
+   "output": "4"
+  },
+  {
+   "input": "1 2\n1 0",
+   "output": "4"
+  }
+ ],
+ "count-negatives-sorted-matrix": [
+  {
+   "input": "4 4\n4 3 2 -1\n3 2 1 -1\n1 1 -1 -2\n-1 -1 -2 -3",
+   "output": "8"
+  },
+  {
+   "input": "2 2\n3 2\n1 0",
+   "output": "0"
+  },
+  {
+   "input": "1 1\n-5",
+   "output": "1"
+  }
+ ],
+ "toeplitz-matrix": [
+  {
+   "input": "3 4\n1 2 3 4\n5 1 2 3\n9 5 1 2",
+   "output": "YES"
+  },
+  {
+   "input": "2 2\n1 2\n2 2",
+   "output": "NO"
+  },
+  {
+   "input": "1 3\n1 2 3",
+   "output": "YES"
+  }
+ ],
+ "game-of-life-step": [
+  {
+   "input": "4 3\n0 1 0\n0 0 1\n1 1 1\n0 0 0",
+   "output": "0 0 0\n1 0 1\n0 1 1\n0 1 0"
+  },
+  {
+   "input": "2 2\n1 1\n1 0",
+   "output": "1 1\n1 1"
+  },
+  {
+   "input": "3 3\n0 0 0\n1 1 1\n0 0 0",
+   "output": "0 1 0\n0 1 0\n0 1 0"
+  }
+ ],
+ "max-ones-row": [
+  {
+   "input": "4 4\n0 1 1 1\n0 0 1 1\n1 1 1 1\n0 0 0 0",
+   "output": "2"
+  },
+  {
+   "input": "2 2\n0 0\n0 0",
+   "output": "-1"
+  },
+  {
+   "input": "2 3\n0 1 1\n0 1 1",
+   "output": "0"
+  }
+ ],
+ "count-bits": [
+  {
+   "input": "11",
+   "output": "3"
+  },
+  {
+   "input": "0",
+   "output": "0"
+  },
+  {
+   "input": "128",
+   "output": "1"
+  },
+  {
+   "input": "255",
+   "output": "8"
+  },
+  {
+   "input": "1000000000000000000",
+   "output": "24"
+  }
+ ],
+ "count-bits-range": [
+  {
+   "input": "2",
+   "output": "0 1 1"
+  },
+  {
+   "input": "5",
+   "output": "0 1 1 2 1 2"
+  },
+  {
+   "input": "0",
+   "output": "0"
+  },
+  {
+   "input": "16",
+   "output": "0 1 1 2 1 2 2 3 1 2 2 3 2 3 3 4 1"
+  }
+ ],
+ "single-number": [
+  {
+   "input": "3\n2 2 1",
+   "output": "1"
+  },
+  {
+   "input": "5\n4 1 2 1 2",
+   "output": "4"
+  },
+  {
+   "input": "1\n1",
+   "output": "1"
+  },
+  {
+   "input": "11\n47 36 8 -46 34 0 0 -46 34 47 8",
+   "output": "36"
+  },
+  {
+   "input": "17\n5 -29 30 44 -28 19 5 37 48 19 24 44 48 -28 -29 24 37",
+   "output": "30"
+  }
+ ],
+ "single-number-thrice": [
+  {
+   "input": "4\n2 2 3 2",
+   "output": "3"
+  },
+  {
+   "input": "7\n0 1 0 1 0 1 99",
+   "output": "99"
+  },
+  {
+   "input": "1\n-5",
+   "output": "-5"
+  },
+  {
+   "input": "7\n-2 -2 -2 7 7 7 -9",
+   "output": "-9"
+  }
+ ],
+ "reverse-bits-32": [
+  {
+   "input": "43261596",
+   "output": "964176192"
+  },
+  {
+   "input": "4294967293",
+   "output": "3221225471"
+  },
+  {
+   "input": "0",
+   "output": "0"
+  },
+  {
+   "input": "1",
+   "output": "2147483648"
+  }
+ ],
+ "hamming-distance": [
+  {
+   "input": "1 4",
+   "output": "2"
+  },
+  {
+   "input": "3 1",
+   "output": "1"
+  },
+  {
+   "input": "0 0",
+   "output": "0"
+  },
+  {
+   "input": "4611686018427387903 0",
+   "output": "62"
+  }
+ ],
+ "total-hamming": [
+  {
+   "input": "3\n4 14 2",
+   "output": "6"
+  },
+  {
+   "input": "2\n4 14",
+   "output": "2"
+  },
+  {
+   "input": "1\n7",
+   "output": "0"
+  },
+  {
+   "input": "8\n108 132 237 497 481 579 194 709",
+   "output": "121"
+  },
+  {
+   "input": "14\n418 60 695 402 887 980 303 48 3 621 989 354 511 88",
+   "output": "473"
+  }
+ ],
+ "find-the-duplicate": [
+  {
+   "input": "5\n1 3 4 2 2",
+   "output": "2"
+  },
+  {
+   "input": "5\n3 1 3 4 2",
+   "output": "3"
+  },
+  {
+   "input": "2\n1 1",
+   "output": "1"
+  },
+  {
+   "input": "5\n2 2 2 2 2",
+   "output": "2"
+  }
+ ],
+ "subsets-xor-sum": [
+  {
+   "input": "2\n1 3",
+   "output": "6"
+  },
+  {
+   "input": "3\n5 1 6",
+   "output": "28"
+  },
+  {
+   "input": "1\n7",
+   "output": "7"
+  },
+  {
+   "input": "6\n3 4 5 6 7 8",
+   "output": "480"
+  }
+ ],
+ "bitwise-and-range": [
+  {
+   "input": "5 7",
+   "output": "4"
+  },
+  {
+   "input": "0 0",
+   "output": "0"
+  },
+  {
+   "input": "1 2147483647",
+   "output": "0"
+  },
+  {
+   "input": "12 15",
+   "output": "12"
+  },
+  {
+   "input": "4611686018427387904 4611686018427387905",
+   "output": "4611686018427387904"
+  }
+ ],
+ "power-of-four": [
+  {
+   "input": "16",
+   "output": "YES"
+  },
+  {
+   "input": "5",
+   "output": "NO"
+  },
+  {
+   "input": "1",
+   "output": "YES"
+  },
+  {
+   "input": "8",
+   "output": "NO"
+  },
+  {
+   "input": "0",
+   "output": "NO"
+  },
+  {
+   "input": "1152921504606846976",
+   "output": "YES"
+  }
+ ],
+ "max-xor-pair": [
+  {
+   "input": "6\n3 10 5 25 2 8",
+   "output": "28"
+  },
+  {
+   "input": "1\n0",
+   "output": "0"
+  },
+  {
+   "input": "8\n14 70 53 83 49 91 36 80",
+   "output": "127"
+  },
+  {
+   "input": "16\n20535 89965 71035 71288 32484 72932 51755 23456 43794 64424 64555 34364 30270 95958 94941 41623",
+   "output": "130554"
+  },
+  {
+   "input": "17\n57525 34062 89446 39399 19963 20037 26932 25485 26194 86452 74208 26104 93876 57565 72464 26431 69348",
+   "output": "129997"
+  }
+ ],
+ "flip-bits-convert": [
+  {
+   "input": "10 20",
+   "output": "4"
+  },
+  {
+   "input": "7 10",
+   "output": "3"
+  },
+  {
+   "input": "0 0",
+   "output": "0"
+  },
+  {
+   "input": "1000000000000000000 1",
+   "output": "25"
+  }
+ ],
+ "odd-occurrences-two": [
+  {
+   "input": "6\n1 2 1 3 2 5",
+   "output": "3 5"
+  },
+  {
+   "input": "2\n-1 0",
+   "output": "-1 0"
+  },
+  {
+   "input": "8\n4 2 4 5 2 3 3 1",
+   "output": "1 5"
+  }
+ ],
+ "grade-calculator": [
+  {
+   "input": "5\n95 82 70 59 60",
+   "output": "A B C F D"
+  },
+  {
+   "input": "1\n100",
+   "output": "A"
+  },
+  {
+   "input": "3\n0 89 90",
+   "output": "F B A"
+  }
+ ],
+ "electricity-bill": [
+  {
+   "input": "50",
+   "output": "150"
+  },
+  {
+   "input": "100",
+   "output": "300"
+  },
+  {
+   "input": "150",
+   "output": "550"
+  },
+  {
+   "input": "250",
+   "output": "1200"
+  },
+  {
+   "input": "0",
+   "output": "0"
+  },
+  {
+   "input": "1000000",
+   "output": "7999200"
+  }
+ ],
+ "simple-interest-emi": [
+  {
+   "input": "100000 10 12",
+   "output": "8791.59"
+  },
+  {
+   "input": "500000 8.5 60",
+   "output": "10258.27"
+  },
+  {
+   "input": "1200 0 12",
+   "output": "100.00"
+  },
+  {
+   "input": "2500000 7 240",
+   "output": "19382.47"
+  }
+ ],
+ "day-of-week": [
+  {
+   "input": "18 10 2026",
+   "output": "Sunday"
+  },
+  {
+   "input": "1 1 2000",
+   "output": "Saturday"
+  },
+  {
+   "input": "15 8 1947",
+   "output": "Friday"
+  },
+  {
+   "input": "29 2 2024",
+   "output": "Thursday"
+  },
+  {
+   "input": "31 12 9999",
+   "output": "Friday"
+  }
+ ],
+ "days-between-dates": [
+  {
+   "input": "1 1 2024\n1 3 2024",
+   "output": "60"
+  },
+  {
+   "input": "15 8 1947\n26 1 1950",
+   "output": "895"
+  },
+  {
+   "input": "1 1 2000\n1 1 2000",
+   "output": "0"
+  },
+  {
+   "input": "31 12 2026\n1 1 2026",
+   "output": "364"
+  }
+ ],
+ "time-conversion": [
+  {
+   "input": "07:05:45PM",
+   "output": "19:05:45"
+  },
+  {
+   "input": "12:00:00AM",
+   "output": "00:00:00"
+  },
+  {
+   "input": "12:45:54PM",
+   "output": "12:45:54"
+  },
+  {
+   "input": "01:00:00AM",
+   "output": "01:00:00"
+  },
+  {
+   "input": "11:59:59PM",
+   "output": "23:59:59"
+  }
+ ],
+ "seconds-to-hms": [
+  {
+   "input": "3661",
+   "output": "1:01:01"
+  },
+  {
+   "input": "0",
+   "output": "0:00:00"
+  },
+  {
+   "input": "59",
+   "output": "0:00:59"
+  },
+  {
+   "input": "86400",
+   "output": "24:00:00"
+  },
+  {
+   "input": "1000000000000",
+   "output": "277777777:46:40"
+  }
+ ],
+ "tic-tac-toe-winner": [
+  {
+   "input": "XOX\nOXO\nOOX",
+   "output": "X"
+  },
+  {
+   "input": "XXX\nOO.\n...",
+   "output": "X"
+  },
+  {
+   "input": "XOX\nXOO\nOXX",
+   "output": "DRAW"
+  },
+  {
+   "input": "X..\n.O.\n...",
+   "output": "PENDING"
+  },
+  {
+   "input": "O.X\nOX.\nO.X",
+   "output": "O"
+  }
+ ],
+ "atm-withdrawal": [
+  {
+   "input": "500 2000.00",
+   "output": "1490.00"
+  },
+  {
+   "input": "550 2000.00",
+   "output": "2000.00"
+  },
+  {
+   "input": "2000 2000.00",
+   "output": "2000.00"
+  },
+  {
+   "input": "100 110.00",
+   "output": "0.00"
+  }
+ ],
+ "parking-fee": [
+  {
+   "input": "30",
+   "output": "20"
+  },
+  {
+   "input": "60",
+   "output": "20"
+  },
+  {
+   "input": "61",
+   "output": "30"
+  },
+  {
+   "input": "0",
+   "output": "0"
+  },
+  {
+   "input": "1000000",
+   "output": "166680"
+  }
+ ],
+ "vending-change": [
+  {
+   "input": "37 100",
+   "output": "6 0 1 1"
+  },
+  {
+   "input": "50 50",
+   "output": "0 0 0 0"
+  },
+  {
+   "input": "20 10",
+   "output": "INSUFFICIENT"
+  },
+  {
+   "input": "1 1000000",
+   "output": "99999 1 2 0"
+  }
+ ],
+ "bank-transactions": [
+  {
+   "input": "5\nD 100\nW 30\nW 100\nD 50\nW 120",
+   "output": "0 1"
+  },
+  {
+   "input": "1\nW 5",
+   "output": "0 1"
+  },
+  {
+   "input": "3\nD 10\nW 10\nW 1",
+   "output": "0 1"
+  }
+ ],
+ "library-fine": [
+  {
+   "input": "9 6 2015\n6 6 2015",
+   "output": "45"
+  },
+  {
+   "input": "1 1 2016\n31 12 2015",
+   "output": "10000"
+  },
+  {
+   "input": "1 9 2015\n5 6 2015",
+   "output": "1500"
+  },
+  {
+   "input": "5 6 2015\n6 6 2015",
+   "output": "0"
+  }
+ ],
+ "password-strength": [
+  {
+   "input": "Ab1!xyz9",
+   "output": "STRONG"
+  },
+  {
+   "input": "password",
+   "output": "3"
+  },
+  {
+   "input": "Abc1!",
+   "output": "1"
+  },
+  {
+   "input": "A",
+   "output": "4"
+  },
+  {
+   "input": "aA1!aA1!",
+   "output": "STRONG"
+  }
+ ],
+ "validate-ipv4": [
+  {
+   "input": "192.168.1.1",
+   "output": "VALID"
+  },
+  {
+   "input": "256.1.1.1",
+   "output": "INVALID"
+  },
+  {
+   "input": "01.2.3.4",
+   "output": "INVALID"
+  },
+  {
+   "input": "1.2.3",
+   "output": "INVALID"
+  },
+  {
+   "input": "0.0.0.0",
+   "output": "VALID"
+  },
+  {
+   "input": "1.2.3.4.5",
+   "output": "INVALID"
+  },
+  {
+   "input": "a.b.c.d",
+   "output": "INVALID"
+  }
+ ],
+ "validate-email-simple": [
+  {
+   "input": "user.name@example.com",
+   "output": "VALID"
+  },
+  {
+   "input": "a@b.co",
+   "output": "VALID"
+  },
+  {
+   "input": "no-at-sign.com",
+   "output": "INVALID"
+  },
+  {
+   "input": "x@@y.com",
+   "output": "INVALID"
+  },
+  {
+   "input": "x@.com",
+   "output": "INVALID"
+  },
+  {
+   "input": "x@y..com",
+   "output": "INVALID"
+  },
+  {
+   "input": "@y.com",
+   "output": "INVALID"
+  },
+  {
+   "input": "x@y",
+   "output": "INVALID"
+  }
+ ],
+ "matrix-mine-counts": [
+  {
+   "input": "3 4\n*...\n..*.\n....",
+   "output": "*211\n12*1\n0111"
+  },
+  {
+   "input": "1 1\n.",
+   "output": "0"
+  },
+  {
+   "input": "2 2\n**\n**",
+   "output": "**\n**"
+  }
+ ],
+ "elevator-simulation": [
+  {
+   "input": "3\n5 2 8",
+   "output": "57"
+  },
+  {
+   "input": "1\n0",
+   "output": "5"
+  },
+  {
+   "input": "4\n10 10 0 3",
+   "output": "89"
+  }
+ ],
+ "queue-at-counter": [
+  {
+   "input": "3\n0 3\n1 9\n2 6",
+   "output": "4.00"
+  },
+  {
+   "input": "1\n5 5",
+   "output": "0.00"
+  },
+  {
+   "input": "3\n0 1\n10 1\n10 1",
+   "output": "0.33"
+  }
+ ],
+ "traffic-light-cycle": [
+  {
+   "input": "30 5 25 0",
+   "output": "GREEN"
+  },
+  {
+   "input": "30 5 25 32",
+   "output": "YELLOW"
+  },
+  {
+   "input": "30 5 25 40",
+   "output": "RED"
+  },
+  {
+   "input": "30 5 25 60",
+   "output": "GREEN"
+  },
+  {
+   "input": "1 1 1 1000000000000000000",
+   "output": "YELLOW"
+  }
+ ],
+ "word-wrap": [
+  {
+   "input": "10\nthe quick brown fox jumps over the lazy dog",
+   "output": "the quick\nbrown fox\njumps over\nthe lazy\ndog"
+  },
+  {
+   "input": "5\nsupercalifragilistic is long",
+   "output": "supercalifragilistic\nis\nlong"
+  },
+  {
+   "input": "100\nshort text",
+   "output": "short text"
+  }
+ ],
+ "text-justify-center": [
+  {
+   "input": "2 9\nhello\nhi",
+   "output": "**hello**\n***hi****"
+  },
+  {
+   "input": "1 3\nabcdef",
+   "output": "abcdef"
+  },
+  {
+   "input": "1 4\nab",
+   "output": "*ab*"
+  }
+ ],
+ "frequency-histogram": [
+  {
+   "input": "6\n3 1 3 2 3 1",
+   "output": "1: ##\n2: #\n3: ###"
+  },
+  {
+   "input": "1\n0",
+   "output": "0: #"
+  },
+  {
+   "input": "4\n-1 -1 5 5",
+   "output": "-1: ##\n5: ##"
+  }
+ ],
+ "running-median": [
+  {
+   "input": "6\n12 4 5 3 8 7",
+   "output": "12.0 8.0 5.0 4.5 5.0 6.0"
+  },
+  {
+   "input": "1\n5",
+   "output": "5.0"
+  },
+  {
+   "input": "4\n1 1 1 1",
+   "output": "1.0 1.0 1.0 1.0"
+  },
+  {
+   "input": "9\n8 2 -16 6 5 -16 7 16 -14",
+   "output": "8.0 5.0 2.0 4.0 5.0 3.5 5.0 5.5 5.0"
+  },
+  {
+   "input": "9\n-20 13 -9 17 -4 19 -3 -10 -9",
+   "output": "-20.0 -3.5 -9.0 2.0 -4.0 4.5 -3.0 -3.5 -4.0"
+  }
+ ],
+ "lru-cache-sim": [
+  {
+   "input": "2 9\nput 1 1\nput 2 2\nget 1\nput 3 3\nget 2\nput 4 4\nget 1\nget 3\nget 4",
+   "output": "1\n-1\n-1\n3\n4"
+  },
+  {
+   "input": "1 3\nput 2 1\nget 2\nget 3",
+   "output": "1\n-1"
+  },
+  {
+   "input": "2 5\nput 1 1\nput 1 5\nput 2 2\nput 3 3\nget 1",
+   "output": "-1"
+  }
+ ],
+ "snake-and-ladder-moves": [
+  {
+   "input": "2\n32 62\n42 68",
+   "output": "13"
+  },
+  {
+   "input": "0",
+   "output": "17"
+  },
+  {
+   "input": "6\n2 99\n94 1\n95 1\n96 1\n97 1\n98 1",
+   "output": "2"
+  },
+  {
+   "input": "6\n94 1\n95 1\n96 1\n97 1\n98 1\n99 1",
+   "output": "-1"
+  }
+ ],
+ "bowling-score": [
+  {
+   "input": "12\n10 10 10 10 10 10 10 10 10 10 10 10",
+   "output": "300"
+  },
+  {
+   "input": "20\n0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0",
+   "output": "0"
+  },
+  {
+   "input": "21\n5 5 5 5 5 5 5 5 5 5 5 5 5 5 5 5 5 5 5 5 5",
+   "output": "150"
+  },
+  {
+   "input": "19\n10 7 3 9 0 10 0 8 8 2 0 6 10 10 10 8 1 0 0",
+   "output": "167"
+  }
+ ],
+ "number-to-words": [
+  {
+   "input": "123",
+   "output": "One Hundred Twenty Three"
+  },
+  {
+   "input": "12345",
+   "output": "Twelve Thousand Three Hundred Forty Five"
+  },
+  {
+   "input": "1234567",
+   "output": "One Million Two Hundred Thirty Four Thousand Five Hundred Sixty Seven"
+  },
+  {
+   "input": "0",
+   "output": "Zero"
+  },
+  {
+   "input": "1000010",
+   "output": "One Million Ten"
+  },
+  {
+   "input": "2147483647",
+   "output": "Two Billion One Hundred Forty Seven Million Four Hundred Eighty Three Thousand Six Hundred Forty Seven"
+  }
+ ],
+ "calculator-expression": [
+  {
+   "input": "3+2*2",
+   "output": "7"
+  },
+  {
+   "input": " 3/2 ",
+   "output": "1"
+  },
+  {
+   "input": "(1+(4+5+2)-3)+(6+8)",
+   "output": "23"
+  },
+  {
+   "input": "2*(5+5*2)/3+(6/2+8)",
+   "output": "21"
+  },
+  {
+   "input": "14-3/2",
+   "output": "13"
+  }
+ ],
+ "inventory-orders": [
+  {
+   "input": "2\npen 10\nbook 3\n4\npen 4\nbook 5\npen 6\nink 1",
+   "output": "2\nbook 3\npen 0"
+  },
+  {
+   "input": "1\nx 0\n1\nx 1",
+   "output": "0\nx 0"
+  },
+  {
+   "input": "3\nrice 50\ndal 20\noil 5\n5\nrice 20\noil 5\ndal 25\nrice 30\noil 1",
+   "output": "3\ndal 20\noil 0\nrice 0"
+  }
+ ],
+ "rainfall-stats": [
+  {
+   "input": "7\n0 12 5 0 30 30 2",
+   "output": "79 11.29 5 2"
+  },
+  {
+   "input": "1\n0",
+   "output": "0 0.00 1 1"
+  },
+  {
+   "input": "25\n29 36 16 7 14 34 40 35 33 39 37 1 20 10 11 4 20 11 4 1 36 26 37 11 31",
+   "output": "543 21.72 7 0"
+  },
+  {
+   "input": "24\n30 31 27 31 25 8 7 11 13 22 28 37 39 37 30 16 32 27 21 26 33 27 20 25",
+   "output": "603 25.12 13 0"
+  }
+ ],
+ "seat-booking": [
+  {
+   "input": "2 5 4\n3\n3\n2\n4",
+   "output": "1 1\n2 1\n1 4\nFULL"
+  },
+  {
+   "input": "1 3 2\n4\n3",
+   "output": "FULL\n1 1"
+  },
+  {
+   "input": "1 1 2\n1\n1",
+   "output": "1 1\nFULL"
+  }
+ ],
+ "unit-converter": [
+  {
+   "input": "100 C F",
+   "output": "212.00"
+  },
+  {
+   "input": "32 F C",
+   "output": "0.00"
+  },
+  {
+   "input": "0 C K",
+   "output": "273.15"
+  },
+  {
+   "input": "300 K F",
+   "output": "80.33"
+  },
+  {
+   "input": "-40 F C",
+   "output": "-40.00"
+  }
+ ],
+ "shopping-cart-discount": [
+  {
+   "input": "2\n250 2\n100 3",
+   "output": "840.00"
+  },
+  {
+   "input": "3\n400 1\n300 1\n300 1",
+   "output": "945.00"
+  },
+  {
+   "input": "1\n999 1",
+   "output": "1048.95"
+  }
+ ],
+ "matrix-path-robot": [
+  {
+   "input": "GGLLGG",
+   "output": "0 0 S"
+  },
+  {
+   "input": "GL",
+   "output": "0 1 W"
+  },
+  {
+   "input": "RRRR",
+   "output": "0 0 N"
+  },
+  {
+   "input": "GRGRGRG",
+   "output": "0 0 W"
+  }
+ ],
+ "attendance-percentage": [
+  {
+   "input": "30 50",
+   "output": "30"
+  },
+  {
+   "input": "75 100",
+   "output": "0"
+  },
+  {
+   "input": "0 1",
+   "output": "3"
+  },
+  {
+   "input": "0 0",
+   "output": "0"
+  }
+ ],
+ "lottery-matching": [
+  {
+   "input": "1 2 3 4 5 6\n1 2 3 4 5 6",
+   "output": "6 JACKPOT"
+  },
+  {
+   "input": "1 2 3 4 5 6\n1 2 3 10 11 12",
+   "output": "3 10"
+  },
+  {
+   "input": "1 2 3 4 5 6\n7 8 9 10 11 12",
+   "output": "0 0"
+  }
+ ],
+ "linked-list-reverse": [
+  {
+   "input": "5\n1 2 3 4 5",
+   "output": "5 4 3 2 1"
+  },
+  {
+   "input": "1\n7",
+   "output": "7"
+  },
+  {
+   "input": "2\n1 2",
+   "output": "2 1"
+  },
+  {
+   "input": "7\n86 17 27 15 32 45 9",
+   "output": "9 45 32 15 27 17 86"
+  },
+  {
+   "input": "17\n81 99 66 30 3 0 60 16 99 98 75 12 85 86 41 38 89",
+   "output": "89 38 41 86 85 12 75 98 99 16 60 0 3 30 66 99 81"
+  }
+ ],
+ "linked-list-middle": [
+  {
+   "input": "5\n1 2 3 4 5",
+   "output": "3"
+  },
+  {
+   "input": "6\n1 2 3 4 5 6",
+   "output": "4"
+  },
+  {
+   "input": "1\n9",
+   "output": "9"
+  },
+  {
+   "input": "2\n4 8",
+   "output": "8"
+  }
+ ],
+ "linked-list-remove-nth": [
+  {
+   "input": "5 2\n1 2 3 4 5",
+   "output": "1 2 3 5"
+  },
+  {
+   "input": "1 1\n1",
+   "output": "EMPTY"
+  },
+  {
+   "input": "2 1\n1 2",
+   "output": "1"
+  },
+  {
+   "input": "2 2\n1 2",
+   "output": "2"
+  }
+ ],
+ "linked-list-merge-sorted": [
+  {
+   "input": "3\n1 2 4\n3\n1 3 4",
+   "output": "1 1 2 3 4 4"
+  },
+  {
+   "input": "1\n5\n2\n1 2",
+   "output": "1 2 5"
+  },
+  {
+   "input": "3\n5 18 27\n7\n2 7 10 12 14 18 20",
+   "output": "2 5 7 10 12 14 18 18 20 27"
+  },
+  {
+   "input": "3\n12 17 24\n5\n6 9 16 24 30",
+   "output": "6 9 12 16 17 24 24 30"
+  }
+ ],
+ "linked-list-palindrome": [
+  {
+   "input": "4\n1 2 2 1",
+   "output": "YES"
+  },
+  {
+   "input": "2\n1 2",
+   "output": "NO"
+  },
+  {
+   "input": "1\n3",
+   "output": "YES"
+  },
+  {
+   "input": "5\n1 2 3 2 1",
+   "output": "YES"
+  }
+ ],
+ "linked-list-remove-duplicates": [
+  {
+   "input": "5\n1 1 2 3 3",
+   "output": "1 2 3"
+  },
+  {
+   "input": "3\n1 1 1",
+   "output": "1"
+  },
+  {
+   "input": "4\n1 2 3 4",
+   "output": "1 2 3 4"
+  }
+ ],
+ "linked-list-rotate": [
+  {
+   "input": "5 2\n1 2 3 4 5",
+   "output": "4 5 1 2 3"
+  },
+  {
+   "input": "3 4\n0 1 2",
+   "output": "2 0 1"
+  },
+  {
+   "input": "1 99\n5",
+   "output": "5"
+  },
+  {
+   "input": "4 0\n1 2 3 4",
+   "output": "1 2 3 4"
+  }
+ ],
+ "linked-list-add-numbers": [
+  {
+   "input": "3\n2 4 3\n3\n5 6 4",
+   "output": "7 0 8"
+  },
+  {
+   "input": "1\n0\n1\n0",
+   "output": "0"
+  },
+  {
+   "input": "7\n9 9 9 9 9 9 9\n4\n9 9 9 9",
+   "output": "8 9 9 9 0 0 0 1"
+  }
+ ],
+ "linked-list-partition": [
+  {
+   "input": "6 3\n1 4 3 2 5 2",
+   "output": "1 2 2 4 3 5"
+  },
+  {
+   "input": "2 2\n2 1",
+   "output": "1 2"
+  },
+  {
+   "input": "3 10\n1 2 3",
+   "output": "1 2 3"
+  }
+ ],
+ "linked-list-odd-even": [
+  {
+   "input": "5\n1 2 3 4 5",
+   "output": "1 3 5 2 4"
+  },
+  {
+   "input": "6\n2 1 3 5 6 4",
+   "output": "2 3 6 1 5 4"
+  },
+  {
+   "input": "1\n7",
+   "output": "7"
+  }
+ ],
+ "linked-list-swap-pairs": [
+  {
+   "input": "4\n1 2 3 4",
+   "output": "2 1 4 3"
+  },
+  {
+   "input": "1\n1",
+   "output": "1"
+  },
+  {
+   "input": "3\n1 2 3",
+   "output": "2 1 3"
+  }
+ ],
+ "linked-list-reverse-k-group": [
+  {
+   "input": "5 2\n1 2 3 4 5",
+   "output": "2 1 4 3 5"
+  },
+  {
+   "input": "5 3\n1 2 3 4 5",
+   "output": "3 2 1 4 5"
+  },
+  {
+   "input": "1 1\n1",
+   "output": "1"
+  },
+  {
+   "input": "6 3\n1 2 3 4 5 6",
+   "output": "3 2 1 6 5 4"
+  }
+ ],
+ "tree-inorder": [
+  {
+   "input": "4\n1 -1 2 3",
+   "output": "1 3 2"
+  },
+  {
+   "input": "1\n5",
+   "output": "5"
+  },
+  {
+   "input": "7\n4 2 6 1 3 5 7",
+   "output": "1 2 3 4 5 6 7"
+  },
+  {
+   "input": "30\n32 33 22 40 25 18 34 34 33 -1 50 35 18 -1 -1 2 -1 9 26 15 50 -1 30 -1 -1 19 24 23 -1 22",
+   "output": "19 2 24 34 40 23 9 33 22 26 33 25 15 50 50 32 35 30 18 18 22 34"
+  },
+  {
+   "input": "6\n49 42 13 5 44 24",
+   "output": "5 42 44 49 24 13"
+  }
+ ],
+ "tree-preorder": [
+  {
+   "input": "7\n4 2 6 1 3 5 7",
+   "output": "4 2 1 3 6 5 7"
+  },
+  {
+   "input": "1\n5",
+   "output": "5"
+  },
+  {
+   "input": "3\n1 -1 2",
+   "output": "1 2"
+  },
+  {
+   "input": "1\n23",
+   "output": "23"
+  },
+  {
+   "input": "28\n41 7 44 19 11 39 -1 21 -1 46 12 50 -1 28 15 38 33 -1 -1 40 11 -1 44 29 -1 35 41 38",
+   "output": "41 7 19 21 28 44 15 29 11 46 38 35 41 33 38 12 44 39 50 40 11"
+  }
+ ],
+ "tree-postorder": [
+  {
+   "input": "7\n4 2 6 1 3 5 7",
+   "output": "1 3 2 5 7 6 4"
+  },
+  {
+   "input": "1\n5",
+   "output": "5"
+  },
+  {
+   "input": "3\n1 -1 2",
+   "output": "2 1"
+  },
+  {
+   "input": "8\n34 -1 16 3 11 20 -1 13",
+   "output": "20 3 13 11 16 34"
+  },
+  {
+   "input": "25\n33 14 27 39 20 36 26 26 -1 7 21 50 -1 30 48 3 27 -1 45 39 41 -1 47 -1 11",
+   "output": "3 27 26 39 45 7 39 41 21 20 14 47 50 36 11 30 48 26 27 33"
+  }
+ ],
+ "tree-level-order": [
+  {
+   "input": "7\n3 9 20 -1 -1 15 7",
+   "output": "3\n9 20\n15 7"
+  },
+  {
+   "input": "1\n1",
+   "output": "1"
+  },
+  {
+   "input": "7\n4 2 6 1 3 5 7",
+   "output": "4\n2 6\n1 3 5 7"
+  },
+  {
+   "input": "8\n1 1 -1 23 7 -1 35 23",
+   "output": "1\n1\n23 7\n35 23"
+  },
+  {
+   "input": "14\n22 29 1 25 16 26 14 25 -1 -1 25 -1 -1 20",
+   "output": "22\n29 1\n25 16 26 14\n25 25 20"
+  }
+ ],
+ "tree-zigzag": [
+  {
+   "input": "7\n3 9 20 -1 -1 15 7",
+   "output": "3\n20 9\n15 7"
+  },
+  {
+   "input": "7\n1 2 3 4 5 6 7",
+   "output": "1\n3 2\n4 5 6 7"
+  },
+  {
+   "input": "1\n1",
+   "output": "1"
+  }
+ ],
+ "tree-max-depth": [
+  {
+   "input": "7\n3 9 20 -1 -1 15 7",
+   "output": "3"
+  },
+  {
+   "input": "3\n1 -1 2",
+   "output": "2"
+  },
+  {
+   "input": "1\n0",
+   "output": "1"
+  },
+  {
+   "input": "11\n47 6 -1 44 46 43 40 29 48 -1 26",
+   "output": "5"
+  },
+  {
+   "input": "6\n6 2 46 29 41 14",
+   "output": "3"
+  }
+ ],
+ "tree-min-depth": [
+  {
+   "input": "7\n3 9 20 -1 -1 15 7",
+   "output": "2"
+  },
+  {
+   "input": "9\n2 -1 3 -1 4 -1 5 -1 6",
+   "output": "5"
+  },
+  {
+   "input": "1\n1",
+   "output": "1"
+  }
+ ],
+ "tree-node-count-sum": [
+  {
+   "input": "7\n3 9 20 -1 -1 15 7",
+   "output": "5 54"
+  },
+  {
+   "input": "1\n-5",
+   "output": "1 -5"
+  },
+  {
+   "input": "6\n-16 7 16 3 -1 3",
+   "output": "5 13"
+  },
+  {
+   "input": "7\n-7 -1 -6 -2 -4 5 10",
+   "output": "6 -4"
+  },
+  {
+   "input": "18\n-16 5 17 18 -13 3 -1 -1 17 6 -9 19 8 8 -1 11 -10 6",
+   "output": "15 70"
+  }
+ ],
+ "tree-leaf-count": [
+  {
+   "input": "7\n3 9 20 -1 -1 15 7",
+   "output": "3"
+  },
+  {
+   "input": "1\n1",
+   "output": "1"
+  },
+  {
+   "input": "7\n1 2 3 4 5 6 7",
+   "output": "4"
+  },
+  {
+   "input": "1\n3",
+   "output": "1"
+  },
+  {
+   "input": "5\n36 9 -1 27 31",
+   "output": "2"
+  }
+ ],
+ "tree-is-symmetric": [
+  {
+   "input": "7\n1 2 2 3 4 4 3",
+   "output": "YES"
+  },
+  {
+   "input": "7\n1 2 2 -1 3 -1 3",
+   "output": "NO"
+  },
+  {
+   "input": "1\n1",
+   "output": "YES"
+  },
+  {
+   "input": "3\n1 2 3",
+   "output": "NO"
+  }
+ ],
+ "tree-is-balanced": [
+  {
+   "input": "7\n3 9 20 -1 -1 15 7",
+   "output": "YES"
+  },
+  {
+   "input": "9\n1 2 2 3 3 -1 -1 4 4",
+   "output": "NO"
+  },
+  {
+   "input": "1\n1",
+   "output": "YES"
+  },
+  {
+   "input": "9\n16 26 22 40 27 26 31 40 30",
+   "output": "YES"
+  },
+  {
+   "input": "6\n35 22 16 -1 -1 5",
+   "output": "YES"
+  }
+ ],
+ "tree-diameter-binary": [
+  {
+   "input": "5\n1 2 3 4 5",
+   "output": "3"
+  },
+  {
+   "input": "2\n1 2",
+   "output": "1"
+  },
+  {
+   "input": "1\n1",
+   "output": "0"
+  },
+  {
+   "input": "3\n49 -1 47",
+   "output": "1"
+  },
+  {
+   "input": "11\n19 38 17 27 28 41 33 -1 26 47 12",
+   "output": "5"
+  }
+ ],
+ "tree-path-sum": [
+  {
+   "input": "13 22\n5 4 8 11 -1 13 4 7 2 -1 -1 -1 1",
+   "output": "YES"
+  },
+  {
+   "input": "3 5\n1 2 3",
+   "output": "NO"
+  },
+  {
+   "input": "1 1\n1",
+   "output": "YES"
+  },
+  {
+   "input": "3 4\n1 2 3",
+   "output": "YES"
+  }
+ ],
+ "bst-validate": [
+  {
+   "input": "3\n2 1 3",
+   "output": "YES"
+  },
+  {
+   "input": "7\n5 1 4 -1 -1 3 6",
+   "output": "NO"
+  },
+  {
+   "input": "7\n5 4 6 -1 -1 3 7",
+   "output": "NO"
+  },
+  {
+   "input": "1\n1",
+   "output": "YES"
+  },
+  {
+   "input": "17\n37 28 -1 10 -1 4 11 1 -1 -1 23 -1 -1 16 27 -1 17",
+   "output": "YES"
+  },
+  {
+   "input": "9\n26 19 37 2 -1 34 -1 -1 18",
+   "output": "YES"
+  }
+ ],
+ "bst-kth-smallest": [
+  {
+   "input": "4 1\n3 1 4 -1 2",
+   "output": "1"
+  },
+  {
+   "input": "8 3\n5 3 6 2 4 -1 -1 1",
+   "output": "3"
+  },
+  {
+   "input": "1 1\n7",
+   "output": "7"
+  }
+ ],
+ "bst-lca": [
+  {
+   "input": "9 2 8\n6 2 8 0 4 7 9 -1 -1 3 5",
+   "output": "6"
+  },
+  {
+   "input": "9 2 4\n6 2 8 0 4 7 9 -1 -1 3 5",
+   "output": "2"
+  },
+  {
+   "input": "2 2 1\n2 1",
+   "output": "2"
+  }
+ ],
+ "bst-insert-inorder": [
+  {
+   "input": "7\n50 30 70 20 40 60 80",
+   "output": "50 30 20 40 70 60 80"
+  },
+  {
+   "input": "3\n1 2 3",
+   "output": "1 2 3"
+  },
+  {
+   "input": "4\n5 5 3 7",
+   "output": "5 3 7"
+  },
+  {
+   "input": "14\n41 2 3 60 11 16 59 41 36 51 25 42 12 50",
+   "output": "41 2 3 11 16 12 36 25 60 59 51 42 50"
+  },
+  {
+   "input": "8\n9 2 16 20 9 13 24 20",
+   "output": "9 2 16 13 20 24"
+  }
+ ],
+ "bst-range-sum": [
+  {
+   "input": "7 7 15\n10 5 15 3 7 -1 18",
+   "output": "32"
+  },
+  {
+   "input": "11 6 10\n10 5 15 3 7 13 18 1 -1 6",
+   "output": "23"
+  },
+  {
+   "input": "1 1 1\n1",
+   "output": "1"
+  }
+ ],
+ "tree-right-view": [
+  {
+   "input": "7\n1 2 3 -1 5 -1 4",
+   "output": "1 3 4"
+  },
+  {
+   "input": "3\n1 -1 3",
+   "output": "1 3"
+  },
+  {
+   "input": "1\n1",
+   "output": "1"
+  },
+  {
+   "input": "4\n46 -1 2 4",
+   "output": "46 2 4"
+  },
+  {
+   "input": "1\n4",
+   "output": "4"
+  }
+ ],
+ "tree-left-view": [
+  {
+   "input": "7\n1 2 3 -1 5 -1 4",
+   "output": "1 2 5"
+  },
+  {
+   "input": "3\n1 -1 3",
+   "output": "1 3"
+  },
+  {
+   "input": "1\n1",
+   "output": "1"
+  },
+  {
+   "input": "10\n47 33 6 44 16 27 50 28 27 16",
+   "output": "47 33 44 28"
+  },
+  {
+   "input": "16\n10 30 32 -1 25 19 4 -1 50 -1 41 -1 23 42 -1 3",
+   "output": "10 30 25 50 42"
+  }
+ ],
+ "tree-level-sums": [
+  {
+   "input": "7\n1 7 0 7 -8 -1 -1",
+   "output": "1 7 -1\n2"
+  },
+  {
+   "input": "9\n989 -1 10250 98693 -89388 -1 -1 -1 -32127",
+   "output": "989 10250 9305 -32127\n2"
+  },
+  {
+   "input": "6\n-9 -1 20 -1 -12 -3",
+   "output": "-9 20 -12 -3\n2"
+  },
+  {
+   "input": "5\n-15 -19 12 -1 5",
+   "output": "-15 -7 5\n3"
+  }
+ ],
+ "tree-same": [
+  {
+   "input": "3\n1 2 3\n3\n1 2 3",
+   "output": "YES"
+  },
+  {
+   "input": "2\n1 2\n3\n1 -1 2",
+   "output": "NO"
+  },
+  {
+   "input": "3\n1 2 1\n3\n1 1 2",
+   "output": "NO"
+  }
+ ],
+ "heap-k-largest": [
+  {
+   "input": "6 3\n1 23 12 9 30 2",
+   "output": "30 23 12"
+  },
+  {
+   "input": "3 3\n5 5 5",
+   "output": "5 5 5"
+  },
+  {
+   "input": "5 1\n-1 -2 -3 -4 -5",
+   "output": "-1"
+  },
+  {
+   "input": "18 17\n21 -38 46 -14 36 -34 50 -44 1 20 27 23 -31 49 -17 49 6 7",
+   "output": "50 49 49 46 36 27 23 21 20 7 6 1 -14 -17 -31 -34 -38"
+  },
+  {
+   "input": "21 4\n-46 -44 0 -41 -33 40 43 2 43 -9 26 -21 30 -17 -44 -33 -34 28 -11 34 -13",
+   "output": "43 43 40 34"
+  }
+ ],
+ "heap-merge-k-sorted": [
+  {
+   "input": "3\n3 1 4 5\n3 1 3 4\n2 2 6",
+   "output": "1 1 2 3 4 4 5 6"
+  },
+  {
+   "input": "1\n1 7",
+   "output": "7"
+  },
+  {
+   "input": "2\n2 -3 0\n3 -5 1 2",
+   "output": "-5 -3 0 1 2"
+  }
+ ],
+ "heap-connect-ropes": [
+  {
+   "input": "4\n4 3 2 6",
+   "output": "29"
+  },
+  {
+   "input": "1\n5",
+   "output": "0"
+  },
+  {
+   "input": "5\n1 2 3 4 5",
+   "output": "33"
+  },
+  {
+   "input": "7\n23 17 8 14 21 4 46",
+   "output": "342"
+  },
+  {
+   "input": "5\n5 11 39 24 42",
+   "output": "256"
+  }
+ ],
+ "heap-kth-largest-stream": [
+  {
+   "input": "6 3\n4 5 8 2 3 10",
+   "output": "-1 -1 4 4 4 5"
+  },
+  {
+   "input": "3 1\n5 1 9",
+   "output": "5 5 9"
+  },
+  {
+   "input": "4 4\n1 2 3 4",
+   "output": "-1 -1 -1 1"
+  }
+ ],
+ "heap-task-scheduler": [
+  {
+   "input": "AAABBB\n2",
+   "output": "8"
+  },
+  {
+   "input": "AAABBB\n0",
+   "output": "6"
+  },
+  {
+   "input": "AAAAAABCDEFG\n2",
+   "output": "16"
+  },
+  {
+   "input": "A\n5",
+   "output": "1"
+  }
+ ],
+ "container-with-most-water": [
+  {
+   "input": "9\n1 8 6 2 5 4 8 3 7",
+   "output": "49"
+  },
+  {
+   "input": "2\n1 1",
+   "output": "1"
+  },
+  {
+   "input": "5\n4 3 2 1 4",
+   "output": "16"
+  },
+  {
+   "input": "27\n24 7 33 6 6 5 39 4 43 29 17 25 20 39 40 31 5 43 13 31 12 16 17 24 29 43 46",
+   "output": "792"
+  },
+  {
+   "input": "12\n43 39 21 16 45 11 26 24 34 30 1 11",
+   "output": "272"
+  }
+ ],
+ "two-sum-sorted": [
+  {
+   "input": "4 9\n2 7 11 15",
+   "output": "1 2"
+  },
+  {
+   "input": "3 6\n2 3 4",
+   "output": "1 3"
+  },
+  {
+   "input": "2 -1\n-1 0",
+   "output": "1 2"
+  },
+  {
+   "input": "6 13\n1 2 3 5 8 20",
+   "output": "4 5"
+  }
+ ],
+ "three-sum-closest": [
+  {
+   "input": "4 1\n-1 2 1 -4",
+   "output": "2"
+  },
+  {
+   "input": "3 1\n0 0 0",
+   "output": "0"
+  },
+  {
+   "input": "5 100\n1 2 3 4 5",
+   "output": "12"
+  },
+  {
+   "input": "8 16\n24 -1 1 13 10 -4 0 1",
+   "output": "15"
+  },
+  {
+   "input": "17 -8\n13 -5 -22 -30 -15 -5 25 -12 14 -19 5 18 7 17 -10 21 -24",
+   "output": "-8"
+  }
+ ],
+ "remove-element": [
+  {
+   "input": "4 3\n3 2 2 3",
+   "output": "2\n2 2"
+  },
+  {
+   "input": "8 2\n0 1 2 2 3 0 4 2",
+   "output": "5\n0 1 3 0 4"
+  },
+  {
+   "input": "2 5\n5 5",
+   "output": "0\nEMPTY"
+  },
+  {
+   "input": "12 1\n1 4 2 0 4 4 2 1 1 1 0 4",
+   "output": "8\n4 2 0 4 4 2 0 4"
+  },
+  {
+   "input": "9 3\n4 4 1 1 3 1 2 1 0",
+   "output": "8\n4 4 1 1 1 2 1 0"
+  }
+ ],
+ "squares-of-sorted": [
+  {
+   "input": "5\n-4 -1 0 3 10",
+   "output": "0 1 9 16 100"
+  },
+  {
+   "input": "5\n-7 -3 2 3 11",
+   "output": "4 9 9 49 121"
+  },
+  {
+   "input": "1\n-5",
+   "output": "25"
+  },
+  {
+   "input": "11\n-19 -7 -7 -3 2 2 7 13 14 26 27",
+   "output": "4 4 9 49 49 49 169 196 361 676 729"
+  },
+  {
+   "input": "18\n-21 -20 -12 -12 -10 -8 -6 -4 -4 -2 -2 -2 2 6 7 19 29 29",
+   "output": "4 4 4 4 16 16 36 36 49 64 100 144 144 361 400 441 841 841"
+  }
+ ],
+ "valid-palindrome-one-delete": [
+  {
+   "input": "aba",
+   "output": "YES"
+  },
+  {
+   "input": "abca",
+   "output": "YES"
+  },
+  {
+   "input": "abc",
+   "output": "NO"
+  },
+  {
+   "input": "eeccccbebaeeabebccceea",
+   "output": "NO"
+  },
+  {
+   "input": "deeee",
+   "output": "YES"
+  }
+ ],
+ "backspace-compare": [
+  {
+   "input": "ab#c\nad#c",
+   "output": "YES"
+  },
+  {
+   "input": "ab##\nc#d#",
+   "output": "YES"
+  },
+  {
+   "input": "a#c\nb",
+   "output": "NO"
+  },
+  {
+   "input": "a##c\n#a#c",
+   "output": "YES"
+  },
+  {
+   "input": "xywrrmp\nxywrrmu#p",
+   "output": "YES"
+  }
+ ],
+ "longest-mountain": [
+  {
+   "input": "7\n2 1 4 7 3 2 5",
+   "output": "5"
+  },
+  {
+   "input": "3\n2 2 2",
+   "output": "0"
+  },
+  {
+   "input": "5\n1 2 3 4 5",
+   "output": "0"
+  },
+  {
+   "input": "25\n3 5 5 3 3 0 4 4 4 1 0 6 5 4 1 2 1 5 5 2 3 5 2 3 4",
+   "output": "5"
+  },
+  {
+   "input": "9\n1 5 4 3 2 2 0 1 0",
+   "output": "5"
+  }
+ ],
+ "windows-average-threshold": [
+  {
+   "input": "8 3 4\n2 2 2 2 5 5 5 8",
+   "output": "3"
+  },
+  {
+   "input": "5 1 3\n1 3 5 2 4",
+   "output": "3"
+  },
+  {
+   "input": "3 3 10\n1 2 3",
+   "output": "0"
+  },
+  {
+   "input": "12 11 8\n15 4 8 6 12 15 3 5 3 10 15 12",
+   "output": "2"
+  },
+  {
+   "input": "14 6 10\n6 3 13 12 4 10 10 12 13 2 2 15 0 14",
+   "output": "2"
+  }
+ ],
+ "longest-ones-k-flips": [
+  {
+   "input": "11 2\n1 1 1 0 0 0 1 1 1 1 0",
+   "output": "6"
+  },
+  {
+   "input": "19 3\n0 0 1 1 0 0 1 1 1 0 1 1 0 0 0 1 1 1 1",
+   "output": "10"
+  },
+  {
+   "input": "3 0\n0 0 0",
+   "output": "0"
+  },
+  {
+   "input": "16 3\n0 0 1 0 0 0 0 1 1 0 0 0 1 0 0 0",
+   "output": "6"
+  },
+  {
+   "input": "28 2\n0 1 1 1 0 1 1 1 1 1 0 0 1 0 0 1 0 0 1 1 0 0 0 1 1 0 0 1",
+   "output": "10"
+  }
+ ],
+ "fruit-into-baskets": [
+  {
+   "input": "3\n1 2 1",
+   "output": "3"
+  },
+  {
+   "input": "4\n0 1 2 2",
+   "output": "3"
+  },
+  {
+   "input": "5\n1 2 3 2 2",
+   "output": "4"
+  },
+  {
+   "input": "11\n3 3 3 1 2 1 1 2 3 3 4",
+   "output": "5"
+  },
+  {
+   "input": "15\n4 3 3 0 3 3 0 0 1 2 0 1 3 2 3",
+   "output": "7"
+  },
+  {
+   "input": "11\n4 4 1 0 1 1 0 4 3 2 2",
+   "output": "5"
+  }
+ ],
+ "subarray-product-less-than-k": [
+  {
+   "input": "4 100\n10 5 2 6",
+   "output": "8"
+  },
+  {
+   "input": "3 0\n1 2 3",
+   "output": "0"
+  },
+  {
+   "input": "3 2\n1 1 1",
+   "output": "6"
+  },
+  {
+   "input": "15 137\n10 7 3 5 10 5 9 4 3 6 10 6 2 10 6",
+   "output": "35"
+  },
+  {
+   "input": "18 135\n6 2 2 3 7 3 6 7 2 2 5 6 1 6 7 9 10 3",
+   "output": "54"
+  }
+ ],
+ "count-nice-subarrays": [
+  {
+   "input": "5 3\n1 1 2 1 1",
+   "output": "2"
+  },
+  {
+   "input": "3 1\n2 4 6",
+   "output": "0"
+  },
+  {
+   "input": "10 2\n2 2 2 1 2 2 1 2 2 2",
+   "output": "16"
+  },
+  {
+   "input": "8 3\n3 5 7 5 2 7 5 6",
+   "output": "6"
+  },
+  {
+   "input": "20 3\n8 1 4 2 5 3 4 7 6 3 6 6 6 7 9 1 5 5 2 5",
+   "output": "26"
+  }
+ ],
+ "binary-subarrays-with-sum": [
+  {
+   "input": "5 2\n1 0 1 0 1",
+   "output": "4"
+  },
+  {
+   "input": "5 0\n0 0 0 0 0",
+   "output": "15"
+  },
+  {
+   "input": "3 3\n1 1 0",
+   "output": "0"
+  },
+  {
+   "input": "23 0\n1 1 0 1 0 0 0 1 1 1 1 1 0 0 1 1 0 1 1 0 1 1 0",
+   "output": "13"
+  },
+  {
+   "input": "24 1\n0 0 0 0 0 1 0 0 0 0 0 0 0 0 0 1 0 1 1 1 1 0 1 1",
+   "output": "89"
+  }
+ ],
+ "longest-substring-k-distinct": [
+  {
+   "input": "eceba\n2",
+   "output": "3"
+  },
+  {
+   "input": "aa\n1",
+   "output": "2"
+  },
+  {
+   "input": "abaccc\n2",
+   "output": "4"
+  },
+  {
+   "input": "abc\n0",
+   "output": "0"
+  },
+  {
+   "input": "aabbcc\n3",
+   "output": "6"
+  }
+ ],
+ "permutation-in-string": [
+  {
+   "input": "ab\neidbaooo",
+   "output": "YES"
+  },
+  {
+   "input": "ab\neidboaoo",
+   "output": "NO"
+  },
+  {
+   "input": "adc\ndcda",
+   "output": "YES"
+  },
+  {
+   "input": "abc\nab",
+   "output": "NO"
+  }
+ ],
+ "find-all-anagrams": [
+  {
+   "input": "cbaebabacd\nabc",
+   "output": "0 6"
+  },
+  {
+   "input": "abab\nab",
+   "output": "0 1 2"
+  },
+  {
+   "input": "aaaa\nb",
+   "output": "NONE"
+  },
+  {
+   "input": "baa\naa",
+   "output": "1"
+  }
+ ],
+ "max-vowels-in-window": [
+  {
+   "input": "abciiidef\n3",
+   "output": "3"
+  },
+  {
+   "input": "aeiou\n2",
+   "output": "2"
+  },
+  {
+   "input": "leetcode\n3",
+   "output": "2"
+  },
+  {
+   "input": "tryhard\n4",
+   "output": "1"
+  }
+ ],
+ "grumpy-bookstore": [
+  {
+   "input": "8 3\n1 0 1 2 1 1 7 5\n0 1 0 1 0 1 0 1",
+   "output": "16"
+  },
+  {
+   "input": "1 1\n1\n0",
+   "output": "1"
+  },
+  {
+   "input": "5 2\n4 10 10 1 2\n1 1 0 1 1",
+   "output": "24"
+  }
+ ],
+ "max-points-cards": [
+  {
+   "input": "7 3\n1 2 3 4 5 6 1",
+   "output": "12"
+  },
+  {
+   "input": "3 2\n2 2 2",
+   "output": "4"
+  },
+  {
+   "input": "7 7\n9 7 7 9 7 7 9",
+   "output": "55"
+  },
+  {
+   "input": "8 3\n1 1000 1 1 1 1 1 1",
+   "output": "1002"
+  }
+ ],
+ "subarray-sum-divisible-k": [
+  {
+   "input": "6 5\n4 5 0 -2 -3 1",
+   "output": "7"
+  },
+  {
+   "input": "1 9\n5",
+   "output": "0"
+  },
+  {
+   "input": "3 2\n2 -2 2",
+   "output": "6"
+  },
+  {
+   "input": "13 5\n1 -4 0 2 9 9 3 4 -10 0 6 -6 6",
+   "output": "19"
+  },
+  {
+   "input": "20 2\n2 -5 -5 -5 -4 -9 1 10 9 -7 9 5 -2 -6 -1 -3 -8 -8 2 3",
+   "output": "106"
+  }
+ ],
+ "contiguous-array": [
+  {
+   "input": "2\n0 1",
+   "output": "2"
+  },
+  {
+   "input": "3\n0 1 0",
+   "output": "2"
+  },
+  {
+   "input": "4\n1 1 1 1",
+   "output": "0"
+  },
+  {
+   "input": "19\n0 1 0 0 1 1 1 1 1 0 1 0 1 1 0 0 1 1 1",
+   "output": "8"
+  },
+  {
+   "input": "13\n1 0 0 0 0 1 1 1 0 1 0 0 0",
+   "output": "10"
+  }
+ ],
+ "longest-subarray-ones-after-delete": [
+  {
+   "input": "4\n1 1 0 1",
+   "output": "3"
+  },
+  {
+   "input": "9\n0 1 1 1 0 1 1 0 1",
+   "output": "5"
+  },
+  {
+   "input": "3\n1 1 1",
+   "output": "2"
+  },
+  {
+   "input": "26\n1 0 0 1 0 0 1 0 0 1 0 1 0 0 0 0 0 1 1 1 0 1 0 0 1 1",
+   "output": "4"
+  },
+  {
+   "input": "18\n0 0 0 1 1 0 1 0 1 1 1 1 0 1 1 1 0 1",
+   "output": "7"
+  }
+ ],
+ "insert-interval": [
+  {
+   "input": "2\n1 3\n6 9\n2 5",
+   "output": "1 5\n6 9"
+  },
+  {
+   "input": "5\n1 2\n3 5\n6 7\n8 10\n12 16\n4 8",
+   "output": "1 2\n3 10\n12 16"
+  },
+  {
+   "input": "0\n5 7",
+   "output": "5 7"
+  },
+  {
+   "input": "2\n1 5\n6 8\n0 0",
+   "output": "0 0\n1 5\n6 8"
+  }
+ ],
+ "interval-intersections": [
+  {
+   "input": "4\n0 2\n5 10\n13 23\n24 25\n4\n1 5\n8 12\n15 24\n25 26",
+   "output": "1 2\n5 5\n8 10\n15 23\n24 24\n25 25"
+  },
+  {
+   "input": "2\n1 3\n5 9\n0",
+   "output": "NONE"
+  },
+  {
+   "input": "1\n1 7\n1\n3 10",
+   "output": "3 7"
+  },
+  {
+   "input": "1\n1 2\n1\n3 4",
+   "output": "NONE"
+  }
+ ],
+ "meeting-rooms-can-attend": [
+  {
+   "input": "3\n0 30\n5 10\n15 20",
+   "output": "NO"
+  },
+  {
+   "input": "2\n7 10\n2 4",
+   "output": "YES"
+  },
+  {
+   "input": "2\n1 5\n5 9",
+   "output": "YES"
+  },
+  {
+   "input": "1\n3 4",
+   "output": "YES"
+  }
+ ],
+ "summary-ranges": [
+  {
+   "input": "6\n0 1 2 4 5 7",
+   "output": "0->2 4->5 7"
+  },
+  {
+   "input": "7\n0 2 3 4 6 8 9",
+   "output": "0 2->4 6 8->9"
+  },
+  {
+   "input": "1\n-1",
+   "output": "-1"
+  },
+  {
+   "input": "3\n-3 -2 -1",
+   "output": "-3->-1"
+  }
+ ],
+ "missing-ranges": [
+  {
+   "input": "5 0 99\n0 1 3 50 75",
+   "output": "2 4->49 51->74 76->99"
+  },
+  {
+   "input": "0 1 1\n",
+   "output": "1"
+  },
+  {
+   "input": "3 1 3\n1 2 3",
+   "output": "NONE"
+  },
+  {
+   "input": "2 -5 5\n-5 5",
+   "output": "-4->4"
+  }
+ ],
+ "find-all-duplicates": [
+  {
+   "input": "8\n4 3 2 7 8 2 3 1",
+   "output": "2 3"
+  },
+  {
+   "input": "3\n1 1 2",
+   "output": "1"
+  },
+  {
+   "input": "1\n1",
+   "output": "NONE"
+  }
+ ],
+ "first-missing-positive": [
+  {
+   "input": "3\n1 2 0",
+   "output": "3"
+  },
+  {
+   "input": "4\n3 4 -1 1",
+   "output": "2"
+  },
+  {
+   "input": "5\n7 8 9 11 12",
+   "output": "1"
+  },
+  {
+   "input": "1\n1",
+   "output": "2"
+  },
+  {
+   "input": "9\n9 6 0 9 6 3 11 1 3",
+   "output": "2"
+  },
+  {
+   "input": "5\n1 0 9 8 8",
+   "output": "2"
+  }
+ ],
+ "find-disappeared-numbers": [
+  {
+   "input": "8\n4 3 2 7 8 2 3 1",
+   "output": "5 6"
+  },
+  {
+   "input": "2\n1 1",
+   "output": "2"
+  },
+  {
+   "input": "3\n1 2 3",
+   "output": "NONE"
+  }
+ ],
+ "sort-by-parity": [
+  {
+   "input": "4\n3 1 2 4",
+   "output": "2 4 3 1"
+  },
+  {
+   "input": "1\n0",
+   "output": "0"
+  },
+  {
+   "input": "5\n1 3 5 2 4",
+   "output": "2 4 1 3 5"
+  },
+  {
+   "input": "6\n7 11 16 16 17 28",
+   "output": "16 16 28 7 11 17"
+  },
+  {
+   "input": "13\n30 3 11 12 0 3 21 25 7 7 3 14 23",
+   "output": "30 12 0 14 3 11 3 21 25 7 7 3 23"
+  }
+ ],
+ "relative-sort-array": [
+  {
+   "input": "11\n2 3 1 3 2 4 6 7 9 2 19\n6\n2 1 4 3 9 6",
+   "output": "2 2 2 1 4 3 3 9 6 7 19"
+  },
+  {
+   "input": "6\n28 6 22 8 44 17\n4\n22 28 8 6",
+   "output": "22 28 8 6 17 44"
+  },
+  {
+   "input": "3\n3 2 1\n1\n2",
+   "output": "2 1 3"
+  }
+ ],
+ "h-index": [
+  {
+   "input": "5\n3 0 6 1 5",
+   "output": "3"
+  },
+  {
+   "input": "3\n1 3 1",
+   "output": "1"
+  },
+  {
+   "input": "1\n0",
+   "output": "0"
+  },
+  {
+   "input": "4\n10 10 10 10",
+   "output": "4"
+  },
+  {
+   "input": "16\n18 23 25 3 16 22 13 13 3 8 10 21 16 3 3 19",
+   "output": "10"
+  },
+  {
+   "input": "8\n7 16 2 14 3 16 10 4",
+   "output": "5"
+  }
+ ],
+ "array-partition-pairs": [
+  {
+   "input": "4\n1 4 3 2",
+   "output": "4"
+  },
+  {
+   "input": "6\n6 2 6 5 1 2",
+   "output": "9"
+  },
+  {
+   "input": "2\n-1 -2",
+   "output": "-2"
+  },
+  {
+   "input": "16\n8 12 -4 5 10 18 15 4 -9 -16 -3 18 0 4 18 10",
+   "output": "35"
+  },
+  {
+   "input": "12\n-7 2 -20 15 12 20 10 8 -12 -20 16 -11",
+   "output": "-3"
+  }
+ ],
+ "maximum-gap": [
+  {
+   "input": "4\n3 6 9 1",
+   "output": "3"
+  },
+  {
+   "input": "1\n10",
+   "output": "0"
+  },
+  {
+   "input": "3\n1 1 1",
+   "output": "0"
+  },
+  {
+   "input": "18\n76 37 14 9 45 4 67 23 36 42 71 75 18 6 4 14 79 15",
+   "output": "22"
+  },
+  {
+   "input": "19\n6 8 15 12 97 41 19 84 59 82 61 80 8 27 90 54 70 98 19",
+   "output": "14"
+  }
+ ],
+ "kth-missing-positive": [
+  {
+   "input": "5 5\n2 3 4 7 11",
+   "output": "9"
+  },
+  {
+   "input": "4 2\n1 2 3 4",
+   "output": "6"
+  },
+  {
+   "input": "1 1\n5",
+   "output": "1"
+  },
+  {
+   "input": "3 4\n2 5 6",
+   "output": "7"
+  }
+ ],
+ "difference-array-updates": [
+  {
+   "input": "5 3\n1 2 10\n2 3 20\n2 5 25",
+   "output": "10 55 45 25 25"
+  },
+  {
+   "input": "3 1\n1 3 -1",
+   "output": "-1 -1 -1"
+  },
+  {
+   "input": "4 2\n1 1 5\n4 4 7",
+   "output": "5 0 0 7"
+  },
+  {
+   "input": "7 1\n5 7 5",
+   "output": "0 0 0 0 5 5 5"
+  },
+  {
+   "input": "7 1\n1 3 5",
+   "output": "5 5 5 0 0 0 0"
+  }
+ ],
+ "car-pooling": [
+  {
+   "input": "2 4\n2 1 5\n3 3 7",
+   "output": "NO"
+  },
+  {
+   "input": "2 5\n2 1 5\n3 3 7",
+   "output": "YES"
+  },
+  {
+   "input": "3 11\n3 2 7\n3 7 9\n8 3 9",
+   "output": "YES"
+  },
+  {
+   "input": "1 1\n2 0 1",
+   "output": "NO"
+  }
+ ],
+ "corporate-flight-bookings": [
+  {
+   "input": "5 3\n1 2 10\n2 3 20\n2 5 25",
+   "output": "10 55 45 25 25"
+  },
+  {
+   "input": "2 2\n1 2 10\n2 2 15",
+   "output": "10 25"
+  },
+  {
+   "input": "3 1\n2 2 7",
+   "output": "0 7 0"
+  }
+ ],
+ "count-triangles": [
+  {
+   "input": "4\n2 2 3 4",
+   "output": "3"
+  },
+  {
+   "input": "4\n4 2 3 4",
+   "output": "4"
+  },
+  {
+   "input": "3\n1 1 5",
+   "output": "0"
+  },
+  {
+   "input": "9\n13 14 0 8 3 15 15 9 9",
+   "output": "44"
+  },
+  {
+   "input": "16\n14 10 5 4 11 20 1 20 14 3 0 11 13 2 18 8",
+   "output": "181"
+  }
+ ],
+ "min-moves-equal-elements": [
+  {
+   "input": "3\n1 2 3",
+   "output": "3"
+  },
+  {
+   "input": "3\n1 1 1",
+   "output": "0"
+  },
+  {
+   "input": "4\n5 6 8 8",
+   "output": "7"
+  },
+  {
+   "input": "3\n1 25 5",
+   "output": "28"
+  },
+  {
+   "input": "11\n25 -10 30 -7 25 22 6 25 5 15 8",
+   "output": "254"
+  }
+ ],
+ "min-moves-equal-median": [
+  {
+   "input": "3\n1 2 3",
+   "output": "2"
+  },
+  {
+   "input": "4\n1 10 2 9",
+   "output": "16"
+  },
+  {
+   "input": "1\n5",
+   "output": "0"
+  },
+  {
+   "input": "3\n21 28 28",
+   "output": "7"
+  },
+  {
+   "input": "13\n23 -11 5 -16 22 -3 -13 -14 2 27 -10 24 31",
+   "output": "199"
+  }
+ ],
+ "longest-harmonious-subsequence": [
+  {
+   "input": "8\n1 3 2 2 5 2 3 7",
+   "output": "5"
+  },
+  {
+   "input": "4\n1 2 3 4",
+   "output": "2"
+  },
+  {
+   "input": "4\n1 1 1 1",
+   "output": "0"
+  },
+  {
+   "input": "7\n2 6 2 0 4 4 4",
+   "output": "0"
+  },
+  {
+   "input": "11\n0 4 5 5 3 1 3 1 3 4 3",
+   "output": "6"
+  }
+ ],
+ "degree-of-array": [
+  {
+   "input": "5\n1 2 2 3 1",
+   "output": "2"
+  },
+  {
+   "input": "7\n1 2 2 3 1 4 2",
+   "output": "6"
+  },
+  {
+   "input": "1\n9",
+   "output": "1"
+  },
+  {
+   "input": "12\n2 5 5 5 3 0 3 4 2 0 4 2",
+   "output": "3"
+  },
+  {
+   "input": "19\n2 3 3 0 5 1 4 2 1 4 2 6 1 1 2 4 4 6 5",
+   "output": "9"
+  }
+ ],
+ "count-good-pairs": [
+  {
+   "input": "6\n1 2 3 1 1 3",
+   "output": "4"
+  },
+  {
+   "input": "4\n1 1 1 1",
+   "output": "6"
+  },
+  {
+   "input": "3\n1 2 3",
+   "output": "0"
+  },
+  {
+   "input": "9\n4 2 4 0 1 5 0 0 3",
+   "output": "4"
+  },
+  {
+   "input": "14\n3 3 0 3 2 4 1 0 4 0 1 1 2 4",
+   "output": "13"
+  }
+ ],
+ "kids-with-candies": [
+  {
+   "input": "5 3\n2 3 5 1 3",
+   "output": "true true true false true"
+  },
+  {
+   "input": "5 1\n4 2 1 1 2",
+   "output": "true false false false false"
+  },
+  {
+   "input": "3 10\n12 1 12",
+   "output": "true false true"
+  }
+ ],
+ "shuffle-the-array": [
+  {
+   "input": "3\n2 5 1 3 4 7",
+   "output": "2 3 5 4 1 7"
+  },
+  {
+   "input": "4\n1 2 3 4 4 3 2 1",
+   "output": "1 4 2 3 3 2 4 1"
+  },
+  {
+   "input": "1\n1 1",
+   "output": "1 1"
+  }
+ ],
+ "smaller-numbers-than-current": [
+  {
+   "input": "5\n8 1 2 2 3",
+   "output": "4 0 1 1 3"
+  },
+  {
+   "input": "4\n6 5 4 8",
+   "output": "2 1 0 3"
+  },
+  {
+   "input": "4\n7 7 7 7",
+   "output": "0 0 0 0"
+  },
+  {
+   "input": "17\n8 4 18 19 7 16 9 2 8 16 1 7 18 12 16 0 14",
+   "output": "6 3 14 16 4 11 8 2 6 11 1 4 14 9 11 0 10"
+  },
+  {
+   "input": "13\n14 6 19 1 8 9 0 7 14 14 1 7 8",
+   "output": "9 3 12 1 6 8 0 4 9 9 1 4 6"
+  }
+ ],
+ "lemonade-change": [
+  {
+   "input": "5\n5 5 5 10 20",
+   "output": "YES"
+  },
+  {
+   "input": "5\n5 5 10 10 20",
+   "output": "NO"
+  },
+  {
+   "input": "1\n10",
+   "output": "NO"
+  },
+  {
+   "input": "6\n5 5 10 20 5 20",
+   "output": "NO"
+  }
+ ],
+ "teemo-attacking": [
+  {
+   "input": "2 2\n1 4",
+   "output": "4"
+  },
+  {
+   "input": "2 2\n1 2",
+   "output": "3"
+  },
+  {
+   "input": "3 5\n1 2 3",
+   "output": "7"
+  },
+  {
+   "input": "1 0\n7",
+   "output": "0"
+  }
+ ],
+ "can-place-flowers": [
+  {
+   "input": "5 1\n1 0 0 0 1",
+   "output": "YES"
+  },
+  {
+   "input": "5 2\n1 0 0 0 1",
+   "output": "NO"
+  },
+  {
+   "input": "1 1\n0",
+   "output": "YES"
+  },
+  {
+   "input": "7 2\n0 0 1 0 0 0 0",
+   "output": "YES"
+  }
+ ],
+ "distribute-candies-types": [
+  {
+   "input": "6\n1 1 2 2 3 3",
+   "output": "3"
+  },
+  {
+   "input": "4\n1 1 2 3",
+   "output": "2"
+  },
+  {
+   "input": "4\n6 6 6 6",
+   "output": "1"
+  }
+ ],
+ "maximum-units-truck": [
+  {
+   "input": "3 4\n1 3\n2 2\n3 1",
+   "output": "8"
+  },
+  {
+   "input": "4 10\n5 10\n2 5\n4 7\n3 9",
+   "output": "91"
+  },
+  {
+   "input": "1 1\n5 5",
+   "output": "5"
+  }
+ ],
+ "min-cost-move-chips": [
+  {
+   "input": "3\n1 2 3",
+   "output": "1"
+  },
+  {
+   "input": "5\n2 2 2 3 3",
+   "output": "2"
+  },
+  {
+   "input": "2\n1 1000000000",
+   "output": "1"
+  }
+ ],
+ "two-city-scheduling": [
+  {
+   "input": "4\n10 20\n30 200\n400 50\n30 20",
+   "output": "110"
+  },
+  {
+   "input": "6\n259 770\n448 54\n926 667\n184 139\n840 118\n577 469",
+   "output": "1859"
+  },
+  {
+   "input": "2\n1 2\n3 1",
+   "output": "2"
+  }
+ ],
+ "partition-labels": [
+  {
+   "input": "ababcbacadefegdehijhklij",
+   "output": "9 7 8"
+  },
+  {
+   "input": "eccbbbbdec",
+   "output": "10"
+  },
+  {
+   "input": "abc",
+   "output": "1 1 1"
+  },
+  {
+   "input": "caedbdedda",
+   "output": "1 9"
+  }
+ ],
+ "queue-reconstruction-height": [
+  {
+   "input": "6\n7 0\n4 4\n7 1\n5 0\n6 1\n5 2",
+   "output": "5 0\n7 0\n5 2\n6 1\n4 4\n7 1"
+  },
+  {
+   "input": "6\n6 0\n5 0\n4 0\n3 2\n2 2\n1 4",
+   "output": "4 0\n5 0\n2 2\n3 2\n1 4\n6 0"
+  },
+  {
+   "input": "1\n5 0",
+   "output": "5 0"
+  }
+ ],
+ "largest-perimeter-triangle": [
+  {
+   "input": "3\n2 1 2",
+   "output": "5"
+  },
+  {
+   "input": "3\n1 2 1",
+   "output": "0"
+  },
+  {
+   "input": "4\n3 6 2 3",
+   "output": "8"
+  },
+  {
+   "input": "10\n23 24 5 11 1 21 4 29 18 23",
+   "output": "76"
+  },
+  {
+   "input": "13\n9 6 25 13 12 4 23 14 14 10 2 23 15",
+   "output": "71"
+  }
+ ],
+ "richest-customer-wealth": [
+  {
+   "input": "2 3\n1 2 3\n3 2 1",
+   "output": "6"
+  },
+  {
+   "input": "3 2\n1 5\n7 3\n3 5",
+   "output": "10"
+  },
+  {
+   "input": "3 3\n2 8 7\n7 1 3\n1 9 5",
+   "output": "17"
+  }
+ ],
+ "ransom-note": [
+  {
+   "input": "a\nb",
+   "output": "NO"
+  },
+  {
+   "input": "aa\nab",
+   "output": "NO"
+  },
+  {
+   "input": "aa\naab",
+   "output": "YES"
+  },
+  {
+   "input": "ab\ndadddecacabada",
+   "output": "YES"
+  },
+  {
+   "input": "ced\neebebbaeaecddce",
+   "output": "YES"
+  }
+ ],
+ "jewels-and-stones": [
+  {
+   "input": "aA\naAAbbbb",
+   "output": "3"
+  },
+  {
+   "input": "z\nZZ",
+   "output": "0"
+  },
+  {
+   "input": "abc\naabbccd",
+   "output": "6"
+  }
+ ],
+ "uncommon-words": [
+  {
+   "input": "this apple is sweet\nthis apple is sour",
+   "output": "sour sweet"
+  },
+  {
+   "input": "apple apple\nbanana",
+   "output": "banana"
+  },
+  {
+   "input": "a b\na b",
+   "output": "NONE"
+  }
+ ],
+ "custom-sort-string": [
+  {
+   "input": "cba\nabcd",
+   "output": "cbad"
+  },
+  {
+   "input": "bcafg\nabcd",
+   "output": "bcad"
+  },
+  {
+   "input": "kqep\npekeq",
+   "output": "kqeep"
+  },
+  {
+   "input": "xyz\nabc",
+   "output": "abc"
+  }
+ ],
+ "longest-palindrome-build": [
+  {
+   "input": "abccccdd",
+   "output": "7"
+  },
+  {
+   "input": "a",
+   "output": "1"
+  },
+  {
+   "input": "Aa",
+   "output": "1"
+  },
+  {
+   "input": "aaabbbccc",
+   "output": "7"
+  }
+ ],
+ "close-strings": [
+  {
+   "input": "abc\nbca",
+   "output": "YES"
+  },
+  {
+   "input": "a\naa",
+   "output": "NO"
+  },
+  {
+   "input": "cabbba\nabbccc",
+   "output": "YES"
+  },
+  {
+   "input": "uau\nssx",
+   "output": "NO"
+  }
+ ],
+ "max-number-of-balloons": [
+  {
+   "input": "nlaebolko",
+   "output": "1"
+  },
+  {
+   "input": "loonbalxballpoon",
+   "output": "2"
+  },
+  {
+   "input": "leetcode",
+   "output": "0"
+  },
+  {
+   "input": "bbaallllooooonn",
+   "output": "2"
+  }
+ ],
+ "bulls-and-cows": [
+  {
+   "input": "1807\n7810",
+   "output": "1A3B"
+  },
+  {
+   "input": "1123\n0111",
+   "output": "1A1B"
+  },
+  {
+   "input": "1\n1",
+   "output": "1A0B"
+  },
+  {
+   "input": "1234\n5678",
+   "output": "0A0B"
+  }
+ ],
+ "find-the-difference": [
+  {
+   "input": "abcd\nabcde",
+   "output": "e"
+  },
+  {
+   "input": "a\naa",
+   "output": "a"
+  },
+  {
+   "input": "xyz\nzyxw",
+   "output": "w"
+  }
+ ],
+ "add-binary": [
+  {
+   "input": "11\n1",
+   "output": "100"
+  },
+  {
+   "input": "1010\n1011",
+   "output": "10101"
+  },
+  {
+   "input": "0\n0",
+   "output": "0"
+  },
+  {
+   "input": "1111111111111111111111111111111111111111\n1",
+   "output": "10000000000000000000000000000000000000000"
+  }
+ ],
+ "add-strings": [
+  {
+   "input": "11\n123",
+   "output": "134"
+  },
+  {
+   "input": "456\n77",
+   "output": "533"
+  },
+  {
+   "input": "0\n0",
+   "output": "0"
+  },
+  {
+   "input": "99999999999999999999\n1",
+   "output": "100000000000000000000"
+  }
+ ],
+ "multiply-strings": [
+  {
+   "input": "2\n3",
+   "output": "6"
+  },
+  {
+   "input": "123\n456",
+   "output": "56088"
+  },
+  {
+   "input": "0\n52",
+   "output": "0"
+  },
+  {
+   "input": "123456789123456789\n987654321987654321",
+   "output": "121932631356500531347203169112635269"
+  }
+ ],
+ "compare-version-numbers": [
+  {
+   "input": "1.01\n1.001",
+   "output": "0"
+  },
+  {
+   "input": "1.0\n1.0.0",
+   "output": "0"
+  },
+  {
+   "input": "0.1\n1.1",
+   "output": "-1"
+  },
+  {
+   "input": "1.2\n1.10",
+   "output": "-1"
+  },
+  {
+   "input": "1.0.1\n1",
+   "output": "1"
+  }
+ ],
+ "length-of-last-word": [
+  {
+   "input": "Hello World",
+   "output": "5"
+  },
+  {
+   "input": "   fly me   to   the moon  ",
+   "output": "4"
+  },
+  {
+   "input": "luffy is still joyboy",
+   "output": "6"
+  },
+  {
+   "input": "a",
+   "output": "1"
+  }
+ ],
+ "license-key-formatting": [
+  {
+   "input": "5F3Z-2e-9-w\n4",
+   "output": "5F3Z-2E9W"
+  },
+  {
+   "input": "2-5g-3-J\n2",
+   "output": "2-5G-3J"
+  },
+  {
+   "input": "a-a-a-a-\n1",
+   "output": "A-A-A-A"
+  },
+  {
+   "input": "abc\n5",
+   "output": "ABC"
+  }
+ ],
+ "detect-capital": [
+  {
+   "input": "USA",
+   "output": "YES"
+  },
+  {
+   "input": "FlaG",
+   "output": "NO"
+  },
+  {
+   "input": "leetcode",
+   "output": "YES"
+  },
+  {
+   "input": "Google",
+   "output": "YES"
+  },
+  {
+   "input": "g",
+   "output": "YES"
+  }
+ ],
+ "student-attendance-record": [
+  {
+   "input": "PPALLP",
+   "output": "YES"
+  },
+  {
+   "input": "PPALLL",
+   "output": "NO"
+  },
+  {
+   "input": "AA",
+   "output": "NO"
+  },
+  {
+   "input": "LALL",
+   "output": "YES"
+  }
+ ],
+ "robot-return-to-origin": [
+  {
+   "input": "UD",
+   "output": "YES"
+  },
+  {
+   "input": "LL",
+   "output": "NO"
+  },
+  {
+   "input": "RRDDLUUL",
+   "output": "YES"
+  },
+  {
+   "input": "URDL",
+   "output": "YES"
+  }
+ ],
+ "shortest-distance-to-char": [
+  {
+   "input": "loveleetcode\ne",
+   "output": "3 2 1 0 1 0 0 1 2 2 1 0"
+  },
+  {
+   "input": "aaab\nb",
+   "output": "3 2 1 0"
+  },
+  {
+   "input": "b\nb",
+   "output": "0"
+  }
+ ],
+ "reverse-each-word": [
+  {
+   "input": "Let's take LeetCode contest",
+   "output": "s'teL ekat edoCteeL tsetnoc"
+  },
+  {
+   "input": "Mr Ding",
+   "output": "rM gniD"
+  },
+  {
+   "input": "a",
+   "output": "a"
+  }
+ ],
+ "reverse-string-k-blocks": [
+  {
+   "input": "abcdefg\n2",
+   "output": "bacdfeg"
+  },
+  {
+   "input": "abcd\n2",
+   "output": "bacd"
+  },
+  {
+   "input": "abc\n5",
+   "output": "cba"
+  },
+  {
+   "input": "abcdefgh\n3",
+   "output": "cbadefhg"
+  }
+ ],
+ "defang-ip-address": [
+  {
+   "input": "1.1.1.1",
+   "output": "1[.]1[.]1[.]1"
+  },
+  {
+   "input": "255.100.50.0",
+   "output": "255[.]100[.]50[.]0"
+  },
+  {
+   "input": "10.0.0.1",
+   "output": "10[.]0[.]0[.]1"
+  }
+ ],
+ "final-value-after-operations": [
+  {
+   "input": "3\n--X X++ X++",
+   "output": "1"
+  },
+  {
+   "input": "3\n++X ++X X++",
+   "output": "3"
+  },
+  {
+   "input": "4\nX++ ++X --X X--",
+   "output": "0"
+  }
+ ],
+ "goal-parser": [
+  {
+   "input": "G()(al)",
+   "output": "Goal"
+  },
+  {
+   "input": "G()()()()(al)",
+   "output": "Gooooal"
+  },
+  {
+   "input": "(al)G(al)()()G",
+   "output": "alGalooG"
+  }
+ ],
+ "count-consistent-strings": [
+  {
+   "input": "ab\n5\nad bd aaab baa badab",
+   "output": "2"
+  },
+  {
+   "input": "abc\n7\na b c ab ac bc abc",
+   "output": "7"
+  },
+  {
+   "input": "cad\n8\ncc acd b ba bac bad ac d",
+   "output": "4"
+  }
+ ],
+ "number-of-steps-to-zero": [
+  {
+   "input": "14",
+   "output": "6"
+  },
+  {
+   "input": "8",
+   "output": "4"
+  },
+  {
+   "input": "123",
+   "output": "12"
+  },
+  {
+   "input": "0",
+   "output": "0"
+  }
+ ],
+ "water-bottles": [
+  {
+   "input": "9 3",
+   "output": "13"
+  },
+  {
+   "input": "15 4",
+   "output": "19"
+  },
+  {
+   "input": "5 5",
+   "output": "6"
+  },
+  {
+   "input": "2 3",
+   "output": "2"
+  }
+ ],
+ "bulb-switcher": [
+  {
+   "input": "3",
+   "output": "1"
+  },
+  {
+   "input": "0",
+   "output": "0"
+  },
+  {
+   "input": "1",
+   "output": "1"
+  },
+  {
+   "input": "1000000",
+   "output": "1000"
+  },
+  {
+   "input": "999999999",
+   "output": "31622"
+  }
+ ],
+ "broken-calculator": [
+  {
+   "input": "2 3",
+   "output": "2"
+  },
+  {
+   "input": "5 8",
+   "output": "2"
+  },
+  {
+   "input": "3 10",
+   "output": "3"
+  },
+  {
+   "input": "1024 1",
+   "output": "1023"
+  }
+ ],
+ "integer-replacement": [
+  {
+   "input": "8",
+   "output": "3"
+  },
+  {
+   "input": "7",
+   "output": "4"
+  },
+  {
+   "input": "4",
+   "output": "2"
+  },
+  {
+   "input": "1",
+   "output": "0"
+  },
+  {
+   "input": "2147483647",
+   "output": "32"
+  }
+ ],
+ "valid-perfect-square": [
+  {
+   "input": "16",
+   "output": "YES"
+  },
+  {
+   "input": "14",
+   "output": "NO"
+  },
+  {
+   "input": "1",
+   "output": "YES"
+  },
+  {
+   "input": "2147395600",
+   "output": "YES"
+  },
+  {
+   "input": "2147483647",
+   "output": "NO"
+  }
+ ],
+ "arranging-coins": [
+  {
+   "input": "5",
+   "output": "2"
+  },
+  {
+   "input": "8",
+   "output": "3"
+  },
+  {
+   "input": "1",
+   "output": "1"
+  },
+  {
+   "input": "2147483647",
+   "output": "65535"
+  }
+ ],
+ "power-of-three": [
+  {
+   "input": "27",
+   "output": "YES"
+  },
+  {
+   "input": "0",
+   "output": "NO"
+  },
+  {
+   "input": "9",
+   "output": "YES"
+  },
+  {
+   "input": "45",
+   "output": "NO"
+  },
+  {
+   "input": "-3",
+   "output": "NO"
+  },
+  {
+   "input": "1",
+   "output": "YES"
+  }
+ ],
+ "maximum-69-number": [
+  {
+   "input": "9669",
+   "output": "9969"
+  },
+  {
+   "input": "9996",
+   "output": "9999"
+  },
+  {
+   "input": "9999",
+   "output": "9999"
+  },
+  {
+   "input": "6",
+   "output": "9"
+  }
+ ],
+ "self-dividing-numbers": [
+  {
+   "input": "1 22",
+   "output": "1 2 3 4 5 6 7 8 9 11 12 15 22"
+  },
+  {
+   "input": "47 85",
+   "output": "48 55 66 77"
+  },
+  {
+   "input": "100 109",
+   "output": "NONE"
+  },
+  {
+   "input": "128 128",
+   "output": "128"
+  }
+ ],
+ "nth-tribonacci": [
+  {
+   "input": "4",
+   "output": "4"
+  },
+  {
+   "input": "25",
+   "output": "1389537"
+  },
+  {
+   "input": "0",
+   "output": "0"
+  },
+  {
+   "input": "37",
+   "output": "2082876103"
+  }
+ ],
+ "count-odds-in-range": [
+  {
+   "input": "3 7",
+   "output": "3"
+  },
+  {
+   "input": "8 10",
+   "output": "1"
+  },
+  {
+   "input": "0 0",
+   "output": "0"
+  },
+  {
+   "input": "1 1000000000",
+   "output": "500000000"
+  }
+ ],
+ "subtract-product-sum-digits": [
+  {
+   "input": "234",
+   "output": "15"
+  },
+  {
+   "input": "4421",
+   "output": "21"
+  },
+  {
+   "input": "1",
+   "output": "0"
+  },
+  {
+   "input": "10",
+   "output": "-1"
+  }
+ ],
+ "nim-game": [
+  {
+   "input": "4",
+   "output": "LOSE"
+  },
+  {
+   "input": "1",
+   "output": "WIN"
+  },
+  {
+   "input": "2",
+   "output": "WIN"
+  },
+  {
+   "input": "8",
+   "output": "LOSE"
+  },
+  {
+   "input": "2147483647",
+   "output": "WIN"
+  }
  ]
 }

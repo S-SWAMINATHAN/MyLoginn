@@ -2,6 +2,7 @@
 
 import { useEffect, useMemo, useRef, useState } from "react";
 import Link from "next/link";
+import { useRouter } from "next/navigation";
 import { AnimatePresence, motion } from "framer-motion";
 import { ArrowRight, Check, Search, X, Zap } from "lucide-react";
 import { AnimatedBook } from "@/components/ui/icons/AnimatedBook";
@@ -130,6 +131,7 @@ const SMOOTH = [0.22, 1, 0.36, 1] as const;
  */
 function SubjectCard({ g, s, match, i }: CardData & { i: number }) {
   const reduced = useReducedMotion();
+  const router = useRouter();
   const color = GROUP_COLOR[g.slug] ?? "#2563eb";
   const [open, setOpen] = useState(false);
   const ref = useRef<HTMLLIElement>(null);
@@ -174,7 +176,7 @@ function SubjectCard({ g, s, match, i }: CardData & { i: number }) {
     >
       <div className={cn("relative h-48 overflow-hidden rounded-3xl border bg-surface transition-[border-color,box-shadow] duration-500", open ? "border-[color-mix(in_srgb,var(--c)_55%,transparent)] shadow-[0_18px_36px_-22px_var(--c)]" : "border-border-soft")}>
         {/* front */}
-        <button type="button" onClick={() => setOpen(true)} className="flex h-full w-full flex-col items-center px-3 pb-3 pt-4 text-center outline-none" aria-expanded={open} aria-label={`${s.title}: show details`}>
+        <button type="button" onClick={(e) => { const pt = (e.nativeEvent as PointerEvent).pointerType; if (pt === "touch" || pt === "pen") setOpen(true); else router.push(`/logiquest/${s.slug}`); }} className="flex h-full w-full flex-col items-center px-3 pb-3 pt-4 text-center outline-none" aria-expanded={open} aria-label={`${s.title}: open`}>
           <span className="text-[9px] font-bold uppercase tracking-[0.14em] text-[var(--c)]">{g.nav}</span>
           <motion.span animate={reduced ? undefined : { scale: open ? 0.88 : 1, y: open ? -3 : 0, opacity: open ? 0.35 : 1 }} transition={{ duration: 0.45, ease: SMOOTH }} className="mt-2 grid h-[3.75rem] w-[3.75rem] shrink-0 place-items-center rounded-full bg-[color-mix(in_srgb,var(--c)_11%,transparent)]">
             <ContentIcon keyword={SUBJECT_ICON_KEY[s.slug] ?? "default"} className="h-11 w-11" />

@@ -1,9 +1,12 @@
 /** LogiQuest coding practice: problems are authored in code; expected outputs come from a reference solution. */
 
-export type CodeLang = "python" | "javascript" | "sql";
+/** Languages judged in the learner's browser against stdin/stdout tests. */
+export type IoLang = "python" | "javascript" | "typescript" | "ruby" | "php" | "lua";
+export type CodeLang = IoLang | "sql";
+export const IO_LANGS: IoLang[] = ["python", "javascript", "typescript", "ruby", "php", "lua"];
 export type CodeDifficulty = "Easy" | "Medium" | "Hard";
 
-/** A stdin/stdout problem (Python and JavaScript), judged in the learner's browser. */
+/** A stdin/stdout problem, judged in the learner's browser in any IoLang. */
 export type IoProblemDef = {
   kind: "io";
   slug: string;
@@ -26,9 +29,9 @@ export type IoProblemDef = {
   refJs?: string;
   hints: string[];
   editorial: string;
-  /** Restrict languages (default: python and javascript). */
-  languages?: ("python" | "javascript")[];
-  starter?: Partial<Record<"python" | "javascript", string>>;
+  /** Restrict languages (default: all IO_LANGS). */
+  languages?: IoLang[];
+  starter?: Partial<Record<IoLang, string>>;
 };
 
 /** A SQL problem, judged on the server against an in-memory SQLite database. */

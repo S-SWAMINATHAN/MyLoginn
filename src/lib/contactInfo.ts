@@ -16,4 +16,8 @@ export const CONTACT_HOURS = "Mon–Sat, 9am–7pm IST";
 export const SOCIAL_LINKS = [
   { id: "instagram", label: "MyLoginn on Instagram", href: "https://www.instagram.com/myloginntech/" },
   { id: "facebook", label: "MyLoginn on Facebook", href: "https://www.facebook.com/p/MyLoginn-Tech-61592248317142/" },
+  // TODO: replace these two placeholder links with MyLoginn's real profile URLs, then remove `pending`.
+  // While `pending` is set they appear in the footer but are left out of the Organization structured data.
+  { id: "linkedin", label: "MyLoginn on LinkedIn", href: "https://www.linkedin.com/", pending: true },
+  { id: "youtube", label: "MyLoginn on YouTube", href: "https://www.youtube.com/", pending: true },
 ] as const;

@@ -1,6 +1,8 @@
 import Link from "next/link";
 import { BookOpenCheck, Timer, Trophy } from "lucide-react";
+import { AnimatedBook } from "@/components/ui/icons/AnimatedBook";
 import { AnimatedBulb } from "@/components/ui/icons/AnimatedBulb";
+import { AnimatedLayers } from "@/components/ui/icons/AnimatedLayers";
 import { AnimatedClock } from "@/components/ui/icons/AnimatedClock";
 import { AnimatedCrown } from "@/components/ui/icons/AnimatedCrown";
 import { AnimatedUser } from "@/components/ui/icons/AnimatedUser";
@@ -61,20 +63,21 @@ export default async function LogiQuestHome() {
               {totalQuestions.toLocaleString("en-IN")}+ questions across {GROUPS.length} sections and {subjectCount} subjects, each with the answer, a worked explanation and a discussion. Learn the formulas, practise topic by topic, then take a timed online test.
             </p>
           </Reveal>
-          <Reveal direction="up" delay={0.25} className="mt-7 flex flex-wrap items-center gap-3">
-            <ArrowLink href="/logiquest/arithmetic-aptitude">Start with Aptitude</ArrowLink>
-            <Link href="/logiquest/online-test" className="btn-sweep inline-flex items-center gap-2 rounded-full border border-border-soft bg-surface px-6 py-2.5 text-sm font-semibold active:scale-95"><Timer className="h-4 w-4" />Online tests</Link>
+          <Reveal direction="up" delay={0.25} className="mt-7 flex flex-col gap-3 sm:flex-row sm:flex-wrap sm:items-center">
+            <ArrowLink href="/logiquest/arithmetic-aptitude" className="w-full justify-between sm:w-auto sm:justify-start">Start with Aptitude</ArrowLink>
+            <Link href="/logiquest/online-test" className="btn-sweep inline-flex h-11 w-full items-center justify-center gap-2 rounded-full border border-border-soft bg-surface px-6 text-sm font-semibold active:scale-95 sm:h-auto sm:w-auto sm:py-2.5"><Timer className="h-4 w-4" />Online tests</Link>
           </Reveal>
           <Reveal direction="up" delay={0.35}>
             <dl className="mt-8 grid w-full grid-cols-3 gap-3 text-center">
               {[
-                [totalQuestions.toLocaleString("en-IN"), "Questions"],
-                [String(subjectCount), "Subjects"],
-                ["Every one", "Explained"],
-              ].map(([v, k]) => (
-                <div key={k} className="flex h-16 flex-col justify-center rounded-2xl border border-border-soft bg-surface px-3 py-3">
+                { v: <>{totalQuestions.toLocaleString("en-IN")}</>, k: "Questions", Icon: AnimatedBook },
+                { v: <>{subjectCount}</>, k: "Subjects", Icon: AnimatedLayers },
+                { v: <><span className="sm:hidden">100%</span><span className="hidden sm:inline">Every one</span></>, k: "Explained", Icon: AnimatedBulb },
+              ].map(({ v, k, Icon }) => (
+                <div key={k} className="flex flex-col items-center justify-center rounded-2xl border border-border-soft bg-surface px-2 py-3 sm:h-16 sm:px-3">
+                  <Icon className="mb-1 h-6 w-6 sm:hidden" />
                   <dt className="sr-only">{k}</dt>
-                  <dd className="text-lg font-bold tabular-nums text-story-navy dark:text-foreground">{v}</dd>
+                  <dd className="whitespace-nowrap text-lg font-bold tabular-nums leading-tight text-story-navy dark:text-foreground">{v}</dd>
                   <p className="text-[11px] font-semibold text-muted" aria-hidden>{k}</p>
                 </div>
               ))}

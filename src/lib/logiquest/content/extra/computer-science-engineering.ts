@@ -1,0 +1,103 @@
+/** More Computer Science Engineering questions. */
+import { m, m2 } from "../build";
+import type { ExtraSubject } from "./merge";
+
+const extra: ExtraSubject = {
+  "theory-of-computation": [
+    m("Which machine recognises recursively enumerable languages?", ["Turing machine", "Finite automaton", "Pushdown automaton", "Mealy machine"], "Turing machines are the most powerful standard model."),
+    m("The Chomsky hierarchy's Type 3 grammars generate:", ["Regular languages", "Context-free languages", "Context-sensitive languages", "Recursively enumerable languages"], "Type 0 is unrestricted, Type 1 context-sensitive, Type 2 context-free."),
+    m("The pumping lemma is used to prove that a language is:", ["Not regular (or not context-free)", "Regular", "Finite", "Decidable"], "It shows a language cannot satisfy a necessary property."),
+    m("A Mealy machine's output depends on:", ["The current state and the current input", "Only the current state", "Only the input", "The previous output"], "A Moore machine's output depends only on the state."),
+    m("Which regular expression describes all binary strings ending in 01?", ["(0 + 1)*01", "01(0 + 1)*", "(01)*", "0*1*"], "Any prefix followed by 01."),
+    m("Regular languages are closed under:", ["Union, concatenation, Kleene star, intersection and complement", "Union only", "None of the operations", "Concatenation only"], "Context-free languages are not closed under intersection or complement."),
+    m("An ε-NFA allows transitions:", ["Without consuming an input symbol", "Only on the symbol ε printed in input", "Only to the start state", "Only to final states"], "They can be removed by computing ε-closures."),
+    m("The minimum number of states in a DFA accepting binary strings divisible by 3 is:", ["3", "2", "4", "6"], "One state per remainder 0, 1, 2."),
+    m("A language is decidable if:", ["A Turing machine halts on every input and accepts exactly its strings", "Some Turing machine accepts it but may loop", "It is infinite", "It is regular only"], "Decidable languages are also called recursive."),
+    m("Rice's theorem states that:", ["Every non-trivial semantic property of programs is undecidable", "All regular languages are finite", "Every CFG is ambiguous", "P equals NP"], "It generalises the halting problem."),
+    m("A grammar is ambiguous if:", ["Some string has more than one parse tree", "It has no start symbol", "It has only terminals", "It generates nothing"], "e.g. the dangling-else grammar."),
+    m("Chomsky Normal Form allows productions of the form:", ["A → BC or A → a", "A → aBc only", "A → ε only", "Any form"], "Useful for the CYK parsing algorithm."),
+    m2("How many states does a minimal DFA need for binary strings with an even number of 0s and an even number of 1s?", ["4", "2", "3", "8"], "One state per parity combination: (even, even), (even, odd), (odd, even), (odd, odd)."),
+  ],
+
+  "compiler-design": [
+    m("Which phase checks types and scope rules?", ["Semantic analysis", "Lexical analysis", "Code generation", "Linking"], "It annotates the syntax tree."),
+    m("A symbol table stores:", ["Information about identifiers such as names, types and scopes", "Only machine instructions", "Only comments", "Output files"], "It is used by all compiler phases."),
+    m("Which phase removes redundant computations and improves performance?", ["Code optimisation", "Lexical analysis", "Parsing", "Preprocessing"], "Examples: constant folding and dead-code elimination."),
+    m("Constant folding means:", ["Evaluating constant expressions at compile time", "Removing constants", "Storing constants in registers", "Folding loops"], "e.g. 2 * 3 becomes 6."),
+    m("Dead code elimination removes:", ["Code whose results are never used or that can never execute", "Comments", "Variables with long names", "Functions with parameters"], "It makes programs smaller and faster."),
+    m("Loop-invariant code motion:", ["Moves computations that do not change inside a loop to outside it", "Unrolls loops", "Deletes loops", "Adds new loops"], "They are then computed once."),
+    m("A recursive-descent parser is a:", ["Top-down parser", "Bottom-up parser", "Lexical analyser", "Linker"], "Each non-terminal becomes a function."),
+    m("Shift-reduce parsing is used by:", ["Bottom-up (LR) parsers", "Top-down parsers", "Lexers", "Assemblers"], "It shifts tokens and reduces handles."),
+    m("A cross compiler:", ["Runs on one platform and generates code for another", "Compiles two languages at once", "Converts high-level to high-level code", "Only checks syntax"], "Used for embedded systems."),
+    m("Register allocation is commonly modelled as:", ["Graph colouring", "Sorting", "Binary search", "Hashing"], "Variables that are live together cannot share a register."),
+    m("FIRST and FOLLOW sets are used to build:", ["LL(1) parsing tables", "Symbol tables", "Lexers", "Object files"], "They predict which production to use."),
+    m("A just-in-time (JIT) compiler:", ["Compiles code during program execution", "Compiles before the program is written", "Only interprets", "Removes all optimisation"], "Used by the JVM and .NET."),
+    m2("How many tokens are in the statement `int x = a + 10;`?", ["7", "5", "6", "8"], "int, x, =, a, +, 10 and ; are seven tokens."),
+  ],
+
+  "computer-organization-and-architecture": [
+    m("CISC processors are characterised by:", ["Many complex instructions, some taking several cycles", "Only simple instructions", "No memory instructions", "Fixed one-cycle instructions"], "x86 is a CISC architecture."),
+    m("A control hazard in a pipeline is caused by:", ["Branch instructions", "Data dependencies", "Lack of memory", "Cache hits"], "Branch prediction reduces it."),
+    m("Branch prediction aims to:", ["Guess branch outcomes to keep the pipeline full", "Remove branches from code", "Increase cache size", "Reduce clock speed"], "Wrong guesses flush the pipeline."),
+    m("In the Harvard architecture:", ["Instructions and data have separate memories and buses", "Instructions and data share memory", "There is no memory", "Only one register exists"], "Common in microcontrollers and DSPs."),
+    m("The program counter holds:", ["The address of the next instruction", "The current data value", "The number of programs", "The stack size"], "It is updated after each fetch or jump."),
+    m("Direct-mapped cache maps each memory block to:", ["Exactly one cache line", "Any cache line", "A set of lines", "No line"], "Fully associative caches allow any line."),
+    m("Which cache write policy updates main memory only when a line is evicted?", ["Write-back", "Write-through", "Write-around", "Write-once"], "Dirty bits mark modified lines."),
+    m("DMA (direct memory access) allows:", ["Devices to transfer data to memory without the CPU copying each byte", "The CPU to access disks directly", "Faster clock speeds", "More registers"], "The CPU is free to do other work."),
+    m("Amdahl's law describes:", ["The limit on speed-up from improving only part of a system", "Cache hit ratios", "Disk access times", "Transistor counts"], "The serial portion limits the overall gain."),
+    m("An instruction's addressing mode that uses the value in the instruction itself is:", ["Immediate addressing", "Direct addressing", "Indirect addressing", "Indexed addressing"], "e.g. ADD R1, #5."),
+    m("Microprogrammed control units store control signals in:", ["Control memory as microinstructions", "Hard-wired logic only", "Cache", "The ALU"], "Hard-wired control is faster but less flexible."),
+    m("A k-stage pipeline executing n instructions ideally takes:", ["k + n − 1 cycles", "k × n cycles", "n cycles", "k cycles"], "After filling, one instruction completes per cycle."),
+    m2("Using Amdahl's law, if 80% of a program is sped up 4 times, the overall speed-up is:", ["2.5", "4", "3.2", "2"], "1 / (0.2 + 0.8 / 4) = 1 / 0.4 = 2.5."),
+  ],
+
+  "design-and-analysis-of-algorithms": [
+    m("Quick sort uses which design technique?", ["Divide and conquer", "Greedy", "Dynamic programming", "Branch and bound"], "Partition, then sort each part recursively."),
+    m("Huffman coding is an example of a:", ["Greedy algorithm", "Backtracking algorithm", "Brute-force algorithm", "Divide and conquer algorithm"], "It merges the two least frequent symbols repeatedly."),
+    m("The fractional knapsack problem is solved optimally by:", ["A greedy algorithm by value/weight ratio", "Dynamic programming only", "Backtracking", "Brute force only"], "Items can be split, so greedy works."),
+    m("Branch and bound is used for:", ["Optimisation problems by pruning branches that cannot beat the best solution", "Sorting", "Searching sorted arrays", "Hashing"], "e.g. the travelling salesman problem."),
+    m("Strassen's algorithm multiplies matrices in about:", ["O(n^2.81)", "O(n³)", "O(n²)", "O(n log n)"], "It uses seven multiplications instead of eight for 2 × 2 blocks."),
+    m("The travelling salesman problem (decision version) is:", ["NP-complete", "Solvable in polynomial time", "Undecidable", "Regular"], "No polynomial algorithm is known."),
+    m("Memoisation means:", ["Storing results of function calls to avoid recomputation", "Writing memos", "Deleting old data", "Sorting results"], "It is top-down dynamic programming."),
+    m("The longest common subsequence of two strings of lengths m and n can be found in:", ["O(mn) time", "O(m + n) time", "O(2ⁿ) time only", "O(log n) time"], "Using a DP table."),
+    m("Matrix chain multiplication is solved using:", ["Dynamic programming", "Greedy choice", "Binary search", "Backtracking only"], "It finds the cheapest parenthesisation."),
+    m("A problem is NP-hard if:", ["Every problem in NP reduces to it in polynomial time", "It is in P", "It has no solution", "It is regular"], "NP-complete problems are NP-hard and in NP."),
+    m("Topological sorting of a DAG can be done in:", ["O(V + E)", "O(V²) only", "O(E log V)", "O(V³)"], "Using DFS or Kahn's algorithm."),
+    m("The master theorem gives T(n) = 4T(n/2) + n as:", ["O(n²)", "O(n log n)", "O(n)", "O(n³)"], "log₂ 4 = 2 dominates the linear term."),
+    m2("How many comparisons does finding both the minimum and maximum of n elements need using the pairwise method?", ["About 3n/2", "2n", "n", "n²"], "Compare elements in pairs, then compare the smaller with the minimum and the larger with the maximum."),
+  ],
+
+  "discrete-mathematics": [
+    m("The negation of 'All students passed' is:", ["Some students did not pass", "No student passed", "All students failed", "Some students passed"], "¬∀x P(x) ≡ ∃x ¬P(x)."),
+    m("P → Q is false only when:", ["P is true and Q is false", "P is false and Q is true", "Both are false", "Both are true"], "An implication with a false premise is true."),
+    m("How many relations are possible on a set with 3 elements?", ["512", "9", "27", "64"], "There are 2^(3 × 3) = 2⁹ subsets of A × A."),
+    m("A partial order is reflexive, transitive and:", ["Antisymmetric", "Symmetric", "Irreflexive", "Total"], "e.g. ≤ on numbers or ⊆ on sets."),
+    m("The number of ways to arrange the letters of 'LEVEL' is:", ["30", "120", "60", "20"], "5! / (2! × 2!) = 30."),
+    m("The pigeonhole principle says that if n + 1 objects go into n boxes:", ["At least one box has two or more objects", "Every box has one object", "One box is empty", "No box has two objects"], "A simple but powerful counting argument."),
+    m("A tree with 10 vertices has how many edges?", ["9", "10", "11", "45"], "A tree with n vertices has n − 1 edges."),
+    m("The number of edges in the complete bipartite graph K₃,₄ is:", ["12", "7", "21", "6"], "Each of the 3 vertices joins all 4: 3 × 4."),
+    m("A planar graph can be drawn:", ["Without any edges crossing", "Only in 3D", "Only as a tree", "With all vertices on a line"], "K₅ and K₃,₃ are not planar."),
+    m("Euler's formula for a connected planar graph is:", ["V − E + F = 2", "V + E + F = 2", "V − E = F", "E = V + 2"], "F counts faces including the outer one."),
+    m("The chromatic number of a cycle with 5 vertices is:", ["3", "2", "5", "4"], "Odd cycles need three colours."),
+    m("In propositional logic, (P ∧ Q) → P is a:", ["Tautology", "Contradiction", "Contingency", "Fallacy"], "If both are true, P is certainly true."),
+    m2("How many ways can a committee of 3 be chosen from 8 people?", ["56", "336", "24", "512"], "C(8, 3) = 8 × 7 × 6 / 6 = 56.", { check: "comb(8, 3)" }),
+  ],
+
+  "computer-graphics": [
+    m("The DDA algorithm is used to:", ["Draw lines by incremental calculation", "Clip polygons", "Fill colours", "Render shadows"], "Digital Differential Analyzer uses floating-point steps."),
+    m("The midpoint circle algorithm uses the symmetry of a circle in:", ["8 octants", "4 quadrants only", "2 halves", "No symmetry"], "Only one octant needs to be computed."),
+    m("Scaling an object by (2, 2) about the origin:", ["Doubles its size and its distance from the origin", "Moves it by 2 units", "Rotates it by 2 degrees", "Changes only its colour"], "Scaling multiplies coordinates."),
+    m("A reflection about the x-axis maps (x, y) to:", ["(x, −y)", "(−x, y)", "(y, x)", "(−x, −y)"], "Reflection about the y-axis gives (−x, y)."),
+    m("The Sutherland–Hodgman algorithm is used for:", ["Polygon clipping", "Line drawing", "Ray tracing", "Texture mapping"], "It clips against each window edge in turn."),
+    m("In perspective projection, objects farther away appear:", ["Smaller", "Larger", "The same size", "Upside down"], "Parallel projection keeps sizes."),
+    m("Ray tracing produces realistic images by:", ["Following light rays through the scene, including reflections and shadows", "Drawing only outlines", "Using only 2D sprites", "Ignoring lighting"], "It is computationally expensive."),
+    m("Phong shading interpolates:", ["Surface normals across a polygon", "Only vertex colours", "Textures only", "Nothing"], "Gouraud shading interpolates vertex intensities."),
+    m("The RGB colour model is:", ["Additive, used by displays", "Subtractive, used by printers", "Used only for black-and-white", "Based on sound"], "CMYK is subtractive."),
+    m("Anti-aliasing reduces:", ["Jagged edges (staircase effect)", "Colours", "Frame rate", "Resolution"], "It blends edge pixels."),
+    m("A frame buffer stores:", ["The pixel values of the image to be displayed", "The program code", "The mouse position", "Sound samples"], "Its size depends on resolution and colour depth."),
+    m("A Bézier curve is defined by:", ["Control points", "A single point", "Only its end points", "A random function"], "The curve is shaped by the control polygon."),
+    m2("How much memory does a 1024 × 768 frame buffer with 24-bit colour need?", ["2.25 MB", "768 KB", "24 MB", "1 MB"], "1024 × 768 × 3 bytes = 2,359,296 bytes = 2.25 MB."),
+  ],
+};
+
+export default extra;

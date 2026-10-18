@@ -1,3 +1,4 @@
+import { IO_LANGS } from "@/lib/logiquest/coding/types";
 import { NextResponse } from "next/server";
 import { getCurrentUser } from "@/lib/auth";
 import { getProblemDef, ioTests } from "@/lib/logiquest/coding/catalog";
@@ -8,7 +9,7 @@ import { allow } from "@/lib/logiquest/rateLimit";
 const VERDICTS = ["ACCEPTED", "WRONG_ANSWER", "RUNTIME_ERROR", "TIME_LIMIT"];
 
 /**
- * Records a Python/JavaScript submission judged in the learner's browser (the MyLoginn IDE).
+ * Records a submission (any browser language) judged in the learner's browser (the MyLoginn IDE).
  * The server cannot re-run the code, so the verdict is the browser's report; counts are checked for consistency.
  */
 export async function POST(request: Request, { params }: { params: Promise<{ slug: string }> }) {
@@ -19,7 +20,7 @@ export async function POST(request: Request, { params }: { params: Promise<{ slu
   const p = getProblemDef(slug);
   if (!p || p.kind !== "io") return err("Problem not found.", 404);
   const body = await readBody<{ language?: unknown; source?: unknown; verdict?: unknown; passed?: unknown }>(request, 60_000);
-  const languages = p.languages ?? ["python", "javascript"];
+  const languages = p.languages ?? IO_LANGS;
   const language = typeof body?.language === "string" && (languages as string[]).includes(body.language) ? body.language : null;
   const source = typeof body?.source === "string" ? body.source : "";
   const verdict = typeof body?.verdict === "string" && VERDICTS.includes(body.verdict) ? body.verdict : null;

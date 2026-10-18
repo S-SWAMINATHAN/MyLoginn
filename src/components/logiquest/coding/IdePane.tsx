@@ -5,11 +5,13 @@ import Image from "next/image";
 import Link from "next/link";
 import { CheckCircle2, CircleAlert, Clock, Loader2, Moon, Play, RotateCcw, Send, Sun, Zap } from "lucide-react";
 import { cn } from "@/lib/cn";
-import { judge, warmUpPython, type CaseResult, type Verdict } from "@/lib/logiquest/coding/browserRun";
+import { judge, warmUp, type CaseResult, type Verdict } from "@/lib/logiquest/coding/browserRun";
 import type { CodeLang, PublicProblem } from "@/lib/logiquest/coding/types";
 import { CodeEditor } from "./CodeEditor";
 
-const LANG_LABEL: Record<CodeLang, string> = { python: "Python 3", javascript: "JavaScript", sql: "SQL (SQLite)" };
+const LANG_LABEL: Record<CodeLang, string> = { python: "Python 3", javascript: "JavaScript", typescript: "TypeScript", ruby: "Ruby 3.3", php: "PHP 8.3", lua: "Lua 5.3", sql: "SQL (SQLite)" };
+/** Shown while a runtime starts; the larger ones download once and are then cached by the browser. */
+const STARTING: Partial<Record<CodeLang, string>> = { python: "Starting Python…", typescript: "Loading TypeScript…", ruby: "Loading Ruby (first run downloads ~35 MB)…", php: "Loading PHP…", lua: "Loading Lua…" };
 const VERDICT_TEXT: Record<Verdict, string> = { ACCEPTED: "Accepted", WRONG_ANSWER: "Wrong Answer", RUNTIME_ERROR: "Runtime Error", TIME_LIMIT: "Time Limit Exceeded" };
 type SqlTable = { columns: string[]; rows: string[][] };
 type Outcome =
@@ -57,9 +59,9 @@ export function IdePane({ problem, loggedIn, drafts, onJudged }: {
   }, [problem.slug, lang, code]);
 
   useEffect(() => {
-    // Start loading Python in the background so the first Run is fast.
-    if (problem.languages.includes("python")) warmUpPython().catch(() => {});
-  }, [problem.languages]);
+    // Start loading the selected language's runtime in the background so the first Run is fast.
+    if (lang !== "sql") warmUp(lang).catch(() => {});
+  }, [lang]);
 
   function switchLang(next: CodeLang) {
     setLang(next);
@@ -82,7 +84,7 @@ export function IdePane({ problem, loggedIn, drafts, onJudged }: {
     if (lang === "sql") return runSql("run");
     setError(null); setTab("result");
     const tests = useCustom ? [{ input: custom, output: "" }] : problem.examples.map((e) => ({ input: e.input, output: e.output }));
-    setBusy(lang === "python" ? "Starting Python…" : "Running…");
+    setBusy(STARTING[lang] ?? "Running…");
     try {
       const r = await judge(lang, code, tests, (n) => setBusy(`Running case ${Math.min(n + 1, tests.length)} of ${tests.length}…`));
       if (useCustom) setOutcome({ kind: "io", mode: "custom", verdict: null, passed: 0, total: 1, cases: r.cases, customOutput: r.cases[0]?.output });
@@ -136,7 +138,7 @@ export function IdePane({ problem, loggedIn, drafts, onJudged }: {
         </div>
       </div>
 
-      <CodeEditor value={code} onChange={setCode} onRun={run} onSubmit={submit} indent={lang === "python" ? 4 : 2} light={light} label={`${LANG_LABEL[lang]} code editor`} />
+      <CodeEditor value={code} onChange={setCode} onRun={run} onSubmit={submit} indent={lang === "python" || lang === "php" ? 4 : 2} light={light} label={`${LANG_LABEL[lang]} code editor`} />
 
       <div className={cn("border-t", light ? "border-slate-200 bg-slate-50" : "border-white/10 bg-[#0b1220]")}>
         <div className="flex flex-wrap items-center gap-1 px-3 pt-2">

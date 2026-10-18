@@ -35,8 +35,9 @@ const nextConfig: NextConfig = {
           { key: "X-Content-Type-Options", value: "nosniff" },
           { key: "X-Frame-Options", value: "SAMEORIGIN" },
           { key: "Referrer-Policy", value: "strict-origin-when-cross-origin" },
-          // Camera is used by the avatar uploader; everything else sensitive stays off.
-          { key: "Permissions-Policy", value: "camera=(self), microphone=(), geolocation=(), payment=(self)" },
+          // Camera is used by the avatar uploader, the microphone by Practice (interview, speaking, group discussion);
+          // everything else sensitive stays off.
+          { key: "Permissions-Policy", value: "camera=(self), microphone=(self), geolocation=(), payment=(self)" },
           { key: "Cross-Origin-Opener-Policy", value: "same-origin-allow-popups" },
           // Remember that this domain (and www) must only be opened over HTTPS.
           { key: "Strict-Transport-Security", value: "max-age=63072000; includeSubDomains" },

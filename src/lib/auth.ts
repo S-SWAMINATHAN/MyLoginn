@@ -1,6 +1,7 @@
 import jwt from "jsonwebtoken";
 import bcrypt from "bcryptjs";
 import { cookies } from "next/headers";
+import { cache } from "react";
 import { prisma } from "./prisma";
 import { getRequiredServerEnv } from "./env";
 const COOKIE_NAME = "myloginn_session";
@@ -47,7 +48,11 @@ export async function clearSessionCookie() {
   store.delete(COOKIE_NAME);
 }
 
-export async function getCurrentUser() {
+/**
+ * The signed-in user. Memoised per request: the root layout and the page both ask for it, and without this every
+ * page view ran the same user query twice.
+ */
+export const getCurrentUser = cache(async function getCurrentUser() {
   const store = await cookies();
   const token = store.get(COOKIE_NAME)?.value;
   if (!token) return null;
@@ -61,6 +66,16 @@ export async function getCurrentUser() {
     console.error("getCurrentUser: database unreachable", error);
     return null;
   }
+});
+
+/**
+ * The signed-in user's id from the session cookie alone, without a database lookup. For high-frequency endpoints
+ * (group-discussion polling) that check membership themselves.
+ */
+export async function getSessionUserId() {
+  const store = await cookies();
+  const token = store.get(COOKIE_NAME)?.value;
+  return token ? verifySession(token)?.userId ?? null : null;
 }
 
 export async function requireAdmin() {

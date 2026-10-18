@@ -79,12 +79,12 @@ export function TopicGrid({ subject, topics, extra, color = "#2563eb", showTest 
                     </div>
                   </div>
 
-                  <div className="relative mt-5 flex items-center gap-2">
+                  <div className="pointer-events-none relative mt-5 flex items-center gap-2">
                     <span className="pointer-events-none inline-flex items-center gap-1.5 rounded-full bg-[color-mix(in_srgb,var(--c)_12%,transparent)] px-3.5 py-1.5 text-xs font-bold text-[var(--c)] transition-colors duration-300 group-hover:bg-[var(--c)] group-hover:text-white">
                       {done ? "Review" : begun ? "Continue" : "Practice"}<ArrowRight className="h-3.5 w-3.5 transition-transform duration-300 group-hover:translate-x-0.5" />
                     </span>
                     {showTest && t.count ? (
-                      <Link href={`/logiquest/online-test/${subject}?topic=${t.slug}`} className="relative z-10 inline-flex items-center gap-1.5 rounded-full border border-border-soft px-3.5 py-1.5 text-xs font-bold text-muted transition-colors duration-300 hover:border-[var(--c)] hover:text-[var(--c)]">
+                      <Link href={`/logiquest/online-test/${subject}?topic=${t.slug}`} className="pointer-events-auto relative z-10 inline-flex items-center gap-1.5 rounded-full border border-border-soft px-3.5 py-1.5 text-xs font-bold text-muted transition-colors duration-300 hover:border-[var(--c)] hover:text-[var(--c)]">
                         <Timer className="h-3.5 w-3.5" />Test
                       </Link>
                     ) : null}

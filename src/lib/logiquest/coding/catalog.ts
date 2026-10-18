@@ -1,14 +1,18 @@
 import "server-only";
 import { ALL_PROBLEMS } from "./problems";
 import TESTS from "./tests.generated.json";
-import type { CodingProblemDef, IoTest, ProblemSummary, PublicProblem } from "./types";
+import { IO_LANGS, type CodeLang, type CodingProblemDef, type IoTest, type ProblemSummary, type PublicProblem } from "./types";
 
 const BY_SLUG = new Map(ALL_PROBLEMS.map((p) => [p.slug, p]));
 const IO_TESTS = TESTS as Record<string, IoTest[]>;
 
-export const STARTERS = {
+export const STARTERS: Record<CodeLang, string> = {
   python: "import sys\n\n\ndef main():\n    data = sys.stdin.read().split()\n    # Write your solution here and print the answer\n\n\nmain()\n",
   javascript: "// readLine() returns the next input line (or null); console.log() prints.\nconst lines = [];\nfor (let line = readLine(); line !== null; line = readLine()) lines.push(line);\n\n// Write your solution here and console.log the answer\n",
+  typescript: "// readLine() returns the next input line (or null); console.log() prints.\ndeclare function readLine(): string | null;\n\nconst lines: string[] = [];\nfor (let line = readLine(); line !== null; line = readLine()) lines.push(line);\n\n// Write your solution here and console.log the answer\n",
+  ruby: "# gets reads one line, STDIN.read reads everything; puts prints.\ndata = STDIN.read.split\n\n# Write your solution here and puts the answer\n",
+  php: "<?php\n// fgets(STDIN) reads one line, stream_get_contents(STDIN) reads everything; echo prints.\n$data = preg_split('/\\s+/', trim(stream_get_contents(STDIN)));\n\n// Write your solution here and echo the answer\n",
+  lua: "-- io.read(\"n\") reads a number, io.read(\"l\") a line, io.read(\"a\") everything; print() prints.\nlocal data = io.read(\"a\")\n\n-- Write your solution here and print the answer\n",
   sql: "-- Write your query below\nSELECT\n",
 };
 
@@ -37,7 +41,7 @@ export function publicProblem(slug: string): PublicProblem | null {
   }
   const tests = ioTests(slug);
   const samples = Math.min(p.samples ?? 2, tests.length);
-  const languages = p.languages ?? ["python", "javascript"];
+  const languages = p.languages ?? IO_LANGS;
   return {
     kind: "io", slug: p.slug, title: p.title, difficulty: p.difficulty, tracks: p.tracks, tags: p.tags, statement: p.statement,
     inputFormat: p.inputFormat, outputFormat: p.outputFormat, constraints: p.constraints,

@@ -4,7 +4,10 @@
  * Runs learner code in the browser for the MyLoginn IDE (never on the app server).
  * Python: Pyodide inside a dedicated Web Worker, so infinite loops can be stopped by terminating the worker.
  * JavaScript: a throw-away Web Worker per run.
+ * TypeScript, Ruby, PHP and Lua: one long-lived worker each (see runtimes.ts), restarted after a time-out.
  */
+import { RUNTIME_WORKERS } from "./runtimes";
+import type { IoLang } from "./types";
 
 export type RunResult = { output: string; error: string | null; timedOut: boolean; ms: number };
 
@@ -19,8 +22,7 @@ const pending = new Map<number, (r: { output: string; error: string | null }) =>
 
 function pythonWorkerSource(origin: string) {
   return `
-    importScripts(${JSON.stringify(`${origin}/pyodide/pyodide.js`)});
-    const ready = loadPyodide({ indexURL: ${JSON.stringify(`${origin}/pyodide/`)} });
+    const ready = import(${JSON.stringify(`${origin}/pyodide/pyodide.mjs`)}).then((m) => m.loadPyodide({ indexURL: ${JSON.stringify(`${origin}/pyodide/`)} }));
     self.onmessage = async (e) => {
       const { id, code, input } = e.data;
       let py;
@@ -48,7 +50,7 @@ function pythonWorkerSource(origin: string) {
 function ensurePython(): Promise<void> {
   if (pyWorker && pyReady) return pyReady;
   const url = URL.createObjectURL(new Blob([pythonWorkerSource(window.location.origin)], { type: "text/javascript" }));
-  pyWorker = new Worker(url);
+  pyWorker = new Worker(url, { type: "module" });
   pyWorker.onmessage = (e: MessageEvent<{ id: number; output: string; error: string | null }>) => {
     const done = pending.get(e.data.id);
     pending.delete(e.data.id);
@@ -114,15 +116,77 @@ function runJavaScript(code: string, input: string, timeoutMs: number): Promise<
   });
 }
 
-export function runCode(language: "python" | "javascript", code: string, input: string, timeoutMs = 4000) {
-  return language === "python" ? runPython(code, input, timeoutMs) : runJavaScript(code, input, timeoutMs);
+// ───────────── TypeScript, Ruby, PHP, Lua ─────────────
+type RuntimeLang = keyof typeof RUNTIME_WORKERS;
+type Slot = { worker: Worker; ready: Promise<void>; pending: Map<number, (r: { output: string; error: string | null }) => void> };
+const slots = new Map<RuntimeLang, Slot>();
+
+function slotFor(lang: RuntimeLang): Slot {
+  const existing = slots.get(lang);
+  if (existing) return existing;
+  const def = RUNTIME_WORKERS[lang];
+  const url = URL.createObjectURL(new Blob([def.src], { type: "text/javascript" }));
+  const worker = new Worker(url, { type: def.type });
+  const pending = new Map<number, (r: { output: string; error: string | null }) => void>();
+  worker.onmessage = (e: MessageEvent<{ id: number; output: string; error: string | null }>) => {
+    const done = pending.get(e.data.id);
+    pending.delete(e.data.id);
+    done?.({ output: e.data.output, error: e.data.error });
+  };
+  worker.onerror = (e) => { e.preventDefault(); for (const [, done] of pending) done({ output: "", error: e.message || "The runtime crashed." }); pending.clear(); };
+  const slot: Slot = { worker, pending, ready: Promise.resolve() };
+  slot.ready = new Promise<void>((resolve, reject) => {
+    const id = ++seq;
+    pending.set(id, (r) => (r.error ? reject(new Error(r.error)) : resolve()));
+    worker.postMessage({ id, code: null, input: "" });
+  }).catch((err) => { killSlot(lang); throw err; });
+  slots.set(lang, slot);
+  return slot;
+}
+
+function killSlot(lang: RuntimeLang) {
+  const slot = slots.get(lang);
+  if (!slot) return;
+  slot.worker.terminate();
+  for (const [, done] of slot.pending) done({ output: "", error: "Execution stopped." });
+  slot.pending.clear();
+  slots.delete(lang);
+}
+
+async function runInRuntime(lang: RuntimeLang, code: string, input: string, timeoutMs: number): Promise<RunResult> {
+  const slot = slotFor(lang);
+  await slot.ready;
+  const started = performance.now();
+  return new Promise<RunResult>((resolve) => {
+    const id = ++seq;
+    const timer = setTimeout(() => {
+      slot.pending.delete(id);
+      killSlot(lang);
+      resolve({ output: "", error: null, timedOut: true, ms: timeoutMs });
+    }, timeoutMs);
+    slot.pending.set(id, (r) => { clearTimeout(timer); resolve({ ...r, timedOut: false, ms: Math.round(performance.now() - started) }); });
+    slot.worker.postMessage({ id, code, input });
+  });
+}
+
+/** Loads a language runtime ahead of time. Heavy runtimes download once and are then cached by the browser. */
+export function warmUp(lang: IoLang): Promise<void> {
+  if (lang === "python") return ensurePython();
+  if (lang === "javascript") return Promise.resolve();
+  return slotFor(lang).ready;
+}
+
+export function runCode(language: IoLang, code: string, input: string, timeoutMs = 4000) {
+  if (language === "python") return runPython(code, input, timeoutMs);
+  if (language === "javascript") return runJavaScript(code, input, timeoutMs);
+  return runInRuntime(language, code, input, timeoutMs);
 }
 
 export type CaseResult = { index: number; input: string; expected: string; output: string; passed: boolean; error: string | null; timedOut: boolean; ms: number };
 export type Verdict = "ACCEPTED" | "WRONG_ANSWER" | "RUNTIME_ERROR" | "TIME_LIMIT";
 
 /** Runs every test case in order and stops at the first failure (like an online judge). */
-export async function judge(language: "python" | "javascript", code: string, tests: { input: string; output: string }[], onProgress?: (done: number) => void) {
+export async function judge(language: IoLang, code: string, tests: { input: string; output: string }[], onProgress?: (done: number) => void) {
   const cases: CaseResult[] = [];
   let verdict: Verdict = "ACCEPTED";
   for (let i = 0; i < tests.length; i++) {

@@ -8,11 +8,17 @@ import { siteUrl } from "@/lib/site";
 const LABELS: Record<string, string> = {
   faq: "FAQ", sql: "SQL", mysql: "MySQL", css: "CSS", html: "HTML", php: "PHP", cpp: "C++", ai: "AI", ui: "UI", ux: "UX",
   login: "Log in", signup: "Sign up", "reset-password": "Reset password", learn: "Learn", tutoring: "Tutoring",
+  gd: "Group Discussion", speaking: "Speaking Lab", interview: "AI Interview", reports: "My Reports",
 };
 // Folders that only group other pages and have no page of their own, so they must not be links.
 const NOT_PAGES = new Set(["/dashboard/projects", "/locations"]);
 
-function labelFor(segment: string) {
+/** Practice pages whose last segment is a record id: show what it is, not the id. */
+const ID_LABELS: Record<string, string> = { "/practice/interview": "Interview session", "/practice/speaking": "Practice session", "/practice/reports": "Report" };
+
+function labelFor(segment: string, parent: string) {
+  if (ID_LABELS[parent] && /^c[a-z0-9]{20,}$/.test(segment)) return ID_LABELS[parent];
+  if (parent === "/practice/gd") return `Room ${decodeURIComponent(segment).toUpperCase()}`;
   const key = decodeURIComponent(segment).toLowerCase();
   if (LABELS[key]) return LABELS[key];
   return key.split("-").filter(Boolean).map((word) => LABELS[word] ?? word.charAt(0).toUpperCase() + word.slice(1)).join(" ");
@@ -27,7 +33,7 @@ export function Breadcrumbs() {
 
   const trail = segments.map((segment, index) => {
     const href = `/${segments.slice(0, index + 1).join("/")}`;
-    return { href, label: labelFor(segment), linkable: !NOT_PAGES.has(href) };
+    return { href, label: labelFor(segment, `/${segments.slice(0, index).join("/")}`), linkable: !NOT_PAGES.has(href) };
   });
 
   const jsonLd = {

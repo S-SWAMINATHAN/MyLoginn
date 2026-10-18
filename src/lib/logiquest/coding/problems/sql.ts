@@ -1,7 +1,7 @@
 /** SQL problems, judged on the server against an in-memory SQLite database. */
 import type { SqlProblemDef } from "../types";
 
-const COMPANY = `CREATE TABLE departments (id INTEGER PRIMARY KEY, name TEXT NOT NULL, city TEXT);
+export const COMPANY = `CREATE TABLE departments (id INTEGER PRIMARY KEY, name TEXT NOT NULL, city TEXT);
 CREATE TABLE employees (id INTEGER PRIMARY KEY, name TEXT NOT NULL, email TEXT, salary INTEGER, dept_id INTEGER REFERENCES departments(id), manager_id INTEGER, hired TEXT);
 INSERT INTO departments VALUES (1,'Engineering','Chennai'),(2,'Sales','Mumbai'),(3,'HR','Pune'),(4,'Research','Bengaluru');
 INSERT INTO employees VALUES
@@ -14,7 +14,7 @@ INSERT INTO employees VALUES
  (7,'Lata','lata@corp.in',55000,2,3,'2023-03-12'),
  (8,'Kiran','asha@corp.in',90000,1,2,'2021-07-30');`;
 
-const SHOP = `CREATE TABLE customers (id INTEGER PRIMARY KEY, name TEXT NOT NULL, city TEXT);
+export const SHOP = `CREATE TABLE customers (id INTEGER PRIMARY KEY, name TEXT NOT NULL, city TEXT);
 CREATE TABLE orders (id INTEGER PRIMARY KEY, customer_id INTEGER REFERENCES customers(id), amount INTEGER, order_date TEXT);
 INSERT INTO customers VALUES (1,'Anil','Delhi'),(2,'Bina','Chennai'),(3,'Chetan','Delhi'),(4,'Divya','Kolkata'),(5,'Esha','Chennai');
 INSERT INTO orders VALUES (1,1,500,'2024-01-05'),(2,1,700,'2024-02-10'),(3,2,200,'2024-01-20'),(4,3,1500,'2024-03-01'),(5,2,800,'2024-03-15'),(6,1,300,'2024-03-20'),(7,5,1000,'2024-02-01');`;
