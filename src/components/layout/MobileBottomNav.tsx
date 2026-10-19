@@ -4,7 +4,9 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useEffect, useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { ChevronRight, GraduationCap, House, LayoutGrid, Mail, type LucideIcon } from "lucide-react";
+import { ChevronRight, GraduationCap, House, LayoutGrid, LogIn, Mail, User, type LucideIcon } from "lucide-react";
+import { Avatar } from "@/components/ui/Avatar";
+import type { ProfileUser } from "@/components/layout/ProfileMenu";
 import { DuoIcon, type MenuIconKey } from "@/components/ui/icons/DuoIcon";
 import { cn } from "@/lib/cn";
 
@@ -15,6 +17,8 @@ type TabItem = {
   label: string;
   icon: IconComponent;
   href?: string;
+  /** The signed-in person: their avatar replaces the icon. */
+  avatar?: ProfileUser;
   isActive: (pathname: string) => boolean;
 };
 
@@ -37,7 +41,7 @@ const learnPopupLinks: { href: string; label: string; desc: string; icon: MenuIc
 const isLearnPath = (p: string) => p.startsWith("/courses") || p.startsWith("/logiquest") || p.startsWith("/practice") || p === "/tutoring";
 const isServicesPath = (p: string) => p.startsWith("/services") || p.startsWith("/projects") || p.startsWith("/careers");
 
-export function MobileBottomNav() {
+export function MobileBottomNav({ user = null }: { user?: ProfileUser | null }) {
   const pathname = usePathname();
   const [openMenu, setOpenMenu] = useState<"learn" | "services" | null>(null);
 
@@ -50,6 +54,9 @@ export function MobileBottomNav() {
     { key: "services", label: "Services", icon: LayoutGrid, isActive: isServicesPath },
     { key: "learn", label: "Learn", icon: GraduationCap, isActive: isLearnPath },
     { key: "contact", label: "Contact Us", icon: Mail, href: "/contact", isActive: (p) => p === "/contact" },
+    user
+      ? { key: "profile", label: "Profile", icon: User, href: "/profile", avatar: user, isActive: (p) => p.startsWith("/profile") || p.startsWith("/dashboard") }
+      : { key: "login", label: "Log in", icon: LogIn, href: "/login", isActive: (p) => p === "/login" || p === "/signup" },
   ];
 
   return (
@@ -115,7 +122,7 @@ export function MobileBottomNav() {
         className="glass-nav fixed inset-x-0 bottom-0 z-50 border-t border-border-soft shadow-[0_-8px_30px_rgba(15,15,35,0.08)] lg:hidden"
         style={{ paddingBottom: "env(safe-area-inset-bottom)" }}
       >
-        <div className="mx-auto grid h-[4.5rem] max-w-lg grid-cols-4 items-stretch px-2">
+        <div className="mx-auto grid h-[4.5rem] max-w-lg grid-cols-5 items-stretch px-1">
           {tabs.map((tab) => {
             const active = openMenu === tab.key || tab.isActive(pathname);
             return tab.href ? (
@@ -167,7 +174,13 @@ function TabButton({
         transition={{ type: "spring", stiffness: 420, damping: 18 }}
         className={cn("relative flex h-7 w-7 items-center justify-center transition-colors duration-200", active ? "text-story-royal" : "text-muted")}
       >
-        <Icon className={cn("h-[23px] w-[23px]", active && "icon-draw icon-draw-fast")} strokeWidth={active ? 2.1 : 1.7} />
+        {tab.avatar ? (
+          <span className={cn("rounded-full transition-shadow duration-200", active && "ring-2 ring-story-royal ring-offset-1 ring-offset-background")}>
+            <Avatar name={tab.avatar.name} avatarColor={tab.avatar.avatarColor} avatarUrl={tab.avatar.avatarUrl} size={26} fallback="silhouette" />
+          </span>
+        ) : (
+          <Icon className={cn("h-[23px] w-[23px]", active && "icon-draw icon-draw-fast")} strokeWidth={active ? 2.1 : 1.7} />
+        )}
       </motion.span>
       <span
         className={cn(

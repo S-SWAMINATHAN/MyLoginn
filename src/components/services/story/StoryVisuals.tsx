@@ -47,74 +47,6 @@ function Pop({ i, className, style, children }: { i: number; className?: string;
 
 /* =====================  APP & WEB DEVELOPMENT  ===================== */
 
-const BUILDS = ["Website", "Web app", "Admin tool"] as const;
-
-function Wireframe({ kind }: { kind: (typeof BUILDS)[number] }) {
-  if (kind === "Website") {
-    return (
-      <div className="flex h-full flex-col gap-2.5">
-        <Pop i={0} className="flex items-center justify-between"><Line w="22%" h={9} strong /><div className="flex gap-2"><Line w={26} /><Line w={26} /><Line w={26} /></div></Pop>
-        <Pop i={1} className="rounded-xl p-4" style={{ background: TINT }}>
-          <Line w="55%" h={12} strong />
-          <div className="mt-2"><Line w="75%" /></div>
-          <div className="mt-3 inline-block rounded-md px-3 py-1.5 text-[10px] font-semibold text-white" style={{ background: "var(--story-royal)" }}>Get started</div>
-        </Pop>
-        <div className="grid flex-1 grid-cols-3 gap-2">
-          {[0, 1, 2].map((n) => <Pop key={n} i={2 + n} className="rounded-lg border border-border-soft p-2"><div className="h-6 w-6 rounded-md" style={{ background: TINT_STRONG }} /><div className="mt-2"><Line w="70%" /></div></Pop>)}
-        </div>
-      </div>
-    );
-  }
-  if (kind === "Web app") {
-    return (
-      <div className="flex h-full gap-2.5">
-        <Pop i={0} className="flex w-1/5 flex-col gap-2 rounded-lg p-2" style={{ background: "var(--story-navy)" }}>
-          {[0, 1, 2, 3].map((n) => <div key={n} className="h-2 rounded-full bg-white/50" style={{ width: n === 0 ? "90%" : "65%" }} />)}
-        </Pop>
-        <div className="flex flex-1 flex-col gap-2">
-          <div className="grid grid-cols-3 gap-2">{[0, 1, 2].map((n) => <Pop key={n} i={1 + n} className="rounded-lg border border-border-soft p-2"><Line w="50%" h={6} /><div className="mt-2"><Line w="75%" h={11} strong /></div></Pop>)}</div>
-          <Pop i={4} className="flex flex-1 items-end gap-1.5 rounded-lg border border-border-soft p-2">
-            {[40, 62, 48, 80, 66, 92, 74].map((h, n) => <div key={n} className="flex-1 rounded-t" style={{ height: `${h}%`, background: n % 2 ? BLUE : "var(--story-royal)" }} />)}
-          </Pop>
-        </div>
-      </div>
-    );
-  }
-  return (
-    <div className="flex h-full flex-col gap-2">
-      <Pop i={0} className="flex items-center justify-between"><Line w="30%" h={10} strong /><div className="rounded-md px-3 py-1 text-[10px] font-semibold text-white" style={{ background: GREEN }}>+ New</div></Pop>
-      <div className="grid grid-cols-4 gap-2 rounded-md px-2 py-1.5" style={{ background: "var(--story-navy)" }}>{[0, 1, 2, 3].map((n) => <div key={n} className="h-1.5 rounded-full bg-white/60" />)}</div>
-      {[0, 1, 2, 3, 4].map((r) => (
-        <Pop key={r} i={1 + r} className="grid grid-cols-4 items-center gap-2 border-b border-border-soft px-2 pb-1.5">
-          <Line h={6} /><Line h={6} w="70%" /><Line h={6} w="85%" />
-          <span className="w-fit rounded-full px-2 py-0.5 text-[8px] font-bold text-white" style={{ background: r % 3 === 0 ? AMBER : GREEN }}>{r % 3 === 0 ? "Pending" : "Active"}</span>
-        </Pop>
-      ))}
-    </div>
-  );
-}
-
-export function SiteBuilderMonitor() {
-  const { index, pick, reduced } = useAutoIndex(BUILDS.length, 3400);
-  const kind = BUILDS[reduced ? 0 : index];
-  return (
-    <MonitorFrame
-      interactive
-      title={`yourproduct.com · ${kind.toLowerCase()}`}
-      label={`${kind} build`}
-      pill="Full-Stack Engineering"
-      ariaLabel="Animated wireframe of a website, web app or admin tool being assembled. Choose a type to preview it."
-      controls={BUILDS.map((b, i) => <Chip key={b} active={kind === b} onClick={() => pick(i)}>{b}</Chip>)}
-    >
-      <AnimatePresence mode="wait" initial={false}>
-        <motion.div key={kind} className="h-full" exit={{ opacity: 0 }} transition={{ duration: 0.15 }}>
-          <Wireframe kind={kind} />
-        </motion.div>
-      </AnimatePresence>
-    </MonitorFrame>
-  );
-}
-
 const LAYERS = [
   { name: "Frontend", color: BLUE, tech: ["Next.js", "React Native", "Tailwind CSS", "Three.js"] },
   { name: "Backend & APIs", color: VIOLET, tech: ["Node.js", "REST APIs", "Integrations"] },
@@ -199,7 +131,7 @@ export function AppPhone() {
       <div className="flex flex-wrap justify-center gap-2" role="group" aria-label="App screen">
         {APP_SCREENS.map((s, i) => <Chip key={s} active={kind === s} onClick={() => pick(i)}>{s}</Chip>)}
       </div>
-      <div className="flex flex-col items-center"><Caption label={`${kind} screen`} pill="Android & iOS Apps" reduced={reduced} curve={false} /></div>
+      <div className="flex flex-col items-center"><Caption label="" pill="Android & iOS Apps" reduced={reduced} curve={false} /></div>
     </div>
   );
 }
@@ -228,7 +160,6 @@ export function DeployMonitor() {
       label={at >= DEPLOY.length ? "Released" : DEPLOY[at].name}
       pill="Cloud & Release"
       ariaLabel="Animated release pipeline from commit to live."
-      controls={<Chip onClick={() => setTick(0)}>Deploy release</Chip>}
     >
       <div className="flex h-full flex-col justify-center">
         <ol>

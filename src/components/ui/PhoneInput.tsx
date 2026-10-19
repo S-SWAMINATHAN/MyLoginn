@@ -291,7 +291,7 @@ export function PhoneInput({ label, hint, error, valid, value, onChange, onCount
                     initial={{ opacity: 0 }}
                     animate={{ opacity: 1 }}
                     exit={{ opacity: 0 }}
-                    className="fixed inset-0 z-[80] bg-slate-900/40"
+                    className="fixed inset-0 z-[140] bg-slate-900/40"
                     onClick={close}
                     aria-hidden
                   />
@@ -307,7 +307,7 @@ export function PhoneInput({ label, hint, error, valid, value, onChange, onCount
                   transition={{ duration: 0.22, ease: [0.16, 1, 0.3, 1] }}
                   style={{ left: placement.left, width: placement.width, top: placement.top, bottom: placement.bottom, maxHeight: placement.maxHeight }}
                   className={cn(
-                    "fixed z-[81] flex flex-col overflow-hidden border border-border-soft bg-surface text-foreground shadow-[0_24px_60px_-16px_rgba(11,31,77,0.35)]",
+                    "fixed z-[141] flex flex-col overflow-hidden border border-border-soft bg-surface text-foreground shadow-[0_24px_60px_-16px_rgba(11,31,77,0.35)]",
                     placement.sheet ? "rounded-t-3xl" : "rounded-2xl"
                   )}
                 >

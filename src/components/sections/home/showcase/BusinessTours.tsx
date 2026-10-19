@@ -182,7 +182,7 @@ const AI_PAGES: TourPage[] = [
 ];
 
 export function AiTour({ play }: { play: boolean }) {
-  return <Stage className="aspect-[5/4]"><Tour pages={AI_PAGES} play={play} frame={(_, c) => <AppFrame app="AI Agent Studio">{c}</AppFrame>} /></Stage>;
+  return <Stage className="aspect-[5/4]"><Tour pages={AI_PAGES} play={play} designWidth={560} frame={(_, c) => <AppFrame app="AI Agent Studio">{c}</AppFrame>} /></Stage>;
 }
 
 /* ===================================================================================================== */
@@ -343,7 +343,7 @@ const MK_PAGES: TourPage[] = [
 ];
 
 export function MarketingTour({ play }: { play: boolean }) {
-  return <Stage className="aspect-[5/4]"><Tour pages={MK_PAGES} play={play} frame={(_, c) => <AppFrame app="Growth Hub">{c}</AppFrame>} /></Stage>;
+  return <Stage className="aspect-[5/4]"><Tour pages={MK_PAGES} play={play} designWidth={560} frame={(_, c) => <AppFrame app="Growth Hub">{c}</AppFrame>} /></Stage>;
 }
 
 /* ===================================================================================================== */
@@ -510,5 +510,5 @@ const SW_PAGES: TourPage[] = [
 ];
 
 export function SoftwareTour({ play }: { play: boolean }) {
-  return <Stage className="aspect-[5/4]"><Tour pages={SW_PAGES} play={play} frame={(_, c) => <AppFrame app="Business Suite">{c}</AppFrame>} /></Stage>;
+  return <Stage className="aspect-[5/4]"><Tour pages={SW_PAGES} play={play} designWidth={560} frame={(_, c) => <AppFrame app="Business Suite">{c}</AppFrame>} /></Stage>;
 }

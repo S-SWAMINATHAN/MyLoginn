@@ -16,7 +16,6 @@ import {
 } from "lucide-react";
 import { DuoIcon, type MenuIconKey } from "@/components/ui/icons/DuoIcon";
 import { ProfileMenu, type ProfileUser } from "./ProfileMenu";
-import { Avatar } from "@/components/ui/Avatar";
 import { Button } from "@/components/ui/Button";
 import { LogoLockup } from "@/components/ui/LogoBadge";
 import { cn } from "@/lib/cn";
@@ -401,7 +400,6 @@ function MobileMenu({
               animate="open"
               className="relative max-h-[calc(100dvh-6.5rem)] overflow-y-auto overscroll-contain px-4 pb-5 pt-4"
             >
-              {user && <MobileProfileCard user={user} />}
 
               <div className="flex flex-col gap-1">
                 <MobileNavItem link={mobileMainLinks[0]} active={pathname === "/"} order={0} />
@@ -510,22 +508,6 @@ function NavHeaderLink({ href, active, children }: { href: string; active: boole
         <span className="pointer-events-none absolute inset-x-3.5 -bottom-0.5 h-[3px] origin-center scale-x-0 rounded-full bg-brand-200 transition-transform duration-300 ease-out group-hover:scale-x-100" />
       )}
     </Link>
-  );
-}
-
-/** The signed-in user's card at the top of the mobile menu. */
-function MobileProfileCard({ user }: { user: ProfileUser }) {
-  return (
-    <motion.div variants={itemVariants} className="mb-3">
-      <Link href="/profile" className="flex items-center gap-3 px-3 py-2 active:scale-[0.99]">
-        <Avatar name={user.name} avatarColor={user.avatarColor} avatarUrl={user.avatarUrl} size={44} fallback="silhouette" />
-        <span className="min-w-0 flex-1">
-          <span className="block truncate text-sm font-semibold text-foreground">{user.name}</span>
-          <span className="block text-xs text-muted">View my profile</span>
-        </span>
-        <ChevronRight className="h-4 w-4 shrink-0 text-muted" />
-      </Link>
-    </motion.div>
   );
 }
 

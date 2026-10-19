@@ -1,7 +1,9 @@
 "use client";
 
 import type { ReactNode } from "react";
+import { useEffect, useState } from "react";
 import { AnimatePresence, motion } from "framer-motion";
+import { useReducedMotion } from "@/lib/useReducedMotion";
 import {
   Apple, BadgeCheck, Bell, Calendar, Check, ChevronDown, ChevronLeft, Clock, CreditCard, Heart, Home, Info, LayoutDashboard, Leaf,
   Mail, MapPin, Navigation, Package, Phone, Search, ShieldCheck, ShoppingBag, ShoppingCart, SlidersHorizontal,
@@ -11,7 +13,7 @@ import {
 import { FINISHES, Headphones, ProductThumb, SmartWatch, STUDIO, type Finish, type ProductKind } from "./products";
 import {
   Bars, BrowserFrame, Card, Caret, CountUp, EASE, GREEN, Kpi, PhoneFrame, Pill, ROYAL, Spinner, Stage, Toast, Tour,
-  fmt, useSteps, useTyped, type TourPage,
+  fmt, useIsPhone, useSteps, useTyped, type TourPage,
 } from "./kit";
 
 const stag = { show: { transition: { staggerChildren: 0.07, delayChildren: 0.1 } } };
@@ -225,7 +227,7 @@ const WEB_PAGES: TourPage[] = [
 export function WebTour({ play }: { play: boolean }) {
   return (
     <Stage className="aspect-[5/4]">
-      <Tour pages={WEB_PAGES} play={play} frame={(p, content) => <BrowserFrame url={p.url!} title={p.label}>{content}</BrowserFrame>} />
+      <Tour pages={WEB_PAGES} play={play} designWidth={560} frame={(p, content) => <BrowserFrame url={p.url!} title={p.label}>{content}</BrowserFrame>} />
     </Stage>
   );
 }
@@ -556,7 +558,81 @@ function SinglePhone({ content }: { content: ReactNode }) {
   );
 }
 
+const APP_STEPS: Record<string, string> = {
+  Login: "Sign in with a mobile number and a one-time code.",
+  Home: "Categories, offers and live products in one place.",
+  Product: "Colours, details and add to cart in a tap.",
+  Booking: "Pick a slot and get an instant confirmation.",
+  Tracking: "Follow the order live on a map.",
+};
+const STEP_MS = 4600;
+
+/**
+ * Phones: one phone beside a step list instead of a tiny device in a wide frame. The list is the controls: tap a step
+ * to jump to that screen, or let it walk through the app by itself (a thin timer shows when it moves on).
+ */
+function PhoneStepper({ play }: { play: boolean }) {
+  const reduced = useReducedMotion();
+  const [i, setI] = useState(0);
+  const [hold, setHold] = useState(false);
+  const running = play && !hold && !reduced;
+  const Page = APP_PAGES[i].Page;
+
+  useEffect(() => {
+    if (!running) return;
+    const t = window.setTimeout(() => setI((x) => (x + 1) % APP_PAGES.length), STEP_MS);
+    return () => window.clearTimeout(t);
+  }, [i, running]);
+
+  return (
+    <div className="grid grid-cols-[9.5rem_minmax(0,1fr)] items-center gap-4" onPointerEnter={(e) => e.pointerType === "mouse" && setHold(true)} onPointerLeave={() => setHold(false)}>
+      <div className="h-[19.5rem]">
+        <PhoneFrame>
+          <AnimatePresence mode="wait" initial={false}>
+            <motion.div key={APP_PAGES[i].label} className="absolute inset-0" initial={{ opacity: 0, x: 18 }} animate={{ opacity: 1, x: 0 }} exit={{ opacity: 0, x: -18 }} transition={{ duration: 0.3, ease: EASE }}>
+              <Page />
+            </motion.div>
+          </AnimatePresence>
+        </PhoneFrame>
+      </div>
+
+      <ol className="relative flex flex-col" aria-label="App screens">
+        <span aria-hidden className="absolute bottom-4 left-[0.95rem] top-4 w-px bg-border-soft" />
+        {APP_PAGES.map((p, k) => {
+          const on = k === i;
+          const done = k < i;
+          const Icon = p.icon;
+          return (
+            <li key={p.label} className="relative">
+              <button type="button" aria-current={on ? "step" : undefined} onClick={() => setI(k)} className="flex w-full items-start gap-3 py-2 text-left outline-none">
+                <span className="relative z-10 grid h-[1.9rem] w-[1.9rem] shrink-0 place-items-center rounded-full border-2 transition-colors duration-300" style={{ borderColor: on || done ? "#1f56d6" : "#dbe3ef", backgroundColor: done ? "#1f56d6" : "#ffffff", color: done ? "#ffffff" : on ? "#1f56d6" : "#94a3b8" }}>
+                  {done ? <Check className="h-3.5 w-3.5" strokeWidth={3} /> : <Icon className="h-3.5 w-3.5" />}
+                </span>
+                <span className="min-w-0 flex-1 pt-1">
+                  <span className={`block text-[13px] font-bold leading-none transition-colors ${on ? "text-[#0b1f4d]" : "text-[#64748b]"}`}>{p.label}</span>
+                  <AnimatePresence initial={false}>
+                    {on && (
+                      <motion.span className="block overflow-hidden" initial={{ height: 0, opacity: 0 }} animate={{ height: "auto", opacity: 1 }} exit={{ height: 0, opacity: 0 }} transition={{ duration: 0.3, ease: EASE }}>
+                        <span className="mt-1.5 block text-xs leading-snug text-[#64748b]">{APP_STEPS[p.label]}</span>
+                        <span aria-hidden className="mt-2 block h-0.5 overflow-hidden rounded-full bg-[#1f56d6]/15">
+                          <motion.span key={`${i}-${running}`} className="block h-full bg-[#1f56d6]" initial={{ width: running ? "0%" : "100%" }} animate={{ width: "100%" }} transition={{ duration: running ? STEP_MS / 1000 : 0, ease: "linear" }} />
+                        </span>
+                      </motion.span>
+                    )}
+                  </AnimatePresence>
+                </span>
+              </button>
+            </li>
+          );
+        })}
+      </ol>
+    </div>
+  );
+}
+
 export function AppTour({ play }: { play: boolean }) {
+  const phone = useIsPhone();
+  if (phone) return <PhoneStepper play={play} />;
   return (
     <Stage className="aspect-[5/4]">
       <Tour pages={APP_PAGES} play={play} frame={(_, content) => <SinglePhone content={content} />} />

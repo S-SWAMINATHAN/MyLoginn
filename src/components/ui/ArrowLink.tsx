@@ -37,11 +37,11 @@ function Track({ tone, reduced, busy }: { tone: Tone; reduced: boolean; busy?: b
 const hoverVariants = { rest: { y: 0 }, hover: { y: 0 } };
 
 /** The site's call-to-action link: a solid pill with a soft arrow track that glides on hover. */
-export function ArrowLink({ href, children, tone = "royal", className, onClick }: { href: string; children: ReactNode; tone?: Tone; className?: string; onClick?: () => void }) {
+export function ArrowLink({ href, children, tone = "royal", className, onClick, block }: { href: string; children: ReactNode; tone?: Tone; className?: string; onClick?: () => void; block?: boolean }) {
   const reduced = useReducedMotion();
   return (
-    <MotionLink href={href} onClick={onClick} initial="rest" whileHover="hover" whileTap={{ scale: 0.97 }} variants={hoverVariants} transition={{ duration: 0.35, ease: [0.22, 1, 0.36, 1] }} className={cn(SHELL, SURFACE[tone], className)}>
-      <span>{children}</span>
+    <MotionLink href={href} onClick={onClick} initial="rest" whileHover="hover" whileTap={{ scale: 0.97 }} variants={hoverVariants} transition={{ duration: 0.35, ease: [0.22, 1, 0.36, 1] }} className={cn(SHELL, SURFACE[tone], block && "w-full pl-[3.9rem]", className)}>
+      <span className={cn(block && "flex-1 text-center")}>{children}</span>
       <Track tone={tone} reduced={reduced} />
     </MotionLink>
   );

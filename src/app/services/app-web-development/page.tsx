@@ -1,7 +1,8 @@
 ﻿import { createPageMetadata } from "@/lib/seo";
 import { localKeywords, regionalKeywords } from "@/lib/localSeo";
 import { StoryLanding } from "@/components/services/story/StoryLanding";
-import { PlanCta, SiteBuilderMonitor, StackLayersMonitor, AppPhone, DeployMonitor } from "@/components/services/story/StoryVisuals";
+import { PlanCta, StackLayersMonitor, AppPhone, DeployMonitor } from "@/components/services/story/StoryVisuals";
+import { ClientRequestMonitor } from "@/components/services/story/ClientRequestMonitor";
 
 const developmentAreas = [
   { title: "Business websites and landing pages", text: "Clear, fast sites that present your business and lead visitors to an enquiry.", icon: "html" },
@@ -61,7 +62,7 @@ export default function AppWebDevelopmentPage() {
       extraIntro="We work with businesses in India and worldwide on website development, mobile app development, and custom software projects."
       cta={<PlanCta label="Plan a web project" service="web" />}
       secondaryLabel="Get an estimate"
-      heroVisual={<SiteBuilderMonitor />}
+      heroVisual={<ClientRequestMonitor />}
       steps={[
         { title: "Discuss goals", text: "Discuss goals and requirements." },
         { title: "Agree scope", text: "Agree on scope and milestones." },

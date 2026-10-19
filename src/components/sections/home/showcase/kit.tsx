@@ -1,7 +1,7 @@
 "use client";
 
 import { useClock } from "@/lib/useClock";
-import { useEffect, useId, useLayoutEffect, useRef, useState, type ReactNode } from "react";
+import { useEffect, useId, useLayoutEffect, useRef, useState, useSyncExternalStore, type ReactNode } from "react";
 import { AnimatePresence, animate, motion, useMotionValue, useTransform } from "framer-motion";
 import { BatteryFull, ChevronLeft, ChevronRight, Lock, Minus, RotateCw, Signal, Square, Wifi, X, type LucideIcon } from "lucide-react";
 import { useReducedMotion } from "@/lib/useReducedMotion";
@@ -394,19 +394,40 @@ const PAGE_MS = 4200;
  * Plays a service as a product tour: each page animates in (and plays its own session), then the next page takes
  * over. The page list below the frame shows where you are and jumps straight to a page; hovering pauses the tour.
  */
-export function Tour({ pages, play, frame }: { pages: TourPage[]; play: boolean; frame: (page: TourPage, content: ReactNode) => ReactNode }) {
+/** True below the `sm` breakpoint: phones, where the tours scale their pages to fit and the page list becomes one swipeable row. */
+export function useIsPhone() {
+  return useSyncExternalStore(
+    (cb) => { const m = window.matchMedia("(max-width: 639px)"); m.addEventListener("change", cb); return () => m.removeEventListener("change", cb); },
+    () => window.matchMedia("(max-width: 639px)").matches,
+    () => false
+  );
+}
+
+export function Tour({ pages, play, frame, designWidth }: { pages: TourPage[]; play: boolean; frame: (page: TourPage, content: ReactNode) => ReactNode; designWidth?: number }) {
   const reduced = useReducedMotion();
+  const phone = useIsPhone();
   const [i, setI] = useState(0);
   const [hold, setHold] = useState(false);
   const tourId = useId();
   const page = pages[i];
+  const chips = useRef<(HTMLButtonElement | null)[]>([]);
+  const running = play && !hold && !reduced;
 
   useEffect(() => {
-    if (!play || hold || reduced) return;
+    if (!running) return;
     const t = window.setTimeout(() => setI((x) => (x + 1) % pages.length), PAGE_MS);
     return () => window.clearTimeout(t);
-  }, [i, play, hold, reduced, pages.length]);
+  }, [i, running, pages.length]);
 
+  // keep the current page tab centred in the phone row, without scrolling the page itself
+  useEffect(() => {
+    const el = chips.current[i];
+    const row = el?.parentElement;
+    if (el && row && row.scrollWidth > row.clientWidth) row.scrollTo({ left: el.offsetLeft - (row.clientWidth - el.clientWidth) / 2, behavior: "smooth" });
+  }, [i]);
+
+  // On a phone the page is drawn at its real design width and scaled to the frame, so nothing wraps or clips.
+  const body = designWidth && phone ? <Scaled width={designWidth}><page.Page /></Scaled> : <page.Page />;
   const content = (
     <AnimatePresence mode="wait" initial={false}>
       <motion.div
@@ -417,21 +438,32 @@ export function Tour({ pages, play, frame }: { pages: TourPage[]; play: boolean;
         exit={{ opacity: 0, x: -24, filter: "blur(6px)" }}
         transition={{ duration: 0.4, ease: EASE }}
       >
-        <page.Page />
+        {body}
       </motion.div>
     </AnimatePresence>
   );
 
   return (
-    <div className="flex h-full flex-col gap-3" onMouseEnter={() => setHold(true)} onMouseLeave={() => setHold(false)}>
+    <motion.div
+      className="flex h-full flex-col gap-3"
+      style={{ touchAction: "pan-y" }}
+      onMouseEnter={() => setHold(true)}
+      onMouseLeave={() => setHold(false)}
+      // swipe the screen left or right to change page
+      onPanEnd={(_, info) => {
+        if (Math.abs(info.offset.x) < 48 || Math.abs(info.offset.x) < Math.abs(info.offset.y) * 1.4) return;
+        setI((x) => (x + (info.offset.x < 0 ? 1 : -1) + pages.length) % pages.length);
+      }}
+    >
       <div className="relative min-h-0 flex-1">{frame(page, content)}</div>
-      <div role="tablist" aria-label="Pages" className="flex flex-wrap justify-center gap-1.5">
+      <div role="tablist" aria-label="Pages" className="no-scrollbar -mx-1 flex flex-nowrap justify-start gap-1.5 overflow-x-auto px-1 pb-0.5 sm:mx-0 sm:flex-wrap sm:justify-center sm:overflow-visible sm:px-0 sm:pb-0">
         {pages.map((p, k) => {
           const on = k === i;
           const Icon = p.icon;
           return (
             <motion.button
               key={p.label}
+              ref={(el) => { chips.current[k] = el; }}
               type="button"
               role="tab"
               aria-selected={on}
@@ -439,19 +471,23 @@ export function Tour({ pages, play, frame }: { pages: TourPage[]; play: boolean;
               onClick={() => setI(k)}
               whileTap={{ scale: 0.94 }}
               className={cn(
-                "group relative flex items-center gap-1 rounded-full px-2.5 py-1 text-[11px] font-semibold transition-colors duration-300",
+                "group relative flex shrink-0 items-center gap-1.5 rounded-full px-3.5 py-2 text-xs font-semibold transition-colors duration-300 sm:gap-1 sm:px-2.5 sm:py-1 sm:text-[11px]",
                 on ? "text-white" : "bg-white/60 text-[#64748b] shadow-[inset_0_1px_0_rgba(255,255,255,1),inset_0_0_0_1px_rgba(11,31,77,0.08),0_4px_12px_-8px_rgba(11,31,77,0.3)] backdrop-blur-md",
               )}
             >
-              {/* one dark pill that glides to the active page */}
+              {/* one pill that glides to the active page */}
               {on && <motion.span layoutId={`tour-tab-${tourId}`} className="absolute inset-0 rounded-full bg-[#1f56d6] shadow-[0_8px_18px_-10px_rgba(31,86,214,0.7)]" transition={{ type: "spring", stiffness: 420, damping: 34 }} />}
-              <Icon className="relative h-3 w-3" />
+              <Icon className="relative h-3.5 w-3.5 sm:h-3 sm:w-3" />
               <span className="relative">{p.label}</span>
             </motion.button>
           );
         })}
       </div>
-    </div>
+      {/* phones: a thin timer shows when the tour moves on by itself */}
+      <div aria-hidden className="h-0.5 overflow-hidden rounded-full bg-[#1f56d6]/15 sm:hidden">
+        <motion.span key={`${i}-${running}`} className="block h-full bg-[#1f56d6]" initial={{ width: running ? "0%" : "100%" }} animate={{ width: "100%" }} transition={{ duration: running ? PAGE_MS / 1000 : 0, ease: "linear" }} />
+      </div>
+    </motion.div>
   );
 }
 

@@ -862,3 +862,24 @@ textarea.field-control { min-height: 7rem; resize: vertical; }
 }
 .icon-solid { transform-origin: center; animation: icon-pop 0.6s var(--icon-delay, 0s) cubic-bezier(0.34, 1.4, 0.64, 1) backwards; }
 @media (prefers-reduced-motion: reduce) { .icon-solid { animation: none; } }
+
+/*
+ * Body copy is justified on every page and screen size, except inside a centred block. It sits in the base layer, so a
+ * paragraph that is deliberately centred, left or right aligned with a Tailwind text-* class keeps that alignment. Hyphenation (the page is lang="en")
+ * keeps the word gaps even in narrow phone columns, and the last line of a paragraph stays ragged.
+ */
+@layer base {
+  p, li {
+    text-align: justify;
+    text-justify: inter-word;
+    hyphens: auto;
+    -webkit-hyphens: auto;
+    text-wrap: pretty;
+  }
+  /* Copy inside a deliberately centred block (hero lines, centred section intros, empty states) stays centred. */
+  .text-center :is(p, li) {
+    text-align: center;
+    hyphens: manual;
+    -webkit-hyphens: manual;
+  }
+}

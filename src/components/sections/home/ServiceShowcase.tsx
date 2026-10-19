@@ -44,7 +44,7 @@ function ServiceRow({ service, index }: { service: CoreService; index: number })
             </motion.li>
           ))}
         </ul>
-        <div className="mt-7"><FancyLink href={service.href} variant="dark">Explore {service.name.toLowerCase()}</FancyLink></div>
+        <div className="mt-7 hidden lg:block"><FancyLink href={service.href} variant="dark">Explore {service.name.toLowerCase()}</FancyLink></div>
       </motion.div>
 
       <motion.div
@@ -56,6 +56,9 @@ function ServiceRow({ service, index }: { service: CoreService; index: number })
       >
         <ServiceVisual id={service.id} play={inView} />
       </motion.div>
+
+      {/* below large screens the call to action sits under the demo instead of above it */}
+      <div className="lg:hidden"><FancyLink href={service.href} variant="dark" block className="sm:!w-auto sm:!pl-5">Explore {service.name.toLowerCase()}</FancyLink></div>
     </article>
   );
 }

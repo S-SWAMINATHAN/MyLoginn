@@ -8,7 +8,6 @@ import { useReducedMotion } from "@/lib/useReducedMotion";
 
 const PASS = "#16a34a";
 const FAIL = "#dc2626";
-const CURVE = "M5,8 C55,-5 95,50 145,20";
 
 export function useTicker(length: number, ms: number, reduced: boolean) {
   const [tick, setTick] = useState(0);
@@ -56,22 +55,10 @@ export function StateIcon({ state }: { state: "pass" | "run" | "wait" }) {
   return <span className="grid h-4 w-4 shrink-0 place-items-center">{state === "pass" ? <Check /> : state === "run" ? <Spinner /> : <Dot />}</span>;
 }
 
-/** The curved line with a travelling cyan dot, plus the pill underneath, shared by every device frame. */
-export function Caption({ label, pill, reduced, curve = true }: { label: string; pill: string; reduced: boolean; curve?: boolean }) {
-  return (
-    <>
-      <p className="mt-3 text-xs font-semibold uppercase tracking-[0.18em] text-muted">{label}</p>
-      <svg width="150" height="46" viewBox="0 0 150 46" className={cn("mt-1 hidden", curve && "sm:block")} aria-hidden>
-        <path d={CURVE} fill="none" stroke="var(--story-line)" strokeWidth="2" />
-        {!reduced && (
-          <circle r="4" fill="var(--story-cyan)">
-            <animateMotion dur="2.4s" repeatCount="indefinite" path={CURVE} />
-          </circle>
-        )}
-      </svg>
-      <span className="story-panel rounded-full px-4 py-1.5 text-xs font-semibold text-story-navy">{pill}</span>
-    </>
-  );
+/** The short title under a device frame. The curved line and the label pill that used to sit below it are gone. */
+export function Caption({ label }: { label: string; pill?: string; reduced?: boolean; curve?: boolean }) {
+  if (!label) return null;
+  return <p className="mt-3 text-xs font-semibold uppercase tracking-[0.18em] text-muted">{label}</p>;
 }
 
 export function Chip({ active, onClick, children }: { active?: boolean; onClick: () => void; children: ReactNode }) {
@@ -95,7 +82,7 @@ export function Chip({ active, onClick, children }: { active?: boolean; onClick:
 export function MonitorFrame({ children, label, pill, title, ariaLabel, controls, interactive, tall, accent }: { children: ReactNode; label: string; pill: string; title: string; ariaLabel: string; controls?: ReactNode; interactive?: boolean; tall?: boolean; accent?: StaticImageData }) {
   const reduced = useReducedMotion();
   return (
-    <div className="relative mx-auto flex w-full max-w-sm flex-col items-center sm:max-w-md">
+    <div className="relative mx-auto flex w-full max-w-md flex-col items-center sm:max-w-xl">
       {accent && (
         <motion.div
           aria-hidden
@@ -114,7 +101,7 @@ export function MonitorFrame({ children, label, pill, title, ariaLabel, controls
           <span className="h-2 w-2 rounded-full" style={{ background: "var(--story-navy)" }} />
           <span className="ml-2 flex-1 truncate rounded-full px-3 py-0.5 font-mono text-[10px] text-muted" style={{ background: "var(--story-mist)" }}>{title}</span>
         </div>
-        <div className={cn("w-full p-4", tall ? "h-[300px] sm:h-[320px]" : "h-[230px] sm:h-[250px]")}>
+        <div className={cn("w-full p-4", tall ? "h-[280px] sm:h-[300px]" : "h-[210px] sm:h-[240px]")}>
           {children}
         </div>
       </div>

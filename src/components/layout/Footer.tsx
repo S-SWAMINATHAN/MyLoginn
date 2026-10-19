@@ -1,18 +1,15 @@
 "use client";
 
 import Link from "next/link";
-import { usePathname } from "next/navigation";
 import { motion } from "framer-motion";
-import { ArrowRight, ArrowUpRight } from "lucide-react";
+import { ArrowRight } from "lucide-react";
 import { AnimatedMail } from "@/components/ui/icons/AnimatedMail";
 import { AnimatedPhone } from "@/components/ui/icons/AnimatedPhone";
 import { AnimatedChat } from "@/components/ui/icons/AnimatedChat";
-import { Reveal } from "@/components/ui/Reveal";
 import { LogoBadge } from "@/components/ui/LogoBadge";
 import { toWhatsAppLink } from "@/lib/whatsapp";
 import { CONTACT_EMAIL, CONTACT_PHONES, SOCIAL_LINKS, WHATSAPP_PHONE } from "@/lib/contactInfo";
 import { CORE_SERVICES } from "@/lib/coreServices";
-import { openProjectRequest } from "@/components/services/ProjectRequestModal";
 
 const EASE = [0.16, 1, 0.3, 1] as const;
 
@@ -62,8 +59,6 @@ const SOCIAL_ICONS: Record<string, string> = {
   youtube: "M23.498 6.186a3.016 3.016 0 0 0-2.122-2.136C19.505 3.545 12 3.545 12 3.545s-7.505 0-9.377.505A3.017 3.017 0 0 0 .502 6.186C0 8.07 0 12 0 12s0 3.93.502 5.814a3.016 3.016 0 0 0 2.122 2.136c1.871.505 9.376.505 9.376.505s7.505 0 9.377-.505a3.015 3.015 0 0 0 2.122-2.136C24 15.93 24 12 24 12s0-3.93-.502-5.814ZM9.545 15.568V8.432L15.818 12l-6.273 3.568Z",
 };
 
-/** Routes that already end in their own page-specific CTA — showing the generic one here would duplicate it. */
-const ROUTES_WITH_OWN_CTA = ["/", "/projects", "/internships", "/careers"];
 
 const contactLinks = [
   { label: CONTACT_EMAIL, href: `mailto:${CONTACT_EMAIL}`, Icon: AnimatedMail },
@@ -78,32 +73,10 @@ const contactLinks = [
  * contact chips sit beside four link columns on large screens and stack on small ones.
  */
 export function Footer() {
-  const pathname = usePathname();
-  const showCta = !ROUTES_WITH_OWN_CTA.includes(pathname);
 
   return (
     <footer className="relative border-t border-border-soft bg-white">
       <div className="mx-auto max-w-6xl px-5 sm:px-8">
-        {/* CTA band — skipped on pages that already end in their own CTA */}
-        {showCta && (
-          <Reveal className="pt-10">
-            <div className="flex flex-col items-start gap-4 rounded-2xl bg-story-royal px-6 py-6 text-white sm:flex-row sm:items-center sm:justify-between sm:px-8">
-              <div>
-                <p className="text-lg font-semibold">What will you build next?</p>
-                <p className="mt-0.5 text-sm text-white/80">Have an idea or a business challenge? Let&apos;s talk.</p>
-              </div>
-              <motion.button
-                type="button"
-                whileTap={{ scale: 0.96 }}
-                onClick={() => openProjectRequest("software")}
-                className="btn-collide inline-flex shrink-0 items-center gap-2 rounded-full bg-white px-5 py-2.5 text-sm font-semibold text-story-royal"
-              >
-                Start a project <ArrowUpRight className="h-4 w-4" />
-              </motion.button>
-            </div>
-          </Reveal>
-        )}
-
         <div className="grid gap-10 py-10 lg:grid-cols-[1.1fr_2fr] lg:gap-14 lg:py-12">
           {/* brand + contact */}
           <motion.div initial={{ opacity: 0, y: 14 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true, margin: "-40px" }} transition={{ duration: 0.6, ease: EASE }}>
