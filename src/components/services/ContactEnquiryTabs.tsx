@@ -120,7 +120,7 @@ export function ContactEnquiryTabs() {
                 <span aria-hidden className="absolute inset-x-0 top-0 flex h-1">
                   {["#2563eb", "#7c3aed", "#059669", "#d97706", "#e11d48"].map((c) => <i key={c} className="flex-1" style={{ background: c }} />)}
                 </span>
-                <span className="grid h-20 w-20 place-items-center rounded-full bg-story-mist"><ContentIcon keyword="student" className="h-14 w-14" /></span>
+                <span className="grid h-20 w-20 place-items-center text-story-royal"><ContentIcon keyword="student" className="h-14 w-14" /></span>
                 <p className="mt-5 text-[11px] font-semibold uppercase tracking-[0.14em] text-story-royal">Join MyLoginn</p>
                 <h3 className="mt-2 text-xl font-semibold text-story-navy">Create your MyLoginn account</h3>
                 <p className="mt-2 max-w-md text-sm leading-6 text-muted">Set up your profile and choose whether you&apos;re joining as a student or mentor.</p>

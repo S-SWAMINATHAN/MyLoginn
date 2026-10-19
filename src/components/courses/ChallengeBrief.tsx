@@ -20,7 +20,7 @@ export function ChallengeBrief({ title, task, given, expectedOutput, hintCount, 
       <span aria-hidden="true" className="pointer-events-none absolute -bottom-16 left-1/3 h-40 w-40 rounded-full bg-fuchsia-400/20 blur-3xl" />
       <div className="relative flex flex-wrap items-center justify-between gap-4">
         <div className="flex min-w-0 items-center gap-4">
-          <span className="grid h-12 w-12 shrink-0 place-items-center rounded-2xl bg-white/15 ring-1 ring-white/30 backdrop-blur"><Target className="h-6 w-6" aria-hidden="true" /></span>
+          <span className="grid h-12 w-12 shrink-0 place-items-center backdrop-blur text-story-royal"><Target className="h-6 w-6" aria-hidden="true" /></span>
           <div className="min-w-0">
             <p className="text-[11px] font-semibold uppercase tracking-[0.18em] text-cyan-200">Step 2 of 2 · Graded challenge</p>
             <h2 className="mt-0.5 text-lg leading-snug sm:truncate sm:text-2xl font-bold tracking-tight sm:text-2xl">{title}</h2>

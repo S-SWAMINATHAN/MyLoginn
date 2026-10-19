@@ -36,7 +36,7 @@ export const AyurdayaCard: React.FC<AyurdayaCardProps> = ({ ayurdaya, lang }) =>
       {/* Header */}
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 border-b border-[rgba(43,33,23,0.2)] pb-4">
         <div className="flex items-center gap-3">
-          <div className="w-9 h-9 rounded-xl bg-[rgba(176,55,38,0.1)] border border-[var(--red)] flex items-center justify-center text-[var(--red)] shadow-sm">
+          <div className="w-9 h-9 flex items-center justify-center text-[var(--red)]">
             <HeartPulse className="w-5 h-5 text-[var(--red)]" />
           </div>
           <div>

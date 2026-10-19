@@ -182,7 +182,7 @@ export function CourseTutorial({ courseTitle, courseSlug, learnerName = "MyLogin
           </div>
 
           {lesson.requiresCodeChallenge && <section className="mt-8 rounded-3xl border border-border-soft bg-background p-5 shadow-sm sm:p-6" aria-label="Try it yourself">
-            <div className="flex items-center gap-3"><span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-amber-100 text-amber-700 dark:bg-amber-400/15 dark:text-amber-300"><Lightbulb className="h-5 w-5" aria-hidden="true" /></span><div><p className="text-[11px] font-semibold uppercase tracking-wider text-muted">Step 1 of 2 · Warm up</p><h2 className="font-bold leading-tight">Try it yourself</h2></div></div>
+            <div className="flex items-center gap-3"><span className="flex h-10 w-10 shrink-0 items-center justify-center text-amber-700 dark:text-amber-300"><Lightbulb className="h-5 w-5" aria-hidden="true" /></span><div><p className="text-[11px] font-semibold uppercase tracking-wider text-muted">Step 1 of 2 · Warm up</p><h2 className="font-bold leading-tight">Try it yourself</h2></div></div>
             <p className="mt-3 text-sm leading-6 text-foreground/80">{lesson.practice}</p>
           </section>}
 

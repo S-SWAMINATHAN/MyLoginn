@@ -399,7 +399,7 @@ export function CodeIDE({ courseSlug, courseTitle, topicSlug, moduleTitle, isLas
     <header className={`flex flex-wrap items-center justify-between gap-x-4 gap-y-3 border-b px-3 py-3 sm:px-5 ${barTheme}`}>
       <div className="flex min-w-0 items-center gap-3">
         <span className="hidden gap-1.5 sm:flex" aria-hidden="true"><i className="h-3 w-3 rounded-full bg-rose-400" /><i className="h-3 w-3 rounded-full bg-amber-400" /><i className="h-3 w-3 rounded-full bg-emerald-400" /></span>
-        <span className="grid h-9 w-9 shrink-0 place-items-center rounded-xl bg-brand-600 text-white shadow-md shadow-brand-600/25"><Terminal className="h-4.5 w-4.5" aria-hidden="true" /></span>
+        <span className="grid h-9 w-9 shrink-0 place-items-center text-story-royal"><Terminal className="h-4.5 w-4.5" aria-hidden="true" /></span>
         <div className="min-w-0"><h2 className="truncate text-sm font-bold tracking-wide">MyLoginn Studio</h2><p className={`truncate font-mono text-[11px] ${mutedText}`}>{filename} · {language}</p></div>
       </div>
       <div className={`order-last flex w-full items-center gap-2 rounded-full border px-3 py-1.5 text-xs font-semibold lg:order-none lg:w-auto lg:max-w-md ${statusStyles}`} role="status" aria-live="polite"><span className={`h-2 w-2 shrink-0 rounded-full ${statusDot}`} /><span className="truncate">{status}</span></div>

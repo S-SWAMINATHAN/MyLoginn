@@ -52,7 +52,7 @@ export default function ResetPasswordPage() {
   return (
     <AuthShell mode="login">
       <div className="mb-5">
-        <span className="mb-3 flex h-10 w-10 items-center justify-center rounded-xl bg-brand-50 text-brand-600 ring-1 ring-brand-100"><KeyRound className="h-5 w-5" /></span>
+        <span className="mb-3 flex h-10 w-10 items-center justify-center text-brand-600"><KeyRound className="h-5 w-5" /></span>
         <p className="text-xs font-semibold uppercase tracking-[.16em] text-brand-600">MyLoginn account</p>
         <h1 className="mt-1 text-2xl font-bold tracking-tight sm:text-3xl">Reset your password</h1>
         <p className="mt-1.5 text-sm leading-5 text-muted">Verify your account with a reset code, then choose a new password.</p>

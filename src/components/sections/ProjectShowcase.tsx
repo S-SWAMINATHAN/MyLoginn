@@ -24,10 +24,10 @@ export function ProjectShowcase() {
         <div className="max-w-2xl">
           <p className="story-eyebrow">Selected work</p>
           <h2 id="showcase-title" className="story-heading mt-4 text-story-navy">
-            Built for the real world.
+            Our projects
           </h2>
           <p className="mt-4 max-w-xl text-sm text-muted sm:text-base">
-            A few live examples of the websites and products MyLoginn develops. Open any project to visit its live home.
+            Live websites and products built by MyLoginn. Open any project for a quick preview.
           </p>
         </div>
 

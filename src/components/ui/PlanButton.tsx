@@ -28,7 +28,7 @@ export function GlideArrow({ reduced }: { reduced: boolean }) {
   );
 }
 
-/** Call-to-action pill: solid brand colour, a soft translucent arrow track, an idle shimmer and a smoothly gliding arrow on hover. */
+/** Call-to-action pill: solid brand colour, a soft translucent arrow track, an idle shimmer, a "collision" fill and a gliding arrow on hover. */
 export function PlanButton({ label, onClick, tone = "royal" }: { label: string; onClick: () => void; tone?: "royal" | "light" }) {
   const light = tone === "light";
   const reduced = useReducedMotion();
@@ -43,7 +43,8 @@ export function PlanButton({ label, onClick, tone = "royal" }: { label: string; 
       transition={{ duration: 0.4, ease: [0.22, 1, 0.36, 1] }}
       className={cn(
         "group relative isolate inline-flex h-11 cursor-pointer select-none items-center gap-3 overflow-hidden rounded-full py-1.5 pl-5 pr-1.5 text-sm font-medium tracking-[0.01em] shadow-[0_8px_20px_-10px_rgba(31,86,214,0.7)] ring-1 ring-inset hover:shadow-[0_14px_28px_-12px_rgba(31,86,214,0.8)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-offset-2",
-        light ? "bg-white text-story-royal ring-story-royal/10 focus-visible:ring-white" : "bg-story-royal text-white ring-white/15 focus-visible:ring-story-royal focus-visible:ring-offset-background"
+        "btn-collide",
+        light ? "bg-white text-story-royal ring-story-royal/10 [--collide:var(--story-royal)] focus-visible:ring-white" : "bg-story-royal text-white ring-white/15 [--collide:var(--story-royal)] focus-visible:ring-story-royal focus-visible:ring-offset-background"
       )}
     >
       {!reduced && (
@@ -56,7 +57,7 @@ export function PlanButton({ label, onClick, tone = "royal" }: { label: string; 
         />
       )}
       <span>{label}</span>
-      <span aria-hidden className={cn("grid h-8 w-14 shrink-0 place-items-center overflow-hidden rounded-full transition-colors duration-300", light ? "bg-story-royal/10 text-story-royal group-hover:bg-story-royal/20" : "bg-white/15 text-white group-hover:bg-white/25")}>
+      <span aria-hidden className={cn("grid h-8 w-14 shrink-0 place-items-center overflow-hidden rounded-full transition-colors duration-300", light ? "bg-story-royal/10 text-story-royal group-hover:bg-white/20 group-hover:text-white" : "bg-white/15 text-white group-hover:bg-white/25")}>
         <GlideArrow reduced={reduced} />
       </span>
     </motion.button>

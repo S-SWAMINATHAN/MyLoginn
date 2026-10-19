@@ -112,7 +112,7 @@ export function AccountSettings({ email: initialEmail, emailVerified: initialEma
     return <div key={field} className="rounded-3xl border border-border-soft bg-surface p-5 transition-all duration-300 hover:border-story-royal/30 hover:shadow-[var(--shadow-soft)] sm:p-6">
       <div className="flex flex-wrap items-start justify-between gap-4">
         <div className="flex min-w-0 items-start gap-3">
-          <span className="grid h-10 w-10 shrink-0 place-items-center rounded-full bg-story-mist text-story-royal"><Icon className="h-5 w-5" /></span>
+          <span className="grid h-10 w-10 shrink-0 place-items-center text-story-royal"><Icon className="h-5 w-5" /></span>
           <div className="min-w-0">
             <p className="text-xs text-muted">{title}</p>
             <p className="mt-1 break-all text-sm font-semibold">{value || "Not added"}</p>

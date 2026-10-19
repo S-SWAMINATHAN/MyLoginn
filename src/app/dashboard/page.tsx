@@ -103,7 +103,7 @@ export default async function DashboardPage() {
         <div className="mt-8 grid gap-4 sm:gap-5 md:grid-cols-2">
           <FadeIn delay={0.08}>
             <div className={`${card} ${hover} flex items-center gap-5 p-5 sm:p-6`}>
-              <span className="grid h-20 w-20 shrink-0 place-items-center rounded-full bg-orange-500/10"><AnimatedFlame className="h-14 w-14" /></span>
+              <span className="grid h-20 w-20 shrink-0 place-items-center text-story-royal"><AnimatedFlame className="h-14 w-14" /></span>
               <div className="min-w-0 flex-1">
                 <p className="text-[11px] font-bold uppercase tracking-[0.14em] text-muted">Day streak</p>
                 <p className="mt-0.5 text-4xl font-bold tabular-nums text-story-navy dark:text-foreground"><Counter value={streak.currentStreak} /></p>
@@ -122,7 +122,7 @@ export default async function DashboardPage() {
 
           <FadeIn delay={0.14}>
             <div className={`${card} ${hover} flex items-center gap-5 p-5 sm:p-6`}>
-              <span className="grid h-20 w-20 shrink-0 place-items-center rounded-full bg-story-royal/10"><AnimatedReward className="h-14 w-14" /></span>
+              <span className="grid h-20 w-20 shrink-0 place-items-center text-story-royal"><AnimatedReward className="h-14 w-14" /></span>
               <div className="min-w-0 flex-1">
                 <p className="text-[11px] font-bold uppercase tracking-[0.14em] text-muted">Reward points</p>
                 <p className="mt-0.5 text-4xl font-bold tabular-nums text-story-navy dark:text-foreground"><Counter value={streak.points} /></p>

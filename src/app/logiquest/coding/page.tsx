@@ -53,7 +53,7 @@ export default async function CodingHome() {
             return (
               <li key={t.slug}>
                 <Link href={`/logiquest/coding/${t.slug}`} className="group flex h-full items-center gap-3 rounded-2xl bg-story-mist p-5 transition-all hover:-translate-y-0.5 hover:bg-story-royal/10">
-                  <span className="grid h-10 w-10 shrink-0 place-items-center rounded-xl bg-surface text-story-royal"><Icon className="h-5 w-5" /></span>
+                  <span className="grid h-10 w-10 shrink-0 place-items-center text-story-royal"><Icon className="h-5 w-5" /></span>
                   <span className="min-w-0">
                     <span className="block font-semibold group-hover:text-story-royal">{t.title}</span>
                     <span className="block text-xs text-muted">{done ? `${done} / ` : ""}{inTrack.length} problems</span>

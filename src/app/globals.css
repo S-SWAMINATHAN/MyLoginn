@@ -814,21 +814,39 @@ textarea.field-control { min-height: 7rem; resize: vertical; }
 .field-message { display: flex; align-items: center; gap: 0.35rem; font-size: 0.75rem; line-height: 1.3; }
 
 /* ── Button hover: a colour fill sweeps in from the left. No lifting or scaling. ─────────────────────────────── */
+/* "Collision" hover, used by every button style: two solid panels slide in from both edges and meet in the middle.
+   (Each layer is a flat single-colour fill, not a gradient.) */
 .btn-sweep,
-.btn-sweep-navy {
+.btn-sweep-navy,
+.btn-collide {
   background-repeat: no-repeat;
-  background-position: left center;
-  background-size: 0% 100%;
-  transition: background-size 0.5s cubic-bezier(0.22, 1, 0.36, 1), color 0.3s ease, border-color 0.3s ease, box-shadow 0.3s ease;
+  background-position: left center, right center;
+  background-size: 0% 100%, 0% 100%;
+  transition: background-size 0.42s cubic-bezier(0.65, 0, 0.35, 1), color 0.3s ease 0.08s, border-color 0.3s ease, box-shadow 0.3s ease;
 }
-.btn-sweep { background-image: linear-gradient(var(--story-royal), var(--story-royal)); }
-.btn-sweep-navy { background-image: linear-gradient(var(--story-navy), var(--story-navy)); }
+.btn-sweep { background-image: linear-gradient(var(--story-royal), var(--story-royal)), linear-gradient(var(--story-royal), var(--story-royal)); }
+.btn-sweep-navy { background-image: linear-gradient(var(--story-navy), var(--story-navy)), linear-gradient(var(--story-navy), var(--story-navy)); }
+.btn-collide { background-image: linear-gradient(var(--collide, var(--story-navy)), var(--collide, var(--story-navy))), linear-gradient(var(--collide, var(--story-navy)), var(--collide, var(--story-navy))); }
 .btn-sweep:hover,
-.btn-sweep:focus-visible { background-size: 100% 100%; color: #fff; border-color: var(--story-royal); }
+.btn-sweep:focus-visible { background-size: 51% 100%, 51% 100%; color: #fff; border-color: var(--story-royal); }
 .btn-sweep-navy:hover,
-.btn-sweep-navy:focus-visible { background-size: 100% 100%; }
+.btn-sweep-navy:focus-visible,
+.btn-collide:hover,
+.btn-collide:focus-visible { background-size: 51% 100%, 51% 100%; }
+.btn-collide:hover,
+.btn-collide:focus-visible { color: var(--collide-text, #fff) !important; border-color: var(--collide, var(--story-navy)); }
+@media (prefers-reduced-motion: reduce) {
+  .btn-sweep, .btn-sweep-navy, .btn-collide { transition: none; }
+}
 
 /* Pill-shaped buttons and links never lift or scale on hover (this overrides per-component hover:-translate / scale). */
 @media (hover: hover) {
-  :is(a, button).rounded-full:hover { translate: none !important; scale: none !important; transform: none !important; }
+  /* opt out with data-magnetic: the homepage CTA buttons and tour tabs move with the pointer on purpose */
+  :is(a, button).rounded-full:not([data-magnetic]):hover { translate: none !important; scale: none !important; transform: none !important; }
 }
+
+
+/* Line icons that draw themselves in: each stroke runs from nothing to full length. */
+@keyframes icon-draw { to { stroke-dashoffset: 0; } }
+.icon-draw :is(path, circle, line, polyline, rect, ellipse) { stroke-dasharray: 100; stroke-dashoffset: 100; animation: icon-draw 0.9s 0.35s cubic-bezier(0.65, 0, 0.35, 1) forwards; }
+@media (prefers-reduced-motion: reduce) { .icon-draw :is(path, circle, line, polyline, rect, ellipse) { animation: none; stroke-dashoffset: 0; } }

@@ -356,18 +356,73 @@ model Internship {
 }
 
 model InternshipApplication {
-  id           String   @id @default(cuid())
+  id           String    @id @default(cuid())
   userId       String
   internshipId String
-  status       String   @default("submitted")
+  status       String    @default("submitted")
   coverNote    String?
   resumeName   String?
-  appliedAt    DateTime @default(now())
+  appliedAt    DateTime  @default(now())
+  // Reviewer fields, set from the admin Careers screen.
+  rating       Int?
+  notes        String?
+  reviewedAt   DateTime?
 
   user       User       @relation(fields: [userId], references: [id])
   internship Internship @relation(fields: [internshipId], references: [id])
 
   @@unique([userId, internshipId])
+}
+
+/// A job opening shown on /careers. `status` is open, upcoming, closed or draft (draft is hidden from the public).
+model JobOpening {
+  id               String    @id @default(cuid())
+  slug             String    @unique
+  title            String
+  team             String
+  type             String
+  location         String
+  experience       String?
+  salaryRange      String?
+  positions        Int       @default(1)
+  summary          String
+  responsibilities String[]
+  requirements     String[]
+  status           String    @default("open")
+  openFrom         DateTime?
+  closeBy          DateTime?
+  createdAt        DateTime  @default(now())
+  updatedAt        DateTime  @updatedAt
+
+  applications JobApplication[]
+
+  @@index([status])
+}
+
+/// A candidate's application (or an open application when `jobId` is null). The CV file is stored privately, see resumeStorage.
+model JobApplication {
+  id              String    @id @default(cuid())
+  jobId           String?
+  name            String
+  email           String
+  phone           String
+  experienceYears Int?
+  currentRole     String?
+  profileUrl      String?
+  coverNote       String?
+  resumeName      String?
+  status          String    @default("new")
+  rating          Int?
+  notes           String?
+  reviewedAt      DateTime?
+  createdAt       DateTime  @default(now())
+  updatedAt       DateTime  @updatedAt
+
+  job JobOpening? @relation(fields: [jobId], references: [id], onDelete: SetNull)
+
+  @@index([jobId])
+  @@index([status])
+  @@index([email])
 }
 
 model Project {

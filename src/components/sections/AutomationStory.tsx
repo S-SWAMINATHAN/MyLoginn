@@ -43,7 +43,7 @@ export function AutomationStory() {
               <RevealGroup className="mt-3 space-y-2" stagger={0.08}>
                 {MANUAL.map((m) => (
                   <RevealItem key={m} className="flex items-start gap-2.5 text-sm text-muted">
-                    <span className="mt-0.5 flex h-5 w-5 shrink-0 items-center justify-center rounded-full bg-danger/10">
+                    <span className="mt-0.5 flex h-5 w-5 shrink-0 items-center justify-center text-story-royal">
                       <X className="h-3 w-3 text-danger" aria-hidden />
                     </span>
                     {m}
@@ -59,7 +59,7 @@ export function AutomationStory() {
               <RevealGroup className="mt-3 space-y-2" stagger={0.08}>
                 {AUTOMATED.map((a) => (
                   <RevealItem key={a} className="flex items-start gap-2.5 text-sm text-foreground">
-                    <span className="mt-0.5 flex h-5 w-5 shrink-0 items-center justify-center rounded-full bg-success/10">
+                    <span className="mt-0.5 flex h-5 w-5 shrink-0 items-center justify-center text-story-royal">
                       <Check className="h-3 w-3 text-success" aria-hidden />
                     </span>
                     {a}

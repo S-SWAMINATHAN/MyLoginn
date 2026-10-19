@@ -31,7 +31,7 @@ export function TopicNav({ subject, subjectTitle, topics, current, color }: { su
   return (
     <div style={{ "--c": color } as React.CSSProperties} className="rounded-3xl border border-border-soft bg-surface p-3 text-sm lg:sticky lg:top-32">
       <Link href={`/logiquest/${subject}`} className="group flex items-center gap-3 rounded-2xl p-2 transition-colors hover:bg-story-mist">
-        <span className="grid h-11 w-11 shrink-0 place-items-center rounded-2xl bg-[var(--c)] text-white"><Icon className="h-5 w-5" strokeWidth={1.9} /></span>
+        <span className="grid h-11 w-11 shrink-0 place-items-center text-story-royal"><Icon className="h-5 w-5" strokeWidth={1.9} /></span>
         <span className="min-w-0 flex-1">
           <span className="block truncate text-[15px] font-bold leading-tight text-story-navy dark:text-foreground">{subjectTitle}</span>
           <span className="mt-0.5 flex items-center gap-1 text-[11px] font-semibold text-muted"><ArrowLeft className="h-3 w-3 transition-transform duration-300 group-hover:-translate-x-0.5" />All {topics.length} topics</span>

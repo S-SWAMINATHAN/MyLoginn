@@ -86,7 +86,7 @@ export default async function AdminSettingsPage() {
           {EXPORTS.map((e) => (
             <li key={e.type}>
               <a href={`/api/admin/export?type=${e.type}`} className="group flex items-center gap-3 rounded-2xl border border-border-soft p-3.5 transition-all hover:-translate-y-1 hover:border-story-royal hover:shadow-[var(--shadow-soft)]">
-                <span className="grid h-10 w-10 shrink-0 place-items-center rounded-full bg-story-mist text-story-royal transition-colors group-hover:bg-story-royal group-hover:text-white"><Download className="h-4 w-4" /></span>
+                <span className="grid h-10 w-10 shrink-0 place-items-center text-story-royal transition-colors group-hover:bg-story-royal group-hover:text-white"><Download className="h-4 w-4" /></span>
                 <span className="min-w-0"><span className="block text-sm font-semibold">{e.label} (CSV)</span><span className="block truncate text-xs text-muted">{e.desc}</span></span>
               </a>
             </li>

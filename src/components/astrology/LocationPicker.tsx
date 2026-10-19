@@ -404,7 +404,7 @@ export const LocationPicker: React.FC<LocationPickerProps> = ({
             {/* Nothing found: resolve the typed text directly */}
             {rows.length === 0 && !isSearching && q.length >= 2 && (
               <div className="space-y-3 px-4 py-6 text-center">
-                <span className="mx-auto flex h-12 w-12 items-center justify-center rounded-2xl bg-brand-500/10 text-brand-fg">
+                <span className="mx-auto flex h-12 w-12 items-center justify-center text-brand-fg">
                   <Globe className="h-6 w-6" />
                 </span>
                 <p className="text-xs text-muted">

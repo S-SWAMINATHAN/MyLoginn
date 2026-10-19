@@ -408,7 +408,7 @@ export const BirthDetailsForm: React.FC<BirthDetailsFormProps> = ({
               aria-expanded={showAdvanced}
               className="group flex w-full items-center gap-3 p-4 text-left sm:p-5"
             >
-              <span className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-brand-500/10 text-brand-fg">
+              <span className="flex h-8 w-8 shrink-0 items-center justify-center text-brand-fg">
                 <HeartHandshake className="h-4 w-4" />
               </span>
               <span className="min-w-0 flex-1">

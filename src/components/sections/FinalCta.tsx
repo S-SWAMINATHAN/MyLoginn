@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from "react";
 import { AnimatePresence, motion } from "framer-motion";
-import { Bot, Code2, Cpu, Megaphone, MessageCircle, Smartphone, type LucideIcon } from "lucide-react";
+import { Bot, Code2, Megaphone, MessageCircle, MonitorCog, Smartphone, type LucideIcon } from "lucide-react";
 import { Chapter } from "@/components/experience/Chapter";
 import { SplitHeadline } from "@/components/experience/SplitHeadline";
 import { Reveal } from "@/components/ui/Reveal";
@@ -28,8 +28,8 @@ const OPTIONS: Option[] = [
   { key: "web", label: "Website", noun: "website", service: "web", Icon: Code2, icon: "webdev", points: [{ t: "Design & build", d: "Designed and built around your goals." }, { t: "Fast & SEO-ready", d: "Fast, responsive pages that search engines can read." }, { t: "Launch & support", d: "Launch and maintenance support after go-live." }] },
   { key: "mobile", label: "Mobile app", noun: "mobile app", service: "mobile", Icon: Smartphone, icon: "mobile", points: [{ t: "Android & iOS", d: "Android, iOS or cross-platform apps." }, { t: "Shared backend", d: "Shares a backend with your website." }, { t: "Test & release", d: "Testing and release support." }] },
   { key: "ai", label: "AI agent", noun: "AI agent", service: "software", Icon: Bot, icon: "ai", points: [{ t: "Assistants", d: "Chatbots, assistants and agents." }, { t: "Your data", d: "Answers from your own data." }, { t: "Human approval", d: "A person approves important actions." }] },
-  { key: "software", label: "Software", noun: "software product", service: "software", Icon: Cpu, icon: "software", points: [{ t: "Your workflow", d: "Tools shaped to your workflow." }, { t: "Integrations", d: "APIs and integrations with your existing tools." }, { t: "Secure & scalable", d: "Secure, scalable architecture." }] },
   { key: "marketing", label: "Marketing", noun: "growth campaign", service: "marketing", Icon: Megaphone, icon: "marketing", points: [{ t: "Campaigns", d: "Search, social and paid campaigns." }, { t: "Lead paths", d: "Lead paths, including WhatsApp." }, { t: "Measurement", d: "Clear measurement and reviews." }] },
+  { key: "software", label: "Software", noun: "software product", service: "software", Icon: MonitorCog, icon: "software", points: [{ t: "Your workflow", d: "CRMs, ERPs and internal tools shaped to your workflow." }, { t: "Desktop apps", d: "Windows and cross-platform desktop applications." }, { t: "Integrations", d: "Connected to the systems you already use." }] },
 ];
 
 /** One-line stepper: three connected nodes that light up in turn (or on click), with the detail for the active step below. */
@@ -113,7 +113,7 @@ export function FinalCta() {
                   href={whatsapp}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="group inline-flex h-11 items-center gap-2 rounded-full border border-border-soft px-5 text-sm font-medium transition-all duration-300 hover:-translate-y-0.5 hover:border-story-royal hover:text-story-royal active:scale-95"
+                  className="btn-sweep group inline-flex h-11 items-center gap-2 rounded-full border border-border-soft px-5 text-sm font-medium active:scale-95"
                 >
                   <MessageCircle className="h-4 w-4 transition-transform duration-300 group-hover:scale-110" />
                   Talk to us

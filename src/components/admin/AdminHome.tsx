@@ -206,7 +206,7 @@ export function AdminHome({ name }: { name: string }) {
                 const Tag = href.startsWith("/api/") ? "a" : Link;
                 return (
                 <Tag key={label} href={href} className="group flex flex-col items-start gap-2 rounded-2xl border border-border-soft p-3 text-sm font-semibold transition-all hover:-translate-y-1 hover:border-story-royal hover:text-story-royal hover:shadow-[var(--shadow-soft)]">
-                  <span className="grid h-9 w-9 place-items-center rounded-full bg-story-mist text-story-royal transition-colors group-hover:bg-story-royal group-hover:text-white"><Icon className="h-4 w-4" /></span>
+                  <span className="grid h-9 w-9 place-items-center text-story-royal transition-colors group-hover:bg-story-royal group-hover:text-white"><Icon className="h-4 w-4" /></span>
                   {label}
                 </Tag>
                 );

@@ -24,7 +24,7 @@ export function CTASection() {
             <div className="pointer-events-none absolute -top-24 -right-24 h-72 w-72 rounded-full bg-white/10 blur-3xl" />
             <div className="pointer-events-none absolute -bottom-24 -left-24 h-72 w-72 rounded-full bg-white/10 blur-3xl" />
 
-            <div className="relative mx-auto mb-5 flex h-16 w-16 items-center justify-center rounded-2xl bg-white/15 backdrop-blur-sm ring-1 ring-white/25">
+            <div className="relative mx-auto mb-5 flex h-16 w-16 items-center justify-center backdrop-blur-sm text-story-royal">
               <AnimatedRocket className="h-10.5 w-10.5" />
             </div>
 

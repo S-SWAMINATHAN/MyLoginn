@@ -18,7 +18,7 @@ export default async function LeaderboardPage() {
   });
 
   return <Section className="py-10 sm:py-14"><Container className="max-w-3xl">
-    <div className="mb-7 flex items-center gap-3"><span className="grid h-12 w-12 place-items-center rounded-2xl bg-brand-50 text-brand-600"><Trophy className="h-6 w-6" /></span><div><p className="text-xs font-bold uppercase tracking-wider text-brand-600">MyLoginn Learning</p><h1 className="text-2xl font-bold sm:text-3xl">Global leaderboard</h1></div></div>
+    <div className="mb-7 flex items-center gap-3"><span className="grid h-12 w-12 place-items-center text-brand-600"><Trophy className="h-6 w-6" /></span><div><p className="text-xs font-bold uppercase tracking-wider text-brand-600">MyLoginn Learning</p><h1 className="text-2xl font-bold sm:text-3xl">Global leaderboard</h1></div></div>
     <p className="mb-6 text-sm leading-6 text-muted">Ranked by points earned from completed lessons and other MyLoginn learning activities.</p>
     {leaders[0]?.id === currentUser.id && <section role="status" className="mb-6 flex items-center gap-4 overflow-hidden rounded-2xl border border-amber-300 bg-gradient-to-r from-amber-50 via-yellow-50 to-orange-50 p-5 dark:border-amber-700 dark:from-amber-950/50 dark:via-yellow-950/30 dark:to-orange-950/40">
       <svg viewBox="0 0 100 110" role="img" aria-label="Animated first place winner badge" className="h-20 w-20 shrink-0 animate-bounce motion-reduce:animate-none">

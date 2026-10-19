@@ -341,7 +341,7 @@ export function LessonVideo({ data }: { data: LessonVideoData }) {
       </div>
 
       {!started && <button type="button" onClick={toggle} aria-label="Play video lesson" className="absolute inset-0 z-20 grid place-items-center bg-white/55 px-4 backdrop-blur-[3px] transition hover:bg-white/35 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-brand-500">
-        <span className="grid min-w-0 place-items-center gap-3 text-center"><span className="lv-play grid h-16 w-16 place-items-center rounded-full bg-brand-600 shadow-[0_14px_30px_-10px_var(--brand-600)] sm:h-20 sm:w-20"><Play className="h-8 w-8 translate-x-0.5 fill-white text-white sm:h-9 sm:w-9" /></span><span className="break-words text-base font-semibold text-slate-900">Watch: {data.title}</span><span className="text-xs text-slate-600">{Math.max(1, Math.round(total / 60000))} min · animated · human-style voice-over &amp; captions</span></span>
+        <span className="grid min-w-0 place-items-center gap-3 text-center"><span className="lv-play grid h-16 w-16 place-items-center sm:h-20 sm:w-20 text-story-royal"><Play className="h-8 w-8 translate-x-0.5 fill-white text-white sm:h-9 sm:w-9" /></span><span className="break-words text-base font-semibold text-slate-900">Watch: {data.title}</span><span className="text-xs text-slate-600">{Math.max(1, Math.round(total / 60000))} min · animated · human-style voice-over &amp; captions</span></span>
       </button>}
     </div>
 

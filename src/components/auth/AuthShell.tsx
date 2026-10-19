@@ -57,13 +57,13 @@ function WaitingPanel() {
   return (
     <div className="relative space-y-3">
       <motion.div animate={float()} transition={floatT(0)} className="flex items-center gap-4 rounded-2xl bg-surface p-4 shadow-sm">
-        <span className="grid h-12 w-12 shrink-0 place-items-center rounded-full bg-orange-500/10"><AnimatedFlame className="h-9 w-9" /></span>
+        <span className="grid h-12 w-12 shrink-0 place-items-center text-story-royal"><AnimatedFlame className="h-9 w-9" /></span>
         <div><p className="text-sm font-bold">Keep your streak alive</p><p className="text-xs text-muted">Log in every day to build momentum</p></div>
       </motion.div>
 
       <motion.div animate={float()} transition={floatT(0.6)} className="ml-6 rounded-2xl bg-surface p-4 shadow-sm">
         <div className="flex items-center gap-3">
-          <span className="grid h-12 w-12 shrink-0 place-items-center rounded-full bg-story-mist"><ContentIcon keyword="student" className="h-8 w-8" /></span>
+          <span className="grid h-12 w-12 shrink-0 place-items-center text-story-royal"><ContentIcon keyword="student" className="h-8 w-8" /></span>
           <p className="text-sm font-bold">Pick up where you left off</p>
         </div>
         <div className="mt-3 h-1.5 overflow-hidden rounded-full bg-story-mist">
@@ -72,7 +72,7 @@ function WaitingPanel() {
       </motion.div>
 
       <motion.div animate={float()} transition={floatT(1.2)} className="flex items-center gap-4 rounded-2xl bg-surface p-4 shadow-sm">
-        <span className="grid h-12 w-12 shrink-0 place-items-center rounded-full bg-story-royal/10"><AnimatedReward className="h-9 w-9" /></span>
+        <span className="grid h-12 w-12 shrink-0 place-items-center text-story-royal"><AnimatedReward className="h-9 w-9" /></span>
         <div><p className="text-sm font-bold">Earn points and badges</p><p className="text-xs text-muted">Climb the learning leaderboard</p></div>
       </motion.div>
     </div>

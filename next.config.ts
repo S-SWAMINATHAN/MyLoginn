@@ -43,6 +43,12 @@ const nextConfig: NextConfig = {
           { key: "Strict-Transport-Security", value: "max-age=63072000; includeSubDomains" },
         ],
       },
+      {
+        // Admin-only CV downloads. Chrome's built-in PDF viewer is a plugin embed, so `object-src 'none'` would blank the
+        // inline preview in the admin Careers screen. Everything else in the policy stays, and the route is nosniff + private.
+        source: "/api/admin/careers/applications/:source/:id/resume",
+        headers: [{ key: "Content-Security-Policy", value: "upgrade-insecure-requests; base-uri 'self'; frame-ancestors 'self'" }],
+      },
     ];
   },
 };

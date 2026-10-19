@@ -150,7 +150,7 @@ export default async function InternshipsPage() {
         <Reveal className="mt-24 sm:mt-28">
           <div className="flex flex-col items-center gap-6 rounded-[2rem] border border-border-soft bg-story-mist px-6 py-9 text-center sm:flex-row sm:justify-between sm:px-10 sm:text-left">
             <div className="flex flex-col items-center gap-4 sm:flex-row sm:gap-5">
-              <span className="grid h-14 w-14 shrink-0 place-items-center rounded-2xl bg-surface shadow-sm"><ContentIcon keyword="career" className="h-10 w-10" /></span>
+              <span className="grid h-14 w-14 shrink-0 place-items-center text-story-royal"><ContentIcon keyword="career" className="h-10 w-10" /></span>
               <div>
                 <h2 className="text-xl font-bold text-story-navy sm:text-2xl dark:text-foreground">Ready to start your journey?</h2>
                 <p className="mt-1.5 max-w-md text-sm text-muted">Review current roles and apply for opportunities that fit your interests.</p>

@@ -122,7 +122,7 @@ function ClientProjectDetail({ project }: { project: ClientProject }) {
                 <div className="relative w-[230px] rounded-[2.4rem] bg-slate-950 p-2.5 shadow-2xl shadow-black/40 ring-1 ring-white/25 sm:w-[260px] lg:rotate-[-3deg] lg:transition lg:duration-500 lg:hover:rotate-0">
                   <span aria-hidden className="absolute left-1/2 top-4 z-10 h-4 w-20 -translate-x-1/2 rounded-full bg-black" />
                   <div className="flex aspect-[9/18] flex-col items-center justify-center gap-4 rounded-[1.9rem] bg-gradient-to-b from-slate-900 to-slate-800 px-4 text-center">
-                    <span className="grid h-14 w-14 place-items-center rounded-2xl bg-white/10 ring-1 ring-white/20"><Smartphone className="h-7 w-7" /></span>
+                    <span className="grid h-14 w-14 place-items-center text-story-royal"><Smartphone className="h-7 w-7" /></span>
                     <span className="inline-flex items-center gap-2 rounded-full border border-white/25 bg-white/10 px-4 py-2 text-sm font-semibold backdrop-blur-sm"><Construction className="h-4 w-4" /> In development</span>
                   </div>
                 </div>
@@ -178,7 +178,7 @@ function ClientProjectDetail({ project }: { project: ClientProject }) {
           <ul className="mt-5 space-y-3.5">
             {(project.deliverables ?? ["Design and build", "Launch support"]).map((item) => (
               <li key={item} className="flex items-start gap-3 text-base font-medium leading-snug">
-                <span className="mt-0.5 flex h-6 w-6 shrink-0 items-center justify-center rounded-full bg-white/20"><Check className="h-3.5 w-3.5" /></span>
+                <span className="mt-0.5 flex h-6 w-6 shrink-0 items-center justify-center text-story-royal"><Check className="h-3.5 w-3.5" /></span>
                 {item}
               </li>
             ))}

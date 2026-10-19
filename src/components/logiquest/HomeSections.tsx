@@ -298,7 +298,7 @@ export function TestsPanel({ tests }: { tests: TestTile[] }) {
     <section className="h-full rounded-3xl border border-border-soft bg-surface p-5 sm:p-6" aria-labelledby="lq-tests">
       <div className="flex items-center justify-between gap-3">
         <h2 id="lq-tests" className="flex items-center gap-2.5 text-lg font-bold text-story-navy dark:text-foreground">
-          <span className="grid h-10 w-10 place-items-center rounded-xl bg-story-mist"><AnimatedClock className="h-7 w-7" /></span>
+          <span className="grid h-10 w-10 place-items-center text-story-royal"><AnimatedClock className="h-7 w-7" /></span>
           Online tests
         </h2>
         <Link href="/logiquest/online-test" className="group inline-flex items-center gap-1 text-sm font-semibold text-story-royal">All tests<ArrowRight className="h-4 w-4 transition-transform duration-300 group-hover:translate-x-1" /></Link>
@@ -313,7 +313,7 @@ export function TestsPanel({ tests }: { tests: TestTile[] }) {
         {tests.map((x, i) => (
           <motion.li key={x.slug} initial={{ opacity: 0, y: 10 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true, margin: "-40px" }} transition={{ duration: 0.4, delay: i * 0.04, ease: SMOOTH }} style={{ "--c": x.color } as React.CSSProperties}>
             <Link href={`/logiquest/online-test/${x.slug}`} className="group flex h-full items-center gap-2.5 rounded-2xl border border-border-soft bg-surface p-2.5 transition-[border-color,background-color] duration-300 hover:border-[color-mix(in_srgb,var(--c)_45%,transparent)] hover:bg-[color-mix(in_srgb,var(--c)_7%,transparent)]">
-              <span className="grid h-10 w-10 shrink-0 place-items-center rounded-full bg-[color-mix(in_srgb,var(--c)_11%,transparent)]"><ContentIcon keyword={SUBJECT_ICON_KEY[x.slug] ?? "default"} className="h-7 w-7" /></span>
+              <span className="grid h-10 w-10 shrink-0 place-items-center text-story-royal"><ContentIcon keyword={SUBJECT_ICON_KEY[x.slug] ?? "default"} className="h-7 w-7" /></span>
               <span className="min-w-0 flex-1">
                 <span className="block truncate text-[13px] font-bold leading-tight text-story-navy dark:text-foreground">{x.title}</span>
                 <span className="mt-0.5 inline-flex items-center gap-1 text-[11px] font-semibold text-[var(--c)]">Take test<ArrowRight className="h-3 w-3 -translate-x-1 opacity-0 transition-all duration-300 group-hover:translate-x-0 group-hover:opacity-100" /></span>

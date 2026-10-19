@@ -164,7 +164,7 @@ export async function LmsCourseDetail({ slug, justEnrolled }: { slug: string; ju
                 })}
                 {structure.finalQuizId && (
                   <li className="relative flex gap-3.5">
-                    <span className="relative z-10 grid h-10 w-10 shrink-0 place-items-center rounded-full bg-story-royal text-white"><Sparkles className="h-4 w-4" /></span>
+                    <span className="relative z-10 grid h-10 w-10 shrink-0 place-items-center text-story-royal"><Sparkles className="h-4 w-4" /></span>
                     <div className="min-w-0 flex-1 rounded-2xl bg-story-mist p-4 text-sm"><strong className="text-story-navy dark:text-foreground">Final assessment.</strong> Score {course.passPercent}% or more to unlock your completion certificate.</div>
                   </li>
                 )}

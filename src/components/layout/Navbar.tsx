@@ -79,10 +79,11 @@ const mobileServiceLinks: MobileLink[] = [
   { href: "/services/testing-automation", label: "Testing & Automation", desc: "QA, API and Playwright testing", icon: AnimatedShield },
 ];
 
+const mobileAboutLink: MobileLink = { href: "/about", label: "About", desc: "Who we are and what we value", icon: AnimatedBuilding };
+
 const mobileAfterServices: MobileLink[] = [
-  { href: "/internships", label: "Internship", desc: "Explore practical experience", icon: AnimatedBriefcase },
-  { href: "/projects", label: "Projects", desc: "Explore project work", icon: AnimatedFolder },
-  { href: "/about", label: "About", desc: "About MyLoginn", icon: AnimatedBuilding },
+  { href: "/projects", label: "Projects", desc: "Our live client work", icon: AnimatedFolder },
+  { href: "/careers", label: "Careers", desc: "Open positions and internships", icon: AnimatedBriefcase },
 ];
 
 const mobileContactLink: MobileLink = {
@@ -92,6 +93,34 @@ const mobileContactLink: MobileLink = {
   icon: AnimatedMail,
 };
 
+type NavSection = "home" | "about" | "services" | "projects" | "careers" | "learn" | "contact";
+
+const LEARN_PREFIXES = ["/courses", "/practice", "/logiquest", "/leaderboard", "/tutoring"];
+
+/** Which top-level navigation item owns the current page, so the active indicator always sits under the right one. */
+function navSection(pathname: string): NavSection | null {
+  const under = (base: string) => pathname === base || pathname.startsWith(`${base}/`);
+  if (pathname === "/") return "home";
+  if (under("/about")) return "about";
+  if (under("/services")) return "services";
+  if (under("/projects")) return "projects";
+  if (under("/careers") || under("/internships")) return "careers";
+  if (LEARN_PREFIXES.some(under)) return "learn";
+  if (under("/contact")) return "contact";
+  return null;
+}
+
+/** The single blue indicator; it glides between items as the page changes. */
+function NavIndicator() {
+  return (
+    <motion.span
+      layoutId="nav-active-indicator"
+      className="pointer-events-none absolute inset-x-3.5 -bottom-0.5 h-[3px] rounded-full brand-gradient-bg"
+      transition={{ type: "spring", stiffness: 420, damping: 34 }}
+    />
+  );
+}
+
 export function Navbar({ user }: { user: NavUser }) {
   const pathname = usePathname();
   const [scrolled, setScrolled] = useState(false);
@@ -99,6 +128,7 @@ export function Navbar({ user }: { user: NavUser }) {
   const [servicesOpen, setServicesOpen] = useState(false);
   const [learnOpen, setLearnOpen] = useState(false);
   const isHome = pathname === "/";
+  const section = navSection(pathname);
 
   useEffect(() => {
     const onScroll = () => setScrolled(window.scrollY > 12);
@@ -132,44 +162,8 @@ export function Navbar({ user }: { user: NavUser }) {
         </Link>
 
         <div className="hidden lg:flex items-center gap-1">
-          <NavHeaderLink href="/" active={pathname === "/"}>
-            Home
-          </NavHeaderLink>
-
-          <div
-            className="group relative"
-            onMouseEnter={() => setLearnOpen(true)}
-            onMouseLeave={() => setLearnOpen(false)}
-          >
-            <button
-              className="relative flex items-center gap-1 rounded-full px-4 py-2 text-sm font-medium text-foreground/80 transition-colors duration-200 hover:text-foreground cursor-pointer"
-              onClick={() => setLearnOpen((open) => !open)}
-              aria-expanded={learnOpen}
-            >
-              Learn
-              <ChevronDown className={cn("h-4 w-4 transition-transform duration-300", learnOpen && "rotate-180")} />
-              <span className={cn("pointer-events-none absolute inset-x-3.5 -bottom-0.5 h-[3px] origin-center rounded-full brand-gradient-bg transition-transform duration-300 ease-out", learnOpen ? "scale-x-100" : "scale-x-0 group-hover:scale-x-100")} />
-            </button>
-            <AnimatePresence>
-              {learnOpen && (
-                <motion.div
-                  initial={{ opacity: 0, y: 8, scale: 0.97 }}
-                  animate={{ opacity: 1, y: 0, scale: 1 }}
-                  exit={{ opacity: 0, y: 8, scale: 0.97 }}
-                  transition={{ duration: 0.18, ease: [0.16, 1, 0.3, 1] }}
-                  className="absolute left-0 top-full mt-2 w-72 rounded-2xl border border-border-soft bg-surface p-2 shadow-[var(--shadow-lift)]"
-                >
-                  {learnLinks.map((item) => {
-                    const active = pathname === item.href || pathname.startsWith(`${item.href}/`);
-                    return <Link key={item.href} href={item.href} className={cn("block rounded-xl px-3.5 py-3 transition-colors hover:bg-surface-2", active && "bg-brand-50 dark:bg-brand-900/20")}>
-                      <span className="block text-sm font-medium">{item.label}</span>
-                      <span className="block text-xs text-muted">{item.desc}</span>
-                    </Link>;
-                  })}
-                </motion.div>
-              )}
-            </AnimatePresence>
-          </div>
+          <NavHeaderLink href="/" active={section === "home"}>Home</NavHeaderLink>
+          <NavHeaderLink href="/about" active={section === "about"}>About</NavHeaderLink>
 
           <div
             className="group relative"
@@ -177,17 +171,20 @@ export function Navbar({ user }: { user: NavUser }) {
             onMouseLeave={() => setServicesOpen(false)}
           >
             <button
-              className="relative flex items-center gap-1 rounded-full px-4 py-2 text-sm font-medium text-foreground/80 transition-colors duration-200 hover:text-foreground cursor-pointer"
+              className={cn("relative flex items-center gap-1 rounded-full px-4 py-2 text-sm font-medium transition-colors duration-200 cursor-pointer", section === "services" ? "text-brand-500" : "text-foreground/80 hover:text-foreground")}
               onClick={() => setServicesOpen((s) => !s)}
+              aria-expanded={servicesOpen}
             >
               Services
               <ChevronDown className={cn("h-4 w-4 transition-transform duration-300", servicesOpen && "rotate-180")} />
-              <span
-                className={cn(
-                  "pointer-events-none absolute inset-x-3.5 -bottom-0.5 h-[3px] origin-center rounded-full brand-gradient-bg transition-transform duration-300 ease-out",
-                  servicesOpen ? "scale-x-100" : "scale-x-0 group-hover:scale-x-100"
-                )}
-              />
+              {section === "services" ? <NavIndicator /> : (
+                <span
+                  className={cn(
+                    "pointer-events-none absolute inset-x-3.5 -bottom-0.5 h-[3px] origin-center rounded-full bg-brand-200 transition-transform duration-300 ease-out",
+                    servicesOpen ? "scale-x-100" : "scale-x-0 group-hover:scale-x-100"
+                  )}
+                />
+              )}
             </button>
             <AnimatePresence>
               {servicesOpen && (
@@ -213,13 +210,45 @@ export function Navbar({ user }: { user: NavUser }) {
             </AnimatePresence>
           </div>
 
-          <NavHeaderLink href="/internships" active={pathname === "/internships" || pathname.startsWith("/internships/")}>Internship</NavHeaderLink>
-          <NavHeaderLink href="/projects" active={pathname === "/projects"}>Projects</NavHeaderLink>
-          <NavHeaderLink href="/about" active={pathname === "/about"}>About</NavHeaderLink>
+          <NavHeaderLink href="/projects" active={section === "projects"}>Projects</NavHeaderLink>
+          <NavHeaderLink href="/careers" active={section === "careers"}>Careers</NavHeaderLink>
 
-          <NavHeaderLink href="/contact" active={pathname === "/contact"}>
-              Contact Us
-          </NavHeaderLink>
+          <div
+            className="group relative"
+            onMouseEnter={() => setLearnOpen(true)}
+            onMouseLeave={() => setLearnOpen(false)}
+          >
+            <button
+              className={cn("relative flex items-center gap-1 rounded-full px-4 py-2 text-sm font-medium transition-colors duration-200 cursor-pointer", section === "learn" ? "text-brand-500" : "text-foreground/80 hover:text-foreground")}
+              onClick={() => setLearnOpen((open) => !open)}
+              aria-expanded={learnOpen}
+            >
+              Learn
+              <ChevronDown className={cn("h-4 w-4 transition-transform duration-300", learnOpen && "rotate-180")} />
+              {section === "learn" ? <NavIndicator /> : <span className={cn("pointer-events-none absolute inset-x-3.5 -bottom-0.5 h-[3px] origin-center rounded-full bg-brand-200 transition-transform duration-300 ease-out", learnOpen ? "scale-x-100" : "scale-x-0 group-hover:scale-x-100")} />}
+            </button>
+            <AnimatePresence>
+              {learnOpen && (
+                <motion.div
+                  initial={{ opacity: 0, y: 8, scale: 0.97 }}
+                  animate={{ opacity: 1, y: 0, scale: 1 }}
+                  exit={{ opacity: 0, y: 8, scale: 0.97 }}
+                  transition={{ duration: 0.18, ease: [0.16, 1, 0.3, 1] }}
+                  className="absolute left-0 top-full mt-2 w-72 rounded-2xl border border-border-soft bg-surface p-2 shadow-[var(--shadow-lift)]"
+                >
+                  {learnLinks.map((item) => {
+                    const active = pathname === item.href || pathname.startsWith(`${item.href}/`);
+                    return <Link key={item.href} href={item.href} className={cn("block rounded-xl px-3.5 py-3 transition-colors hover:bg-surface-2", active && "bg-brand-50 dark:bg-brand-900/20")}>
+                      <span className="block text-sm font-medium">{item.label}</span>
+                      <span className="block text-xs text-muted">{item.desc}</span>
+                    </Link>;
+                  })}
+                </motion.div>
+              )}
+            </AnimatePresence>
+          </div>
+
+          <NavHeaderLink href="/contact" active={section === "contact"}>Contact</NavHeaderLink>
         </div>
 
         <div className="hidden lg:flex items-center gap-3">
@@ -396,18 +425,7 @@ function MobileMenu({
             >
               <div className="flex flex-col gap-1">
                 <MobileNavItem link={mobileMainLinks[0]} active={pathname === "/"} />
-              </div>
-
-              <motion.div variants={itemVariants} className="my-3 flex items-center gap-3 px-2">
-                <span className="h-px flex-1 bg-gradient-to-r from-transparent via-border-soft to-transparent" />
-                <span className="text-[11px] font-bold uppercase tracking-[0.16em] brand-gradient-text">Learn</span>
-                <span className="h-px flex-1 bg-gradient-to-r from-transparent via-border-soft to-transparent" />
-              </motion.div>
-
-              <div className="flex flex-col gap-1">
-                {mobileMainLinks.slice(1).map((link) => (
-                  <MobileNavItem key={link.href} link={link} active={pathname === link.href || pathname.startsWith(`${link.href}/`)} />
-                ))}
+                <MobileNavItem link={mobileAboutLink} active={pathname === "/about"} />
               </div>
 
               <motion.div variants={itemVariants} className="my-3 flex items-center gap-3 px-2">
@@ -424,8 +442,23 @@ function MobileMenu({
 
               <div className="my-3 flex flex-col gap-1">
                 {mobileAfterServices.map((link) => (
+                  <MobileNavItem key={link.href} link={link} active={pathname === link.href || pathname.startsWith(`${link.href}/`) || (link.href === "/careers" && pathname.startsWith("/internships"))} />
+                ))}
+              </div>
+
+              <motion.div variants={itemVariants} className="my-3 flex items-center gap-3 px-2">
+                <span className="h-px flex-1 bg-gradient-to-r from-transparent via-border-soft to-transparent" />
+                <span className="text-[11px] font-bold uppercase tracking-[0.16em] brand-gradient-text">Learn</span>
+                <span className="h-px flex-1 bg-gradient-to-r from-transparent via-border-soft to-transparent" />
+              </motion.div>
+
+              <div className="flex flex-col gap-1">
+                {mobileMainLinks.slice(1).map((link) => (
                   <MobileNavItem key={link.href} link={link} active={pathname === link.href || pathname.startsWith(`${link.href}/`)} />
                 ))}
+              </div>
+
+              <div className="my-3 flex flex-col gap-1">
                 <MobileNavItem link={mobileContactLink} active={pathname === mobileContactLink.href || pathname.startsWith(`${mobileContactLink.href}/`)} />
               </div>
 
@@ -492,12 +525,11 @@ function NavHeaderLink({ href, active, children }: { href: string; active: boole
       )}
     >
       {children}
-      <span
-        className={cn(
-          "pointer-events-none absolute inset-x-3.5 -bottom-0.5 h-[3px] origin-center rounded-full brand-gradient-bg transition-transform duration-300 ease-out",
-          active ? "scale-x-100" : "scale-x-0 group-hover:scale-x-100"
-        )}
-      />
+      {active ? (
+        <NavIndicator />
+      ) : (
+        <span className="pointer-events-none absolute inset-x-3.5 -bottom-0.5 h-[3px] origin-center scale-x-0 rounded-full bg-brand-200 transition-transform duration-300 ease-out group-hover:scale-x-100" />
+      )}
     </Link>
   );
 }
