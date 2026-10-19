@@ -18,31 +18,31 @@ import { CONTACT_EMAIL, CONTACT_HOURS, CONTACT_PHONES, WHATSAPP_PHONE } from "@/
 export const metadata = createPageMetadata({
   title: "Contact MyLoginn",
   absoluteTitle: true,
-  description: "Contact MyLoginn Tech Private Limited about software development, AI, digital marketing, courses and internships.",
+  description: "Start a project with MyLoginn Tech Private Limited: web development, app development, desktop applications, AI agents and digital marketing.",
   path: "/contact",
   keywords: ["contact MyLoginn", "MyLoginn contact", "software development enquiry", "digital marketing enquiry"],
 });
 
 const contactFaqs = [
-  { question: "How do I request app or web development?", answer: "Use the project enquiry form or visit the App & Web Development service page to describe your project." },
-  { question: "How do I enquire about digital marketing?", answer: "Visit the Digital Marketing service page and share your goals and channels with our team." },
-  { question: "Where can I ask about courses or internships?", answer: "Browse the Courses or Internships pages for current listings, or use the enquiry form on this page." },
   { question: "What should I include in a project enquiry?", answer: "Share your goal, expected users, key requirements, relevant links and any timing constraints you know." },
+  { question: "What happens after I send an enquiry?", answer: "Our team reviews it and contacts you with next steps, usually starting with a short discovery conversation." },
+  { question: "Can you work with an existing website or system?", answer: "Yes. We can improve, extend, integrate with or migrate what you already have, as well as build new." },
+  { question: "Where can I ask about MyLoginn Learn?", answer: "Use the Learn tab in the form on this page for course, fee and payment questions." },
 ];
 
 const phoneLink = (phone: string) => `tel:${phone.replace(/[^+\d]/g, "")}`;
 const supportAreas = [
-  { label: "Course guidance", value: "Learning paths", icon: "student" },
-  { label: "Career support", value: "Internships", icon: "career" },
-  { label: "Business enquiries", value: "Project services", icon: "business" },
-  { label: "Personal learning", value: "Mentoring", icon: "leader" },
+  { label: "Build", value: "Web & apps", icon: "webdev" },
+  { label: "Software", value: "Desktop applications", icon: "software" },
+  { label: "Automate", value: "AI agents", icon: "ai" },
+  { label: "Grow", value: "Digital marketing", icon: "marketing" },
 ];
 
 const quickLinks = [
-  { title: "Explore courses", description: "Browse learning paths and course details.", href: "/courses", icon: "student", color: "#2563eb", cta: "Browse courses" },
-  { title: "Create an account", description: "Set up your MyLoginn learner profile.", href: "/signup", icon: "comm", color: "#059669", cta: "Sign up free" },
-  { title: "Find an internship", description: "Explore current internship opportunities.", href: "/internships", icon: "career", color: "#7c3aed", cta: "See internships" },
-  { title: "Discuss a project", description: "Tell us about a product or marketing need.", href: "/services", icon: "webdev", color: "#d97706", cta: "View services" },
+  { title: "Explore solutions", description: "Web, app, desktop, AI and marketing services.", href: "/services", icon: "webdev", color: "#2563eb", cta: "View solutions" },
+  { title: "See our work", description: "Websites and products we have built and launched.", href: "/projects", icon: "business", color: "#7c3aed", cta: "View projects" },
+  { title: "Join our team", description: "Open roles across development, AI and marketing.", href: "/careers", icon: "career", color: "#059669", cta: "View careers" },
+  { title: "MyLoginn Learn", description: "Our separate platform for technology courses.", href: "/courses", icon: "student", color: "#d97706", cta: "Go to Learn" },
 ];
 
 export default function ContactPage() {
@@ -54,12 +54,12 @@ export default function ContactPage() {
         <div aria-hidden="true" className="pointer-events-none absolute -right-40 top-10 -z-0 h-[36rem] w-[36rem] rounded-full bg-[radial-gradient(circle,rgba(91,157,255,.11),rgba(255,255,255,0)_70%)]" />
         <header className="relative z-10 grid items-center gap-10 py-4 sm:py-6 lg:grid-cols-2 lg:gap-14">
           <div className="min-w-0">
-            <SplitHeadline as="h1" text="We're here to help you" className="mt-0 max-w-xl text-4xl font-bold leading-[1.08] tracking-tight text-story-navy sm:text-5xl" />
+            <SplitHeadline as="h1" text="Let's build something together" className="mt-0 max-w-xl text-4xl font-bold leading-[1.08] tracking-tight text-story-navy sm:text-5xl" />
             <Reveal direction="up" delay={0.15}>
-              <p className="mt-5 max-w-lg text-base leading-8 text-[#62708d] sm:text-lg">Course questions, project ideas, or internships — tell us what you need and we&apos;ll point you in the right direction.</p>
+              <p className="mt-5 max-w-lg text-base leading-8 text-[#62708d] sm:text-lg">Tell us about your business and what you want to build. We&apos;ll come back to you with next steps.</p>
             </Reveal>
             <Reveal direction="up" delay={0.25} className="mt-7 flex justify-center lg:justify-start">
-              <ArrowLink href="#contact-form">Send an enquiry</ArrowLink>
+              <ArrowLink href="#contact-form">Start a project</ArrowLink>
             </Reveal>
           </div>
           <Reveal direction="left" delay={0.15} className="min-w-0">

@@ -4,7 +4,7 @@ import { CONTACT_EMAIL } from "@/lib/contactInfo";
 
 export const metadata = createPageMetadata({
   title: "Terms of Use",
-  description: "Terms for using myloginn.com, its courses, internships and services.",
+  description: "The terms for using myloginn.com and MyLoginn services, courses, internships and learning tools, including accounts, payments and acceptable use.",
   path: "/terms",
 });
 

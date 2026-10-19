@@ -3,7 +3,7 @@ import { regionalKeywords } from "@/lib/localSeo";
 import { TestingLanding } from "@/components/services/testing/TestingLanding";
 
 export const metadata = createPageMetadata({
-  title: "Automation Testing",
+  title: "Software Testing & Test Automation Services",
   description:
     "Manual and automated QA for web applications, including API testing and Playwright test automation, from the India-based MyLoginn team.",
   path: "/services/testing-automation",
@@ -19,7 +19,7 @@ const faqs = [
   { question: "Which automation tools do you use?", answer: "We commonly use Playwright for browser automation and Postman or code-based suites for API testing. The tool is chosen to fit your stack and team." },
   { question: "Can automated tests run in CI/CD?", answer: "Yes. Tests can be wired into your pipeline so they run on every change and report failures clearly." },
   { question: "Can you test an application you did not build?", answer: "Yes. Share the application, access and key user flows, and we will propose a test scope." },
-  { question: "Do you also offer testing training?", answer: "MyLoginn runs technology courses through its learning platform. See the courses page for what is currently available." },
+  { question: "Do you also offer testing training?", answer: "Training is offered separately through MyLoginn Learn, our learning platform. See the Learn section for what is currently available." },
 ];
 
 export default function TestingAutomationPage() {
@@ -46,7 +46,7 @@ export default function TestingAutomationPage() {
       related={[
         { href: "/services/app-web-development", label: "Web, mobile and software development" },
         { href: "/services/ai-development", label: "AI development and agents" },
-        { href: "/courses", label: "Technology courses" },
+        { href: "/projects", label: "Projects" },
         { href: "/contact", label: "Contact MyLoginn" },
       ]}
     />

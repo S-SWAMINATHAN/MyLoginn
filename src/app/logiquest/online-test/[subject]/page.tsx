@@ -4,14 +4,26 @@ import { Container } from "@/components/ui/Section";
 import { PageTitle } from "@/components/logiquest/ui";
 import { TestRunner } from "@/components/logiquest/TestRunner";
 import { GROUP_BY_SLUG, getSubjectMeta } from "@/lib/logiquest/catalog";
+import { createPageMetadata } from "@/lib/seo";
 
 type Props = { params: Promise<{ subject: string }>; searchParams: Promise<{ topic?: string }> };
 
 export async function generateMetadata({ params, searchParams }: Props) {
-  const s = getSubjectMeta((await params).subject);
+  const slug = (await params).subject;
+  const s = getSubjectMeta(slug);
   const { topic } = await searchParams;
   const t = s?.topics.find((x) => x.slug === topic);
-  return { title: s ? `${t ? t.title : s.title} Online Test · LogiQuest` : "Online Test · LogiQuest", robots: { index: !t, follow: true } };
+  if (!s) return { title: "Online Test · LogiQuest" };
+  const name = t ? t.title : s.title;
+  // a single-topic test is a filtered view of the subject test: it points search engines at the subject test
+  return createPageMetadata({
+    title: `${name} Online Test | LogiQuest`,
+    absoluteTitle: true,
+    description: `Free timed ${name} online test with 20 questions, an instant score and explained answers. Practise for placement tests and interviews.`,
+    path: `/logiquest/online-test/${slug}`,
+    keywords: [`${name} online test`, `${name} mock test`, `${name} quiz`],
+    noIndex: Boolean(t),
+  });
 }
 
 export default async function TestPage({ params, searchParams }: Props) {

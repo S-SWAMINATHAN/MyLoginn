@@ -1,7 +1,7 @@
 "use client";
 
 import { useClock } from "@/lib/useClock";
-import { useEffect, useRef, useState, type CSSProperties, type KeyboardEvent, type ReactNode } from "react";
+import { useEffect, useLayoutEffect, useRef, useState, type CSSProperties, type KeyboardEvent, type ReactNode } from "react";
 import { AnimatePresence, motion, useMotionValue, useSpring, useTransform } from "framer-motion";
 import { BatteryFull, ChevronLeft, ChevronRight, Lock, Minus, RotateCw, Signal, Square, Wifi, X } from "lucide-react";
 import { useReducedMotion } from "@/lib/useReducedMotion";
@@ -19,26 +19,33 @@ type Placement = { style: CSSProperties; turn: number; name: string };
 type Layout = { w: number; h: number; monitorBottom: number; devices: Record<DeviceId, Placement> };
 
 const WIDE: Layout = {
-  w: 1000,
+  // the monitor centred, with a small, even gap to the angled tablet and phone either side
+  w: 890,
   h: 320,
   monitorBottom: 238,
   devices: {
-    tablet: { style: { left: 40, top: 100, width: 236 }, turn: 34, name: "Tablet" },
-    desktop: { style: { left: 296, top: 6, width: 408 }, turn: 0, name: "Desktop" },
-    phone: { style: { left: 782, top: 56, width: 118 }, turn: -34, name: "Phone" },
+    tablet: { style: { left: 16, top: 96, width: 236 }, turn: 34, name: "Tablet" },
+    desktop: { style: { left: 241, top: 6, width: 408 }, turn: 0, name: "Desktop" },
+    phone: { style: { left: 649, top: 50, width: 128 }, turn: -34, name: "Phone" },
   },
 };
 
 const COMPACT: Layout = {
-  w: 560,
-  h: 650,
-  monitorBottom: 238,
+  // phones: a slider — one device at a time, facing forward, as large as fits
+  w: 400,
+  h: 272,
+  monitorBottom: 250,
   devices: {
-    desktop: { style: { left: 100, top: 6, width: 360 }, turn: 0, name: "Desktop" },
-    tablet: { style: { left: 6, top: 410, width: 226 }, turn: 26, name: "Tablet" },
-    phone: { style: { left: 411, top: 433, width: 116 }, turn: -26, name: "Phone" },
+    desktop: { style: { left: 8, top: 28, width: 384 }, turn: 0, name: "Desktop" },
+    tablet: { style: { left: 50, top: 14, width: 300 }, turn: 0, name: "Tablet" },
+    phone: { style: { left: 134, top: 4, width: 132 }, turn: 0, name: "Phone" },
   },
 };
+
+/** On phones each device is shown on its own for this long before the next slides in. */
+const SLIDE_MS = 2200;
+const SLIDES: DeviceId[] = ["desktop", "tablet", "phone"];
+const DEVICE_NAMES: Record<DeviceId, string> = { desktop: "Desktop", tablet: "Tablet", phone: "Phone" };
 
 const MOTES = [
   { x: "8%", y: "70%", s: 4, d: 7, delay: 0 }, { x: "22%", y: "18%", s: 3, d: 9, delay: 2 }, { x: "48%", y: "86%", s: 3, d: 8, delay: 1 },
@@ -69,10 +76,21 @@ function Hardware({ finish, radius, edge, bezel, extras, children }: { finish: s
 }
 
 /** A faint reflection across the glass, as on a real screen. */
-function Sheen() {
+function Sheen({ flash = false }: { flash?: boolean }) {
   const reduced = useReducedMotion();
   return (
     <>
+      {/* pointing at the device catches the light once, straight away */}
+      {flash && !reduced && (
+        <motion.span
+          aria-hidden
+          className="pointer-events-none absolute inset-y-0 z-30 w-1/2 -skew-x-12"
+          style={{ background: "linear-gradient(90deg, transparent, rgba(255,255,255,0.4), transparent)" }}
+          initial={{ left: "-60%" }}
+          animate={{ left: "160%" }}
+          transition={{ duration: 0.9, ease: [0.45, 0, 0.2, 1] }}
+        />
+      )}
       <span aria-hidden className="pointer-events-none absolute inset-0 z-30" style={{ background: "linear-gradient(115deg, transparent 32%, rgba(255,255,255,0.14) 44%, rgba(255,255,255,0.03) 54%, transparent 64%)" }} />
       {/* a band of studio light sweeping across the glass */}
       {!reduced && (
@@ -145,9 +163,9 @@ function Screen({ scenario, device }: { scenario: Scenario; device: DeviceId }) 
 
 /* ---------- the three devices ---------- */
 
-type FrameProps = { scenario: Scenario; dim: boolean; play: boolean; children: ReactNode };
+type FrameProps = { scenario: Scenario; dim: boolean; play: boolean; flash: boolean; children: ReactNode };
 
-function MonitorFrame({ scenario, dim, play, children }: FrameProps) {
+function MonitorFrame({ scenario, dim, play, flash, children }: FrameProps) {
   const t = scenario.touches.desktop;
   return (
     <Hardware finish={ALUMINIUM} radius={14} edge={2.5} bezel={7}>
@@ -176,14 +194,14 @@ function MonitorFrame({ scenario, dim, play, children }: FrameProps) {
             {children}
             {play && <Cursor key={`${scenario.id}-${scenario.url}`} x={t.x} y={t.y} />}
           </div>
-          <Sheen />
+          <Sheen flash={flash} />
           <Dim on={dim} />
         </div>
     </Hardware>
   );
 }
 
-function TabletFrame({ scenario, dim, play, children }: FrameProps) {
+function TabletFrame({ scenario, dim, play, flash, children }: FrameProps) {
   const t = scenario.touches.tablet;
   return (
     <Hardware finish={SPACE_GREY} radius={20} edge={2} bezel={8} extras={<span aria-hidden className="absolute -top-[1.5px] right-10 h-[2px] w-7 rounded-full" style={{ background: SPACE_GREY }} />}>
@@ -195,14 +213,14 @@ function TabletFrame({ scenario, dim, play, children }: FrameProps) {
             {play && <Tap key={`${scenario.id}-${scenario.url}`} x={t.x} y={t.y} delay={1.1} />}
           </div>
           <span className="absolute bottom-[3px] left-1/2 h-[2.5px] w-14 -translate-x-1/2 rounded-full bg-[#0b1220]/60" />
-          <Sheen />
+          <Sheen flash={flash} />
           <Dim on={dim} />
         </div>
     </Hardware>
   );
 }
 
-function PhoneFrame({ scenario, dim, play, children }: FrameProps) {
+function PhoneFrame({ scenario, dim, play, flash, children }: FrameProps) {
   const t = scenario.touches.phone;
   return (
     <Hardware
@@ -228,7 +246,7 @@ function PhoneFrame({ scenario, dim, play, children }: FrameProps) {
             {play && <Tap key={`${scenario.id}-${scenario.url}`} x={t.x} y={t.y} delay={1.5} />}
           </div>
           <span className="absolute bottom-[4px] left-1/2 h-[3px] w-9 -translate-x-1/2 rounded-full bg-[#0b1220]/70" />
-          <Sheen />
+          <Sheen flash={flash} />
           <Dim on={dim} />
         </div>
     </Hardware>
@@ -244,22 +262,28 @@ type Props = {
   onExplore: (device: DeviceId) => void;
   onLeave: () => void;
   introDelay?: number;
-  /** Rendered centred just below the monitor (at real size, not scaled with the devices). */
+  /** Rendered centred just below the monitor (at real size, not scaled with the devices); under the devices on narrow screens. */
   below?: ReactNode;
+  /** Narrow screens: a sideways swipe across the devices moves to the next (1) or previous (-1) service. */
+  onSwipe?: (dir: 1 | -1) => void;
 };
 
 /**
  * The hero showroom: three realistic devices — tablet, monitor and phone — on a white stage. The device for the current service is brought forward; pointing at (or tapping, or focusing) a device pauses
  * the tour and lets the visitor explore it. The scene leans gently towards the pointer — it never floats on its own.
  */
-export function HeroShowroom({ scenario, focus, exploring, onExplore, onLeave, introDelay = 0, below }: Props) {
+export function HeroShowroom({ scenario, focus, exploring, onExplore, onLeave, introDelay = 0, below, onSwipe }: Props) {
   const reduced = useReducedMotion();
   const wrapRef = useRef<HTMLDivElement>(null);
-  const [width, setWidth] = useState(1000);
+  // unknown until measured: the server cannot know the screen size, so the stage reserves its height with CSS until then
+  const [measured, setMeasured] = useState<number | null>(null);
+  const width = measured ?? 1000;
   const touched = useRef(false);
+  const swipe = useRef<{ x: number; y: number } | null>(null);
 
   const layout = width < 700 ? COMPACT : WIDE;
-  const scale = Math.min(1.15, width / layout.w);
+  const wide = layout === WIDE;
+  const scale = Math.min(wide ? 1.15 : 1.25, width / layout.w);
 
   const px = useMotionValue(0);
   const py = useMotionValue(0);
@@ -268,10 +292,12 @@ export function HeroShowroom({ scenario, focus, exploring, onExplore, onLeave, i
   const rotateY = useTransform(sx, [-0.5, 0.5], [-5, 5]);
   const rotateX = useTransform(sy, [-0.5, 0.5], [3, -3]);
 
-  useEffect(() => {
+  // measured before the first paint, so a phone never sees the desktop arrangement
+  useLayoutEffect(() => {
     const el = wrapRef.current;
     if (!el) return;
-    const ro = new ResizeObserver(([entry]) => setWidth(entry.contentRect.width));
+    setMeasured(el.getBoundingClientRect().width);
+    const ro = new ResizeObserver(([entry]) => setMeasured(entry.contentRect.width));
     ro.observe(el);
     return () => ro.disconnect();
   }, []);
@@ -287,11 +313,37 @@ export function HeroShowroom({ scenario, focus, exploring, onExplore, onLeave, i
 
   const order: DeviceId[] = ["tablet", "desktop", "phone"];
 
+  // phones: which device the slider shows; each service starts again on the monitor
+  const [slide, setSlide] = useState(0);
+  const [slideFor, setSlideFor] = useState(scenario.id);
+  if (slideFor !== scenario.id) { setSlideFor(scenario.id); setSlide(0); }
+  useEffect(() => {
+    if (wide || reduced || slide >= SLIDES.length - 1) return;
+    const t = window.setTimeout(() => setSlide((n) => n + 1), SLIDE_MS);
+    return () => window.clearTimeout(t);
+  }, [wide, reduced, slide, scenario.id]);
+  const step = (dir: 1 | -1) => {
+    const next = slide + dir;
+    if (next < 0 || next >= SLIDES.length) onSwipe?.(dir); // past either end: the previous or next service
+    else setSlide(next);
+  };
+
   return (
+    <div ref={wrapRef} className="relative mx-auto w-full">
     <div
-      ref={wrapRef}
-      className="relative mx-auto w-full select-none"
-      style={{ height: layout.h * scale }}
+      className={`relative w-full select-none ${measured === null ? "invisible aspect-[400/272] min-[700px]:aspect-[890/330]" : ""}`}
+      style={{ height: measured === null ? undefined : layout.h * scale, touchAction: wide ? undefined : "pan-y" }}
+      onPointerDown={(e) => { if (e.pointerType !== "mouse") swipe.current = { x: e.clientX, y: e.clientY }; }}
+      onPointerUp={(e) => {
+        const start = swipe.current;
+        swipe.current = null;
+        if (!start) return;
+        const dx = e.clientX - start.x;
+        if (Math.abs(dx) > 48 && Math.abs(dx) > Math.abs(e.clientY - start.y) * 1.5) {
+          if (!wide) step(dx < 0 ? 1 : -1);
+          else onSwipe?.(dx < 0 ? 1 : -1);
+        }
+      }}
       onPointerMove={(e) => {
         if (reduced || e.pointerType !== "mouse") return;
         const r = e.currentTarget.getBoundingClientRect();
@@ -307,7 +359,7 @@ export function HeroShowroom({ scenario, focus, exploring, onExplore, onLeave, i
           aria-hidden
           className="pointer-events-none absolute top-[5%] h-[80%] w-[45%] rounded-full blur-3xl"
           style={{ background: "radial-gradient(closest-side, rgba(47,111,237,0.22), rgba(34,211,238,0.08), transparent)" }}
-          animate={{ left: focus === "tablet" ? "-2%" : focus === "phone" ? "57%" : "27%" }}
+          animate={{ left: "27%" }}
           transition={{ duration: 1.1, ease: EASE }}
         />
       )}
@@ -325,7 +377,7 @@ export function HeroShowroom({ scenario, focus, exploring, onExplore, onLeave, i
       {/* the camera: a slow push-in as the scene opens */}
       <motion.div
         className="absolute inset-0"
-        initial={reduced ? false : { scale: 0.9, y: 24, opacity: 0 }}
+        initial={false}
         animate={{ scale: 1, y: 0, opacity: 1 }}
         transition={{ duration: 1.8, ease: EASE, delay: Math.max(0, introDelay - 0.4) }}
         style={{ transformOrigin: "50% 30%" }}
@@ -335,34 +387,50 @@ export function HeroShowroom({ scenario, focus, exploring, onExplore, onLeave, i
           {order.map((id, k) => {
             const { style, turn, name } = layout.devices[id];
             const Frame = FRAMES[id];
-            const active = id === focus;
+            // phones: only the current slide is shown; the others wait to its left or right
+            const offset = wide ? 0 : SLIDES.indexOf(id) - slide;
+            const active = wide ? id === focus : offset === 0;
             const keyActivate = (e: KeyboardEvent) => { if (e.key === "Enter" || e.key === " ") { e.preventDefault(); onExplore(id); } };
             return (
               <motion.div
                 key={id}
-                role="button"
-                tabIndex={0}
+                role={wide ? "button" : undefined}
+                tabIndex={wide || active ? 0 : -1}
+                aria-hidden={!wide && !active ? true : undefined}
                 aria-label={`${name}: ${scenario.area}. Explore this device`}
                 aria-pressed={active && exploring}
-                onPointerEnter={(e) => { if (e.pointerType === "mouse") onExplore(id); }}
+                onPointerEnter={(e) => { if (wide && e.pointerType === "mouse") onExplore(id); }}
                 onPointerDown={(e) => { touched.current = e.pointerType !== "mouse"; }}
-                onClick={() => onExplore(id)}
-                onFocus={() => onExplore(id)}
-                onKeyDown={keyActivate}
+                onClick={() => { if (wide) onExplore(id); }}
+                onFocus={() => { if (wide) onExplore(id); }}
+                onKeyDown={wide ? keyActivate : undefined}
                 className="absolute cursor-pointer rounded-[22px] outline-none focus-visible:ring-2 focus-visible:ring-story-royal focus-visible:ring-offset-4"
                 // each side device has its own close perspective, so its 3D angle reads clearly: the tablet's screen faces
                 // right and the phone's faces left — the two screens face each other across the monitor
-                style={{ ...style, transformOrigin: "50% 60%", transformPerspective: 700 }}
-                initial={{ opacity: 0, y: 40, rotateY: turn }}
-                animate={{ opacity: exploring && !active ? 0.7 : 1, y: 0, rotateY: turn, z: active ? (exploring ? 70 : 40) : 0, scale: active && exploring ? 1.04 : 1 }}
-                transition={{
+                style={{ ...style, transformOrigin: "50% 60%", transformPerspective: 700, zIndex: active ? 10 : 1 }}
+                initial={{ opacity: 1, y: 0, rotateY: turn }}
+                // pointed at, a device turns part-way towards the viewer and comes forward a little
+                animate={wide
+                  ? { opacity: exploring && !active ? 0.7 : 1, y: 0, x: 0, rotateY: active && exploring ? turn * 0.45 : turn, scale: active && exploring ? 1.045 : 1 }
+                  : { opacity: active ? 1 : 0, y: 0, x: offset * 260, rotateY: offset * -18, scale: active ? 1 : 0.86 }}
+                transition={!wide ? { type: "spring", stiffness: 120, damping: 20, opacity: { duration: 0.35 } } : {
                   opacity: { duration: 0.6, delay: exploring ? 0 : introDelay + k * 0.25 },
                   y: { duration: 0.9, ease: EASE, delay: introDelay + k * 0.25 },
                   z: { type: "spring", stiffness: 140, damping: 20 },
                   scale: { type: "spring", stiffness: 160, damping: 20 },
+                  rotateY: { type: "spring", stiffness: 110, damping: 18 },
                 }}
               >
-                <Frame scenario={scenario} dim={exploring && !active} play={!reduced && active}>
+                {/* light pooling behind the device in focus */}
+                <motion.span
+                  aria-hidden
+                  className="pointer-events-none absolute -inset-6 -z-10 rounded-[40px] blur-2xl"
+                  style={{ background: "radial-gradient(closest-side, rgba(47,111,237,0.28), rgba(34,211,238,0.12), transparent)" }}
+                  initial={false}
+                  animate={{ opacity: active ? (exploring ? 1 : 0.55) : 0 }}
+                  transition={{ duration: 0.6 }}
+                />
+                <Frame scenario={scenario} dim={exploring && !active} play={!reduced && active} flash={active && exploring}>
                   <Screen scenario={scenario} device={id} />
                 </Frame>
               </motion.div>
@@ -371,11 +439,36 @@ export function HeroShowroom({ scenario, focus, exploring, onExplore, onLeave, i
         </motion.div>
       </div>
       </motion.div>
-      {below && (
-        <div className="absolute inset-x-0 z-40 flex justify-center px-4" style={{ top: layout.monitorBottom * scale + 14 }}>
-          {below}
+      {below && wide && (
+        <motion.div
+          className="pointer-events-none absolute inset-x-0 z-40 flex justify-center px-4"
+          animate={{ y: focus === "desktop" ? (exploring ? 11 : 4) * scale : 0 }}
+          transition={{ type: "spring", stiffness: 140, damping: 20 }}
+          style={{ top: (layout.monitorBottom + 4) * scale, rotateX: reduced ? 0 : rotateX, transformPerspective: 1400 * scale, transformOrigin: `50% ${(layout.h * scale) / 2 - (layout.monitorBottom + 4) * scale}px` }}
+        >
+          {/* kept within the monitor's width so it never runs under the tablet or phone */}
+          <div className="pointer-events-auto" style={{ maxWidth: 400 * scale }}>{below}</div>
+        </motion.div>
+      )}
+    </div>
+      {!wide && (
+        <div className="mt-1 flex justify-center gap-1.5" role="tablist" aria-label="Devices">
+          {SLIDES.map((id, k) => (
+            <button
+              key={id}
+              type="button"
+              role="tab"
+              aria-selected={k === slide}
+              aria-label={DEVICE_NAMES[id]}
+              onClick={() => setSlide(k)}
+              className="grid h-6 place-items-center px-0.5"
+            >
+              <motion.span className="block h-1.5 rounded-full" initial={false} animate={{ width: k === slide ? 18 : 6, backgroundColor: k === slide ? "#1f56d6" : "#c7d2e6" }} transition={{ duration: 0.3 }} />
+            </button>
+          ))}
         </div>
       )}
+      {below && !wide && <div className="relative mt-2 flex justify-center px-2">{below}</div>}
     </div>
   );
 }

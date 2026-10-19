@@ -12,21 +12,11 @@ import {
   LogOut,
   LogIn,
   Rocket,
+  Settings,
 } from "lucide-react";
-import type { ComponentType, CSSProperties } from "react";
-import { AnimatedHome } from "@/components/ui/icons/AnimatedHome";
-import { AnimatedBook } from "@/components/ui/icons/AnimatedBook";
-import { AnimatedCrown } from "@/components/ui/icons/AnimatedCrown";
-import { AnimatedBriefcase } from "@/components/ui/icons/AnimatedBriefcase";
-import { AnimatedFolder } from "@/components/ui/icons/AnimatedFolder";
-import { AnimatedMegaphone } from "@/components/ui/icons/AnimatedMegaphone";
-import { AnimatedCode } from "@/components/ui/icons/AnimatedCode";
-import { AnimatedAi } from "@/components/ui/icons/AnimatedAi";
-import { AnimatedShield } from "@/components/ui/icons/AnimatedShield";
-import { AnimatedMail } from "@/components/ui/icons/AnimatedMail";
-import { AnimatedUser } from "@/components/ui/icons/AnimatedUser";
-import { AnimatedBuilding } from "@/components/ui/icons/AnimatedBuilding";
+import { DuoIcon, type MenuIconKey } from "@/components/ui/icons/DuoIcon";
 import { ProfileMenu, type ProfileUser } from "./ProfileMenu";
+import { Avatar } from "@/components/ui/Avatar";
 import { Button } from "@/components/ui/Button";
 import { LogoLockup } from "@/components/ui/LogoBadge";
 import { cn } from "@/lib/cn";
@@ -51,15 +41,15 @@ type MobileLink = {
   href: string;
   label: string;
   desc?: string;
-  icon: ComponentType<{ className?: string; style?: CSSProperties }>;
+  icon: MenuIconKey;
 };
 
 const mobileMainLinks: MobileLink[] = [
-  { href: "/", label: "Home", desc: "Back to the start", icon: AnimatedHome },
-  { href: "/courses", label: "Courses", desc: "Learn job-ready skills", icon: AnimatedBook },
-  { href: "/practice", label: "Practice", desc: "AI mock interviews, group discussion & speaking", icon: AnimatedAi },
-  { href: "/logiquest", label: "LogiQuest", desc: "Aptitude, reasoning, programming & interview Q&A", icon: AnimatedCode },
-  { href: "/logiquest/leaderboard", label: "Leaderboard", desc: "Top LogiQuest learners", icon: AnimatedCrown },
+  { href: "/", label: "Home", desc: "Back to the start", icon: "home" },
+  { href: "/courses", label: "Courses", desc: "Learn job-ready skills", icon: "courses" },
+  { href: "/practice", label: "Practice", desc: "AI mock interviews, group discussion & speaking", icon: "practice" },
+  { href: "/logiquest", label: "LogiQuest", desc: "Aptitude, reasoning, programming & interview Q&A", icon: "logiquest" },
+  { href: "/logiquest/leaderboard", label: "Leaderboard", desc: "Top LogiQuest learners", icon: "leaderboard" },
 ];
 
 const mobileServiceLinks: MobileLink[] = [
@@ -67,30 +57,30 @@ const mobileServiceLinks: MobileLink[] = [
     href: "/services/digital-marketing",
     label: "Digital Marketing",
     desc: "AI-driven growth campaigns",
-    icon: AnimatedMegaphone,
+    icon: "marketing",
   },
   {
     href: "/services/app-web-development",
     label: "App & Web Development",
     desc: "Full-stack builds, premium UX",
-    icon: AnimatedCode,
+    icon: "web",
   },
-  { href: "/services/ai-development", label: "AI Development", desc: "Generative AI & AI agents", icon: AnimatedAi },
-  { href: "/services/testing-automation", label: "Testing & Automation", desc: "QA, API and Playwright testing", icon: AnimatedShield },
+  { href: "/services/ai-development", label: "AI Development", desc: "Generative AI & AI agents", icon: "ai" },
+  { href: "/services/testing-automation", label: "Testing & Automation", desc: "QA, API and Playwright testing", icon: "testing" },
 ];
 
-const mobileAboutLink: MobileLink = { href: "/about", label: "About", desc: "Who we are and what we value", icon: AnimatedBuilding };
+const mobileAboutLink: MobileLink = { href: "/about", label: "About", desc: "Who we are and what we value", icon: "about" };
 
 const mobileAfterServices: MobileLink[] = [
-  { href: "/projects", label: "Projects", desc: "Our live client work", icon: AnimatedFolder },
-  { href: "/careers", label: "Careers", desc: "Open positions and internships", icon: AnimatedBriefcase },
+  { href: "/projects", label: "Projects", desc: "Our live client work", icon: "projects" },
+  { href: "/careers", label: "Careers", desc: "Open positions and internships", icon: "careers" },
 ];
 
 const mobileContactLink: MobileLink = {
   href: "/contact",
   label: "Contact Us",
   desc: "We reply fast",
-  icon: AnimatedMail,
+  icon: "contact",
 };
 
 type NavSection = "home" | "about" | "services" | "projects" | "careers" | "learn" | "contact";
@@ -266,18 +256,8 @@ export function Navbar({ user }: { user: NavUser }) {
           )}
         </div>
 
+        {/* on small screens the profile and log-in live inside the menu, so the header shows only the menu button */}
         <div className="flex items-center gap-2.5 lg:hidden">
-          {user ? (
-            <ProfileMenu user={user} onOpen={() => setMobileOpen(false)} />
-          ) : (
-            <Link
-              href="/login"
-              aria-label="Log in"
-              className="flex h-10 w-10 items-center justify-center rounded-full border border-border-soft bg-surface transition-all duration-300 hover:border-brand-400 hover:shadow-[0_4px_16px_rgba(31,86,214,0.25)] active:scale-95"
-            >
-              <AnimatedUser className="h-6 w-6" />
-            </Link>
-          )}
           <HamburgerButton open={mobileOpen} onToggle={() => setMobileOpen((o) => !o)} />
         </div>
       </nav>
@@ -414,8 +394,6 @@ function MobileMenu({
             className="fixed inset-x-3 top-[4.75rem] z-50 origin-top overflow-hidden rounded-3xl border border-border-soft bg-surface shadow-[var(--shadow-lift)]"
           >
             {/* ambient gradient glow inside the sheet */}
-            <div className="pointer-events-none absolute -top-24 -right-20 h-56 w-56 rounded-full bg-[radial-gradient(circle,rgba(31,86,214,0.22),transparent_70%)]" />
-            <div className="pointer-events-none absolute -bottom-24 -left-20 h-56 w-56 rounded-full bg-[radial-gradient(circle,rgba(6,182,212,0.18),transparent_70%)]" />
 
             <motion.div
               variants={listVariants}
@@ -423,43 +401,45 @@ function MobileMenu({
               animate="open"
               className="relative max-h-[calc(100dvh-6.5rem)] overflow-y-auto overscroll-contain px-4 pb-5 pt-4"
             >
+              {user && <MobileProfileCard user={user} />}
+
               <div className="flex flex-col gap-1">
-                <MobileNavItem link={mobileMainLinks[0]} active={pathname === "/"} />
-                <MobileNavItem link={mobileAboutLink} active={pathname === "/about"} />
+                <MobileNavItem link={mobileMainLinks[0]} active={pathname === "/"} order={0} />
+                <MobileNavItem link={mobileAboutLink} active={pathname === "/about"} order={1} />
               </div>
 
               <motion.div variants={itemVariants} className="my-3 flex items-center gap-3 px-2">
-                <span className="h-px flex-1 bg-gradient-to-r from-transparent via-border-soft to-transparent" />
-                <span className="text-[11px] font-bold uppercase tracking-[0.16em] brand-gradient-text">Services</span>
-                <span className="h-px flex-1 bg-gradient-to-r from-transparent via-border-soft to-transparent" />
+                <span className="h-px flex-1 bg-border-soft" />
+                <span className="text-[11px] font-bold uppercase tracking-[0.16em] text-story-royal">Services</span>
+                <span className="h-px flex-1 bg-border-soft" />
               </motion.div>
 
               <div className="flex flex-col gap-1">
-                {mobileServiceLinks.map((link) => (
-                  <MobileNavItem key={link.href} link={link} active={pathname === link.href || pathname.startsWith(`${link.href}/`)} />
+                {mobileServiceLinks.map((link, i) => (
+                  <MobileNavItem key={link.href} order={2 + i} link={link} active={pathname === link.href || pathname.startsWith(`${link.href}/`)} />
                 ))}
               </div>
 
               <div className="my-3 flex flex-col gap-1">
-                {mobileAfterServices.map((link) => (
-                  <MobileNavItem key={link.href} link={link} active={pathname === link.href || pathname.startsWith(`${link.href}/`) || (link.href === "/careers" && pathname.startsWith("/internships"))} />
+                {mobileAfterServices.map((link, i) => (
+                  <MobileNavItem key={link.href} order={6 + i} link={link} active={pathname === link.href || pathname.startsWith(`${link.href}/`) || (link.href === "/careers" && pathname.startsWith("/internships"))} />
                 ))}
               </div>
 
               <motion.div variants={itemVariants} className="my-3 flex items-center gap-3 px-2">
-                <span className="h-px flex-1 bg-gradient-to-r from-transparent via-border-soft to-transparent" />
-                <span className="text-[11px] font-bold uppercase tracking-[0.16em] brand-gradient-text">Learn</span>
-                <span className="h-px flex-1 bg-gradient-to-r from-transparent via-border-soft to-transparent" />
+                <span className="h-px flex-1 bg-border-soft" />
+                <span className="text-[11px] font-bold uppercase tracking-[0.16em] text-story-royal">Learn</span>
+                <span className="h-px flex-1 bg-border-soft" />
               </motion.div>
 
               <div className="flex flex-col gap-1">
-                {mobileMainLinks.slice(1).map((link) => (
-                  <MobileNavItem key={link.href} link={link} active={pathname === link.href || pathname.startsWith(`${link.href}/`)} />
+                {mobileMainLinks.slice(1).map((link, i) => (
+                  <MobileNavItem key={link.href} order={8 + i} link={link} active={pathname === link.href || pathname.startsWith(`${link.href}/`)} />
                 ))}
               </div>
 
               <div className="my-3 flex flex-col gap-1">
-                <MobileNavItem link={mobileContactLink} active={pathname === mobileContactLink.href || pathname.startsWith(`${mobileContactLink.href}/`)} />
+                <MobileNavItem order={12} link={mobileContactLink} active={pathname === mobileContactLink.href || pathname.startsWith(`${mobileContactLink.href}/`)} />
               </div>
 
               <motion.div variants={itemVariants} className="mt-4 flex flex-col gap-2 border-t border-border-soft pt-4">
@@ -484,8 +464,7 @@ function MobileMenu({
   );
 }
 
-function MobileNavItem({ link, active }: { link: MobileLink; active: boolean }) {
-  const Icon = link.icon;
+function MobileNavItem({ link, active, order = 0 }: { link: MobileLink; active: boolean; order?: number }) {
   return (
     <motion.div variants={itemVariants}>
       <Link
@@ -497,8 +476,8 @@ function MobileNavItem({ link, active }: { link: MobileLink; active: boolean }) 
             : "hover:bg-surface-2"
         )}
       >
-        <span className="flex h-10 w-10 shrink-0 items-center justify-center transition-transform duration-300 group-hover:scale-110 group-hover:-rotate-6">
-          <Icon className="h-8 w-8" />
+        <span className="transition-transform duration-300 group-hover:scale-110 group-hover:-rotate-6 group-active:scale-90">
+          <DuoIcon name={link.icon} delay={0.25 + order * 0.05} />
         </span>
         <span className="min-w-0 flex-1">
           <span className={cn("block text-sm font-semibold", active && "text-brand-500")}>{link.label}</span>
@@ -534,6 +513,22 @@ function NavHeaderLink({ href, active, children }: { href: string; active: boole
   );
 }
 
+/** The signed-in user's card at the top of the mobile menu. */
+function MobileProfileCard({ user }: { user: ProfileUser }) {
+  return (
+    <motion.div variants={itemVariants} className="mb-3">
+      <Link href="/profile" className="flex items-center gap-3 px-3 py-2 active:scale-[0.99]">
+        <Avatar name={user.name} avatarColor={user.avatarColor} avatarUrl={user.avatarUrl} size={44} fallback="silhouette" />
+        <span className="min-w-0 flex-1">
+          <span className="block truncate text-sm font-semibold text-foreground">{user.name}</span>
+          <span className="block text-xs text-muted">View my profile</span>
+        </span>
+        <ChevronRight className="h-4 w-4 shrink-0 text-muted" />
+      </Link>
+    </motion.div>
+  );
+}
+
 function MobileUserActions({ user }: { user: ProfileUser }) {
   async function handleLogout() {
     await fetch("/api/auth/logout", { method: "POST" });
@@ -544,6 +539,9 @@ function MobileUserActions({ user }: { user: ProfileUser }) {
     <>
       <Button href="/dashboard" variant="primary" icon={<LayoutDashboard className="h-4 w-4" />}>
         Dashboard
+      </Button>
+      <Button href="/profile#account-settings-title" variant="secondary" icon={<Settings className="h-4 w-4" />}>
+        Account settings
       </Button>
       {user.role === "ADMIN" && (
         <Button href="/admin" variant="secondary" icon={<ShieldCheck className="h-4 w-4" />}>

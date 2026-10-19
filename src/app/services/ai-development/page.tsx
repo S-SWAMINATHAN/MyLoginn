@@ -4,14 +4,15 @@ import { StoryLanding } from "@/components/services/story/StoryLanding";
 import { PlanCta, AgentRunMonitor, DocQaMonitor, WorkflowMonitor, SupportChatPhone } from "@/components/services/story/StoryVisuals";
 
 export const metadata = createPageMetadata({
-  title: "AI Solutions",
+  title: "AI Agent Development & Business Automation",
   description:
-    "MyLoginn builds generative AI features, AI agents and workflow automation, and integrates them into your existing software. India-based team serving businesses worldwide.",
+    "Custom AI agents, assistants and workflow automation that work with your data and tools, with human approval where it matters. Built by MyLoginn in India.",
   path: "/services/ai-development",
   keywords: [
     ...regionalKeywords(["AI development company", "AI agent development"]),
     "AI development company India", "AI agent development", "generative AI development",
     "agentic AI", "AI automation", "AI integration", "AI chatbot development",
+    "AI agent creation", "business process automation", "AI assistant development",
   ],
 });
 
@@ -77,7 +78,7 @@ export default function AiDevelopmentPage() {
       related={[
         { href: "/services/app-web-development", label: "Web, mobile and software development" },
         { href: "/services/testing-automation", label: "Software testing and automation" },
-        { href: "/courses/gen-ai-get-ready-for-future", label: "Generative AI course" },
+        { href: "/services/digital-marketing", label: "Digital marketing" },
         { href: "/contact", label: "Contact MyLoginn" },
       ]}
       form={{ service: "AI Development", needs, needsQuestion: "What do you want to build?", goalsPrefix: "AI needs", submitLabel: "Request an estimate", messagePlaceholder: "Describe the workflow, data and tools involved…", heading: "Tell us about your AI project" }}

@@ -9,7 +9,7 @@ import { CONTACT_EMAIL, CONTACT_PHONES } from "@/lib/contactInfo";
 export const metadata = createPageMetadata({
   title: "Services in Tamil Nadu",
   description:
-    "MyLoginn builds websites, mobile apps, AI solutions and digital marketing for businesses across Tamil Nadu, and offers courses and internships.",
+    "MyLoginn builds websites, mobile apps, desktop software, AI agents and digital marketing for businesses across Tamil Nadu.",
   path: "/locations/tamil-nadu",
   keywords: [
     "software company Tamil Nadu", "web development company Tamil Nadu", "app development Tamil Nadu",
@@ -26,9 +26,9 @@ const services = [
 ];
 
 const faqs = [
-  { question: "Which parts of Tamil Nadu do you work with?", answer: "We work with businesses and learners across Tamil Nadu, including Coimbatore, Pollachi, Udumalpet and Erode, and also serve clients elsewhere in India and abroad remotely." },
+  { question: "Which parts of Tamil Nadu do you work with?", answer: "We work with businesses across Tamil Nadu, including Coimbatore, Pollachi, Udumalpet and Erode, and also serve clients elsewhere in India and abroad remotely." },
   { question: "Can you work with a business outside the big cities?", answer: "Yes. Most project work, from discovery calls to delivery, can run online, so location does not limit what we can build." },
-  { question: "Do you offer courses and internships for students in Tamil Nadu?", answer: "Yes. MyLoginn runs online technology courses and internships. See the courses and internships pages for what is currently open." },
+  { question: "Do you offer courses and internships for students in Tamil Nadu?", answer: "Yes, through MyLoginn Learn, our separate learning platform, which runs online technology courses and internships. See the courses and internships pages for what is currently open." },
   { question: "How do I start a project?", answer: `Send an enquiry through the contact page or email ${CONTACT_EMAIL}, and the team will follow up to understand your goals before agreeing scope.` },
 ];
 

@@ -14,6 +14,7 @@ import { TopicNav } from "@/components/logiquest/TopicNav";
 import { GROUP_COLOR } from "@/components/logiquest/subjectStyle";
 import { PAGE_SIZE } from "@/lib/logiquest/constants";
 import { practiceSeed, shuffleQuestions } from "@/lib/logiquest/shuffle";
+import { createPageMetadata } from "@/lib/seo";
 
 type Props = { params: Promise<{ subject: string; topic: string }>; searchParams: Promise<{ ex?: string; page?: string; s?: string }> };
 
@@ -22,11 +23,16 @@ export async function generateMetadata({ params, searchParams }: Props) {
   const { page } = await searchParams;
   const m = getTopicMeta(subject, topic);
   if (!m) return { title: "LogiQuest" };
-  const p = Number(page) > 1 ? ` - Page ${Number(page)}` : "";
-  return {
-    title: `${m.topic.title} - ${m.subject.title} Questions and Answers${p} · LogiQuest`,
-    description: `${m.topic.title} questions and answers with detailed explanations, for placement tests, interviews and competitive exams.`,
-  };
+  const n = Number(page) > 1 ? Number(page) : 1;
+  const p = n > 1 ? ` - Page ${n}` : "";
+  // each page of a paginated topic is its own canonical URL
+  return createPageMetadata({
+    title: `${m.topic.title} Questions and Answers${p} | LogiQuest`,
+    absoluteTitle: true,
+    description: `${m.topic.title} (${m.subject.title}) questions and answers with detailed explanations, for placement tests, interviews and competitive exams.${n > 1 ? ` Page ${n}.` : ""}`,
+    path: `/logiquest/${subject}/${topic}${n > 1 ? `?page=${n}` : ""}`,
+    keywords: [`${m.topic.title} questions`, `${m.topic.title} MCQ`, `${m.topic.title} aptitude`],
+  });
 }
 
 export default async function TopicPage({ params, searchParams }: Props) {

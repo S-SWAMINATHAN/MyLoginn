@@ -9,13 +9,22 @@ import { GROUP_BY_SLUG, getSubjectMeta } from "@/lib/logiquest/catalog";
 import { GROUP_COLOR } from "@/components/logiquest/subjectStyle";
 import { topicCounts } from "@/lib/logiquest/bank";
 import { topicProgress } from "@/lib/logiquest/progress";
+import { createPageMetadata } from "@/lib/seo";
 
 type Props = { params: Promise<{ subject: string }> };
 
 export async function generateMetadata({ params }: Props) {
-  const s = getSubjectMeta((await params).subject);
+  const slug = (await params).subject;
+  const s = getSubjectMeta(slug);
   if (!s) return { title: "LogiQuest" };
-  return { title: `${s.heading} · LogiQuest`, description: `${s.desc} Topics: ${s.topics.map((t) => t.title).join(", ")}.` };
+  const full = `${s.desc} Topics: ${s.topics.map((t) => t.title).join(", ")}.`;
+  return createPageMetadata({
+    title: `${s.heading} | LogiQuest`,
+    absoluteTitle: true,
+    description: full,
+    path: `/logiquest/${slug}`,
+    keywords: [`${s.title} questions and answers`, `${s.title} MCQ`, `${s.title} practice`],
+  });
 }
 
 export default async function SubjectPage({ params }: Props) {

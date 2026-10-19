@@ -4,17 +4,22 @@ import { useCallback, useEffect, useRef, useState } from "react";
 import { motion } from "framer-motion";
 import { Chapter } from "@/components/experience/Chapter";
 import { FancyLink } from "@/components/ui/FancyButton";
+import { PlanButton } from "@/components/ui/PlanButton";
+import { ServiceGlyph } from "@/components/ui/ServiceGlyph";
+import { openProjectRequest } from "@/components/services/ProjectRequestModal";
 import { HeroShowroom } from "@/components/sections/hero/HeroShowroom";
+import { HeroStageLabel } from "@/components/sections/hero/HeroStageLabel";
 import { HeroWordmark } from "@/components/sections/hero/HeroWordmark";
 import { SCENARIOS, withSet, type DeviceId, type ScenarioId } from "@/components/sections/hero/heroScenarios";
 import { useReducedMotion } from "@/lib/useReducedMotion";
+import { cn } from "@/lib/cn";
 
 const SCENARIO_MS = 6500;
 const EASE = [0.16, 1, 0.3, 1] as const;
 
 /** Opening sequence, in seconds: hologram → kinetic headline → devices → services start rotating. */
-const T_HEADLINE = 0.35;
-const T_DEVICES = 1.3;
+const T_HEADLINE = 0;
+const T_DEVICES = 0;
 
 /** Each headline verb owns the services it stands for; the verb for the service on screen lights up. */
 const WORDS: { w: string; ids: ScenarioId[] }[] = [
@@ -25,10 +30,35 @@ const WORDS: { w: string; ids: ScenarioId[] }[] = [
 
 const GRADIENT = "linear-gradient(100deg, var(--story-royal), var(--story-electric) 55%, var(--story-cyan))";
 
+/** The project-request form has no separate AI option; AI agent work is requested as custom software. */
+const REQUEST: Record<ScenarioId, "web" | "mobile" | "software" | "marketing"> = { web: "web", mobile: "mobile", software: "software", ai: "software", marketing: "marketing" };
+
+/** A service disc on the module rail. The disc for the service on show carries a ring that fills until the next one. */
+function ModuleDisc({ id, on, timed, reduced }: { id: ScenarioId; on: boolean; timed: boolean; reduced: boolean }) {
+  return (
+    <span className="relative grid h-11 w-11 place-items-center">
+      <motion.span className="absolute inset-[3px] rounded-full" initial={false} animate={{ backgroundColor: on ? "#1f56d6" : "#eaf1ff" }} transition={{ duration: 0.3 }} />
+      <ServiceGlyph name={id} active={on} className="relative h-6 w-6" />
+      {on && (
+        <svg aria-hidden viewBox="0 0 44 44" className="absolute inset-0 -rotate-90">
+          <circle cx="22" cy="22" r="20.5" fill="none" stroke="rgba(31,86,214,0.15)" strokeWidth="1.5" />
+          <motion.circle
+            cx="22" cy="22" r="20.5" fill="none" stroke="var(--story-royal)" strokeWidth="1.5" strokeLinecap="round"
+            initial={{ pathLength: timed && !reduced ? 0 : 1 }}
+            animate={{ pathLength: 1 }}
+            transition={{ duration: timed && !reduced ? SCENARIO_MS / 1000 : 0, ease: "linear" }}
+          />
+        </svg>
+      )}
+    </span>
+  );
+}
+
 /**
- * Home hero as a white technology showroom: "Build. Automate. Grow." and the service on show sit above it; a tablet, a monitor and a phone stand on a lit platform and cycle through the five core services;
- * glass consoles at the front hold the actions and the service selector. Pointing at a device or a service pauses
- * the tour and brings that service forward.
+ * Home hero as a white technology showroom: "Build. Automate. Grow." and one line on what MyLoginn delivers sit above
+ * it; a tablet, a monitor and a phone cycle through the five core services, with the service on show named on the
+ * stage beneath them. The module rail and the actions sit underneath. Pointing at a device or a module pauses the tour
+ * and brings that service forward; on phones a sideways swipe across the devices moves between services.
  */
 export function Hero() {
   const reduced = useReducedMotion();
@@ -82,6 +112,7 @@ export function Hero() {
   };
 
   const leave = useCallback(() => { setExploring(false); setRun((r) => r + 1); }, []);
+  const swipe = useCallback((dir: 1 | -1) => select((indexRef.current + dir + SCENARIOS.length) % SCENARIOS.length), [select]);
 
   const at = (s: number) => (reduced ? 0 : s);
 
@@ -107,7 +138,7 @@ export function Hero() {
           {/* headline and the service on show */}
           <motion.div
             className="relative mx-auto max-w-3xl px-2 pb-6 pt-2 text-center sm:pb-8 sm:pt-3"
-            initial={reduced ? false : { opacity: 0, scale: 0.94, filter: "blur(8px)" }}
+            initial={false}
             animate={{ opacity: 1, scale: 1, filter: "blur(0px)" }}
             transition={{ duration: 0.9, ease: EASE }}
           >
@@ -121,7 +152,7 @@ export function Hero() {
                       <span className="relative inline-block overflow-hidden pb-[0.08em] align-bottom" onMouseEnter={() => { setHoverWord(i); exploreService(ids.includes(scenario.id) ? index : SCENARIOS.findIndex((s) => s.id === ids[0])); }}>
                         <motion.span
                           className="relative inline-grid"
-                          initial={reduced ? false : { y: "105%" }}
+                          initial={false}
                           animate={{ y: "0%" }}
                           transition={{ duration: 0.8, ease: EASE, delay: at(T_HEADLINE + i * 0.22) }}
                         >
@@ -133,33 +164,16 @@ export function Hero() {
                     </span>
                   );
                 })}
-                <span className="sr-only"> MyLoginn is an IT company for web development, app development, AI agents, digital marketing and custom software and desktop applications.</span>
+                <span className="sr-only"> MyLoginn is a technology company that builds websites, mobile apps, desktop applications, AI agents and digital marketing for businesses.</span>
               </h1>
 
-              {/* the service on show */}
-              <div className="mt-3 grid" aria-live="polite">
-                {SCENARIOS.map((s, i) => {
-                  const on = i === index;
-                  return (
-                    <motion.div
-                      key={s.id}
-                      aria-hidden={on ? undefined : true}
-                      className="col-start-1 row-start-1"
-                      style={{ visibility: on ? "visible" : "hidden" }}
-                      initial={false}
-                      animate={{ opacity: on ? 1 : 0, y: on ? 0 : 8 }}
-                      transition={{ duration: 0.45, ease: EASE }}
-                    >
-                      <p className="text-sm font-bold uppercase tracking-[0.16em] text-story-royal sm:text-lg">0{i + 1} — {s.area}</p>
-                      <p className="mt-1 text-sm text-muted sm:text-base">{s.tagline}</p>
-                    </motion.div>
-                  );
-                })}
-              </div>
+              <p className="mx-auto mt-3 max-w-xl text-sm leading-6 text-muted sm:text-base sm:leading-7">
+                Web platforms, mobile and desktop apps, AI agents and digital marketing, built around how your business works.
+              </p>
             </div>
           </motion.div>
 
-          {/* the showroom, with the calls to action centred under the monitor */}
+          {/* the showroom */}
           <div className="mt-2 sm:mt-0">
             <HeroShowroom
               scenario={scenario}
@@ -168,17 +182,39 @@ export function Hero() {
               onExplore={exploreDevice}
               onLeave={leave}
               introDelay={at(T_DEVICES)}
-              below={
-                <motion.div
-                  className="flex items-center gap-3"
-                  initial={reduced ? false : { opacity: 0, y: 12 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  transition={{ duration: 0.7, ease: EASE, delay: at(T_DEVICES + 0.5) }}
-                >
-                  <FancyLink href="/contact" variant="primary" arrow="right" className="whitespace-nowrap">Start your project</FancyLink>
-                </motion.div>
-              }
+              onSwipe={swipe}
+              below={<HeroStageLabel scenario={scenario} n={index + 1} total={SCENARIOS.length} />}
             />
+          </div>
+
+          {/* the five modules, and the actions */}
+          <div className="mt-6 flex flex-col items-center gap-5 lg:mt-8 lg:flex-row lg:justify-center lg:gap-8">
+            <div role="tablist" aria-label="Our services" className="flex items-start gap-1 sm:gap-2" onMouseLeave={() => { if (exploring) leave(); }}>
+              {SCENARIOS.map((s, i) => {
+                const on = i === index;
+                return (
+                  <button
+                    key={s.id}
+                    type="button"
+                    role="tab"
+                    aria-selected={on}
+                    aria-label={s.area}
+                    onMouseEnter={() => exploreService(i)}
+                    onFocus={() => exploreService(i)}
+                    onClick={() => select(i)}
+                    className="group flex w-[3.9rem] flex-col items-center gap-1 rounded-xl outline-none focus-visible:ring-2 focus-visible:ring-story-royal sm:w-[4.6rem]"
+                  >
+                    <ModuleDisc key={on ? `${s.id}-${run}` : s.id} id={s.id} on={on} timed={!exploring} reduced={reduced} />
+                    <span className={cn("text-[11px] font-semibold leading-tight transition-colors", on ? "text-story-royal" : "text-muted group-hover:text-foreground")}>{s.label}</span>
+                  </button>
+                );
+              })}
+            </div>
+            <span aria-hidden className="hidden h-10 w-px bg-border-soft lg:block" />
+            <div className="flex flex-wrap items-center justify-center gap-3">
+              <FancyLink href="#services" variant="primary" className="whitespace-nowrap">Explore solutions</FancyLink>
+              <PlanButton label="Start a project" tone="light" onClick={() => openProjectRequest(REQUEST[scenario.id])} />
+            </div>
           </div>
         </div>
       </div>

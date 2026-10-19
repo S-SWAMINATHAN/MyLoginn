@@ -4,23 +4,11 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useEffect, useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import type { ComponentType, CSSProperties } from "react";
-import { AnimatedHome } from "@/components/ui/icons/AnimatedHome";
-import { AnimatedBook } from "@/components/ui/icons/AnimatedBook";
-import { AnimatedCrown } from "@/components/ui/icons/AnimatedCrown";
-import { AnimatedBriefcase } from "@/components/ui/icons/AnimatedBriefcase";
-import { AnimatedFolder } from "@/components/ui/icons/AnimatedFolder";
-import { AnimatedLayers } from "@/components/ui/icons/AnimatedLayers";
-import { AnimatedGraduation } from "@/components/ui/icons/AnimatedGraduation";
-import { AnimatedMegaphone } from "@/components/ui/icons/AnimatedMegaphone";
-import { AnimatedCode } from "@/components/ui/icons/AnimatedCode";
-import { AnimatedAi } from "@/components/ui/icons/AnimatedAi";
-import { AnimatedShield } from "@/components/ui/icons/AnimatedShield";
-import { AnimatedSparkle } from "@/components/ui/icons/AnimatedSparkle";
-import { AnimatedMail } from "@/components/ui/icons/AnimatedMail";
+import { ChevronRight, GraduationCap, House, LayoutGrid, Mail, type LucideIcon } from "lucide-react";
+import { DuoIcon, type MenuIconKey } from "@/components/ui/icons/DuoIcon";
 import { cn } from "@/lib/cn";
 
-type IconComponent = ComponentType<{ className?: string; style?: CSSProperties }>;
+type IconComponent = LucideIcon;
 
 type TabItem = {
   key: string;
@@ -30,24 +18,24 @@ type TabItem = {
   isActive: (pathname: string) => boolean;
 };
 
-const servicesPopupLinks: { href: string; label: string; desc: string; icon: IconComponent }[] = [
-  { href: "/internships", label: "Internship", desc: "Get real-world experience", icon: AnimatedBriefcase },
-  { href: "/projects", label: "Project", desc: "Build your portfolio", icon: AnimatedFolder },
-  { href: "/services/digital-marketing", label: "Digital Marketing", desc: "AI-driven growth campaigns", icon: AnimatedMegaphone },
-  { href: "/services/app-web-development", label: "App & Web Development", desc: "Full-stack builds, premium UX", icon: AnimatedCode },
-  { href: "/services/ai-development", label: "AI Development", desc: "Generative AI & AI agents", icon: AnimatedAi },
-  { href: "/services/testing-automation", label: "Testing & Automation", desc: "QA, API and Playwright testing", icon: AnimatedShield },
+const servicesPopupLinks: { href: string; label: string; desc: string; icon: MenuIconKey }[] = [
+  { href: "/services/app-web-development", label: "App & Web Development", desc: "Websites, mobile and desktop apps", icon: "web" },
+  { href: "/services/ai-development", label: "AI Development", desc: "AI agents & intelligent automation", icon: "ai" },
+  { href: "/services/digital-marketing", label: "Digital Marketing", desc: "AI-driven growth campaigns", icon: "marketing" },
+  { href: "/services/testing-automation", label: "Testing & Automation", desc: "QA, API and Playwright testing", icon: "testing" },
+  { href: "/projects", label: "Projects", desc: "Our live client work", icon: "projects" },
+  { href: "/careers", label: "Careers", desc: "Join the MyLoginn team", icon: "careers" },
 ];
 
-const learnPopupLinks: { href: string; label: string; desc: string; icon: IconComponent }[] = [
-  { href: "/courses", label: "Courses", desc: "Learn job-ready skills", icon: AnimatedBook },
-  { href: "/practice", label: "Practice", desc: "AI mock interviews, group discussion & speaking", icon: AnimatedAi },
-  { href: "/logiquest", label: "LogiQuest", desc: "Aptitude, reasoning, programming & interview Q&A", icon: AnimatedCode },
-  { href: "/logiquest/leaderboard", label: "Leaderboard", desc: "Top LogiQuest learners", icon: AnimatedCrown },
+const learnPopupLinks: { href: string; label: string; desc: string; icon: MenuIconKey }[] = [
+  { href: "/courses", label: "Courses", desc: "Learn job-ready skills", icon: "courses" },
+  { href: "/practice", label: "Practice", desc: "AI mock interviews, group discussion & speaking", icon: "practice" },
+  { href: "/logiquest", label: "LogiQuest", desc: "Aptitude, reasoning, programming & interview Q&A", icon: "logiquest" },
+  { href: "/logiquest/leaderboard", label: "Leaderboard", desc: "Top LogiQuest learners", icon: "leaderboard" },
 ];
 
 const isLearnPath = (p: string) => p.startsWith("/courses") || p.startsWith("/logiquest") || p.startsWith("/practice") || p === "/tutoring";
-const isServicesPath = (p: string) => p.startsWith("/services") || p.startsWith("/internships") || p.startsWith("/projects");
+const isServicesPath = (p: string) => p.startsWith("/services") || p.startsWith("/projects") || p.startsWith("/careers");
 
 export function MobileBottomNav() {
   const pathname = usePathname();
@@ -58,10 +46,10 @@ export function MobileBottomNav() {
   }, [pathname]);
 
   const tabs: TabItem[] = [
-    { key: "home", label: "Home", icon: AnimatedHome, href: "/", isActive: (p) => p === "/" },
-    { key: "learn", label: "Learn", icon: AnimatedBook, isActive: isLearnPath },
-    { key: "services", label: "Services", icon: AnimatedLayers, isActive: isServicesPath },
-    { key: "contact", label: "Contact Us", icon: AnimatedMail, href: "/contact", isActive: (p) => p === "/contact" },
+    { key: "home", label: "Home", icon: House, href: "/", isActive: (p) => p === "/" },
+    { key: "services", label: "Services", icon: LayoutGrid, isActive: isServicesPath },
+    { key: "learn", label: "Learn", icon: GraduationCap, isActive: isLearnPath },
+    { key: "contact", label: "Contact Us", icon: Mail, href: "/contact", isActive: (p) => p === "/contact" },
   ];
 
   return (
@@ -89,33 +77,31 @@ export function MobileBottomNav() {
               className="fixed inset-x-3 z-50 origin-bottom overflow-hidden max-h-[calc(100dvh-7.5rem)] overflow-y-auto rounded-3xl border border-border-soft bg-surface p-2 shadow-[var(--shadow-lift)]"
               style={{ bottom: "calc(5rem + env(safe-area-inset-bottom))" }}
             >
-              <div className="pointer-events-none absolute -top-20 -right-16 h-44 w-44 rounded-full bg-[radial-gradient(circle,rgba(31,86,214,0.2),transparent_70%)]" />
-              <p className="px-3.5 pb-1 pt-2 text-[11px] font-bold uppercase tracking-[0.16em] brand-gradient-text">
-                {openMenu === "learn" ? "Learn" : "Services"}
+              <p className="px-3.5 pb-1 pt-2 text-[11px] font-bold uppercase tracking-[0.16em] text-story-royal">
+                {openMenu === "learn" ? "MyLoginn Learn" : "Services"}
               </p>
-              {(openMenu === "learn" ? learnPopupLinks : servicesPopupLinks).map((s) => {
-                const Icon = s.icon;
+              {(openMenu === "learn" ? learnPopupLinks : servicesPopupLinks).map((s, i) => {
                 const active = pathname === s.href || pathname.startsWith(`${s.href}/`);
                 return (
-                  <Link
-                    key={s.href}
-                    href={s.href}
-                    onClick={() => setOpenMenu(null)}
-                    className={cn(
-                      "group flex items-center gap-3.5 rounded-2xl px-3 py-2.5 transition-all duration-200 active:scale-[0.98]",
-                      active
-                        ? "bg-brand-50 ring-1 ring-brand-200 dark:bg-brand-900/25 dark:ring-brand-700/50"
-                        : "hover:bg-surface-2"
-                    )}
-                  >
-                    <span className="flex h-10 w-10 shrink-0 items-center justify-center">
-                      <Icon className="h-8 w-8" />
-                    </span>
-                    <span className="min-w-0 flex-1">
-                      <span className={cn("block text-sm font-semibold", active && "text-brand-500")}>{s.label}</span>
-                      <span className="block truncate text-xs text-muted">{s.desc}</span>
-                    </span>
-                  </Link>
+                  <motion.div key={s.href} initial={{ opacity: 0, x: -12 }} animate={{ opacity: 1, x: 0 }} transition={{ delay: 0.05 + i * 0.045, duration: 0.3, ease: [0.16, 1, 0.3, 1] }}>
+                    <Link
+                      href={s.href}
+                      onClick={() => setOpenMenu(null)}
+                      className={cn(
+                        "group flex items-center gap-3.5 rounded-2xl px-3 py-2.5 transition-colors duration-200 active:scale-[0.98]",
+                        active ? "bg-brand-50 ring-1 ring-brand-200 dark:bg-brand-900/25 dark:ring-brand-700/50" : "hover:bg-surface-2"
+                      )}
+                    >
+                      <span className="transition-transform duration-300 group-active:scale-90">
+                        <DuoIcon name={s.icon} delay={0.1 + i * 0.045} />
+                      </span>
+                      <span className="min-w-0 flex-1">
+                        <span className={cn("block text-sm font-semibold", active && "text-brand-500")}>{s.label}</span>
+                        <span className="block truncate text-xs text-muted">{s.desc}</span>
+                      </span>
+                      <ChevronRight aria-hidden className="h-4 w-4 shrink-0 text-muted transition-transform duration-300 group-hover:translate-x-0.5 group-active:translate-x-1" />
+                    </Link>
+                  </motion.div>
                 );
               })}
             </motion.div>
@@ -168,22 +154,25 @@ function TabButton({
     <>
       {active && (
         <motion.span
-          layoutId="bottom-nav-pill"
+          layoutId="bottom-nav-indicator"
           transition={{ type: "spring", stiffness: 420, damping: 34 }}
-          className="absolute inset-x-0.5 inset-y-1.5 rounded-2xl bg-brand-50 ring-1 ring-brand-200 dark:bg-brand-900/25 dark:ring-brand-700/50"
+          className="absolute inset-x-[28%] top-0 h-[3px] rounded-b-full bg-story-royal"
         />
       )}
+      {/* keyed by state: switching to active replays the icon drawing itself in, with a small spring */}
       <motion.span
-        animate={active ? { y: -1, scale: 1.08 } : { y: 0, scale: 1 }}
-        transition={{ type: "spring", stiffness: 420, damping: 26 }}
-        className="relative flex h-7 w-7 items-center justify-center"
+        key={active ? "on" : "off"}
+        initial={active ? { scale: 0.7, y: 4 } : false}
+        animate={{ scale: 1, y: active ? -1 : 0 }}
+        transition={{ type: "spring", stiffness: 420, damping: 18 }}
+        className={cn("relative flex h-7 w-7 items-center justify-center transition-colors duration-200", active ? "text-story-royal" : "text-muted")}
       >
-        <Icon className="h-6 w-6" />
+        <Icon className={cn("h-[23px] w-[23px]", active && "icon-draw icon-draw-fast")} strokeWidth={active ? 2.1 : 1.7} />
       </motion.span>
       <span
         className={cn(
           "relative max-w-full truncate text-[10px] font-semibold leading-none transition-colors duration-200",
-          active ? "text-brand-500" : "text-muted"
+          active ? "text-story-royal" : "text-muted"
         )}
       >
         {tab.label}

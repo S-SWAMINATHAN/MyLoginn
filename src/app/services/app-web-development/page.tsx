@@ -25,8 +25,8 @@ const developmentFaqs = [
 const stack = ["Next.js", "React Native", "Node.js", "PostgreSQL", "Prisma", "Three.js", "Tailwind CSS", "AWS / Vercel"];
 
 export const metadata = createPageMetadata({
-  title: "Web & App Development",
-  description: "Secure, scalable websites, web applications, Android and iOS apps and custom software from MyLoginn, an India-based team serving businesses across India, including Coimbatore and Tamil Nadu, and abroad.",
+  title: "Web, App & Desktop Software Development",
+  description: "Websites, web apps and SaaS platforms, iOS and Android apps, and custom desktop software such as CRMs and ERPs, built by MyLoginn's India-based team.",
   path: "/services/app-web-development",
   keywords: [
     ...regionalKeywords(["web development company", "mobile app development"]),
@@ -35,6 +35,8 @@ export const metadata = createPageMetadata({
     "website development services", "web application development",
     "mobile app development company", "app development company",
     "custom software development", "full-stack development",
+    "desktop application development", "CRM development", "ERP development", "SaaS development",
+    "iOS app development", "Android app development", "business website development",
   ],
 });
 
@@ -52,6 +54,7 @@ const needs = [
 export default function AppWebDevelopmentPage() {
   return (
     <StoryLanding
+      service={{ name: "Web, App and Desktop Software Development", description: "Websites, web applications, SaaS platforms, iOS and Android apps, and custom desktop software built around how a business works.", path: "/services/app-web-development", serviceType: "Software development" }}
       eyebrow="Full-stack development"
       h1="Development that builds scalable platforms"
       intro="Custom end-to-end app and web development, leveraging modern technology stacks for robust, high-performance, and secure user experiences."

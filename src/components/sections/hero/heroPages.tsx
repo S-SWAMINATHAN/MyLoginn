@@ -103,8 +103,8 @@ export function ClinicSite() {
       </div>
       <AnimatePresence>
         {booked && (
-          <motion.div key="ok" initial={{ y: 30, opacity: 0 }} animate={{ y: 0, opacity: 1 }} exit={{ opacity: 0 }} className="absolute inset-x-3 bottom-3 flex items-center gap-2 rounded-xl bg-[#0b1f4d] px-3 py-2 text-white">
-            <CheckCircle2 className="h-5 w-5 text-[#4ade80]" /><span className="text-[10px] leading-tight"><b className="block">Appointment confirmed</b>Dr. Kavya R. · Today, 11:00 AM</span>
+          <motion.div key="ok" initial={{ y: 30, opacity: 0 }} animate={{ y: 0, opacity: 1 }} exit={{ opacity: 0 }} className="absolute inset-x-3 bottom-3 flex items-center gap-2 rounded-xl border border-[#bbf7d0] bg-[#f0fdf4] px-3 py-2 text-[#14532d] shadow-[0_8px_20px_-10px_rgba(22,163,74,0.5)]">
+            <CheckCircle2 className="h-5 w-5 text-[#16a34a]" /><span className="text-[10px] leading-tight"><b className="block">Appointment confirmed</b>Dr. Kavya R. · Today, 11:00 AM</span>
           </motion.div>
         )}
       </AnimatePresence>
@@ -118,7 +118,7 @@ export function RealEstateMobile() {
   return (
     <div className="flex h-full flex-col bg-white">
       <div className="flex items-center gap-1.5 px-3 py-2"><span className="text-[12px] font-black text-[#0b1f4d]">your<span className="text-[#f97316]">homes</span></span><span className="ml-auto flex items-center gap-1 rounded-full bg-[#f1f5f9] px-2 py-1 text-[8px] text-[#64748b]"><Search className="h-2.5 w-2.5" />Coimbatore</span></div>
-      <div className="flex gap-1.5 px-3 pb-2">{["Buy", "Rent", "Plots"].map((t, k) => <span key={t} className={`rounded-full px-2.5 py-0.5 text-[9px] font-semibold ${k === 0 ? "bg-[#0b1f4d] text-white" : "bg-[#f1f5f9] text-[#64748b]"}`}>{t}</span>)}</div>
+      <div className="flex gap-1.5 px-3 pb-2">{["Buy", "Rent", "Plots"].map((t, k) => <span key={t} className={`rounded-full px-2.5 py-0.5 text-[9px] font-semibold ${k === 0 ? "bg-[#1f56d6] text-white" : "bg-[#f1f5f9] text-[#64748b]"}`}>{t}</span>)}</div>
       <motion.div initial={{ opacity: 0, y: 12 }} animate={{ opacity: 1, y: 0 }} className="mx-3 overflow-hidden rounded-xl border border-[#eef2f7]">
         <div className="relative h-[92px]">
           <Photo src="villa.jpg" className="absolute inset-0 h-full w-full" />
@@ -193,7 +193,7 @@ export function RestaurantPos() {
             </motion.span>
           ))}
         </div>
-        <div className="mt-3 grid grid-cols-3 gap-1.5">{["Starters", "Mains", "Drinks"].map((c, k) => <span key={c} className={`rounded-lg py-1.5 text-center text-[9px] font-semibold ${k === 1 ? "bg-[#0b1f4d] text-white" : "bg-white text-[#475569] shadow-[inset_0_0_0_1px_#e6ebf3]"}`}>{c}</span>)}</div>
+        <div className="mt-3 grid grid-cols-3 gap-1.5">{["Starters", "Mains", "Drinks"].map((c, k) => <span key={c} className={`rounded-lg py-1.5 text-center text-[9px] font-semibold ${k === 1 ? "bg-[#1f56d6] text-white" : "bg-white text-[#475569] shadow-[inset_0_0_0_1px_#e6ebf3]"}`}>{c}</span>)}</div>
       </div>
       <div className="flex flex-col border-l border-[#eef2f7] bg-white p-3">
         <p className="text-[11px] font-bold">Order · Table 5</p>
@@ -224,23 +224,23 @@ function Ring({ r, color, pct, delay }: { r: number; color: string; pct: number;
 export function FitnessApp() {
   const bpm = useLive(118, 4, 700);
   return (
-    <div className="flex h-full flex-col bg-[#0b1220] px-3 pt-2 text-white">
-      <p className="text-[9px] text-white/60">Thursday</p>
+    <div className="flex h-full flex-col bg-white px-3 pt-2 text-[#0b1f4d]">
+      <p className="text-[9px] text-[#94a3b8]">Thursday</p>
       <p className="text-[14px] font-bold">Today&apos;s activity</p>
       <div className="relative mx-auto mt-2 h-[110px] w-[110px]">
         <svg viewBox="0 0 100 100" className="h-full w-full -rotate-90" aria-hidden>
           <Ring r={42} color="#fb7185" pct={0.82} delay={0.2} />
-          <Ring r={31} color="#a3e635" pct={0.64} delay={0.4} />
-          <Ring r={20} color="#22d3ee" pct={0.9} delay={0.6} />
+          <Ring r={31} color="#65a30d" pct={0.64} delay={0.4} />
+          <Ring r={20} color="#0891b2" pct={0.9} delay={0.6} />
         </svg>
       </div>
       <div className="mt-2 grid grid-cols-3 gap-1.5 text-center">
-        {[{ I: Flame, v: 486, u: "kcal", c: "#fb7185" }, { I: Footprints, v: 8240, u: "steps", c: "#a3e635" }, { I: Clock, v: 42, u: "min", c: "#22d3ee" }].map(({ I, v, u, c }) => (
-          <span key={u} className="rounded-xl bg-white/5 py-1.5"><I className="mx-auto h-3.5 w-3.5" style={{ color: c }} /><span className="block text-[11px] font-bold"><CountUp to={v} /></span><span className="text-[8px] text-white/50">{u}</span></span>
+        {[{ I: Flame, v: 486, u: "kcal", c: "#fb7185" }, { I: Footprints, v: 8240, u: "steps", c: "#65a30d" }, { I: Clock, v: 42, u: "min", c: "#0891b2" }].map(({ I, v, u, c }) => (
+          <span key={u} className="rounded-xl bg-[#f8fafc] py-1.5 shadow-[inset_0_0_0_1px_#eef2f7]"><I className="mx-auto h-3.5 w-3.5" style={{ color: c }} /><span className="block text-[11px] font-bold"><CountUp to={v} /></span><span className="text-[8px] text-[#94a3b8]">{u}</span></span>
         ))}
       </div>
-      <div className="mt-2 rounded-xl bg-white/5 p-2">
-        <p className="flex items-center justify-between text-[9px] text-white/70"><span className="flex items-center gap-1"><Activity className="h-3 w-3 text-[#fb7185]" />Heart rate</span><span className="text-[12px] font-bold tabular-nums text-white">{bpm} <span className="text-[8px] font-normal text-white/50">bpm</span></span></p>
+      <div className="mt-2 rounded-xl bg-[#f8fafc] p-2 shadow-[inset_0_0_0_1px_#eef2f7]">
+        <p className="flex items-center justify-between text-[9px] text-[#64748b]"><span className="flex items-center gap-1"><Activity className="h-3 w-3 text-[#fb7185]" />Heart rate</span><span className="text-[12px] font-bold tabular-nums text-[#0b1f4d]">{bpm} <span className="text-[8px] font-normal text-[#94a3b8]">bpm</span></span></p>
         <svg viewBox="0 0 100 20" className="mt-1 h-5 w-full" aria-hidden>
           <motion.path d="M0 12 L18 12 L22 4 L27 18 L31 12 L50 12 L54 6 L58 16 L62 12 L100 12" fill="none" stroke="#fb7185" strokeWidth="1.5" initial={{ pathLength: 0 }} animate={{ pathLength: 1 }} transition={{ duration: 1.6, repeat: Infinity, ease: "linear" }} />
         </svg>
@@ -248,7 +248,7 @@ export function FitnessApp() {
       <div className="relative mb-3 mt-auto h-14 overflow-hidden rounded-xl">
         <Photo src="fitness.jpg" className="absolute inset-0" position="center 30%" />
         <span className="absolute inset-0 bg-gradient-to-r from-black/70 to-transparent" />
-        <span className="absolute left-2 top-1/2 -translate-y-1/2 leading-tight"><span className="block text-[8px] text-white/70">Next up</span><span className="text-[11px] font-bold">Core · 20 min</span></span>
+        <span className="absolute left-2 top-1/2 -translate-y-1/2 leading-tight text-white"><span className="block text-[8px] text-white/70">Next up</span><span className="text-[11px] font-bold">Core · 20 min</span></span>
         <span className="absolute right-2 top-1/2 -translate-y-1/2 rounded-full bg-[#a3e635] px-2.5 py-1 text-[9px] font-bold text-[#0b1220]">Start</span>
       </div>
     </div>
@@ -474,11 +474,11 @@ export function FieldServiceApp() {
   const synced = step >= 4;
   return (
     <div className="flex h-full flex-col">
-      <div className="bg-[#0b1f4d] px-3 pb-3 pt-2 text-white">
-        <p className="text-[9px] text-white/70">Thursday · 3 jobs</p>
+      <div className="bg-[#eef3ff] px-3 pb-3 pt-2 text-[#0b1f4d]">
+        <p className="text-[9px] text-[#64748b]">Thursday · 3 jobs</p>
         <p className="text-[14px] font-bold">Good morning, Arun</p>
-        <div className="mt-2 h-1.5 overflow-hidden rounded-full bg-white/15"><motion.div className="h-full rounded-full bg-[#22d3ee]" animate={{ width: `${(done / 3) * 100}%` }} transition={{ duration: 0.6, ease: EASE }} /></div>
-        <p className="mt-1 text-[9px] text-white/70">{done} of 3 completed</p>
+        <div className="mt-2 h-1.5 overflow-hidden rounded-full bg-white"><motion.div className="h-full rounded-full bg-[#22d3ee]" animate={{ width: `${(done / 3) * 100}%` }} transition={{ duration: 0.6, ease: EASE }} /></div>
+        <p className="mt-1 text-[9px] text-[#64748b]">{done} of 3 completed</p>
       </div>
       <div className="flex flex-col gap-1.5 px-3 pt-2">
         {JOBS.map((j, k) => {

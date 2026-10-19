@@ -7,13 +7,21 @@ import { RichText } from "@/components/logiquest/RichText";
 import { TopicTabs } from "@/components/logiquest/TopicTabs";
 import { GROUP_BY_SLUG, getTopicMeta } from "@/lib/logiquest/catalog";
 import { getTopic } from "@/lib/logiquest/bank";
+import { createPageMetadata } from "@/lib/seo";
 
 type Props = { params: Promise<{ subject: string; topic: string }> };
 
 export async function generateMetadata({ params }: Props) {
   const { subject, topic } = await params;
   const m = getTopicMeta(subject, topic);
-  return m ? { title: `${m.topic.title} - Explanation and Formulas · LogiQuest`, description: `Concepts, formulas and shortcuts for ${m.topic.title} with solved examples.` } : { title: "LogiQuest" };
+  if (!m) return { title: "LogiQuest" };
+  return createPageMetadata({
+    title: `${m.topic.title} Formulas and Explanation | LogiQuest`,
+    absoluteTitle: true,
+    description: `Concepts, formulas and shortcuts for ${m.topic.title} (${m.subject.title}) with solved examples, before you practise the questions.`,
+    path: `/logiquest/${subject}/${topic}/formulas`,
+    keywords: [`${m.topic.title} formulas`, `${m.topic.title} shortcuts`],
+  });
 }
 
 export default async function FormulasPage({ params }: Props) {

@@ -23,7 +23,7 @@ const courseFaqs = [
 
 export const metadata = createPageMetadata({
   title: "Courses",
-  description: "Explore mentor-led artificial intelligence, data, full-stack and digital marketing courses for learners across India, including Tamil Nadu.",
+  description: "Practical AI, data, full-stack development, testing and digital marketing courses from MyLoginn, with hands-on projects for learners across India.",
   path: "/courses",
   keywords: [
     ...localKeywords(["AI course", "technology courses", "full stack course", "Python course"]),
@@ -81,7 +81,7 @@ export default async function CoursesPage() {
             <SplitHeadline as="h1" text="Master skills for your future" className="mt-0 max-w-xl text-4xl font-bold leading-[1.08] tracking-tight text-story-navy sm:text-5xl dark:text-foreground" />
             <Reveal direction="up" delay={0.15}>
               <p className="mt-5 max-w-lg text-base leading-8 text-muted sm:text-lg">Explore current course topics, levels, duration, fees, and enrolment details in the listings below.</p>
-              <p className="mt-3 max-w-lg text-sm leading-6 text-muted">MyLoginn offers mentor-led AI and technology learning for learners everywhere. Browse current courses and contact us if you have any questions.</p>
+              <p className="mt-3 max-w-lg text-sm leading-6 text-muted">MyLoginn offers practical AI and technology learning for learners everywhere. Browse current courses and contact us if you have any questions.</p>
             </Reveal>
             <Reveal direction="up" delay={0.25} className="mt-7 flex flex-wrap items-center justify-center gap-3 lg:justify-start">
               <ArrowLink href="#courses-list">Browse courses</ArrowLink>

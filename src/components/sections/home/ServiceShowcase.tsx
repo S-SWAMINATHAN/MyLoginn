@@ -61,7 +61,7 @@ function ServiceRow({ service, index }: { service: CoreService; index: number })
 }
 
 /**
- * 04 — What we build. Each core service is a row with its copy on one side and a live, multi-page product tour on
+ * 02 — What we build. Each core service is a row with its copy on one side and a live, multi-page product tour on
  * the other. The rows alternate sides, and every tour has the same frame so the rows line up. On small screens each
  * row stacks, copy first.
  */
@@ -71,7 +71,12 @@ export function ServiceShowcase() {
       <div className="mx-auto w-full max-w-6xl px-5 sm:px-8">
         <div className="max-w-2xl">
           <Reveal><span className="story-eyebrow">What we build</span></Reveal>
-          <SplitHeadline as="h2" text="Every service, engineered end to end." className="story-subheading mt-4 text-story-navy" />
+          <SplitHeadline as="h2" text="Technology built around the way your business works." className="story-subheading mt-4 text-story-navy" />
+          <Reveal direction="up" delay={0.1}>
+            <p className="mt-5 max-w-xl text-base leading-7 text-muted">
+              We don&apos;t just ship digital products. We start from your operations, customers and goals, then design, develop, automate and market the technology that serves them, across five core capabilities.
+            </p>
+          </Reveal>
         </div>
         <div className="mt-4 divide-y divide-border-soft">
           {CORE_SERVICES.map((s, i) => <ServiceRow key={s.id} service={s} index={i} />)}

@@ -3,7 +3,7 @@ import { FaqAccordion } from "@/components/ui/FaqAccordion";
 import { Reveal } from "@/components/ui/Reveal";
 import { SplitHeadline } from "@/components/experience/SplitHeadline";
 import { JsonLd } from "@/components/seo/JsonLd";
-import { faqStructuredData } from "@/lib/structuredData";
+import { faqStructuredData, serviceStructuredData } from "@/lib/structuredData";
 import { StoryRow } from "@/components/services/testing/TestingLanding";
 import { AreaGrid } from "@/components/services/story/StoryLanding";
 import { StepTracker } from "@/components/services/testing/TestingVisuals";
@@ -39,6 +39,7 @@ export function MarketingLanding({ areas, faqs }: { areas: Area[]; faqs: Faq[] }
   return (
     <Section className="pt-6 sm:pt-10">
       <JsonLd data={faqStructuredData(faqs)} />
+      <JsonLd data={serviceStructuredData({ name: "Digital Marketing", description: "Meta Ads, Google Ads, SEO, branding and performance marketing focused on acquiring customers.", path: "/services/digital-marketing", serviceType: "Digital marketing" })} />
 
       {/* Hero */}
       <div className="mx-auto grid w-full min-w-0 max-w-6xl items-center gap-12 px-5 sm:px-8 lg:grid-cols-2 lg:gap-16">

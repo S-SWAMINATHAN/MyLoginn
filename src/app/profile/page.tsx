@@ -43,10 +43,10 @@ export default async function ProfilePage() {
             </Link>
           </Reveal>
 
-          <div className="text-right">
+          <div className="sm:text-right">
             <SplitHeadline as="h1" text="My profile" className="mt-0 text-3xl font-bold leading-[1.08] tracking-tight text-story-navy sm:text-4xl dark:text-foreground" />
             <Reveal direction="up" delay={0.15}>
-              <p className="ml-auto mt-2 max-w-xl text-sm leading-6 text-muted sm:text-base">Your personal details and learning profile.</p>
+              <p className="mt-2 max-w-xl sm:ml-auto text-sm leading-6 text-muted sm:text-base">Your personal details and learning profile.</p>
             </Reveal>
           </div>
         </div>
@@ -54,7 +54,7 @@ export default async function ProfilePage() {
         <div className="mt-6 grid gap-6 lg:grid-cols-[21rem_minmax(0,1fr)] lg:gap-8">
           {/* Identity */}
           <Reveal direction="right">
-            <aside className="rounded-3xl border border-border-soft bg-surface p-6 text-center shadow-[var(--shadow-soft)] lg:sticky lg:top-24">
+            <aside className="rounded-3xl border border-border-soft bg-surface p-5 text-center sm:p-6 shadow-[var(--shadow-soft)] lg:sticky lg:top-24">
               <div className="mx-auto w-fit">
                 <Avatar name={user.name} avatarColor={user.avatarColor} avatarUrl={user.avatarUrl} size={104} className="rounded-full text-3xl shadow-md" />
               </div>

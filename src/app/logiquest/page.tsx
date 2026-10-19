@@ -118,8 +118,8 @@ export default async function LogiQuestHome() {
         ))}
       </RevealGroup>
 
-      <div className="mt-12 grid gap-6 lg:grid-cols-2">
-        <Reveal>
+      <div className="mt-12 grid grid-cols-1 gap-6 lg:grid-cols-2">
+        <Reveal className="min-w-0">
           <TestsPanel
             tests={["arithmetic-aptitude", "verbal-ability", "logical-reasoning", "verbal-reasoning", "c-programming", "java-programming", "python-programming", "database", "networking", "general-knowledge"].map((slug) => {
               const m = SUBJECT_BY_SLUG.get(slug);

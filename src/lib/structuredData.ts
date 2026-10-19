@@ -12,7 +12,7 @@ export const organizationStructuredData = {
   logo: `${siteUrl}/myloginn-logo.png`,
   image: `${siteUrl}/myloginn-logo.png`,
   description:
-    "MyLoginn Tech Private Limited is an India-based technology company building web, mobile, custom software, AI, automation and digital solutions for businesses worldwide, and teaching practical technology skills.",
+    "MyLoginn Tech Private Limited is an India-based IT company building websites, web apps, mobile apps, custom desktop software, AI agents and digital marketing for businesses in India and worldwide.",
   email: CONTACT_EMAIL,
   telephone: CONTACT_PHONES[0].tel,
   sameAs: SOCIAL_LINKS.filter((s) => !("pending" in s)).map((s) => s.href),
@@ -30,11 +30,12 @@ export const organizationStructuredData = {
     "@type": "OfferCatalog",
     name: "MyLoginn services",
     itemListElement: [
-      { name: "Web, mobile app and custom software development", path: "/services/app-web-development" },
-      { name: "AI development and AI agent development", path: "/services/ai-development" },
+      { name: "Web development", path: "/services/app-web-development" },
+      { name: "Mobile app development", path: "/services/app-web-development" },
+      { name: "Custom software and desktop application development", path: "/services/app-web-development" },
+      { name: "AI agent development and automation", path: "/services/ai-development" },
+      { name: "Digital marketing: Meta Ads, Google Ads and SEO", path: "/services/digital-marketing" },
       { name: "Software testing and test automation", path: "/services/testing-automation" },
-      { name: "Digital marketing and SEO", path: "/services/digital-marketing" },
-      { name: "Technology courses", path: "/courses" },
     ].map((s) => ({
       "@type": "Offer",
       itemOffered: { "@type": "Service", name: s.name, url: `${siteUrl}${s.path}` },
@@ -51,15 +52,20 @@ export const organizationStructuredData = {
   knowsAbout: [
     "Website development",
     "Web application development",
+    "SaaS development",
     "Mobile app development",
+    "iOS and Android apps",
     "Custom software development",
+    "Desktop application development",
+    "CRM and ERP software",
     "Artificial intelligence",
-    "Generative AI",
     "AI agent development",
-    "Software testing and test automation",
+    "Business process automation",
     "Digital marketing",
-    "Technology education",
-    "Technology internships",
+    "Meta Ads",
+    "Google Ads",
+    "Search engine optimization",
+    "Software testing and test automation",
   ],
 };
 
@@ -112,6 +118,27 @@ export function faqStructuredData(items: { question: string; answer: string }[])
       "@type": "Question",
       name: question,
       acceptedAnswer: { "@type": "Answer", text: answer },
+    })),
+  };
+}
+
+/** The five core services, as an ordered list for the homepage. */
+export function coreServicesStructuredData(services: { name: string; summary: string; href: string }[]) {
+  return {
+    "@context": "https://schema.org",
+    "@type": "ItemList",
+    "@id": `${siteUrl}/#services`,
+    name: "MyLoginn services",
+    itemListElement: services.map((s, i) => ({
+      "@type": "ListItem",
+      position: i + 1,
+      item: {
+        "@type": "Service",
+        name: s.name,
+        description: s.summary,
+        url: `${siteUrl}${s.href}`,
+        provider: { "@id": `${siteUrl}/#organization` },
+      },
     })),
   };
 }

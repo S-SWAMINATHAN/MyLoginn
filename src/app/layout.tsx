@@ -1,5 +1,5 @@
-﻿import type { Metadata } from "next";
-import { JetBrains_Mono, Plus_Jakarta_Sans, Sora } from "next/font/google";
+﻿import type { Metadata, Viewport } from "next";
+import { Inter, JetBrains_Mono, Plus_Jakarta_Sans } from "next/font/google";
 import { MotionConfig } from "framer-motion";
 import "./globals.css";
 import { ThemeProvider } from "@/components/layout/ThemeProvider";
@@ -14,13 +14,14 @@ import { Breadcrumbs } from "@/components/layout/Breadcrumbs";
 import { getCurrentUser } from "@/lib/auth";
 import { siteUrl } from "@/lib/site";
 
-const fontSans = Plus_Jakarta_Sans({
+// Google Fonts, self-hosted by next/font: Inter for reading and interface text, Plus Jakarta Sans for headings.
+const fontSans = Inter({
   subsets: ["latin"],
   variable: "--font-sans-body",
   display: "swap",
 });
 
-const fontDisplay = Sora({
+const fontDisplay = Plus_Jakarta_Sans({
   subsets: ["latin"],
   variable: "--font-display-face",
   display: "swap",
@@ -32,19 +33,25 @@ const fontMono = JetBrains_Mono({
   display: "swap",
 });
 
+export const viewport: Viewport = {
+  themeColor: "#ffffff",
+  width: "device-width",
+  initialScale: 1,
+};
+
 export const metadata: Metadata = {
   metadataBase: new URL(siteUrl),
   title: {
-    default: "MyLoginn",
+    default: "MyLoginn | Web, App & Digital Solutions for Businesses",
     template: "%s | MyLoginn",
   },
   description:
-    "MyLoginn Tech Private Limited is an India-based technology company building web, mobile, custom software, AI and automation solutions for businesses worldwide, with practical technology courses.",
+    "Your technology partner to build, automate and grow. MyLoginn creates websites, mobile apps, desktop software and AI agents, and grows them with digital marketing.",
   applicationName: "MyLoginn",
   authors: [{ name: "MyLoginn Tech Private Limited" }],
   creator: "MyLoginn Tech Private Limited",
   publisher: "MyLoginn Tech Private Limited",
-  category: "Technology and professional education",
+  category: "Technology",
   keywords: [
     "MyLoginn", "MyLoginn Tech", "MyLoginn Tech Private Limited",
   ],
@@ -52,16 +59,17 @@ export const metadata: Metadata = {
     type: "website",
     locale: "en_IN",
     siteName: "MyLoginn",
-    title: "MyLoginn",
+    title: "MyLoginn | Web, App & Digital Solutions for Businesses",
     description:
-      "India-based technology company building web, mobile, custom software, AI and automation solutions for businesses worldwide.",
+      "India-based IT company building websites, mobile apps, desktop software, AI agents and digital marketing for businesses worldwide.",
   },
   twitter: {
     card: "summary_large_image",
-    title: "MyLoginn",
+    title: "MyLoginn | Web, App & Digital Solutions for Businesses",
     description:
-      "India-based technology company building web, mobile, custom software, AI and automation solutions for businesses worldwide.",
+      "India-based IT company building websites, mobile apps, desktop software, AI agents and digital marketing for businesses worldwide.",
   },
+  formatDetection: { telephone: false, email: false, address: false },
   robots: {
     index: true,
     follow: true,

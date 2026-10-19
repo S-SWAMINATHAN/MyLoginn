@@ -52,7 +52,7 @@ export function ProjectsHero({
           >
             <Eyebrow className="gap-2">
               <AnimatedRocket className="h-4.5 w-4.5" />
-              Built by learners. Backed by mentors.
+              Designed, built and launched by MyLoginn.
             </Eyebrow>
           </motion.div>
 
@@ -69,8 +69,8 @@ export function ProjectsHero({
 
           <Reveal delay={0.5} distance={18}>
             <p className="mx-auto mt-3 max-w-xl text-base text-muted max-md:mt-2 max-md:mx-0 max-md:text-sm sm:text-lg lg:mx-0">
-              Explore capstone projects built by MyLoginn learners with guidance from
-              industry mentors.
+              Websites, apps, business software and AI solutions we&apos;ve built and
+              launched for businesses.
             </p>
           </Reveal>
         </div>

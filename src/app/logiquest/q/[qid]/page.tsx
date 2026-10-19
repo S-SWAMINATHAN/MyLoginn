@@ -10,6 +10,7 @@ import { Discussion } from "@/components/logiquest/Discussion";
 import { GROUP_BY_SLUG, getTopicMeta } from "@/lib/logiquest/catalog";
 import { getQuestion } from "@/lib/logiquest/bank";
 import { PAGE_SIZE } from "@/lib/logiquest/constants";
+import { createPageMetadata } from "@/lib/seo";
 
 type Props = { params: Promise<{ qid: string }> };
 
@@ -17,7 +18,12 @@ export async function generateMetadata({ params }: Props) {
   const q = await getQuestion(decodeURIComponent((await params).qid));
   const m = q && getTopicMeta(q.subject, q.topic);
   if (!q || !m) return { title: "LogiQuest" };
-  return { title: `${q.q.split("\n")[0].slice(0, 80)} - ${m.topic.title} · LogiQuest`, description: `${m.subject.title} › ${m.topic.title}: question with answer, explanation and discussion.` };
+  return createPageMetadata({
+    title: `${q.q.split("\n")[0].slice(0, 50).replace(/\s+\S*$/, "")}… | LogiQuest`,
+    absoluteTitle: true,
+    description: `${m.subject.title} › ${m.topic.title}: question with answer, explanation and discussion.`,
+    path: `/logiquest/q/${encodeURIComponent(decodeURIComponent((await params).qid))}`,
+  });
 }
 
 export default async function QuestionPage({ params }: Props) {

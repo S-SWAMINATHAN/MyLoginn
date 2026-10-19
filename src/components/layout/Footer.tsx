@@ -37,7 +37,7 @@ const columns = [
     ],
   },
   {
-    title: "Learn",
+    title: "MyLoginn Learn",
     links: [
       { href: "/courses", label: "Courses" },
       { href: "/practice", label: "Practice" },

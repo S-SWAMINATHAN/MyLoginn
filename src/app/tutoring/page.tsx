@@ -18,13 +18,15 @@ const tutoringFaqs = [
 ];
 
 export const metadata = createPageMetadata({
-  title: "Online Tutoring & Mentor Support in India",
-  description: "Personalized online tutoring and mentor sessions in programming, data science and mathematics for learners across India, including Tamil Nadu.",
+  // tutoring is switched off (HIDE_TUTORING): the page returns 404 and stays out of search
+  title: "Tutoring",
+  description: "Tutoring is not currently offered by MyLoginn.",
   path: "/tutoring",
+  noIndex: true,
   keywords: [
     ...localKeywords(["online tutor", "programming coaching", "maths tutor"]),
     "MyLoginn tutoring", "online tutoring", "programming tutor",
-    "data science tutor", "one-to-one tutoring", "personalized tutoring",
+    "data science tutor",
   ],
 });
 

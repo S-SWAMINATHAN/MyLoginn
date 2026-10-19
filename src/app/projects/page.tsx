@@ -1,4 +1,4 @@
-﻿import { createPageMetadata } from "@/lib/seo";
+import { createPageMetadata } from "@/lib/seo";
 import { Section, Container } from "@/components/ui/Section";
 import { prisma } from "@/lib/prisma";
 import type { ShowcaseProject } from "@/lib/showcaseProjects";
@@ -10,16 +10,16 @@ import { ProjectsHeroVisual } from "@/components/pages/PageHeroVisuals";
 import Link from "next/link";
 import { ClientProjectCard } from "@/components/projects/ClientProjectCard";
 import { ProjectsExplorer } from "@/components/projects/ProjectsExplorer";
-import { ProjectsCtaBanner } from "@/components/projects/ProjectsCtaBanner";
+import { FinalCta } from "@/components/sections/FinalCta";
 
 export const metadata = createPageMetadata({
   title: "Projects",
-  description: "Explore software and technology projects built by MyLoginn learners with guidance from experienced mentors.",
+  description: "Websites, apps, custom software and AI solutions MyLoginn has designed, built and launched for businesses.",
   path: "/projects",
   keywords: [
     "MyLoginn projects", "software projects", "website projects", "app projects",
-    "custom software projects", "technology project portfolio", "student software projects",
-    "capstone projects",
+    "custom software projects", "technology project portfolio", "AI solutions portfolio",
+    "client projects",
   ],
 });
 
@@ -42,7 +42,8 @@ export default async function ProjectsPage() {
     mentor: p.mentor,
   }));
 
-  const projectCount = clientProjects.length + showcaseProjects.length;
+  // Totals describe company work only; learner projects are shown separately below.
+  const projectCount = clientProjects.length;
   const liveCount = clientProjects.filter((p) => p.status === "live").length;
   const industryCount = new Set(clientProjects.map((p) => p.category)).size;
 
@@ -53,11 +54,11 @@ export default async function ProjectsPage() {
           <div className="min-w-0">
             <SplitHeadline as="h1" text="Real Projects. Real Impact." className="mt-4 max-w-xl text-4xl font-bold leading-[1.08] tracking-tight text-story-navy sm:text-5xl dark:text-foreground" />
             <Reveal direction="up" delay={0.15}>
-              <p className="mt-5 max-w-lg text-base leading-8 text-muted sm:text-lg">Explore capstone projects built by MyLoginn learners with guidance from industry mentors.</p>
+              <p className="mt-5 max-w-lg text-base leading-8 text-muted sm:text-lg">Websites, apps, business software and AI solutions we&apos;ve designed, built and launched for businesses, and continue to run.</p>
             </Reveal>
             <Reveal direction="up" delay={0.25} className="mt-7 flex flex-wrap items-center justify-center gap-3 lg:justify-start">
               <ArrowLink href="#client-work">See our work</ArrowLink>
-              <Link href="/contact" className="btn-sweep rounded-full border border-border-soft bg-surface px-6 py-2.5 text-sm font-semibold active:scale-95">Discuss a project</Link>
+              <Link href="/contact" className="btn-sweep rounded-full border border-border-soft bg-surface px-6 py-2.5 text-sm font-semibold active:scale-95">Start a project</Link>
             </Reveal>
           </div>
           <Reveal direction="left" delay={0.15} className="min-w-0">
@@ -79,19 +80,22 @@ export default async function ProjectsPage() {
           </div>
         </div>
 
-        <div className="mt-20 sm:mt-24">
-          <Reveal><span className="story-eyebrow">Learner showcase</span></Reveal>
-          <h2 className="story-subheading mt-3 text-story-navy dark:text-foreground">Student capstone projects</h2>
-          <p className="mt-3 max-w-xl text-sm leading-7 text-muted sm:text-base">
-            Capstone projects built by MyLoginn learners with guidance from industry mentors.
-          </p>
+        {/* Learner work belongs to MyLoginn Learn: it is labelled as such, and only shown once there is some */}
+        {showcaseProjects.length > 0 && (
+          <div className="mt-20 sm:mt-24">
+            <Reveal><span className="story-eyebrow">From MyLoginn Learn</span></Reveal>
+            <h2 className="story-subheading mt-3 text-story-navy dark:text-foreground">Learner projects</h2>
+            <p className="mt-3 max-w-xl text-sm leading-7 text-muted sm:text-base">
+              Projects built by learners on MyLoginn Learn, our separate learning platform, with guidance from mentors.
+            </p>
 
-          <div className="mt-8">
-            <ProjectsExplorer projects={showcaseProjects} />
+            <div className="mt-8">
+              <ProjectsExplorer projects={showcaseProjects} />
+            </div>
           </div>
-        </div>
+        )}
 
-        <ProjectsCtaBanner />
+        <div className="mt-16 sm:mt-20"><FinalCta /></div>
       </Container>
     </Section>
   );

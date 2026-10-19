@@ -27,17 +27,17 @@ export default function NotFound() {
         </p>
         <nav aria-label="Helpful pages" className="mx-auto mt-6 grid w-full max-w-3xl grid-cols-1 gap-3 sm:mt-7 sm:grid-cols-3 sm:gap-4">
           <Link className={`${primaryAction} brand-gradient-bg text-white shadow-[var(--shadow-lift)]`} href="/">Return to Home</Link>
-          <Link className={`${primaryAction} border border-slate-500/70 bg-white/45 text-slate-900 hover:bg-white/75`} href="/internships">Browse Internships</Link>
+          <Link className={`${primaryAction} border border-slate-500/70 bg-white/45 text-slate-900 hover:bg-white/75`} href="/services">Explore Services</Link>
           <Link className={`${primaryAction} border border-slate-500/70 bg-white/45 text-slate-900 hover:bg-white/75`} href="/projects">Explore Projects</Link>
         </nav>
         <div className="mx-auto mt-8 flex max-w-4xl flex-col items-center justify-between gap-4 rounded-3xl border border-white/80 bg-white/75 px-5 py-5 text-left shadow-[0_16px_50px_-28px_rgba(45,67,143,.42)] backdrop-blur-md sm:mt-10 sm:flex-row sm:px-7">
           <div>
             <p className="font-semibold text-slate-900">Keep moving forward</p>
-            <p className="mt-1 text-sm text-slate-600">Find a course, learn about our services, or get in touch.</p>
+            <p className="mt-1 text-sm text-slate-600">Learn about our services, see our work, or start a project with us.</p>
           </div>
           <div className="flex w-full flex-wrap gap-2 sm:w-auto sm:justify-end">
-            <Link className="rounded-full border border-slate-300 px-4 py-2 text-sm font-medium text-slate-800 transition-colors hover:border-brand-400 hover:text-brand-700" href="/courses">Courses</Link>
-            <Link className="rounded-full border border-slate-300 px-4 py-2 text-sm font-medium text-slate-800 transition-colors hover:border-brand-400 hover:text-brand-700" href="/services">Services</Link>
+            <Link className="rounded-full border border-slate-300 px-4 py-2 text-sm font-medium text-slate-800 transition-colors hover:border-brand-400 hover:text-brand-700" href="/about">About</Link>
+            <Link className="rounded-full border border-slate-300 px-4 py-2 text-sm font-medium text-slate-800 transition-colors hover:border-brand-400 hover:text-brand-700" href="/careers">Careers</Link>
             <Link className="rounded-full border border-slate-300 px-4 py-2 text-sm font-medium text-slate-800 transition-colors hover:border-brand-400 hover:text-brand-700" href="/contact">Contact</Link>
           </div>
         </div>

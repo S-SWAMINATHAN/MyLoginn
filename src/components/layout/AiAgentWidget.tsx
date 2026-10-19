@@ -40,14 +40,14 @@ const SUGGESTIONS: { text: string; icon: LucideIcon }[] = [
   { text: "How do I get a quote?", icon: Headset },
   { text: "Do you offer software testing and automation?", icon: ShieldCheck },
   { text: "Can you improve my existing website or app?", icon: Briefcase },
-  { text: "What courses do you offer?", icon: BookOpen },
-  { text: "Are there paid internships?", icon: MessageCircle },
+  { text: "Can you build a desktop application for us?", icon: MessageCircle },
+  { text: "What is MyLoginn Learn?", icon: BookOpen },
 ];
 
 const INITIAL_COUNT = 4;
 
 const GREETING =
-  "Hi! I'm the MyLoginn AI agent. Ask me anything about our courses, internships, or services — I'm happy to help!";
+  "Hi! I'm the MyLoginn AI agent. Ask me about our web, app, desktop, AI and marketing solutions, starting a project, or MyLoginn Learn — I'm happy to help!";
 
 const MAX_CHARS = 2000;
 
@@ -454,7 +454,7 @@ export function AiAgentWidget() {
                       send(input);
                     }
                   }}
-                  placeholder="Ask about courses, internships…"
+                  placeholder="Ask about our services, a project…"
                   aria-label="Message"
                   className="max-h-24 min-h-9 min-w-0 flex-1 resize-none bg-transparent py-2 text-sm leading-5 outline-none placeholder:text-muted"
                 />

@@ -281,10 +281,10 @@ export function ProjectsExplorer({ projects }: { projects: ShowcaseProject[] }) 
           </motion.div>
           {projects.length === 0 ? (
             <>
-              <h3 className="relative mt-5 text-lg font-semibold text-story-navy dark:text-foreground">Capstone projects are on the way</h3>
-              <p className="relative mx-auto mt-1.5 max-w-sm text-sm leading-6 text-muted">New learner projects will appear here as mentors review them. Meanwhile, explore our courses or tell us about a project of your own.</p>
+              <h3 className="relative mt-5 text-lg font-semibold text-story-navy dark:text-foreground">More projects are on the way</h3>
+              <p className="relative mx-auto mt-1.5 max-w-sm text-sm leading-6 text-muted">New work will appear here as it launches. Meanwhile, tell us about the project you have in mind.</p>
               <div className="relative mt-6 flex flex-wrap items-center justify-center gap-3">
-                <ArrowLink href="/courses">Explore courses</ArrowLink>
+                <ArrowLink href="/services">Explore solutions</ArrowLink>
                 <Link href="/contact" className="rounded-full border border-border-soft bg-surface px-6 py-2.5 text-sm font-semibold transition-all duration-300 hover:-translate-y-0.5 hover:border-story-royal hover:text-story-royal active:scale-95">Discuss a project</Link>
               </div>
             </>

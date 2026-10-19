@@ -59,24 +59,24 @@ export function CarShowroom() {
   const months = useSteps(4, 600);
   const emi = 48900 - months * 3100;
   return (
-    <div className="flex h-full flex-col bg-[#0b0f17] text-white">
-      <div className="flex items-center justify-between px-3 py-2"><span className="flex items-center gap-1 text-[12px] font-black tracking-wide"><Car className="h-4 w-4 text-[#ef4444]" />YOUR MOTORS</span><span className="text-[9px] text-white/60">Models · Offers · Test drive</span></div>
+    <div className="flex h-full flex-col bg-white text-[#0b1f4d]">
+      <div className="flex items-center justify-between px-3 py-2"><span className="flex items-center gap-1 text-[12px] font-black tracking-wide"><Car className="h-4 w-4 text-[#ef4444]" />YOUR MOTORS</span><span className="text-[9px] text-[#64748b]">Models · Offers · Test drive</span></div>
       <div className="relative h-[86px]">
         <Photo src="car.jpg" className="absolute inset-0" position="center 60%" />
-        <span className="absolute inset-0 bg-gradient-to-t from-[#0b0f17] via-transparent to-transparent" />
-        <span className="absolute bottom-1.5 left-3 text-[14px] font-bold">GT Sport Sedan</span>
+        <span className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent" />
+        <span className="absolute bottom-1.5 left-3 text-[14px] font-bold text-white">GT Sport Sedan</span>
       </div>
       <div className="grid grid-cols-3 gap-1.5 px-3 pt-2">
         {[{ I: Gauge, k: "0–100", v: "4.2 s" }, { I: Fuel, k: "Mileage", v: "14 km/l" }, { I: Users, k: "Seats", v: "5" }].map(({ I, k, v }) => (
-          <span key={k} className="rounded-lg bg-white/5 px-2 py-1.5"><I className="h-3 w-3 text-[#ef4444]" /><span className="mt-0.5 block text-[8px] text-white/50">{k}</span><span className="text-[11px] font-bold">{v}</span></span>
+          <span key={k} className="rounded-lg bg-[#f8fafc] px-2 py-1.5 shadow-[inset_0_0_0_1px_#eef2f7]"><I className="h-3 w-3 text-[#ef4444]" /><span className="mt-0.5 block text-[8px] text-[#94a3b8]">{k}</span><span className="text-[11px] font-bold">{v}</span></span>
         ))}
       </div>
-      <div className="mx-3 mt-2 rounded-xl bg-white/5 p-2">
-        <p className="flex items-center justify-between text-[9px] text-white/60">EMI calculator<span className="text-white">{36 + months * 12} months</span></p>
-        <div className="relative mt-1.5 h-1 rounded-full bg-white/15"><motion.div className="absolute inset-y-0 left-0 rounded-full bg-[#ef4444]" animate={{ width: `${20 + months * 18}%` }} transition={{ duration: 0.5, ease: EASE }} /></div>
-        <p className="mt-1.5 text-[15px] font-black tabular-nums">₹{fmt(emi)}<span className="text-[9px] font-normal text-white/50"> / month</span></p>
+      <div className="mx-3 mt-2 rounded-xl bg-[#f8fafc] p-2 shadow-[inset_0_0_0_1px_#eef2f7]">
+        <p className="flex items-center justify-between text-[9px] text-[#64748b]">EMI calculator<span className="font-semibold text-[#0b1f4d]">{36 + months * 12} months</span></p>
+        <div className="relative mt-1.5 h-1 rounded-full bg-[#e6ebf3]"><motion.div className="absolute inset-y-0 left-0 rounded-full bg-[#ef4444]" animate={{ width: `${20 + months * 18}%` }} transition={{ duration: 0.5, ease: EASE }} /></div>
+        <p className="mt-1.5 text-[15px] font-black tabular-nums">₹{fmt(emi)}<span className="text-[9px] font-normal text-[#94a3b8]"> / month</span></p>
       </div>
-      <div className="mx-3 mb-3 mt-auto rounded-lg bg-[#ef4444] py-1.5 text-center text-[10px] font-bold">Book a test drive</div>
+      <div className="mx-3 mb-3 mt-auto rounded-lg bg-[#ef4444] py-1.5 text-center text-[10px] font-bold text-white">Book a test drive</div>
     </div>
   );
 }
@@ -299,9 +299,9 @@ export function SalonScheduler() {
   const n = useSteps(SLOTS.length, 500);
   return (
     <div className="flex h-full bg-[#fdf8f6]">
-      <div className="w-[22%] bg-[#4a2a2a] p-2 text-white">
+      <div className="w-[22%] border-r border-[#f3e8e4] bg-white p-2 text-[#4a2a2a]">
         <p className="text-[11px] font-bold">Salon · Admin</p>
-        {[["Schedule", Calendar], ["Clients", Users], ["Billing", CreditCard]].map(([t, I], k) => { const Icon = I as typeof Calendar; return <span key={t as string} className={`mt-1.5 flex items-center gap-1.5 rounded-md px-1.5 py-1 text-[10px] ${k === 0 ? "bg-white/15" : "text-white/70"}`}><Icon className="h-3 w-3" />{t as string}</span>; })}
+        {[["Schedule", Calendar], ["Clients", Users], ["Billing", CreditCard]].map(([t, I], k) => { const Icon = I as typeof Calendar; return <span key={t as string} className={`mt-1.5 flex items-center gap-1.5 rounded-md px-1.5 py-1 text-[10px] ${k === 0 ? "bg-[#fdf2f8] font-semibold text-[#be185d]" : "text-[#9a7b74]"}`}><Icon className="h-3 w-3" />{t as string}</span>; })}
         <div className="relative mt-3 h-16 overflow-hidden rounded-lg"><Photo src="spa.jpg" className="absolute inset-0" zoom={false} /></div>
       </div>
       <div className="flex flex-1 flex-col p-3">
@@ -358,7 +358,7 @@ export function SalonStaffApp() {
   const step = useSteps(3, 900);
   return (
     <div className="flex h-full flex-col bg-[#fdf8f6]">
-      <div className="bg-[#4a2a2a] px-3 pb-3 pt-2 text-white"><p className="text-[9px] text-white/70">Thursday</p><p className="text-[13px] font-bold">Hi Asha · 6 clients today</p></div>
+      <div className="bg-[#fdf2f8] px-3 pb-3 pt-2 text-[#4a2a2a]"><p className="text-[9px] text-[#9a7b74]">Thursday</p><p className="text-[13px] font-bold">Hi Asha · 6 clients today</p></div>
       <div className="flex flex-col gap-1.5 px-3 pt-2">
         {[["Priya", "Facial · 10:00", 0], ["Kavya", "Hair spa · 12:30", 1], ["Nisha", "Manicure · 3:00", 2]].map(([n, t, k]) => {
           const done = (k as number) < step;
@@ -371,7 +371,7 @@ export function SalonStaffApp() {
           );
         })}
       </div>
-      <div className="relative mx-3 mb-3 mt-auto h-12 overflow-hidden rounded-xl"><Photo src="spa.jpg" className="absolute inset-0" zoom={false} /><span className="absolute inset-0 bg-[#4a2a2a]/60" /><span className="absolute inset-0 grid place-items-center text-[10px] font-bold text-white">Tips this week · ₹2,350</span></div>
+      <div className="relative mx-3 mb-3 mt-auto h-12 overflow-hidden rounded-xl"><Photo src="spa.jpg" className="absolute inset-0" zoom={false} /><span className="absolute inset-0 bg-[#be185d]/45" /><span className="absolute inset-0 grid place-items-center text-[10px] font-bold text-white">Tips this week · ₹2,350</span></div>
     </div>
   );
 }

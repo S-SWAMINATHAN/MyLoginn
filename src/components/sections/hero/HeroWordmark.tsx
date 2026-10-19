@@ -35,7 +35,7 @@ export function HeroWordmark({ delay = 0.1 }: { delay?: number }) {
   return (
     <motion.span
       className="relative inline-flex select-none"
-      initial={reduced ? false : { opacity: 0, y: 8, filter: "blur(5px)", clipPath: "inset(0 100% 0 0)" }}
+      initial={false}
       animate={{ opacity: 1, y: 0, filter: "blur(0px)", clipPath: "inset(-40% -10% -40% -10%)" }}
       transition={{ duration: 1, delay, ease: EASE }}
     >

@@ -10,12 +10,23 @@ import { getProblemDef, problemSummaries, publicProblem } from "@/lib/logiquest/
 import { runSql } from "@/lib/logiquest/coding/sqlJudge";
 import { TRACK_BY_SLUG } from "@/lib/logiquest/coding/tracks";
 import type { CodeLang } from "@/lib/logiquest/coding/types";
+import { createPageMetadata } from "@/lib/seo";
 
 type Props = { params: Promise<{ slug: string }> };
 
 export async function generateMetadata({ params }: Props) {
-  const p = publicProblem((await params).slug);
-  return p ? { title: `${p.title} - ${p.difficulty} Coding Problem · LogiQuest`, description: p.statement.replace(/\*\*/g, "").slice(0, 160) } : { title: "Coding · LogiQuest" };
+  const slug = (await params).slug;
+  const p = publicProblem(slug);
+  if (!p) return { title: "Coding · LogiQuest" };
+  const text = p.statement.replace(/\*\*|`/g, "").replace(/\s+/g, " ").trim();
+  return createPageMetadata({
+    title: `${p.title} - Coding Problem | LogiQuest`,
+    absoluteTitle: true,
+    // short statements get a line on how to solve it, so the description is useful in search results
+    description: text.length < 110 ? `${text} ${p.difficulty} problem: solve it online in Python, JavaScript or SQL and check it instantly.` : text,
+    path: `/logiquest/coding/problems/${slug}`,
+    keywords: [p.title, `${p.title} solution`, "coding problem", "coding interview practice"],
+  });
 }
 
 /** Sample rows of every table in a SQL problem's dataset, shown with the statement. */

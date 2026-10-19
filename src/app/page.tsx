@@ -3,11 +3,10 @@ import { createPageMetadata } from "@/lib/seo";
 import { localKeywords, regionalKeywords } from "@/lib/localSeo";
 import { StoryStage } from "@/components/experience/StoryStage";
 import { JsonLd } from "@/components/seo/JsonLd";
-import { organizationStructuredData, websiteStructuredData } from "@/lib/structuredData";
+import { coreServicesStructuredData, organizationStructuredData, websiteStructuredData } from "@/lib/structuredData";
+import { CORE_SERVICES } from "@/lib/coreServices";
 
-const Hero = dynamic(() => import("@/components/sections/Hero").then((mod) => mod.Hero), {
-  loading: () => <div className="min-h-[440px] w-full bg-slate-50" aria-busy="true" aria-live="polite" />,
-});
+import { Hero } from "@/components/sections/Hero";
 const ProblemsSolutions = dynamic(() => import("@/components/sections/home/ProblemsSolutions").then((mod) => mod.ProblemsSolutions), {
   loading: () => <div className="min-h-[420px] w-full bg-slate-50" aria-busy="true" aria-live="polite" />,
 });
@@ -34,10 +33,10 @@ const LearnTeaser = dynamic(() => import("@/components/sections/home/CareersLear
 });
 
 export const metadata = createPageMetadata({
-  title: "MyLoginn",
+  title: "MyLoginn | Web, App & Digital Solutions for Businesses",
   absoluteTitle: true,
   description:
-    "MyLoginn Tech Private Limited is an India-based IT company: web development, app development, AI agent creation, digital marketing and custom software and desktop applications for businesses in Coimbatore, Tamil Nadu and worldwide.",
+    "Your technology partner to build, automate and grow. MyLoginn creates websites, mobile apps, desktop software and AI agents, and grows them with digital marketing.",
   path: "/",
   keywords: [
     ...regionalKeywords(["web development company", "software development company", "AI development company"]),
@@ -48,6 +47,7 @@ export const metadata = createPageMetadata({
     "web development", "app development", "mobile app development",
     "digital marketing", "custom software solutions", "UI/UX design", "AI solutions",
     "AI agent development", "Meta Ads", "Google Ads", "SEO services", "custom software development", "desktop application development",
+    "SaaS development", "CRM development", "ERP development", "iOS app development", "Android app development", "business automation",
   ],
 });
 
@@ -56,12 +56,12 @@ export default function Home() {
     <>
       <JsonLd data={{
         "@context": "https://schema.org",
-        "@graph": [organizationStructuredData, websiteStructuredData],
+        "@graph": [organizationStructuredData, websiteStructuredData, coreServicesStructuredData(CORE_SERVICES)],
       }} />
       <StoryStage>
         <Hero />
-        <ProblemsSolutions />
         <ServiceShowcase />
+        <ProblemsSolutions />
         <ProcessFlow />
         <ProjectShowcase />
         <AboutValues />

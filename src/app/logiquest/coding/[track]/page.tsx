@@ -5,12 +5,21 @@ import { Breadcrumbs, PageTitle } from "@/components/logiquest/ui";
 import { ProblemTable } from "@/components/logiquest/coding/ProblemTable";
 import { problemRows } from "@/lib/logiquest/coding/listing";
 import { TRACKS, TRACK_BY_SLUG } from "@/lib/logiquest/coding/tracks";
+import { createPageMetadata } from "@/lib/seo";
 
 type Props = { params: Promise<{ track: string }> };
 
 export async function generateMetadata({ params }: Props) {
-  const t = TRACK_BY_SLUG.get((await params).track);
-  return { title: t ? `${t.title} Coding Problems · LogiQuest` : "Coding · LogiQuest", description: t?.desc };
+  const slug = (await params).track;
+  const t = TRACK_BY_SLUG.get(slug);
+  if (!t) return { title: "Coding · LogiQuest" };
+  return createPageMetadata({
+    title: `${t.title} Coding Problems | LogiQuest`,
+    absoluteTitle: true,
+    description: `${t.desc} Solve them in Python, JavaScript or SQL in the browser and get instant results.`,
+    path: `/logiquest/coding/${slug}`,
+    keywords: [`${t.title} problems`, `${t.title} practice`, "coding practice online"],
+  });
 }
 
 export default async function TrackPage({ params }: Props) {

@@ -10,8 +10,8 @@ import { RelatedLinks } from "@/components/services/story/RelatedLinks";
 import { ServicesExplorer, type ServiceItem } from "@/components/pages/ServicesExplorer";
 
 export const metadata = createPageMetadata({
-  title: "Services",
-  description: "Web and mobile app development, custom software, AI and AI agents, software testing and automation, and digital marketing from India-based MyLoginn Tech.",
+  title: "IT Services: Web, App, AI Agents & Digital Marketing",
+  description: "Web development, mobile apps, custom desktop software, AI agents, software testing and digital marketing from MyLoginn, an India-based IT company.",
   path: "/services",
   keywords: [
     "MyLoginn IT services", "IT services", "technology services",
@@ -81,8 +81,8 @@ export default function ServicesPage() {
           wide
           related={[
             { href: "/projects", label: "Projects" },
-            { href: "/courses", label: "Technology courses" },
-            { href: "/internships", label: "Internships" },
+            { href: "/about", label: "About MyLoginn" },
+            { href: "/careers", label: "Careers" },
             { href: "/contact", label: "Contact MyLoginn" },
           ]}
         />

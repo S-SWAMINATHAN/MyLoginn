@@ -353,14 +353,14 @@ export function MarketingTour({ play }: { play: boolean }) {
 function SuiteSide({ active }: { active: string }) {
   const items = [{ I: LayoutDashboard, t: "Dashboard" }, { I: Boxes, t: "Inventory" }, { I: KanbanSquare, t: "Orders" }, { I: Receipt, t: "Billing" }, { I: Users, t: "HR" }];
   return (
-    <div className="flex w-[19%] flex-col gap-1 bg-[#0b1f4d] p-2 text-white">
+    <div className="flex w-[19%] flex-col gap-1 border-r border-[#eef2f7] bg-[#f8fafc] p-2 text-[#475569]">
       {items.map(({ I, t }) => (
         <span key={t} className="relative flex items-center gap-1.5 rounded-md px-1.5 py-1 text-[10px]">
-          {t === active && <motion.span layoutId="suite-tour-active" className="absolute inset-0 rounded-md bg-white/15" />}
+          {t === active && <motion.span layoutId="suite-tour-active" className="absolute inset-0 rounded-md bg-white shadow-[0_2px_8px_-4px_rgba(11,31,77,0.3)]" />}
           <I className="relative h-3 w-3" /><span className="relative">{t}</span>
         </span>
       ))}
-      <span className="mt-auto flex items-center gap-1 text-[9px] text-white/60"><CheckCircle2 className="h-3 w-3" />Synced</span>
+      <span className="mt-auto flex items-center gap-1 text-[9px] text-[#16a34a]"><CheckCircle2 className="h-3 w-3" />Synced</span>
     </div>
   );
 }

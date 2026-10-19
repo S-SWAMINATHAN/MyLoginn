@@ -16,6 +16,12 @@ const nextConfig: NextConfig = {
     // speed for not needing that manual recovery.
     turbopackFileSystemCacheForDev: false,
   },
+  async redirects() {
+    return [
+      // One canonical host for search engines: the bare domain permanently redirects to www (matches siteUrl).
+      { source: "/:path*", has: [{ type: "host", value: "myloginn.com" }], destination: "https://www.myloginn.com/:path*", permanent: true },
+    ];
+  },
   async headers() {
     return [
       {

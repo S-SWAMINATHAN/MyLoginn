@@ -295,7 +295,7 @@ export type TestTile = { slug: string; title: string; color: string };
 /** Online tests panel: what a test is, then one tile per subject with its animated icon. Tiles tint and slide an arrow in on hover. */
 export function TestsPanel({ tests }: { tests: TestTile[] }) {
   return (
-    <section className="h-full rounded-3xl border border-border-soft bg-surface p-5 sm:p-6" aria-labelledby="lq-tests">
+    <section className="h-full rounded-3xl border border-border-soft bg-surface p-4 sm:p-6" aria-labelledby="lq-tests">
       <div className="flex items-center justify-between gap-3">
         <h2 id="lq-tests" className="flex items-center gap-2.5 text-lg font-bold text-story-navy dark:text-foreground">
           <span className="grid h-10 w-10 place-items-center text-story-royal"><AnimatedClock className="h-7 w-7" /></span>
@@ -305,18 +305,18 @@ export function TestsPanel({ tests }: { tests: TestTile[] }) {
       </div>
       <ul className="mt-4 grid grid-cols-3 gap-2 text-center text-[11px] font-semibold text-muted">
         {[{ Icon: AnimatedBook, k: "20 questions" }, { Icon: AnimatedClock, k: "30 minutes" }, { Icon: AnimatedTrending, k: "Instant score" }].map(({ Icon, k }) => (
-          <li key={k} className="flex items-center justify-center gap-1.5 rounded-xl bg-story-mist px-2 py-2"><Icon className="h-5 w-5 shrink-0" /><span className="truncate">{k}</span></li>
+          <li key={k} className="flex flex-col items-center justify-center gap-1 rounded-xl bg-story-mist px-2 py-2 sm:flex-row sm:gap-1.5"><Icon className="h-5 w-5 shrink-0" /><span className="leading-tight">{k}</span></li>
         ))}
       </ul>
       <p className="mt-3 text-sm text-muted">Random questions from every topic, then a full answer review. Pick a subject to begin.</p>
       <ul className="mt-4 grid grid-cols-2 gap-2.5 min-[420px]:grid-cols-3">
         {tests.map((x, i) => (
           <motion.li key={x.slug} initial={{ opacity: 0, y: 10 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true, margin: "-40px" }} transition={{ duration: 0.4, delay: i * 0.04, ease: SMOOTH }} style={{ "--c": x.color } as React.CSSProperties}>
-            <Link href={`/logiquest/online-test/${x.slug}`} className="group flex h-full items-center gap-2.5 rounded-2xl border border-border-soft bg-surface p-2.5 transition-[border-color,background-color] duration-300 hover:border-[color-mix(in_srgb,var(--c)_45%,transparent)] hover:bg-[color-mix(in_srgb,var(--c)_7%,transparent)]">
-              <span className="grid h-10 w-10 shrink-0 place-items-center text-story-royal"><ContentIcon keyword={SUBJECT_ICON_KEY[x.slug] ?? "default"} className="h-7 w-7" /></span>
+            <Link href={`/logiquest/online-test/${x.slug}`} className="group flex h-full items-center gap-2 rounded-2xl border border-border-soft bg-surface p-2 transition-[border-color,background-color] sm:gap-2.5 sm:p-2.5 duration-300 hover:border-[color-mix(in_srgb,var(--c)_45%,transparent)] hover:bg-[color-mix(in_srgb,var(--c)_7%,transparent)]">
+              <span className="grid h-8 w-8 shrink-0 place-items-center text-story-royal sm:h-10 sm:w-10"><ContentIcon keyword={SUBJECT_ICON_KEY[x.slug] ?? "default"} className="h-6 w-6 sm:h-7 sm:w-7" /></span>
               <span className="min-w-0 flex-1">
-                <span className="block truncate text-[13px] font-bold leading-tight text-story-navy dark:text-foreground">{x.title}</span>
-                <span className="mt-0.5 inline-flex items-center gap-1 text-[11px] font-semibold text-[var(--c)]">Take test<ArrowRight className="h-3 w-3 -translate-x-1 opacity-0 transition-all duration-300 group-hover:translate-x-0 group-hover:opacity-100" /></span>
+                <span className="line-clamp-2 block text-[13px] font-bold leading-tight text-story-navy dark:text-foreground">{x.title}</span>
+                <span className="mt-0.5 inline-flex items-center gap-1 whitespace-nowrap text-[11px] font-semibold text-[var(--c)]">Take test<ArrowRight className="h-3 w-3 -translate-x-1 opacity-0 transition-all duration-300 group-hover:translate-x-0 group-hover:opacity-100" /></span>
               </span>
             </Link>
           </motion.li>

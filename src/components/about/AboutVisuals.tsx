@@ -3,7 +3,7 @@
 import Link from "next/link";
 import { useEffect, useState, type ComponentType } from "react";
 import { AnimatePresence, motion } from "framer-motion";
-import { Lightbulb, Rocket, ShieldCheck, Sparkles } from "lucide-react";
+import { Bot, Lightbulb, Rocket, TrendingUp } from "lucide-react";
 import { useReducedMotion } from "@/lib/useReducedMotion";
 import { MonitorFrame } from "@/components/services/testing/TestingVisuals";
 import { ContentIcon } from "@/components/ui/ContentIcon";
@@ -28,17 +28,17 @@ function useAutoIndex(length: number, ms: number) {
 /* ---------- Hero: growth orbit ---------- */
 
 const ORBIT: { title: string; text: string; color: string; icon: string; Icon: ComponentType<{ className?: string }>; x: number; y: number }[] = [
-  { title: "Analysis", text: "Skills that matter, taught practically.", color: BLUE, icon: "student", Icon: Lightbulb, x: 50, y: 9 },
-  { title: "Build", text: "Real-world projects for your portfolio.", color: VIOLET, icon: "webdev", Icon: Rocket, x: 91, y: 50 },
-  { title: "Practice", text: "A hands-on approach to every topic.", color: GREEN, icon: "testing", Icon: ShieldCheck, x: 50, y: 91 },
-  { title: "Grow", text: "A supportive community to grow with.", color: AMBER, icon: "career", Icon: Sparkles, x: 9, y: 50 },
+  { title: "Discover", text: "We start from your goals, customers and workflows.", color: BLUE, icon: "business", Icon: Lightbulb, x: 50, y: 9 },
+  { title: "Build", text: "Websites, apps and software, engineered end to end.", color: VIOLET, icon: "webdev", Icon: Rocket, x: 91, y: 50 },
+  { title: "Automate", text: "AI agents that take repetitive work off your team.", color: GREEN, icon: "ai", Icon: Bot, x: 50, y: 91 },
+  { title: "Grow", text: "Marketing that turns visibility into customers.", color: AMBER, icon: "marketing", Icon: TrendingUp, x: 9, y: 50 },
 ];
 
 export function GrowthOrbit() {
   const { index, pick, reduced } = useAutoIndex(ORBIT.length, 3200);
   const cur = ORBIT[index];
   return (
-    <div className="mx-auto w-full max-w-[24rem] sm:max-w-[26rem]" role="group" aria-label="Learn, build, practice and grow. Select a step to read more.">
+    <div className="mx-auto w-full max-w-[24rem] sm:max-w-[26rem]" role="group" aria-label="Discover, build, automate and grow. Select a step to read more.">
       <div className="relative aspect-square w-full">
         {/* soft rings and a single satellite that circles the outer ring */}
         <div aria-hidden className="absolute inset-[9%] rounded-full border border-dashed" style={{ borderColor: "var(--story-line)" }} />
@@ -101,13 +101,13 @@ export function GrowthOrbit() {
   );
 }
 
-/* ---------- Who we are: learning journey ---------- */
+/* ---------- Who we are: how a project is delivered ---------- */
 
 const JOURNEY = [
-  { title: "Courses", text: "Structured, practical technology courses you can learn at your own pace.", color: BLUE, x: 30, y: 82, icon: "student", href: "/courses", cta: "Browse courses" },
-  { title: "Projects", text: "Real projects that turn what you learn into a portfolio.", color: VIOLET, x: 110, y: 38, icon: "webdev", href: "/projects", cta: "See projects" },
-  { title: "Internships", text: "Real work and mentor guidance with the MyLoginn team.", color: GREEN, x: 190, y: 82, icon: "career", href: "/internships", cta: "View internships" },
-  { title: "Services", text: "Web, mobile, AI and marketing solutions for businesses.", color: AMBER, x: 270, y: 38, icon: "business", href: "/services", cta: "Explore services" },
+  { title: "Discovery", text: "We map your operations, customers and goals before choosing any technology.", color: BLUE, x: 30, y: 82, icon: "business", href: "/contact", cta: "Talk to us" },
+  { title: "Design & build", text: "Websites, apps, desktop software and AI agents built around your workflow.", color: VIOLET, x: 110, y: 38, icon: "software", href: "/services", cta: "Our solutions" },
+  { title: "Launch", text: "Tested, deployed and handed over with the tools your team needs to run it.", color: GREEN, x: 190, y: 82, icon: "cloud", href: "/projects", cta: "See our work" },
+  { title: "Grow", text: "Marketing, support and improvements that keep results moving after launch.", color: AMBER, x: 270, y: 38, icon: "marketing", href: "/services/digital-marketing", cta: "Grow with us" },
 ];
 const JOURNEY_PATH = "M30 82 C70 82 70 38 110 38 S150 82 190 82 S230 38 270 38";
 
@@ -115,7 +115,7 @@ export function JourneyMonitor() {
   const { index, pick, reduced } = useAutoIndex(JOURNEY.length, 3600);
   const cur = JOURNEY[index];
   return (
-    <MonitorFrame interactive title="myloginn · learning journey" label={`Stage ${index + 1} of ${JOURNEY.length}`} pill="Learn, Build, Grow" ariaLabel="Interactive learning journey from courses to projects, internships and services. Select a stage to read about it.">
+    <MonitorFrame interactive title="myloginn · project delivery" label={`Stage ${index + 1} of ${JOURNEY.length}`} pill="Discover, Build, Grow" ariaLabel="How MyLoginn delivers a project, from discovery to design and build, launch and growth. Select a stage to read about it.">
       <div className="flex h-full flex-col justify-between gap-2">
         <div className="relative w-full" style={{ aspectRatio: "300 / 108" }}>
           <svg aria-hidden viewBox="0 0 300 108" className="absolute inset-0 h-full w-full" fill="none">

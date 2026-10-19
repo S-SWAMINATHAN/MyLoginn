@@ -7,6 +7,7 @@ import { prisma } from "@/lib/prisma";
 import { clientProjects, getClientProject } from "@/lib/clientProjects";
 import type { ClientProject } from "@/lib/clientProjects";
 import { getCourseIconInfo } from "@/lib/courseIcons";
+import { FinalCta } from "@/components/sections/FinalCta";
 import { getProjectCardArt } from "@/lib/projectCardArt";
 import { Section, Container, Eyebrow } from "@/components/ui/Section";
 import { ContentIcon } from "@/components/ui/ContentIcon";
@@ -239,17 +240,7 @@ function ClientProjectDetail({ project }: { project: ClientProject }) {
       </section>
 
       {/* CTA */}
-      <section className="mx-auto my-16 max-w-[1480px] px-4 sm:px-6 lg:px-10">
-        <div className="relative overflow-hidden rounded-3xl p-8 text-white sm:p-12" style={{ backgroundColor: gradient }}>
-          <div className="relative flex flex-col items-start justify-between gap-6 lg:flex-row lg:items-center">
-            <div>
-              <h2 className="text-3xl font-semibold tracking-tight sm:text-4xl">Have a product in mind?</h2>
-              <p className="mt-2 max-w-2xl text-white/85">Tell us what you want to build. We design, develop and run websites and apps for real businesses.</p>
-            </div>
-            <Link href="/contact" className="inline-flex shrink-0 items-center gap-2 rounded-full bg-white px-7 py-3.5 text-sm font-semibold text-slate-900 shadow-xl transition hover:-translate-y-0.5">Start a project <ArrowUpRight className="h-4 w-4" /></Link>
-          </div>
-        </div>
-      </section>
+      <div className="my-16"><FinalCta /></div>
     </div>
   );
 }

@@ -20,8 +20,8 @@ const marketingFaqs = [
 ];
 
 export const metadata = createPageMetadata({
-  title: "Digital Marketing",
-  description: "SEO, paid campaigns, social media, content and analytics from MyLoginn, an India-based team supporting businesses across India, including Coimbatore and Tamil Nadu, and internationally.",
+  title: "Digital Marketing: Meta Ads, Google Ads & SEO",
+  description: "Meta Ads, Google Ads, SEO, branding and performance marketing focused on bringing customers, from MyLoginn's India-based digital marketing team.",
   path: "/services/digital-marketing",
   keywords: [
     ...regionalKeywords(["digital marketing agency", "SEO company"]),
@@ -30,7 +30,7 @@ export const metadata = createPageMetadata({
     "digital marketing services", "AI digital marketing solutions",
     "SEO services", "social media marketing", "Google Ads management",
     "Meta Ads management", "paid advertising", "content marketing",
-    "marketing analytics",
+    "marketing analytics", "performance marketing", "branding services", "lead generation",
   ],
 });
 

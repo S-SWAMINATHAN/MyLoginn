@@ -38,12 +38,12 @@ const internshipFaqs = [
 
 export const metadata = createPageMetadata({
   title: "Internships",
-  description: "Explore practical MyLoginn technology internships with real projects and mentor guidance for students across India, including Tamil Nadu.",
+  description: "Practical MyLoginn internships in web, app, AI and digital marketing, working on real projects. Open to students across India.",
   path: "/internships",
   keywords: [
     ...localKeywords(["technology internship", "software internship", "AI internship"]),
     "MyLoginn internships", "AI internships", "software development internships",
-    "technology internships", "internship programs", "internships with mentorship",
+    "technology internships", "internship programs",
   ],
 });
 

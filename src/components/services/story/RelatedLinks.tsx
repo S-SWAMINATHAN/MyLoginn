@@ -11,7 +11,7 @@ const META: Record<string, Meta> = {
   "/services/ai-development": { color: "#7c3aed", text: "Chatbots, agents and AI workflows.", icon: "ai" },
   "/services/testing-automation": { color: "#d97706", text: "Manual and automated QA for web apps.", icon: "testing" },
   "/services/digital-marketing": { color: "#e11d48", text: "SEO, paid campaigns and social media.", icon: "marketing" },
-  "/projects": { color: "#7c3aed", text: "Live products and learner capstones.", icon: "business" },
+  "/projects": { color: "#7c3aed", text: "Websites and products we have built and launched.", icon: "business" },
   "/internships": { color: "#059669", text: "Real work with mentor guidance.", icon: "career" },
   "/courses": { color: "#059669", text: "Learn technology skills with mentors.", icon: "student" },
   "/contact": { color: "#e11d48", text: "Talk to the team about your project.", icon: "comm" },
