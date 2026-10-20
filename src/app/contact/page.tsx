@@ -18,7 +18,7 @@ import { CONTACT_EMAIL, CONTACT_HOURS, CONTACT_PHONES, WHATSAPP_PHONE } from "@/
 export const metadata = createPageMetadata({
   title: "Contact MyLoginn",
   absoluteTitle: true,
-  description: "Start a project with MyLoginn Tech Private Limited: web development, app development, desktop applications, AI agents and digital marketing.",
+  description: "Start a project with MyLoginn Tech: web development, app development, desktop applications, AI agents and digital marketing.",
   path: "/contact",
   keywords: ["contact MyLoginn", "MyLoginn contact", "software development enquiry", "digital marketing enquiry"],
 });

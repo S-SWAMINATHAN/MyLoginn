@@ -3,7 +3,9 @@
 import { ArrowButton } from "@/components/ui/ArrowLink";
 import { useEffect, useRef } from "react";
 import { AnimatePresence, motion } from "framer-motion";
-import { Briefcase, CalendarClock, Check, Clock, MapPin, Users, Wallet, X } from "lucide-react";
+import { Briefcase, Building2, CalendarClock, Check, Clock, MapPin, Users, Wallet, X } from "lucide-react";
+import { Rich } from "@/components/careers/Rich";
+import { applyHref } from "@/lib/postings";
 import type { PublicJob } from "@/components/careers/CareersBoard";
 
 const day = (iso: string) => new Date(iso).toLocaleDateString("en-IN", { day: "numeric", month: "short", year: "numeric" });
@@ -27,7 +29,8 @@ function Body({ job, onClose, onApply, onOpenApplication }: { job: PublicJob; on
   const facts = [
     { Icon: Briefcase, text: job.team },
     { Icon: Clock, text: job.type },
-    { Icon: MapPin, text: job.location },
+    { Icon: Building2, text: job.workMode },
+    ...(job.location ? [{ Icon: MapPin, text: job.location }] : []),
     { Icon: Users, text: `${job.positions} ${job.positions === 1 ? "vacancy" : "vacancies"}` },
     ...(job.experience ? [{ Icon: Briefcase, text: job.experience }] : []),
     ...(job.salaryRange ? [{ Icon: Wallet, text: job.salaryRange }] : []),
@@ -41,21 +44,42 @@ function Body({ job, onClose, onApply, onOpenApplication }: { job: PublicJob; on
           <button onClick={onClose} aria-label="Close" className="absolute right-4 top-4 grid h-9 w-9 place-items-center rounded-full border border-border-soft bg-background text-muted transition-colors hover:border-story-royal hover:text-story-royal"><X className="h-4 w-4" /></button>
           <span className="story-eyebrow">{job.status === "open" ? "Open now" : job.status === "upcoming" ? "Opening soon" : "Closed"}</span>
           <h2 className="mt-2 pr-10 text-2xl font-bold tracking-tight text-story-navy dark:text-foreground">{job.title}</h2>
+          <p className="mt-1 text-sm font-semibold text-story-royal">{job.company}</p>
           <ul className="mt-4 flex flex-wrap gap-x-5 gap-y-2 text-sm text-muted">
             {facts.map((f, i) => <li key={i} className="flex items-center gap-1.5"><f.Icon className="h-4 w-4 text-story-royal" />{f.text}</li>)}
           </ul>
           {job.status === "upcoming" && job.openFrom && <p className="mt-3 inline-flex items-center gap-1.5 text-sm font-semibold text-amber-700 dark:text-amber-300"><CalendarClock className="h-4 w-4" />Applications open on {day(job.openFrom)}</p>}
-          {job.status === "open" && job.closeBy && <p className="mt-3 inline-flex items-center gap-1.5 text-sm font-semibold text-story-royal"><CalendarClock className="h-4 w-4" />Apply by {day(job.closeBy)}</p>}
 
-          <p className="mt-5 text-sm leading-7 text-muted">{job.summary}</p>
-          {[{ title: "What you will do", items: job.responsibilities }, { title: "What we are looking for", items: job.requirements }].map((s) => (
+          <section className="mt-6">
+            <h3 className="text-sm font-bold text-story-navy dark:text-foreground">About the Role</h3>
+            <div className="mt-2 space-y-3 text-sm leading-7 text-muted">{job.summary.split(/\n{2,}/).map((p, i) => <p key={i} className="whitespace-pre-line"><Rich text={p.trim()} /></p>)}</div>
+          </section>
+          {[
+            { title: "Key Responsibilities", items: job.responsibilities },
+            { title: "Requirements", items: job.requirements },
+            { title: "Good to Have", items: job.goodToHave },
+            { title: "What You'll Gain", items: job.benefits },
+          ].filter((s) => s.items.length).map((s) => (
             <section key={s.title} className="mt-6">
               <h3 className="text-sm font-bold text-story-navy dark:text-foreground">{s.title}</h3>
               <ul className="mt-2.5 space-y-2">
-                {s.items.map((r) => <li key={r} className="flex gap-2.5 text-sm leading-6 text-muted"><Check className="mt-1 h-4 w-4 shrink-0 text-story-royal" />{r}</li>)}
+                {s.items.map((r) => <li key={r} className="flex gap-2.5 text-sm leading-6 text-muted"><Check className="mt-1 h-4 w-4 shrink-0 text-story-royal" /><span><Rich text={r} /></span></li>)}
               </ul>
             </section>
           ))}
+          {job.idealCandidate && (
+            <section className="mt-6">
+              <h3 className="text-sm font-bold text-story-navy dark:text-foreground">Who We&apos;re Looking For</h3>
+              <p className="mt-2 text-sm leading-7 text-muted"><Rich text={job.idealCandidate} /></p>
+            </section>
+          )}
+          {job.status === "open" && job.applyUrl && (
+            <p className="mt-6 rounded-2xl bg-story-mist px-4 py-3 text-sm text-muted">
+              <span className="font-semibold text-story-navy dark:text-foreground">Apply now:</span>{" "}
+              <a href={applyHref(job.applyUrl)} target={job.applyUrl.includes("@") ? undefined : "_blank"} rel="noreferrer" className="break-all font-semibold text-story-royal hover:underline">{job.applyUrl}</a>
+              <span> or use the button below.</span>
+            </p>
+          )}
         </div>
         <div className="flex flex-wrap items-center justify-end gap-3 border-t border-border-soft bg-background p-4 sm:px-8">
           {job.status === "open" ? (

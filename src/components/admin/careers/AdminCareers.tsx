@@ -10,11 +10,12 @@ import { InternshipsPanel } from "@/components/admin/careers/InternshipsPanel";
 import { ApplicationsPanel } from "@/components/admin/careers/ApplicationsPanel";
 import type { ApplicationsResponse, InternshipRow, JobRow } from "@/lib/careerTypes";
 
-type Tab = "openings" | "internships" | "applications";
+export type CareersTab = "openings" | "internships" | "applications";
+type Tab = CareersTab;
 
 /** Careers control room: manage roles (current, upcoming, closed, drafts), internships, and review every candidate. */
-export function AdminCareers() {
-  const [tab, setTab] = useState<Tab>("openings");
+export function AdminCareers({ initialTab = "openings" }: { initialTab?: Tab }) {
+  const [tab, setTab] = useState<Tab>(initialTab);
   const [jobFilter, setJobFilter] = useState<string | null>(null);
   const [kindPreset, setKindPreset] = useState<"all" | "job" | "internship">("all");
 
@@ -49,7 +50,7 @@ export function AdminCareers() {
     <div className="space-y-6">
       <div>
         <h1 className="text-2xl font-bold">Careers</h1>
-        <p className="mt-1 text-sm text-muted">Publish roles, schedule upcoming ones, close finished ones, and review every CV in one place. Changes show on the public careers page straight away.</p>
+        <p className="mt-1 text-sm text-muted">Write job openings and internships as structured postings, open or close them (there are no end dates), and review every CV in one place. Changes show on the public site straight away.</p>
       </div>
 
       <div className="grid grid-cols-2 gap-3 lg:grid-cols-4">

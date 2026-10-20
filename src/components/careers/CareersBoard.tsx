@@ -23,21 +23,25 @@ export type PublicJob = {
   summary: string;
   responsibilities: string[];
   requirements: string[];
+  company: string;
+  workMode: string;
+  goodToHave: string[];
+  benefits: string[];
+  idealCandidate: string | null;
+  applyUrl: string | null;
   status: "open" | "upcoming" | "closed";
   openFrom: string | null;
   closeBy: string | null;
   postedAt: string;
 };
 
-export type PublicInternship = { id: string; slug: string; title: string; type: string; location: string; durationWeeks: number; applyDeadline: string; open: boolean };
+export type PublicInternship = { id: string; slug: string; title: string; type: string; location: string; durationWeeks: number; open: boolean };
 
 const TABS = [
   { id: "open", label: "Open now" },
   { id: "upcoming", label: "Opening soon" },
   { id: "closed", label: "Closed" },
 ] as const;
-
-const day = (iso: string) => new Date(iso).toLocaleDateString("en-IN", { day: "numeric", month: "short", year: "numeric" });
 
 /** Roles from the database grouped by status, with team filters, an apply dialog and the open internships. */
 export function CareersBoard({ jobs, internships, email }: { jobs: PublicJob[]; internships: PublicInternship[]; email: string }) {
@@ -53,7 +57,7 @@ export function CareersBoard({ jobs, internships, email }: { jobs: PublicJob[]; 
   const [applying, setApplying] = useState<ApplyTarget | null>(null);
 
   const inTab = useMemo(() => jobs.filter((j) => j.status === tab), [jobs, tab]);
-  const uniq = (key: "team" | "location" | "type") => Array.from(new Set(inTab.map((j) => j[key]))).sort().map((v) => ({ value: v, label: v }));
+  const uniq = (key: "team" | "location" | "type") => Array.from(new Set(inTab.map((j) => j[key]).filter(Boolean))).sort().map((v) => ({ value: v, label: v }));
   const q = query.trim().toLowerCase();
   const shown = useMemo(() => {
     const list = inTab.filter((j) => (!team || j.team === team) && (!location || j.location === location) && (!type || j.type === type) && (!q || `${j.title} ${j.team} ${j.location} ${j.summary}`.toLowerCase().includes(q)));
@@ -145,9 +149,8 @@ export function CareersBoard({ jobs, internships, email }: { jobs: PublicJob[]; 
                     </span>
                     <span className="mt-2 flex flex-wrap gap-x-3 gap-y-1 text-xs text-muted">
                       <span>{i.type}</span>
-                      <span className="flex items-center gap-1"><MapPin className="h-3 w-3" />{i.location}</span>
+                      {i.location && <span className="flex items-center gap-1"><MapPin className="h-3 w-3" />{i.location}</span>}
                       <span className="flex items-center gap-1"><Clock className="h-3 w-3" />{i.durationWeeks} weeks</span>
-                      <span>Apply by {day(i.applyDeadline)}</span>
                     </span>
                   </Link>
                 </li>

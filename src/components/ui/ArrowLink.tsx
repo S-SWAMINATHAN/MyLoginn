@@ -40,7 +40,7 @@ const hoverVariants = { rest: { y: 0 }, hover: { y: 0 } };
 export function ArrowLink({ href, children, tone = "royal", className, onClick, block }: { href: string; children: ReactNode; tone?: Tone; className?: string; onClick?: () => void; block?: boolean }) {
   const reduced = useReducedMotion();
   return (
-    <MotionLink href={href} onClick={onClick} initial="rest" whileHover="hover" whileTap={{ scale: 0.97 }} variants={hoverVariants} transition={{ duration: 0.35, ease: [0.22, 1, 0.36, 1] }} className={cn(SHELL, SURFACE[tone], block && "w-full pl-[3.9rem]", className)}>
+    <MotionLink href={href} onClick={onClick} initial="rest" whileHover="hover" whileTap={{ scale: 0.97 }} variants={hoverVariants} transition={{ duration: 0.35, ease: [0.22, 1, 0.36, 1] }} className={cn(SHELL, SURFACE[tone], block && "w-full pl-[4.625rem]", className)}>
       <span className={cn(block && "flex-1 text-center")}>{children}</span>
       <Track tone={tone} reduced={reduced} />
     </MotionLink>
@@ -51,8 +51,8 @@ export function ArrowLink({ href, children, tone = "royal", className, onClick, 
 export function ArrowButton({ children, tone = "royal", className, onClick, type = "button", disabled, busy, full }: { children: ReactNode; tone?: Tone; className?: string; onClick?: () => void; type?: "button" | "submit"; disabled?: boolean; busy?: boolean; full?: boolean }) {
   const reduced = useReducedMotion();
   return (
-    <motion.button type={type} onClick={onClick} disabled={disabled || busy} initial="rest" whileHover="hover" whileTap={{ scale: 0.97 }} variants={hoverVariants} transition={{ duration: 0.35, ease: [0.22, 1, 0.36, 1] }} className={cn(SHELL, SURFACE[tone], "cursor-pointer", full && "w-full justify-between", className)}>
-      <span>{children}</span>
+    <motion.button type={type} onClick={onClick} disabled={disabled || busy} initial="rest" whileHover="hover" whileTap={{ scale: 0.97 }} variants={hoverVariants} transition={{ duration: 0.35, ease: [0.22, 1, 0.36, 1] }} className={cn(SHELL, SURFACE[tone], "cursor-pointer", full && "w-full pl-[4.625rem]", className)}>
+      <span className={cn(full && "flex-1 text-center")}>{children}</span>
       <Track tone={tone} reduced={reduced} busy={busy} />
     </motion.button>
   );

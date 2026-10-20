@@ -2,10 +2,10 @@
 
 import { useMemo, useState } from "react";
 import { AnimatePresence, motion } from "framer-motion";
-import { CalendarClock, CheckCircle2, Clock, EyeOff, Lock, MapPin, Pencil, Plus, Trash2, Unlock, Users } from "lucide-react";
+import { Building2, CalendarClock, CheckCircle2, Clock, EyeOff, Lock, MapPin, Pencil, Plus, Trash2, Unlock, Users, Wallet } from "lucide-react";
 import { cn } from "@/lib/cn";
 import { ConfirmDialog, useToast, type ConfirmState } from "@/components/admin/Modal";
-import { OpeningForm } from "@/components/admin/careers/OpeningForm";
+import { PostingEditor } from "@/components/admin/careers/PostingEditor";
 import { JOB_STATUS_LABEL, type JobStatus } from "@/lib/jobs";
 import type { JobRow } from "@/lib/careerTypes";
 
@@ -99,7 +99,6 @@ export function OpeningsPanel({ jobs, loading, refresh, onViewApplications }: { 
         <AnimatePresence initial={false} mode="popLayout">
           {shown.map((job) => {
             const tone = TONE[job.effective];
-            const closes = day(job.closeBy);
             const opens = day(job.openFrom);
             return (
               <motion.li key={job.id} layout initial={{ opacity: 0, y: 12 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, scale: 0.97 }} transition={{ duration: 0.28 }} className="relative overflow-hidden rounded-3xl border border-border-soft bg-surface">
@@ -115,11 +114,12 @@ export function OpeningsPanel({ jobs, loading, refresh, onViewApplications }: { 
                     <div className="mt-2.5 flex flex-wrap gap-x-4 gap-y-1 text-xs text-muted">
                       <span className="font-semibold text-story-royal">{job.team}</span>
                       <span className="inline-flex items-center gap-1"><Clock className="h-3.5 w-3.5" />{job.type}</span>
-                      <span className="inline-flex items-center gap-1"><MapPin className="h-3.5 w-3.5" />{job.location}</span>
+                      <span className="inline-flex items-center gap-1"><Building2 className="h-3.5 w-3.5" />{job.workMode}</span>
+                      {job.location && <span className="inline-flex items-center gap-1"><MapPin className="h-3.5 w-3.5" />{job.location}</span>}
                       {job.experience && <span>{job.experience}</span>}
+                      {job.salaryRange && <span className="inline-flex items-center gap-1"><Wallet className="h-3.5 w-3.5" />{job.salaryRange}</span>}
                       <span>{job.positions} {job.positions === 1 ? "position" : "positions"}</span>
-                      {opens && <span className="inline-flex items-center gap-1"><CalendarClock className="h-3.5 w-3.5" />Opens {opens}</span>}
-                      {closes && <span>Apply by {closes}</span>}
+                      {job.effective === "upcoming" && opens && <span className="inline-flex items-center gap-1"><CalendarClock className="h-3.5 w-3.5" />Opens {opens}</span>}
                     </div>
                   </div>
 
@@ -146,7 +146,7 @@ export function OpeningsPanel({ jobs, loading, refresh, onViewApplications }: { 
         </div>
       )}
 
-      {editing && <OpeningForm job={editing === "new" ? null : editing} onClose={() => setEditing(null)} onSaved={refresh} />}
+      {editing && <PostingEditor kind="job" job={editing === "new" ? null : editing} onClose={() => setEditing(null)} onSaved={refresh} />}
       <ConfirmDialog state={confirm} onClose={() => setConfirm(null)} />
     </div>
   );

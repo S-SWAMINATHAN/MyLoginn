@@ -38,7 +38,7 @@ export default function TamilNaduPage() {
       <JsonLd data={faqStructuredData(faqs)} />
       <Container className="max-w-4xl">
         <h1 className="mt-0 text-4xl font-bold leading-[1.1] tracking-tight sm:text-5xl">Software, AI and digital services for Tamil Nadu businesses</h1>
-        <p className="mt-4 text-lg leading-8 text-muted">MyLoginn Tech Private Limited is an India-based technology company. We help businesses across Tamil Nadu, including Coimbatore, Pollachi, Udumalpet and Erode, build and grow with web, mobile, AI and marketing solutions, and we help students learn practical technology skills.</p>
+        <p className="mt-4 text-lg leading-8 text-muted">MyLoginn Tech is an India-based technology company. We help businesses across Tamil Nadu, including Coimbatore, Pollachi, Udumalpet and Erode, build and grow with web, mobile, AI and marketing solutions, and we help students learn practical technology skills.</p>
 
         <section aria-labelledby="tn-services" className="mt-12">
           <h2 id="tn-services" className="text-2xl font-semibold tracking-tight">What we can do for your business</h2>

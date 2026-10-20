@@ -56,7 +56,7 @@ export function ServiceLanding(p: ServiceLandingProps) {
             </section>
             <section aria-labelledby="svc-who" className="mt-12">
               <h2 id="svc-who" className="text-2xl font-semibold tracking-tight">Who we work with</h2>
-              <p className="mt-3 leading-7 text-muted">MyLoginn Tech Private Limited is an India-based technology company. We work with startups, small and mid-sized businesses and organisations across India, and serve clients in other countries remotely. Scope, timelines and deliverables are agreed in writing before work begins.</p>
+              <p className="mt-3 leading-7 text-muted">MyLoginn Tech is an India-based technology company. We work with startups, small and mid-sized businesses and organisations across India, and serve clients in other countries remotely. Scope, timelines and deliverables are agreed in writing before work begins.</p>
             </section>
             <section aria-labelledby="svc-faq" className="mt-12">
               <h2 id="svc-faq" className="text-2xl font-semibold tracking-tight">Frequently asked questions</h2>

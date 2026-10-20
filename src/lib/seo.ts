@@ -4,7 +4,6 @@ import { siteUrl } from "@/lib/site";
 const brandKeywords = [
   "MyLoginn",
   "MyLoginn Tech",
-  "MyLoginn Tech Private Limited",
 ];
 
 /**

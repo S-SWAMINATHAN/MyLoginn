@@ -316,7 +316,6 @@ export const internshipConfig: EntityConfig = {
     { key: "location", label: "Location", hideBelow: "lg" },
     { key: "stipend", label: "Stipend", align: "right", hideBelow: "md", render: (r) => (r.stipend ? `₹${nfIN.format(Number(r.stipend))}` : "Unpaid") },
     { key: "applications", label: "Applications", align: "right" },
-    { key: "applyDeadline", label: "Deadline", hideBelow: "lg", render: dateCell("applyDeadline") },
   ] as Column[],
   createFields: [
     { name: "title", label: "Title", type: "text", required: true },
@@ -325,7 +324,6 @@ export const internshipConfig: EntityConfig = {
     { name: "location", label: "Location", type: "text", required: true },
     { name: "durationWeeks", label: "Duration (weeks)", type: "number", min: 1, max: 52, required: true },
     { name: "stipend", label: "Stipend (₹/month)", type: "number", min: 0 },
-    { name: "applyDeadline", label: "Apply deadline", type: "date", required: true },
     { name: "paid", label: "Paid internship", type: "checkbox" },
     { name: "mentorName", label: "Mentor name", type: "text", required: true },
     { name: "mentorEmail", label: "Mentor email", type: "email", required: true },
@@ -341,7 +339,6 @@ export const internshipConfig: EntityConfig = {
     { name: "location", label: "Location", type: "text" },
     { name: "durationWeeks", label: "Duration (weeks)", type: "number", min: 1, max: 52 },
     { name: "stipend", label: "Stipend (₹/month)", type: "number", min: 0 },
-    { name: "applyDeadline", label: "Apply deadline", type: "date" },
     { name: "paid", label: "Paid internship", type: "checkbox" },
     { name: "mentorName", label: "Mentor name", type: "text" },
     { name: "mentorEmail", label: "Mentor email", type: "email" },

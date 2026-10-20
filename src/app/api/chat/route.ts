@@ -37,7 +37,7 @@ async function buildSystemPrompt(topics: Set<ChatTopic>) {
       orderBy: [{ featured: "desc" }, { studentsCount: "desc" }],
     }),
     !wants("internships") ? noRows : prisma.internship.findMany({
-      where: { applyDeadline: { gte: new Date() } },
+      where: { status: "open" },
       select: { title: true, type: true, paid: true, stipend: true, location: true, durationWeeks: true },
       orderBy: { featured: "desc" },
     }),
@@ -106,7 +106,7 @@ async function buildSystemPrompt(topics: Set<ChatTopic>) {
 
   return `${currentDateTimeContext()}
 
-You are the official AI assistant for MyLoginn (MyLoginn Tech Private Limited), a technology company from India that builds digital products, software, AI solutions and digital growth systems for businesses.
+You are the official AI assistant for MyLoginn (MyLoginn Tech), a technology company from India that builds digital products, software, AI solutions and digital growth systems for businesses.
 
 What MyLoginn offers:
 1. Five core services for businesses (overview: /services) — Web Development and App Development (/services/app-web-development), Desktop Applications and custom business software (/services/app-web-development), AI Agents and automation (/services/ai-development), and Digital Marketing (/services/digital-marketing). To start a project, point people to /contact.

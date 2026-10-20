@@ -28,13 +28,13 @@ const STEPS = [
   { icon: CalendarClock, title: "Conversation", text: "A conversation about your skills, the role and how we work." },
 ];
 
+const EMPLOYMENT_TYPE: Record<string, string> = { "Full-time": "FULL_TIME", "Part-time": "PART_TIME", Contract: "CONTRACTOR", Internship: "INTERN" };
+
 export default async function CareersPage() {
-  const yesterday = new Date();
-  yesterday.setDate(yesterday.getDate() - 1);
   // Keep the page useful when the database is temporarily unavailable.
   const [rows, internshipRows] = await Promise.all([
     prisma.jobOpening.findMany({ where: { status: { not: "draft" } }, orderBy: { createdAt: "desc" }, take: 60 }).catch(() => []),
-    prisma.internship.findMany({ where: { applyDeadline: { gte: yesterday } }, orderBy: { applyDeadline: "asc" }, take: 6 }).catch(() => []),
+    prisma.internship.findMany({ where: { status: "open" }, orderBy: [{ featured: "desc" }, { createdAt: "desc" }], take: 6 }).catch(() => []),
   ]);
 
   const jobs: PublicJob[] = [];
@@ -46,11 +46,12 @@ export default async function CareersPage() {
     jobs.push({
       id: j.id, title: j.title, team: j.team, type: j.type, location: j.location, experience: j.experience, salaryRange: j.salaryRange,
       positions: j.positions, summary: j.summary, responsibilities: j.responsibilities, requirements: j.requirements,
+      company: j.company, workMode: j.workMode, goodToHave: j.goodToHave, benefits: j.benefits, idealCandidate: j.idealCandidate, applyUrl: j.applyUrl,
       status, openFrom: j.openFrom?.toISOString() ?? null, closeBy: j.closeBy?.toISOString() ?? null, postedAt: j.createdAt.toISOString(),
     });
   }
   const internships: PublicInternship[] = internshipRows.map((i) => ({
-    id: i.id, slug: i.slug, title: i.title, type: i.type, location: i.location, durationWeeks: i.durationWeeks, applyDeadline: i.applyDeadline.toISOString(), open: true,
+    id: i.id, slug: i.slug, title: i.title, type: i.type, location: i.location, durationWeeks: i.durationWeeks, open: true,
   }));
 
   // Structured data only for roles that are actually taking applications.
@@ -60,12 +61,19 @@ export default async function CareersPage() {
       "@context": "https://schema.org",
       "@type": "JobPosting",
       title: j.title,
-      description: `${j.summary}\n\nResponsibilities: ${j.responsibilities.join("; ")}\n\nRequirements: ${j.requirements.join("; ")}`,
+      description: [
+        j.summary,
+        `Key responsibilities: ${j.responsibilities.join("; ")}`,
+        `Requirements: ${j.requirements.join("; ")}`,
+        ...(j.goodToHave.length ? [`Good to have: ${j.goodToHave.join("; ")}`] : []),
+        ...(j.benefits.length ? [`What you'll gain: ${j.benefits.join("; ")}`] : []),
+        ...(j.idealCandidate ? [j.idealCandidate] : []),
+      ].join("\n\n").replace(/\*\*/g, ""),
       datePosted: j.createdAt.toISOString().slice(0, 10),
-      ...(j.closeBy ? { validThrough: j.closeBy.toISOString().slice(0, 10) } : {}),
-      employmentType: j.type === "Full-time" ? "FULL_TIME" : j.type === "Part-time" ? "PART_TIME" : "CONTRACTOR",
-      hiringOrganization: { "@type": "Organization", name: "MyLoginn", sameAs: siteUrl },
-      jobLocation: { "@type": "Place", address: { "@type": "PostalAddress", addressLocality: j.location, addressCountry: "IN" } },
+      employmentType: j.type.split("/").map((t) => EMPLOYMENT_TYPE[t.trim()] ?? "OTHER"),
+      hiringOrganization: { "@type": "Organization", name: j.company || "MyLoginn", sameAs: siteUrl },
+      ...(j.workMode === "Remote" ? { jobLocationType: "TELECOMMUTE", applicantLocationRequirements: { "@type": "Country", name: "India" } } : {}),
+      jobLocation: { "@type": "Place", address: { "@type": "PostalAddress", ...(j.location ? { addressLocality: j.location } : {}), addressCountry: "IN" } },
       directApply: true,
     }));
 

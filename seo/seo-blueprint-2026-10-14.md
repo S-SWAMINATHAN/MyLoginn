@@ -8,7 +8,7 @@ Written for: the MyLoginn owner and developers. Builds on the earlier reports in
 
 1. **The homepage `<title>` had no brand in it** (`AI, Web, Mobile & Software Development Company`). The root layout's `%s | MyLoginn` template does not apply to a page in the same segment as the layout. **Fixed today** (see section 12).
 2. **The homepage H1 contained six rotating tagline sentences.** The hidden ones were `aria-hidden` but still inside `<h1>`. **Fixed today:** H1 is now `MyLoginn`; the rotating tagline is a `<p>`.
-3. **Two of your terms belong to another entity.** "My Login", "mylogin" and "my login" are the established MyLogin school single sign-on product. Earlier work found that Google auto-corrects `myloginn` to `mylogin`. Your brief asks to "naturally mention" these variants. I recommend **not** doing that: it cannot be done naturally, it would mislead people looking for MyLogin, and it risks the spam treatment you want to avoid. Targeted: `MyLoginn`, `My Loginn`, `MyLoginn Tech`, `MyLoginn Tech Private Limited`, `myloginn.com`. The About-page FAQ ("Is MyLoginn the same as MyLogin?") is the legitimate way to capture confused searchers.
+3. **Two of your terms belong to another entity.** "My Login", "mylogin" and "my login" are the established MyLogin school single sign-on product. Earlier work found that Google auto-corrects `myloginn` to `mylogin`. Your brief asks to "naturally mention" these variants. I recommend **not** doing that: it cannot be done naturally, it would mislead people looking for MyLogin, and it risks the spam treatment you want to avoid. Targeted: `MyLoginn`, `My Loginn`, `MyLoginn Tech`, `MyLoginn Tech`, `myloginn.com`. The About-page FAQ ("Is MyLoginn the same as MyLogin?") is the legitimate way to capture confused searchers.
 4. **Keep the existing service URLs.** Your example tree uses `/services/web-development` and `/services/app-web-development`-style splits, but the live pages are `/services/app-web-development`, `/ai-development`, `/testing-automation`, `/digital-marketing`. They are indexed and in the sitemap; renaming them means 301s and lost signals for no gain. Split only when a sub-page has distinct content (section 3).
 
 ## 1. Domain configuration (verified live)
@@ -72,11 +72,11 @@ When a split page ships: 301 nothing (the parent remains), link parent to child,
 
 ## 4. Brand keyword strategy
 
-- One entity: **MyLoginn = MyLoginn Tech Private Limited = myloginn.com.**
-- Sentence pattern used once or twice per key page: "MyLoginn, operated by MyLoginn Tech Private Limited, is an India-based technology company...". Already on About and in schema.
+- One entity: **MyLoginn = MyLoginn Tech = myloginn.com.**
+- Sentence pattern used once or twice per key page: "MyLoginn, operated by MyLoginn Tech, is an India-based technology company...". Already on About and in schema.
 - Allowed aliases in schema: `My Loginn`, `MyLoginn Tech`. Never `MyLogin`.
 - No pages per spelling (also in `cannibalization-report.md`).
-- Footer: legal line "MyLoginn Tech Private Limited" plus the registered address and CIN once you publish them (only if real).
+- Footer: legal line "MyLoginn Tech" plus the registered address and CIN once you publish them (only if real).
 
 ## 5. Keyword-to-page map
 
@@ -124,7 +124,7 @@ Present: Privacy, Terms (marked as drafts, **have them legally reviewed**), secu
 ## 10. Local SEO
 
 - Not fake city pages. The existing `/locations/tamil-nadu` stands; add **one** `/locations/coimbatore` only if it holds unique local facts (address, projects delivered there, local clients with permission).
-- Create/verify **Google Business Profile** only if you have a physical office clients/students can visit or a staffed service area; NAP must match the site exactly (name `MyLoginn Tech Private Limited`, real address, +91 96555 60555).
+- Create/verify **Google Business Profile** only if you have a physical office clients/students can visit or a staffed service area; NAP must match the site exactly (name `MyLoginn Tech`, real address, +91 96555 60555).
 - Add `LocalBusiness`/`PostalAddress` schema only after the address is public on Contact.
 
 ## 11. Backlinks and brand authority (slow, legitimate)
@@ -202,7 +202,7 @@ For each of 5 to 8 Indian service competitors (see `competitor-analysis.md`): po
 | When | Realistic expectation |
 |---|---|
 | Weeks 1 to 4 | Homepage and core pages indexed with the new title; site name `MyLoginn` in results; branded query impressions appear in Search Console |
-| Months 2 to 3 | `myloginn.com` appears for exact `MyLoginn Tech` / `MyLoginn Tech Private Limited` queries; sitelinks may appear (Google decides) |
+| Months 2 to 3 | `myloginn.com` appears for exact `MyLoginn Tech` / `MyLoginn Tech` queries; sitelinks may appear (Google decides) |
 | Months 3 to 6 | Rank for exact `myloginn` depends on whether Google stops auto-correcting to `mylogin`, which depends on real search and click volume; possible, not promised |
 | Months 6 to 12 | Non-brand service queries (e.g. "AI agent development company India") are highly competitive; expect page-2 to page-1 movement only with case studies, reviews and backlinks |
 

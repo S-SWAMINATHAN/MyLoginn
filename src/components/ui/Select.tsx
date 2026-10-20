@@ -3,6 +3,7 @@
 import { cn } from "@/lib/cn";
 import { AnimatePresence, motion } from "framer-motion";
 import { AlertCircle, Check, ChevronDown } from "lucide-react";
+import { LabelText } from "@/components/ui/LabelText";
 import { forwardRef, useCallback, useEffect, useId, useLayoutEffect, useRef, useState, type SelectHTMLAttributes } from "react";
 import { createPortal } from "react-dom";
 
@@ -141,7 +142,7 @@ export const Select = forwardRef<HTMLSelectElement, SelectProps>(
 
     return (
       <div className="group flex flex-col gap-1.5">
-        {label && <label htmlFor={triggerId} className="field-label">{label}</label>}
+        {label && <label htmlFor={triggerId} className="field-label"><LabelText>{label}</LabelText></label>}
         <div className="relative">
           <select ref={setRefs} tabIndex={-1} aria-hidden="true" disabled={disabled} className="pointer-events-none absolute inset-0 h-full w-full opacity-0" {...rest}>
             {placeholder && <option value="" disabled hidden>{placeholder}</option>}

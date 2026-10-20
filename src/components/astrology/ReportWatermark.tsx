@@ -12,7 +12,7 @@ import React, { useEffect, useMemo, useRef, useState } from "react";
 import type { ReportAccess } from "@/lib/astrology/access";
 import { setReportContext, usePaywall } from "@/lib/astrology/paywall";
 
-const COPYRIGHT = "© MyLoginn Tech Private Limited · Astrology";
+const COPYRIGHT = "© MyLoginn Tech · Astrology";
 
 function tile(locked: boolean): string {
   const text = locked ? "PREVIEW · MyLoginn Astrology" : COPYRIGHT;

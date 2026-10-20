@@ -26,7 +26,7 @@ import { ASTRO_PRODUCTS, priceInPaise } from "@/lib/astrology/access";
 import { ASTRO_PURCHASE_API } from "@/lib/astrology/routes";
 import { usePersistentLang } from "@/lib/astrology/useLang";
 
-const COPYRIGHT = "© MyLoginn Tech Private Limited · Astrology";
+const COPYRIGHT = "© MyLoginn Tech · Astrology";
 
 const rupees = (paise: number) => (paise / 100).toLocaleString("en-IN", { minimumFractionDigits: 2, maximumFractionDigits: 2 });
 

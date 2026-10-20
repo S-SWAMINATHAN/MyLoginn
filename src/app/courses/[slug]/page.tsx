@@ -92,7 +92,7 @@ export default async function CourseDetailPage({ params }: { params: Promise<{ s
         name: displayTitle,
         description: course.description,
         url: `${siteUrl}/courses/${course.slug}`,
-        provider: { "@type": "Organization", "@id": `${siteUrl}/#organization`, name: "MyLoginn Tech Private Limited", sameAs: siteUrl },
+        provider: { "@type": "Organization", "@id": `${siteUrl}/#organization`, name: "MyLoginn Tech", sameAs: siteUrl },
         inLanguage: "en",
         hasCourseInstance: { "@type": "CourseInstance", courseMode: "online" },
         offers: { "@type": "Offer", price: course.price, priceCurrency: "INR", category: course.price === 0 ? "Free" : "Paid", url: `${siteUrl}/courses/${course.slug}` },
@@ -251,17 +251,17 @@ export default async function CourseDetailPage({ params }: { params: Promise<{ s
                     {course.price === 0 ? (
                       <FreeEnrollButton slug={course.slug} loggedIn={!!user} enrolled={!!enrollment} />
                     ) : !user ? (
-                      <ArrowLink href={`/login?next=${encodeURIComponent(`/courses/${course.slug}`)}`} className="w-full justify-between">Log in to enroll</ArrowLink>
+                      <ArrowLink href={`/login?next=${encodeURIComponent(`/courses/${course.slug}`)}`} block>Log in to enroll</ArrowLink>
                     ) : enrollment && stepByStep ? (
                       <FreeEnrollButton slug={course.slug} loggedIn enrolled />
                     ) : enrollment ? (
                       <div className="flex flex-col items-center gap-2 text-center">
                         <AnimatedSuccess className="h-10.5 w-10.5" />
                         <p className="text-sm font-medium">You&apos;re enrolled</p>
-                        <ArrowLink href="/dashboard" className="w-full justify-between">Go to dashboard</ArrowLink>
+                        <ArrowLink href="/dashboard" block>Go to dashboard</ArrowLink>
                       </div>
                     ) : (
-                      <ArrowLink href={`/courses/${course.slug}/checkout`} className="w-full justify-between">Enroll now — pay ₹{course.price.toLocaleString("en-IN")}</ArrowLink>
+                      <ArrowLink href={`/courses/${course.slug}/checkout`} block>Enroll now — pay ₹{course.price.toLocaleString("en-IN")}</ArrowLink>
                     )}
                   </div>
 

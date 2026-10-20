@@ -17,9 +17,9 @@ export const metadata = createPageMetadata({
   title: "About MyLoginn",
   absoluteTitle: true,
   description:
-    "MyLoginn Tech Private Limited is an India-based IT company building websites, mobile apps, desktop software, AI agents and digital marketing for businesses.",
+    "MyLoginn Tech is an India-based IT company building websites, mobile apps, desktop software, AI agents and digital marketing for businesses.",
   path: "/about",
-  keywords: ["about MyLoginn", "MyLoginn Tech Private Limited company", "MyLoginn technology company", "MyLoginn IT company"],
+  keywords: ["about MyLoginn", "MyLoginn Tech company", "MyLoginn technology company", "MyLoginn IT company"],
 });
 
 const offerings = [
@@ -38,8 +38,8 @@ const principles: { title: string; description: string; Icon: LucideIcon; color:
 ];
 
 const faqs = [
-  { question: "What is MyLoginn Tech Private Limited?", answer: "MyLoginn Tech Private Limited is an Indian technology company. MYLOGINN is the company’s primary brand spelling." },
-  { question: "Is MyLoginn the same as MyLogin or My Login?", answer: "No. MyLoginn (with two n's), also written My Loginn, is MyLoginn Tech Private Limited, an India-based technology company at myloginn.com. It is not related to MyLogin, the school single sign-on service, or to other products with similar names." },
+  { question: "What is MyLoginn Tech?", answer: "MyLoginn Tech is an Indian technology company. MYLOGINN is the company’s primary brand spelling." },
+  { question: "Is MyLoginn the same as MyLogin or My Login?", answer: "No. MyLoginn (with two n's), also written My Loginn, is MyLoginn Tech, an India-based technology company at myloginn.com. It is not related to MyLogin, the school single sign-on service, or to other products with similar names." },
   { question: "What does MyLoginn do?", answer: "MyLoginn builds websites, mobile apps, desktop applications and AI agents, and runs digital marketing, for startups and businesses in India and worldwide." },
   { question: "How can I start a project with MyLoginn?", answer: "Use the Contact page to tell the team about your business, your goals and what you want to build. We reply with next steps and a proposed scope." },
   { question: "Does MyLoginn also offer learning?", answer: "Yes. MyLoginn Learn is a separate learning platform with technology courses and practice. Visit the Learn section for details." },

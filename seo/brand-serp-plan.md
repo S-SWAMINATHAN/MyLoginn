@@ -27,8 +27,8 @@ Run a small Search campaign on exact/phrase `myloginn`, `my loginn`, `myloginn t
 1. Deploy and request indexing of `/`, `/about`, service pages (Search Console).
 2. Create/verify LinkedIn, YouTube, GitHub, Facebook, Google Business Profile; add to `sameAs`.
 3. Ask students/clients to search "MyLoginn Tech" and follow your profile links.
-4. Use exactly "MyLoginn Tech Private Limited" in bios, certificates, email signatures, and press.
-5. Re-test these queries weekly: myloginn, my loginn, myloginn tech, myloginn.com, MyLoginn Tech Private Limited.
+4. Use exactly "MyLoginn Tech" in bios, certificates, email signatures, and press.
+5. Re-test these queries weekly: myloginn, my loginn, myloginn tech, myloginn.com, MyLoginn Tech.
 
 ## Files (updated 2026-10-13)
 - `brand-variants.csv`: 2,445 systematically generated spellings of the brand (prefix x spacing x core x suffix), each classified TARGET_BRAND, BRAND_VARIANT, OUR_TYPO, AMBIGUOUS or OTHER_ENTITY, with the action to take.

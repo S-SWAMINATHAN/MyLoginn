@@ -1,12 +1,12 @@
 import { NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
 import { requireAdmin } from "@/lib/auth";
+import { internshipInputSchema, slugifyJob } from "@/lib/jobs";
+import { splitLines } from "@/lib/postings";
 
 export const runtime = "nodejs";
 
-const DAY = 24 * 60 * 60 * 1000;
-
-/** Internships with their application counts and whether they are still taking applications (decided by the deadline). */
+/** Internships with every posting field (for the editor), their application counts and their status. */
 export async function GET() {
   const admin = await requireAdmin();
   if (!admin) return NextResponse.json({ error: "Forbidden" }, { status: 403 });
@@ -23,22 +23,47 @@ export async function GET() {
     counts.set(g.internshipId, c);
   }
 
-  const now = Date.now();
   return NextResponse.json({
     internships: list.map((i) => ({
       id: i.id,
       slug: i.slug,
       title: i.title,
       company: i.company,
-      type: i.type,
+      workMode: i.type,
       location: i.location,
       durationWeeks: i.durationWeeks,
       paid: i.paid,
+      stipend: i.stipend,
       featured: i.featured,
-      applyDeadline: i.applyDeadline.toISOString(),
-      open: i.applyDeadline.getTime() + DAY > now,
+      status: i.status,
+      open: i.status === "open",
+      description: i.description,
+      responsibilities: splitLines(i.responsibilities),
+      requirements: splitLines(i.requirements),
+      goodToHave: splitLines(i.goodToHave),
+      benefits: splitLines(i.benefits),
+      idealCandidate: i.idealCandidate,
+      applyUrl: i.applyUrl,
+      mentorName: i.mentorName,
+      mentorEmail: i.mentorEmail,
+      createdAt: i.createdAt.toISOString(),
       applications: counts.get(i.id)?.total ?? 0,
       newApplications: counts.get(i.id)?.fresh ?? 0,
     })),
   });
+}
+
+export async function POST(req: Request) {
+  const admin = await requireAdmin();
+  if (!admin) return NextResponse.json({ error: "Forbidden" }, { status: 403 });
+
+  const parsed = internshipInputSchema.safeParse(await req.json().catch(() => null));
+  if (!parsed.success) return NextResponse.json({ error: parsed.error.issues[0]?.message ?? "Invalid input" }, { status: 400 });
+
+  const base = slugifyJob(parsed.data.title);
+  let slug = base;
+  for (let n = 2; await prisma.internship.findUnique({ where: { slug }, select: { id: true } }); n++) slug = `${base}-${n}`;
+
+  const internship = await prisma.internship.create({ data: { ...parsed.data, slug, applyDeadline: null }, select: { id: true } });
+  return NextResponse.json({ internship }, { status: 201 });
 }

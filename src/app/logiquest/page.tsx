@@ -64,7 +64,7 @@ export default async function LogiQuestHome() {
             </p>
           </Reveal>
           <Reveal direction="up" delay={0.25} className="mt-7 flex flex-col gap-3 sm:flex-row sm:flex-wrap sm:items-center">
-            <ArrowLink href="/logiquest/arithmetic-aptitude" className="w-full justify-between sm:w-auto sm:justify-start">Start with Aptitude</ArrowLink>
+            <ArrowLink href="/logiquest/arithmetic-aptitude" block className="sm:!w-auto sm:!pl-5">Start with Aptitude</ArrowLink>
             <Link href="/logiquest/online-test" className="btn-sweep inline-flex h-11 w-full items-center justify-center gap-2 rounded-full border border-border-soft bg-surface px-6 text-sm font-semibold active:scale-95 sm:h-auto sm:w-auto sm:py-2.5"><Timer className="h-4 w-4" />Online tests</Link>
           </Reveal>
           <Reveal direction="up" delay={0.35}>

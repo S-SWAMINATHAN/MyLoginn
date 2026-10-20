@@ -48,12 +48,12 @@ export const metadata: Metadata = {
   description:
     "Your technology partner to build, automate and grow. MyLoginn creates websites, mobile apps, desktop software and AI agents, and grows them with digital marketing.",
   applicationName: "MyLoginn",
-  authors: [{ name: "MyLoginn Tech Private Limited" }],
-  creator: "MyLoginn Tech Private Limited",
-  publisher: "MyLoginn Tech Private Limited",
+  authors: [{ name: "MyLoginn Tech" }],
+  creator: "MyLoginn Tech",
+  publisher: "MyLoginn Tech",
   category: "Technology",
   keywords: [
-    "MyLoginn", "MyLoginn Tech", "MyLoginn Tech Private Limited",
+    "MyLoginn", "MyLoginn Tech",
   ],
   openGraph: {
     type: "website",

@@ -51,8 +51,11 @@ export async function POST(req: Request, { params }: { params: Promise<{ id: str
   }
 
   const internship = await prisma.internship.findUnique({ where: { id } });
-  if (!internship) {
+  if (!internship || internship.status === "draft") {
     return NextResponse.json({ error: "Internship not found" }, { status: 404 });
+  }
+  if (internship.status !== "open") {
+    return NextResponse.json({ error: "Applications are closed for this internship" }, { status: 409 });
   }
 
   const existing = await prisma.internshipApplication.findUnique({

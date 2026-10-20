@@ -2,6 +2,7 @@
 
 import { cn } from "@/lib/cn";
 import { AlertCircle, CheckCircle2 } from "lucide-react";
+import { LabelText } from "@/components/ui/LabelText";
 import { forwardRef, useState, type ChangeEvent, type InputHTMLAttributes, type ReactNode, type TextareaHTMLAttributes } from "react";
 
 type FieldProps = { label?: string; error?: string; hint?: ReactNode; valid?: boolean };
@@ -26,7 +27,7 @@ type InputProps = InputHTMLAttributes<HTMLInputElement> & FieldProps & { icon?: 
 export const Input = forwardRef<HTMLInputElement, InputProps>(
   ({ label, error, hint, valid, className, id, icon, ...rest }, ref) => (
     <div className="group flex flex-col gap-1.5">
-      {label && <label htmlFor={id} className="field-label">{label}</label>}
+      {label && <label htmlFor={id} className="field-label"><LabelText>{label}</LabelText></label>}
       <div className="relative">
         {icon && <span aria-hidden="true" className="pointer-events-none absolute left-3.5 top-1/2 -translate-y-1/2 text-muted transition-colors group-focus-within:text-brand-600">{icon}</span>}
         <input ref={ref} id={id} aria-invalid={error ? true : undefined} data-valid={valid && !error ? true : undefined} className={cn("field-control", icon && "pl-11", (error || valid) && "pr-10", className)} {...rest} />
@@ -44,7 +45,7 @@ export const Textarea = forwardRef<HTMLTextAreaElement, TextareaProps>(
   ({ label, error, hint, valid, className, id, onChange, maxLength, ...rest }, ref) => {
     const [count, setCount] = useState(String(rest.defaultValue ?? "").length);
     return <div className="group flex flex-col gap-1.5">
-      {label && <label htmlFor={id} className="field-label">{label}</label>}
+      {label && <label htmlFor={id} className="field-label"><LabelText>{label}</LabelText></label>}
       <textarea ref={ref} id={id} maxLength={maxLength} aria-invalid={error ? true : undefined} data-valid={valid && !error ? true : undefined} className={cn("field-control", className)} onChange={(event: ChangeEvent<HTMLTextAreaElement>) => { setCount(event.target.value.length); onChange?.(event); }} {...rest} />
       <FieldMessage error={error} hint={hint} count={count} max={maxLength} />
     </div>;

@@ -102,7 +102,7 @@ const internshipCreate = z.object({
   responsibilities: z.string().trim().min(3),
   mentorName: z.string().trim().min(2),
   mentorEmail: z.string().trim().email(),
-  applyDeadline: z.coerce.date(),
+  applyDeadline: z.coerce.date().optional().nullable(),
   featured: z.coerce.boolean().default(false),
 });
 const internshipUpdate = internshipCreate.partial();

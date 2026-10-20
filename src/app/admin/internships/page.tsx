@@ -1,7 +1,6 @@
-import { EntityScreen } from "@/components/admin/EntityScreen";
+import { redirect } from "next/navigation";
 
-export const metadata = { title: "Internships — MyLoginn Admin" };
-
+/** Internships are written and managed as structured postings in Careers. */
 export default function AdminInternshipsPage() {
-  return <EntityScreen entity="internships" />;
+  redirect("/admin/careers?tab=internships");
 }

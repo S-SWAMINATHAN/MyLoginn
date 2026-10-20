@@ -37,10 +37,10 @@ export async function LmsCourseDetail({ slug, justEnrolled }: { slug: string; ju
   const learnHref = `/courses/${slug}/learn`;
 
   let cta: React.ReactNode;
-  if (access.allowed) cta = <ArrowLink href={learnHref} className="w-full justify-between">{ctx.preview ? "Preview course" : state && state.view.requiredDone > 0 ? "Continue learning" : "Start learning"}</ArrowLink>;
-  else if (!user) cta = <ArrowLink href={`/login?next=/courses/${slug}`} className="w-full justify-between">Log in to {free ? "enroll" : "buy"}</ArrowLink>;
+  if (access.allowed) cta = <ArrowLink href={learnHref} block>{ctx.preview ? "Preview course" : state && state.view.requiredDone > 0 ? "Continue learning" : "Start learning"}</ArrowLink>;
+  else if (!user) cta = <ArrowLink href={`/login?next=/courses/${slug}`} block>Log in to {free ? "enroll" : "buy"}</ArrowLink>;
   else if (access.reason === "not_enrolled") cta = <LmsEnrollButton slug={slug} />;
-  else if (access.reason === "needs_purchase" || access.reason === "expired") cta = <ArrowLink href={paidCourseHref(slug)} className="w-full justify-between">{access.reason === "expired" ? "Renew" : "Buy"} for ₹{priceNow.toLocaleString("en-IN")}</ArrowLink>;
+  else if (access.reason === "needs_purchase" || access.reason === "expired") cta = <ArrowLink href={paidCourseHref(slug)} block>{access.reason === "expired" ? "Renew" : "Buy"} for ₹{priceNow.toLocaleString("en-IN")}</ArrowLink>;
   else cta = <p className="rounded-2xl bg-story-mist px-4 py-3 text-sm" role="status">{access.message}</p>;
 
   const canRenewSoon = purchase?.action === "renew" && access.allowed;
@@ -55,7 +55,7 @@ export async function LmsCourseDetail({ slug, justEnrolled }: { slug: string; ju
     <Section className="pt-8 sm:pt-12">
       <JsonLd data={{
         "@context": "https://schema.org", "@type": "Course", name: course.title, description: course.description, url: `${siteUrl}/courses/${course.slug}`,
-        provider: { "@type": "Organization", name: "MyLoginn Tech Private Limited", sameAs: siteUrl },
+        provider: { "@type": "Organization", name: "MyLoginn Tech", sameAs: siteUrl },
         offers: { "@type": "Offer", price: course.price, priceCurrency: "INR", category: free ? "Free" : "Paid" },
       }} />
       <Container className="max-w-6xl">

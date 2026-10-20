@@ -1,12 +1,17 @@
 import { z } from "zod";
 import { contactEmailSchema, personNameSchema, phoneSchema } from "@/lib/validation";
+import { WORK_MODES } from "@/lib/postings";
 
 export const JOB_TEAMS = ["Engineering", "Design", "AI", "Marketing", "Operations", "Sales", "Support"] as const;
-export const JOB_TYPES = ["Full-time", "Part-time", "Contract"] as const;
+export const JOB_TYPES = ["Full-time", "Part-time", "Contract", "Internship"] as const;
 export const JOB_STATUSES = ["open", "upcoming", "closed", "draft"] as const;
 export type JobStatus = (typeof JOB_STATUSES)[number];
 
 export const JOB_STATUS_LABEL: Record<JobStatus, string> = { open: "Open now", upcoming: "Opening soon", closed: "Closed", draft: "Draft" };
+
+/** Internships have no end date: they are open, closed or a draft until an administrator changes it. */
+export const INTERNSHIP_POST_STATUSES = ["open", "closed", "draft"] as const;
+export type InternshipPostStatus = (typeof INTERNSHIP_POST_STATUSES)[number];
 
 /** The review pipeline for job applications. Internship applications keep their older status names (see INTERNSHIP_STATUSES). */
 export const APPLICATION_STATUSES = [
@@ -71,28 +76,85 @@ const dateInput = z.string().trim().optional().or(z.literal("")).nullable().tran
   return d;
 });
 
+const optionalLines = (max: number, label: string) => lines(0, max, label).default([]);
+
+/** An optional apply link (https://…) or email address. */
+const applyUrlInput = z
+  .string()
+  .trim()
+  .max(200, "That link is too long")
+  .optional()
+  .or(z.literal(""))
+  .refine((v) => !v || /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(v) || /^(https?:\/\/)?[^\s]+\.[^\s]+$/i.test(v), { message: "Enter a link (https://…) or an email address" })
+  .transform((v) => v || null);
+
+/** Shared posting sections: header details and the About / Responsibilities / Requirements / … body. */
+const postingFields = {
+  title: z.string().trim().min(3, "Enter the role title").max(100, "Keep the title under 100 characters"),
+  company: z.string().trim().min(2, "Enter the company").max(100),
+  workMode: z.enum(WORK_MODES, { message: "Choose a work mode" }),
+  location: z.string().trim().max(80, "Keep the location under 80 characters").optional().default(""),
+  responsibilities: lines(1, 15, "responsibility"),
+  requirements: lines(1, 15, "requirement"),
+  goodToHave: optionalLines(12, "good-to-have point"),
+  benefits: optionalLines(12, "benefit"),
+  idealCandidate: optionalText(1200),
+  applyUrl: applyUrlInput,
+};
+
+/** "Full-time / Internship": one or more employment types joined with " / ". */
+const jobTypeInput = z
+  .string()
+  .trim()
+  .refine((v) => {
+    const parts = v.split("/").map((p) => p.trim()).filter(Boolean);
+    return parts.length > 0 && parts.every((p) => (JOB_TYPES as readonly string[]).includes(p));
+  }, { message: "Choose at least one job type" });
+
 export const jobInputSchema = z
   .object({
-    title: z.string().trim().min(3, "Enter the role title").max(100, "Keep the title under 100 characters"),
+    ...postingFields,
     team: z.string().trim().min(2, "Choose a team").max(40),
-    type: z.enum(JOB_TYPES),
-    location: z.string().trim().min(2, "Enter the location").max(80),
+    type: jobTypeInput,
     experience: optionalText(60),
     salaryRange: optionalText(60),
     positions: z.coerce.number().int().min(1, "At least one position").max(99),
-    summary: z.string().trim().min(20, "Describe the role in at least 20 characters").max(1200, "Keep the summary under 1200 characters"),
-    responsibilities: lines(1, 12, "responsibility"),
-    requirements: lines(1, 12, "requirement"),
+    summary: z.string().trim().min(20, "Describe the role in at least 20 characters").max(2000, "Keep About the role under 2000 characters"),
     status: z.enum(JOB_STATUSES),
     openFrom: dateInput,
-    closeBy: dateInput,
+    // Roles have no end date any more; saving a role clears an old one so only the status decides.
+    closeBy: z.any().optional().transform(() => null),
   })
   .superRefine((v, ctx) => {
     if (v.status === "upcoming" && !v.openFrom) ctx.addIssue({ code: "custom", path: ["openFrom"], message: "An upcoming role needs an opening date" });
-    if (v.openFrom && v.closeBy && v.closeBy < v.openFrom) ctx.addIssue({ code: "custom", path: ["closeBy"], message: "The last day to apply must be after the opening date" });
   });
 
 export type JobInput = z.infer<typeof jobInputSchema>;
+
+/** An internship posting. Lists are stored one item per line; there is no end date (see INTERNSHIP_POST_STATUSES). */
+export const internshipInputSchema = z
+  .object({
+    ...postingFields,
+    description: z.string().trim().min(20, "Describe the role in at least 20 characters").max(2000, "Keep About the role under 2000 characters"),
+    durationWeeks: z.coerce.number().int().min(1, "At least 1 week").max(52, "At most 52 weeks"),
+    paid: z.boolean(),
+    stipend: z.coerce.number().int().min(0).max(500000).nullable().optional().transform((v) => v || null),
+    mentorName: z.string().trim().max(80).optional().default(""),
+    mentorEmail: z.string().trim().max(120).optional().or(z.literal("")).refine((v) => !v || /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(v), { message: "Enter a valid mentor email" }).transform((v) => v ?? ""),
+    featured: z.boolean().default(false),
+    status: z.enum(INTERNSHIP_POST_STATUSES),
+  })
+  .transform(({ workMode, responsibilities, requirements, goodToHave, benefits, paid, stipend, ...rest }) => ({
+    ...rest,
+    // The internship's `type` column holds its work mode (On-site / Hybrid / Remote).
+    type: workMode,
+    paid,
+    stipend: paid ? stipend : null,
+    responsibilities: responsibilities.join("\n"),
+    requirements: requirements.join("\n"),
+    goodToHave: goodToHave.join("\n"),
+    benefits: benefits.join("\n"),
+  }));
 
 export const jobApplicationSchema = z.object({
   jobId: z.string().trim().max(40).optional().or(z.literal("")).transform((v) => v || null),

@@ -1,6 +1,6 @@
 # Entity SEO
 
-**Entity:** MyLoginn Tech Private Limited (brand MyLoginn, myloginn.com). `@id` = `https://www.myloginn.com/#organization`, referenced by WebSite and by each Service's `provider`.
+**Entity:** MyLoginn Tech (brand MyLoginn, myloginn.com). `@id` = `https://www.myloginn.com/#organization`, referenced by WebSite and by each Service's `provider`.
 
 **Problem found:** a web search for "myloginn" returns only "MyLogin" (school SSO, LAUSD, a Minecraft plugin). MyLogin was previously declared an alias in schema; removed. Allowed aliases: "My Loginn", "MyLoginn Tech".
 

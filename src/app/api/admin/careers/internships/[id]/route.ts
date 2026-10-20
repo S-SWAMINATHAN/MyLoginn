@@ -2,30 +2,44 @@ import { NextResponse } from "next/server";
 import { z } from "zod";
 import { prisma } from "@/lib/prisma";
 import { requireAdmin } from "@/lib/auth";
+import { INTERNSHIP_POST_STATUSES, internshipInputSchema } from "@/lib/jobs";
 
 export const runtime = "nodejs";
 
-const DAY = 24 * 60 * 60 * 1000;
-const schema = z.object({ action: z.enum(["close", "reopen"]), days: z.number().int().min(1).max(365).optional() });
+const quickSchema = z.object({ quickStatus: z.enum(INTERNSHIP_POST_STATUSES) });
 
-/**
- * Open or close an internship's applications. Internships are open while their deadline has not passed, so closing sets
- * the deadline to yesterday and reopening sets it to a number of days from now (30 by default). Everything else about an
- * internship is edited in the Internships manager.
- */
+/** Update an internship: a full edit (same shape as creating one) or a one-click status change. There is no end date. */
 export async function PATCH(req: Request, { params }: { params: Promise<{ id: string }> }) {
   const admin = await requireAdmin();
   if (!admin) return NextResponse.json({ error: "Forbidden" }, { status: 403 });
   const { id } = await params;
 
-  const parsed = schema.safeParse(await req.json().catch(() => null));
-  if (!parsed.success) return NextResponse.json({ error: "Invalid request" }, { status: 400 });
+  const existing = await prisma.internship.findUnique({ where: { id }, select: { id: true } });
+  if (!existing) return NextResponse.json({ error: "Internship not found" }, { status: 404 });
 
-  const applyDeadline = new Date(parsed.data.action === "close" ? Date.now() - 2 * DAY : Date.now() + (parsed.data.days ?? 30) * DAY);
-  try {
-    const internship = await prisma.internship.update({ where: { id }, data: { applyDeadline }, select: { id: true, applyDeadline: true } });
-    return NextResponse.json({ internship: { id: internship.id, applyDeadline: internship.applyDeadline.toISOString() } });
-  } catch {
-    return NextResponse.json({ error: "Internship not found" }, { status: 404 });
+  const body = await req.json().catch(() => null);
+  const quick = quickSchema.safeParse(body);
+  if (quick.success) {
+    const internship = await prisma.internship.update({ where: { id }, data: { status: quick.data.quickStatus, applyDeadline: null }, select: { id: true, status: true } });
+    return NextResponse.json({ internship });
   }
+
+  const parsed = internshipInputSchema.safeParse(body);
+  if (!parsed.success) return NextResponse.json({ error: parsed.error.issues[0]?.message ?? "Invalid input" }, { status: 400 });
+  const internship = await prisma.internship.update({ where: { id }, data: { ...parsed.data, applyDeadline: null }, select: { id: true } });
+  return NextResponse.json({ internship });
+}
+
+/** Deleting an internship also removes its applications (they belong to it). */
+export async function DELETE(_req: Request, { params }: { params: Promise<{ id: string }> }) {
+  const admin = await requireAdmin();
+  if (!admin) return NextResponse.json({ error: "Forbidden" }, { status: 403 });
+  const { id } = await params;
+  const existing = await prisma.internship.findUnique({ where: { id }, select: { id: true } });
+  if (!existing) return NextResponse.json({ error: "Internship not found" }, { status: 404 });
+  await prisma.$transaction([
+    prisma.internshipApplication.deleteMany({ where: { internshipId: id } }),
+    prisma.internship.delete({ where: { id } }),
+  ]);
+  return NextResponse.json({ ok: true });
 }

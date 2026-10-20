@@ -1,28 +1,24 @@
 "use client";
 
-import { useMemo } from "react";
 import { ApplyForm } from "@/components/internships/ApplyForm";
 import { ArrowLink } from "@/components/ui/ArrowLink";
 import { AnimatedSuccess } from "@/components/ui/icons/AnimatedSuccess";
+import { applyHref } from "@/lib/postings";
 
 export function InternshipApplyPanel({
   internshipId,
-  applyDeadline,
+  open,
+  applyUrl,
   loggedIn,
   applicationStatus,
 }: {
   internshipId: string;
-  applyDeadline: string;
+  open: boolean;
+  /** Optional external link or email; candidates can also apply here. */
+  applyUrl?: string | null;
   loggedIn: boolean;
   applicationStatus: string | null;
 }) {
-  const daysLeft = useMemo(() => {
-    const deadline = new Date(applyDeadline);
-    return Math.max(0, Math.ceil((deadline.getTime() - Date.now()) / (1000 * 60 * 60 * 24)));
-  }, [applyDeadline]);
-
-  const open = daysLeft > 0;
-
   return (
     <div className="relative overflow-hidden rounded-3xl border border-border-soft bg-surface p-6 shadow-[var(--shadow-soft)]">
       <span aria-hidden className="absolute inset-x-0 top-0 flex h-1">
@@ -39,13 +35,13 @@ export function InternshipApplyPanel({
             {open && <span className="absolute inset-0 animate-ping rounded-full bg-emerald-400/60" />}
             <span className={`relative h-1.5 w-1.5 rounded-full ${open ? "bg-emerald-500" : "bg-muted"}`} />
           </span>
-          {open ? `${daysLeft} days left` : "Deadline passed"}
+          {open ? "Open" : "Closed"}
         </span>
       </div>
 
       <div className="mt-6 border-t border-border-soft pt-5">
         {!loggedIn ? (
-          <ArrowLink href="/login" className="w-full justify-between">Log in to apply</ArrowLink>
+          <ArrowLink href="/login" block>Log in to apply</ArrowLink>
         ) : applicationStatus ? (
           <div className="flex flex-col items-center gap-2 py-2 text-center">
             <AnimatedSuccess className="h-12 w-12" />
@@ -56,6 +52,12 @@ export function InternshipApplyPanel({
           <ApplyForm internshipId={internshipId} />
         ) : (
           <p className="text-center text-sm text-muted">Applications are closed for this internship.</p>
+        )}
+        {open && applyUrl && (
+          <p className="mt-4 text-center text-xs text-muted">
+            Or apply via{" "}
+            <a href={applyHref(applyUrl)} target={applyUrl.includes("@") ? undefined : "_blank"} rel="noreferrer" className="break-all font-semibold text-story-royal hover:underline">{applyUrl}</a>
+          </p>
         )}
       </div>
     </div>

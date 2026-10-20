@@ -83,7 +83,7 @@ export function Footer() {
             <Link href="/" className="inline-flex items-center gap-3">
               <LogoBadge className="h-9 w-auto" />
               <span>
-                <span className="block text-sm font-semibold text-story-navy">MyLoginn Tech Private Limited</span>
+                <span className="block text-sm font-semibold text-story-navy">MyLoginn Tech</span>
                 <span className="block text-[10px] font-bold uppercase tracking-[0.14em] text-story-royal">Build · Automate · Grow</span>
               </span>
             </Link>
@@ -145,7 +145,7 @@ export function Footer() {
 
         {/* bottom bar */}
         <div className="flex flex-col items-center gap-3 border-t border-border-soft py-5 text-xs text-muted sm:flex-row sm:justify-between">
-          <p>&copy; {new Date().getFullYear()} MyLoginn Tech Private Limited</p>
+          <p>&copy; {new Date().getFullYear()} MyLoginn Tech</p>
           <p className="inline-flex flex-wrap items-center justify-center gap-x-4 gap-y-1">
             <Link href="/locations/tamil-nadu" className="rounded outline-none transition-colors duration-200 hover:text-story-royal focus-visible:ring-2 focus-visible:ring-story-royal/40">Tamil Nadu</Link>
             <Link href="/privacy" className="rounded outline-none transition-colors duration-200 hover:text-story-royal focus-visible:ring-2 focus-visible:ring-story-royal/40">Privacy</Link>

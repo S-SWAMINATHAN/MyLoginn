@@ -13,6 +13,7 @@ import { AnimatePresence, motion } from "framer-motion";
 import { AlertCircle, Check, CheckCircle2, ChevronDown, Search, X } from "lucide-react";
 import { useEffect, useLayoutEffect, useMemo, useRef, useState } from "react";
 import { createPortal } from "react-dom";
+import { LabelText } from "@/components/ui/LabelText";
 
 const regionNames =
   typeof Intl !== "undefined" && "DisplayNames" in Intl
@@ -218,7 +219,7 @@ export function PhoneInput({ label, hint, error, valid, value, onChange, onCount
 
   return (
     <div className="group flex flex-col gap-1.5" ref={rootRef}>
-      {label && <label className="field-label">{label}</label>}
+      {label && <label className="field-label"><LabelText>{label}</LabelText></label>}
       <div
         ref={shellRef}
         className={cn(

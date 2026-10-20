@@ -52,7 +52,7 @@ export const dynamic = "force-dynamic";
 export default async function InternshipsPage() {
   const [user, internships] = await Promise.all([
     getCurrentUser(),
-    prisma.internship.findMany({ orderBy: { applyDeadline: "asc" } }),
+    prisma.internship.findMany({ where: { status: { not: "draft" } }, orderBy: [{ featured: "desc" }, { createdAt: "desc" }] }),
   ]);
 
   const applications = user
@@ -70,7 +70,7 @@ export default async function InternshipsPage() {
     stipend: i.stipend,
     location: i.location,
     durationWeeks: i.durationWeeks,
-    applyDeadline: i.applyDeadline.toISOString(),
+    open: i.status === "open",
     featured: i.featured,
   }));
 

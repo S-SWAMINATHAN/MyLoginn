@@ -41,8 +41,7 @@ const NAV_GROUPS: { label: string; items: NavItem[] }[] = [
   {
     label: "Opportunities",
     items: [
-      { href: "/admin/careers", label: "Careers", icon: Briefcase, keywords: "jobs openings hiring resume cv candidates review" },
-      { href: "/admin/internships", label: "Internships", icon: GraduationCap },
+      { href: "/admin/careers", label: "Careers", icon: Briefcase, keywords: "jobs openings internships hiring resume cv candidates review" },
       { href: "/admin/applications", label: "Applications", icon: Mail, keywords: "resume" },
       { href: "/admin/projects", label: "Projects", icon: FolderKanban },
       { href: "/admin/requests", label: "Form Requests", icon: Inbox, keywords: "leads enquiries" },

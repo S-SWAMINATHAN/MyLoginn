@@ -348,8 +348,17 @@ model Internship {
   responsibilities String
   mentorName       String
   mentorEmail      String
-  applyDeadline    DateTime
+  /// Legacy; internships no longer end on a date. Open or closed is decided by `status`.
+  applyDeadline    DateTime?
+  /// open, closed or draft (draft is hidden from the public).
+  status           String   @default("open")
   featured         Boolean  @default(false)
+  /// Posting sections beyond the basics; lists are one item per line, like requirements and responsibilities.
+  goodToHave       String   @default("")
+  benefits         String   @default("")
+  idealCandidate   String?
+  /// Optional external link or email for applying; blank means candidates apply on the site.
+  applyUrl         String?
   createdAt        DateTime @default(now())
 
   applications InternshipApplication[]
@@ -388,6 +397,13 @@ model JobOpening {
   summary          String
   responsibilities String[]
   requirements     String[]
+  company          String    @default("MyLoginn Tech")
+  workMode         String    @default("On-site")
+  goodToHave       String[]  @default([])
+  benefits         String[]  @default([])
+  idealCandidate   String?
+  /// Optional external link or email for applying; blank means candidates apply on the site.
+  applyUrl         String?
   status           String    @default("open")
   openFrom         DateTime?
   closeBy          DateTime?

@@ -61,10 +61,10 @@ export function JobCard({ job, now, index, onOpen }: { job: PublicJob; now: numb
 
         <div className="flex flex-1 flex-col p-5">
           <h3 className="line-clamp-2 text-lg font-bold leading-snug text-story-navy transition-colors group-hover:text-story-royal dark:text-foreground">{job.title}</h3>
-          <p className="mt-1.5 line-clamp-2 text-sm leading-6 text-muted">{job.summary}</p>
+          <p className="mt-1.5 line-clamp-2 text-sm leading-6 text-muted">{job.summary.replace(/\*\*/g, "")}</p>
 
           <ul className="mt-4 grid gap-2 text-sm text-muted">
-            <li className="flex items-center gap-2"><MapPin className="h-4 w-4 shrink-0 text-story-royal" />{job.location}</li>
+            <li className="flex items-center gap-2"><MapPin className="h-4 w-4 shrink-0 text-story-royal" />{[job.workMode, job.location].filter(Boolean).join(" · ")}</li>
             {job.experience && <li className="flex items-center gap-2"><Briefcase className="h-4 w-4 shrink-0 text-story-royal" />{job.experience}</li>}
             <li className="flex items-center gap-2"><Users className="h-4 w-4 shrink-0 text-story-royal" />{job.positions} {job.positions === 1 ? "vacancy" : "vacancies"}</li>
             {job.salaryRange && <li className="flex items-center gap-2"><Wallet className="h-4 w-4 shrink-0 text-story-royal" />{job.salaryRange}</li>}

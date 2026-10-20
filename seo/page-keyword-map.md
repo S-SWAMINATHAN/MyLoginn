@@ -12,7 +12,7 @@ Search volumes were not available; priorities are judgement. Meta descriptions a
 | `/services/digital-marketing` | digital marketing services | SEO services, Google Ads | Commercial | Digital Marketing & SEO Services | (existing hero) | FAQPage, Breadcrumb | Lead form |
 | `/courses` | technology courses | Python, React, Gen AI | Commercial hub | existing | existing | Breadcrumb | Enrol |
 | `/courses/<slug>` (28) | "<tech> course" | fundamentals | Commercial | existing | existing | Breadcrumb; **Course schema recommended** (see remaining) | Enrol |
-| `/about` | MyLoginn Tech Private Limited | who is MyLoginn | Navigational | existing | existing | Breadcrumb | Contact |
+| `/about` | MyLoginn Tech | who is MyLoginn | Navigational | existing | existing | Breadcrumb | Contact |
 | `/projects`, `/projects/<slug>` | MyLoginn projects | case studies | Informational | existing | existing | Breadcrumb | Contact |
 | `/contact` | contact MyLoginn | | Navigational | existing | existing | Breadcrumb | Form |
 

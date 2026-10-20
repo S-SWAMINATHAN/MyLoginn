@@ -26,7 +26,7 @@ export async function GET(req: Request) {
   const hits: Hit[] = [
     ...users.map((u): Hit => ({ id: `u-${u.id}`, group: "People", label: u.name, sub: `${u.email} · ${u.role.toLowerCase()}`, href: u.role === "MENTOR" ? "/admin/mentors" : "/admin/users" })),
     ...courses.map((c): Hit => ({ id: `c-${c.id}`, group: "Courses", label: c.title, sub: c.category, href: "/admin/courses" })),
-    ...internships.map((i): Hit => ({ id: `i-${i.id}`, group: "Internships", label: i.title, sub: i.company, href: "/admin/internships" })),
+    ...internships.map((i): Hit => ({ id: `i-${i.id}`, group: "Internships", label: i.title, sub: i.company, href: "/admin/careers?tab=internships" })),
     ...leads.map((l): Hit => ({ id: `l-${l.id}`, group: "Enquiries", label: l.name, sub: l.service, href: "/admin/requests" })),
     ...requests.map((r): Hit => ({ id: `r-${r.id}`, group: "Project requests", label: r.name, sub: `${r.service} · ${r.requestId}`, href: "/admin/requests" })),
   ];

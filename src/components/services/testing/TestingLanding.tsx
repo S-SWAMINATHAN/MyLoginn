@@ -143,7 +143,7 @@ export function TestingLanding(p: ServiceLandingProps) {
               })}
             </RevealGroup>
             <p className="mt-8 leading-7 text-muted">
-              MyLoginn Tech Private Limited is an India-based technology company. We work with startups, small and mid-sized businesses and organisations across India, and serve clients in other countries remotely. Scope, timelines and deliverables are agreed in writing before work begins.
+              MyLoginn Tech is an India-based technology company. We work with startups, small and mid-sized businesses and organisations across India, and serve clients in other countries remotely. Scope, timelines and deliverables are agreed in writing before work begins.
             </p>
           </section>
         </div>

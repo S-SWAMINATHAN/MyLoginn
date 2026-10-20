@@ -47,9 +47,9 @@ export function AuthButton({ children, type = "button", onClick, disabled, varia
       whileTap={disabled ? undefined : { scale: 0.98 }}
       variants={{ rest: { y: 0 }, hover: { y: -2 } }}
       transition={{ duration: 0.35, ease: [0.22, 1, 0.36, 1] }}
-      className={cn("group inline-flex h-12 w-full cursor-pointer select-none items-center justify-between gap-3 rounded-full bg-story-royal py-1.5 pl-6 pr-1.5 text-sm font-semibold text-white shadow-[0_10px_24px_-12px_rgba(31,86,214,0.8)] transition-shadow hover:shadow-[0_16px_30px_-12px_rgba(31,86,214,0.85)] disabled:cursor-not-allowed disabled:opacity-60 disabled:shadow-none", className)}
+      className={cn("group inline-flex h-12 w-full cursor-pointer select-none items-center gap-3 rounded-full bg-story-royal py-1.5 pl-[4.625rem] pr-1.5 text-sm font-semibold text-white shadow-[0_10px_24px_-12px_rgba(31,86,214,0.8)] transition-shadow hover:shadow-[0_16px_30px_-12px_rgba(31,86,214,0.85)] disabled:cursor-not-allowed disabled:opacity-60 disabled:shadow-none", className)}
     >
-      <span>{children}</span>
+      <span className="flex-1 text-center">{children}</span>
       <span aria-hidden className="grid h-9 w-14 shrink-0 place-items-center overflow-hidden rounded-full bg-white/15">
         <GlideArrow reduced={reduced} />
       </span>

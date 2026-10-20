@@ -25,11 +25,10 @@ export type InternshipCardData = {
   stipend: number | null;
   location: string;
   durationWeeks: number;
-  applyDeadline: string;
+  /** Whether the internship is taking applications (set by the admin; there is no end date). */
+  open: boolean;
   featured: boolean;
 };
-
-const APPLY_WINDOW_DAYS = 30;
 
 export function InternshipCard({
   internship,
@@ -45,10 +44,6 @@ export function InternshipCard({
     () => getProjectCardArt(`${internship.type} ${internship.title}`, idSeed),
     [internship.type, internship.title, idSeed]
   );
-  const deadline = new Date(internship.applyDeadline);
-  const daysLeft = Math.max(0, Math.ceil((deadline.getTime() - Date.now()) / (1000 * 60 * 60 * 24)));
-  const urgent = daysLeft > 0 && daysLeft <= 5;
-  const windowLeft = Math.min(1, daysLeft / APPLY_WINDOW_DAYS);
   const { rotateX, rotateY, spotlightBg, onMouseMove, onMouseLeave } = useTiltSpotlight();
 
   return (
@@ -129,19 +124,10 @@ export function InternshipCard({
               </div>
 
               <div className="mt-4 border-t border-border-soft pt-3">
-                {/* Deadline progress */}
-                <div className="h-1 w-full overflow-hidden rounded-full bg-surface-2">
-                  <motion.div
-                    className={`h-full rounded-full ${urgent ? "bg-gradient-to-r from-amber-400 to-rose-500" : "brand-gradient-bg"}`}
-                    initial={{ width: 0 }}
-                    whileInView={{ width: `${Math.max(6, windowLeft * 100)}%` }}
-                    viewport={{ once: true }}
-                    transition={{ duration: 1, delay: 0.3, ease: [0.16, 1, 0.3, 1] }}
-                  />
-                </div>
-                <div className="mt-2.5 flex items-center justify-between">
-                  <span className="text-xs text-muted">
-                    {daysLeft > 0 ? `${daysLeft} days left to apply` : "Deadline passed"}
+                <div className="flex items-center justify-between">
+                  <span className={`inline-flex items-center gap-1.5 text-xs ${internship.open ? "font-semibold text-emerald-700 dark:text-emerald-300" : "text-muted"}`}>
+                    <span aria-hidden className={`h-1.5 w-1.5 rounded-full ${internship.open ? "bg-emerald-500" : "bg-muted"}`} />
+                    {internship.open ? "Taking applications" : "Applications closed"}
                   </span>
                   <span className="inline-flex items-center gap-1 rounded-full brand-gradient-bg px-3 py-1 text-[11px] font-medium text-white shadow-[var(--shadow-soft)] transition-transform duration-300 group-hover:scale-105">
                     View Details
