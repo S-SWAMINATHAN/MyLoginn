@@ -78,6 +78,8 @@ function questionData(input: QuestionInput): Omit<Prisma.CcQuestionCreateInput, 
     active: input.active,
   };
 }
+/** Large hidden tests over a remote database take longer than Prisma's 5 s default. */
+const BANK_TX = { timeout: 60_000, maxWait: 15_000 };
 const testRows = (input: QuestionInput) => input.tests.map((t, position) => ({ ...t, position }));
 
 export async function createQuestion(input: QuestionInput, actorId: string) {
@@ -86,7 +88,7 @@ export async function createQuestion(input: QuestionInput, actorId: string) {
     const q = await tx.ccQuestion.create({ data: { ...questionData(input), family: input.family, version: 1, tests: { create: testRows(input) } } });
     await audit(tx, { actorId, action: "question.create", entity: "CcQuestion", entityId: q.id, meta: { family: q.family } });
     return q;
-  });
+  }, BANK_TX);
 }
 
 /**
@@ -109,7 +111,7 @@ export async function updateQuestion(id: string, input: QuestionInput, actorId: 
     const q = await tx.ccQuestion.update({ where: { id }, data: { ...questionData(input), tests: { create: testRows(input) } } });
     await audit(tx, { actorId, action: "question.update", entity: "CcQuestion", entityId: id });
     return q;
-  });
+  }, BANK_TX);
 }
 
 export async function setQuestionActive(id: string, active: boolean, actorId: string) {

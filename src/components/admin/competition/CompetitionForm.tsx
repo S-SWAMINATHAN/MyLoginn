@@ -115,7 +115,7 @@ export function CompetitionForm({ initial, onSaved }: { initial: CompetitionRow 
   const dt = (k: "registrationOpensAt" | "registrationClosesAt" | "startsAt" | "endsAt" | "resultsPublishAt") => (
     <input type="datetime-local" className={inputCls} value={toLocalInput(f[k])} onChange={(e) => set(k, fromLocalInput(e.target.value))} />
   );
-  const LockNote = () => (locked ? <span className="ml-1 inline-flex items-center gap-1 text-[11px] font-medium text-amber-700"><Lock className="h-3 w-3" /> locked after registration opened</span> : null);
+  const lockNote = locked ? <span className="ml-1 inline-flex items-center gap-1 text-[11px] font-medium text-amber-700"><Lock className="h-3 w-3" /> locked after registration opened</span> : null;
 
   return (
     <form onSubmit={save} className="space-y-5">
@@ -144,7 +144,7 @@ export function CompetitionForm({ initial, onSaved }: { initial: CompetitionRow 
         {problems.length > 0 && <ul className="mt-4 space-y-1 rounded-xl bg-amber-50 p-3 text-xs text-amber-800">{problems.map((p) => <li key={p}>• {p}</li>)}</ul>}
       </Panel>
 
-      <Panel title="Questions & scoring" sub={<>Total {blueprintMaxScore(f.blueprint)} marks. <LockNote /></>}>
+      <Panel title="Questions & scoring" sub={<>Total {blueprintMaxScore(f.blueprint)} marks. {lockNote}</>}>
         <div className="space-y-2">
           {f.blueprint.map((b, i) => (
             <div key={i} className="grid grid-cols-[1fr_6rem_6rem_auto] items-end gap-2">
@@ -186,7 +186,7 @@ export function CompetitionForm({ initial, onSaved }: { initial: CompetitionRow 
         </div>
       </Panel>
 
-      <Panel title="Monitoring policy" sub={<>Published to candidates exactly as configured. <LockNote /></>}>
+      <Panel title="Monitoring policy" sub={<>Published to candidates exactly as configured. {lockNote}</>}>
         <div className="grid gap-4 md:grid-cols-4">
           {(Object.keys(POLICY_LABEL) as (keyof ViolationPolicy)[]).map((k) => (
             <Field key={k} label={POLICY_LABEL[k]}><input type="number" min={0} className={inputCls} disabled={locked} value={f.violationPolicy[k]} onChange={(e) => set("violationPolicy", { ...f.violationPolicy, [k]: Number(e.target.value) })} /></Field>

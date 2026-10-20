@@ -22,7 +22,8 @@ const SURFACE: Record<Tone, string> = {
 const TRACK: Record<Tone, string> = {
   royal: "bg-white/15 text-white group-hover:bg-white/25",
   navy: "bg-white/15 text-white group-hover:bg-white/25",
-  light: "bg-story-royal/10 text-story-royal group-hover:bg-story-royal/20",
+  // On hover the collision fill turns the pill royal blue, so the arrow turns white with it (as in PlanButton).
+  light: "bg-story-royal/10 text-story-royal group-hover:bg-white/20 group-hover:text-white",
   outline: "bg-story-navy/[0.06] text-story-navy group-hover:bg-story-navy/10",
 };
 

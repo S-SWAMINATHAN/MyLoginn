@@ -13,6 +13,7 @@ import { useReducedMotion } from "@/lib/useReducedMotion";
 import { api, ApiFailure } from "./client";
 import { BannerJourney, CountUp, SpotlightBanner } from "./BannerJourney";
 import { Countdown } from "./Countdown";
+import { GOLD_BUTTON, GOLD_SHINE } from "./styles";
 
 export type RegisterCompetition = {
   title: string;
@@ -183,7 +184,8 @@ function Success({ candidateId, c, name }: { candidateId: string; c: RegisterCom
       </motion.div>
 
       <div className="mt-6 flex flex-wrap justify-center gap-3">
-        <Link href="/coding-competition/dashboard" className="group inline-flex items-center gap-2 rounded-full bg-story-royal px-6 py-3 text-sm font-semibold text-white shadow-[var(--shadow-soft)] hover:shadow-[var(--shadow-lift)]">
+        <Link href="/coding-competition/dashboard" className={GOLD_BUTTON}>
+          <span aria-hidden="true" className={GOLD_SHINE} />
           Go to my dashboard <ArrowRight className="h-4 w-4 transition-transform group-hover:translate-x-1" />
         </Link>
         <a href={ics} download="myloginn-coding-competition.ics" className="inline-flex items-center gap-2 rounded-full border border-border-soft bg-surface px-5 py-3 text-sm font-semibold hover:border-story-royal/40">
@@ -440,7 +442,8 @@ export function RegisterFlow({ c, signedIn, serverNow }: { c: RegisterCompetitio
                     <ArrowLeft className="h-4 w-4" /> Back
                   </button>
                 )}
-                <button data-primary type="submit" disabled={busy} className="group ml-auto inline-flex min-w-40 items-center justify-center gap-2 rounded-full bg-story-royal px-6 py-3 text-sm font-semibold text-white shadow-[var(--shadow-soft)] transition-[box-shadow,opacity] hover:shadow-[var(--shadow-lift)] disabled:opacity-60">
+                <button data-primary type="submit" disabled={busy} className={cn(GOLD_BUTTON, "ml-auto min-w-40")}>
+                  <span aria-hidden="true" className={GOLD_SHINE} />
                   {busy ? <><Loader2 className="h-4 w-4 animate-spin" /> Registering…</> : step < lastStep ? <>Continue <ArrowRight className="h-4 w-4 transition-transform group-hover:translate-x-1" /></> : <>Complete registration <Check className="h-4 w-4" /></>}
                 </button>
               </div>

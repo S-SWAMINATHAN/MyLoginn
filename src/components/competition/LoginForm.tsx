@@ -7,6 +7,8 @@ import { ArrowRight, Loader2, Mail, Trophy } from "lucide-react";
 import { Input } from "@/components/ui/Input";
 import { PasswordInput } from "@/components/ui/PasswordInput";
 import { api } from "./client";
+import { GOLD_BUTTON, GOLD_SHINE } from "./styles";
+import { cn } from "@/lib/cn";
 
 /** Only same-site paths under /coding-competition are accepted as a post-login destination. */
 const safeNext = (next: string | null) => (next && /^\/coding-competition(\/[\w/-]*)?$/.test(next) ? next : "/coding-competition/dashboard");
@@ -47,7 +49,8 @@ export function LoginForm({ next, title }: { next: string | null; title: string 
           <AnimatePresence>
             {error && <motion.p role="alert" initial={{ opacity: 0, height: 0 }} animate={{ opacity: 1, height: "auto" }} exit={{ opacity: 0, height: 0 }} className="rounded-2xl border border-danger/30 bg-danger/5 p-3 text-sm text-danger">{error}</motion.p>}
           </AnimatePresence>
-          <button type="submit" disabled={busy} className="group inline-flex w-full items-center justify-center gap-2 rounded-full bg-story-royal px-6 py-3 text-sm font-semibold text-white shadow-[var(--shadow-soft)] transition-shadow hover:shadow-[var(--shadow-lift)] disabled:opacity-60">
+          <button type="submit" disabled={busy} className={cn(GOLD_BUTTON, "w-full")}>
+            <span aria-hidden="true" className={GOLD_SHINE} />
             {busy ? <><Loader2 className="h-4 w-4 animate-spin" /> Signing in…</> : <>Log in <ArrowRight className="h-4 w-4 transition-transform group-hover:translate-x-1" /></>}
           </button>
         </form>

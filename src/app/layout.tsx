@@ -94,6 +94,8 @@ export default async function RootLayout({
     <html
       lang="en"
       suppressHydrationWarning
+      data-theme="light"
+      style={{ colorScheme: "light" }}
       data-scroll-behavior="smooth"
       className={`${fontSans.variable} ${fontDisplay.variable} ${fontMono.variable} min-h-full antialiased`}
     >

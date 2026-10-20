@@ -1,22 +1,10 @@
-"use client";
+import type { ReactNode } from "react";
 
-import { ThemeProvider as NextThemesProvider } from "next-themes";
-import type { ComponentProps } from "react";
-
-export function ThemeProvider({
-  children,
-  ...props
-}: ComponentProps<typeof NextThemesProvider>) {
-  return (
-    <NextThemesProvider
-      attribute="data-theme"
-      defaultTheme="light"
-      forcedTheme="light"
-      enableSystem={false}
-      disableTransitionOnChange
-      {...props}
-    >
-      {children}
-    </NextThemesProvider>
-  );
+/**
+ * The site always renders in the light theme. The root layout sets data-theme="light" (and color-scheme) on <html>
+ * in the server HTML, so no theme script is needed. next-themes used to do this with an inline <script>, which
+ * React 19 reports as "Encountered a script tag while rendering React component" whenever the tree re-renders.
+ */
+export function ThemeProvider({ children }: { children: ReactNode }) {
+  return <>{children}</>;
 }

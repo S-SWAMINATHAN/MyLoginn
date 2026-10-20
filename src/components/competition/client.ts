@@ -30,16 +30,73 @@ export async function api<T>(path: string, init: { method?: string; body?: unkno
 }
 
 /**
- * Current server time, ticking every `ms`. The browser clock is never trusted for deadlines: the offset to the
- * server's clock is taken once from `serverNowIso`, and the browser clock only advances it between server syncs.
+ * Shared server-clock offset (server time − browser time). Seeded from the page's render time, then measured
+ * against /api/coding-competition/time with round-trip compensation (NTP style), re-synced every 5 minutes and when
+ * the tab becomes visible. Deadlines therefore never depend on the browser clock or on a stale cached page.
  */
-export function useServerNow(serverNowIso: string | undefined, ms = 1000) {
-  const [offset] = useState(() => (serverNowIso ? new Date(serverNowIso).getTime() - Date.now() : 0));
-  const [now, setNow] = useState(() => Date.now() + offset);
+let clockOffset: number | null = null;
+let lastSync = 0;
+let syncing: Promise<void> | null = null;
+const offsetListeners = new Set<() => void>();
+
+async function syncClock() {
+  if (syncing) return syncing;
+  syncing = (async () => {
+    let best: { offset: number; rtt: number } | null = null;
+    for (let i = 0; i < 3; i++) {
+      try {
+        const t0 = Date.now();
+        const res = await fetch("/api/coding-competition/time", { cache: "no-store" });
+        const t1 = Date.now();
+        const { now } = (await res.json()) as { now: number };
+        const sample = { offset: now - (t0 + t1) / 2, rtt: t1 - t0 };
+        if (!best || sample.rtt < best.rtt) best = sample;
+      } catch {
+        /* offline: keep the previous offset */
+      }
+    }
+    if (best) {
+      clockOffset = best.offset;
+      lastSync = Date.now();
+      offsetListeners.forEach((fn) => fn());
+    }
+  })().finally(() => (syncing = null));
+  return syncing;
+}
+
+/**
+ * Current server time, re-rendering exactly on each second boundary. `serverNowIso` (the page's render time) is
+ * only a first estimate until the clock sync answers.
+ */
+export function useServerNow(serverNowIso: string | undefined) {
+  const [seed] = useState(() => (serverNowIso ? new Date(serverNowIso).getTime() - Date.now() : 0));
+  const offset = () => clockOffset ?? seed;
+  const [now, setNow] = useState(() => Date.now() + offset());
   useEffect(() => {
-    const id = setInterval(() => setNow(Date.now() + offset), ms);
-    return () => clearInterval(id);
-  }, [offset, ms]);
+    let timer: ReturnType<typeof setTimeout>;
+    const tick = () => {
+      // Also called when a sync lands, so cancel the pending wake-up to keep exactly one timer chain.
+      clearTimeout(timer);
+      const t = Date.now() + (clockOffset ?? seed);
+      setNow(t);
+      // Wake just after the next whole server second, so digits change on time instead of drifting.
+      timer = setTimeout(tick, 1000 - (t % 1000) + 5);
+    };
+    const resync = () => {
+      if (document.visibilityState === "visible" && Date.now() - lastSync > 30_000) syncClock();
+    };
+    offsetListeners.add(tick);
+    if (clockOffset === null || Date.now() - lastSync > 300_000) syncClock();
+    const every = setInterval(() => syncClock(), 300_000);
+    document.addEventListener("visibilitychange", resync);
+    tick();
+    return () => {
+      clearTimeout(timer);
+      clearInterval(every);
+      offsetListeners.delete(tick);
+      document.removeEventListener("visibilitychange", resync);
+    };
+  }, [seed]);
   return now;
 }
 

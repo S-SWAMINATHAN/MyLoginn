@@ -1,5 +1,5 @@
 import Link from "next/link";
-import { ArrowRight, Award, BadgeCheck, Brain, CalendarClock, CheckCircle2, Code2, Eye, FileCheck2, Gauge, GraduationCap, Layers, ListChecks, Lock, MonitorUp, Scale, ShieldCheck, Shuffle, Timer, Trophy, UserPlus, Users } from "lucide-react";
+import { ArrowRight, Award, Bell, BadgeCheck, Brain, CalendarClock, CheckCircle2, Code2, Eye, FileCheck2, Gauge, GraduationCap, Layers, ListChecks, Lock, MonitorUp, Scale, ShieldCheck, Shuffle, Timer, Trophy, UserPlus } from "lucide-react";
 import { Reveal } from "@/components/ui/Reveal";
 import { FaqAccordion } from "@/components/ui/FaqAccordion";
 import { cn } from "@/lib/cn";
@@ -8,10 +8,12 @@ import { formatInZone, STATUS_LABEL } from "@/lib/competition/types";
 import { ArenaPreview } from "./ArenaPreview";
 import { BannerJourney, SpotlightBanner } from "./BannerJourney";
 import { Countdown } from "./Countdown";
+import { FormatCards } from "./FormatCards";
+import { ScheduleTimeline } from "./ScheduleTimeline";
+import { GOLD_BUTTON, GOLD_SHINE } from "./styles";
 
 type Me = { signedIn: boolean; registered: boolean; candidateId: string | null; attemptStatus: string | null };
 
-const DIFF_STYLE = { EASY: { label: "Easy", c: "#16a34a" }, MEDIUM: { label: "Medium", c: "#d97706" }, HARD: { label: "Hard", c: "#dc2626" } } as const;
 const money = (amount: number, currency: string) => new Intl.NumberFormat("en-IN", { style: "currency", currency, maximumFractionDigits: 0 }).format(amount);
 
 /** The next moment that matters to a visitor, for the hero countdown. */
@@ -27,27 +29,36 @@ function milestone(c: PublicCompetition, now: number) {
 
 function Primary({ c, me, now }: { c: PublicCompetition; me: Me; now: number }) {
   const base = "group inline-flex items-center justify-center gap-2 rounded-full px-6 py-3 text-sm font-semibold transition-[box-shadow,background-color,color] duration-300 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-300 focus-visible:ring-offset-2";
-  const solid = cn(base, "bg-story-royal text-white shadow-[var(--shadow-soft)] hover:shadow-[var(--shadow-lift)]");
   const ghost = cn(base, "border border-border-soft bg-surface text-foreground hover:border-story-royal/40");
   const arrow = <ArrowRight className="h-4 w-4 transition-transform duration-300 group-hover:translate-x-1" />;
+  const shine = <span aria-hidden="true" className={GOLD_SHINE} />;
   if (me.registered)
     return (
       <div className="flex flex-wrap gap-3">
-        <Link href="/coding-competition/dashboard" className={solid}>Go to my dashboard {arrow}</Link>
+        <Link href="/coding-competition/dashboard" className={GOLD_BUTTON}>{shine}Go to my dashboard {arrow}</Link>
         {c.status === "LIVE" && me.attemptStatus !== "FINALIZED" && <Link href="/coding-competition/instructions" className={ghost}>Start the competition</Link>}
       </div>
     );
+  const opensLater = new Date(c.registrationOpensAt).getTime() > now;
   return (
     <div className="flex flex-wrap gap-3">
-      {c.registrationOpen ? <Link href="/coding-competition/register" className={solid}>Register now {arrow}</Link> : <span className={cn(base, "cursor-not-allowed bg-surface-2 text-muted")}>Registration {new Date(c.registrationOpensAt).getTime() > now ? "opens soon" : "closed"}</span>}
+      {c.registrationOpen ? (
+        <Link href="/coding-competition/register" className={GOLD_BUTTON}>{shine}Register now {arrow}</Link>
+      ) : (
+        <span aria-disabled="true" className={cn(GOLD_BUTTON, "cursor-default", !opensLater && "grayscale")}>
+          {shine}
+          <Bell className="h-4 w-4" />
+          {opensLater ? `Registration opens ${formatInZone(c.registrationOpensAt, c.timezone, { year: undefined, timeZoneName: undefined })}` : "Registration closed"}
+        </span>
+      )}
       {!me.signedIn && <Link href="/coding-competition/login" className={ghost}>Student login</Link>}
     </div>
   );
 }
 
-function Fact({ icon: Icon, label, value }: { icon: typeof Timer; label: string; value: string }) {
+function Fact({ icon: Icon, label, value, className }: { icon: typeof Timer; label: string; value: string; className?: string }) {
   return (
-    <div className="flex items-center gap-3 rounded-2xl border border-border-soft bg-surface px-3.5 py-3">
+    <div className={cn("flex items-center gap-3 rounded-2xl border border-border-soft bg-surface px-3.5 py-3", className)}>
       <span className="grid h-9 w-9 shrink-0 place-items-center rounded-xl bg-brand-50 text-story-royal dark:bg-brand-900/30"><Icon className="h-4 w-4" /></span>
       <span className="min-w-0">
         <span className="block text-[11px] font-semibold uppercase tracking-wider text-muted">{label}</span>
@@ -92,14 +103,14 @@ export function CompetitionLanding({ c, me, serverNow }: { c: PublicCompetition;
       {/* ───────── Hero ───────── */}
       <section className="relative">
         <div aria-hidden="true" className="pointer-events-none absolute inset-0 bg-[radial-gradient(60rem_30rem_at_85%_-10%,rgba(47,111,237,0.14),transparent_60%),radial-gradient(40rem_24rem_at_0%_10%,rgba(34,211,238,0.10),transparent_60%)]" />
-        <div className="relative mx-auto grid max-w-7xl items-center gap-10 px-4 pb-12 pt-8 sm:px-8 sm:pt-12 lg:grid-cols-[1.05fr_1fr] lg:gap-14 lg:pb-20">
+        <div className="relative mx-auto grid max-w-7xl items-start gap-8 px-4 pb-10 pt-6 sm:px-8 sm:pt-8 lg:grid-cols-[1.05fr_1fr] lg:gap-12 lg:pb-14">
           <div>
             <span className="inline-flex items-center gap-2 rounded-full border border-brand-200 bg-brand-50 px-3 py-1 text-xs font-semibold text-story-royal dark:border-brand-800 dark:bg-brand-900/30 dark:text-brand-200">
               <span className="relative flex h-2 w-2">
                 {c.status === "LIVE" || c.registrationOpen ? <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-emerald-400 opacity-60 motion-reduce:hidden" /> : null}
                 <span className={cn("relative inline-flex h-2 w-2 rounded-full", c.status === "LIVE" || c.registrationOpen ? "bg-emerald-500" : "bg-brand-400")} />
               </span>
-              MyLoginn Learn · {c.registrationOpen ? "Registration open" : STATUS_LABEL[c.status]}
+              MyLoginn Learn · {c.registrationOpen ? "Registration open" : c.status === "REGISTRATION_OPEN" && new Date(serverNow) < new Date(c.registrationOpensAt) ? "Registration opens soon" : STATUS_LABEL[c.status]}
             </span>
             <h1 className="mt-4 text-[2rem] font-bold leading-[1.12] tracking-tight sm:text-5xl">
               {c.title}
@@ -109,23 +120,22 @@ export function CompetitionLanding({ c, me, serverNow }: { c: PublicCompetition;
             <div className="mt-6 grid gap-2.5 min-[460px]:grid-cols-2">
               <Fact icon={CalendarClock} label="Starts" value={formatInZone(c.startsAt, tz, { year: undefined })} />
               <Fact icon={Timer} label="Duration" value={`${c.durationMinutes} minutes · ${c.questionCount} questions`} />
-              <Fact icon={Code2} label="Languages" value={c.languages.map((l) => l.label.replace(/ \(.*\)/, "")).join(", ")} />
-              <Fact icon={Users} label="Registered" value={`${c.registrationCount.toLocaleString("en-IN")} of ${c.maxParticipants.toLocaleString("en-IN")} seats`} />
+              <Fact className="min-[460px]:col-span-2" icon={Code2} label="Languages" value={c.languages.map((l) => l.label.replace(/ \(.*\)/, "")).join(", ")} />
             </div>
 
             <div className="mt-7"><Primary c={c} me={me} now={new Date(serverNow).getTime()} /></div>
             {me.registered && me.candidateId && <p className="mt-3 text-sm text-muted">You are registered as <b className="text-foreground">{me.candidateId}</b>.</p>}
 
-            {next && (
-              <div className="mt-8">
-                <p className="mb-2.5 text-xs font-bold uppercase tracking-wider text-muted">{next.label}</p>
-                <Countdown target={next.at} serverNow={serverNow} done={<p className="text-sm font-semibold text-story-royal">Updating… refresh the page.</p>} />
-              </div>
-            )}
           </div>
           <div className="relative">
+            {next && (
+              <div className="mb-4 flex flex-col items-start sm:items-end">
+                <p className="mb-2.5 text-xs font-bold uppercase tracking-wider text-muted">{next.label}</p>
+                <Countdown compact target={next.at} serverNow={serverNow} done={<p className="text-sm font-semibold text-story-royal">Updating… refresh the page.</p>} />
+              </div>
+            )}
             <ArenaPreview />
-            <p className="mt-3 text-center text-xs text-muted">Preview of the competition arena</p>
+            <p className="mt-2 text-center text-xs text-muted">Preview of the competition arena</p>
           </div>
         </div>
       </section>
@@ -148,19 +158,17 @@ export function CompetitionLanding({ c, me, serverNow }: { c: PublicCompetition;
               </Reveal>
             ))}
           </div>
-          <div className="mt-8 grid gap-3 text-sm sm:grid-cols-3">
-            {[
-              ["Registration", `${formatInZone(c.registrationOpensAt, tz)} – ${formatInZone(c.registrationClosesAt, tz)}`],
-              ["Competition window", `${formatInZone(c.startsAt, tz)} – ${formatInZone(c.endsAt, tz)} (join within ${c.lateJoinMinutes} min of the start)`],
-              ["Results", `${formatInZone(c.resultsPublishAt, tz)}, after evaluation and review`],
-            ].map(([k, v]) => (
-              <div key={k} className="rounded-2xl border border-border-soft bg-surface p-4">
-                <p className="text-xs font-bold uppercase tracking-wider text-muted">{k}</p>
-                <p className="mt-1 font-medium leading-6">{v}</p>
-              </div>
-            ))}
+          <div className="mt-8">
+            <ScheduleTimeline
+              tz={tz}
+              nowMs={new Date(serverNow).getTime()}
+              items={[
+                { key: "registration", label: "Registration", when: `${formatInZone(c.registrationOpensAt, tz)} – ${formatInZone(c.registrationClosesAt, tz)}`, startMs: new Date(c.registrationOpensAt).getTime(), endMs: new Date(c.registrationClosesAt).getTime() },
+                { key: "window", label: "Competition window", when: `${formatInZone(c.startsAt, tz)} – ${formatInZone(c.endsAt, tz)}`, note: `Join within ${c.lateJoinMinutes} min of the start`, startMs: new Date(c.startsAt).getTime(), endMs: new Date(c.endsAt).getTime() },
+                { key: "results", label: "Results", when: formatInZone(c.resultsPublishAt, tz), note: "After evaluation and review", startMs: new Date(c.resultsPublishAt).getTime(), endMs: new Date(c.resultsPublishAt).getTime() },
+              ]}
+            />
           </div>
-          <p className="mt-3 text-center text-xs text-muted">All times are shown in {tz}.</p>
         </div>
       </section>
 
@@ -168,28 +176,7 @@ export function CompetitionLanding({ c, me, serverNow }: { c: PublicCompetition;
       <section className="py-14 sm:py-20">
         <div className="mx-auto max-w-7xl px-4 sm:px-8">
           <SectionHead eyebrow="Format" title={`${c.questionCount} questions · ${c.maxScore} marks`} sub="Marks belong to the difficulty slot, not the question, so every candidate's set is worth exactly the same." />
-          <div className="grid gap-4 md:grid-cols-3">
-            {c.blueprint.map((s) => {
-              const d = DIFF_STYLE[s.difficulty];
-              const share = Math.round(((s.count * s.marks) / c.maxScore) * 100);
-              return (
-                <Reveal key={s.difficulty}>
-                  <div className="rounded-3xl border border-border-soft bg-surface p-5">
-                    <div className="flex items-center justify-between">
-                      <span className="rounded-full px-2.5 py-1 text-xs font-bold" style={{ background: `${d.c}14`, color: d.c }}>{d.label}</span>
-                      <span className="text-sm text-muted">{s.count} × {s.marks} marks</span>
-                    </div>
-                    <p className="mt-4 text-3xl font-bold tabular-nums">{s.count * s.marks}<span className="text-base font-medium text-muted"> marks</span></p>
-                    <div className="mt-3 h-2 overflow-hidden rounded-full bg-surface-2"><div className="h-full rounded-full" style={{ width: `${share}%`, background: d.c }} /></div>
-                    <p className="mt-2 text-xs text-muted">{share}% of the total</p>
-                  </div>
-                </Reveal>
-              );
-            })}
-          </div>
-          <div className="mt-6 flex flex-wrap justify-center gap-2">
-            {c.languages.map((l) => <span key={l.key} className="rounded-full border border-border-soft bg-surface px-3.5 py-1.5 text-sm font-medium">{l.label}</span>)}
-          </div>
+          <FormatCards slots={c.blueprint.map((x) => ({ difficulty: x.difficulty, count: x.count, marks: x.marks }))} maxScore={c.maxScore} languages={c.languages.map((l) => ({ key: l.key, label: l.label }))} />
         </div>
       </section>
 
@@ -307,10 +294,21 @@ export function CompetitionLanding({ c, me, serverNow }: { c: PublicCompetition;
           <div>
             <p className="text-xs font-bold uppercase tracking-[0.16em] text-story-royal">Eligibility</p>
             <h2 className="mt-2 text-2xl font-bold tracking-tight">Who can take part</h2>
-            <p className="mt-3 whitespace-pre-line text-sm leading-7 text-muted">{c.eligibility || "Open to students and recent graduates with a valid email address and mobile number. One registration per person."}</p>
+            <ul className="mt-4 space-y-2.5 [&_:is(p,li)]:text-left [&_:is(p,li)]:hyphens-manual">
+              {(c.eligibility || "Open to students and recent graduates with a valid email address and mobile number. One registration per person.")
+                .split(/\n+|(?<=[.!?])\s+/)
+                .map((t) => t.trim())
+                .filter(Boolean)
+                .map((t) => (
+                  <li key={t} className="flex items-start gap-3 rounded-2xl border border-border-soft bg-surface px-4 py-3 text-sm leading-6 transition-colors duration-300 hover:border-story-royal/40">
+                    <CheckCircle2 className="mt-0.5 h-5 w-5 shrink-0 text-story-royal" />
+                    <span>{t}</span>
+                  </li>
+                ))}
+            </ul>
             <div className="mt-6 rounded-3xl border border-story-royal/20 bg-surface p-5">
               <p className="font-semibold">Ready to compete?</p>
-              <p className="mt-1 text-sm text-muted">{c.seatsLeft > 0 ? `${c.seatsLeft.toLocaleString("en-IN")} seats left.` : "All seats are taken."}</p>
+              <p className="mt-1 text-sm text-muted">{c.seatsLeft > 0 ? "Register to reserve your place." : "All seats are taken."}</p>
               <div className="mt-4"><Primary c={c} me={me} now={new Date(serverNow).getTime()} /></div>
             </div>
           </div>
@@ -335,7 +333,7 @@ export function NoCompetition({ signedIn = false }: { signedIn?: boolean }) {
     { icon: MonitorUp, title: "Compete in the arena", body: "A browser IDE with server-side execution, full-screen and screen-share monitoring." },
     { icon: Trophy, title: "Results & rewards", body: "Published after evaluation and human review, with certificates and a paid internship for first place." },
   ];
-  const solid = "group inline-flex items-center justify-center gap-2 rounded-full bg-white px-6 py-3 text-sm font-semibold text-[#0b1f4d] shadow-[0_10px_30px_-10px_rgba(0,0,0,0.5)] transition-[box-shadow,transform] duration-300 hover:shadow-[0_16px_40px_-12px_rgba(125,211,252,0.6)] active:scale-[0.98]";
+  const solid = GOLD_BUTTON;
   const ghost = "inline-flex items-center justify-center gap-2 rounded-full px-6 py-3 text-sm font-semibold text-white ring-1 ring-white/30 transition-colors hover:bg-white/10";
   return (
     <div className="overflow-x-clip [&_li]:text-left [&_li]:hyphens-manual">
@@ -371,9 +369,9 @@ export function NoCompetition({ signedIn = false }: { signedIn?: boolean }) {
 
               <div className="mt-7 flex flex-wrap gap-3">
                 {signedIn ? (
-                  <Link href="/logiquest" className={solid}>Practise coding now <ArrowRight className="h-4 w-4 transition-transform duration-300 group-hover:translate-x-1" /></Link>
+                  <Link href="/logiquest" className={solid}><span aria-hidden="true" className={GOLD_SHINE} />Practise coding now <ArrowRight className="h-4 w-4 transition-transform duration-300 group-hover:translate-x-1" /></Link>
                 ) : (
-                  <Link href="/signup" className={solid}>Create your free account <ArrowRight className="h-4 w-4 transition-transform duration-300 group-hover:translate-x-1" /></Link>
+                  <Link href="/signup" className={solid}><span aria-hidden="true" className={GOLD_SHINE} />Create your free account <ArrowRight className="h-4 w-4 transition-transform duration-300 group-hover:translate-x-1" /></Link>
                 )}
                 <Link href={signedIn ? "/courses" : "/logiquest"} className={ghost}>{signedIn ? "Browse courses" : "Practise on LogiQuest"}</Link>
               </div>
