@@ -5,6 +5,7 @@ import { Briefcase } from "lucide-react";
 import { AnimatedMapPin } from "@/components/ui/icons/AnimatedMapPin";
 import { AnimatedClock } from "@/components/ui/icons/AnimatedClock";
 import { useReducedMotion } from "@/lib/useReducedMotion";
+import { formatDuration } from "@/lib/postings";
 
 const EASE = [0.16, 1, 0.3, 1] as const;
 
@@ -33,9 +34,11 @@ function Fact({ icon, label, children, delay }: { icon: React.ReactNode; label: 
  * Key facts for an internship in one line: format, location and duration. The duration shows one dot per week
  * that fill in one after another. No filled backgrounds; the dividers and motion do the work.
  */
-export function InternshipFacts({ type, location, weeks }: { type: string; location: string; weeks: number }) {
+export function InternshipFacts({ type, location, amount, unit }: { type: string; location: string; amount: number | null; unit: string }) {
   const reduced = useReducedMotion();
-  const dots = Math.min(Math.max(weeks, 1), 16);
+  // One dot per week or month; a flexible duration shows no dots.
+  const count = amount ?? 0;
+  const dots = Math.min(count, 16);
 
   return (
     <div className="mt-6 grid grid-cols-3 divide-x divide-border-soft border-y border-border-soft">
@@ -50,7 +53,7 @@ export function InternshipFacts({ type, location, weeks }: { type: string; locat
       </Fact>
 
       <Fact label="Duration" delay={0.16} icon={<AnimatedClock className="h-7 w-7" />}>
-        <p className="mt-0.5 break-words text-sm font-semibold leading-snug text-story-navy sm:text-base dark:text-foreground">{weeks} {weeks === 1 ? "week" : "weeks"}</p>
+        <p className="mt-0.5 break-words text-sm font-semibold leading-snug text-story-navy sm:text-base dark:text-foreground">{formatDuration(amount, unit) ?? "Flexible"}</p>
         <div className="mt-2 flex flex-wrap items-center justify-center gap-1 sm:justify-start" aria-hidden>
           {Array.from({ length: dots }).map((_, i) => (
             <motion.span
@@ -63,7 +66,7 @@ export function InternshipFacts({ type, location, weeks }: { type: string; locat
               {...(reduced ? {} : { whileHover: { scale: 1.8 } })}
             />
           ))}
-          {weeks > dots && <span className="ml-1 text-[10px] font-semibold text-muted">+{weeks - dots}</span>}
+          {count > dots && <span className="ml-1 text-[10px] font-semibold text-muted">+{count - dots}</span>}
         </div>
       </Fact>
     </div>

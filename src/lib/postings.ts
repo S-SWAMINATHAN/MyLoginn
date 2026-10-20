@@ -292,3 +292,31 @@ export const SALARY_OPTIONS = [
 
 /** Monthly stipend choices for internships, in rupees. "To be discussed" is a paid internship without an amount. */
 export const STIPEND_OPTIONS = [2000, 3000, 5000, 7500, 10000, 12000, 15000, 20000, 25000, 30000] as const;
+
+/* ── Internship duration ────────────────────────────────────────────── */
+
+export const DURATION_UNITS = ["weeks", "months"] as const;
+export type DurationUnit = (typeof DURATION_UNITS)[number];
+
+/** "8 weeks", "3 months", "1 month"; null when no duration is set. */
+export function formatDuration(amount: number | null | undefined, unit: string | null | undefined) {
+  if (!amount) return null;
+  const u = unit === "months" ? "month" : "week";
+  return `${amount} ${u}${amount === 1 ? "" : "s"}`;
+}
+
+/** The duration in weeks (a month counts as 4⅓ weeks), for averages; null when no duration is set. */
+export function durationInWeeks(amount: number | null | undefined, unit: string | null | undefined) {
+  if (!amount) return null;
+  return unit === "months" ? Math.round(amount * 4.33) : amount;
+}
+
+/* ── Save errors ────────────────────────────────────────────────────── */
+
+/** A readable message for a failed posting save, so the admin sees the cause instead of a generic error. */
+export function postingSaveError(error: unknown) {
+  const code = (error as { code?: string } | null)?.code;
+  if (code === "P2022" || code === "P2021") return "The database is missing the latest posting fields. Run `npx prisma db push` (or redeploy), then save again.";
+  if (code === "P2025") return "This posting no longer exists. Close the editor and refresh.";
+  return "Could not save the posting. Please try again.";
+}

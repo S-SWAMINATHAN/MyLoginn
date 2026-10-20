@@ -14,6 +14,7 @@ import { AnimatedClock } from "@/components/ui/icons/AnimatedClock";
 import { AnimatedRupee } from "@/components/ui/icons/AnimatedRupee";
 import { AnimatedSuccess } from "@/components/ui/icons/AnimatedSuccess";
 import { useTiltSpotlight } from "@/hooks/useTiltSpotlight";
+import { formatDuration } from "@/lib/postings";
 
 export type InternshipCardData = {
   id: string;
@@ -24,7 +25,9 @@ export type InternshipCardData = {
   paid: boolean;
   stipend: number | null;
   location: string;
-  durationWeeks: number;
+  /** Optional duration amount, counted in durationUnit. */
+  durationWeeks: number | null;
+  durationUnit: string;
   /** Whether the internship is taking applications (set by the admin; there is no end date). */
   open: boolean;
   featured: boolean;
@@ -114,9 +117,11 @@ export function InternshipCard({
                 <span className="flex items-center gap-1.5">
                   <AnimatedMapPin className="h-4.5 w-4.5" /> {internship.location}
                 </span>
-                <span className="flex items-center gap-1.5">
-                  <AnimatedClock className="h-4.5 w-4.5" /> {internship.durationWeeks} weeks
-                </span>
+                {internship.durationWeeks ? (
+                  <span className="flex items-center gap-1.5">
+                    <AnimatedClock className="h-4.5 w-4.5" /> {formatDuration(internship.durationWeeks, internship.durationUnit)}
+                  </span>
+                ) : null}
                 <span className="flex items-center gap-1.5">
                   <AnimatedRupee className="h-4.5 w-4.5" />{" "}
                   {internship.paid ? `${internship.stipend?.toLocaleString()} / month` : "Unpaid"}

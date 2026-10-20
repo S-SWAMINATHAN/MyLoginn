@@ -1,6 +1,7 @@
 import { NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
 import { requireAdmin } from "@/lib/auth";
+import { postingSaveError } from "@/lib/postings";
 import { effectiveStatus, jobInputSchema, slugifyJob } from "@/lib/jobs";
 
 export const runtime = "nodejs";
@@ -51,6 +52,11 @@ export async function POST(req: Request) {
   let slug = base;
   for (let n = 2; await prisma.jobOpening.findUnique({ where: { slug }, select: { id: true } }); n++) slug = `${base}-${n}`;
 
-  const job = await prisma.jobOpening.create({ data: { ...parsed.data, slug } });
-  return NextResponse.json({ job }, { status: 201 });
+  try {
+    const job = await prisma.jobOpening.create({ data: { ...parsed.data, slug } });
+    return NextResponse.json({ job }, { status: 201 });
+  } catch (error) {
+    console.error("[careers] create opening failed", error);
+    return NextResponse.json({ error: postingSaveError(error) }, { status: 500 });
+  }
 }

@@ -1,6 +1,6 @@
 import { z } from "zod";
 import { contactEmailSchema, personNameSchema, phoneSchema } from "@/lib/validation";
-import { WORK_MODES } from "@/lib/postings";
+import { DURATION_UNITS, WORK_MODES } from "@/lib/postings";
 
 export const JOB_TEAMS = ["Engineering", "Design", "AI", "Marketing", "Operations", "Sales", "Support"] as const;
 export const JOB_TYPES = ["Full-time", "Part-time", "Contract", "Internship"] as const;
@@ -136,7 +136,9 @@ export const internshipInputSchema = z
   .object({
     ...postingFields,
     description: z.string().trim().min(20, "Describe the role in at least 20 characters").max(2000, "Keep About the role under 2000 characters"),
-    durationWeeks: z.coerce.number().int().min(1, "At least 1 week").max(52, "At most 52 weeks"),
+    // Optional. Stored in the durationWeeks column as an amount counted in durationUnit.
+    durationWeeks: z.coerce.number().int().min(1, "Duration must be at least 1").max(52, "Keep the duration under 52").nullable().optional().transform((v) => v || null),
+    durationUnit: z.enum(DURATION_UNITS).default("weeks"),
     paid: z.boolean(),
     stipend: z.coerce.number().int().min(0).max(500000).nullable().optional().transform((v) => v || null),
     mentorName: z.string().trim().max(80).optional().default(""),

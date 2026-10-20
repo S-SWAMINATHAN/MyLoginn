@@ -35,7 +35,7 @@ export type PublicJob = {
   postedAt: string;
 };
 
-export type PublicInternship = { id: string; slug: string; title: string; type: string; location: string; durationWeeks: number; open: boolean };
+export type PublicInternship = { id: string; slug: string; title: string; type: string; location: string; duration: string | null; open: boolean };
 
 const TABS = [
   { id: "open", label: "Open now" },
@@ -150,7 +150,7 @@ export function CareersBoard({ jobs, internships, email }: { jobs: PublicJob[]; 
                     <span className="mt-2 flex flex-wrap gap-x-3 gap-y-1 text-xs text-muted">
                       <span>{i.type}</span>
                       {i.location && <span className="flex items-center gap-1"><MapPin className="h-3 w-3" />{i.location}</span>}
-                      <span className="flex items-center gap-1"><Clock className="h-3 w-3" />{i.durationWeeks} weeks</span>
+                      {i.duration && <span className="flex items-center gap-1"><Clock className="h-3 w-3" />{i.duration}</span>}
                     </span>
                   </Link>
                 </li>

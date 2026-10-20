@@ -14,6 +14,7 @@ import { IconBadge } from "@/components/ui/IconBadge";
 import { ContentIcon } from "@/components/ui/ContentIcon";
 import { InternshipsHeroVisual } from "@/components/internships/InternshipsHeroVisual";
 import Link from "next/link";
+import { durationInWeeks } from "@/lib/postings";
 
 const listingFeatures = [
   { icon: "webdev", title: "Role details", desc: "Review the responsibilities listed for each opening", color: "#2563eb" },
@@ -70,15 +71,16 @@ export default async function InternshipsPage() {
     stipend: i.stipend,
     location: i.location,
     durationWeeks: i.durationWeeks,
+    durationUnit: i.durationUnit,
     open: i.status === "open",
     featured: i.featured,
   }));
 
   const paidCount = cards.filter((c) => c.paid).length;
   const companyCount = new Set(cards.map((c) => c.company)).size;
-  const avgWeeks = cards.length
-    ? Math.round(cards.reduce((sum, c) => sum + c.durationWeeks, 0) / cards.length)
-    : 0;
+  // Average over internships that set a duration, in weeks (months are converted).
+  const weekCounts = cards.map((c) => durationInWeeks(c.durationWeeks, c.durationUnit)).filter((w): w is number => w !== null);
+  const avgWeeks = weekCounts.length ? Math.round(weekCounts.reduce((sum, w) => sum + w, 0) / weekCounts.length) : 0;
 
   return (
     <Section className="overflow-hidden pt-6 sm:pt-10">

@@ -38,7 +38,9 @@ export type InternshipRow = {
   company: string;
   workMode: string;
   location: string;
-  durationWeeks: number;
+  /** Optional duration amount, counted in durationUnit. */
+  durationWeeks: number | null;
+  durationUnit: string;
   paid: boolean;
   stipend: number | null;
   featured: boolean;

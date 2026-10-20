@@ -5,6 +5,7 @@ import { localKeywords } from "@/lib/localSeo";
 import { prisma } from "@/lib/prisma";
 import { CAREERS_EMAIL } from "@/lib/careers";
 import { effectiveStatus } from "@/lib/jobs";
+import { formatDuration } from "@/lib/postings";
 import { siteUrl } from "@/lib/site";
 import { Reveal } from "@/components/ui/Reveal";
 import { SplitHeadline } from "@/components/experience/SplitHeadline";
@@ -51,7 +52,7 @@ export default async function CareersPage() {
     });
   }
   const internships: PublicInternship[] = internshipRows.map((i) => ({
-    id: i.id, slug: i.slug, title: i.title, type: i.type, location: i.location, durationWeeks: i.durationWeeks, open: true,
+    id: i.id, slug: i.slug, title: i.title, type: i.type, location: i.location, duration: formatDuration(i.durationWeeks, i.durationUnit), open: true,
   }));
 
   // Structured data only for roles that are actually taking applications.

@@ -2,6 +2,7 @@ import { NextResponse } from "next/server";
 import { z } from "zod";
 import { prisma } from "@/lib/prisma";
 import { requireAdmin } from "@/lib/auth";
+import { postingSaveError } from "@/lib/postings";
 import { jobInputSchema } from "@/lib/jobs";
 
 export const runtime = "nodejs";
@@ -32,8 +33,13 @@ export async function PATCH(req: Request, { params }: { params: Promise<{ id: st
 
   const parsed = jobInputSchema.safeParse(body);
   if (!parsed.success) return NextResponse.json({ error: parsed.error.issues[0]?.message ?? "Invalid input" }, { status: 400 });
-  const job = await prisma.jobOpening.update({ where: { id }, data: parsed.data });
-  return NextResponse.json({ job });
+  try {
+    const job = await prisma.jobOpening.update({ where: { id }, data: parsed.data });
+    return NextResponse.json({ job });
+  } catch (error) {
+    console.error("[careers] update opening failed", error);
+    return NextResponse.json({ error: postingSaveError(error) }, { status: 500 });
+  }
 }
 
 /** Deleting an opening keeps its applications (they become open applications) so no candidate record is lost. */

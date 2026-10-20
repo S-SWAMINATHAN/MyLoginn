@@ -2,6 +2,7 @@ import { NextResponse } from "next/server";
 import { z } from "zod";
 import { prisma } from "@/lib/prisma";
 import { requireAdmin } from "@/lib/auth";
+import { postingSaveError } from "@/lib/postings";
 import { INTERNSHIP_POST_STATUSES, internshipInputSchema } from "@/lib/jobs";
 
 export const runtime = "nodejs";
@@ -26,8 +27,13 @@ export async function PATCH(req: Request, { params }: { params: Promise<{ id: st
 
   const parsed = internshipInputSchema.safeParse(body);
   if (!parsed.success) return NextResponse.json({ error: parsed.error.issues[0]?.message ?? "Invalid input" }, { status: 400 });
-  const internship = await prisma.internship.update({ where: { id }, data: { ...parsed.data, applyDeadline: null }, select: { id: true } });
-  return NextResponse.json({ internship });
+  try {
+    const internship = await prisma.internship.update({ where: { id }, data: { ...parsed.data, applyDeadline: null }, select: { id: true } });
+    return NextResponse.json({ internship });
+  } catch (error) {
+    console.error("[careers] update internship failed", error);
+    return NextResponse.json({ error: postingSaveError(error) }, { status: 500 });
+  }
 }
 
 /** Deleting an internship also removes its applications (they belong to it). */

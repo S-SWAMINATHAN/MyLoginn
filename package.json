@@ -14,7 +14,9 @@
     "lq:totals": "tsx scripts/lq-totals.ts",
     "lq:coding": "tsx scripts/lq-coding-gen.ts",
     "test:lms": "tsx --require ./tests/setup.cjs --test tests/lms/*.test.ts",
-    "test:practice": "tsx --require ./tests/setup.cjs --test tests/practice/*.test.ts"
+    "test:practice": "tsx --require ./tests/setup.cjs --test tests/practice/*.test.ts",
+    "test:competition": "tsx --require ./tests/setup.cjs --test tests/competition/pure.test.ts",
+    "test:competition:db": "tsx --require ./tests/setup.cjs --require ./tests/competition/setup.cjs --test tests/competition/lifecycle.test.ts"
   },
   "prisma": {
     "seed": "tsx prisma/seed.ts"

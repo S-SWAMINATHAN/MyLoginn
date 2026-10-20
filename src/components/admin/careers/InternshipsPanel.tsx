@@ -9,6 +9,7 @@ import { ConfirmDialog, useToast, type ConfirmState } from "@/components/admin/M
 import { PostingEditor } from "@/components/admin/careers/PostingEditor";
 import type { InternshipPostStatus } from "@/lib/jobs";
 import type { InternshipRow } from "@/lib/careerTypes";
+import { formatDuration } from "@/lib/postings";
 
 const FILTERS: { id: InternshipPostStatus | "all"; label: string }[] = [
   { id: "open", label: "Open" },
@@ -113,7 +114,7 @@ export function InternshipsPanel({ internships, loading, refresh, onViewApplicat
                       <span className="font-semibold text-story-royal">{i.company}</span>
                       <span className="inline-flex items-center gap-1"><Building2 className="h-3.5 w-3.5" />{i.workMode}</span>
                       {i.location && <span className="inline-flex items-center gap-1"><MapPin className="h-3.5 w-3.5" />{i.location}</span>}
-                      <span className="inline-flex items-center gap-1"><Clock className="h-3.5 w-3.5" />{i.durationWeeks} weeks</span>
+                      {i.durationWeeks ? <span className="inline-flex items-center gap-1"><Clock className="h-3.5 w-3.5" />{formatDuration(i.durationWeeks, i.durationUnit)}</span> : null}
                       <span className="inline-flex items-center gap-1"><Wallet className="h-3.5 w-3.5" />{!i.paid ? "Unpaid" : i.stipend ? `₹${nfIN.format(i.stipend)} / month` : "Stipend to be discussed"}</span>
                     </div>
                   </div>

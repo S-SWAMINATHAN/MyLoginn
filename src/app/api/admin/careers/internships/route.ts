@@ -2,7 +2,7 @@ import { NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
 import { requireAdmin } from "@/lib/auth";
 import { internshipInputSchema, slugifyJob } from "@/lib/jobs";
-import { splitLines } from "@/lib/postings";
+import { postingSaveError, splitLines } from "@/lib/postings";
 
 export const runtime = "nodejs";
 
@@ -32,6 +32,7 @@ export async function GET() {
       workMode: i.type,
       location: i.location,
       durationWeeks: i.durationWeeks,
+      durationUnit: i.durationUnit,
       paid: i.paid,
       stipend: i.stipend,
       featured: i.featured,
@@ -64,6 +65,11 @@ export async function POST(req: Request) {
   let slug = base;
   for (let n = 2; await prisma.internship.findUnique({ where: { slug }, select: { id: true } }); n++) slug = `${base}-${n}`;
 
-  const internship = await prisma.internship.create({ data: { ...parsed.data, slug, applyDeadline: null }, select: { id: true } });
-  return NextResponse.json({ internship }, { status: 201 });
+  try {
+    const internship = await prisma.internship.create({ data: { ...parsed.data, slug, applyDeadline: null }, select: { id: true } });
+    return NextResponse.json({ internship }, { status: 201 });
+  } catch (error) {
+    console.error("[careers] create internship failed", error);
+    return NextResponse.json({ error: postingSaveError(error) }, { status: 500 });
+  }
 }

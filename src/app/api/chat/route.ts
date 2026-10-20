@@ -4,6 +4,7 @@ import { CONTACT_EMAIL, CONTACT_PHONES, CONTACT_HOURS, WHATSAPP_PHONE } from "@/
 import { MyBuddyError, isMyBuddyConfigured, streamMyBuddyReply } from "@/lib/mybuddy";
 import { GeminiError, isGeminiConfigured, streamGeminiReply } from "@/lib/gemini";
 import { HIDE_TUTORING } from "@/lib/hiddenSections";
+import { formatDuration } from "@/lib/postings";
 import { REQUEST_SCOPED_STYLE, currentDateTimeContext, detectTopics, type ChatTopic } from "@/lib/chatIntent";
 
 export const runtime = "nodejs";
@@ -38,7 +39,7 @@ async function buildSystemPrompt(topics: Set<ChatTopic>) {
     }),
     !wants("internships") ? noRows : prisma.internship.findMany({
       where: { status: "open" },
-      select: { title: true, type: true, paid: true, stipend: true, location: true, durationWeeks: true },
+      select: { title: true, type: true, paid: true, stipend: true, location: true, durationWeeks: true, durationUnit: true },
       orderBy: { featured: "desc" },
     }),
     !wants("tutoring") ? noRows : prisma.tutor.findMany({
@@ -52,7 +53,7 @@ async function buildSystemPrompt(topics: Set<ChatTopic>) {
   const internshipList = internships
     .map(
       (i) =>
-        `- ${i.title} (${i.type}, ${i.location}, ${i.durationWeeks} weeks, ${
+        `- ${i.title} (${[i.type, i.location, formatDuration(i.durationWeeks, i.durationUnit)].filter(Boolean).join(", ")}, ${
           i.paid ? `paid${i.stipend ? ` — stipend ₹${i.stipend}/mo` : ""}` : "unpaid"
         })`
     )

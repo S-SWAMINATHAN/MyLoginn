@@ -96,7 +96,7 @@ const internshipCreate = z.object({
   paid: z.coerce.boolean().default(true),
   stipend: z.coerce.number().int().min(0).optional().nullable(),
   location: z.string().trim().min(2),
-  durationWeeks: z.coerce.number().int().min(1).max(52),
+  durationWeeks: z.coerce.number().int().min(1).max(52).optional().nullable(),
   description: z.string().trim().min(10),
   requirements: z.string().trim().min(3),
   responsibilities: z.string().trim().min(3),

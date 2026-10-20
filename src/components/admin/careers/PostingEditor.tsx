@@ -11,8 +11,8 @@ import { ListEditor, fromItems, toItems, type ListItem } from "@/components/admi
 import { PostingPreview } from "@/components/admin/careers/PostingPreview";
 import { INTERNSHIP_POST_STATUSES, JOB_STATUS_LABEL, JOB_STATUSES, JOB_TEAMS, JOB_TYPES, type InternshipPostStatus, type JobStatus } from "@/lib/jobs";
 import {
-  BENEFIT_SUGGESTIONS, DEFAULT_COMPANY, POSTING_SECTIONS, POSTING_TEMPLATES, SALARY_OPTIONS, STIPEND_OPTIONS, WORK_MODES,
-  parsePosting, postingToMarkdown, type Posting, type PostingKind,
+  BENEFIT_SUGGESTIONS, DEFAULT_COMPANY, DURATION_UNITS, POSTING_SECTIONS, POSTING_TEMPLATES, SALARY_OPTIONS, STIPEND_OPTIONS, WORK_MODES,
+  formatDuration, parsePosting, postingToMarkdown, type Posting, type PostingKind,
 } from "@/lib/postings";
 import type { InternshipRow, JobRow } from "@/lib/careerTypes";
 
@@ -55,6 +55,7 @@ type Form = {
   openFrom: string;
   // Internships
   durationWeeks: string;
+  durationUnit: string;
   /** "unpaid", "tbd", an amount, or CUSTOM. */
   stipend: string;
   customStipend: string;
@@ -87,7 +88,8 @@ function initialForm(kind: PostingKind, job: JobRow | null, intern: InternshipRo
     customSalary: salary && !(SALARY_OPTIONS as readonly string[]).includes(salary) ? salary : "",
     positions: String(job?.positions ?? 1),
     openFrom: job?.openFrom ? job.openFrom.slice(0, 10) : "",
-    durationWeeks: String(intern?.durationWeeks ?? 8),
+    durationWeeks: intern ? (intern.durationWeeks ? String(intern.durationWeeks) : "") : "8",
+    durationUnit: intern?.durationUnit === "months" ? "months" : "weeks",
     stipend: stipendValue,
     customStipend: stipendValue === CUSTOM && intern?.stipend ? String(intern.stipend) : "",
     mentorName: intern?.mentorName ?? "",
@@ -148,7 +150,7 @@ export function PostingEditor({ kind, job = null, internship = null, onClose, on
 
   const extras = kind === "job"
     ? [f.team, f.experience.trim(), payText ? `Salary: ${payText}` : "", `${f.positions || 1} ${Number(f.positions) === 1 ? "position" : "positions"}`].filter(Boolean)
-    : [`${f.durationWeeks || "?"} weeks`, payText].filter(Boolean);
+    : [formatDuration(Number(f.durationWeeks) || null, f.durationUnit) ?? "", payText].filter(Boolean);
 
   const done: Record<SectionId, boolean> = {
     basics: Boolean(posting.title.length >= 3 && posting.company && posting.jobType),
@@ -263,7 +265,7 @@ export function PostingEditor({ kind, job = null, internship = null, onClose, on
     };
     const body = kind === "job"
       ? { ...shared, summary: posting.about.trim(), team: f.team, type: posting.jobType, experience: f.experience.trim(), salaryRange: salaryText, positions: Number(f.positions) || 1, openFrom: f.status === "upcoming" ? f.openFrom : "" }
-      : { ...shared, description: posting.about.trim(), durationWeeks: Number(f.durationWeeks), paid: f.stipend !== "unpaid", stipend: f.stipend === "unpaid" ? null : stipendAmount || null, mentorName: f.mentorName.trim(), mentorEmail: f.mentorEmail.trim(), featured: f.featured };
+      : { ...shared, description: posting.about.trim(), durationWeeks: Number(f.durationWeeks) || null, durationUnit: f.durationUnit, paid: f.stipend !== "unpaid", stipend: f.stipend === "unpaid" ? null : stipendAmount || null, mentorName: f.mentorName.trim(), mentorEmail: f.mentorEmail.trim(), featured: f.featured };
     const base = kind === "job" ? "/api/admin/jobs" : "/api/admin/careers/internships";
     const id = job?.id ?? internship?.id;
     try {
@@ -408,7 +410,21 @@ export function PostingEditor({ kind, job = null, internship = null, onClose, on
                   ) : (
                     <>
                       <div className="sm:col-span-2 flex items-center gap-2 rounded-2xl bg-story-mist px-3.5 py-2.5 text-sm"><span className="font-semibold">Job type:</span> Internship</div>
-                      <Input id="p-weeks" label="Duration (weeks) *" type="number" min={1} max={52} value={f.durationWeeks} onChange={(e) => set("durationWeeks", e.target.value)} />
+                      <div className="flex flex-col gap-1.5">
+                        <label htmlFor="p-duration" className="field-label">Duration (optional)</label>
+                        <div className="flex gap-2">
+                          <input id="p-duration" type="number" min={1} max={52} inputMode="numeric" value={f.durationWeeks} onChange={(e) => set("durationWeeks", e.target.value)} placeholder="e.g. 8" className="field-control min-w-0 flex-1" />
+                          <div role="radiogroup" aria-label="Duration unit" className="flex shrink-0 gap-1 rounded-2xl bg-story-mist p-1">
+                            {DURATION_UNITS.map((u) => (
+                              <button key={u} type="button" role="radio" aria-checked={f.durationUnit === u} onClick={() => set("durationUnit", u)} className={cn("relative rounded-xl px-3 text-sm font-semibold capitalize transition-colors", f.durationUnit === u ? "text-white" : "text-muted hover:text-story-royal")}>
+                                {f.durationUnit === u && <motion.span layoutId="seg-duration-unit" className="absolute inset-0 rounded-xl bg-story-royal" transition={{ type: "spring", stiffness: 420, damping: 34 }} />}
+                                <span className="relative">{u}</span>
+                              </button>
+                            ))}
+                          </div>
+                        </div>
+                        <span className="field-message text-muted">Leave blank if the duration is flexible.</span>
+                      </div>
                       <div className="space-y-2">
                         <Select id="p-stipend" label="Stipend (optional)" value={f.stipend} onChange={(e) => set("stipend", e.target.value)} options={[{ value: "tbd", label: "To be discussed" }, { value: "unpaid", label: "Unpaid" }, ...STIPEND_OPTIONS.map((n) => ({ value: String(n), label: `₹${nfIN.format(n)} / month` })), { value: CUSTOM, label: "Custom amount…" }]} />
                         {f.stipend === CUSTOM && <Input id="p-stipend-custom" aria-label="Custom stipend per month" type="number" min={0} value={f.customStipend} onChange={(e) => set("customStipend", e.target.value)} placeholder="₹ per month" autoFocus />}

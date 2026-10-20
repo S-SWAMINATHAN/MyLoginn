@@ -67,6 +67,7 @@ model User {
   practiceSessions       PracticeSession[]
   gdRoomsHosted          GdRoom[]                @relation("GdHost")
   gdSeats                GdParticipant[]
+  ccRegistrations        CcRegistration[]
 }
 
 model DailyActivity {
@@ -342,7 +343,10 @@ model Internship {
   paid             Boolean  @default(true)
   stipend          Int?
   location         String
-  durationWeeks    Int
+  /// Optional duration amount, counted in `durationUnit` (the column keeps its original name).
+  durationWeeks    Int?
+  /// weeks or months
+  durationUnit     String   @default("weeks")
   description      String
   requirements     String
   responsibilities String
@@ -1239,4 +1243,615 @@ model PracticeAiLog {
 
   @@index([createdAt])
   @@index([kind, createdAt])
+}
+
+// ───────────────────────────── Coding competition (/coding-competition) ─────────────────────────────
+// Every table is prefixed Cc. Timestamps are UTC; pages convert them to Competition.timezone for display.
+// Server-only data (hidden tests, reference solutions, unpublished scores) lives here and is never selected into
+// candidate-facing responses: see src/lib/competition/*.
+
+enum CcStatus {
+  DRAFT
+  REGISTRATION_OPEN
+  REGISTRATION_CLOSED
+  SCHEDULED
+  LIVE
+  SUBMISSION_CLOSED
+  EVALUATION
+  UNDER_REVIEW
+  RESULTS_PUBLISHED
+  ARCHIVED
+}
+
+enum CcDifficulty {
+  EASY
+  MEDIUM
+  HARD
+}
+
+enum CcAttemptStatus {
+  ACTIVE
+  FINALIZED
+}
+
+enum CcJobKind {
+  RUN
+  EVALUATE
+  /// Admin check: a question's reference solution against all of its tests.
+  VERIFY
+}
+
+enum CcJobStatus {
+  QUEUED
+  RUNNING
+  DONE
+  FAILED
+}
+
+enum CcReviewStatus {
+  NONE
+  FLAGGED
+  CLEARED
+  PENALIZED
+  DISQUALIFIED
+}
+
+enum CcCertificateKind {
+  PARTICIPATION
+  WINNER
+  RUNNER_UP
+  SECOND_RUNNER_UP
+}
+
+enum CcOfferStatus {
+  ELIGIBILITY_CHECK
+  APPROVED
+  SENT
+  ACCEPTED
+  DECLINED
+  EXPIRED
+  WITHDRAWN
+}
+
+model Competition {
+  id                         String    @id @default(cuid())
+  slug                       String    @unique
+  title                      String
+  description                String    @default("")
+  eligibility                String    @default("")
+  timezone                   String    @default("Asia/Kolkata")
+  registrationOpensAt        DateTime
+  registrationClosesAt       DateTime
+  /// The exam window opens here; candidates may start until startsAt + lateJoinMinutes.
+  startsAt                   DateTime
+  /// Hard end of the window. Each attempt's deadline is min(startedAt + durationMinutes, endsAt).
+  endsAt                     DateTime
+  durationMinutes            Int
+  lateJoinMinutes            Int       @default(15)
+  maxParticipants            Int       @default(1000)
+  /// Language keys from lib/competition/languages.ts that are enabled for this competition.
+  languages                  Json      @default("[\"python\",\"javascript\",\"java\",\"cpp\"]")
+  /// Question slots: [{ difficulty, count, marks }]. Marks belong to the slot, not the question, so every set is
+  /// worth the same.
+  blueprint                  Json      @default("[]")
+  /// Marks deducted for each assigned question whose final answer scores zero (0 = off).
+  negativeMarkPerWrong       Float     @default(0)
+  /// Allowed spread of a set's expected solving time around the blueprint target (0.15 = 15%).
+  timeBalanceTolerance       Float     @default(0.15)
+  rules                      String    @default("")
+  /// Published thresholds: see lib/competition/policy.ts (ViolationPolicy).
+  violationPolicy            Json      @default("{}")
+  screenShareRequired        Boolean   @default(true)
+  fullscreenRequired         Boolean   @default(true)
+  /// Disclosed third tie-breaker: earlier last scoring submission ranks higher.
+  tieBreakBySubmitTime       Boolean   @default(true)
+  /// An autosaved draft counts as the answer for a question the candidate never explicitly submitted.
+  autosaveCountsAsSubmission Boolean   @default(true)
+  resultsPublishAt           DateTime
+  /// Participation certificate: finalized, not disqualified, at least one answer, and at least this score %.
+  certificateMinPercent      Float     @default(0)
+  status                     CcStatus  @default(DRAFT)
+  statusChangedAt            DateTime  @default(now())
+  /// Incremented inside the registration transaction; doubles as the candidate number and the capacity guard.
+  registrationCount          Int       @default(0)
+  candidatePrefix            String    @default("MLC")
+  /// Mixed into each candidate's assignment seed.
+  assignmentSalt             String    @default(cuid())
+  assignmentsGeneratedAt     DateTime?
+  evaluationVersion          Int       @default(1)
+  resultsApprovedAt          DateTime?
+  resultsApprovedById        String?
+  resultsPublishedAt         DateTime?
+  createdAt                  DateTime  @default(now())
+  updatedAt                  DateTime  @updatedAt
+
+  registrations CcRegistration[]
+  attempts      CcAttempt[]
+  assignments   CcAssignment[]
+  snapshots     CcLeaderboardSnapshot[]
+  certificates  CcCertificate[]
+  reward        CcInternshipReward?
+  offers        CcInternshipOffer[]
+
+  @@index([status, startsAt])
+}
+
+model CcRegistration {
+  id              String   @id @default(cuid())
+  competitionId   String
+  userId          String
+  /// Public identifier (e.g. MLC-00042). Contact details are never used on public pages.
+  candidateId     String   @unique
+  displayName     String
+  emailNormalized String
+  /// E.164
+  phoneNormalized String
+  acceptedRulesAt DateTime
+  createdAt       DateTime @default(now())
+
+  competition  Competition         @relation(fields: [competitionId], references: [id], onDelete: Restrict)
+  user         User                @relation(fields: [userId], references: [id], onDelete: Restrict)
+  assignment   CcAssignment?
+  attempt      CcAttempt?
+  certificates CcCertificate[]
+  offers       CcInternshipOffer[]
+  appeals      CcAppeal[]
+
+  @@unique([competitionId, userId])
+  @@unique([competitionId, emailNormalized])
+  @@unique([competitionId, phoneNormalized])
+}
+
+/// One concrete question. Editing a question that is locked into a competition creates a new version row
+/// (same family, version + 1); assignments always reference the exact row they were given.
+model CcQuestion {
+  id                String       @id @default(cuid())
+  /// Variants of the same underlying problem share a family; a candidate never gets two from one family.
+  family            String
+  version           Int          @default(1)
+  title             String
+  statement         String
+  inputFormat       String       @default("")
+  outputFormat      String       @default("")
+  constraints       String       @default("")
+  /// [{ input, output, explanation? }] shown to candidates.
+  examples          Json         @default("[]")
+  difficulty        CcDifficulty
+  topic             String
+  /// Calibrated solving time in minutes; drives the time-balance check in the assignment engine.
+  expectedMinutes   Int          @default(20)
+  timeLimitMs       Int          @default(2000)
+  memoryLimitMb     Int          @default(256)
+  languages         Json         @default("[\"python\",\"javascript\",\"java\",\"cpp\"]")
+  /// { [language]: starter source }
+  starterCode       Json         @default("{}")
+  /// SERVER ONLY.
+  referenceSolution String       @default("")
+  referenceLanguage String       @default("python")
+  /// exact | trim (trailing whitespace ignored) | float:<tolerance>
+  comparator        String       @default("trim")
+  active            Boolean      @default(true)
+  /// Set when the question is assigned to a competition; a locked row is immutable.
+  lockedAt          DateTime?
+  createdAt         DateTime     @default(now())
+  updatedAt         DateTime     @updatedAt
+
+  tests       CcTestCase[]
+  assignments CcAssignmentItem[]
+
+  @@unique([family, version])
+  @@index([active, difficulty])
+}
+
+/// SERVER ONLY. Sample rows are shown as examples and used by Run; weight 0 = not scored.
+model CcTestCase {
+  id         String  @id @default(cuid())
+  questionId String
+  input      String
+  expected   String
+  isSample   Boolean @default(false)
+  weight     Int     @default(1)
+  position   Int     @default(0)
+
+  question CcQuestion @relation(fields: [questionId], references: [id], onDelete: Cascade)
+
+  @@index([questionId, position])
+}
+
+model CcAssignment {
+  id               String   @id @default(cuid())
+  competitionId    String
+  registrationId   String   @unique
+  /// sha256(competitionId:registrationId:assignmentSalt). Re-running the engine with this seed reproduces the pick.
+  seed             String
+  /// Order-independent hash of the question ids; used to avoid identical sets.
+  setHash          String
+  algorithmVersion Int      @default(1)
+  expectedMinutes  Int
+  createdAt        DateTime @default(now())
+
+  competition  Competition        @relation(fields: [competitionId], references: [id], onDelete: Restrict)
+  registration CcRegistration     @relation(fields: [registrationId], references: [id], onDelete: Restrict)
+  items        CcAssignmentItem[]
+
+  @@index([competitionId, setHash])
+}
+
+model CcAssignmentItem {
+  id           String       @id @default(cuid())
+  assignmentId String
+  questionId   String
+  position     Int
+  difficulty   CcDifficulty
+  marks        Float
+
+  assignment CcAssignment @relation(fields: [assignmentId], references: [id], onDelete: Cascade)
+  question   CcQuestion   @relation(fields: [questionId], references: [id], onDelete: Restrict)
+
+  @@unique([assignmentId, position])
+  @@index([questionId])
+}
+
+model CcAttempt {
+  id             String          @id @default(cuid())
+  competitionId  String
+  registrationId String          @unique
+  startedAt      DateTime        @default(now())
+  deadlineAt     DateTime
+  status         CcAttemptStatus @default(ACTIVE)
+  finalizedAt    DateTime?
+  /// SUBMITTED | TIME_EXPIRED | ADMIN
+  finalReason    String?
+  /// Bumped on each arena load after the first; repeated reconnects are an integrity signal.
+  resumeCount    Int             @default(0)
+  lastSeenAt     DateTime        @default(now())
+  /// True while a required screen share is not active; run and submit are refused until it is restored.
+  paused         Boolean         @default(false)
+  userAgent      String?
+  /// Truncated SHA-256 of the client IP (no raw IP is stored).
+  ipHash         String?
+
+  competition  Competition         @relation(fields: [competitionId], references: [id], onDelete: Restrict)
+  registration CcRegistration      @relation(fields: [registrationId], references: [id], onDelete: Restrict)
+  drafts       CcDraft[]
+  submissions  CcSubmission[]
+  jobs         CcJudgeJob[]
+  evaluations  CcEvaluation[]
+  events       CcIntegrityEvent[]
+  reports      CcIntegrityReport[]
+  adjustments  CcScoreAdjustment[]
+  result       CcResult?
+  appeals      CcAppeal[]
+
+  @@index([competitionId, status, deadlineAt])
+}
+
+/// Latest autosave per question.
+model CcDraft {
+  attemptId  String
+  questionId String
+  language   String
+  source     String
+  updatedAt  DateTime @updatedAt
+
+  attempt CcAttempt @relation(fields: [attemptId], references: [id], onDelete: Cascade)
+
+  @@id([attemptId, questionId])
+}
+
+/// An explicit "Submit answer". The latest one before the deadline is the question's final answer.
+model CcSubmission {
+  id         String   @id @default(cuid())
+  attemptId  String
+  questionId String
+  language   String
+  source     String
+  /// Client-generated key; a replayed request returns the original row instead of creating another.
+  requestKey String
+  /// True for the row created from an autosaved draft at finalization.
+  fromDraft  Boolean  @default(false)
+  createdAt  DateTime @default(now())
+
+  attempt CcAttempt @relation(fields: [attemptId], references: [id], onDelete: Cascade)
+
+  @@unique([attemptId, requestKey])
+  @@index([attemptId, questionId, createdAt])
+}
+
+/// Work for the isolated judge workers, which pull jobs over HTTPS and never see the database.
+model CcJudgeJob {
+  id         String      @id @default(cuid())
+  kind       CcJobKind
+  status     CcJobStatus @default(QUEUED)
+  /// Null for VERIFY jobs.
+  attemptId  String?
+  questionId String
+  /// Lower runs first: interactive runs (0) beat evaluation (10).
+  priority   Int         @default(10)
+  /// { language, source, timeLimitMs, memoryLimitMb, comparator, tests: [{ id, input, expected }] }
+  payload    Json
+  result     Json?
+  error      String?
+  tries      Int         @default(0)
+  lockedAt   DateTime?
+  lockedBy   String?
+  /// EVALUATE jobs: one per (attempt, question, evaluationVersion), so a duplicate enqueue is a no-op.
+  dedupeKey  String?     @unique
+  createdAt  DateTime    @default(now())
+  finishedAt DateTime?
+
+  attempt CcAttempt? @relation(fields: [attemptId], references: [id], onDelete: Cascade)
+
+  @@index([status, priority, createdAt])
+  @@index([attemptId, kind, status])
+}
+
+model CcJudgeWorker {
+  id         String   @id
+  version    String
+  languages  Json     @default("[]")
+  running    Int      @default(0)
+  lastSeenAt DateTime @default(now())
+}
+
+model CcEvaluation {
+  id                String    @id @default(cuid())
+  attemptId         String
+  questionId        String
+  submissionId      String?
+  evaluationVersion Int
+  /// PENDING | DONE | FAILED
+  status            String    @default("PENDING")
+  language          String?
+  marks             Float
+  passedWeight      Int       @default(0)
+  totalWeight       Int       @default(0)
+  score             Float     @default(0)
+  /// NO_ANSWER | COMPILE_ERROR | null when tests ran.
+  verdict           String?
+  compileOutput     String?
+  createdAt         DateTime  @default(now())
+  completedAt       DateTime?
+
+  attempt CcAttempt      @relation(fields: [attemptId], references: [id], onDelete: Cascade)
+  tests   CcTestResult[]
+
+  @@unique([attemptId, questionId, evaluationVersion])
+}
+
+model CcTestResult {
+  id           String  @id @default(cuid())
+  evaluationId String
+  testCaseId   String
+  /// OK | WRONG_ANSWER | RUNTIME_ERROR | TIME_LIMIT | MEMORY_LIMIT | COMPILE_ERROR | INTERNAL
+  status       String
+  passed       Boolean
+  weight       Int
+  timeMs       Int?
+  /// Truncated stdout/stderr, admin only.
+  detail       String?
+
+  evaluation CcEvaluation @relation(fields: [evaluationId], references: [id], onDelete: Cascade)
+
+  @@unique([evaluationId, testCaseId])
+}
+
+/// Append-only, written by the server only. clientAt is the browser's claim and is never trusted for policy.
+model CcIntegrityEvent {
+  id        String    @id @default(cuid())
+  attemptId String
+  type      String
+  serverAt  DateTime  @default(now())
+  clientAt  DateTime?
+  meta      Json?
+  /// NONE | WARNING | RISK | PAUSE | FLAG
+  action    String    @default("NONE")
+
+  attempt CcAttempt @relation(fields: [attemptId], references: [id], onDelete: Cascade)
+
+  @@index([attemptId, serverAt])
+  @@index([type])
+}
+
+/// Evidence from the integrity analysis (similarity, monitoring summary, optional AI narrative).
+/// A report is a suspicion for human review, never a confirmed violation.
+model CcIntegrityReport {
+  id             String   @id @default(cuid())
+  attemptId      String
+  /// SIMILARITY | MONITORING | AI_SUMMARY
+  kind           String
+  questionId     String?
+  otherAttemptId String?
+  riskScore      Float
+  evidence       Json
+  /// heuristic-v1 | mybuddy
+  generator      String
+  createdAt      DateTime @default(now())
+
+  attempt CcAttempt @relation(fields: [attemptId], references: [id], onDelete: Cascade)
+
+  @@index([attemptId, kind])
+}
+
+/// Every manual score change and review decision: penalties, corrections, clears, disqualifications.
+model CcScoreAdjustment {
+  id        String   @id @default(cuid())
+  attemptId String
+  /// PENALTY | CORRECTION | CLEAR | DISQUALIFY
+  kind      String
+  delta     Float    @default(0)
+  reason    String
+  actorId   String
+  createdAt DateTime @default(now())
+
+  attempt CcAttempt @relation(fields: [attemptId], references: [id], onDelete: Cascade)
+
+  @@index([attemptId])
+}
+
+model CcResult {
+  id                  String         @id @default(cuid())
+  attemptId           String         @unique
+  competitionId       String
+  evaluationVersion   Int
+  rawScore            Float
+  /// Score on HARD slots (second tie-breaker).
+  hardScore           Float
+  maxScore            Float
+  negativeMarks       Float          @default(0)
+  adjustments         Float          @default(0)
+  finalScore          Float
+  integrityRisk       Float          @default(0)
+  reviewStatus        CcReviewStatus @default(NONE)
+  questionsAttempted  Int
+  testsPassed         Int
+  testsTotal          Int
+  lastScoringSubmitAt DateTime?
+  rank                Int?
+  computedAt          DateTime       @default(now())
+
+  attempt CcAttempt @relation(fields: [attemptId], references: [id], onDelete: Cascade)
+
+  @@index([competitionId, finalScore])
+}
+
+model CcAppeal {
+  id             String    @id @default(cuid())
+  registrationId String
+  attemptId      String?
+  /// INTEGRITY | SCORE | OTHER
+  topic          String
+  message        String
+  /// OPEN | UPHELD | REJECTED
+  status         String    @default("OPEN")
+  response       String?
+  resolverId     String?
+  createdAt      DateTime  @default(now())
+  resolvedAt     DateTime?
+
+  registration CcRegistration @relation(fields: [registrationId], references: [id], onDelete: Cascade)
+  attempt      CcAttempt?     @relation(fields: [attemptId], references: [id], onDelete: SetNull)
+
+  @@index([status, createdAt])
+}
+
+/// Frozen ranking. The approved snapshot is what gets published; it is never edited (a correction makes a new one).
+model CcLeaderboardSnapshot {
+  id            String    @id @default(cuid())
+  competitionId String
+  version       Int
+  /// [{ rank, candidateId, displayName, finalScore, maxScore, award }]
+  entries       Json
+  total         Int
+  createdById   String
+  approvedById  String?
+  approvedAt    DateTime?
+  publishedAt   DateTime?
+  createdAt     DateTime  @default(now())
+
+  competition Competition @relation(fields: [competitionId], references: [id], onDelete: Cascade)
+
+  @@unique([competitionId, version])
+}
+
+model CcCertificate {
+  id             String            @id @default(cuid())
+  /// Unpredictable public code used in the verification URL.
+  code           String            @unique
+  competitionId  String
+  registrationId String
+  kind           CcCertificateKind
+  /// Bumped on reissue; only one unrevoked certificate per (registration, kind) exists at a time.
+  revision       Int               @default(1)
+  candidateName  String
+  rank           Int?
+  issuedAt       DateTime          @default(now())
+  revokedAt      DateTime?
+  revokeReason   String?
+
+  competition   Competition                 @relation(fields: [competitionId], references: [id], onDelete: Restrict)
+  registration  CcRegistration              @relation(fields: [registrationId], references: [id], onDelete: Restrict)
+  verifications CcCertificateVerification[]
+
+  @@unique([registrationId, kind, revision])
+  @@index([competitionId, kind])
+}
+
+model CcCertificateVerification {
+  id            String   @id @default(cuid())
+  certificateId String
+  ipHash        String?
+  createdAt     DateTime @default(now())
+
+  certificate CcCertificate @relation(fields: [certificateId], references: [id], onDelete: Cascade)
+
+  @@index([certificateId])
+}
+
+/// Published before registration opens; required to open registration.
+model CcInternshipReward {
+  id                String    @id @default(cuid())
+  competitionId     String    @unique
+  role              String
+  stipendAmount     Int
+  stipendCurrency   String    @default("INR")
+  /// per month | total
+  stipendPeriod     String    @default("per month")
+  durationText      String
+  expectedStartDate DateTime?
+  /// Remote | On-site | Hybrid
+  workMode          String
+  location          String    @default("")
+  eligibility       String
+  requiredDocuments String    @default("")
+  offerValidDays    Int       @default(14)
+  updatedAt         DateTime  @updatedAt
+
+  competition Competition @relation(fields: [competitionId], references: [id], onDelete: Cascade)
+}
+
+model CcInternshipOffer {
+  id               String        @id @default(cuid())
+  competitionId    String
+  registrationId   String
+  status           CcOfferStatus @default(ELIGIBILITY_CHECK)
+  /// Copy of the reward terms when the offer was created.
+  terms            Json
+  eligibilityNotes String?
+  approvedById     String?
+  approvedAt       DateTime?
+  sentAt           DateTime?
+  expiresAt        DateTime?
+  respondedAt      DateTime?
+  createdAt        DateTime      @default(now())
+  updatedAt        DateTime      @updatedAt
+
+  competition  Competition    @relation(fields: [competitionId], references: [id], onDelete: Restrict)
+  registration CcRegistration @relation(fields: [registrationId], references: [id], onDelete: Restrict)
+
+  @@unique([competitionId, registrationId])
+}
+
+/// Hash-chained admin audit trail: each row stores the previous row's hash, so edits or deletions are detectable.
+model CcAuditLog {
+  id            String   @id @default(cuid())
+  seq           Int      @unique @default(autoincrement())
+  competitionId String?
+  actorId       String
+  action        String
+  entity        String
+  entityId      String?
+  meta          Json?
+  prevHash      String
+  hash          String
+  createdAt     DateTime @default(now())
+
+  @@index([competitionId, createdAt])
+}
+
+/// Fixed-window counters shared by every serverless instance (in-memory limits do not work on Vercel).
+model CcRateLimit {
+  key         String   @id
+  windowStart DateTime
+  count       Int
 }

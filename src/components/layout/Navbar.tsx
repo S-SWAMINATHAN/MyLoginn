@@ -34,6 +34,7 @@ const learnLinks = [
   { href: "/practice", label: "Practice", desc: "AI mock interviews, group discussion & speaking" },
   { href: "/logiquest", label: "LogiQuest", desc: "Aptitude, reasoning, programming & interview Q&A" },
   { href: "/logiquest/leaderboard", label: "Leaderboard", desc: "Top LogiQuest learners" },
+  { href: "/coding-competition", label: "Coding Competition", desc: "Compete live, win certificates & a paid internship" },
 ];
 
 type MobileLink = {
@@ -49,6 +50,7 @@ const mobileMainLinks: MobileLink[] = [
   { href: "/practice", label: "Practice", desc: "AI mock interviews, group discussion & speaking", icon: "practice" },
   { href: "/logiquest", label: "LogiQuest", desc: "Aptitude, reasoning, programming & interview Q&A", icon: "logiquest" },
   { href: "/logiquest/leaderboard", label: "Leaderboard", desc: "Top LogiQuest learners", icon: "leaderboard" },
+  { href: "/coding-competition", label: "Coding Competition", desc: "Compete live, win certificates & a paid internship", icon: "logiquest" },
 ];
 
 const mobileServiceLinks: MobileLink[] = [
@@ -84,7 +86,7 @@ const mobileContactLink: MobileLink = {
 
 type NavSection = "home" | "about" | "services" | "projects" | "careers" | "learn" | "contact";
 
-const LEARN_PREFIXES = ["/courses", "/practice", "/logiquest", "/leaderboard", "/tutoring"];
+const LEARN_PREFIXES = ["/courses", "/practice", "/logiquest", "/leaderboard", "/tutoring", "/coding-competition"];
 
 /** Which top-level navigation item owns the current page, so the active indicator always sits under the right one. */
 function navSection(pathname: string): NavSection | null {
@@ -160,7 +162,7 @@ export function Navbar({ user }: { user: NavUser }) {
             onMouseLeave={() => setServicesOpen(false)}
           >
             <button
-              className={cn("relative flex items-center gap-1 rounded-full px-4 py-2 text-sm font-medium transition-colors duration-200 cursor-pointer", section === "services" ? "text-brand-500" : "text-foreground/80 hover:text-foreground")}
+              className={cn("relative flex items-center gap-1 rounded-full px-4 py-2 text-sm font-medium transition-colors duration-200 cursor-pointer", section === "services" ? "text-story-royal" : "text-foreground/80 hover:text-story-royal")}
               onClick={() => setServicesOpen((s) => !s)}
               aria-expanded={servicesOpen}
             >
@@ -169,7 +171,7 @@ export function Navbar({ user }: { user: NavUser }) {
               {section === "services" ? <NavIndicator /> : (
                 <span
                   className={cn(
-                    "pointer-events-none absolute inset-x-3.5 -bottom-0.5 h-[3px] origin-center rounded-full bg-brand-200 transition-transform duration-300 ease-out",
+                    "pointer-events-none absolute inset-x-3.5 -bottom-0.5 h-[3px] origin-center rounded-full bg-story-royal transition-transform duration-300 ease-out",
                     servicesOpen ? "scale-x-100" : "scale-x-0 group-hover:scale-x-100"
                   )}
                 />
@@ -208,13 +210,13 @@ export function Navbar({ user }: { user: NavUser }) {
             onMouseLeave={() => setLearnOpen(false)}
           >
             <button
-              className={cn("relative flex items-center gap-1 rounded-full px-4 py-2 text-sm font-medium transition-colors duration-200 cursor-pointer", section === "learn" ? "text-brand-500" : "text-foreground/80 hover:text-foreground")}
+              className={cn("relative flex items-center gap-1 rounded-full px-4 py-2 text-sm font-medium transition-colors duration-200 cursor-pointer", section === "learn" ? "text-story-royal" : "text-foreground/80 hover:text-story-royal")}
               onClick={() => setLearnOpen((open) => !open)}
               aria-expanded={learnOpen}
             >
               Learn
               <ChevronDown className={cn("h-4 w-4 transition-transform duration-300", learnOpen && "rotate-180")} />
-              {section === "learn" ? <NavIndicator /> : <span className={cn("pointer-events-none absolute inset-x-3.5 -bottom-0.5 h-[3px] origin-center rounded-full bg-brand-200 transition-transform duration-300 ease-out", learnOpen ? "scale-x-100" : "scale-x-0 group-hover:scale-x-100")} />}
+              {section === "learn" ? <NavIndicator /> : <span className={cn("pointer-events-none absolute inset-x-3.5 -bottom-0.5 h-[3px] origin-center rounded-full bg-story-royal transition-transform duration-300 ease-out", learnOpen ? "scale-x-100" : "scale-x-0 group-hover:scale-x-100")} />}
             </button>
             <AnimatePresence>
               {learnOpen && (
@@ -498,14 +500,14 @@ function NavHeaderLink({ href, active, children }: { href: string; active: boole
       href={href}
       className={cn(
         "group relative rounded-full px-4 py-2 text-sm font-medium transition-colors duration-200",
-        active ? "text-brand-500" : "text-foreground/80 hover:text-foreground"
+        active ? "text-story-royal" : "text-foreground/80 hover:text-story-royal"
       )}
     >
       {children}
       {active ? (
         <NavIndicator />
       ) : (
-        <span className="pointer-events-none absolute inset-x-3.5 -bottom-0.5 h-[3px] origin-center scale-x-0 rounded-full bg-brand-200 transition-transform duration-300 ease-out group-hover:scale-x-100" />
+        <span className="pointer-events-none absolute inset-x-3.5 -bottom-0.5 h-[3px] origin-center scale-x-0 rounded-full bg-story-royal transition-transform duration-300 ease-out group-hover:scale-x-100" />
       )}
     </Link>
   );

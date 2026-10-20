@@ -82,7 +82,7 @@ export default async function InternshipDetailPage({
               </div>
             </Reveal>
 
-            <InternshipFacts type={internship.type} location={internship.location || internship.type} weeks={internship.durationWeeks} />
+            <InternshipFacts type={internship.type} location={internship.location || internship.type} amount={internship.durationWeeks} unit={internship.durationUnit} />
 
             <Reveal direction="up" delay={0.1}>
               <section className="mt-8" aria-labelledby="about">

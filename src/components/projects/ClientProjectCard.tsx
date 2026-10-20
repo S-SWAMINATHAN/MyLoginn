@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import { motion } from "framer-motion";
-import { Construction } from "lucide-react";
+import { ArrowRight, Construction } from "lucide-react";
 import { Card } from "@/components/ui/Card";
 import { CardArtAnimation } from "@/components/projects/CardArtAnimation";
 import { getCardArtByKey } from "@/lib/projectCardArt";
@@ -73,8 +73,11 @@ export function ClientProjectCard({ project, index = 0 }: { project: ClientProje
                 </ul>
               )}
 
-              <span className="mt-4 inline-flex items-center gap-1.5 text-sm font-semibold text-brand-600 transition-transform duration-300 group-hover:translate-x-1">
-                View details →
+              <span className="mt-4 block">
+                <span className="inline-flex w-full items-center justify-center gap-2 rounded-full bg-story-royal px-5 py-2.5 text-sm font-semibold text-white shadow-[0_10px_24px_-12px_rgba(11,31,77,0.55)] transition-shadow duration-300 group-hover:shadow-[0_16px_30px_-14px_rgba(11,31,77,0.7)]">
+                  View details
+                  <ArrowRight aria-hidden className="h-4 w-4 transition-transform duration-300 group-hover:translate-x-1" />
+                </span>
               </span>
             </div>
           </Card>
