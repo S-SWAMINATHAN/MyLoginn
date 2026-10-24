@@ -5,19 +5,16 @@ import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useRouter } from "next/navigation";
 import { motion, AnimatePresence } from "framer-motion";
-import { KeyRound, LogIn, Mail, Smartphone } from "lucide-react";
+import { KeyRound, LogIn } from "lucide-react";
 import { loginSchema, type LoginInput } from "@/lib/validation";
-import { formatPhoneDisplay } from "@/lib/whatsapp";
 import { cn } from "@/lib/cn";
 import { Input } from "@/components/ui/Input";
 import { AuthButton } from "@/components/auth/AuthButton";
 import { AuthShell } from "@/components/auth/AuthShell";
-import { PhoneInput } from "@/components/ui/PhoneInput";
 import { OtpInput } from "@/components/ui/OtpInput";
 import { PasswordInput } from "@/components/ui/PasswordInput";
 
 type Mode = "password" | "otp";
-type Channel = "phone" | "email";
 type OtpStep = "enter" | "verify";
 
 const panelVariants = {
@@ -39,8 +36,6 @@ export default function LoginPage() {
   const [submitting, setSubmitting] = useState(false);
 
   const [otpStep, setOtpStep] = useState<OtpStep>("enter");
-  const [channel, setChannel] = useState<Channel>("phone");
-  const [phone, setPhone] = useState("");
   const [otpEmail, setOtpEmail] = useState("");
   const [otp, setOtp] = useState("");
   const [otpError, setOtpError] = useState<string | null>(null);
@@ -49,7 +44,7 @@ export default function LoginPage() {
   const [cooldown, setCooldown] = useState(0);
   const [devCode, setDevCode] = useState<string | null>(null);
 
-  const identifier = channel === "phone" ? phone : otpEmail;
+  const identifier = otpEmail;
 
   const {
     register,
@@ -88,7 +83,7 @@ export default function LoginPage() {
 
   async function requestLoginCode() {
     if (!identifier) {
-      setOtpError(channel === "phone" ? "Enter your phone number" : "Enter your email address");
+      setOtpError("Enter your email address");
       return;
     }
     setOtpError(null);
@@ -98,7 +93,7 @@ export default function LoginPage() {
       const res = await fetch("/api/auth/otp/request", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ identifier, purpose: "login", channel }),
+        body: JSON.stringify({ identifier: identifier.trim().toLowerCase(), purpose: "login", channel: "email" }),
       });
       const json = await res.json();
       if (!res.ok) {
@@ -122,7 +117,7 @@ export default function LoginPage() {
       const res = await fetch("/api/auth/otp/verify", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ identifier, purpose: "login", channel, code }),
+        body: JSON.stringify({ identifier: identifier.trim().toLowerCase(), purpose: "login", channel: "email", code }),
       });
       const json = await res.json();
       if (!res.ok) {
@@ -225,49 +220,14 @@ export default function LoginPage() {
                       transition={{ duration: 0.25 }}
                       className="flex flex-col gap-4"
                     >
-                      <div className="flex gap-2">
-                        {(["phone", "email"] as Channel[]).map((c) => (
-                          <button
-                            key={c}
-                            type="button"
-                            onClick={() => {
-                              setChannel(c);
-                              setOtpError(null);
-                            }}
-                            className={cn(
-                              "group flex flex-1 cursor-pointer items-center justify-center gap-1.5 rounded-full border px-3 py-2 text-sm font-semibold transition-all duration-200",
-                              channel === c
-                                ? "border-story-royal bg-story-royal/10 text-story-royal"
-                                : "border-border-soft text-muted hover:border-story-royal/50 hover:text-story-royal"
-                            )}
-                          >
-                            {c === "phone" ? (
-                              <Smartphone className="h-4.5 w-4.5 transition-transform duration-300 group-hover:scale-110" />
-                            ) : (
-                              <Mail className="h-4.5 w-4.5 transition-transform duration-300 group-hover:scale-110" />
-                            )}
-                            {c === "phone" ? "Phone" : "Email"}
-                          </button>
-                        ))}
-                      </div>
-
-                      {channel === "phone" ? (
-                        <PhoneInput
-                          label="Phone number"
-                          value={phone}
-                          onChange={setPhone}
-                          error={otpError && channel === "phone" ? otpError : undefined}
-                        />
-                      ) : (
-                        <Input
+                      <Input
                           label="Email address"
                           type="email"
                           placeholder="you@example.com"
                           value={otpEmail}
                           onChange={(e) => setOtpEmail(e.target.value)}
-                          error={otpError && channel === "email" ? otpError : undefined}
+                          error={otpError ?? undefined}
                         />
-                      )}
 
                       <AuthButton onClick={requestLoginCode} disabled={requesting}>
                         {requesting ? "Sending code…" : "Send code"}
@@ -285,12 +245,11 @@ export default function LoginPage() {
                     >
                       <p className="text-sm text-muted">
                         Enter the 6-digit code we sent to{" "}
-                        <strong>{channel === "phone" ? formatPhoneDisplay(phone) : otpEmail}</strong>.
+                        <strong>{otpEmail}</strong>.
                       </p>
                       {devCode && (
                         <p className="rounded-lg bg-warning/10 px-3 py-2 text-xs text-warning">
-                          Dev mode — no {channel === "phone" ? "Twilio" : "Resend"} credentials configured yet, so
-                          nothing was actually {channel === "phone" ? "texted" : "emailed"}. Your code is{" "}
+                          Dev mode — no Brevo or Resend credentials configured yet, so nothing was emailed. Your code is{" "}
                           <strong className="tracking-widest">{devCode}</strong>.
                         </p>
                       )}

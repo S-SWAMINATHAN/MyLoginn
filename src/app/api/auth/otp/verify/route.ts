@@ -13,6 +13,9 @@ export async function POST(req: Request) {
   }
 
   const { identifier, purpose, channel, code } = parsed.data;
+  if (purpose === "login" && channel !== "email") {
+    return NextResponse.json({ error: "Sign-in codes are available by email." }, { status: 400 });
+  }
   const result = await checkVerificationCode(identifier, purpose, channel, code);
   if (!result.ok) {
     return NextResponse.json({ error: result.reason }, { status: 400 });
