@@ -1,6 +1,8 @@
 import { Resend } from "resend";
 
-const FROM = process.env.EMAIL_FROM ?? "MyLoginn <onboarding@resend.dev>";
+const CONFIGURED_FROM = process.env.EMAIL_FROM?.trim();
+const BREVO_FROM = CONFIGURED_FROM || "MyLoginn <contact@myloginn.com>";
+const RESEND_FROM = CONFIGURED_FROM || "MyLoginn <onboarding@resend.dev>";
 
 const purposeCopy: Record<string, { subject: string; intro: string }> = {
   signup: { subject: "Verify your MyLoginn email", intro: "Use this code to finish creating your account." },
@@ -43,7 +45,7 @@ export async function sendPasswordResetLink(to: string, link: string): Promise<b
 async function sendEmail(to: string, subject: string, htmlContent: string): Promise<boolean> {
   const brevoKey = process.env.BREVO_API_KEY;
   if (brevoKey) {
-    const from = parseFrom(FROM);
+    const from = parseFrom(BREVO_FROM);
     const response = await fetch("https://api.brevo.com/v3/smtp/email", {
       method: "POST",
       headers: { "api-key": brevoKey, "Content-Type": "application/json", accept: "application/json" },
@@ -59,7 +61,7 @@ async function sendEmail(to: string, subject: string, htmlContent: string): Prom
   const apiKey = process.env.RESEND_API_KEY;
   if (!apiKey) return false;
   const resend = new Resend(apiKey);
-  const { error } = await resend.emails.send({ from: FROM, to, subject, html: htmlContent });
+  const { error } = await resend.emails.send({ from: RESEND_FROM, to, subject, html: htmlContent });
   if (error) throw new Error(error.message ?? "Failed to send email");
   return true;
 }

@@ -65,7 +65,8 @@ export async function POST(req: Request) {
       );
     }
     return NextResponse.json({ ok: true, devCode: result.devCode });
-  } catch {
+  } catch (error) {
+    console.error("Verification code delivery failed:", error);
     const message =
       channel === "phone"
         ? "Couldn't send verification SMS. Please try again."
