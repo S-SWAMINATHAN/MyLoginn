@@ -24,6 +24,9 @@ export async function sendOtpEmail(to: string, code: string, purpose: string): P
     `;
   const sent = await sendEmail(to, copy.subject, html);
   if (!sent) {
+    if (process.env.NODE_ENV === "production") {
+      throw new Error("No email provider is configured for verification code delivery.");
+    }
     // Local/dev fallback: no email provider configured yet. Log server-side.
     console.log(`[dev-otp] ${purpose} code for ${to}: ${code}`);
     return false;
