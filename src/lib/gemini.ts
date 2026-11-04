@@ -10,7 +10,10 @@ export function isGeminiConfigured() {
 }
 
 export class GeminiError extends Error {
-  constructor(public kind: "auth" | "unavailable") {
+  constructor(
+    public kind: "auth" | "unavailable",
+    public status?: number
+  ) {
     super(`Gemini ${kind}`);
   }
 }
@@ -43,13 +46,13 @@ export async function streamGeminiReply(
       }
     );
   } catch {
+    if (signal?.aborted) throw new DOMException("The request was aborted", "AbortError");
     throw new GeminiError("unavailable");
   }
-  if (res.status === 400 || res.status === 401 || res.status === 403) {
-    console.error("Gemini rejected request:", res.status, await res.text().catch(() => ""));
-    throw new GeminiError(res.status === 400 ? "unavailable" : "auth");
+  if (!res.ok) {
+    throw new GeminiError(res.status === 401 || res.status === 403 ? "auth" : "unavailable", res.status);
   }
-  if (!res.ok || !res.body) throw new GeminiError("unavailable");
+  if (!res.body) throw new GeminiError("unavailable", res.status);
 
   const decoder = new TextDecoder();
   const encoder = new TextEncoder();

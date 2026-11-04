@@ -1,9 +1,6 @@
 import { CheckCircle2, CircleAlert, Download } from "lucide-react";
 import { getCurrentUser } from "@/lib/auth";
 import { prisma } from "@/lib/prisma";
-import { isMyBuddyConfigured } from "@/lib/mybuddy";
-import { isGeminiConfigured } from "@/lib/gemini";
-import { isOpenAIConfigured } from "@/lib/openai";
 import { Avatar } from "@/components/ui/Avatar";
 
 export const metadata = { title: "Settings — MyLoginn Admin" };
@@ -38,7 +35,7 @@ export default async function AdminSettingsPage() {
     { name: "SMS verification (Twilio)", ok: has("TWILIO_ACCOUNT_SID") && has("TWILIO_AUTH_TOKEN") && has("TWILIO_VERIFY_SERVICE_SID"), note: "Sends one-time codes by SMS" },
     { name: "Email (Resend)", ok: has("RESEND_API_KEY"), note: "Sends one-time codes and notices by email" },
     { name: "Payments (Razorpay)", ok: has("NEXT_PUBLIC_RAZORPAY_KEY_ID"), note: "Course checkout" },
-    { name: "AI assistant", ok: isOpenAIConfigured() || isGeminiConfigured() || isMyBuddyConfigured(), note: "Chat widget replies" },
+    { name: "AI assistant", ok: true, note: "Puter.js client-side; sign-in or usage limits may apply" },
     { name: "Site URL", ok: has("NEXT_PUBLIC_SITE_URL"), note: has("NEXT_PUBLIC_SITE_URL") ? (process.env.NEXT_PUBLIC_SITE_URL as string) : "Used for links and the sitemap" },
   ];
   const healthy = services.filter((s) => s.ok).length;

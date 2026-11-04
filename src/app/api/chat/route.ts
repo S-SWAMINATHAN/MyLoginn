@@ -1,10 +1,6 @@
 import { NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
 import { CONTACT_EMAIL, CONTACT_PHONES, CONTACT_HOURS, WHATSAPP_PHONE } from "@/lib/contactInfo";
-import { MyBuddyError, isMyBuddyConfigured, streamMyBuddyReply } from "@/lib/mybuddy";
-import { GeminiError, isGeminiConfigured, streamGeminiReply } from "@/lib/gemini";
-import { isOpenAIConfigured, OpenAIChatError, streamOpenAIReply } from "@/lib/openai";
-import { GroqChatError, isGroqConfigured, streamGroqReply } from "@/lib/groq";
 import { HIDE_TUTORING } from "@/lib/hiddenSections";
 import { formatDuration } from "@/lib/postings";
 import { REQUEST_SCOPED_STYLE, currentDateTimeContext, detectTopics, type ChatTopic } from "@/lib/chatIntent";
@@ -15,6 +11,12 @@ const MAX_TURNS = 20;
 const MAX_MESSAGE_CHARS = 2000;
 
 type ChatTurn = { role: "user" | "assistant"; content: string };
+
+function rowsOrEmpty<T>(result: PromiseSettledResult<T[]>, source: string): T[] {
+  if (result.status === "fulfilled") return result.value;
+  console.error(`Chat live ${source} lookup failed; continuing without live ${source} data.`);
+  return [];
+}
 
 function isChatTurn(value: unknown): value is ChatTurn {
   if (typeof value !== "object" || value === null) return false;
@@ -33,7 +35,7 @@ async function buildSystemPrompt(topics: Set<ChatTopic>) {
   const all = topics.size === 0;
   const wants = (t: ChatTopic) => !(HIDE_TUTORING && t === "tutoring") && (all || topics.has(t));
   const noRows = Promise.resolve([] as never[]);
-  const [courses, internships, tutors] = await Promise.all([
+  const [coursesResult, internshipsResult, tutorsResult] = await Promise.allSettled([
     !wants("courses") ? noRows : prisma.course.findMany({
       where: { status: "published" },
       select: { title: true, category: true, level: true, durationWeeks: true, price: true, description: true },
@@ -48,6 +50,9 @@ async function buildSystemPrompt(topics: Set<ChatTopic>) {
       select: { name: true, subject: true, boards: true, experienceYears: true },
     }),
   ]);
+  const courses = rowsOrEmpty(coursesResult, "course");
+  const internships = rowsOrEmpty(internshipsResult, "internship");
+  const tutors = rowsOrEmpty(tutorsResult, "tutor");
 
   const courseList = courses
     .map((c) => `- ${c.title} (${c.category}, ${c.level}, ${c.durationWeeks} weeks, ₹${c.price}): ${c.description}`)
@@ -131,17 +136,6 @@ ${REQUEST_SCOPED_STYLE}`;
 }
 
 export async function POST(req: Request) {
-  const useGemini = isGeminiConfigured();
-  const useGroq = isGroqConfigured();
-  const useOpenAI = isOpenAIConfigured();
-  const useMyBuddy = isMyBuddyConfigured();
-  if (!useGemini && !useGroq && !useOpenAI && !useMyBuddy) {
-    return NextResponse.json(
-      { error: `The AI assistant isn't configured yet. Please reach us at ${CONTACT_EMAIL}.` },
-      { status: 503 }
-    );
-  }
-
   let body: unknown;
   try {
     body = await req.json();
@@ -158,59 +152,11 @@ export async function POST(req: Request) {
   }
 
   const history = rawMessages.slice(-MAX_TURNS);
-  const latest = history[history.length - 1];
-  const earlier = history.slice(0, -1);
   const topics = detectTopics(history.filter((m) => m.role === "user").map((m) => m.content));
 
   const system = await buildSystemPrompt(topics);
-
-  // Providers are tried in this order on every request; quota errors naturally fail over without
-  // relying on process-local state or assuming all providers reset on the same monthly schedule.
-  const providers: {
-    name: string;
-    start: () => Promise<{ stream: ReadableStream<Uint8Array> }>;
-  }[] = [];
-  if (useGemini) providers.push({ name: "Gemini", start: () => streamGeminiReply(system, history, req.signal) });
-  if (useGroq) providers.push({ name: "Groq", start: () => streamGroqReply(system, history, req.signal) });
-  if (useOpenAI) providers.push({ name: "OpenAI", start: () => streamOpenAIReply(system, history, req.signal) });
-
-  let myBuddySystem = system;
-  // Each MyBuddy request runs in a fresh conversation, so earlier turns ride along in the instructions.
-  if (useMyBuddy && earlier.length > 0) {
-    const transcript = earlier.map((m) => `${m.role === "user" ? "User" : "Assistant"}: ${m.content}`).join("\n");
-    myBuddySystem += `\n\nConversation so far (for context only):\n${transcript}`;
-  }
-  if (useMyBuddy) {
-    providers.push({
-      name: "MyBuddy",
-      start: async () => {
-        const { stream } = await streamMyBuddyReply(myBuddySystem, latest.content, req.signal);
-        return { stream };
-      },
-    });
-  }
-
-  for (const provider of providers) {
-    try {
-      const { stream } = await provider.start();
-      return new Response(stream, {
-        headers: { "Content-Type": "text/plain; charset=utf-8", "Cache-Control": "no-store" },
-      });
-    } catch (error) {
-      if (req.signal.aborted) throw error;
-      const kind =
-        error instanceof GeminiError ||
-        error instanceof GroqChatError ||
-        error instanceof OpenAIChatError ||
-        error instanceof MyBuddyError
-          ? error.kind
-          : "unavailable";
-      console.error(`${provider.name} chat error:`, kind);
-    }
-  }
-
   return NextResponse.json(
-    { error: `All configured AI providers are currently unavailable or have reached their limits. Please try again later. Email: ${CONTACT_EMAIL}` },
-    { status: 502 }
+    { systemPrompt: system },
+    { headers: { "Cache-Control": "no-store" } }
   );
 }
