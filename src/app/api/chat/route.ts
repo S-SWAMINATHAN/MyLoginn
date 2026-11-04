@@ -4,6 +4,7 @@ import { CONTACT_EMAIL, CONTACT_PHONES, CONTACT_HOURS, WHATSAPP_PHONE } from "@/
 import { MyBuddyError, isMyBuddyConfigured, streamMyBuddyReply } from "@/lib/mybuddy";
 import { GeminiError, isGeminiConfigured, streamGeminiReply } from "@/lib/gemini";
 import { isOpenAIConfigured, OpenAIChatError, streamOpenAIReply } from "@/lib/openai";
+import { GroqChatError, isGroqConfigured, streamGroqReply } from "@/lib/groq";
 import { HIDE_TUTORING } from "@/lib/hiddenSections";
 import { formatDuration } from "@/lib/postings";
 import { REQUEST_SCOPED_STYLE, currentDateTimeContext, detectTopics, type ChatTopic } from "@/lib/chatIntent";
@@ -130,9 +131,11 @@ ${REQUEST_SCOPED_STYLE}`;
 }
 
 export async function POST(req: Request) {
-  const useOpenAI = isOpenAIConfigured();
   const useGemini = isGeminiConfigured();
-  if (!useOpenAI && !useGemini && !isMyBuddyConfigured()) {
+  const useGroq = isGroqConfigured();
+  const useOpenAI = isOpenAIConfigured();
+  const useMyBuddy = isMyBuddyConfigured();
+  if (!useGemini && !useGroq && !useOpenAI && !useMyBuddy) {
     return NextResponse.json(
       { error: `The AI assistant isn't configured yet. Please reach us at ${CONTACT_EMAIL}.` },
       { status: 503 }
@@ -159,57 +162,55 @@ export async function POST(req: Request) {
   const earlier = history.slice(0, -1);
   const topics = detectTopics(history.filter((m) => m.role === "user").map((m) => m.content));
 
-  let system = await buildSystemPrompt(topics);
+  const system = await buildSystemPrompt(topics);
 
-  if (useOpenAI) {
-    try {
-      const { stream } = await streamOpenAIReply(system, history, req.signal);
-      return new Response(stream, {
-        headers: { "Content-Type": "text/plain; charset=utf-8", "Cache-Control": "no-store" },
-      });
-    } catch (error) {
-      console.error("OpenAI chat error:", error instanceof OpenAIChatError ? error.kind : error);
-      const friendly =
-        error instanceof OpenAIChatError && error.kind === "auth"
-          ? "The AI assistant's API key is invalid. Please contact us instead."
-          : "The AI assistant is temporarily unavailable. Please try again in a moment.";
-      return NextResponse.json({ error: `${friendly} Email: ${CONTACT_EMAIL}` }, { status: 502 });
-    }
-  }
+  // Providers are tried in this order on every request; quota errors naturally fail over without
+  // relying on process-local state or assuming all providers reset on the same monthly schedule.
+  const providers: {
+    name: string;
+    start: () => Promise<{ stream: ReadableStream<Uint8Array> }>;
+  }[] = [];
+  if (useGemini) providers.push({ name: "Gemini", start: () => streamGeminiReply(system, history, req.signal) });
+  if (useGroq) providers.push({ name: "Groq", start: () => streamGroqReply(system, history, req.signal) });
+  if (useOpenAI) providers.push({ name: "OpenAI", start: () => streamOpenAIReply(system, history, req.signal) });
 
-  if (useGemini) {
-    try {
-      const { stream } = await streamGeminiReply(system, history, req.signal);
-      return new Response(stream, {
-        headers: { "Content-Type": "text/plain; charset=utf-8", "Cache-Control": "no-store" },
-      });
-    } catch (error) {
-      console.error("Gemini error:", error);
-      const friendly =
-        error instanceof GeminiError && error.kind === "auth"
-          ? "The AI assistant's API key is invalid. Please contact us instead."
-          : "The AI assistant is temporarily unavailable. Please try again in a moment.";
-      return NextResponse.json({ error: `${friendly} Email: ${CONTACT_EMAIL}` }, { status: 502 });
-    }
-  }
-
+  let myBuddySystem = system;
   // Each MyBuddy request runs in a fresh conversation, so earlier turns ride along in the instructions.
-  if (earlier.length > 0) {
+  if (useMyBuddy && earlier.length > 0) {
     const transcript = earlier.map((m) => `${m.role === "user" ? "User" : "Assistant"}: ${m.content}`).join("\n");
-    system += `\n\nConversation so far (for context only):\n${transcript}`;
+    myBuddySystem += `\n\nConversation so far (for context only):\n${transcript}`;
+  }
+  if (useMyBuddy) {
+    providers.push({
+      name: "MyBuddy",
+      start: async () => {
+        const { stream } = await streamMyBuddyReply(myBuddySystem, latest.content, req.signal);
+        return { stream };
+      },
+    });
   }
 
-  try {
-    const { stream } = await streamMyBuddyReply(system, latest.content, req.signal);
-    return new Response(stream, {
-      headers: { "Content-Type": "text/plain; charset=utf-8", "Cache-Control": "no-store" },
-    });
-  } catch (error) {
-    console.error("MyBuddy error:", error);
-    const friendly =
-      error instanceof MyBuddyError && error.kind === "auth"
-        ? "The AI assistant's login is invalid. Please contact us instead."
-        : "The AI assistant is temporarily unavailable. Please try again in a moment.";
-    return NextResponse.json({ error: `${friendly} Email: ${CONTACT_EMAIL}` }, { status: 502 });
+  for (const provider of providers) {
+    try {
+      const { stream } = await provider.start();
+      return new Response(stream, {
+        headers: { "Content-Type": "text/plain; charset=utf-8", "Cache-Control": "no-store" },
+      });
+    } catch (error) {
+      if (req.signal.aborted) throw error;
+      const kind =
+        error instanceof GeminiError ||
+        error instanceof GroqChatError ||
+        error instanceof OpenAIChatError ||
+        error instanceof MyBuddyError
+          ? error.kind
+          : "unavailable";
+      console.error(`${provider.name} chat error:`, kind);
+    }
   }
+
+  return NextResponse.json(
+    { error: `All configured AI providers are currently unavailable or have reached their limits. Please try again later. Email: ${CONTACT_EMAIL}` },
+    { status: 502 }
+  );
 }
