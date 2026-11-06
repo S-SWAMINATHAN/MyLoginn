@@ -1,8 +1,11 @@
 import { notFound, redirect } from "next/navigation";
+import type { Metadata } from "next";
 import { prisma } from "@/lib/prisma";
 import { getCurrentUser } from "@/lib/auth";
 import { buildTutorialLesson, toTopicSlug } from "@/lib/freeCourseTutorial";
 import { flattenCourseModules, getCourseModules, isStepByStepCourse } from "@/lib/freeCourseCurriculum";
+
+export const metadata: Metadata = { robots: { index: false, follow: false } };
 
 export default async function CourseLearnIndex({ params }: { params: Promise<{ slug: string }> }) {
   const { slug } = await params;

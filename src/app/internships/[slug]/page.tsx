@@ -21,6 +21,15 @@ export async function generateMetadata({ params }: { params: Promise<{ slug: str
   });
 
   if (!internship || internship.status === "draft") return {};
+  if (internship.status === "closed") {
+    return createPageMetadata({
+      title: internship.title,
+      description: internship.description.replace(/\*\*/g, "").slice(0, 300),
+      path: `/internships/${internship.slug}`,
+      noIndex: true,
+      keywords: [internship.title, `${internship.company} internship`],
+    });
+  }
 
   return createPageMetadata({
     title: internship.title,

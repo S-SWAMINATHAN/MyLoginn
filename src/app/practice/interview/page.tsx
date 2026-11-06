@@ -5,11 +5,15 @@ import { Container } from "@/components/ui/Section";
 import { PageTitle } from "@/components/logiquest/ui";
 import { InterviewSetup } from "@/components/practice/InterviewSetup";
 import { Card } from "@/components/practice/ui";
+import { createPageMetadata } from "@/lib/seo";
 
-export const metadata = {
+export const metadata = createPageMetadata({
   title: "AI Mock Interview — HR, Technical, Testing & MNC Interview Practice",
+  absoluteTitle: true,
   description: "A spoken AI mock interview that adapts to your answers: HR, technical, Java, Python, SQL, Selenium, Playwright, API testing and MNC placement interviews with a detailed feedback report.",
-};
+  path: "/practice/interview",
+  keywords: ["AI mock interview", "technical interview practice", "HR interview practice"],
+});
 
 export default async function InterviewPage() {
   const user = await getCurrentUser();

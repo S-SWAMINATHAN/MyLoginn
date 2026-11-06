@@ -18,11 +18,15 @@ import { GROUP_COLOR } from "@/components/logiquest/subjectStyle";
 import { GROUPS, SUBJECT_BY_SLUG, subjectsInGroup } from "@/lib/logiquest/catalog";
 import { subjectTotals } from "@/lib/logiquest/bank";
 import { getLogiQuestLeaderboard } from "@/lib/logiquest/leaderboard";
+import { createPageMetadata } from "@/lib/seo";
 
-export const metadata = {
+export const metadata = createPageMetadata({
   title: "LogiQuest — Aptitude, Reasoning, Programming & Interview Questions with Answers",
+  absoluteTitle: true,
   description: "Practice aptitude, verbal ability, logical and verbal reasoning, programming, technical MCQs, interview questions and general knowledge with answers, explanations and timed online tests.",
-};
+  path: "/logiquest",
+  keywords: ["aptitude questions", "reasoning questions", "technical MCQs", "programming questions"],
+});
 
 const QUICK = [
   { href: "/logiquest/online-test", label: "Online tests", note: "20 questions, 30 minutes", Icon: AnimatedClock, color: "#2563eb" },
