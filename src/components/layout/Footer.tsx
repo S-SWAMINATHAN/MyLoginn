@@ -21,7 +21,6 @@ const columns = [
     links: [
       { href: "/", label: "Home" },
       { href: "/about", label: "About" },
-      { href: "/projects", label: "Projects" },
       { href: "/careers", label: "Careers" },
       { href: "/contact", label: "Contact" },
     ],
@@ -36,10 +35,7 @@ const columns = [
   {
     title: "Explore",
     links: [
-      { href: "/careers/students", label: "Students" },
-      { href: "/careers/students/courses", label: "Courses" },
-      { href: "/careers/students/practice", label: "Practice" },
-      { href: "/internships", label: "Internships" },
+      { href: "/projects", label: "Our work" },
       { href: "/locations/tamil-nadu", label: "Locations" },
     ],
   },
@@ -62,44 +58,43 @@ const contactLinks = [
 /* ── Footer ─────────────────────────────────────────────────────────── */
 
 /**
- * Site footer in the new homepage style: white, solid brand colours and compact spacing. The brand block and the
- * contact chips sit beside four link columns on large screens and stack on small ones.
+ * The company footer pairs direct contact details with clear service and company links.
  */
 export function Footer() {
 
   return (
     <footer className="relative border-t border-border-soft bg-white">
       <div className="mx-auto max-w-6xl px-5 sm:px-8">
-        <div className="grid gap-12 py-12 sm:py-14 lg:grid-cols-[1.45fr_0.7fr_1fr_0.75fr] lg:gap-10 lg:py-16">
+        <div className="grid gap-10 py-12 sm:grid-cols-2 sm:gap-y-12 sm:py-14 lg:grid-cols-[minmax(0,1.45fr)_minmax(0,0.7fr)_minmax(0,1fr)_minmax(0,0.75fr)] lg:gap-12 lg:py-18">
           {/* brand + contact */}
           <motion.div initial={{ opacity: 0, y: 14 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true, margin: "-40px" }} transition={{ duration: 0.6, ease: EASE }}>
             <Link href="/" className="inline-flex items-center gap-3">
-              <LogoBadge className="h-9 w-auto" />
+              <LogoBadge className="h-10 w-auto" />
               <span>
-                <span className="block text-sm font-semibold text-story-navy">MyLoginn Tech</span>
-                <span className="block text-[10px] font-bold uppercase tracking-[0.14em] text-story-royal">Build · Automate · Grow</span>
+                <span className="block text-base font-semibold text-story-navy">MyLoginn Tech</span>
+                <span className="block text-[10px] font-bold uppercase tracking-[0.16em] text-story-royal">Build · Automate · Grow</span>
               </span>
             </Link>
-            <p className="mt-4 max-w-sm text-sm leading-6 text-muted">
-              Web, app, AI agents, digital marketing and custom software — one connected team for businesses in India and worldwide.
+            <p className="mt-5 max-w-md text-sm leading-7 text-muted">
+              We design, build and grow digital products for ambitious businesses — from custom software and AI to marketing that moves your business forward.
             </p>
 
-            <ul className="mt-5 flex flex-col gap-3">
+            <ul className="mt-6 flex flex-col gap-3.5">
               {contactLinks.map((c) => (
                 <li key={c.label}>
                   <a
                     href={c.href}
                     {...(c.external ? { target: "_blank", rel: "noopener noreferrer" } : {})}
-                    className="group inline-flex items-center gap-2.5 text-sm font-medium text-muted transition-colors duration-200 hover:text-story-royal"
+                    className="group inline-flex min-h-6 items-center gap-3 text-sm font-medium text-muted transition-colors duration-200 hover:text-story-royal focus-visible:rounded-sm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-story-royal/50"
                   >
-                    <c.Icon className="h-5 w-5 transition-transform duration-300 group-hover:scale-125 group-hover:-rotate-6" />
+                    <c.Icon className="h-5 w-5 shrink-0 transition-transform duration-300 group-hover:scale-125 group-hover:-rotate-6" />
                     <span>{c.label}</span>
                   </a>
                 </li>
               ))}
             </ul>
 
-            <ul className="mt-4 flex items-center gap-2" aria-label="MyLoginn on social media">
+            <ul className="mt-6 flex items-center gap-2.5" aria-label="MyLoginn on social media">
               {SOCIAL_LINKS.map((s) => (
                 <li key={s.id}>
                   <a
@@ -107,9 +102,9 @@ export function Footer() {
                     target="_blank"
                     rel="noopener noreferrer me"
                     aria-label={s.label}
-                    className="grid h-8 w-8 place-items-center rounded-full border border-border-soft text-muted transition-colors duration-200 hover:border-story-royal hover:bg-story-royal hover:text-white focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-story-royal"
+                    className="grid h-9 w-9 place-items-center rounded-full border border-border-soft text-muted transition-colors duration-200 hover:border-story-royal hover:bg-story-royal hover:text-white focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-story-royal"
                   >
-                    <svg viewBox="0 0 24 24" className="h-3.5 w-3.5" fill="currentColor" aria-hidden="true"><path d={SOCIAL_ICONS[s.id]} /></svg>
+                    <svg viewBox="0 0 24 24" className="h-4 w-4" fill="currentColor" aria-hidden="true"><path d={SOCIAL_ICONS[s.id]} /></svg>
                   </a>
                 </li>
               ))}
@@ -117,11 +112,11 @@ export function Footer() {
           </motion.div>
 
           {/* link columns */}
-          <div className="grid grid-cols-2 gap-x-6 gap-y-10 sm:grid-cols-3 lg:contents">
+          <div className="grid grid-cols-2 gap-x-6 gap-y-10 sm:col-span-2 sm:grid-cols-3 lg:col-span-3 lg:contents">
             {columns.map((col, ci) => (
               <motion.div key={col.title} initial={{ opacity: 0, y: 14 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true, margin: "-40px" }} transition={{ duration: 0.5, delay: ci * 0.08, ease: EASE }}>
-                <p className="text-[11px] font-bold uppercase tracking-[0.16em] text-story-royal">{col.title}</p>
-                <ul className="mt-4 flex flex-col gap-2.5">
+                <p className="text-[11px] font-bold uppercase tracking-[0.17em] text-story-royal">{col.title}</p>
+                <ul className="mt-4 flex flex-col gap-3">
                   {col.links.map((link) => (
                     <li key={`${link.href}-${link.label}`}>
                       <Link href={link.href} className="group relative inline-block rounded text-sm leading-5 text-muted outline-none transition-colors duration-200 hover:text-story-royal focus-visible:text-story-royal focus-visible:ring-2 focus-visible:ring-story-royal/40">
@@ -137,10 +132,9 @@ export function Footer() {
         </div>
 
         {/* bottom bar */}
-        <div className="flex flex-col items-center gap-3 border-t border-border-soft py-5 text-xs text-muted sm:flex-row sm:justify-between">
+        <div className="flex flex-col items-center gap-4 border-t border-border-soft py-6 text-xs text-muted sm:flex-row sm:justify-between sm:gap-3">
           <p>&copy; {new Date().getFullYear()} MyLoginn Tech</p>
-          <p className="inline-flex flex-wrap items-center justify-center gap-x-4 gap-y-1">
-            <Link href="/locations/tamil-nadu" className="rounded outline-none transition-colors duration-200 hover:text-story-royal focus-visible:ring-2 focus-visible:ring-story-royal/40">Tamil Nadu</Link>
+          <p className="inline-flex flex-wrap items-center justify-center gap-x-5 gap-y-2">
             <Link href="/privacy" className="rounded outline-none transition-colors duration-200 hover:text-story-royal focus-visible:ring-2 focus-visible:ring-story-royal/40">Privacy</Link>
             <Link href="/terms" className="rounded outline-none transition-colors duration-200 hover:text-story-royal focus-visible:ring-2 focus-visible:ring-story-royal/40">Terms</Link>
           </p>

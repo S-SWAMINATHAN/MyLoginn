@@ -4,7 +4,7 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { ChevronRight, GraduationCap, House, LayoutGrid, Mail, User, type LucideIcon } from "lucide-react";
+import { Briefcase, ChevronRight, House, LayoutGrid, Mail, User, type LucideIcon } from "lucide-react";
 import { Avatar } from "@/components/ui/Avatar";
 import type { ProfileUser } from "@/components/layout/ProfileMenu";
 import { DuoIcon, type MenuIconKey } from "@/components/ui/icons/DuoIcon";
@@ -40,7 +40,7 @@ export function MobileBottomNav({ user = null }: { user?: ProfileUser | null }) 
   const tabs: TabItem[] = [
     { key: "home", label: "Home", icon: House, href: "/", isActive: (p) => p === "/" },
     { key: "services", label: "Services", icon: LayoutGrid, isActive: isServicesPath },
-    { key: "students", label: "Students", icon: GraduationCap, href: "/careers/students", isActive: (p) => p.startsWith("/careers/students") },
+    { key: "projects", label: "Projects", icon: Briefcase, href: "/projects", isActive: (p) => p.startsWith("/projects") },
     { key: "contact", label: "Contact Us", icon: Mail, href: "/contact", isActive: (p) => p === "/contact" },
     ...(user
       ? [{ key: "profile", label: "Profile", icon: User, href: "/profile", avatar: user, isActive: (p) => p.startsWith("/profile") || p.startsWith("/dashboard") } satisfies TabItem]

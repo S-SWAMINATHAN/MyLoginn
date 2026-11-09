@@ -36,7 +36,7 @@ type MobileLink = {
 
 const mobileMainLinks: MobileLink[] = [
   { href: "/", label: "Home", desc: "Back to the start", icon: "home" },
-  { href: "/careers/students", label: "Students", desc: "Courses, practice and student account access", icon: "courses" },
+  { href: "/projects", label: "Projects", desc: "Selected work for businesses", icon: "projects" },
 ];
 
 const mobileServiceLinks: MobileLink[] = [
@@ -69,13 +69,14 @@ const mobileContactLink: MobileLink = {
   icon: "contact",
 };
 
-type NavSection = "home" | "about" | "services" | "careers" | "contact";
+type NavSection = "home" | "about" | "projects" | "services" | "careers" | "contact";
 
 /** Which top-level navigation item owns the current page, so the active indicator always sits under the right one. */
 function navSection(pathname: string): NavSection | null {
   const under = (base: string) => pathname === base || pathname.startsWith(`${base}/`);
   if (pathname === "/") return "home";
   if (under("/about")) return "about";
+  if (under("/projects")) return "projects";
   if (under("/services")) return "services";
   if (under("/careers") || under("/internships")) return "careers";
   if (under("/contact")) return "contact";
@@ -135,6 +136,7 @@ export function Navbar({ user }: { user: NavUser }) {
         <div className="hidden lg:flex items-center gap-1">
           <NavHeaderLink href="/" active={section === "home"}>Home</NavHeaderLink>
           <NavHeaderLink href="/about" active={section === "about"}>About</NavHeaderLink>
+          <NavHeaderLink href="/projects" active={section === "projects"}>Projects</NavHeaderLink>
 
           <div
             className="group relative"
@@ -335,6 +337,7 @@ function MobileMenu({
               <div className="flex flex-col gap-1">
                 <MobileNavItem link={mobileMainLinks[0]} active={pathname === "/"} order={0} />
                 <MobileNavItem link={mobileAboutLink} active={pathname === "/about"} order={1} />
+                <MobileNavItem link={mobileMainLinks[1]} active={pathname === "/projects" || pathname.startsWith("/projects/")} order={2} />
               </div>
 
               <motion.div variants={itemVariants} className="my-3 flex items-center gap-3 px-2">
@@ -345,25 +348,13 @@ function MobileMenu({
 
               <div className="flex flex-col gap-1">
                 {mobileServiceLinks.map((link, i) => (
-                  <MobileNavItem key={link.href} order={2 + i} link={link} active={pathname === link.href || pathname.startsWith(`${link.href}/`)} />
+                  <MobileNavItem key={link.href} order={3 + i} link={link} active={pathname === link.href || pathname.startsWith(`${link.href}/`)} />
                 ))}
               </div>
 
               <div className="my-3 flex flex-col gap-1">
                 {mobileAfterServices.map((link, i) => (
-                  <MobileNavItem key={link.href} order={6 + i} link={link} active={pathname === link.href || pathname.startsWith(`${link.href}/`) || (link.href === "/careers" && pathname.startsWith("/internships"))} />
-                ))}
-              </div>
-
-              <motion.div variants={itemVariants} className="my-3 flex items-center gap-3 px-2">
-                <span className="h-px flex-1 bg-border-soft" />
-                <span className="text-[11px] font-bold uppercase tracking-[0.16em] text-story-royal">Students</span>
-                <span className="h-px flex-1 bg-border-soft" />
-              </motion.div>
-
-              <div className="flex flex-col gap-1">
-                {mobileMainLinks.slice(1).map((link, i) => (
-                  <MobileNavItem key={link.href} order={8 + i} link={link} active={pathname === link.href || pathname.startsWith(`${link.href}/`)} />
+                  <MobileNavItem key={link.href} order={7 + i} link={link} active={pathname === link.href || pathname.startsWith(`${link.href}/`) || (link.href === "/careers" && pathname.startsWith("/internships"))} />
                 ))}
               </div>
 
@@ -375,8 +366,8 @@ function MobileMenu({
                 {user ? (
                   <MobileUserActions user={user} />
                 ) : (
-                  <Button href="/careers/students" variant="primary">
-                    Explore Students
+                  <Button href="/contact" variant="primary">
+                    Start a project
                   </Button>
                 )}
               </motion.div>
