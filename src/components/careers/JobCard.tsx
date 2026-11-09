@@ -71,15 +71,15 @@ export function JobCard({ job, now, index, onOpen }: { job: PublicJob; now: numb
             {status.label}
           </span>
           <JobCover team={job.team} Icon={Icon} mx={mx} my={my} />
-          <h3 className="absolute inset-x-5 bottom-4 z-10 line-clamp-2 max-w-[75%] text-xl font-bold leading-tight tracking-tight">{job.title}</h3>
         </div>
 
         <div className="flex flex-1 flex-col p-5">
           <span className="w-fit rounded-full bg-story-royal/10 px-3 py-1 text-xs font-semibold text-story-royal">{job.team} · {job.type}</span>
-          <p className="mt-3 line-clamp-2 text-sm leading-6 text-muted">{job.summary.replace(/\*\*/g, "")}</p>
+          <h3 className="mt-3 break-words text-lg font-bold leading-snug tracking-tight text-story-navy dark:text-foreground">{job.title}</h3>
+          <p className="mt-2 text-sm leading-6 text-muted">{job.summary.replace(/\*\*/g, "")}</p>
           <ul className="mt-3 space-y-1.5 text-[13px] text-muted">
             {points.slice(0, 4).map((t) => (
-              <li key={t} className="flex gap-2"><span aria-hidden className="mt-[0.55em] h-1 w-1 shrink-0 rounded-full bg-story-royal" /><span className="min-w-0 truncate">{t}</span></li>
+              <li key={t} className="flex gap-2"><span aria-hidden className="mt-[0.55em] h-1 w-1 shrink-0 rounded-full bg-story-royal" /><span className="min-w-0 break-words">{t}</span></li>
             ))}
           </ul>
           <span className="mt-auto block pt-5">
