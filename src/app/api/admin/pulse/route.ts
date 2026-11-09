@@ -22,7 +22,16 @@ export async function GET() {
     prisma.payment.findMany({ take: 6, where: { status: "paid" }, orderBy: { createdAt: "desc" }, include: { user: { select: { name: true } }, course: { select: { title: true } } } }),
     prisma.lead.findMany({ take: 6, orderBy: { createdAt: "desc" }, select: { id: true, name: true, service: true, createdAt: true } }),
     prisma.projectRequest.findMany({ take: 6, orderBy: { createdAt: "desc" }, select: { id: true, name: true, service: true, createdAt: true } }),
-    prisma.internshipApplication.findMany({ take: 6, orderBy: { appliedAt: "desc" }, include: { user: { select: { name: true } }, internship: { select: { title: true } } } }),
+    prisma.internshipApplication.findMany({
+      take: 6,
+      orderBy: { appliedAt: "desc" },
+      select: {
+        id: true,
+        appliedAt: true,
+        user: { select: { name: true } },
+        internship: { select: { title: true } },
+      },
+    }),
   ]);
 
   const activity: Activity[] = [

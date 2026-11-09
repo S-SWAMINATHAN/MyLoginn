@@ -28,8 +28,44 @@ export async function GET(req: Request) {
   const q = (url.searchParams.get("q") ?? "").trim().toLowerCase().slice(0, 80);
 
   const [jobApps, internApps] = await Promise.all([
-    kind === "internship" ? [] : prisma.jobApplication.findMany({ orderBy: { createdAt: "desc" }, take: 300, include: { job: { select: { title: true } } } }),
-    kind === "job" || jobId ? [] : prisma.internshipApplication.findMany({ orderBy: { appliedAt: "desc" }, take: 300, include: { user: { select: { name: true, email: true, phone: true } }, internship: { select: { title: true } } } }),
+    kind === "internship" ? [] : prisma.jobApplication.findMany({
+      orderBy: { createdAt: "desc" },
+      take: 300,
+      select: {
+        id: true,
+        name: true,
+        email: true,
+        phone: true,
+        jobId: true,
+        status: true,
+        rating: true,
+        notes: true,
+        coverNote: true,
+        experienceYears: true,
+        currentRole: true,
+        profileUrl: true,
+        resumeName: true,
+        createdAt: true,
+        reviewedAt: true,
+        job: { select: { title: true } },
+      },
+    }),
+    kind === "job" || jobId ? [] : prisma.internshipApplication.findMany({
+      orderBy: { appliedAt: "desc" },
+      take: 300,
+      select: {
+        id: true,
+        status: true,
+        rating: true,
+        notes: true,
+        coverNote: true,
+        resumeName: true,
+        appliedAt: true,
+        reviewedAt: true,
+        user: { select: { name: true, email: true, phone: true } },
+        internship: { select: { title: true } },
+      },
+    }),
   ]);
 
   let rows: ApplicationRow[] = [

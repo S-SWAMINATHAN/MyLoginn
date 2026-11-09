@@ -50,7 +50,12 @@ export async function GET(req: Request) {
     }));
   } else if (type === "internships") {
     const applications = await prisma.internshipApplication.findMany({
-      include: { user: true, internship: true },
+      select: {
+        status: true,
+        appliedAt: true,
+        user: { select: { name: true, email: true } },
+        internship: { select: { title: true } },
+      },
       orderBy: { appliedAt: "desc" },
     });
     rows = applications.map((a) => ({

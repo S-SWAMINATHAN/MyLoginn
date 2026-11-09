@@ -16,21 +16,23 @@ export async function GET(req: Request, { params }: { params: Promise<{ source: 
 
   const { source, id } = await params;
   const row =
-    source === "job" ? await prisma.jobApplication.findUnique({ where: { id }, select: { resumeName: true } })
-    : source === "internship" ? await prisma.internshipApplication.findUnique({ where: { id }, select: { resumeName: true } })
+    source === "job" ? await prisma.jobApplication.findUnique({ where: { id }, select: { resumeName: true, resumeData: true } })
+    : source === "internship" ? await prisma.internshipApplication.findUnique({ where: { id }, select: { resumeName: true, resumeData: true } })
     : null;
   const ext = row?.resumeName ? resumeExtension(row.resumeName) : null;
   if (!row || !ext) return NextResponse.json({ error: "No CV on file" }, { status: 404 });
 
-  let data: Buffer;
-  try {
-    data = await readFile(resumeFilePath(id, ext));
-  } catch {
-    return NextResponse.json({ error: "The CV file could not be found" }, { status: 404 });
+  let data = row.resumeData;
+  if (!data) {
+    try {
+      data = await readFile(resumeFilePath(id, ext));
+    } catch {
+      return NextResponse.json({ error: "The CV file could not be found" }, { status: 404 });
+    }
   }
 
   const inline = ext === ".pdf" && new URL(req.url).searchParams.get("download") !== "1";
-  return new NextResponse(new Uint8Array(data), {
+  return new NextResponse(data, {
     headers: {
       "Content-Type": RESUME_TYPES[ext].mime,
       "Content-Disposition": `${inline ? "inline" : "attachment"}; filename="${cleanResumeName(row.resumeName!)}"`,

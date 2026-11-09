@@ -415,7 +415,13 @@ export const adminEntities: Record<string, EntityDef> = {
     list: async () => {
       const rows = await prisma.internshipApplication.findMany({
         orderBy: { appliedAt: "desc" },
-        include: {
+        select: {
+          id: true,
+          status: true,
+          coverNote: true,
+          resumeName: true,
+          resumeStored: true,
+          appliedAt: true,
           user: { select: { name: true, email: true } },
           internship: { select: { title: true, company: true } },
         },
@@ -423,7 +429,7 @@ export const adminEntities: Record<string, EntityDef> = {
       return Promise.all(
         rows.map(async (a) => {
           const ext = a.resumeName ? resumeExtension(a.resumeName) : null;
-          const hasResume = ext ? await access(resumeFilePath(a.id, ext)).then(() => true, () => false) : false;
+          const hasResume = Boolean(a.resumeStored) || (ext ? await access(resumeFilePath(a.id, ext)).then(() => true, () => false) : false);
           return {
             id: a.id,
             applicant: a.user.name,
