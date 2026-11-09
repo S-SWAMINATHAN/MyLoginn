@@ -33,10 +33,13 @@ const EMPLOYMENT_TYPE: Record<string, string> = { "Full-time": "FULL_TIME", "Par
 
 export default async function CareersPage() {
   // Keep the page useful when the database is temporarily unavailable.
-  const [rows, internshipRows] = await Promise.all([
-    prisma.jobOpening.findMany({ where: { status: { not: "draft" } }, orderBy: { createdAt: "desc" }, take: 60 }).catch(() => []),
-    prisma.internship.findMany({ where: { status: "open" }, orderBy: [{ featured: "desc" }, { createdAt: "desc" }], take: 6 }).catch(() => []),
+  const [jobResult, internshipResult] = await Promise.allSettled([
+    prisma.jobOpening.findMany({ where: { status: { not: "draft" } }, orderBy: { createdAt: "desc" }, take: 60 }),
+    prisma.internship.findMany({ where: { status: "open" }, orderBy: [{ featured: "desc" }, { createdAt: "desc" }], take: 6 }),
   ]);
+  const databaseAvailable = jobResult.status === "fulfilled";
+  const rows = jobResult.status === "fulfilled" ? jobResult.value : [];
+  const internshipRows = internshipResult.status === "fulfilled" ? internshipResult.value : [];
 
   const jobs: PublicJob[] = [];
   let closedShown = 0;
@@ -80,10 +83,10 @@ export default async function CareersPage() {
 
   return (
     <div className="relative overflow-x-clip">
-      <section className="px-5 pb-6 pt-12 sm:px-8 sm:pt-16">
+      <section className="px-3 pb-6 pt-10 min-[360px]:px-5 sm:px-8 sm:pt-16">
         <div className="mx-auto max-w-4xl text-center">
           <Reveal><span className="story-eyebrow">Careers</span></Reveal>
-          <SplitHeadline as="h1" text="Build what businesses run on." className="mt-4 text-4xl font-bold leading-[1.05] tracking-tight text-story-navy sm:text-6xl dark:text-foreground" />
+          <SplitHeadline as="h1" text="Build what businesses run on." className="mt-4 text-[2rem] font-bold leading-[1.08] tracking-tight text-story-navy min-[360px]:text-4xl sm:text-6xl dark:text-foreground" />
           <Reveal direction="up" delay={0.12}>
             <p className="mx-auto mt-5 max-w-xl text-base leading-7 text-muted sm:text-lg">
               Join the MyLoginn team building web applications, mobile apps, AI agents and digital marketing for real businesses.
@@ -95,7 +98,7 @@ export default async function CareersPage() {
         </div>
       </section>
 
-      <CareersBoard jobs={jobs} internships={internships} email={CAREERS_EMAIL} />
+      <CareersBoard jobs={jobs} internships={internships} email={CAREERS_EMAIL} databaseAvailable={databaseAvailable} />
 
       <section aria-label="How to apply" className="px-5 pb-20 pt-14 sm:px-8">
         <div className="mx-auto max-w-4xl">
@@ -115,6 +118,23 @@ export default async function CareersPage() {
               );
             })}
           </ol>
+        </div>
+      </section>
+
+      <section aria-labelledby="students-heading" className="px-5 pb-10 pt-6 sm:px-8">
+        <div className="mx-auto max-w-4xl rounded-3xl border border-border-soft bg-surface p-6 sm:p-8">
+          <div className="flex flex-col items-start gap-5 sm:flex-row sm:items-center sm:justify-between">
+            <div>
+              <p className="story-eyebrow">Students</p>
+              <h2 id="students-heading" className="mt-3 text-2xl font-bold tracking-tight text-story-navy sm:text-3xl dark:text-foreground">
+                Learn, practise, and grow your career
+              </h2>
+              <p className="mt-2 max-w-xl text-sm leading-6 text-muted">
+                Access courses, practice tools, LogiQuest, leaderboards, account access, and your student dashboard.
+              </p>
+            </div>
+            <ArrowLink href="/careers/students" className="shrink-0 self-start sm:self-auto">Explore Students</ArrowLink>
+          </div>
         </div>
       </section>
 

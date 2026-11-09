@@ -1,7 +1,7 @@
 "use client";
 
 import Link from "next/link";
-import { usePathname } from "next/navigation";
+import { usePathname, useRouter } from "next/navigation";
 import { useEffect, useRef, useState, type ReactNode } from "react";
 import { motion, AnimatePresence, type Variants } from "framer-motion";
 import {
@@ -10,12 +10,10 @@ import {
   LayoutDashboard,
   ShieldCheck,
   LogOut,
-  LogIn,
-  Rocket,
   Settings,
 } from "lucide-react";
 import { DuoIcon, type MenuIconKey } from "@/components/ui/icons/DuoIcon";
-import { ProfileMenu, type ProfileUser } from "./ProfileMenu";
+import type { ProfileUser } from "./ProfileMenu";
 import { Button } from "@/components/ui/Button";
 import { LogoLockup } from "@/components/ui/LogoBadge";
 import { cn } from "@/lib/cn";
@@ -29,14 +27,6 @@ const serviceLinks = [
   { href: "/services/testing-automation", label: "Testing & Automation", desc: "QA, API and Playwright testing" },
 ];
 
-const learnLinks = [
-  { href: "/courses", label: "Courses", desc: "Learn job-ready skills" },
-  { href: "/practice", label: "Practice", desc: "AI mock interviews, group discussion & speaking" },
-  { href: "/logiquest", label: "LogiQuest", desc: "Aptitude, reasoning, programming & interview Q&A" },
-  { href: "/logiquest/leaderboard", label: "Leaderboard", desc: "Top LogiQuest learners" },
-  { href: "/coding-competition", label: "Coding Competition", desc: "Compete live, win certificates & a paid internship" },
-];
-
 type MobileLink = {
   href: string;
   label: string;
@@ -46,11 +36,7 @@ type MobileLink = {
 
 const mobileMainLinks: MobileLink[] = [
   { href: "/", label: "Home", desc: "Back to the start", icon: "home" },
-  { href: "/courses", label: "Courses", desc: "Learn job-ready skills", icon: "courses" },
-  { href: "/practice", label: "Practice", desc: "AI mock interviews, group discussion & speaking", icon: "practice" },
-  { href: "/logiquest", label: "LogiQuest", desc: "Aptitude, reasoning, programming & interview Q&A", icon: "logiquest" },
-  { href: "/logiquest/leaderboard", label: "Leaderboard", desc: "Top LogiQuest learners", icon: "leaderboard" },
-  { href: "/coding-competition", label: "Coding Competition", desc: "Compete live, win certificates & a paid internship", icon: "logiquest" },
+  { href: "/careers/students", label: "Students", desc: "Courses, practice and student account access", icon: "courses" },
 ];
 
 const mobileServiceLinks: MobileLink[] = [
@@ -73,7 +59,6 @@ const mobileServiceLinks: MobileLink[] = [
 const mobileAboutLink: MobileLink = { href: "/about", label: "About", desc: "Who we are and what we value", icon: "about" };
 
 const mobileAfterServices: MobileLink[] = [
-  { href: "/projects", label: "Projects", desc: "Our live client work", icon: "projects" },
   { href: "/careers", label: "Careers", desc: "Open positions and internships", icon: "careers" },
 ];
 
@@ -84,9 +69,7 @@ const mobileContactLink: MobileLink = {
   icon: "contact",
 };
 
-type NavSection = "home" | "about" | "services" | "projects" | "careers" | "learn" | "contact";
-
-const LEARN_PREFIXES = ["/courses", "/practice", "/logiquest", "/leaderboard", "/tutoring", "/coding-competition"];
+type NavSection = "home" | "about" | "services" | "careers" | "contact";
 
 /** Which top-level navigation item owns the current page, so the active indicator always sits under the right one. */
 function navSection(pathname: string): NavSection | null {
@@ -94,9 +77,7 @@ function navSection(pathname: string): NavSection | null {
   if (pathname === "/") return "home";
   if (under("/about")) return "about";
   if (under("/services")) return "services";
-  if (under("/projects")) return "projects";
   if (under("/careers") || under("/internships")) return "careers";
-  if (LEARN_PREFIXES.some(under)) return "learn";
   if (under("/contact")) return "contact";
   return null;
 }
@@ -117,7 +98,6 @@ export function Navbar({ user }: { user: NavUser }) {
   const [scrolled, setScrolled] = useState(false);
   const [mobileOpen, setMobileOpen] = useState(false);
   const [servicesOpen, setServicesOpen] = useState(false);
-  const [learnOpen, setLearnOpen] = useState(false);
   const isHome = pathname === "/";
   const section = navSection(pathname);
 
@@ -148,7 +128,7 @@ export function Navbar({ user }: { user: NavUser }) {
       )}
     >
       <nav className="mx-auto flex h-16 max-w-7xl items-center justify-between px-5 sm:px-8">
-        <Link href="/" className="flex items-center transition-transform duration-300 ease-out hover:scale-[1.04] active:scale-[0.97]">
+        <Link href="/" className="flex w-fit items-center transition-transform duration-300 ease-out hover:scale-[1.04] active:scale-[0.97]">
           <LogoLockup />
         </Link>
 
@@ -201,60 +181,9 @@ export function Navbar({ user }: { user: NavUser }) {
             </AnimatePresence>
           </div>
 
-          <NavHeaderLink href="/projects" active={section === "projects"}>Projects</NavHeaderLink>
           <NavHeaderLink href="/careers" active={section === "careers"}>Careers</NavHeaderLink>
 
-          <div
-            className="group relative"
-            onMouseEnter={() => setLearnOpen(true)}
-            onMouseLeave={() => setLearnOpen(false)}
-          >
-            <button
-              className={cn("relative flex items-center gap-1 rounded-full px-4 py-2 text-sm font-medium transition-colors duration-200 cursor-pointer", section === "learn" ? "text-story-royal" : "text-foreground/80 hover:text-story-royal")}
-              onClick={() => setLearnOpen((open) => !open)}
-              aria-expanded={learnOpen}
-            >
-              Learn
-              <ChevronDown className={cn("h-4 w-4 transition-transform duration-300", learnOpen && "rotate-180")} />
-              {section === "learn" ? <NavIndicator /> : <span className={cn("pointer-events-none absolute inset-x-3.5 -bottom-0.5 h-[3px] origin-center rounded-full bg-story-royal transition-transform duration-300 ease-out", learnOpen ? "scale-x-100" : "scale-x-0 group-hover:scale-x-100")} />}
-            </button>
-            <AnimatePresence>
-              {learnOpen && (
-                <motion.div
-                  initial={{ opacity: 0, y: 8, scale: 0.97 }}
-                  animate={{ opacity: 1, y: 0, scale: 1 }}
-                  exit={{ opacity: 0, y: 8, scale: 0.97 }}
-                  transition={{ duration: 0.18, ease: [0.16, 1, 0.3, 1] }}
-                  className="absolute left-0 top-full mt-2 w-72 rounded-2xl border border-border-soft bg-surface p-2 shadow-[var(--shadow-lift)]"
-                >
-                  {learnLinks.map((item) => {
-                    const active = pathname === item.href || pathname.startsWith(`${item.href}/`);
-                    return <Link key={item.href} href={item.href} className={cn("block rounded-xl px-3.5 py-3 transition-colors hover:bg-surface-2", active && "bg-brand-50 dark:bg-brand-900/20")}>
-                      <span className="block text-sm font-medium">{item.label}</span>
-                      <span className="block text-xs text-muted">{item.desc}</span>
-                    </Link>;
-                  })}
-                </motion.div>
-              )}
-            </AnimatePresence>
-          </div>
-
           <NavHeaderLink href="/contact" active={section === "contact"}>Contact</NavHeaderLink>
-        </div>
-
-        <div className="hidden lg:flex items-center gap-3">
-          {user ? (
-            <ProfileMenu user={user} />
-          ) : (
-            <>
-              <Button href="/login" variant="ghost" size="sm">
-                Log in
-              </Button>
-              <Button href="/signup" variant="primary" size="sm">
-                Get started
-              </Button>
-            </>
-          )}
         </div>
 
         {/* on small screens the profile and log-in live inside the menu, so the header shows only the menu button */}
@@ -428,7 +357,7 @@ function MobileMenu({
 
               <motion.div variants={itemVariants} className="my-3 flex items-center gap-3 px-2">
                 <span className="h-px flex-1 bg-border-soft" />
-                <span className="text-[11px] font-bold uppercase tracking-[0.16em] text-story-royal">Learn</span>
+                <span className="text-[11px] font-bold uppercase tracking-[0.16em] text-story-royal">Students</span>
                 <span className="h-px flex-1 bg-border-soft" />
               </motion.div>
 
@@ -446,14 +375,9 @@ function MobileMenu({
                 {user ? (
                   <MobileUserActions user={user} />
                 ) : (
-                  <>
-                    <Button href="/signup" variant="primary" icon={<Rocket className="h-4 w-4" />}>
-                      Get started — it&apos;s free
-                    </Button>
-                    <Button href="/login" variant="secondary" icon={<LogIn className="h-4 w-4" />}>
-                      Log in
-                    </Button>
-                  </>
+                  <Button href="/careers/students" variant="primary">
+                    Explore Students
+                  </Button>
                 )}
               </motion.div>
             </motion.div>
@@ -514,9 +438,12 @@ function NavHeaderLink({ href, active, children }: { href: string; active: boole
 }
 
 function MobileUserActions({ user }: { user: ProfileUser }) {
+  const router = useRouter();
+
   async function handleLogout() {
     await fetch("/api/auth/logout", { method: "POST" });
-    window.location.href = "/";
+    router.push("/");
+    router.refresh();
   }
 
   return (

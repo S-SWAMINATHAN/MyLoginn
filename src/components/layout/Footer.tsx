@@ -34,20 +34,13 @@ const columns = [
     ],
   },
   {
-    title: "MyLoginn Learn",
+    title: "Explore",
     links: [
-      { href: "/courses", label: "Courses" },
-      { href: "/practice", label: "Practice" },
-      { href: "/logiquest", label: "LogiQuest" },
-      { href: "/logiquest/leaderboard", label: "Leaderboard" },
-    ],
-  },
-  {
-    title: "Account",
-    links: [
-      { href: "/dashboard", label: "Dashboard" },
-      { href: "/login", label: "Log in" },
-      { href: "/signup", label: "Create account" },
+      { href: "/careers/students", label: "Students" },
+      { href: "/careers/students/courses", label: "Courses" },
+      { href: "/careers/students/practice", label: "Practice" },
+      { href: "/internships", label: "Internships" },
+      { href: "/locations/tamil-nadu", label: "Locations" },
     ],
   },
 ];
@@ -77,7 +70,7 @@ export function Footer() {
   return (
     <footer className="relative border-t border-border-soft bg-white">
       <div className="mx-auto max-w-6xl px-5 sm:px-8">
-        <div className="grid gap-10 py-10 lg:grid-cols-[1.1fr_2fr] lg:gap-14 lg:py-12">
+        <div className="grid gap-12 py-12 sm:py-14 lg:grid-cols-[1.45fr_0.7fr_1fr_0.75fr] lg:gap-10 lg:py-16">
           {/* brand + contact */}
           <motion.div initial={{ opacity: 0, y: 14 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true, margin: "-40px" }} transition={{ duration: 0.6, ease: EASE }}>
             <Link href="/" className="inline-flex items-center gap-3">
@@ -124,14 +117,14 @@ export function Footer() {
           </motion.div>
 
           {/* link columns */}
-          <div className="grid grid-cols-2 gap-x-6 gap-y-8 sm:grid-cols-4">
+          <div className="grid grid-cols-2 gap-x-6 gap-y-10 sm:grid-cols-3 lg:contents">
             {columns.map((col, ci) => (
               <motion.div key={col.title} initial={{ opacity: 0, y: 14 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true, margin: "-40px" }} transition={{ duration: 0.5, delay: ci * 0.08, ease: EASE }}>
                 <p className="text-[11px] font-bold uppercase tracking-[0.16em] text-story-royal">{col.title}</p>
-                <ul className="mt-3 flex flex-col gap-2">
+                <ul className="mt-4 flex flex-col gap-2.5">
                   {col.links.map((link) => (
                     <li key={`${link.href}-${link.label}`}>
-                      <Link href={link.href} className="group relative inline-block rounded text-sm text-muted outline-none transition-colors duration-200 hover:text-story-royal focus-visible:text-story-royal focus-visible:ring-2 focus-visible:ring-story-royal/40">
+                      <Link href={link.href} className="group relative inline-block rounded text-sm leading-5 text-muted outline-none transition-colors duration-200 hover:text-story-royal focus-visible:text-story-royal focus-visible:ring-2 focus-visible:ring-story-royal/40">
                         <ArrowRight aria-hidden className="pointer-events-none absolute left-0 top-1/2 h-3.5 w-3.5 -translate-x-3 -translate-y-1/2 text-story-royal opacity-0 transition-all duration-300 ease-out group-hover:translate-x-0 group-hover:opacity-100 group-focus-visible:translate-x-0 group-focus-visible:opacity-100" />
                         <span className="inline-block transition-transform duration-300 ease-out group-hover:translate-x-5 group-focus-visible:translate-x-5">{link.label}</span>
                       </Link>

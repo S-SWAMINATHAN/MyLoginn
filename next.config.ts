@@ -20,6 +20,20 @@ const nextConfig: NextConfig = {
     return [
       // One canonical host for search engines: the bare domain permanently redirects to www (matches siteUrl).
       { source: "/:path*", has: [{ type: "host", value: "myloginn.com" }], destination: "https://www.myloginn.com/:path*", permanent: true },
+      // Existing learning and account URLs remain canonical and continue to work.
+      // The Careers Students URLs are compatibility aliases into the Student Portal.
+      { source: "/careers/students/courses/:path*", destination: "/courses/:path*", permanent: false },
+      { source: "/careers/students/practice/:path*", destination: "/practice/:path*", permanent: false },
+      { source: "/careers/students/logiquest/:path*", destination: "/logiquest/:path*", permanent: false },
+      { source: "/careers/students/leaderboard/:path*", destination: "/leaderboard/:path*", permanent: false },
+      { source: "/careers/students/login", destination: "/login", permanent: false },
+      { source: "/careers/students/signup", destination: "/signup", permanent: false },
+      { source: "/careers/students/dashboard/:path*", destination: "/dashboard/:path*", permanent: false },
+      { source: "/careers/students/dashboard", destination: "/dashboard", permanent: false },
+      { source: "/careers/students/courses", destination: "/courses", permanent: false },
+      { source: "/careers/students/practice", destination: "/practice", permanent: false },
+      { source: "/careers/students/logiquest", destination: "/logiquest", permanent: false },
+      { source: "/careers/students/leaderboard", destination: "/leaderboard", permanent: false },
     ];
   },
   async headers() {

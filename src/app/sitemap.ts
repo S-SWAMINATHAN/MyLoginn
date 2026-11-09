@@ -24,6 +24,7 @@ const companyRoutes: Route[] = [
   { path: "/about", priority: 0.8, changeFrequency: "monthly" },
   { path: "/contact", priority: 0.8, changeFrequency: "monthly" },
   { path: "/careers", priority: 0.7, changeFrequency: "weekly" },
+  { path: "/careers/students", priority: 0.7, changeFrequency: "monthly" },
   { path: "/internships", priority: 0.7, changeFrequency: "weekly" },
   { path: "/locations/tamil-nadu", priority: 0.6, changeFrequency: "monthly" },
   { path: "/privacy", priority: 0.2, changeFrequency: "yearly" },

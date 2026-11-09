@@ -1,5 +1,5 @@
 import Link from "next/link";
-import { Handshake, ShieldCheck, Target, TrendingUp, Users, type LucideIcon } from "lucide-react";
+import { Bot, Code2, Handshake, Megaphone, MonitorSmartphone, ShieldCheck, Target, TrendingUp, Users, type LucideIcon } from "lucide-react";
 import { JsonLd } from "@/components/seo/JsonLd";
 import { FaqAccordion } from "@/components/ui/FaqAccordion";
 import { Reveal, RevealGroup, RevealItem } from "@/components/ui/Reveal";
@@ -8,8 +8,6 @@ import { SplitHeadline } from "@/components/experience/SplitHeadline";
 import { IconBadge } from "@/components/ui/IconBadge";
 import { ContentIcon } from "@/components/ui/ContentIcon";
 import { ArrowLink } from "@/components/ui/ArrowLink";
-import { StoryRow } from "@/components/services/testing/TestingLanding";
-import { GrowthOrbit, JourneyMonitor } from "@/components/about/AboutVisuals";
 import { CONTACT_EMAIL } from "@/lib/contactInfo";
 import { createPageMetadata } from "@/lib/seo";
 
@@ -51,12 +49,15 @@ export default function AboutPage() {
       <JsonLd data={{ "@context": "https://schema.org", "@type": "FAQPage", mainEntity: faqs.map(({ question, answer }) => ({ "@type": "Question", name: question, acceptedAnswer: { "@type": "Answer", text: answer } })) }} />
 
       {/* Hero */}
-      <div className="mx-auto grid w-full min-w-0 max-w-6xl items-center gap-12 px-5 sm:px-8 lg:grid-cols-2 lg:gap-16">
+      <div className="mx-auto grid w-full min-w-0 max-w-6xl items-center gap-12 px-5 py-10 sm:px-8 lg:grid-cols-[0.92fr_1.08fr] lg:gap-20 lg:py-16">
         <div className="min-w-0">
-          <SplitHeadline as="h1" text="Turning Ideas Into Digital Success" className="mt-0 max-w-xl text-4xl font-bold leading-[1.08] tracking-tight text-story-navy sm:text-5xl dark:text-foreground" />
+          <Reveal direction="up">
+            <span className="story-eyebrow">About MyLoginn</span>
+          </Reveal>
+          <SplitHeadline as="h1" text="Technology that moves your business forward." className="mt-5 max-w-xl text-4xl font-bold leading-[1.08] tracking-tight text-story-navy sm:text-5xl dark:text-foreground" />
           <Reveal direction="up" delay={0.15}>
             <p className="mt-5 max-w-lg text-base leading-8 text-muted sm:text-lg">
-              <strong className="font-semibold text-foreground">MYLOGINN TECH</strong> is a technology company. We design and build websites, apps, desktop software and AI agents, and run the digital marketing that helps businesses grow.
+              <strong className="font-semibold text-foreground">MYLOGINN TECH</strong> combines strategy, engineering and growth expertise to build dependable digital products for businesses.
             </p>
           </Reveal>
           <Reveal direction="up" delay={0.25} className="mt-7 flex flex-wrap items-center justify-center gap-3 lg:justify-start">
@@ -66,19 +67,37 @@ export default function AboutPage() {
             </Link>
           </Reveal>
         </div>
-        <Reveal direction="left" delay={0.15} className="min-w-0"><GrowthOrbit /></Reveal>
+        <Reveal direction="left" delay={0.15} className="min-w-0">
+          <div className="overflow-hidden rounded-3xl border border-border-soft bg-surface shadow-[var(--shadow-lift)]">
+            <div className="border-b border-border-soft px-6 py-5 sm:px-8">
+              <p className="text-xs font-semibold uppercase tracking-[0.18em] text-brand-600">Our delivery model</p>
+              <h2 className="mt-2 text-xl font-semibold text-story-navy dark:text-foreground">One team. Every digital capability.</h2>
+            </div>
+            <div className="grid sm:grid-cols-2">
+              {[
+                { title: "Web & app development", text: "Scalable, responsive digital products.", Icon: MonitorSmartphone, color: "#2563eb" },
+                { title: "Custom software", text: "Purpose-built tools for your operations.", Icon: Code2, color: "#0891b2" },
+                { title: "AI automation", text: "Practical agents that reduce manual work.", Icon: Bot, color: "#059669" },
+                { title: "Digital marketing", text: "Focused campaigns that create demand.", Icon: Megaphone, color: "#d97706" },
+              ].map(({ title, text, Icon, color }, index) => (
+                <div key={title} className={`flex gap-4 p-6 sm:p-8 ${index % 2 === 0 ? "sm:border-r" : ""} ${index < 2 ? "border-b" : ""} border-border-soft`}>
+                  <div className="grid h-11 w-11 shrink-0 place-items-center rounded-xl" style={{ backgroundColor: `${color}12`, color }}>
+                    <Icon className="h-5 w-5" aria-hidden="true" />
+                  </div>
+                  <div>
+                    <h3 className="text-sm font-semibold text-foreground">{title}</h3>
+                    <p className="mt-1.5 text-sm leading-6 text-muted">{text}</p>
+                  </div>
+                </div>
+              ))}
+            </div>
+            <div className="flex items-center justify-between gap-6 border-t border-border-soft bg-story-mist px-6 py-4 sm:px-8">
+              <p className="text-sm font-medium text-foreground">Built for clarity, speed and long-term value.</p>
+              <span className="hidden h-2.5 w-2.5 shrink-0 rounded-full bg-brand-500 shadow-[0_0_0_5px_rgba(37,99,235,0.1)] sm:block" aria-hidden="true" />
+            </div>
+          </div>
+        </Reveal>
       </div>
-
-      {/* Who we are */}
-      <StoryRow
-        id="who-we-are"
-        eyebrow="Who we are"
-        title="Technology built around the way your business works."
-        text="We don’t start with a template or a favourite framework. We start with your operations, customers and goals, then design, build, automate and market the technology that serves them, with one team from first call to launch and beyond."
-        points={["Discovery before technology", "One team from design to launch", "Support and growth after go-live"]}
-        visual={<JourneyMonitor />}
-        flip
-      />
 
       {/* What we offer */}
       <Container className="mt-24 max-w-6xl sm:mt-32">

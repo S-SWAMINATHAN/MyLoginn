@@ -2,9 +2,9 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { ChevronRight, GraduationCap, House, LayoutGrid, LogIn, Mail, User, type LucideIcon } from "lucide-react";
+import { ChevronRight, GraduationCap, House, LayoutGrid, Mail, User, type LucideIcon } from "lucide-react";
 import { Avatar } from "@/components/ui/Avatar";
 import type { ProfileUser } from "@/components/layout/ProfileMenu";
 import { DuoIcon, type MenuIconKey } from "@/components/ui/icons/DuoIcon";
@@ -31,32 +31,20 @@ const servicesPopupLinks: { href: string; label: string; desc: string; icon: Men
   { href: "/careers", label: "Careers", desc: "Join the MyLoginn team", icon: "careers" },
 ];
 
-const learnPopupLinks: { href: string; label: string; desc: string; icon: MenuIconKey }[] = [
-  { href: "/courses", label: "Courses", desc: "Learn job-ready skills", icon: "courses" },
-  { href: "/practice", label: "Practice", desc: "AI mock interviews, group discussion & speaking", icon: "practice" },
-  { href: "/logiquest", label: "LogiQuest", desc: "Aptitude, reasoning, programming & interview Q&A", icon: "logiquest" },
-  { href: "/logiquest/leaderboard", label: "Leaderboard", desc: "Top LogiQuest learners", icon: "leaderboard" },
-];
-
-const isLearnPath = (p: string) => p.startsWith("/courses") || p.startsWith("/logiquest") || p.startsWith("/practice") || p === "/tutoring";
 const isServicesPath = (p: string) => p.startsWith("/services") || p.startsWith("/projects") || p.startsWith("/careers");
 
 export function MobileBottomNav({ user = null }: { user?: ProfileUser | null }) {
   const pathname = usePathname();
-  const [openMenu, setOpenMenu] = useState<"learn" | "services" | null>(null);
-
-  useEffect(() => {
-    setOpenMenu(null);
-  }, [pathname]);
+  const [openMenu, setOpenMenu] = useState<"services" | null>(null);
 
   const tabs: TabItem[] = [
     { key: "home", label: "Home", icon: House, href: "/", isActive: (p) => p === "/" },
     { key: "services", label: "Services", icon: LayoutGrid, isActive: isServicesPath },
-    { key: "learn", label: "Learn", icon: GraduationCap, isActive: isLearnPath },
+    { key: "students", label: "Students", icon: GraduationCap, href: "/careers/students", isActive: (p) => p.startsWith("/careers/students") },
     { key: "contact", label: "Contact Us", icon: Mail, href: "/contact", isActive: (p) => p === "/contact" },
-    user
-      ? { key: "profile", label: "Profile", icon: User, href: "/profile", avatar: user, isActive: (p) => p.startsWith("/profile") || p.startsWith("/dashboard") }
-      : { key: "login", label: "Log in", icon: LogIn, href: "/login", isActive: (p) => p === "/login" || p === "/signup" },
+    ...(user
+      ? [{ key: "profile", label: "Profile", icon: User, href: "/profile", avatar: user, isActive: (p) => p.startsWith("/profile") || p.startsWith("/dashboard") } satisfies TabItem]
+      : []),
   ];
 
   return (
@@ -85,9 +73,9 @@ export function MobileBottomNav({ user = null }: { user?: ProfileUser | null }) 
               style={{ bottom: "calc(5rem + env(safe-area-inset-bottom))" }}
             >
               <p className="px-3.5 pb-1 pt-2 text-[11px] font-bold uppercase tracking-[0.16em] text-story-royal">
-                {openMenu === "learn" ? "MyLoginn Learn" : "Services"}
+                Services
               </p>
-              {(openMenu === "learn" ? learnPopupLinks : servicesPopupLinks).map((s, i) => {
+              {servicesPopupLinks.map((s, i) => {
                 const active = pathname === s.href || pathname.startsWith(`${s.href}/`);
                 return (
                   <motion.div key={s.href} initial={{ opacity: 0, x: -12 }} animate={{ opacity: 1, x: 0 }} transition={{ delay: 0.05 + i * 0.045, duration: 0.3, ease: [0.16, 1, 0.3, 1] }}>
@@ -122,7 +110,7 @@ export function MobileBottomNav({ user = null }: { user?: ProfileUser | null }) 
         className="glass-nav fixed inset-x-0 bottom-0 z-50 border-t border-border-soft shadow-[0_-8px_30px_rgba(15,15,35,0.08)] lg:hidden"
         style={{ paddingBottom: "env(safe-area-inset-bottom)" }}
       >
-        <div className="mx-auto grid h-[4.5rem] max-w-lg grid-cols-5 items-stretch px-1">
+        <div className={cn("mx-auto grid h-[4.5rem] max-w-lg items-stretch px-1", tabs.length === 5 ? "grid-cols-5" : "grid-cols-4")}>
           {tabs.map((tab) => {
             const active = openMenu === tab.key || tab.isActive(pathname);
             return tab.href ? (
@@ -133,7 +121,7 @@ export function MobileBottomNav({ user = null }: { user?: ProfileUser | null }) 
                 tab={tab}
                 active={active}
                 expanded={openMenu === tab.key}
-                onClick={() => setOpenMenu((menu) => (menu === tab.key ? null : tab.key as "learn" | "services"))}
+                onClick={() => setOpenMenu((menu) => (menu === "services" ? null : "services"))}
               />
             );
           })}
