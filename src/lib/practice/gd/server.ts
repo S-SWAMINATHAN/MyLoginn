@@ -416,21 +416,25 @@ export async function evaluateRoom(code: string, userId: string, deadlineMs: num
       if (transcript.length > 60_000) transcript = segments.filter((s) => s.transcript).map((s) => `[${fmtMs(s.startMs)}] ${labelOf.get(s.userId)?.label}: ${s.transcript!.slice(0, 350)}`).join("\n").slice(0, 60_000);
       const metricsText = stats.map((s) => `${s.label} ${s.name}: speaking ${fmtMs(s.speakingMs)}, ${s.turns} turns, avg turn ${fmtMs(s.avgTurnMs)}, longest ${fmtMs(s.longestTurnMs)}, ${s.interruptions} interruptions, ${s.questions} questions, ${s.words} words`).join("\n");
       const slips = segments.flatMap((s) => (asRecord(s.notes).grammar as { said: string; better: string }[] | undefined ?? []).map((g) => `${labelOf.get(s.userId)?.label}: "${g.said}" -> "${g.better}"`)).slice(0, 40).join("\n");
-      const { data } = await generateJson({
-        kind: "gd_judge",
-        system: `You are the AI judge of a company recruitment group discussion. Topic: "${room.topic}". Duration ${Math.round(durationS / 60)} minutes.
+      try {
+        const { data } = await generateJson({
+          kind: "gd_judge",
+          system: `You are the AI judge of a company recruitment group discussion. Topic: "${room.topic}". Duration ${Math.round(durationS / 60)} minutes.
 Evaluate the COMPLETE discussion for each participant who spoke (${speakers.map((s) => s.label).join(", ")}). Judge content and behaviour across the whole discussion, never from a single sentence.
 Quality over quantity: someone who spoke briefly with highly relevant, well-reasoned points can outscore someone who spoke at length. Do not punish speaking less by itself; consider context (did they get space? did they build on others?).
 Leadership = initiating, structuring, summarising, inviting quieter members. Teamwork/listening = building on and referring to others' points, disagreeing respectfully. Professional behaviour drops for interruptions and dismissive language.
 ${RUBRIC}`,
-        parts: [{ text: `Measured participation:\n${metricsText}\n\nGrammar slips noted during transcription:\n${slips || "none"}\n\nTranscript (time from start, speaker):\n${transcript}` }],
-        schema: JUDGE_SCHEMA,
-        parse: (v) => { const r = asRecord(v); return Array.isArray(r.participants) ? r : null; },
-        timeoutMs: Math.max(20_000, Math.min(90_000, deadlineMs - Date.now() - 5_000)),
-        thinking: 2048,
-        maxOutputTokens: 12_000,
-      });
-      judged = data;
+          parts: [{ text: `Measured participation:\n${metricsText}\n\nGrammar slips noted during transcription:\n${slips || "none"}\n\nTranscript (time from start, speaker):\n${transcript}` }],
+          schema: JUDGE_SCHEMA,
+          parse: (v) => { const r = asRecord(v); return Array.isArray(r.participants) ? r : null; },
+          timeoutMs: Math.max(20_000, Math.min(90_000, deadlineMs - Date.now() - 5_000)),
+          thinking: 2048,
+          maxOutputTokens: 12_000,
+        });
+        judged = data;
+      } catch (e) {
+        console.error("GD AI judge unavailable", room.code, e instanceof Error ? e.name : "Unknown error");
+      }
     }
 
     const team = asRecord(judged?.team);
@@ -478,11 +482,14 @@ ${RUBRIC}`,
         };
       } else {
         const untranscribed = segments.some((x) => x.userId === p.userId && x.status === "DROPPED");
+        const enoughSpeech = s.words >= 15;
         report = {
           version: 1, module: "GD", title: "Group Discussion", subtitle: room.topic, overall: 0, unscored: true,
-          level: untranscribed && !s.words ? "Evaluation unavailable" : "Not enough speech to evaluate",
+          level: enoughSpeech || (untranscribed && !s.words) ? "Evaluation unavailable" : "Not enough speech to evaluate",
           dimensions: [], stats: stats4,
-          summary: untranscribed && !s.words
+          summary: enoughSpeech
+            ? "Your speech and participation metrics were saved, but the AI judge could not produce a reliable score. This report preserves the measured participation data; please try another discussion later."
+            : untranscribed && !s.words
             ? "Your speech was recorded, but the AI service was unavailable and could not transcribe it, so this discussion could not be scored. Your participation time is shown below. Please try another discussion later."
             : s.words
               ? "You spoke too little for a fair evaluation. In a real GD, aim to make at least 3-4 relevant points: open with a view, support it with an example, and respond to others."

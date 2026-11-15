@@ -33,19 +33,22 @@ export default async function ReportPage({ params }: Props) {
   const participants = session.module === "GD" ? ((session.config as { participants?: string[] })?.participants ?? []) : undefined;
 
   return (
-    <Container className="max-w-5xl space-y-5 py-6 sm:py-8">
-      <Link href="/practice/reports" className="inline-flex items-center gap-1 text-sm text-muted hover:text-story-royal"><ArrowLeft className="h-4 w-4" />My reports</Link>
-      <div className="flex flex-wrap items-end justify-between gap-4">
+    <Container className="max-w-screen-2xl space-y-6 py-6 sm:py-10">
+      <Link href="/practice/reports" className="inline-flex items-center gap-2 rounded-full border border-border-soft bg-surface px-3.5 py-2 text-sm font-semibold text-muted transition-colors hover:border-story-royal/40 hover:text-story-royal"><ArrowLeft className="h-4 w-4" />My reports</Link>
+      <div className="grid min-w-0 gap-5 rounded-3xl border border-border-soft bg-surface p-5 shadow-[var(--shadow-soft)] sm:p-7 xl:grid-cols-[minmax(0,1fr)_auto] xl:items-end">
         <div className="min-w-0">
-          <p className="text-xs font-semibold uppercase tracking-wider text-muted">{MODULE_LABEL[session.module]} · {date} · {session.reportNo}</p>
-          <h1 className="mt-1 text-2xl font-bold text-story-navy sm:text-3xl dark:text-foreground">{report.title}</h1>
-          <p className="mt-1 text-sm text-muted">{report.subtitle}</p>
+          <p className="inline-flex rounded-full bg-story-mist px-3 py-1 text-xs font-semibold text-story-royal dark:bg-surface-2">{MODULE_LABEL[session.module]}</p>
+          <h1 className="mt-3 text-2xl font-bold leading-tight tracking-tight text-story-navy sm:text-4xl dark:text-foreground">{report.title}</h1>
+          <p className="mt-2 text-sm leading-6 text-muted sm:text-base">{report.subtitle}</p>
+          <p className="mt-3 text-xs text-muted">{date} · Report {session.reportNo}</p>
         </div>
-        <ReportActions report={report} canDelete={session.userId === user.id} meta={{ studentName: session.user.name, studentEmail: session.user.email, reportNo: session.reportNo ?? session.id, sessionId: session.id, date, moduleLabel: MODULE_LABEL[session.module], participants }} />
+        <div className="min-w-0 xl:max-w-sm">
+          <ReportActions report={report} canDelete={session.userId === user.id} meta={{ studentName: session.user.name, studentEmail: session.user.email, reportNo: session.reportNo ?? session.id, sessionId: session.id, date, moduleLabel: MODULE_LABEL[session.module], participants }} />
+        </div>
       </div>
 
       {previous && prevScores && session.score !== null ? (
-        <Card>
+        <Card className="border-l-4 border-l-story-royal">
           <p className="text-sm font-semibold">Compared with your previous attempt <span className="font-normal text-muted">({previous.startedAt.toLocaleDateString("en-IN", { day: "numeric", month: "short", timeZone: "Asia/Kolkata" })})</span></p>
           <ul className="mt-3 flex flex-wrap gap-2">
             <Delta label="Overall" now={session.score} before={previous.score ?? 0} />

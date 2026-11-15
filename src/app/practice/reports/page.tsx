@@ -5,8 +5,9 @@ import { getCurrentUser } from "@/lib/auth";
 import { prisma } from "@/lib/prisma";
 import { cn } from "@/lib/cn";
 import { Container } from "@/components/ui/Section";
-import { PageTitle, EmptyState } from "@/components/logiquest/ui";
+import { EmptyState } from "@/components/logiquest/ui";
 import { Button } from "@/components/ui/Button";
+import { PracticeHero } from "@/components/practice/PracticeHero";
 import { MODULE_LABEL } from "@/lib/practice/report";
 import { band, bandColor } from "@/lib/practice/speech";
 
@@ -33,25 +34,36 @@ export default async function ReportsPage({ searchParams }: Props) {
   const href = (p: number, m = moduleFilter) => `/practice/reports?${new URLSearchParams({ ...(m ? { module: m } : {}), ...(p > 1 ? { page: String(p) } : {}) })}`;
 
   return (
-    <Container className="max-w-5xl space-y-6 py-6 sm:py-10">
-      <PageTitle title="My reports" sub="Every completed interview, group discussion and speaking session. Open one to view it, compare with your previous attempt, or download the PDF." />
-      <nav aria-label="Filter reports" className="flex flex-wrap gap-2">
-        {FILTERS.map((f) => <Link key={f.id} href={href(1, f.id)} aria-current={moduleFilter === f.id ? "page" : undefined} className={cn("rounded-full px-3.5 py-1.5 text-sm font-semibold", moduleFilter === f.id ? "bg-story-royal text-white" : "bg-surface text-muted hover:text-story-royal")}>{f.label}</Link>)}
+    <Container className="max-w-screen-2xl space-y-7 py-6 sm:py-10">
+      <PracticeHero
+        eyebrow="My reports"
+        title="See how your practice is adding up."
+        description="Review feedback from every completed interview, group discussion and speaking session. Compare your progress and download a report whenever you need it."
+        facts={[
+          { value: String(total), label: "completed reports" },
+          { value: "3", label: "practice formats" },
+          { value: "PDF", label: "ready to download" },
+        ]}
+      />
+      <nav aria-label="Filter reports" className="flex flex-wrap gap-2 border-b border-border-soft pb-4">
+        {FILTERS.map((f) => <Link key={f.id} href={href(1, f.id)} aria-current={moduleFilter === f.id ? "page" : undefined} className={cn("rounded-full px-4 py-2 text-sm font-semibold transition-colors", moduleFilter === f.id ? "bg-[#10264A] text-white" : "bg-surface text-muted hover:bg-story-mist hover:text-story-royal")}>{f.label}</Link>)}
       </nav>
       {rows.length ? (
-        <ul className="divide-y divide-border-soft overflow-hidden rounded-3xl border border-border-soft bg-surface">
+        <ul className="divide-y divide-border-soft overflow-hidden rounded-2xl border border-border-soft bg-surface">
           {rows.map((r) => (
             <li key={r.id}>
-              <Link href={`/practice/reports/${r.id}`} className="flex items-center gap-4 px-5 py-4 transition-colors hover:bg-story-mist/60 dark:hover:bg-surface-2">
-                <FileText className="h-5 w-5 shrink-0 text-story-royal" />
+              <Link href={`/practice/reports/${r.id}`} className="grid min-w-0 grid-cols-[auto_minmax(0,1fr)_auto] items-center gap-3 px-4 py-4 transition-colors hover:bg-story-mist/60 sm:grid-cols-[auto_minmax(0,1fr)_10rem_5rem_auto] sm:gap-5 sm:px-6">
+                <span className="grid h-10 w-10 place-items-center rounded-xl bg-story-mist text-story-royal dark:bg-surface-2"><FileText className="h-5 w-5 shrink-0" /></span>
                 <span className="min-w-0 flex-1">
-                  <span className="block truncate font-semibold">{r.title}</span>
-                  <span className="text-xs text-muted">{r.startedAt.toLocaleDateString("en-IN", { day: "numeric", month: "short", year: "numeric", timeZone: "Asia/Kolkata" })} · {MODULE_LABEL[r.module]}{r.durationS ? ` · ${Math.max(1, Math.round(r.durationS / 60))} min` : ""} · {r.reportNo}</span>
+                  <span className="block truncate text-sm font-semibold sm:text-base">{r.title}</span>
+                  <span className="mt-1 block text-xs text-muted">{r.startedAt.toLocaleDateString("en-IN", { day: "numeric", month: "short", year: "numeric", timeZone: "Asia/Kolkata" })}{r.durationS ? ` · ${Math.max(1, Math.round(r.durationS / 60))} min` : ""}</span>
                 </span>
+                <span className="hidden truncate rounded-full bg-story-mist px-3 py-1.5 text-xs font-semibold text-muted dark:bg-surface-2 sm:block">{MODULE_LABEL[r.module]}</span>
                 <span className="text-right">
-                  <span className="block text-xl font-bold tabular-nums" style={{ color: r.score !== null ? bandColor(r.score) : undefined }}>{r.score ?? "—"}</span>
+                  <span className="block text-lg font-bold tabular-nums sm:text-xl" style={{ color: r.score !== null ? bandColor(r.score) : undefined }}>{r.score ?? "—"}</span>
                   {r.score !== null ? <span className="hidden text-xs text-muted sm:block">{band(r.score)}</span> : null}
                 </span>
+                <ChevronRight className="hidden h-4 w-4 text-muted sm:block" />
               </Link>
             </li>
           ))}

@@ -33,11 +33,11 @@ export default async function PracticeHome() {
   const overview = user ? await getPracticeOverview(user.id) : null;
 
   return (
-    <Container className="max-w-7xl space-y-8 py-6 sm:py-10">
+    <Container className="max-w-screen-2xl space-y-8 py-6 sm:py-10">
       <header className="relative isolate overflow-hidden rounded-[2rem] bg-[#10264A] px-6 py-8 text-white sm:px-10 sm:py-10 lg:px-12">
         <div aria-hidden className="pointer-events-none absolute -right-20 -top-28 h-80 w-80 rounded-full bg-[#1F56D6]/30 blur-3xl" />
-        <div className="relative grid items-center gap-8 lg:grid-cols-[1fr_0.85fr] lg:gap-14">
-          <div className="max-w-2xl">
+        <div className="relative grid min-w-0 items-center gap-8 lg:grid-cols-[minmax(0,1.1fr)_minmax(20rem,0.9fr)] lg:gap-14">
+          <div className="min-w-0 max-w-3xl">
             <p className="text-sm font-semibold text-[#B9D2FF]">Practice room</p>
             <h1 className="mt-3 max-w-xl text-3xl font-bold leading-tight tracking-tight sm:text-4xl lg:text-5xl">
               Get comfortable before the real conversation.
@@ -49,12 +49,12 @@ export default async function PracticeHome() {
               Start with an interview <ArrowRight aria-hidden className="h-4 w-4" />
             </Link>
           </div>
-          <div className="relative mx-auto w-full max-w-md rounded-3xl border border-white/15 bg-white/[0.07] p-5 backdrop-blur-sm sm:p-6">
+          <div className="relative mx-auto w-full max-w-xl rounded-3xl border border-white/15 bg-white/[0.07] p-5 backdrop-blur-sm sm:p-6">
             <p className="text-xs font-semibold text-[#B9D2FF]">A question to get started</p>
             <p className="mt-3 text-lg font-semibold leading-7 sm:text-xl">“Tell me about a project you’re proud of.”</p>
-            <div className="mt-6 flex h-10 items-center gap-1.5" aria-hidden="true">
+            <div className="mt-6 flex h-10 min-w-0 items-center justify-between gap-[3px] overflow-hidden" aria-hidden="true">
               {[12, 20, 28, 16, 34, 24, 14, 30, 20, 36, 16, 26, 12, 22, 32, 18, 27, 13, 30, 20, 11, 24, 16, 31, 19, 12, 28, 18].map((height, index) => (
-                <span key={index} className="w-1.5 rounded-full bg-[#8DE4CE]" style={{ height }} />
+                <span key={index} className="min-w-0 max-w-1.5 flex-1 rounded-full bg-[#8DE4CE]" style={{ height }} />
               ))}
             </div>
             <p className="mt-2 text-xs text-blue-100/65">Take a moment. Then answer in your own words.</p>
@@ -78,7 +78,7 @@ export default async function PracticeHome() {
           </div>
           {user ? <Link href="/practice/reports" className="text-sm font-semibold text-story-royal hover:underline">View your reports</Link> : null}
         </div>
-        <div className="grid gap-3 sm:grid-cols-2 xl:grid-cols-4">
+        <div className="grid gap-4 sm:grid-cols-2 xl:grid-cols-4">
           {MODULES.map(({ href, title, desc, detail, Icon, color, surface, action, featured }) => (
             <Link
               key={href}

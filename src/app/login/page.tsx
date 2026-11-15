@@ -3,7 +3,6 @@
 import { useState } from "react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { useRouter } from "next/navigation";
 import { loginSchema, type LoginInput } from "@/lib/validation";
 import { Input } from "@/components/ui/Input";
 import { AuthButton } from "@/components/auth/AuthButton";
@@ -17,7 +16,6 @@ function postLoginPath(role: string) {
 }
 
 export default function LoginPage() {
-  const router = useRouter();
   const [serverError, setServerError] = useState<string | null>(null);
   const [submitting, setSubmitting] = useState(false);
 
@@ -41,8 +39,7 @@ export default function LoginPage() {
         setServerError(json.error ?? "Something went wrong");
         return;
       }
-      router.push(postLoginPath(json.user.role));
-      router.refresh();
+      window.location.assign(postLoginPath(json.user.role));
     } catch {
       setServerError("We couldn't complete sign in. Please try again.");
     } finally {

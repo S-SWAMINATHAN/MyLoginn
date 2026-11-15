@@ -3,8 +3,8 @@
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { ArrowRight, LogIn, Plus, Shuffle } from "lucide-react";
-import { cn } from "@/lib/cn";
 import { Button } from "@/components/ui/Button";
+import { Select } from "@/components/ui/Select";
 import { GD_CATEGORIES, GD_LIMITS, isRoomCode, normalizeRoomCode } from "@/lib/practice/gd/config";
 import { Card, postJson } from "./ui";
 
@@ -43,44 +43,75 @@ export function GdStart({ loggedIn }: { loggedIn: boolean }) {
   };
 
   const shuffle = () => { const pick = cat.topics[Math.floor(Math.random() * cat.topics.length)]; setTopic(pick); setCustom(""); };
-  const select = "mt-2 w-full rounded-2xl border border-border-soft bg-background px-3.5 py-2.5 text-sm outline-none focus:border-story-royal";
+  const inputClass = "mt-2 w-full rounded-2xl border border-border-soft bg-background px-3.5 py-2.5 text-sm outline-none focus:border-story-royal";
 
   return (
-    <div className="grid gap-5 lg:grid-cols-[1fr_22rem]">
-      <Card className="space-y-5">
+    <div className="grid min-w-0 gap-6 xl:grid-cols-[minmax(0,1.35fr)_minmax(19rem,0.65fr)] 2xl:grid-cols-[minmax(0,1.4fr)_minmax(22rem,0.6fr)]">
+      <Card className="min-w-0 space-y-6 p-5 sm:p-7 lg:p-8">
         <p className="flex items-center gap-2 text-base font-bold"><Plus className="h-5 w-5 text-story-royal" />Create a room</p>
+        <Select
+          label="Category"
+          value={category}
+          options={GD_CATEGORIES.map((c) => ({ label: c.label, value: c.id }))}
+          className="rounded-2xl"
+          onChange={(e) => {
+            const next = GD_CATEGORIES.find((c) => c.id === e.target.value)!;
+            setCategory(next.id);
+            setTopic(next.topics[0]);
+            setCustom("");
+          }}
+        />
         <div>
-          <p className="text-sm font-semibold">Category</p>
-          <div className="mt-2 flex flex-wrap gap-2">
-            {GD_CATEGORIES.map((c) => <button key={c.id} type="button" aria-pressed={category === c.id} onClick={() => { setCategory(c.id); setTopic(c.topics[0]); }} className={cn("rounded-full border px-3.5 py-1.5 text-sm font-medium transition-colors", category === c.id ? "border-story-royal bg-story-royal/10 text-story-royal" : "border-border-soft hover:border-story-royal/40")}>{c.label}</button>)}
-          </div>
-        </div>
-        <div>
-          <div className="flex items-center justify-between"><p className="text-sm font-semibold">Topic</p><button type="button" onClick={shuffle} className="inline-flex items-center gap-1 text-xs font-semibold text-story-royal hover:underline"><Shuffle className="h-3.5 w-3.5" />Random</button></div>
-          <ul className="mt-2 grid gap-1.5">
-            {cat.topics.map((t) => <li key={t}><button type="button" aria-pressed={!custom && topic === t} onClick={() => { setTopic(t); setCustom(""); }} className={cn("w-full rounded-2xl border px-3.5 py-2.5 text-left text-sm transition-colors", !custom && topic === t ? "border-story-royal bg-story-royal/10 font-semibold text-story-royal" : "border-border-soft hover:border-story-royal/40")}>{t}</button></li>)}
-          </ul>
+          <div className="flex items-center justify-between gap-3"><label htmlFor="gd-topic" className="text-sm font-semibold">Topic</label><button type="button" onClick={shuffle} className="inline-flex shrink-0 items-center gap-1 text-xs font-semibold text-story-royal hover:underline"><Shuffle className="h-3.5 w-3.5" />Random</button></div>
+          <Select
+            id="gd-topic"
+            value={topic}
+            options={cat.topics.map((t) => ({ label: t, value: t }))}
+            className="mt-2 rounded-2xl"
+            onChange={(e) => { setTopic(e.target.value); setCustom(""); }}
+          />
           <label className="mt-3 block">
             <span className="text-xs font-semibold text-muted">Or write your own topic</span>
-            <input value={custom} onChange={(e) => setCustom(e.target.value.slice(0, 160))} placeholder="e.g. Should startups hire freshers?" className={select} />
+            <input value={custom} onChange={(e) => setCustom(e.target.value.slice(0, 160))} placeholder="e.g. Should startups hire freshers?" className={inputClass} />
           </label>
         </div>
-        <div className="grid gap-4 sm:grid-cols-3">
-          <label className="block text-sm font-semibold">Participants (max)
-            <select value={max} onChange={(e) => setMax(Number(e.target.value))} className={select}>{Array.from({ length: GD_LIMITS.maxParticipants - GD_LIMITS.minParticipants + 1 }, (_, i) => i + GD_LIMITS.minParticipants).map((n) => <option key={n} value={n}>{n}{n === GD_LIMITS.defaultParticipants ? " (recommended)" : ""}</option>)}</select>
-          </label>
-          <label className="block text-sm font-semibold">Discussion
-            <select value={minutes} onChange={(e) => setMinutes(Number(e.target.value))} className={select}>{[5, 10, 15, 20, 25, 30, 35, 40].map((m) => <option key={m} value={m}>{m} minutes{m === 30 ? " (recommended)" : ""}</option>)}</select>
-          </label>
-          <label className="block text-sm font-semibold">Preparation
-            <select value={prep} onChange={(e) => setPrep(Number(e.target.value))} className={select}>{[0, 1, 2, 3, 5].map((m) => <option key={m} value={m}>{m ? `${m} minute${m > 1 ? "s" : ""}` : "None"}</option>)}</select>
-          </label>
+        <div className="grid gap-4 sm:grid-cols-2 xl:grid-cols-3">
+          <Select
+            label="Participants (max)"
+            value={String(max)}
+            options={Array.from({ length: GD_LIMITS.maxParticipants - GD_LIMITS.minParticipants + 1 }, (_, i) => i + GD_LIMITS.minParticipants).map((n) => ({
+              label: `${n}${n === GD_LIMITS.defaultParticipants ? " (recommended)" : ""}`,
+              value: String(n),
+            }))}
+            className="rounded-2xl"
+            onChange={(e) => setMax(Number(e.target.value))}
+          />
+          <Select
+            label="Discussion"
+            value={String(minutes)}
+            options={[5, 10, 15, 20, 25, 30, 35, 40].map((m) => ({
+              label: `${m} minutes${m === 30 ? " (recommended)" : ""}`,
+              value: String(m),
+            }))}
+            className="rounded-2xl"
+            onChange={(e) => setMinutes(Number(e.target.value))}
+          />
+          <Select
+            label="Preparation"
+            value={String(prep)}
+            options={[0, 1, 2, 3, 5].map((m) => ({
+              label: m ? `${m} minute${m > 1 ? "s" : ""}` : "None",
+              value: String(m),
+            }))}
+            className="rounded-2xl"
+            onChange={(e) => setPrep(Number(e.target.value))}
+          />
         </div>
-        <Button size="lg" className="w-full sm:w-auto" onClick={() => void create()} disabled={busy !== null} icon={<ArrowRight className="h-5 w-5" />}>{busy === "create" ? "Creating room…" : loggedIn ? "Create room" : "Log in to create"}</Button>
+        <Button size="lg" className="w-full sm:w-auto" onClick={() => void create()} disabled={busy !== null} icon={<ArrowRight className="h-5 w-5" />}>{busy === "create" ? "Creating room…" : loggedIn ? "Create discussion room" : "Log in to create"}</Button>
       </Card>
 
-      <div className="space-y-5">
-        <Card>
+      <div className="min-w-0 space-y-5 xl:sticky xl:top-32 xl:self-start">
+        <Card className="space-y-4 p-5 sm:p-6">
           <form onSubmit={join} className="space-y-3">
             <p className="flex items-center gap-2 text-base font-bold"><LogIn className="h-5 w-5 text-story-royal" />Join with a code</p>
             <label className="block">
@@ -91,7 +122,7 @@ export function GdStart({ loggedIn }: { loggedIn: boolean }) {
           </form>
         </Card>
         {error ? <p role="alert" className="text-sm text-danger">{error}</p> : null}
-        <Card className="text-sm leading-6 text-muted">
+        <Card className="border-l-4 border-l-story-royal text-sm leading-6 text-muted">
           <p className="font-semibold text-foreground">How it works</p>
           <ol className="mt-2 list-decimal space-y-1 pl-5">
             <li>Create a room and share the code with 1-5 friends.</li>

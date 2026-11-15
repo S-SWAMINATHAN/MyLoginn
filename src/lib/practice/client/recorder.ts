@@ -51,6 +51,7 @@ export class Recorder {
   private chunks: Float32Array[] = [];
   private recording = false;
   private node: AudioWorkletNode | ScriptProcessorNode | null = null;
+  private sink: GainNode | null = null;
   /** RMS of the latest chunk (0..1), for the level meter. */
   level = 0;
   /** Milliseconds of loud audio since start(), for "we can hear you". */
@@ -68,7 +69,7 @@ export class Recorder {
     if (!navigator.mediaDevices?.getUserMedia) throw new MicError("unsupported");
     let stream: MediaStream;
     try {
-      stream = await navigator.mediaDevices.getUserMedia({ audio: { echoCancellation: true, noiseSuppression: true, autoGainControl: true, channelCount: 1 } });
+      stream = await navigator.mediaDevices.getUserMedia({ audio: { echoCancellation: true, noiseSuppression: true, autoGainControl: true, channelCount: { ideal: 1 } } });
     } catch (e) {
       const name = (e as DOMException)?.name;
       throw new MicError(name === "NotAllowedError" || name === "SecurityError" ? "denied" : name === "NotFoundError" || name === "OverconstrainedError" ? "no-device" : name === "NotReadableError" || name === "AbortError" ? "busy" : "unknown");
@@ -76,7 +77,12 @@ export class Recorder {
     const Ctx = window.AudioContext ?? (window as unknown as { webkitAudioContext: typeof AudioContext }).webkitAudioContext;
     const ctx = new Ctx();
     const rec = new Recorder(stream, ctx, onEnded);
-    await rec.wire();
+    try {
+      await rec.wire();
+    } catch (e) {
+      rec.close();
+      throw e;
+    }
     stream.getAudioTracks().forEach((t) => t.addEventListener("ended", () => rec.onEnded?.()));
     return rec;
   }
@@ -95,19 +101,32 @@ export class Recorder {
     };
     try {
       const url = URL.createObjectURL(new Blob([WORKLET], { type: "application/javascript" }));
-      await this.ctx.audioWorklet.addModule(url);
-      URL.revokeObjectURL(url);
+      try {
+        await this.ctx.audioWorklet.addModule(url);
+      } finally {
+        URL.revokeObjectURL(url);
+      }
       const node = new AudioWorkletNode(this.ctx, "ml-tap");
       node.port.onmessage = (e) => take(e.data as Float32Array);
       source.connect(node);
+      const sink = this.ctx.createGain();
+      sink.gain.value = 0;
+      node.connect(sink);
+      sink.connect(this.ctx.destination);
       this.node = node;
+      this.sink = sink;
     } catch {
       // Older Safari: ScriptProcessor fallback.
+      source.disconnect();
       const node = this.ctx.createScriptProcessor(4096, 1, 1);
       node.onaudioprocess = (e) => take(new Float32Array(e.inputBuffer.getChannelData(0)));
       source.connect(node);
-      node.connect(this.ctx.destination);
+      const sink = this.ctx.createGain();
+      sink.gain.value = 0;
+      node.connect(sink);
+      sink.connect(this.ctx.destination);
       this.node = node;
+      this.sink = sink;
     }
   }
 
@@ -162,6 +181,7 @@ export class Recorder {
   close() {
     this.recording = false;
     try { this.node?.disconnect(); } catch { /* already gone */ }
+    try { this.sink?.disconnect(); } catch { /* already gone */ }
     this.stream.getTracks().forEach((t) => t.stop());
     void this.ctx.close().catch(() => {});
   }

@@ -70,7 +70,12 @@ export function InterviewRoom(props: InterviewRoomProps) {
     const rec = await ensureMic();
     if (!rec || !go(["ready"], "recording")) return;
     setNotice(null);
-    await rec.start();
+    try {
+      await rec.start();
+    } catch {
+      go(["recording"], "ready");
+      setNotice("The microphone could not start recording. Check its permission and try again.");
+    }
   }, [go, ensureMic]);
 
   const speakThenListen = useCallback(async (text: string, autoRecord: boolean) => {
@@ -198,13 +203,16 @@ export function InterviewRoom(props: InterviewRoomProps) {
   const stageIndex = Math.min(asked, total) - 1;
 
   return (
-    <div className="grid gap-5 lg:grid-cols-[1fr_20rem]">
+    <div className="grid min-w-0 gap-6 xl:grid-cols-[minmax(0,1fr)_20rem] 2xl:grid-cols-[minmax(0,1fr)_24rem]">
       <div className="min-w-0 space-y-5">
-        <Card className="relative overflow-hidden">
+        <Card className="relative min-w-0 overflow-hidden border-0 p-5 shadow-[var(--shadow-soft)] sm:p-7 lg:p-9">
           <div className="flex flex-wrap items-center justify-between gap-3">
-            <div className="flex items-center gap-2 text-sm">
-              <Chip tone="brand">Question {Math.min(asked, total)} / {total}</Chip>
-              <Chip>{props.plan[stageIndex]}</Chip>
+            <div className="min-w-0">
+              <p className="mb-2 text-sm font-bold text-story-navy dark:text-foreground">{props.title}</p>
+              <div className="flex flex-wrap items-center gap-2 text-sm">
+                <Chip tone="brand">Question {Math.min(asked, total)} / {total}</Chip>
+                <Chip>{props.plan[stageIndex]}</Chip>
+              </div>
             </div>
             <div className="flex items-center gap-1">
               <IconToggle on={captions} onClick={() => setCaptions((v) => !v)} label="Captions"><Captions className="h-4 w-4" /></IconToggle>
@@ -212,12 +220,12 @@ export function InterviewRoom(props: InterviewRoomProps) {
             </div>
           </div>
 
-          <div className="mt-6 flex flex-col items-center text-center">
+          <div className="mt-6 flex flex-col items-center rounded-3xl bg-story-mist px-4 py-6 text-center dark:bg-surface-2 sm:px-8 sm:py-9">
             <Interviewer name={props.persona.name} speaking={phase === "speaking"} />
             <p className="mt-3 text-sm font-semibold">{props.persona.name} <span className="font-normal text-muted">· {props.persona.label}</span></p>
-            <div className="mt-4 min-h-[4.5rem] max-w-2xl">
+            <div className="mt-4 min-h-[4.5rem] max-w-3xl">
               {captions || voiceFailed || phase === "idle" ? (
-                <p className="text-lg leading-8 text-story-navy sm:text-xl dark:text-foreground">{question}</p>
+                <p className="text-lg leading-8 text-story-navy sm:text-2xl sm:leading-9 dark:text-foreground">{question}</p>
               ) : (
                 <p className="text-sm text-muted">Captions are off. Listen to the question.</p>
               )}
@@ -295,7 +303,7 @@ export function InterviewRoom(props: InterviewRoomProps) {
         ) : null}
       </div>
 
-      <aside className="space-y-4">
+      <aside className="min-w-0 space-y-4 xl:sticky xl:top-32 xl:self-start">
         {props.coding ? (
           <Card>
             <p className="text-xs font-semibold uppercase tracking-wider text-muted">Problem</p>

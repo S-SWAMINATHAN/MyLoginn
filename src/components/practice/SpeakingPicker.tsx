@@ -5,10 +5,11 @@ import { useRouter } from "next/navigation";
 import { ArrowRight, AudioLines, BookOpen, Ear, Gamepad2, Image as ImageIcon, MessageSquareQuote, Repeat2, SpellCheck2, Timer } from "lucide-react";
 import { cn } from "@/lib/cn";
 import { Button } from "@/components/ui/Button";
+import { Select } from "@/components/ui/Select";
 import { TWISTER_MODES } from "@/lib/practice/speaking/content";
 import { Card, postJson } from "./ui";
 
-export type PickerExercise = { kind: string; title: string; short: string; desc: string; group: string; perSession: number };
+export type PickerExercise = { kind: string; title: string; short: string; desc: string; group: string; perSession: number; itemCount: number };
 
 const ICONS: Record<string, React.ComponentType<{ className?: string }>> = {
   repeat: Repeat2, pronounce: SpellCheck2, describe: ImageIcon, story: BookOpen, listen: Ear, comprehension: AudioLines, grammar: MessageSquareQuote, fluency: Timer, twister: Gamepad2,
@@ -46,29 +47,33 @@ export function SpeakingPicker({ exercises, loggedIn, initialKind, initialGroup 
   };
 
   return (
-    <div className="grid gap-5 lg:grid-cols-[1fr_21rem]">
-      <div className="space-y-4">
+    <div className="grid min-w-0 gap-6 xl:grid-cols-[minmax(0,1fr)_minmax(22rem,26rem)]">
+      <div className="min-w-0 space-y-5">
         <div role="tablist" aria-label="Exercise groups" className="flex flex-wrap gap-2">
           {GROUPS.map((g) => <button key={g.id} role="tab" type="button" aria-selected={group === g.id} onClick={() => setGroup(g.id)} className={cn("rounded-full px-3.5 py-1.5 text-sm font-semibold transition-colors", group === g.id ? "bg-story-royal text-white" : "bg-surface text-muted hover:text-story-royal")}>{g.label}</button>)}
         </div>
-        <div className="grid gap-3 sm:grid-cols-2">
+        <div className="grid gap-3 sm:grid-cols-2 2xl:grid-cols-3">
           {shown.map((e) => {
             const Icon = ICONS[e.kind] ?? AudioLines;
             return (
-              <button key={e.kind} type="button" aria-pressed={kind === e.kind} onClick={() => setKind(e.kind)} className={cn("flex gap-3 rounded-3xl border p-4 text-left transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-300", kind === e.kind ? "border-story-royal bg-story-royal/5" : "border-border-soft bg-surface hover:border-story-royal/40")}>
-                <span className={cn("grid h-10 w-10 shrink-0 place-items-center rounded-2xl", kind === e.kind ? "bg-story-royal text-white" : "bg-story-mist text-story-royal dark:bg-surface-2")}><Icon className="h-5 w-5" /></span>
-                <span className="min-w-0"><span className="block font-semibold">{e.title}</span><span className="mt-0.5 block text-sm leading-6 text-muted">{e.short}</span></span>
+              <button key={e.kind} type="button" aria-pressed={kind === e.kind} onClick={() => setKind(e.kind)} className={cn("flex min-h-28 gap-3 rounded-2xl border p-4 text-left transition-[border-color,background-color,box-shadow] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-300", kind === e.kind ? "border-story-royal bg-story-royal/5 shadow-[var(--shadow-soft)]" : "border-border-soft bg-surface hover:border-story-royal/40")}>
+                <span className={cn("grid h-10 w-10 shrink-0 place-items-center rounded-xl", kind === e.kind ? "bg-[#10264A] text-white" : "bg-story-mist text-story-royal dark:bg-surface-2")}><Icon className="h-5 w-5" /></span>
+                <span className="min-w-0"><span className="block font-semibold">{e.title}</span><span className="mt-1 block text-sm leading-6 text-muted">{e.short}</span></span>
               </button>
             );
           })}
         </div>
       </div>
 
-      <Card className="h-fit space-y-4 lg:sticky lg:top-32">
+      <Card className="h-fit space-y-5 p-5 sm:p-6 xl:sticky xl:top-32">
         <div>
-          <p className="text-lg font-bold">{selected.title}</p>
+          <p className="text-xs font-semibold text-story-royal">Selected exercise</p>
+          <p className="mt-1 text-xl font-bold tracking-tight">{selected.title}</p>
           <p className="mt-1 text-sm leading-6 text-muted">{selected.desc}</p>
-          <p className="mt-2 text-xs text-muted">{selected.perSession} item{selected.perSession > 1 ? "s" : ""} per session · instant feedback after each attempt</p>
+          <div className="mt-4 grid grid-cols-2 gap-3 border-y border-border-soft py-3">
+            <p><span className="block text-xs text-muted">This session</span><strong className="mt-1 block text-2xl font-bold tabular-nums text-foreground">{selected.perSession}</strong></p>
+            <p><span className="block text-xs text-muted">Question bank</span><strong className="mt-1 block text-2xl font-bold tabular-nums text-foreground">{selected.itemCount}</strong></p>
+          </div>
         </div>
         {kind === "twister" ? (
           <fieldset>
@@ -79,11 +84,13 @@ export function SpeakingPicker({ exercises, loggedIn, initialKind, initialGroup 
           </fieldset>
         ) : null}
         {kind === "fluency" ? (
-          <label className="block text-sm font-semibold">Type
-            <select value={focus} onChange={(e) => setFocus(e.target.value)} className="mt-2 w-full rounded-2xl border border-border-soft bg-background px-3.5 py-2.5 text-sm outline-none focus:border-story-royal">
-              {FLUENCY_FOCUS.map((f) => <option key={f.id} value={f.id}>{f.label}</option>)}
-            </select>
-          </label>
+          <Select
+            label="Focus"
+            value={focus}
+            options={FLUENCY_FOCUS.map((f) => ({ label: f.label, value: f.id }))}
+            className="rounded-2xl"
+            onChange={(e) => setFocus(e.target.value)}
+          />
         ) : null}
         {error ? <p role="alert" className="text-sm text-danger">{error}</p> : null}
         <Button size="lg" className="w-full" onClick={() => void start()} disabled={busy} icon={<ArrowRight className="h-5 w-5" />}>{busy ? "Preparing…" : loggedIn ? "Start" : "Log in to start"}</Button>

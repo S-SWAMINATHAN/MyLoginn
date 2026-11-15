@@ -85,24 +85,29 @@ export function GdRoom({ code, me }: { code: string; me: { id: string; name: str
     setBlocked(null);
     const rec = await ensureMic();
     if (!rec) { setJoining(false); return; }
-    await rec.resume();
-    const res = await postJson<Joined>(`/api/gd/rooms/${code}/join`);
-    setJoining(false);
-    if (!res.ok) { setJoinError(res.error); return; }
-    after.current = 0;
-    mesh.current?.close();
-    mesh.current = new GdMesh({
-      myPeer: res.data.peerId,
-      stream: rec.mediaStream,
-      ice: res.data.iceServers,
-      send: async (to, kind, payload) => { await fetch(`/api/gd/rooms/${code}/signal`, { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ from: res.data.peerId, to, kind, payload }) }); },
-      onChange: () => setLinks(mesh.current?.states() ?? {}),
-    });
-    const seg = new GdSegmenter(upload);
-    seg.enabled = false;
-    segmenter.current = seg;
-    rec.onChunk = (data, rate) => seg.push(data, rate);
-    setJoined(res.data);
+    try {
+      await rec.resume();
+      const res = await postJson<Joined>(`/api/gd/rooms/${code}/join`);
+      if (!res.ok) { setJoinError(res.error); return; }
+      after.current = 0;
+      mesh.current?.close();
+      mesh.current = new GdMesh({
+        myPeer: res.data.peerId,
+        stream: rec.mediaStream,
+        ice: res.data.iceServers,
+        send: async (to, kind, payload) => { await fetch(`/api/gd/rooms/${code}/signal`, { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ from: res.data.peerId, to, kind, payload }) }); },
+        onChange: () => setLinks(mesh.current?.states() ?? {}),
+      });
+      const seg = new GdSegmenter(upload);
+      seg.enabled = false;
+      segmenter.current = seg;
+      rec.onChunk = (data, rate) => seg.push(data, rate);
+      setJoined(res.data);
+    } catch {
+      setJoinError("Could not connect to the discussion. Check your connection and try again.");
+    } finally {
+      setJoining(false);
+    }
   };
 
   // ── sync loop: one request at a time; faster while links are negotiating ──
@@ -270,11 +275,11 @@ export function GdRoom({ code, me }: { code: string; me: { id: string; name: str
   if (!sync) return <Card className="text-center"><Working label="Connecting to the room…" /></Card>;
 
   return (
-    <div className="space-y-5">
+    <div className="min-w-0 space-y-6">
       {offline ? <p role="status" className="flex items-center gap-2 rounded-2xl bg-amber-500/10 p-3 text-sm text-amber-800 dark:text-amber-200"><WifiOff className="h-4 w-4" />Connection lost — reconnecting. Your audio links will recover automatically.</p> : null}
       {actionError ? <p role="alert" className="text-sm text-danger">{actionError}</p> : null}
 
-      <Card>
+      <Card className="border-l-4 border-l-story-royal p-5 sm:p-7">
         <div className="flex flex-wrap items-start justify-between gap-4">
           <div className="min-w-0">
             <div className="flex flex-wrap items-center gap-2"><Chip tone="brand">{sync.room.category}</Chip><Chip>{phase === "LOBBY" ? "Waiting room" : phase === "PREP" ? "Preparation" : phase === "LIVE" ? "Live" : phase === "CANCELLED" ? "Cancelled" : "Evaluating"}</Chip></div>
@@ -304,12 +309,12 @@ export function GdRoom({ code, me }: { code: string; me: { id: string; name: str
         </Card>
       ) : null}
 
-      <div className="grid grid-cols-2 gap-3 sm:grid-cols-3">
+      <div className="grid min-w-0 grid-cols-2 gap-3 sm:grid-cols-3 lg:grid-cols-4 2xl:grid-cols-6">
         {people.map((p) => {
           const self = p.userId === me.id;
           const link = self ? "connected" : links[p.peerId] ?? "connecting";
           return (
-            <div key={p.userId} className="flex flex-col items-center gap-2 rounded-3xl border border-border-soft bg-surface p-4 text-center">
+            <div key={p.userId} className="flex min-w-0 flex-col items-center gap-2 rounded-2xl border border-border-soft bg-surface p-4 text-center shadow-[var(--shadow-soft)]">
               <span ref={(el) => { if (el) tiles.current.set(p.userId, el); else tiles.current.delete(p.userId); }} className="rounded-full transition-[box-shadow] duration-100">
                 <Avatar name={p.name} avatarColor={p.avatarColor} avatarUrl={p.avatarUrl} size={64} />
               </span>

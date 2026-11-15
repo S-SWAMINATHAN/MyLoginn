@@ -1,7 +1,7 @@
 import { getCurrentUser } from "@/lib/auth";
 import { Container } from "@/components/ui/Section";
-import { PageTitle } from "@/components/logiquest/ui";
 import { SpeakingPicker } from "@/components/practice/SpeakingPicker";
+import { PracticeHero } from "@/components/practice/PracticeHero";
 import { EXERCISES } from "@/lib/practice/speaking/content";
 import { createPageMetadata } from "@/lib/seo";
 
@@ -17,10 +17,19 @@ type Props = { searchParams: Promise<{ kind?: string; group?: string }> };
 
 export default async function SpeakingPage({ searchParams }: Props) {
   const [user, sp] = await Promise.all([getCurrentUser(), searchParams]);
-  const exercises = EXERCISES.map(({ kind, title, short, desc, group, perSession }) => ({ kind, title, short, desc, group, perSession }));
+  const exercises = EXERCISES.map(({ kind, title, short, desc, group, perSession, items }) => ({ kind, title, short, desc, group, perSession, itemCount: items.length }));
   return (
-    <Container className="max-w-7xl space-y-6 py-6 sm:py-10">
-      <PageTitle eyebrow="Speaking Lab" title="Become a confident, clear English speaker." sub="Short spoken exercises with feedback on every word: pronunciation, grammar, fluency, vocabulary and structure." />
+    <Container className="max-w-screen-2xl space-y-7 py-6 sm:py-10">
+      <PracticeHero
+        eyebrow="Speaking lab"
+        title="Find a clearer, more confident voice."
+        description="Practise pronunciation, fluency, listening and verbal reasoning with focused speaking exercises. Every session is shuffled and gives you useful feedback."
+        facts={[
+          { value: String(exercises.length), label: "exercise types" },
+          { value: String(Math.max(...exercises.map((exercise) => exercise.perSession))), label: "per session" },
+          { value: "Word-level", label: "pronunciation feedback" },
+        ]}
+      />
       <SpeakingPicker exercises={exercises} loggedIn={Boolean(user)} initialKind={sp.kind} initialGroup={sp.group} />
     </Container>
   );

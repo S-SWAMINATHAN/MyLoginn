@@ -20,27 +20,27 @@ export type InterviewType = {
   desc: string;
   /** What the technical questions should cover. */
   focus: string;
-  /** Stage pattern; it is stretched or trimmed to the chosen length, always starting with intro and ending with closing. */
+  /** Weighted stage pool, shuffled for each interview between a fixed intro and closing. */
   stages: Stage[];
   /** Dimensions shown on the report for this type. */
   technical: boolean;
 };
 
 export const INTERVIEW_TYPES: InterviewType[] = [
-  { id: "hr", label: "HR Interview", desc: "Self-introduction, strengths, goals, teamwork and salary questions.", focus: "career goals, strengths and weaknesses, teamwork, conflict, motivation, company fit, relocation and salary expectations", stages: ["intro", "hr", "behavioral", "hr", "scenario", "behavioral", "hr", "closing"], technical: false },
-  { id: "technical", label: "Technical Interview", desc: "Core CS fundamentals for software roles: OOP, DBMS, OS, networks.", focus: "OOP, data structures, DBMS and SQL, operating systems, networking basics, and the candidate's main programming language", stages: ["intro", "resume", "technical", "technical", "scenario", "technical", "problem", "closing"], technical: true },
-  { id: "automation-testing", label: "Automation Testing", desc: "Frameworks, locators, waits, CI and test design for automation roles.", focus: "test automation frameworks, Selenium/Playwright, locator strategy, waits and synchronisation, page object model, CI integration, flaky tests, reporting", stages: ["intro", "resume", "technical", "technical", "scenario", "technical", "behavioral", "closing"], technical: true },
-  { id: "manual-testing", label: "Manual Testing", desc: "SDLC/STLC, test cases, bug life cycle, test techniques.", focus: "SDLC and STLC, test case design, boundary value and equivalence partitioning, bug life cycle, severity vs priority, regression and smoke testing", stages: ["intro", "resume", "technical", "scenario", "technical", "technical", "behavioral", "closing"], technical: true },
-  { id: "java", label: "Java Interview", desc: "OOP in Java, collections, exceptions, multithreading, Java 8+.", focus: "Java OOP, String handling, collections, exceptions, multithreading, JVM memory, Java 8 streams and lambdas", stages: ["intro", "resume", "technical", "technical", "problem", "technical", "scenario", "closing"], technical: true },
-  { id: "python", label: "Python Interview", desc: "Data types, functions, OOP, comprehensions, error handling.", focus: "Python data types, mutability, functions and decorators, OOP, comprehensions and generators, exceptions, common libraries", stages: ["intro", "resume", "technical", "technical", "problem", "technical", "scenario", "closing"], technical: true },
-  { id: "sql", label: "SQL Interview", desc: "Joins, grouping, subqueries, indexes, normalisation.", focus: "joins, GROUP BY and HAVING, subqueries, window functions, indexes, normalisation, transactions", stages: ["intro", "resume", "technical", "problem", "technical", "scenario", "technical", "closing"], technical: true },
-  { id: "selenium", label: "Selenium Interview", desc: "WebDriver, locators, waits, frames, exceptions, POM, TestNG.", focus: "Selenium WebDriver architecture, locators and XPath, implicit/explicit/fluent waits, frames and windows, stale element and other exceptions, page object model, TestNG", stages: ["intro", "resume", "technical", "technical", "scenario", "technical", "problem", "closing"], technical: true },
-  { id: "playwright", label: "Playwright Interview", desc: "Auto-waiting, locators, fixtures, tracing, API testing in Playwright.", focus: "Playwright auto-waiting, locators, fixtures, browser contexts, parallel runs, tracing and debugging, network interception, API testing with Playwright", stages: ["intro", "resume", "technical", "technical", "scenario", "technical", "problem", "closing"], technical: true },
-  { id: "api-testing", label: "API Testing", desc: "HTTP, REST, status codes, Postman, auth, contract and negative tests.", focus: "HTTP methods and status codes, REST principles, Postman collections and scripts, authentication (tokens, OAuth), JSON validation, negative and boundary tests, API automation", stages: ["intro", "resume", "technical", "technical", "scenario", "technical", "problem", "closing"], technical: true },
-  { id: "devops", label: "DevOps Basics", desc: "Git, CI/CD, Docker, Linux basics, cloud fundamentals.", focus: "Git workflows, CI/CD pipelines, Docker images and containers, basic Linux commands, cloud fundamentals, monitoring", stages: ["intro", "resume", "technical", "technical", "scenario", "technical", "behavioral", "closing"], technical: true },
-  { id: "coding", label: "Coding Round (explain aloud)", desc: "Talk through a coding problem: approach, complexity, edge cases.", focus: "problem-solving approach, choice of data structures, time and space complexity, edge cases, optimisation and testing of the solution", stages: ["intro", "coding", "coding", "coding", "coding", "coding", "problem", "closing"], technical: true },
-  { id: "mnc", label: "MNC Placement Interview", desc: "Campus-style mix of HR, aptitude-style reasoning and technical basics.", focus: "fresher campus placement: self-introduction, academic projects, programming basics, OOP, DBMS, puzzles and reasoning, HR questions about relocation, shifts and bond", stages: ["intro", "resume", "technical", "problem", "hr", "technical", "behavioral", "closing"], technical: true },
-  { id: "full", label: "Full Mock Interview", desc: "Complete recruitment loop: HR, resume, technical, scenario, behavioural.", focus: "a complete IT recruitment loop covering HR, resume deep-dive, technical fundamentals of the candidate's stated skills, scenarios and behaviour", stages: ["intro", "hr", "resume", "technical", "technical", "scenario", "problem", "behavioral", "hr", "closing"], technical: true },
+  { id: "hr", label: "HR Interview", desc: "Self-introduction, strengths, goals, teamwork and salary questions.", focus: "career goals, strengths and weaknesses, teamwork, conflict, motivation, company fit, relocation and salary expectations", stages: ["intro", "hr", "resume", "behavioral", "scenario", "problem", "hr", "behavioral", "closing"], technical: false },
+  { id: "technical", label: "Technical Interview", desc: "Core CS fundamentals for software roles: OOP, DBMS, OS, networks.", focus: "OOP, data structures, DBMS and SQL, operating systems, networking basics, and the candidate's main programming language", stages: ["intro", "resume", "technical", "scenario", "technical", "problem", "behavioral", "technical", "hr", "closing"], technical: true },
+  { id: "automation-testing", label: "Automation Testing", desc: "Frameworks, locators, waits, CI and test design for automation roles.", focus: "test automation frameworks, Selenium/Playwright, locator strategy, waits and synchronisation, page object model, CI integration, flaky tests, reporting", stages: ["intro", "resume", "technical", "scenario", "technical", "problem", "behavioral", "technical", "closing"], technical: true },
+  { id: "manual-testing", label: "Manual Testing", desc: "SDLC/STLC, test cases, bug life cycle, test techniques.", focus: "SDLC and STLC, test case design, boundary value and equivalence partitioning, bug life cycle, severity vs priority, regression and smoke testing", stages: ["intro", "resume", "technical", "scenario", "problem", "technical", "behavioral", "hr", "closing"], technical: true },
+  { id: "java", label: "Java Interview", desc: "OOP in Java, collections, exceptions, multithreading, Java 8+.", focus: "Java OOP, String handling, collections, exceptions, multithreading, JVM memory, Java 8 streams and lambdas", stages: ["intro", "resume", "technical", "problem", "technical", "scenario", "behavioral", "technical", "closing"], technical: true },
+  { id: "python", label: "Python Interview", desc: "Data types, functions, OOP, comprehensions, error handling.", focus: "Python data types, mutability, functions and decorators, OOP, comprehensions and generators, exceptions, common libraries", stages: ["intro", "resume", "technical", "problem", "technical", "scenario", "behavioral", "technical", "closing"], technical: true },
+  { id: "sql", label: "SQL Interview", desc: "Joins, grouping, subqueries, indexes, normalisation.", focus: "joins, GROUP BY and HAVING, subqueries, window functions, indexes, normalisation, transactions", stages: ["intro", "resume", "technical", "problem", "technical", "scenario", "behavioral", "technical", "closing"], technical: true },
+  { id: "selenium", label: "Selenium Interview", desc: "WebDriver, locators, waits, frames, exceptions, POM, TestNG.", focus: "Selenium WebDriver architecture, locators and XPath, implicit/explicit/fluent waits, frames and windows, stale element and other exceptions, page object model, TestNG", stages: ["intro", "resume", "technical", "scenario", "technical", "problem", "behavioral", "technical", "closing"], technical: true },
+  { id: "playwright", label: "Playwright Interview", desc: "Auto-waiting, locators, fixtures, tracing, API testing in Playwright.", focus: "Playwright auto-waiting, locators, fixtures, browser contexts, parallel runs, tracing and debugging, network interception, API testing with Playwright", stages: ["intro", "resume", "technical", "scenario", "technical", "problem", "behavioral", "technical", "closing"], technical: true },
+  { id: "api-testing", label: "API Testing", desc: "HTTP, REST, status codes, Postman, auth, contract and negative tests.", focus: "HTTP methods and status codes, REST principles, Postman collections and scripts, authentication (tokens, OAuth), JSON validation, negative and boundary tests, API automation", stages: ["intro", "resume", "technical", "scenario", "technical", "problem", "behavioral", "technical", "closing"], technical: true },
+  { id: "devops", label: "DevOps Basics", desc: "Git, CI/CD, Docker, Linux basics, cloud fundamentals.", focus: "Git workflows, CI/CD pipelines, Docker images and containers, basic Linux commands, cloud fundamentals, monitoring", stages: ["intro", "resume", "technical", "scenario", "technical", "problem", "behavioral", "hr", "closing"], technical: true },
+  { id: "coding", label: "Coding Round (explain aloud)", desc: "Talk through a coding problem: approach, complexity, edge cases.", focus: "problem-solving approach, choice of data structures, time and space complexity, edge cases, optimisation and testing of the solution", stages: ["intro", "resume", "coding", "coding", "technical", "problem", "scenario", "coding", "closing"], technical: true },
+  { id: "mnc", label: "MNC Placement Interview", desc: "Campus-style mix of HR, aptitude-style reasoning and technical basics.", focus: "fresher campus placement: self-introduction, academic projects, programming basics, OOP, DBMS, puzzles and reasoning, HR questions about relocation, shifts and bond", stages: ["intro", "resume", "technical", "problem", "hr", "scenario", "behavioral", "technical", "closing"], technical: true },
+  { id: "full", label: "Full Mock Interview", desc: "Complete recruitment loop: HR, resume, technical, scenario, behavioural.", focus: "a complete IT recruitment loop covering HR, resume deep-dive, technical fundamentals of the candidate's stated skills, scenarios and behaviour", stages: ["intro", "hr", "resume", "technical", "scenario", "problem", "behavioral", "technical", "hr", "closing"], technical: true },
 ];
 
 export const DIFFICULTIES = [
@@ -62,9 +62,9 @@ export const PERSONAS = [
 ] as const;
 
 export const LENGTHS = [
-  { id: "quick", label: "Quick", questions: 5, note: "≈ 8 min" },
-  { id: "standard", label: "Standard", questions: 8, note: "≈ 15 min" },
-  { id: "long", label: "Long", questions: 12, note: "≈ 25 min" },
+  { id: "quick", label: "Quick", questions: 8, note: "≈ 12 min" },
+  { id: "standard", label: "Standard", questions: 12, note: "≈ 20 min" },
+  { id: "long", label: "Long", questions: 16, note: "≈ 30 min" },
 ] as const;
 
 /** Longest single answer. Keeps uploads under the serverless body limit. */
@@ -84,11 +84,27 @@ export type InterviewConfig = {
 export const typeById = (id: string) => INTERVIEW_TYPES.find((t) => t.id === id);
 export const personaById = (id: string) => PERSONAS.find((p) => p.id === id) ?? PERSONAS[0];
 
-/** Stage for every question number: intro first, closing last, the type's pattern in between. */
+/** Keeps the introduction and closing fixed while reshuffling weighted middle stages for every new interview. */
 export function stagePlan(type: InterviewType, total: number): Stage[] {
   const middle = type.stages.filter((s) => s !== "intro" && s !== "closing");
   const plan: Stage[] = ["intro"];
-  for (let i = 0; plan.length < total - 1; i++) plan.push(middle[i % middle.length]);
+  const pool: Stage[] = [];
+  while (plan.length < total - 1) {
+    if (!pool.length) {
+      pool.push(...middle);
+      for (let i = pool.length - 1; i > 0; i--) {
+        const j = Math.floor(Math.random() * (i + 1));
+        [pool[i], pool[j]] = [pool[j], pool[i]];
+      }
+    }
+    const choices = pool.map((stage, index) => stage !== plan[plan.length - 1] ? index : -1).filter((index) => index >= 0);
+    if (!choices.length && new Set(middle).size > 1) {
+      pool.length = 0;
+      continue;
+    }
+    const index = choices.length ? choices[Math.floor(Math.random() * choices.length)] : 0;
+    plan.push(pool.splice(index, 1)[0]);
+  }
   plan.push("closing");
   return plan.slice(0, total);
 }

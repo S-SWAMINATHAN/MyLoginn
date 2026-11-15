@@ -1,9 +1,14 @@
 import { test } from "node:test";
 import assert from "node:assert/strict";
+import { createElement } from "react";
+import { renderToStaticMarkup } from "react-dom/server";
 import { alignWords, decodeWav, deliveryScore, encodeWav, frameEnergies, transcriptMetrics, voiceActivity, band, SAMPLE_RATE } from "../../src/lib/practice/speech";
 import { gdPhase, isRoomCode, normalizeRoomCode } from "../../src/lib/practice/gd/config";
-import { INTERVIEW_TYPES, stagePlan } from "../../src/lib/practice/interview/config";
-import { EXERCISES, challengeSeconds, itemById, SCENES } from "../../src/lib/practice/speaking/content";
+import { INTERVIEW_TYPES, LENGTHS, stagePlan } from "../../src/lib/practice/interview/config";
+import { EXERCISES, challengeSeconds, itemById, SCENES, speakingProgressLabels } from "../../src/lib/practice/speaking/content";
+import { expandSpeakingConfig, normalizeSpeakingConfig } from "../../src/lib/practice/speaking/engine";
+import { expandInterviewState, selectNextInterviewQuestion } from "../../src/lib/practice/interview/engine";
+import { Scene } from "../../src/components/practice/Scenes";
 import { weightedScore, readinessLevel } from "../../src/lib/practice/report";
 
 /** Synthetic "speech": 440 Hz bursts separated by silence. */
@@ -79,13 +84,38 @@ test("rubric bands and weighted scores", () => {
   assert.match(readinessLevel(82), /Interview Ready with Improvement Areas/);
 });
 
-test("interview plans start with intro, end with closing, and fit every length", () => {
-  for (const type of INTERVIEW_TYPES) for (const n of [5, 8, 12]) {
+test("interview plans keep bookends, shuffle stages and fit every length", () => {
+  for (const type of INTERVIEW_TYPES) for (const n of [5, ...LENGTHS.map((length) => length.questions)]) {
     const plan = stagePlan(type, n);
     assert.equal(plan.length, n);
     assert.equal(plan[0], "intro");
     assert.equal(plan[n - 1], "closing");
+    for (let i = 1; i < plan.length; i++) assert.notEqual(plan[i], plan[i - 1], `${type.id} should not repeat adjacent stages`);
   }
+  for (const type of INTERVIEW_TYPES) {
+    const plans = Array.from({ length: 20 }, () => stagePlan(type, 12).join(","));
+    assert.ok(new Set(plans).size > 1, `${type.id} should vary between interviews`);
+  }
+});
+
+test("untouched interviews and speaking sessions are expanded without losing existing work", () => {
+  const type = INTERVIEW_TYPES.find((entry) => entry.id === "technical")!;
+  const state = { plan: stagePlan(type, 5), asked: 1, current: "Tell me about yourself.", askedQuestions: [], memory: "", recent: [], done: false };
+  const config = { type: type.id, difficulty: "intermediate", persona: "professional", length: "quick" };
+  const expandedState = expandInterviewState(config, state);
+  assert.equal(expandedState.plan.length, LENGTHS.find((length) => length.id === "quick")!.questions);
+  const inProgress = { ...state, asked: 2 };
+  assert.equal(expandInterviewState(config, inProgress), inProgress);
+  const missingQuestion = selectNextInterviewQuestion(config, "technical", 3, "", [state.current]);
+  assert.ok(missingQuestion.length > 10, "a missing AI follow-up must not end the interview early");
+  assert.notEqual(missingQuestion, state.current);
+  assert.notEqual(selectNextInterviewQuestion(config, "technical", 3, "Already asked?", ["Already asked?"]), "Already asked?");
+
+  const oldConfig = { kind: "twister", mode: "practice" as const, items: EXERCISES.find((entry) => entry.kind === "twister")!.items.slice(0, 4).map((item) => item.id) };
+  const expandedConfig = expandSpeakingConfig(oldConfig);
+  assert.equal(expandedConfig.items.length, EXERCISES.find((entry) => entry.kind === "twister")!.perSession);
+  assert.deepEqual(expandedConfig.items.slice(0, oldConfig.items.length), oldConfig.items);
+  assert.equal(new Set(expandedConfig.items).size, expandedConfig.items.length);
 });
 
 test("room codes normalise and validate", () => {
@@ -113,10 +143,93 @@ test("speaking content is well-formed", () => {
       assert.ok(!ids.has(item.id), `duplicate id ${item.id}`);
       ids.add(item.id);
       assert.equal(itemById(item.id), item);
-      if (item.scene) assert.ok(SCENES[item.scene], `missing scene ${item.scene}`);
+      if (item.scene) {
+        assert.ok(SCENES[item.scene], `missing scene ${item.scene}`);
+        assert.match(renderToStaticMarkup(createElement(Scene, { id: item.scene, title: SCENES[item.scene].title })), /<img/);
+      }
       if (["repeat", "twister", "pronounce"].includes(ex.kind)) assert.ok(item.target, `${item.id} needs a target`);
       if (["describe", "story", "comprehension", "listen", "grammar", "fluency"].includes(ex.kind)) assert.ok(item.reference, `${item.id} needs a reference`);
     }
   }
   assert.ok(challengeSeconds("Red lorry, yellow lorry.", 3) > 3);
+});
+
+test("speaking topics have larger banks and each session gets a shuffled selection", () => {
+  const minimums: Record<string, number> = {
+    repeat: 40,
+    pronounce: 15,
+    describe: 10,
+    story: 24,
+    listen: 30,
+    comprehension: 48,
+    grammar: 30,
+    fluency: 72,
+    twister: 36,
+  };
+
+  for (const ex of EXERCISES) {
+    assert.ok(ex.items.length >= minimums[ex.kind], `${ex.kind} should have a larger question bank`);
+    const sessions = Array.from({ length: 10 }, () => normalizeSpeakingConfig({ kind: ex.kind })!);
+    for (const config of sessions) {
+      assert.equal(config.items.length, ex.perSession);
+      assert.equal(new Set(config.items).size, config.items.length);
+      assert.ok(config.items.every((id) => ex.items.some((item) => item.id === id)));
+    }
+    assert.ok(new Set(sessions.map((config) => config.items.join(","))).size > 1, `${ex.kind} should vary between sessions`);
+  }
+
+  const comprehensionItems = EXERCISES.find((ex) => ex.kind === "comprehension")!.items;
+  const comprehension = EXERCISES.find((ex) => ex.kind === "comprehension")!;
+  const passageSizes = [...new Set(comprehensionItems.map((item) => item.id.split(".")[1]))]
+    .map((passageId) => comprehensionItems.filter((item) => item.id.split(".")[1] === passageId).length);
+  assert.equal(new Set(passageSizes).size, 1, "comprehension passages use complete, equal-sized question groups");
+  const expectedPassages = Math.ceil(comprehension.perSession / passageSizes[0]);
+  for (const config of Array.from({ length: 10 }, () => normalizeSpeakingConfig({ kind: "comprehension" })!)) {
+    const groups: string[][] = [];
+    for (const id of config.items) {
+      const passageId = id.split(".")[1];
+      let group = groups[groups.length - 1];
+      if (!group || group[0].split(".")[1] !== passageId) {
+        assert.ok(!groups.some((existing) => existing[0].split(".")[1] === passageId), "passage questions stay contiguous");
+        group = [];
+        groups.push(group);
+      }
+      group.push(id);
+    }
+    assert.equal(groups.length, expectedPassages, "each session includes enough shuffled passages");
+    for (const group of groups) {
+      const passageId = group[0].split(".")[1];
+      const matchingItems = comprehensionItems.filter((item) => item.id.split(".")[1] === passageId);
+      assert.deepEqual(group, matchingItems.map((item) => item.id));
+    }
+  }
+
+  const fluency = EXERCISES.find((ex) => ex.kind === "fluency")!;
+  for (const focus of new Set(fluency.items.map((item) => item.focus))) {
+    const config = normalizeSpeakingConfig({ kind: "fluency", focus })!;
+    assert.equal(config.items.length, fluency.perSession);
+    assert.ok(config.items.every((id) => itemById(id)?.focus === focus));
+  }
+});
+
+test("speaking progress labels show distinct topic text instead of repeated prompt starters", () => {
+  const fluency = EXERCISES.find((ex) => ex.kind === "fluency")!;
+  const topics = fluency.items.slice(0, 12);
+  const labels = speakingProgressLabels(topics);
+  assert.equal(new Set(labels).size, labels.length);
+  assert.ok(labels.every((label) => !/^Speak for one minute:/i.test(label)));
+  const specific = fluency.items.find((item) => /stay healthy/i.test(item.display))!;
+  assert.match(speakingProgressLabels([specific])[0], /stay healthy/i);
+
+  const repeated = speakingProgressLabels([{ display: "Speak for one minute: a topic" }, { display: "Speak for one minute: a topic" }]);
+  assert.deepEqual(repeated, ["a topic", "a topic (2)"]);
+});
+
+test("open-response speaking exercises include a separately measured communication score", () => {
+  for (const kind of ["describe", "story", "listen", "comprehension", "grammar", "fluency"]) {
+    assert.ok(EXERCISES.find((ex) => ex.kind === kind)!.dims.some((dimension) => dimension.key === "communication"), `${kind} includes communication`);
+  }
+  for (const kind of ["repeat", "pronounce", "twister"]) {
+    assert.ok(!EXERCISES.find((ex) => ex.kind === kind)!.dims.some((dimension) => dimension.key === "communication"), `${kind} stays focused on exact speech`);
+  }
 });

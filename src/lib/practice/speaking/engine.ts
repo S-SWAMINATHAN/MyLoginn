@@ -24,15 +24,44 @@ export function normalizeSpeakingConfig(input: Record<string, unknown>): Speakin
   if (!ex) return null;
   let items: SpeakingItem[];
   if (ex.kind === "comprehension") {
-    // Keep one passage's questions together and in order.
-    const passages = [...new Set(ex.items.map((i) => i.id.split(".")[1]))];
-    const pick = passages[randomInt(passages.length)];
-    items = ex.items.filter((i) => i.id.split(".")[1] === pick);
+    // Shuffle whole passages so their questions stay together and in order.
+    const passages = [...new Set(ex.items.map((i) => i.id.split(".")[1]))]
+      .map((passage) => ex.items.filter((i) => i.id.split(".")[1] === passage));
+    items = [];
+    for (const passage of sample(passages, passages.length)) {
+      items.push(...passage);
+      if (items.length >= ex.perSession) break;
+    }
   } else if (ex.kind === "fluency" && typeof input.focus === "string" && ex.items.some((i) => i.focus === input.focus)) {
     items = sample(ex.items.filter((i) => i.focus === input.focus), ex.perSession);
   } else items = sample(ex.items, ex.perSession);
   const mode = ex.kind === "twister" ? (TWISTER_MODES.find((m) => m.id === input.mode)?.id ?? "practice") : undefined;
   return { kind: ex.kind, ...(mode ? { mode } : {}), items: items.map((i) => i.id) };
+}
+
+export function expandSpeakingConfig(config: SpeakingConfig): SpeakingConfig {
+  const ex = exerciseByKind(config.kind);
+  if (!ex || config.items.length >= ex.perSession) return config;
+
+  const selected = new Set(config.items);
+  let additions: string[];
+  if (ex.kind === "comprehension") {
+    const remaining = ex.items.filter((item) => !selected.has(item.id));
+    const passages = [...new Set(remaining.map((item) => item.id.split(".")[1]))]
+      .map((passage) => remaining.filter((item) => item.id.split(".")[1] === passage));
+    additions = [];
+    for (const passage of sample(passages, passages.length)) {
+      additions.push(...passage.map((item) => item.id));
+      if (config.items.length + additions.length >= ex.perSession) break;
+    }
+  } else {
+    const first = ex.kind === "fluency" ? itemById(config.items[0]) : null;
+    const focus = first?.focus && config.items.every((id) => itemById(id)?.focus === first.focus) ? first.focus : null;
+    const candidates = ex.items.filter((item) => !selected.has(item.id) && (!focus || item.focus === focus));
+    additions = sample(candidates, ex.perSession - config.items.length).map((item) => item.id);
+  }
+
+  return { ...config, items: [...config.items, ...additions] };
 }
 
 export const speakingTitle = (config: SpeakingConfig) => {
@@ -80,7 +109,12 @@ function schemaFor(ex: SpeakingExercise) {
   return S.obj({
     heardSpeech: S.bool("false when the audio has no intelligible human speech"),
     transcript: S.str("verbatim transcript"),
-    scores: S.obj(Object.fromEntries(AI_DIMS(ex).map((k) => [k, S.int()]))),
+    scores: S.obj(Object.fromEntries(AI_DIMS(ex).map((k) => [
+      k,
+      S.int(k === "communication"
+        ? "clear, relevant, coherent speech that a listener can follow; do not score accent or answer length"
+        : undefined),
+    ]))),
     feedback: S.str("2 specific sentences: what was good and the single most useful thing to fix"),
     corrections: S.arr(S.obj({ said: S.str(), better: S.str(), why: S.str() }), "spoken grammar/wording corrections (max 4); empty if none"),
     words: S.arr(S.obj({ word: S.str(), score: S.int(), issue: S.str() }), "per-word pronunciation feedback; each distinct word at most once", 8),
@@ -100,7 +134,7 @@ export async function runSpeakingTurn(config: SpeakingConfig, item: SpeakingItem
   const dims = AI_DIMS(ex);
   const { data, ms } = await generateJson({
     kind: "speaking_turn",
-    system: `You are an English speaking coach for Indian students and job seekers. ${NO_HALLUCINATION}\nEvaluate the complete recording.\n${RUBRIC}`,
+    system: `You are an English speaking coach for Indian students and job seekers. ${NO_HALLUCINATION}\nEvaluate the complete recording. Assess communication by clarity, relevance, coherence and how easily a listener can follow the response; do not penalise accent or length.\n${RUBRIC}`,
     parts: [{ text: taskInstructions(ex, item, target, Boolean(mode?.strict)) }, { text: "Learner's recording:" }, { inlineData: { mimeType: "audio/wav", data: audio.base64 } }],
     schema: schemaFor(ex),
     parse: (raw) => {
@@ -146,7 +180,7 @@ export async function runSpeakingTurn(config: SpeakingConfig, item: SpeakingItem
     scores.fluency = Math.round(scores.fluency * 0.5 + deliveryScore(tm, audio.va) * 0.5);
   }
   const weights: Record<string, number> = ex.kind === "twister" && mode?.strict ? { accuracy: 2, pronunciation: 2, clarity: 1, speed: 0.5 } : {};
-  const keys = ex.dims.map((d) => d.key).filter((k) => typeof scores[k] === "number");
+  const keys = ex.dims.map((d) => d.key).filter((k) => k !== "communication" && typeof scores[k] === "number");
   const total = keys.reduce((n, k) => n + (weights[k] ?? 1), 0);
   const overall = Math.round(keys.reduce((n, k) => n + scores[k] * (weights[k] ?? 1), 0) / Math.max(total, 1));
 

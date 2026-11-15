@@ -14,14 +14,21 @@ export function useMic() {
   const [ready, setReady] = useState(false);
 
   const ensure = useCallback(async () => {
-    if (rec.current) return rec.current;
+    let recorder = rec.current;
     try {
-      rec.current = await Recorder.open(() => { setLost(true); setReady(false); rec.current?.close(); rec.current = null; });
+      if (!recorder) {
+        recorder = await Recorder.open(() => { setLost(true); setReady(false); rec.current?.close(); rec.current = null; });
+        rec.current = recorder;
+      }
+      await recorder.resume();
       setProblem(null);
       setLost(false);
       setReady(true);
-      return rec.current;
+      return recorder;
     } catch (e) {
+      recorder?.close();
+      rec.current = null;
+      setReady(false);
       setProblem(e instanceof MicError ? e.problem : "unknown");
       return null;
     }

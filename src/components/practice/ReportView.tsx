@@ -6,30 +6,34 @@ import { Card, DimensionBars, ScoreRing } from "./ui";
 
 export function ReportView({ report }: { report: PracticeReport }) {
   return (
-    <div className="space-y-5">
-      <Card className="grid items-center gap-6 sm:grid-cols-[auto_1fr]">
-        {report.unscored ? <span className="grid h-[132px] w-[132px] place-items-center rounded-full border-[9px] border-border-soft text-3xl font-bold text-muted" aria-label="Not scored">—</span> : <ScoreRing score={report.overall} size={132} label="Overall score" />}
+    <div className="min-w-0 space-y-6">
+      <Card className="grid min-w-0 items-center gap-6 border-l-4 border-l-story-royal p-5 sm:grid-cols-[auto_minmax(0,1fr)] sm:p-7 xl:gap-10">
+        <div className="grid min-w-32 justify-items-center rounded-2xl bg-story-mist px-5 py-4 dark:bg-surface-2">
+          {report.unscored ? <span className="grid h-[132px] w-[132px] place-items-center rounded-full border-[9px] border-border-soft text-3xl font-bold text-muted" aria-label="Not scored">—</span> : <ScoreRing score={report.overall} size={132} label="Overall score" />}
+          <span className="mt-1 text-xs font-semibold text-muted">Overall score</span>
+        </div>
         <div className="min-w-0">
-          <p className="text-xs font-semibold uppercase tracking-wider text-muted">Overall</p>
-          <p className="mt-1 text-xl font-bold" style={{ color: report.unscored ? undefined : bandColor(report.overall) }}>{report.level}</p>
-          <p className="mt-3 text-sm leading-7">{report.summary}</p>
-          {!report.aiSummary && !report.unscored && report.module !== "GD" ? <p className="mt-2 text-xs text-muted">The AI summary was unavailable, so this report was assembled from your per-answer results.</p> : null}
+          <p className="text-sm font-semibold text-story-royal">Your result</p>
+          <p className="mt-1 text-2xl font-bold tracking-tight" style={{ color: report.unscored ? undefined : bandColor(report.overall) }}>{report.level}</p>
+          <p className="mt-3 text-sm leading-7 sm:text-base">{report.summary}</p>
+          {!report.aiSummary && !report.unscored && report.module !== "GD" ? <p className="mt-3 rounded-xl bg-amber-500/10 px-3 py-2 text-xs leading-5 text-amber-800 dark:text-amber-200">The AI summary was unavailable, so this report was assembled from your per-answer results.</p> : null}
         </div>
       </Card>
 
-      <div className={report.dimensions.length ? "grid gap-5 lg:grid-cols-[1fr_20rem]" : "grid gap-5"}>
+      <div className={report.dimensions.length ? "grid min-w-0 gap-5 xl:grid-cols-[minmax(0,1.3fr)_minmax(18rem,0.7fr)]" : "grid gap-5"}>
         {report.dimensions.length ? (
-          <Card>
-            <p className="mb-4 text-sm font-semibold">Score breakdown</p>
+          <Card className="p-5 sm:p-7">
+            <p className="mb-5 text-lg font-bold tracking-tight">Score breakdown</p>
             <DimensionBars dims={report.dimensions} />
           </Card>
         ) : null}
-        <Card>
-          <dl className="grid grid-cols-2 gap-4">
+        <Card className="p-5 sm:p-7">
+          <p className="mb-5 text-lg font-bold tracking-tight">Session details</p>
+          <dl className="grid grid-cols-2 gap-x-4 gap-y-5 sm:grid-cols-3 xl:grid-cols-2">
             {report.stats.map((s) => (
               <div key={s.label}>
-                <dt className="text-[11px] font-semibold uppercase tracking-wider text-muted">{s.label}</dt>
-                <dd className="mt-0.5 text-sm font-semibold">{s.value}</dd>
+                <dt className="text-xs font-medium text-muted">{s.label}</dt>
+                <dd className="mt-1 text-sm font-semibold">{s.value}</dd>
               </div>
             ))}
           </dl>
@@ -43,8 +47,8 @@ export function ReportView({ report }: { report: PracticeReport }) {
 
 function Section({ section }: { section: ReportSection }) {
   return (
-    <Card>
-      <h2 className="text-base font-bold text-story-navy dark:text-foreground">{section.title}</h2>
+    <Card className="p-5 sm:p-7">
+      <h2 className="border-b border-border-soft pb-3 text-lg font-bold tracking-tight text-story-navy dark:text-foreground">{section.title}</h2>
       <div className="mt-3">
         {section.kind === "text" ? <p className="text-sm leading-7">{section.text}</p> : null}
         {section.kind === "list" ? (

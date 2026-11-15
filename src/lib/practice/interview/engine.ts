@@ -14,6 +14,7 @@ export type InterviewState = {
   /** Questions asked so far; the current question is number `asked`. */
   asked: number;
   current: string;
+  askedQuestions: string[];
   /** Rolling notes about the candidate, so long interviews never resend the full transcript. */
   memory: string;
   recent: { q: string; a: string }[];
@@ -70,7 +71,13 @@ export function startState(config: InterviewConfig, candidateName: string): Inte
   const label = type.label.replace(/ \(.*\)$/, "");
   const what = /interview|round/i.test(label) ? label : `${label} interview`;
   const opener = `${greeting()}, ${first}. I'm ${persona.name}, and I'll be taking your ${what}${roleText} today. Please answer as you would in a real interview. Let's begin. Tell me about yourself.`;
-  return { plan: stagePlan(type, total), asked: 1, current: opener, memory: "", recent: [], done: false };
+  return { plan: stagePlan(type, total), asked: 1, current: opener, askedQuestions: [], memory: "", recent: [], done: false };
+}
+
+export function expandInterviewState(config: InterviewConfig, state: InterviewState): InterviewState {
+  const total = LENGTHS.find((length) => length.id === config.length)!.questions;
+  if (state.asked !== 1 || state.done || state.plan.length >= total) return state;
+  return { ...state, plan: stagePlan(typeById(config.type)!, total) };
 }
 
 const TURN_SCHEMA = S.obj({
@@ -142,6 +149,38 @@ Each request gives you the candidate's recorded answer to your current question.
 ${RUBRIC}`;
 }
 
+function fallbackQuestion(config: InterviewConfig, stage: Stage, asked: number) {
+  const type = typeById(config.type)!;
+  const firstFocus = type.focus.split(/[,;]/)[0].trim();
+  const questions: Record<Stage, string[]> = {
+    intro: ["Could you briefly introduce yourself and the experience most relevant to this role?"],
+    resume: ["Which project or experience best shows your strengths for this role?", "What was your specific contribution to a project you mentioned?", "What result from your experience are you most proud of?", "What did you learn from a challenge in your education or work?"],
+    technical: [`Which ${firstFocus} concept would you explain to a new teammate, and why?`, `How would you apply ${firstFocus} to a practical problem?`, `What trade-off should a team consider when using ${firstFocus}?`, `How would you test that a solution using ${firstFocus} works reliably?`, `What common mistake should a beginner avoid when learning ${firstFocus}?`],
+    scenario: ["A deadline moves forward while a key requirement is unclear. How would you decide what to do first and keep the team informed?", "A change causes an unexpected issue just before release. What would you do first?", "Two stakeholders request different priorities. How would you clarify the next step?"],
+    problem: ["How would you break an unfamiliar problem into smaller parts, and how would you check your solution?", "What steps would you take to compare two possible solutions to a difficult problem?", "How would you find the cause of an issue that you cannot reproduce consistently?"],
+    behavioral: ["Tell me about a time you received feedback and changed your approach.", "Describe a time you had to work through a disagreement with a teammate.", "Tell me about a time you took responsibility for a mistake.", "Describe a time you helped a group reach a shared goal."],
+    hr: ["What attracts you to this role, and what would you hope to contribute?", "What kind of work environment helps you do your best work?", "What skill would you like to develop in your next role?", "What motivates you when a task becomes challenging?"],
+    coding: [config.coding ? `Before implementing "${config.coding.title}", how would you explain your approach and the edge cases you would test?` : "How would you explain your approach and the edge cases you would test?", "Which data structure would you consider first for this problem, and why?", "How would you check the solution against boundary cases?"],
+    closing: ["What questions do you have about the role or team?"],
+  };
+  return questions[stage][(asked - 1) % questions[stage].length];
+}
+
+function questionKey(value: string) {
+  return value.toLowerCase().replace(/[^a-z0-9]+/g, " ").trim();
+}
+
+export function selectNextInterviewQuestion(config: InterviewConfig, stage: Stage, questionNumber: number, candidate: string, askedQuestions: string[]) {
+  const isRepeated = (question: string) => askedQuestions.some((asked) => questionKey(asked) === questionKey(question));
+  const cleaned = candidate.trim();
+  if (cleaned && !isRepeated(cleaned)) return cleaned;
+  for (let offset = 0; offset < 5; offset++) {
+    const fallback = fallbackQuestion(config, stage, questionNumber + offset);
+    if (!isRepeated(fallback)) return fallback;
+  }
+  return fallbackQuestion(config, stage, questionNumber);
+}
+
 export type InterviewTurnResult =
   | { kind: "no_speech" }
   | { kind: "ok"; transcript: string; evaluation: TurnEvaluation; metrics: ReturnType<typeof transcriptMetrics> & { delivery: number; speechMs: number; longPauses: number }; reply: string; nextQuestion: string | null; state: InterviewState; aiMs: number };
@@ -194,16 +233,18 @@ export async function runInterviewTurn(config: InterviewConfig, state: Interview
   };
 
   const recent = [...state.recent, { q: state.current.slice(0, 300), a: data.transcript.slice(0, 500) }].slice(-2);
+  const askedQuestions = [...(state.askedQuestions ?? state.recent.map((turn) => turn.q)), state.current];
   let nextQuestion: string | null = null;
   let reply: string;
-  if (isLast || !data.nextQuestion) {
+  if (isLast) {
     reply = "Thank you. That brings us to the end of the interview. I'm preparing your evaluation now.";
   } else {
-    nextQuestion = data.nextQuestion;
-    reply = [data.acknowledgement, data.nextQuestion].filter(Boolean).join(" ");
+    nextQuestion = selectNextInterviewQuestion(config, nextStage!, state.asked + 1, data.nextQuestion, askedQuestions);
+    reply = [data.acknowledgement, nextQuestion].filter(Boolean).join(" ");
   }
   const next: InterviewState = {
     ...state,
+    askedQuestions,
     asked: nextQuestion ? state.asked + 1 : state.asked,
     current: nextQuestion ?? state.current,
     memory: data.memory || state.memory,
@@ -263,8 +304,8 @@ export async function buildInterviewReport(config: InterviewConfig, turns: DoneT
       maxOutputTokens: 6000,
     });
     ai = data;
-  } catch {
-    // Fall back to a report assembled from per-answer results, so the learner always gets one.
+  } catch (e) {
+    console.error("Interview report generation failed", e instanceof Error ? e.name : "Unknown error");
   }
 
   const struggledFallback = turns.filter((t) => t.evaluation.struggled).map((t) => ({ question: t.prompt, issue: t.evaluation.feedback, betterAnswer: t.evaluation.betterAnswer }));

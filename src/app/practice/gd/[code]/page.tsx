@@ -35,7 +35,7 @@ export default async function GdRoomPage({ params }: Props) {
   }
 
   return (
-    <Container className="max-w-5xl py-6 sm:py-8">
+    <Container className="max-w-screen-2xl py-6 sm:py-10">
       <h1 className="sr-only">Group discussion {code}</h1>
       <GdRoom code={code} me={{ id: user.id, name: user.name }} />
     </Container>

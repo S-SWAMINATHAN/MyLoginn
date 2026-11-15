@@ -3,7 +3,6 @@
 import { useEffect, useState } from "react";
 import { Controller, useForm, useWatch } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { useRouter } from "next/navigation";
 import { AnimatePresence, motion } from "framer-motion";
 import { BadgeCheck, Check, Mail, ShieldCheck, Smartphone, UserPlus } from "lucide-react";
 import { signupSchema, type SignupInput } from "@/lib/validation";
@@ -25,7 +24,6 @@ const steps = [
 ];
 
 export default function SignupPage() {
-  const router = useRouter();
   const [step, setStep] = useState(1);
   const [success, setSuccess] = useState(false);
   const [serverError, setServerError] = useState<string | null>(null);
@@ -108,8 +106,7 @@ export default function SignupPage() {
       if (data.role === "STUDENT") {
         setSuccess(true);
         setTimeout(() => {
-          router.push("/dashboard");
-          router.refresh();
+          window.location.assign("/dashboard");
         }, 1300);
         return;
       }
@@ -141,8 +138,7 @@ export default function SignupPage() {
       }
       setSuccess(true);
       setTimeout(() => {
-        router.push("/dashboard");
-        router.refresh();
+        window.location.assign("/dashboard");
       }, 1300);
     } catch {
       setOtpError("Verification failed. Check your connection and try again.");

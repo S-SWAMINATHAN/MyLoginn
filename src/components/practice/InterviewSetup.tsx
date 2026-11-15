@@ -5,6 +5,7 @@ import { useRouter } from "next/navigation";
 import { ArrowRight, FileText } from "lucide-react";
 import { cn } from "@/lib/cn";
 import { Button } from "@/components/ui/Button";
+import { Select } from "@/components/ui/Select";
 import { DIFFICULTIES, INTERVIEW_TYPES, LENGTHS, MAX_RESUME_CHARS, PERSONAS } from "@/lib/practice/interview/config";
 import { Card, postJson } from "./ui";
 
@@ -19,6 +20,10 @@ export function InterviewSetup({ loggedIn }: { loggedIn: boolean }) {
   const [showResume, setShowResume] = useState(false);
   const [busy, setBusy] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const selectedType = INTERVIEW_TYPES.find((t) => t.id === type)!;
+  const selectedDifficulty = DIFFICULTIES.find((d) => d.id === difficulty)?.label ?? difficulty;
+  const selectedPersona = PERSONAS.find((p) => p.id === persona)?.label ?? persona;
+  const selectedLength = LENGTHS.find((l) => l.id === length)?.label ?? length;
 
   const start = async () => {
     if (busy) return;
@@ -30,44 +35,56 @@ export function InterviewSetup({ loggedIn }: { loggedIn: boolean }) {
     else { setError(res.error); setBusy(false); }
   };
 
-  const chip = (active: boolean) => cn("rounded-2xl border px-3.5 py-2.5 text-left text-sm transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-300", active ? "border-story-royal bg-story-royal/10 text-story-royal" : "border-border-soft bg-surface hover:border-story-royal/40");
+  const chip = (active: boolean) => cn("rounded-2xl border px-3.5 py-2.5 text-left text-sm transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-300", active ? "border-[#10264A] bg-[#10264A] text-white" : "border-border-soft bg-surface hover:border-story-royal/50");
 
   return (
-    <div className="grid gap-5 lg:grid-cols-[1fr_22rem]">
-      <Card>
+    <div className="grid min-w-0 gap-6 xl:grid-cols-[minmax(0,1.3fr)_minmax(21rem,0.7fr)] 2xl:grid-cols-[minmax(0,1.45fr)_minmax(23rem,0.65fr)]">
+      <Card className="min-w-0 p-5 sm:p-7 lg:p-8">
         <fieldset>
-          <legend className="text-sm font-semibold">Interview type</legend>
-          <div className="mt-3 grid gap-2 min-[520px]:grid-cols-2 xl:grid-cols-3">
+          <legend className="text-lg font-bold tracking-tight">Choose an interview focus</legend>
+          <p className="mt-1 text-sm leading-6 text-muted">Each format has its own question mix and follow-up style.</p>
+          <div className="mt-5 grid gap-3 min-[520px]:grid-cols-2 2xl:grid-cols-3">
             {INTERVIEW_TYPES.map((t) => (
               <button key={t.id} type="button" aria-pressed={type === t.id} onClick={() => setType(t.id)} className={chip(type === t.id)}>
                 <span className="block font-semibold">{t.label}</span>
-                <span className="mt-0.5 block text-xs leading-5 text-muted">{t.desc}</span>
+                <span className={cn("mt-1 block text-xs leading-5", type === t.id ? "text-blue-100/80" : "text-muted")}>{t.desc}</span>
               </button>
             ))}
           </div>
         </fieldset>
       </Card>
 
-      <div className="space-y-5">
-        <Card className="space-y-5">
-          <fieldset>
-            <legend className="text-sm font-semibold">Difficulty</legend>
-            <div className="mt-2 flex flex-wrap gap-2">
-              {DIFFICULTIES.map((d) => <button key={d.id} type="button" title={d.desc} aria-pressed={difficulty === d.id} onClick={() => setDifficulty(d.id)} className={cn(chip(difficulty === d.id), "py-1.5")}>{d.label}</button>)}
-            </div>
-          </fieldset>
-          <fieldset>
-            <legend className="text-sm font-semibold">Interviewer</legend>
-            <div className="mt-2 grid grid-cols-2 gap-2">
-              {PERSONAS.map((p) => <button key={p.id} type="button" aria-pressed={persona === p.id} onClick={() => setPersona(p.id)} className={cn(chip(persona === p.id), "py-2")}><span className="block font-semibold">{p.label}</span><span className="text-xs text-muted">{p.name}</span></button>)}
-            </div>
-          </fieldset>
-          <fieldset>
-            <legend className="text-sm font-semibold">Length</legend>
-            <div className="mt-2 grid grid-cols-3 gap-2">
-              {LENGTHS.map((l) => <button key={l.id} type="button" aria-pressed={length === l.id} onClick={() => setLength(l.id)} className={cn(chip(length === l.id), "py-2 text-center")}><span className="block font-semibold">{l.label}</span><span className="block text-xs text-muted">{l.questions} questions</span><span className="block text-xs text-muted">{l.note}</span></button>)}
-            </div>
-          </fieldset>
+      <div className="min-w-0 space-y-5 xl:sticky xl:top-32 xl:self-start">
+        <Card className="space-y-5 p-5 sm:p-6">
+          <div className="rounded-2xl bg-[#10264A] p-4 text-white">
+            <p className="text-xs font-semibold text-blue-100/70">Your interview profile</p>
+            <p className="mt-1 text-lg font-bold">{selectedType.label}</p>
+            <p className="mt-1 text-xs leading-5 text-blue-100/75">{selectedDifficulty} · {selectedPersona} interviewer · {selectedLength.toLowerCase()} session</p>
+          </div>
+          <Select
+            label="Difficulty"
+            value={difficulty}
+            onChange={(event) => setDifficulty(event.target.value)}
+            options={DIFFICULTIES.map(({ id, label }) => ({ value: id, label }))}
+          />
+          <p className="-mt-3 text-xs leading-5 text-muted">
+            {DIFFICULTIES.find((item) => item.id === difficulty)?.desc}
+          </p>
+          <Select
+            label="Interviewer"
+            value={persona}
+            onChange={(event) => setPersona(event.target.value)}
+            options={PERSONAS.map(({ id, label, name }) => ({ value: id, label: `${label} · ${name}` }))}
+          />
+          <Select
+            label="Length"
+            value={length}
+            onChange={(event) => setLength(event.target.value)}
+            options={LENGTHS.map(({ id, label, questions, note }) => ({
+              value: id,
+              label: `${label} · ${questions} questions · ${note}`,
+            }))}
+          />
           <label className="block">
             <span className="text-sm font-semibold">Target role <span className="font-normal text-muted">(optional)</span></span>
             <input value={role} onChange={(e) => setRole(e.target.value.slice(0, 80))} placeholder="e.g. QA Automation Engineer" className="mt-2 w-full rounded-2xl border border-border-soft bg-background px-3.5 py-2.5 text-sm outline-none focus:border-story-royal" />

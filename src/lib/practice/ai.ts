@@ -3,9 +3,8 @@ import { after } from "next/server";
 import { prisma } from "@/lib/prisma";
 
 /**
- * Structured (JSON-schema) Gemini calls for Practice: transcription, evaluation and next-question generation.
- * Server-only — the API key never reaches the browser. Every call is timed and logged to PracticeAiLog for the
- * admin performance dashboard.
+ * Structured practice AI calls for transcription, evaluation and next-question generation.
+ * Server-only — provider keys never reach the browser. Every call is timed and logged to PracticeAiLog.
  */
 
 const DEFAULT_MODEL = "gemini-3.8-flash";
@@ -23,9 +22,12 @@ export class AiError extends Error {
 
 /** Practice can use its own key, so enabling it does not switch the site's AI chat (MyBuddy) over to Gemini. */
 const practiceKey = () => process.env.PRACTICE_GEMINI_API_KEY || process.env.GEMINI_API_KEY;
+const practiceOpenAiKey = () => process.env.PRACTICE_OPENAI_API_KEY;
+type Provider = "gemini" | "openai";
+const provider = (): Provider => process.env.PRACTICE_AI_PROVIDER === "openai" ? "openai" : "gemini";
 
 export function isAiConfigured() {
-  return Boolean(practiceKey());
+  return Boolean(provider() === "openai" ? practiceOpenAiKey() : practiceKey());
 }
 
 export type AiPart = { text: string } | { inlineData: { mimeType: string; data: string } };
@@ -73,12 +75,113 @@ type CallOptions<T> = {
 
 /** Primary model, then fallbacks used only when a model is rate-limited (quotas are per model). */
 function models() {
+  if (provider() === "openai") return [process.env.PRACTICE_OPENAI_MODEL || "gpt-4o-mini"];
   const primary = process.env.PRACTICE_GEMINI_MODEL || process.env.GEMINI_MODEL || DEFAULT_MODEL;
   const fallbacks = (process.env.PRACTICE_GEMINI_FALLBACK_MODELS ?? DEFAULT_FALLBACKS).split(",").map((m) => m.trim()).filter((m) => m && m !== primary);
   return [primary, ...fallbacks];
 }
 
-async function once(opts: CallOptions<unknown>, signal: AbortSignal, model: string) {
+function openAiSchema(schema: Schema): Record<string, unknown> {
+  const description = "description" in schema && schema.description ? { description: schema.description } : {};
+  switch (schema.type) {
+    case "STRING":
+      return { type: "string", ...("enum" in schema && schema.enum ? { enum: schema.enum } : {}), ...description };
+    case "INTEGER":
+      return { type: "integer", ...description };
+    case "NUMBER":
+      return { type: "number", ...description };
+    case "BOOLEAN":
+      return { type: "boolean", ...description };
+    case "ARRAY":
+      return { type: "array", items: openAiSchema(schema.items), ...description };
+    case "OBJECT":
+      return {
+        type: "object",
+        properties: Object.fromEntries(Object.entries(schema.properties).map(([key, value]) => [key, openAiSchema(value)])),
+        required: schema.required ?? Object.keys(schema.properties),
+        additionalProperties: false,
+        ...description,
+      };
+  }
+}
+
+async function checkOpenAiResponse(res: Response) {
+  if (res.status === 401 || res.status === 403) {
+    console.error("Practice OpenAI rejected:", res.status, (await res.text().catch(() => "")).slice(0, 300));
+    throw new AiError("auth");
+  }
+  if (res.status === 429) throw new AiError("rate_limited");
+  if (res.status >= 500) throw new AiError("unavailable");
+  if (!res.ok) {
+    console.error("Practice OpenAI bad request:", res.status, (await res.text().catch(() => "")).slice(0, 300));
+    throw new AiError("unavailable");
+  }
+}
+
+async function onceOpenAi(opts: CallOptions<unknown>, signal: AbortSignal, model: string) {
+  const key = practiceOpenAiKey();
+  if (!key) throw new AiError("not_configured");
+  try {
+    const textParts = opts.parts.filter((part): part is { text: string } => "text" in part).map((part) => part.text);
+    const audioParts = opts.parts.filter((part): part is { inlineData: { mimeType: string; data: string } } => "inlineData" in part);
+    for (const [index, part] of audioParts.entries()) {
+      const upload = new FormData();
+      upload.set("model", process.env.PRACTICE_OPENAI_TRANSCRIPTION_MODEL || "gpt-4o-mini-transcribe");
+      upload.set("file", new Blob([Buffer.from(part.inlineData.data, "base64")], { type: part.inlineData.mimeType }), `practice-${index + 1}.wav`);
+      const transcribed = await fetch("https://api.openai.com/v1/audio/transcriptions", {
+        method: "POST",
+        signal,
+        headers: { Authorization: `Bearer ${key}` },
+        body: upload,
+      });
+      await checkOpenAiResponse(transcribed);
+      const result = await transcribed.json().catch(() => null) as { text?: unknown } | null;
+      if (typeof result?.text !== "string") throw new AiError("invalid_output");
+      textParts.push(`Transcribed learner audio (verbatim):\n${result.text}`);
+    }
+
+    const res = await fetch("https://api.openai.com/v1/chat/completions", {
+      method: "POST",
+      signal,
+      headers: { "Content-Type": "application/json", Authorization: `Bearer ${key}` },
+      body: JSON.stringify({
+        model,
+        messages: [
+          { role: "system", content: opts.system },
+          { role: "user", content: textParts.join("\n\n") },
+        ],
+        response_format: {
+          type: "json_schema",
+          json_schema: {
+            name: "practice_evaluation",
+            strict: true,
+            schema: openAiSchema(opts.schema),
+          },
+        },
+        temperature: opts.temperature ?? 0.2,
+        max_completion_tokens: opts.maxOutputTokens ?? 4096,
+      }),
+    });
+    await checkOpenAiResponse(res);
+    const body = await res.json().catch(() => null) as { choices?: { message?: { content?: unknown } }[] } | null;
+    const content = body?.choices?.[0]?.message?.content;
+    if (typeof content !== "string") throw new AiError("invalid_output");
+    let raw: unknown;
+    try {
+      raw = JSON.parse(content);
+    } catch {
+      throw new AiError("invalid_output");
+    }
+    const parsed = opts.parse(raw);
+    if (parsed === null) throw new AiError("invalid_output");
+    return parsed;
+  } catch (error) {
+    if (error instanceof AiError) throw error;
+    throw new AiError(signal.aborted ? "timeout" : "unavailable");
+  }
+}
+
+async function onceGemini(opts: CallOptions<unknown>, signal: AbortSignal, model: string) {
   let res: Response;
   try {
     res = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/${encodeURIComponent(model)}:generateContent`, {
@@ -122,6 +225,12 @@ async function once(opts: CallOptions<unknown>, signal: AbortSignal, model: stri
   const parsed = opts.parse(raw);
   if (parsed === null) throw new AiError("invalid_output");
   return parsed;
+}
+
+async function once(opts: CallOptions<unknown>, signal: AbortSignal, model: string) {
+  return provider() === "openai"
+    ? onceOpenAi(opts, signal, model)
+    : onceGemini(opts, signal, model);
 }
 
 /**

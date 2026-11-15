@@ -46,6 +46,7 @@ const DIM_ADVICE: Record<string, { label: string; href: string; module: string }
   content: { label: "answer content", href: "/practice/interview", module: "AI Mock Interview" },
   technical: { label: "technical knowledge", href: "/logiquest/technical-interview", module: "Technical Interview Q&A" },
   comprehension: { label: "listening", href: "/practice/speaking?kind=comprehension", module: "Listen & Comprehend" },
+  communication: { label: "communication", href: "/practice/speaking", module: "Speaking Lab" },
   accuracy: { label: "word accuracy", href: "/practice/speaking?kind=repeat", module: "Listen & Repeat" },
   clarity: { label: "clarity", href: "/practice/speaking?kind=twister", module: "Tongue Twisters" },
   confidence: { label: "confidence", href: "/practice/speaking?kind=fluency", module: "Fluency Training" },
@@ -97,7 +98,10 @@ export async function getPracticeOverview(userId: string) {
 
   const scores: Record<Area, number | null> = {
     interview: recentMean(byArea.get("interview")),
-    communication: recentMean(byArea.get("communication")),
+    communication: recentMean((byArea.get("communication") ?? []).map((s) => {
+      const score = (s.scores as Record<string, number> | null)?.communication;
+      return typeof score === "number" ? { ...s, score } : s;
+    })),
     fluency: recentMean(byArea.get("fluency")),
     gd: recentMean(byArea.get("gd")),
     technical,

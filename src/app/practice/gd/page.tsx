@@ -1,7 +1,7 @@
 import { getCurrentUser } from "@/lib/auth";
 import { Container } from "@/components/ui/Section";
-import { PageTitle } from "@/components/logiquest/ui";
 import { GdStart } from "@/components/practice/GdStart";
+import { PracticeHero } from "@/components/practice/PracticeHero";
 import { createPageMetadata } from "@/lib/seo";
 
 export const metadata = createPageMetadata({
@@ -15,8 +15,17 @@ export const metadata = createPageMetadata({
 export default async function GdPage() {
   const user = await getCurrentUser();
   return (
-    <Container className="max-w-7xl space-y-6 py-6 sm:py-10">
-      <PageTitle eyebrow="Group Discussion" title="Practise GDs the way companies run them." sub="2-6 participants, a topic, a timer and a silent AI judge that evaluates everyone on the whole discussion — communication, logic, teamwork, leadership and more." />
+    <Container className="max-w-screen-2xl space-y-7 py-6 sm:py-10">
+      <PracticeHero
+        eyebrow="Group discussion room"
+        title="Make your point. Make space for others."
+        description="Practise a live group discussion with friends. Share a room code, prepare your points, and get feedback on communication, reasoning and teamwork."
+        facts={[
+          { value: "2–6", label: "people in a room" },
+          { value: "Live", label: "browser voice chat" },
+          { value: "Fair", label: "individual feedback" },
+        ]}
+      />
       <GdStart loggedIn={Boolean(user)} />
     </Container>
   );

@@ -2,13 +2,14 @@
 
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { useRouter } from "next/navigation";
-import { ArrowRight, Eye, Flag, Mic, RotateCcw, Square, Timer, Trophy, Volume2 } from "lucide-react";
+import { ArrowRight, ChevronDown, Eye, Flag, Mic, RotateCcw, Square, Timer, Trophy, Volume2 } from "lucide-react";
 import { cn } from "@/lib/cn";
 import { Button } from "@/components/ui/Button";
 import { VoicePlayer } from "@/lib/practice/client/voice";
 import { useMic, useTicker } from "@/lib/practice/client/useMic";
 import type { Recording } from "@/lib/practice/client/recorder";
 import type { Alignment } from "@/lib/practice/speech";
+import { speakingProgressLabels } from "@/lib/practice/speaking/content";
 import { Scene } from "./Scenes";
 import { Card, Chip, LevelMeter, MicHelp, ScoreRing, Working, fmtClock, postJson, sendForm } from "./ui";
 
@@ -79,6 +80,7 @@ export function SpeakingRoom(props: SpeakingRoomProps) {
   const [hasPending, setHasPending] = useState(false);
   const item = props.items[pos];
   const isLast = pos >= props.items.length - 1;
+  const progressLabels = useMemo(() => speakingProgressLabels(props.items), [props.items]);
 
   const go = useCallback((from: Phase[], to: Phase) => {
     if (!from.includes(phaseRef.current)) return false;
@@ -122,7 +124,12 @@ export function SpeakingRoom(props: SpeakingRoomProps) {
     player.stop();
     setNotice(null);
     setError(null);
-    await rec.start();
+    try {
+      await rec.start();
+    } catch {
+      go(["recording"], "ready");
+      setNotice("The microphone could not start recording. Check its permission and try again.");
+    }
   };
 
   const submit = useCallback(async (attemptPos: number) => {
@@ -191,9 +198,9 @@ export function SpeakingRoom(props: SpeakingRoomProps) {
   const seconds = ticking / 1000;
 
   return (
-    <div className="grid gap-5 lg:grid-cols-[1fr_19rem]">
+    <div className="grid min-w-0 gap-6 xl:grid-cols-[minmax(0,1fr)_20rem] 2xl:grid-cols-[minmax(0,1fr)_24rem]">
       <div className="min-w-0 space-y-5">
-        <Card>
+        <Card className="min-w-0 border-0 p-5 shadow-[var(--shadow-soft)] sm:p-7 lg:p-9">
           <div className="flex flex-wrap items-center justify-between gap-2">
             <div className="flex flex-wrap items-center gap-2">
               <Chip tone="brand">Item {pos + 1} / {props.items.length}</Chip>
@@ -206,7 +213,7 @@ export function SpeakingRoom(props: SpeakingRoomProps) {
             </div>
           </div>
 
-          {item.scene ? <div className="mt-4 overflow-hidden rounded-2xl border border-border-soft"><Scene id={item.scene} title={item.sceneTitle ?? "Picture"} className="h-auto w-full" /></div> : null}
+          {item.scene ? <div className="mt-5 overflow-hidden rounded-2xl border border-border-soft bg-story-mist dark:bg-surface-2"><Scene id={item.scene} title={item.sceneTitle ?? "Picture"} className="mx-auto max-h-[min(62vw,40rem)] w-full object-contain" /></div> : null}
 
           <div className="mt-5">
             {showText ? (
@@ -285,18 +292,24 @@ export function SpeakingRoom(props: SpeakingRoomProps) {
         {phase === "result" && result ? <AttemptResult result={result} dims={props.dims} /> : null}
       </div>
 
-      <aside className="space-y-4">
-        <Card>
-          <p className="text-xs font-semibold uppercase tracking-wider text-muted">Progress</p>
-          <ol className="mt-3 space-y-1.5 text-sm">
+      <aside className="min-w-0 space-y-4 xl:sticky xl:top-32 xl:self-start">
+        <details className="group rounded-3xl border border-border-soft bg-surface p-4 sm:p-5">
+          <summary className="flex cursor-pointer list-none items-center justify-between gap-3 rounded-xl text-sm font-semibold marker:hidden focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-story-royal [&::-webkit-details-marker]:hidden">
+            <span>Progress</span>
+            <span className="flex items-center gap-2 text-xs font-medium text-muted">
+              <span>{Math.min(props.items.length, pos + (attempts > 0 || phase === "result" ? 1 : 0))} / {props.items.length} complete</span>
+              <ChevronDown aria-hidden className="h-4 w-4 transition-transform group-open:rotate-180" />
+            </span>
+          </summary>
+          <ol className="mt-3 max-h-72 space-y-1.5 overflow-y-auto text-sm">
             {props.items.map((it, i) => (
               <li key={it.id} className={cn("flex items-center gap-2", i === pos ? "font-semibold text-story-royal" : i < pos ? "text-muted line-through decoration-1" : "text-muted")}>
                 <span className="grid h-5 w-5 shrink-0 place-items-center rounded-full bg-story-mist text-[10px] font-bold dark:bg-surface-2">{i + 1}</span>
-                <span className="truncate">{it.hidden && i >= pos ? "Listening item" : it.target ? it.display : it.display.slice(0, 48)}</span>
+                <span className="truncate">{it.hidden && i >= pos ? `Listening item ${i + 1}` : progressLabels[i]}</span>
               </li>
             ))}
           </ol>
-        </Card>
+        </details>
         <Card className="text-xs leading-5 text-muted">Scores follow one rubric: 90+ Excellent · 80-89 Very good · 70-79 Good · 60-69 Needs improvement. Retries never lower your report score — the best attempt per item counts.</Card>
       </aside>
     </div>
