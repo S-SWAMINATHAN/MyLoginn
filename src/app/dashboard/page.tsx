@@ -32,7 +32,13 @@ export default async function DashboardPage() {
 
   // Visiting the dashboard counts as the day's activity: sessions last 30
   // days, so most days never touch the login route. Idempotent per day.
-  await recordDailyActivity(user.id);
+  // Activity tracking awards points, but it must never prevent the learner
+  // from opening their dashboard if the ledger or notification write fails.
+  try {
+    await recordDailyActivity(user.id);
+  } catch (error) {
+    console.error("Dashboard: unable to record daily activity", error);
+  }
 
   const streak = await getStreakSummary(user.id);
   const [leaderboardWeek, leaderboardAll] = await Promise.all([getLeaderboard(user.id, 7), getLeaderboard(user.id)]);
