@@ -1,4 +1,5 @@
 import { NextResponse } from "next/server";
+import OpenAI from "openai";
 import { prisma } from "@/lib/prisma";
 import { CONTACT_EMAIL, CONTACT_PHONES, CONTACT_HOURS, WHATSAPP_PHONE } from "@/lib/contactInfo";
 import { HIDE_TUTORING } from "@/lib/hiddenSections";
@@ -145,9 +146,62 @@ export async function POST(req: Request) {
   const history = rawMessages.slice(-MAX_TURNS);
   const topics = detectTopics(history.filter((m) => m.role === "user").map((m) => m.content));
 
+  const apiKey = process.env.OPENAI_API_KEY;
+  if (!apiKey) {
+    return NextResponse.json({ error: "The chat assistant is not configured. Add OPENAI_API_KEY to the server environment." }, { status: 503 });
+  }
+
   const system = await buildSystemPrompt(topics);
-  return NextResponse.json(
-    { systemPrompt: system },
-    { headers: { "Cache-Control": "no-store" } }
-  );
+  const abortController = new AbortController();
+  req.signal.addEventListener("abort", () => abortController.abort(), { once: true });
+
+  let openAIStream;
+  try {
+    const client = new OpenAI({ apiKey });
+    openAIStream = await client.responses.create({
+      model: process.env.OPENAI_CHAT_MODEL || "gpt-6-luna",
+      instructions: system,
+      input: history.map(({ role, content }) => ({ role, content })),
+      max_output_tokens: 1024,
+      store: false,
+      stream: true,
+    }, { signal: abortController.signal });
+  } catch (error) {
+    console.error("OpenAI chat request could not start", error);
+    const status = error instanceof OpenAI.APIError && error.status === 401 ? 503 : 502;
+    const message = error instanceof OpenAI.APIError && error.status === 401
+      ? "The OpenAI API key is invalid. Check OPENAI_API_KEY in the server environment."
+      : error instanceof OpenAI.APIError && error.status === 429
+        ? "The OpenAI service is busy or its usage limit has been reached. Please try again later."
+        : "The chat assistant could not connect. Please try again shortly.";
+    return NextResponse.json({ error: message }, { status });
+  }
+
+  const encoder = new TextEncoder();
+  const bodyStream = new ReadableStream<Uint8Array>({
+    async start(controller) {
+      try {
+        for await (const event of openAIStream) {
+          if (event.type === "response.output_text.delta") controller.enqueue(encoder.encode(event.delta));
+          if (event.type === "response.failed") throw new Error(event.response.error?.message || "OpenAI response failed");
+          if (event.type === "error") throw new Error(event.message || "OpenAI response failed");
+        }
+        controller.close();
+      } catch (error) {
+        if (!abortController.signal.aborted) console.error("OpenAI chat stream failed", error);
+        controller.error(error);
+      }
+    },
+    cancel() {
+      abortController.abort();
+    },
+  });
+
+  return new Response(bodyStream, {
+    headers: {
+      "Cache-Control": "no-store, no-transform",
+      "Content-Type": "text/plain; charset=utf-8",
+      "X-Accel-Buffering": "no",
+    },
+  });
 }

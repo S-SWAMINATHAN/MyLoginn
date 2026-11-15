@@ -3,7 +3,6 @@
 import Link from "next/link";
 import { Fragment, useCallback, useEffect, useRef, useState, type ReactNode } from "react";
 import { AnimatePresence, motion } from "framer-motion";
-import Script from "next/script";
 import {
   ArrowDown,
   BookOpen,
@@ -32,21 +31,6 @@ import { CONTACT_EMAIL, CONTACT_PHONES, WHATSAPP_PHONE } from "@/lib/contactInfo
 export const OPEN_AGENT_EVENT = "myloginn:open-agent";
 
 type ChatMessage = { role: "user" | "assistant"; content: string };
-
-type PuterStream = AsyncIterable<{ text?: string }>;
-
-declare global {
-  interface Window {
-    puter?: {
-      ai: {
-        chat: (
-          prompt: string,
-          options: { stream: true; signal: AbortSignal; max_tokens: number }
-        ) => Promise<PuterStream>;
-      };
-    };
-  }
-}
 
 /** The first four are shown on the welcome screen; the rest are offered as follow-ups. */
 const SUGGESTIONS: { text: string; icon: LucideIcon }[] = [
@@ -165,7 +149,6 @@ export function AiAgentWidget() {
   const [input, setInput] = useState("");
   const [loading, setLoading] = useState(false);
   const [atBottom, setAtBottom] = useState(true);
-  const [puterLoadError, setPuterLoadError] = useState(false);
   const scrollRef = useRef<HTMLDivElement>(null);
   const inputRef = useRef<HTMLTextAreaElement>(null);
   const abortRef = useRef<AbortController | null>(null);
@@ -250,8 +233,6 @@ export function AiAgentWidget() {
       }, 60_000);
 
       try {
-        if (!window.puter) throw new Error(puterLoadError ? "Puter.js failed to load" : "Puter.js has not loaded");
-
         const res = await fetch("/api/chat", {
           method: "POST",
           headers: { "Content-Type": "application/json" },
@@ -264,27 +245,26 @@ export function AiAgentWidget() {
           appendToReply(() => data?.error ?? "Something went wrong on our side. Please try again in a moment.");
           return;
         }
-
-        const data = (await res.json()) as { systemPrompt?: string };
-        if (!data.systemPrompt) throw new Error("Chat instructions were not returned");
-        const transcript = history
-          .map(({ role, content }) => `${role === "user" ? "User" : "Assistant"}: ${content}`)
-          .join("\n");
-        const prompt = `${data.systemPrompt}\n\nConversation:\n${transcript}\nAssistant:`;
-        const stream = await window.puter.ai.chat(prompt, {
-          stream: true,
-          signal: controller.signal,
-          max_tokens: 1024,
-        });
+        if (!res.body) throw new Error("The chat service returned an empty response");
+        const reader = res.body.getReader();
+        const decoder = new TextDecoder();
         let responseText = "";
-        for await (const part of stream) {
-          if (part.text) {
-            responseText += part.text;
-            appendToReply((prev) => prev + part.text);
+        while (true) {
+          const { done, value } = await reader.read();
+          if (done) break;
+          const delta = decoder.decode(value, { stream: true });
+          if (delta) {
+            responseText += delta;
+            appendToReply((prev) => prev + delta);
           }
         }
+        const finalDelta = decoder.decode();
+        if (finalDelta) {
+          responseText += finalDelta;
+          appendToReply((prev) => prev + finalDelta);
+        }
         if (controller.signal.aborted) throw new DOMException("Aborted", "AbortError");
-        if (!responseText) throw new Error("Puter returned an empty response");
+        if (!responseText) throw new Error("OpenAI returned an empty response");
       } catch (err) {
         if (timedOut) {
           appendToReply((prev) => prev || "The response took too long. Please try again.");
@@ -292,11 +272,7 @@ export function AiAgentWidget() {
           appendToReply((prev) =>
             prev
               ? prev
-              : err instanceof Error && err.message === "Puter.js has not loaded"
-                ? "The chat service is still loading. Please try again shortly."
-                : err instanceof Error && err.message === "Puter.js failed to load"
-                  ? "Puter AI could not load. Check your connection or browser content-blocking settings."
-                : "Puter AI could not complete this request. Sign in if prompted, or try again later."
+              : "OpenAI could not complete this request. Please try again later."
           );
         } else {
           appendToReply((prev) => prev || "Stopped.");
@@ -307,7 +283,7 @@ export function AiAgentWidget() {
         setLoading(false);
       }
     },
-    [messages, loading, puterLoadError]
+    [messages, loading]
   );
 
   const lastIdx = messages.length - 1;
@@ -319,12 +295,6 @@ export function AiAgentWidget() {
 
   return (
     <>
-      <Script
-        src="https://js.puter.com/v2/"
-        strategy="afterInteractive"
-        onReady={() => setPuterLoadError(false)}
-        onError={() => setPuterLoadError(true)}
-      />
       {/* Chat panel — anchored to the bottom-right corner on every breakpoint */}
       <AnimatePresence>
         {open && (
@@ -529,7 +499,7 @@ export function AiAgentWidget() {
                 )}
               </div>
               <p className="mt-1.5 flex items-center justify-between px-1 text-[10px] text-muted">
-                <span>Puter AI; sign-in or usage limits may apply · Enter to send</span>
+                <span>Powered by OpenAI · Enter to send</span>
                 {input.length > MAX_CHARS * 0.8 && (
                   <span className={input.length >= MAX_CHARS ? "text-danger" : undefined}>
                     {input.length}/{MAX_CHARS}

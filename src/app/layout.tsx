@@ -114,9 +114,7 @@ export default async function RootLayout({
             <HideOnAdmin>
               <Footer />
               <MobileBottomNav user={navUser} />
-              <div hidden>
-                <AiAgentWidget />
-              </div>
+              <AiAgentWidget />
               <ProjectRequestModal />
             </HideOnAdmin>
           </ThemeProvider>
