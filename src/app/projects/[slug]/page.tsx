@@ -78,12 +78,24 @@ function ClientProjectDetail({ project }: { project: ClientProject }) {
   const accent = accents[project.artKey] ?? accents.platform;
   const others = clientProjects.filter((p) => p.slug !== project.slug);
   const isMobile = project.platform === "mobile";
-  const host = project.url ? new URL(project.url).hostname.replace(/^www\./, "") : "Preview coming soon";
+  const isDesktop = project.platform === "desktop";
+  const host = project.url
+    ? new URL(project.url).hostname.replace(/^www\./, "")
+    : isLive
+      ? "Private client project"
+      : "Preview coming soon";
+  const platformFact = isMobile
+    ? { label: "Platform", value: "Mobile app" }
+    : isDesktop
+      ? { label: "Platform", value: "Desktop application" }
+      : project.url
+        ? { label: "Website", value: host }
+        : { label: "Access", value: host };
   const facts = [
     { label: "Category", value: project.category },
     { label: "Status", value: isLive ? "Live in production" : "In development" },
     { label: "Delivered by", value: "MyLoginn" },
-    isMobile ? { label: "Platform", value: "Mobile app" } : { label: "Website", value: host },
+    platformFact,
   ];
   const gradient = accent.from;
 
@@ -103,10 +115,12 @@ function ClientProjectDetail({ project }: { project: ClientProject }) {
             <h1 className="mt-4 text-4xl font-semibold leading-[1.05] tracking-tight sm:mt-5 sm:text-6xl sm:leading-[1.02] lg:text-7xl">{project.name}</h1>
             <p className="mt-4 max-w-2xl text-base leading-7 text-white/85 sm:mt-5 sm:text-xl sm:leading-relaxed">{project.longDescription}</p>
             <div className="mt-7 grid gap-3 sm:mt-8 sm:flex sm:flex-wrap sm:items-center">
-              {isLive ? (
+              {isLive && project.url ? (
                 <a href={project.url} target="_blank" rel="noreferrer" className="inline-flex items-center justify-center gap-2 rounded-full bg-white px-7 py-3.5 text-sm font-semibold text-slate-900 shadow-xl shadow-black/20 transition hover:-translate-y-0.5 hover:shadow-2xl">
                   <ExternalLink className="h-4 w-4" /> Visit live website
                 </a>
+              ) : isLive ? (
+                <span className="inline-flex items-center justify-center gap-2 rounded-full bg-white/15 px-6 py-3.5 text-sm font-semibold ring-1 ring-white/25 backdrop-blur">Private client project</span>
               ) : (
                 <span className="inline-flex items-center justify-center gap-2 rounded-full bg-white/15 px-6 py-3.5 text-sm font-semibold ring-1 ring-white/25 backdrop-blur"><Construction className="h-4 w-4" /> Public preview coming soon</span>
               )}
@@ -136,7 +150,7 @@ function ClientProjectDetail({ project }: { project: ClientProject }) {
               </div>
               <div className="relative aspect-[16/10] overflow-hidden">
                 {isLive ? (
-                  project.fallbackPreview ? <OotyPreview /> : <ProjectThumbnail name={project.name} />
+                  project.fallbackPreview ? <OotyPreview /> : <ProjectThumbnail project={project} />
                 ) : (
                   <div className="flex h-full items-center justify-center bg-slate-900">
                     <span className="inline-flex items-center gap-2 rounded-full border border-white/25 bg-white/10 px-4 py-2 text-sm font-semibold backdrop-blur-sm"><Construction className="h-4 w-4" /> In development</span>

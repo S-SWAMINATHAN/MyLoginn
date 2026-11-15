@@ -12,7 +12,7 @@ const MotionLink = motion.create(Link);
 
 type Tone = "royal" | "navy" | "light" | "outline";
 
-const SHELL = "group relative inline-flex h-11 select-none items-center gap-3 whitespace-nowrap rounded-full py-1.5 pl-5 pr-1.5 text-sm font-medium tracking-[0.01em] transition-shadow duration-300 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 btn-collide disabled:pointer-events-none disabled:opacity-60";
+const SHELL = "group relative flex h-11 w-fit mx-auto md:mx-0 select-none items-center gap-3 whitespace-nowrap rounded-full py-1.5 pl-5 pr-1.5 text-sm font-medium tracking-[0.01em] transition-shadow duration-300 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 btn-collide disabled:pointer-events-none disabled:opacity-60";
 const SURFACE: Record<Tone, string> = {
   royal: "bg-story-royal text-white shadow-[0_10px_24px_-12px_rgba(11,31,77,0.55)] hover:shadow-[0_16px_30px_-14px_rgba(11,31,77,0.7)] [--collide:var(--story-royal)] focus-visible:ring-story-royal",
   navy: "bg-story-navy text-white shadow-[0_10px_24px_-12px_rgba(11,31,77,0.55)] hover:shadow-[0_16px_30px_-14px_rgba(11,31,77,0.7)] [--collide:var(--story-navy)] focus-visible:ring-story-navy",

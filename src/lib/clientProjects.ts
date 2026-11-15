@@ -13,6 +13,8 @@ export type ClientProject = {
   category: string;
   /** Which illustrated card-banner scene to use (see projectCardArt.ts). */
   artKey: CardArtKey;
+  /** Short project-specific result displayed in the visual preview. */
+  cardMetric?: string;
   description: string;
   longDescription: string;
   highlights: string[];
@@ -23,7 +25,7 @@ export type ClientProject = {
   /** What MyLoginn delivered on the project. */
   deliverables?: string[];
   /** Delivery platform; defaults to "web". */
-  platform?: "web" | "mobile";
+  platform?: "web" | "mobile" | "desktop";
   status: "live" | "in-development";
   /** Ooty Nigel Travels blocks being embedded in an iframe — show the
    * hand-built fallback preview instead of trying to load the real site. */
@@ -99,6 +101,69 @@ export const clientProjects: ClientProject[] = [
       { title: "Role-based dashboards", text: "Separate student, mentor and admin dashboards keep every role focused on its own tasks." },
     ],
     deliverables: ["Admin platform design and build", "Student, mentor and admin dashboards", "Payment integration", "Launch and ongoing support"],
+    status: "live",
+  },
+  {
+    slug: "u-tele-services",
+    name: "U Tele Services",
+    url: "",
+    category: "Digital marketing",
+    artKey: "network",
+    cardMetric: "100+ leads generated",
+    description: "Digital marketing for a network company, with 100+ leads generated.",
+    longDescription:
+      "U Tele Services is a network company. MyLoginn supported its digital marketing and lead generation, generating more than 100 leads. The campaign result is presented with a visual data summary.",
+    highlights: ["100+ leads generated", "Network company", "Visual campaign result summary"],
+    audience: "A network services business looking to grow its customer enquiries.",
+    features: [
+      { title: "Lead generation", text: "Digital marketing work focused on bringing relevant enquiries to U Tele Services." },
+      { title: "Results at a glance", text: "A visual campaign summary makes the 100+ generated leads easy to scan." },
+    ],
+    deliverables: ["Digital marketing support", "Lead generation campaign", "Visual summary of campaign results"],
+    status: "live",
+  },
+  {
+    slug: "loginn-digital-jadhagam",
+    name: "Loginn Digital Jadhagam",
+    url: "",
+    category: "Digital marketing",
+    artKey: "jadhagam",
+    cardMetric: "69+ leads generated",
+    description: "Digital marketing that generated 69+ leads for Loginn Digital Jadhagam.",
+    longDescription:
+      "MyLoginn supported digital marketing and lead generation for Loginn Digital Jadhagam, generating more than 69 leads.",
+    highlights: ["69+ leads generated", "Digital marketing", "Lead generation"],
+    deliverables: ["Digital marketing support", "Lead generation campaign", "Campaign result reporting"],
+    status: "live",
+  },
+  {
+    slug: "tcs-creakers-shops",
+    name: "TCS Creakers Shops",
+    url: "",
+    category: "Digital marketing",
+    artKey: "shop-leads",
+    cardMetric: "80+ real leads",
+    description: "Digital marketing for TCS Creakers Shops, generating 80+ real leads.",
+    longDescription:
+      "MyLoginn supported digital marketing and lead generation for TCS Creakers Shops, generating more than 80 real leads.",
+    highlights: ["80+ real leads", "Digital marketing", "Lead generation"],
+    deliverables: ["Digital marketing support", "Lead generation campaign", "Campaign result reporting"],
+    status: "live",
+  },
+  {
+    slug: "tcs-creakers-shop-crm",
+    name: "TCS Creakers Shop CRM",
+    url: "",
+    category: "Desktop CRM application",
+    artKey: "crm",
+    cardMetric: "Desktop CRM",
+    description: "A custom desktop CRM application built for TCS Creakers Shop.",
+    longDescription:
+      "MyLoginn built a desktop customer relationship management application for TCS Creakers Shop. The application is a private business tool and does not have a public website preview.",
+    highlights: ["Desktop application", "CRM for TCS Creakers Shop", "Private business software"],
+    audience: "TCS Creakers Shop staff managing customer relationships for the business.",
+    deliverables: ["Desktop CRM application", "Application setup for TCS Creakers Shop"],
+    platform: "desktop",
     status: "live",
   },
   {

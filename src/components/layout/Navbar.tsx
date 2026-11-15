@@ -76,7 +76,7 @@ const mobileContactLink: MobileLink = {
   icon: "contact",
 };
 
-type NavSection = "home" | "about" | "services" | "projects" | "careers" | "studentnest" | "contact";
+type NavSection = "home" | "about" | "services" | "careers" | "studentnest" | "contact";
 
 const STUDENTNEST_PREFIXES = ["/studentnest", "/courses", "/practice", "/logiquest", "/leaderboard", "/coding-competition", "/internships", "/dashboard"];
 
@@ -86,7 +86,6 @@ function navSection(pathname: string): NavSection | null {
   if (pathname === "/") return "home";
   if (under("/about")) return "about";
   if (under("/services")) return "services";
-  if (under("/projects")) return "projects";
   if (under("/careers")) return "careers";
   if (STUDENTNEST_PREFIXES.some(under)) return "studentnest";
   if (under("/contact")) return "contact";
@@ -146,7 +145,6 @@ export function Navbar({ user }: { user: NavUser }) {
         <div className="hidden lg:flex items-center gap-1">
           <NavHeaderLink href="/" active={section === "home"}>Home</NavHeaderLink>
           <NavHeaderLink href="/about" active={section === "about"}>About</NavHeaderLink>
-          <NavHeaderLink href="/projects" active={section === "projects"}>Projects</NavHeaderLink>
 
           <div
             className="group relative"

@@ -6,7 +6,7 @@ import { usePathname, useRouter } from "next/navigation";
 import { AnimatePresence, motion } from "framer-motion";
 import {
   BarChart3, Bell, BookOpen, Briefcase, CalendarDays, ChevronsLeft, CircleUserRound, CreditCard, ExternalLink, FolderKanban, GraduationCap,
-  Award, Code2, Inbox, Layers, LayoutDashboard, LogOut, Mail, Menu, Mic2, Search, Settings, Sparkles, Trophy, UserCog, Users, X, type LucideIcon,
+  Award, Code2, Inbox, Layers, LayoutDashboard, LogOut, Mail, Menu, Mic2, Search, Settings, Sparkles, Trophy, UserCog, Users, X, MessageSquareQuote, type LucideIcon,
 } from "lucide-react";
 import { cn } from "@/lib/cn";
 import { Avatar } from "@/components/ui/Avatar";
@@ -34,6 +34,7 @@ const NAV_GROUPS: { label: string; items: NavItem[] }[] = [
   {
     label: "People",
     items: [
+      { href: "/admin/company", label: "Team & Reviews", icon: MessageSquareQuote, keywords: "about team categories testimonials customer reviews approval" },
       { href: "/admin/users", label: "Users", icon: Users },
       { href: "/admin/mentors", label: "Mentors", icon: UserCog },
       { href: "/admin/tutoring", label: "Tutoring", icon: CalendarDays },

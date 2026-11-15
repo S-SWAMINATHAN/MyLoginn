@@ -70,7 +70,7 @@ export default async function ProjectsPage() {
           <Reveal><span className="story-eyebrow">Real client work</span></Reveal>
           <h2 className="story-subheading mt-3 text-story-navy dark:text-foreground">Projects we&apos;ve shipped</h2>
           <p className="mt-3 max-w-xl text-sm leading-7 text-muted sm:text-base">
-            Live websites and products MyLoginn has built and continues to run for real businesses.
+            Client websites, marketing campaigns and business software delivered by MyLoginn.
           </p>
 
           <div className="mt-8 grid grid-cols-1 gap-6 sm:grid-cols-2 sm:gap-7 lg:grid-cols-4">

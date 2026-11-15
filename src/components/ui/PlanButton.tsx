@@ -42,7 +42,7 @@ export function PlanButton({ label, onClick, tone = "royal" }: { label: string; 
       variants={{ rest: { y: 0 }, hover: { y: 0 } }}
       transition={{ duration: 0.4, ease: [0.22, 1, 0.36, 1] }}
       className={cn(
-        "group relative isolate inline-flex h-11 cursor-pointer select-none items-center gap-3 overflow-hidden rounded-full py-1.5 pl-5 pr-1.5 text-sm font-medium tracking-[0.01em] shadow-[0_8px_20px_-10px_rgba(31,86,214,0.7)] ring-1 ring-inset hover:shadow-[0_14px_28px_-12px_rgba(31,86,214,0.8)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-offset-2",
+        "group relative isolate flex h-11 w-fit mx-auto md:mx-0 cursor-pointer select-none items-center gap-3 overflow-hidden whitespace-nowrap rounded-full py-1.5 pl-5 pr-1.5 text-sm font-medium tracking-[0.01em] shadow-[0_8px_20px_-10px_rgba(31,86,214,0.7)] ring-1 ring-inset hover:shadow-[0_14px_28px_-12px_rgba(31,86,214,0.8)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-offset-2",
         "btn-collide",
         light ? "bg-white text-story-royal ring-story-royal/10 [--collide:var(--story-royal)] focus-visible:ring-white" : "bg-story-royal text-white ring-white/15 [--collide:var(--story-royal)] focus-visible:ring-story-royal focus-visible:ring-offset-background"
       )}

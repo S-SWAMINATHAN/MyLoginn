@@ -1,184 +1,141 @@
+import Image from "next/image";
 import Link from "next/link";
-import { Bot, Code2, Handshake, Megaphone, MonitorSmartphone, ShieldCheck, Target, TrendingUp, Users, type LucideIcon } from "lucide-react";
+import { ArrowRight, Code2, ExternalLink, Handshake, Lightbulb, ShieldCheck, Sparkles, Target, TrendingUp, Users, type LucideIcon } from "lucide-react";
 import { JsonLd } from "@/components/seo/JsonLd";
 import { FaqAccordion } from "@/components/ui/FaqAccordion";
-import { Reveal, RevealGroup, RevealItem } from "@/components/ui/Reveal";
-import { Container, Section } from "@/components/ui/Section";
-import { SplitHeadline } from "@/components/experience/SplitHeadline";
-import { IconBadge } from "@/components/ui/IconBadge";
 import { ContentIcon } from "@/components/ui/ContentIcon";
-import { ArrowLink } from "@/components/ui/ArrowLink";
+import { ReviewSection } from "@/components/about/ReviewSection";
 import { CONTACT_EMAIL } from "@/lib/contactInfo";
+import { prisma } from "@/lib/prisma";
 import { createPageMetadata } from "@/lib/seo";
 
 export const metadata = createPageMetadata({
   title: "About MyLoginn",
   absoluteTitle: true,
-  description:
-    "MyLoginn Tech is an India-based IT company building websites, mobile apps, desktop software, AI agents and digital marketing for businesses.",
+  description: "Meet MyLoginn Tech: a technology partner building websites, apps, custom software, AI solutions and digital growth experiences.",
   path: "/about",
   keywords: ["about MyLoginn", "MyLoginn Tech company", "MyLoginn technology company", "MyLoginn IT company"],
 });
+export const dynamic = "force-dynamic";
 
 const offerings = [
-  { title: "Web Development", text: "Websites, portals, dashboards and web platforms that convert and scale.", href: "/services/app-web-development", icon: "webdev", color: "#2563eb" },
-  { title: "App Development", text: "Android, iOS and cross-platform apps built around your customers.", href: "/services/app-web-development", icon: "mobile", color: "#7c3aed" },
-  { title: "Desktop Applications", text: "Custom business software for billing, inventory and operations.", href: "/services/app-web-development", icon: "software", color: "#0891b2" },
-  { title: "AI Agents", text: "Agents and automation that take repetitive work off your team.", href: "/services/ai-development", icon: "ai", color: "#059669" },
-  { title: "Digital Marketing", text: "Meta Ads, Google Ads, SEO and branding that bring customers.", href: "/services/digital-marketing", icon: "marketing", color: "#d97706" },
+  { title: "Website development", text: "Websites, platforms and portals designed around how your customers work.", href: "/services/app-web-development", icon: "webdev" },
+  { title: "Mobile app development", text: "Useful Android, iOS and cross-platform experiences for your customers.", href: "/services/app-web-development", icon: "mobile" },
+  { title: "Custom software", text: "Purpose-built systems for the workflows and needs of your business.", href: "/services/app-web-development", icon: "software" },
+  { title: "Desktop applications", text: "Dependable applications for focused day-to-day business operations.", href: "/services/app-web-development", icon: "software" },
+  { title: "Digital marketing", text: "Search, paid campaigns and content that help customers find you.", href: "/services/digital-marketing", icon: "marketing" },
+  { title: "AI solutions", text: "Practical automation and agents that make repetitive work easier.", href: "/services/ai-development", icon: "ai" },
 ];
 
-const principles: { title: string; description: string; Icon: LucideIcon; color: string }[] = [
-  { title: "Innovation", Icon: Target, color: "#2563eb", description: "We embrace new ideas and modern technology to create better solutions." },
-  { title: "Integrity", Icon: ShieldCheck, color: "#7c3aed", description: "We believe in honesty, transparency and doing what’s right, always." },
-  { title: "Partnership", Icon: Users, color: "#059669", description: "We work as an extension of your team, with clear scope and open communication." },
-  { title: "Impact", Icon: TrendingUp, color: "#d97706", description: "We measure success by what changes for your business after launch." },
+const pillars: { title: string; description: string; Icon: LucideIcon }[] = [
+  { title: "People first", Icon: Users, description: "We start with the people who will use and rely on what we build." },
+  { title: "Impact driven", Icon: Target, description: "We keep the business goal visible through each project decision." },
+  { title: "Ready to grow", Icon: TrendingUp, description: "We plan for solutions that can evolve with the work ahead." },
 ];
 
 const faqs = [
-  { question: "What is MyLoginn Tech?", answer: "MyLoginn Tech is an Indian technology company. MYLOGINN is the company’s primary brand spelling." },
-  { question: "Is MyLoginn the same as MyLogin or My Login?", answer: "No. MyLoginn (with two n's), also written My Loginn, is MyLoginn Tech, an India-based technology company at myloginn.com. It is not related to MyLogin, the school single sign-on service, or to other products with similar names." },
-  { question: "What does MyLoginn do?", answer: "MyLoginn builds websites, mobile apps, desktop applications and AI agents, and runs digital marketing, for startups and businesses in India and worldwide." },
-  { question: "How can I start a project with MyLoginn?", answer: "Use the Contact page to tell the team about your business, your goals and what you want to build. We reply with next steps and a proposed scope." },
+  { question: "What is MyLoginn Tech?", answer: "MyLoginn Tech is an India-based technology company building digital products and growth solutions for businesses." },
+  { question: "What does MyLoginn do?", answer: "MyLoginn builds websites, mobile apps, desktop applications and AI solutions, and provides custom software development and digital marketing." },
+  { question: "How can I start a project with MyLoginn?", answer: "Use the Contact page to tell the team about your business, your goals and what you want to build. We will reply with next steps and a proposed scope." },
 ];
 
-export default function AboutPage() {
+const teamSocials = [
+  { key: "facebookUrl", label: "Facebook", platform: "facebook" },
+  { key: "xUrl", label: "X / Twitter", platform: "x" },
+  { key: "youtubeUrl", label: "YouTube", platform: "youtube" },
+  { key: "instagramUrl", label: "Instagram", platform: "instagram" },
+] as const;
+
+function TeamSocialIcon({ platform }: { platform: (typeof teamSocials)[number]["platform"] }) {
+  if (platform === "facebook") return <svg viewBox="0 0 24 24" aria-hidden="true" className="h-4 w-4 fill-current"><path d="M13.4 21v-8h2.7l.4-3h-3.1V8.1c0-.9.3-1.5 1.5-1.5h1.7V3.9c-.3 0-1.3-.1-2.5-.1-2.5 0-4.2 1.5-4.2 4.4V10H7v3h2.9v8h3.5Z" /></svg>;
+  if (platform === "x") return <svg viewBox="0 0 24 24" aria-hidden="true" className="h-3.5 w-3.5 fill-current"><path d="M18.9 3h2.9l-6.4 7.3L23 21h-5.8l-4.6-6.1L7.2 21H4.3l6.9-7.9L3.8 3h6l4.2 5.6L18.9 3Zm-1 16h1.6L9 4.9H7.3L17.9 19Z" /></svg>;
+  if (platform === "youtube") return <svg viewBox="0 0 24 24" aria-hidden="true" className="h-4 w-4 fill-current"><path d="M23.5 6.2a3 3 0 0 0-2.1-2.1C19.5 3.6 12 3.6 12 3.6s-7.5 0-9.4.5A3 3 0 0 0 .5 6.2 31 31 0 0 0 0 12a31 31 0 0 0 .5 5.8 3 3 0 0 0 2.1 2.1c1.9.5 9.4.5 9.4.5s7.5 0 9.4-.5a3 3 0 0 0 2.1-2.1A31 31 0 0 0 24 12a31 31 0 0 0-.5-5.8ZM9.6 15.6V8.4l6.2 3.6-6.2 3.6Z" /></svg>;
+  return <svg viewBox="0 0 24 24" aria-hidden="true" className="h-4 w-4 fill-none stroke-current" strokeWidth="1.8"><rect x="3.2" y="3.2" width="17.6" height="17.6" rx="5.2" /><circle cx="12" cy="12" r="4.1" /><circle cx="17.7" cy="6.6" r="1" className="fill-current stroke-none" /></svg>;
+}
+
+export default async function AboutPage() {
+  const [profile, categories, reviews] = await Promise.all([
+    prisma.companyProfile.findUnique({ where: { id: "main" } }).catch(() => null),
+    prisma.teamCategory.findMany({ where: { active: true, members: { some: { active: true } } }, include: { members: { where: { active: true }, orderBy: { sortOrder: "asc" } } }, orderBy: [{ sortOrder: "asc" }, { name: "asc" }] }).catch(() => []),
+    prisma.customerReview.findMany({ where: { status: "APPROVED", published: true }, orderBy: [{ sortOrder: "asc" }, { submittedAt: "desc" }], select: { id: true, name: true, company: true, rating: true, content: true, submittedAt: true } }).catch(() => []),
+  ]);
+  const seenMembers = new Set<string>();
+  const uniqueCategories = categories.map((category) => ({
+    ...category,
+    members: category.members.filter((member) => {
+      const key = [member.firstName, member.lastName, member.designation].map((value) => value.trim().replace(/\s+/g, " ").toLocaleLowerCase()).join("|");
+      if (seenMembers.has(key)) return false;
+      seenMembers.add(key);
+      return true;
+    }),
+  })).filter((category) => category.members.length > 0);
+
   return (
-    <Section className="pt-6 sm:pt-10">
+    <main className="overflow-hidden bg-white text-story-navy dark:bg-background dark:text-foreground">
       <JsonLd data={{ "@context": "https://schema.org", "@type": "FAQPage", mainEntity: faqs.map(({ question, answer }) => ({ "@type": "Question", name: question, acceptedAnswer: { "@type": "Answer", text: answer } })) }} />
 
       {/* Hero */}
-      <div className="mx-auto grid w-full min-w-0 max-w-6xl items-center gap-12 px-5 py-10 sm:px-8 lg:grid-cols-[0.92fr_1.08fr] lg:gap-20 lg:py-16">
-        <div className="min-w-0">
-          <Reveal direction="up">
-            <span className="story-eyebrow">About MyLoginn</span>
-          </Reveal>
-          <SplitHeadline as="h1" text="Technology that moves your business forward." className="mt-5 max-w-xl text-4xl font-bold leading-[1.08] tracking-tight text-story-navy sm:text-5xl dark:text-foreground" />
-          <Reveal direction="up" delay={0.15}>
-            <p className="mt-5 max-w-lg text-base leading-8 text-muted sm:text-lg">
-              <strong className="font-semibold text-foreground">MYLOGINN TECH</strong> combines strategy, engineering and growth expertise to build dependable digital products for businesses.
-            </p>
-          </Reveal>
-          <Reveal direction="up" delay={0.25} className="mt-7 flex flex-wrap items-center justify-center gap-3 lg:justify-start">
-            <ArrowLink href="/contact">Start a project</ArrowLink>
-            <Link href="/services" className="btn-sweep rounded-full border border-border-soft bg-surface px-6 py-3 text-sm font-semibold active:scale-95">
-              Explore solutions
-            </Link>
-          </Reveal>
+      <section className="relative isolate border-b border-border-soft bg-[linear-gradient(115deg,#fff_0%,#fff_64%,#f1f6ff_100%)] dark:bg-background">
+        <div className="mx-auto flex w-full max-w-7xl items-center px-4 py-10 sm:px-6 sm:py-14 lg:px-8 lg:py-20">
+          <div className="w-full max-w-5xl">
+            <p className="text-sm font-bold text-brand-700 dark:text-brand-300">About MyLoginn Tech</p>
+            <h1 className="mt-4 max-w-[22ch] text-4xl font-bold leading-[1.08] tracking-[-.04em] text-story-navy sm:text-5xl lg:text-[4.5rem] dark:text-foreground">We build digital solutions that move business forward.</h1>
+            <p className="mt-5 max-w-3xl text-base leading-7 text-muted sm:text-lg sm:leading-8">{profile?.introduction || "We bring strategy, engineering and growth together to help businesses solve real problems with dependable technology."}</p>
+            <div className="mt-6 flex flex-wrap gap-3">
+              <Link href="/contact" className="inline-flex items-center gap-2 rounded-lg bg-brand-600 px-5 py-3 text-sm font-semibold text-white shadow-[0_10px_24px_-12px_rgba(31,86,214,.7)] transition-colors hover:bg-brand-700 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand-600">Let’s work together <ArrowRight className="h-4 w-4" /></Link>
+            </div>
+            <div className="mt-7 flex flex-wrap items-center gap-x-5 gap-y-2 border-t border-border-soft pt-4 text-sm text-muted"><span className="inline-flex items-center gap-2"><Code2 className="h-4 w-4 text-brand-600" /> Thoughtful engineering</span><span className="hidden h-4 w-px bg-border-soft sm:block" /><span className="inline-flex items-center gap-2"><Handshake className="h-4 w-4 text-brand-600" /> Close collaboration</span></div>
+          </div>
         </div>
-        <Reveal direction="left" delay={0.15} className="min-w-0">
-          <div className="overflow-hidden rounded-3xl border border-border-soft bg-surface shadow-[var(--shadow-lift)]">
-            <div className="border-b border-border-soft px-6 py-5 sm:px-8">
-              <p className="text-xs font-semibold uppercase tracking-[0.18em] text-brand-600">Our delivery model</p>
-              <h2 className="mt-2 text-xl font-semibold text-story-navy dark:text-foreground">One team. Every digital capability.</h2>
-            </div>
-            <div className="grid sm:grid-cols-2">
-              {[
-                { title: "Web & app development", text: "Scalable, responsive digital products.", Icon: MonitorSmartphone, color: "#2563eb" },
-                { title: "Custom software", text: "Purpose-built tools for your operations.", Icon: Code2, color: "#0891b2" },
-                { title: "AI automation", text: "Practical agents that reduce manual work.", Icon: Bot, color: "#059669" },
-                { title: "Digital marketing", text: "Focused campaigns that create demand.", Icon: Megaphone, color: "#d97706" },
-              ].map(({ title, text, Icon, color }, index) => (
-                <div key={title} className={`flex gap-4 p-6 sm:p-8 ${index % 2 === 0 ? "sm:border-r" : ""} ${index < 2 ? "border-b" : ""} border-border-soft`}>
-                  <div className="grid h-11 w-11 shrink-0 place-items-center rounded-xl" style={{ backgroundColor: `${color}12`, color }}>
-                    <Icon className="h-5 w-5" aria-hidden="true" />
-                  </div>
-                  <div>
-                    <h3 className="text-sm font-semibold text-foreground">{title}</h3>
-                    <p className="mt-1.5 text-sm leading-6 text-muted">{text}</p>
-                  </div>
-                </div>
-              ))}
-            </div>
-            <div className="flex items-center justify-between gap-6 border-t border-border-soft bg-story-mist px-6 py-4 sm:px-8">
-              <p className="text-sm font-medium text-foreground">Built for clarity, speed and long-term value.</p>
-              <span className="hidden h-2.5 w-2.5 shrink-0 rounded-full bg-brand-500 shadow-[0_0_0_5px_rgba(37,99,235,0.1)] sm:block" aria-hidden="true" />
-            </div>
+      </section>
+
+      {/* Team: portrait cards follow the reference layout and use admin-managed profiles. */}
+      <section className="bg-[#f5f6f8] px-5 py-16 sm:px-8 sm:py-24 dark:bg-surface-2" aria-labelledby="team-title">
+        <div className="mx-auto w-full max-w-7xl">
+          <header className="mx-auto mb-10 max-w-2xl text-center sm:mb-14"><span className="inline-flex items-center gap-2 rounded-full border border-brand-100 bg-white px-3.5 py-1.5 text-[11px] font-bold tracking-wide text-brand-700 shadow-sm dark:border-brand-800 dark:bg-surface dark:text-brand-300"><span className="h-1.5 w-1.5 rounded-full bg-brand-500" /> OUR TEAM <span className="h-1.5 w-1.5 rounded-full bg-brand-500" /></span><h2 id="team-title" className="mt-4 text-3xl font-bold tracking-tight sm:text-4xl"><span className="text-brand-600">Team</span> members</h2><p className="mx-auto mt-3 max-w-xl text-sm leading-6 text-muted">Meet the people bringing thoughtful technology and practical ideas to every project.</p></header>
+          {uniqueCategories.length ? <div className="space-y-8">{uniqueCategories.map((category) => <div key={category.id}><h3 className="mb-4 text-center text-sm font-bold tracking-wide text-story-navy dark:text-foreground">{category.name}</h3><div className="mx-auto grid max-w-6xl grid-cols-1 gap-x-5 gap-y-6 sm:grid-cols-2 lg:grid-cols-4">{category.members.map((member) => <article key={member.id} className="group overflow-hidden rounded-[1.35rem] border border-white bg-white p-2.5 shadow-[0_14px_34px_-28px_rgba(11,31,77,.42)] transition-shadow duration-300 hover:shadow-[0_20px_42px_-25px_rgba(31,86,214,.28)] dark:border-border-soft dark:bg-surface">
+              <div className="relative aspect-[.9] overflow-visible rounded-[1.05rem] bg-[#edf1f7] dark:bg-surface-2">
+                {member.imageUrl ? <Image src={member.imageUrl} alt={`${member.firstName} ${member.lastName}`} fill sizes="(max-width: 640px) 90vw, (max-width: 1024px) 44vw, 280px" className="rounded-[1.05rem] object-cover transition-transform duration-500 group-hover:scale-[1.025]" /> : <div className="grid h-full place-items-center rounded-[1.05rem] text-5xl font-bold text-brand-500">{member.firstName[0]}{member.lastName[0]}</div>}
+                <div className="absolute inset-x-2 bottom-0 translate-y-1/2 rounded-2xl bg-brand-600 px-3 py-3 text-center text-white shadow-[0_8px_18px_-10px_rgba(31,86,214,.8)]"><h4 className="truncate text-sm font-bold">{member.firstName} {member.lastName}</h4><p className="mt-0.5 truncate text-xs font-medium text-blue-100">{member.designation}</p></div>
+              </div>
+              <div className="px-3 pb-2 pt-7">{member.biography.trim() && <p className="mb-2 line-clamp-3 text-center text-xs leading-5 text-muted">{member.biography}</p>}<div className="flex min-h-7 items-center justify-center gap-1.5">{teamSocials.map(({ key, label, platform }) => { const url = member[key]; const icon = <TeamSocialIcon platform={platform} />; return url ? <a key={key} href={url} target="_blank" rel="noreferrer" aria-label={`${member.firstName} ${member.lastName} on ${label}`} className="grid h-7 w-7 place-items-center rounded-full border border-border-soft bg-white text-brand-700 transition-colors hover:border-brand-300 hover:bg-brand-50 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand-600 dark:bg-surface">{icon}</a> : <span key={key} role="img" aria-label={`${label} profile not provided`} title={`${label} profile not provided`} className="grid h-7 w-7 place-items-center rounded-full border border-border-soft bg-white text-muted opacity-35 dark:bg-surface">{icon}</span>; })}{member.profileUrl && <a href={member.profileUrl} target="_blank" rel="noreferrer" aria-label={`${member.firstName} ${member.lastName} professional profile`} className="grid h-7 w-7 place-items-center rounded-full border border-border-soft bg-white text-brand-700 transition-colors hover:border-brand-300 hover:bg-brand-50 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand-600 dark:bg-surface"><ExternalLink className="h-3.5 w-3.5" /></a>}</div></div>
+            </article>)}</div></div>)}</div> : <div className="mx-auto max-w-2xl rounded-2xl border border-dashed border-brand-200 bg-white/80 px-6 py-8 text-center dark:border-brand-800 dark:bg-surface"><p className="text-lg font-semibold">Our team profiles are coming soon.</p><p className="mt-2 text-sm leading-6 text-muted">We’ll introduce our people here as they are added. For now, tell us what you’re working on and we’ll connect you with the right team.</p><Link href="/contact" className="mt-5 inline-flex items-center gap-2 rounded-lg bg-brand-600 px-4 py-2.5 text-sm font-semibold text-white transition-colors hover:bg-brand-700">Talk to our team <ArrowRight className="h-4 w-4" /></Link></div>}
+        </div>
+      </section>
+
+      {/* Brand story */}
+      <section className="border-y border-border-soft bg-[#f5f8ff] dark:bg-surface-2">
+        <div className="mx-auto grid w-full max-w-7xl items-center gap-9 px-5 py-16 sm:px-8 sm:py-20 lg:grid-cols-[.82fr_1.18fr] lg:gap-16">
+          <div className="max-w-xl"><p className="text-xs font-bold tracking-[.16em] text-brand-700">OUR JOURNEY</p><h2 className="mt-3 text-3xl font-bold tracking-tight sm:text-4xl">A technology partner, from first idea to what’s next.</h2><p className="mt-5 leading-7 text-muted">{profile?.approach || "MyLoginn brings product development and digital growth under one roof. We work alongside clients to understand the problem, make the important decisions clear, and deliver useful solutions in focused stages."}</p><p className="mt-4 leading-7 text-muted">The work is collaborative by design: listen carefully, share progress early, and keep building toward outcomes people can use.</p><Link href="/contact" className="mt-6 inline-flex items-center gap-2 text-sm font-bold text-brand-700 hover:gap-3 dark:text-brand-300">Talk with our team <ArrowRight className="h-4 w-4" /></Link></div>
+          <div className="relative min-h-[280px] overflow-hidden rounded-[1.75rem] bg-brand-100 sm:min-h-[390px]"><Image src="/about/team-collaboration.jpg" alt="A team collaborating around software and product work" fill sizes="(max-width: 1024px) 90vw, 620px" className="object-cover object-center" /><div className="absolute inset-0 bg-gradient-to-t from-story-navy/35 via-transparent to-transparent" /><div className="absolute bottom-5 left-5 rounded-lg border border-white/50 bg-white/90 px-4 py-3 backdrop-blur"><p className="text-sm font-semibold text-story-navy">Ideas become useful when we build them together.</p></div></div>
+        </div>
+      </section>
+
+      {/* Mission, vision and values */}
+      <section id="our-vision" className="mx-auto w-full max-w-7xl scroll-mt-24 px-5 py-16 sm:px-8 sm:py-24">
+        <div className="mx-auto max-w-3xl text-center"><p className="text-xs font-bold tracking-[.16em] text-brand-700">OUR VISION</p><h2 className="mt-3 text-3xl font-bold tracking-tight sm:text-4xl">Build a better digital future.</h2><p className="mx-auto mt-4 max-w-2xl leading-7 text-muted">{profile?.vision || "We see a future where good technology helps more businesses create meaningful connections, solve real problems and grow with confidence."}</p></div>
+        <div className="mt-10 grid divide-y divide-border-soft border-y border-border-soft sm:grid-cols-3 sm:divide-x sm:divide-y-0">{pillars.map(({ title, description, Icon }) => <article key={title} className="px-5 py-7 text-center sm:px-8 sm:py-9"><Icon className="mx-auto h-7 w-7 text-brand-600" strokeWidth={1.7} /><h3 className="mt-4 font-bold">{title}</h3><p className="mx-auto mt-2 max-w-xs text-sm leading-6 text-muted">{description}</p></article>)}</div>
+        <div className="mt-10 grid gap-4 lg:grid-cols-[.72fr_1.28fr] lg:items-start"><div><p className="text-xs font-bold tracking-[.16em] text-brand-700">OUR MISSION</p><h3 className="mt-3 text-2xl font-bold">Make technology useful.</h3><p className="mt-3 max-w-md leading-7 text-muted">{profile?.mission || "We help businesses move forward through thoughtful software, clear collaboration and technology that serves a real purpose."}</p></div><div className="grid gap-3 sm:grid-cols-2">{[[Lightbulb, "Curiosity", "Ask better questions before choosing a solution."], [ShieldCheck, "Integrity", "Be clear about decisions, progress and trade-offs."], [Users, "Partnership", "Work as a close extension of each client’s team."], [TrendingUp, "Impact", "Keep attention on the difference the work makes."]].map(([Icon, title, text]) => { const ValueIcon = Icon as LucideIcon; return <div key={title as string} className="flex gap-3 rounded-xl bg-[#f5f8ff] p-4 dark:bg-surface-2"><ValueIcon className="mt-0.5 h-5 w-5 shrink-0 text-brand-600" /><div><h4 className="text-sm font-bold">{title as string}</h4><p className="mt-1 text-xs leading-5 text-muted">{text as string}</p></div></div>; })}</div></div>
+      </section>
+
+      {/* Services and USP */}
+      <section className="bg-[#f5f8ff] dark:bg-surface-2">
+        <div className="mx-auto w-full max-w-7xl px-5 py-16 sm:px-8 sm:py-24">
+          <div className="mb-8 max-w-2xl"><p className="text-xs font-bold tracking-[.16em] text-brand-700">WHAT WE DO</p><h2 className="mt-3 text-3xl font-bold tracking-tight sm:text-4xl">Solutions that move work forward.</h2><p className="mt-3 leading-7 text-muted">From a first digital product to the next stage of growth, bring the right capabilities together.</p></div>
+          <div className="grid gap-4 lg:grid-cols-[1.7fr_.8fr]">
+            <div className="grid gap-3 sm:grid-cols-2 xl:grid-cols-3">{offerings.map((item) => <Link key={item.title} href={item.href} className="group rounded-xl border border-border-soft bg-white p-5 transition-colors hover:border-brand-300 hover:bg-brand-50/60 dark:bg-surface dark:hover:bg-brand-900/20"><span className="grid h-10 w-10 place-items-center rounded-lg bg-brand-50 text-brand-700 dark:bg-brand-900/40 dark:text-brand-300"><ContentIcon keyword={item.icon} className="h-6 w-6" /></span><h3 className="mt-4 font-bold">{item.title}</h3><p className="mt-2 text-sm leading-6 text-muted">{item.text}</p><span className="mt-4 inline-flex items-center gap-1.5 text-xs font-bold text-brand-700 group-hover:gap-2.5 dark:text-brand-300">Explore service <ArrowRight className="h-3.5 w-3.5" /></span></Link>)}</div>
+            <aside className="relative overflow-hidden rounded-2xl bg-[#1249a5] p-6 text-white sm:p-8"><span aria-hidden className="absolute -right-12 -top-12 h-48 w-48 rounded-full border-[28px] border-white/5" /><div className="relative"><p className="text-xs font-bold tracking-[.16em] text-blue-200">WHY MYLOGINN</p><h3 className="mt-3 text-2xl font-bold leading-tight">One team for the whole digital journey.</h3><p className="mt-3 text-sm leading-6 text-blue-100">Strategy, engineering and growth work better when they share context and direction.</p><ul className="mt-6 space-y-4 text-sm">{["Start with your goals and users", "Keep communication clear", "Build in visible, focused stages", "Connect product decisions to growth"].map((point) => <li key={point} className="flex gap-3"><span className="mt-1 grid h-4 w-4 shrink-0 place-items-center rounded-full bg-white/15"><span className="h-1.5 w-1.5 rounded-full bg-cyan-200" /></span><span>{point}</span></li>)}</ul><Link href="/contact" className="mt-7 inline-flex items-center gap-2 rounded-lg bg-white px-4 py-2.5 text-sm font-bold text-brand-800 transition-colors hover:bg-blue-50">Start a conversation <ArrowRight className="h-4 w-4" /></Link></div></aside>
           </div>
-        </Reveal>
-      </div>
+        </div>
+      </section>
 
-      {/* What we offer */}
-      <Container className="mt-24 max-w-6xl sm:mt-32">
-        <section aria-labelledby="offer-title">
-          <Reveal><span className="story-eyebrow">What we offer</span></Reveal>
-          <h2 id="offer-title" className="story-subheading mt-3 text-story-navy dark:text-foreground">Five core capabilities</h2>
-          <p className="mt-3 max-w-2xl leading-7 text-muted">Everything a business needs to build, automate and grow digitally, delivered by one team.</p>
-          <RevealGroup className="mt-8 grid gap-4 sm:grid-cols-2 lg:grid-cols-5">
-            {offerings.map((o, i) => (
-              <RevealItem key={o.title} className="h-full">
-                <Link
-                  href={o.href}
-                  style={{ "--c": o.color } as React.CSSProperties}
-                  className="group relative flex h-full flex-col overflow-hidden rounded-2xl border border-border-soft bg-surface p-6 transition-all duration-300 hover:-translate-y-1 hover:border-[var(--c)] hover:shadow-[0_18px_36px_-20px_var(--c)]"
-                >
-                  <IconBadge size="md" delay={i * 0.05}><ContentIcon keyword={o.icon} className="h-13 w-13" /></IconBadge>
-                  <h3 className="mt-4 text-lg font-semibold">{o.title}</h3>
-                  <p className="mt-2 flex-1 text-sm leading-6 text-muted">{o.text}</p>
-                  <span className="mt-4 inline-flex items-center gap-2 text-sm font-semibold text-[var(--c)]">
-                    Learn more
-                    <span aria-hidden className="grid h-6 w-6 place-items-center rounded-full border border-[var(--c)] text-xs transition-all duration-300 group-hover:translate-x-1 group-hover:bg-[var(--c)] group-hover:text-white">→</span>
-                  </span>
-                  <span aria-hidden className="absolute bottom-0 left-0 h-0.5 w-0 bg-[var(--c)] transition-all duration-500 group-hover:w-full" />
-                </Link>
-              </RevealItem>
-            ))}
-          </RevealGroup>
-        </section>
-      </Container>
+      {/* Social proof: only approved, published reviews are supplied. */}
+      <section className="py-16 sm:py-24"><ReviewSection reviews={reviews.map((review) => ({ ...review, submittedAt: review.submittedAt.toISOString() }))} /></section>
 
-      {/* Values */}
-      <Container id="our-values" className="mt-24 max-w-6xl scroll-mt-24 sm:mt-32">
-        <section aria-labelledby="values-title">
-          <Reveal><span className="story-eyebrow">Our values</span></Reveal>
-          <h2 id="values-title" className="story-subheading mt-3 text-story-navy dark:text-foreground">What drives us</h2>
-          <p className="mt-3 max-w-2xl leading-7 text-muted">Our values shape how we work with every client, partner and team member.</p>
-          <RevealGroup className="mt-10 grid gap-x-5 gap-y-12 sm:grid-cols-2 lg:grid-cols-4">
-            {principles.map(({ title, description, Icon, color }) => (
-              <RevealItem key={title}>
-                <article className="group relative h-full rounded-[2rem] border border-border-soft bg-surface px-6 pb-6 pt-14 text-center transition-all duration-300 hover:-translate-y-1 hover:shadow-[0_18px_36px_-22px_var(--c)]" style={{ "--c": color } as React.CSSProperties}>
-                  <span className="absolute -top-9 left-1/2 grid h-[4.5rem] w-[4.5rem] -translate-x-1/2 place-items-center rounded-full bg-surface">
-                    <span aria-hidden className="absolute inset-0 animate-[spin_16s_linear_infinite] rounded-full border-2 border-dashed" style={{ borderColor: color }} />
-                    <span className="grid h-12 w-12 place-items-center rounded-full text-white transition-transform duration-300 group-hover:scale-110" style={{ background: color }}>
-                      <Icon className="h-5 w-5" aria-hidden="true" />
-                    </span>
-                  </span>
-                  <h3 className="text-lg font-semibold">{title}</h3>
-                  <p className="mt-2 text-sm leading-6 text-muted">{description}</p>
-                </article>
-              </RevealItem>
-            ))}
-          </RevealGroup>
-        </section>
-      </Container>
+      {/* Closing CTA */}
+      <section className="relative overflow-hidden bg-[#1452b8] text-white"><span aria-hidden className="absolute -right-20 -top-32 h-[30rem] w-[30rem] rounded-full border-[70px] border-white/[.045]" /><span aria-hidden className="absolute -bottom-40 left-[15%] h-[24rem] w-[24rem] rounded-full border-[55px] border-white/[.04]" /><div className="relative mx-auto max-w-5xl px-5 py-16 text-center sm:px-8 sm:py-20"><Sparkles className="mx-auto h-7 w-7 text-cyan-200" /><p className="mt-4 text-xs font-bold tracking-[.16em] text-blue-100">LET’S BUILD SOMETHING USEFUL</p><h2 className="mx-auto mt-3 max-w-2xl text-3xl font-bold tracking-tight sm:text-4xl">Ready to create impact together?</h2><p className="mx-auto mt-4 max-w-xl leading-7 text-blue-100">Tell us what you want to make possible. We’ll help shape a clear next step.</p><Link href="/contact" className="mt-7 inline-flex items-center gap-2 rounded-lg bg-white px-5 py-3 text-sm font-bold text-brand-800 transition-colors hover:bg-blue-50">Start a project <ArrowRight className="h-4 w-4" /></Link></div></section>
 
-      {/* CTA */}
-      <Container className="mt-24 max-w-6xl sm:mt-32">
-        <Reveal>
-          <div className="relative overflow-hidden rounded-[2rem] bg-story-navy px-6 py-10 text-white sm:px-10 sm:py-12 lg:flex lg:items-center lg:justify-between lg:gap-8">
-            <span aria-hidden className="pointer-events-none absolute -right-12 -top-12 h-48 w-48 rounded-full border-[28px] border-white/5" />
-            <span aria-hidden className="pointer-events-none absolute -bottom-16 right-24 h-40 w-40 rounded-full border-[20px] border-white/5" />
-            <div className="relative max-w-2xl">
-              <Handshake className="h-8 w-8 text-story-cyan" aria-hidden="true" />
-              <h2 className="mt-4 text-2xl font-semibold tracking-tight sm:text-3xl">Have something to build?</h2>
-              <p className="mt-3 text-sm leading-6 text-white/80 sm:text-base">Tell us about your business and goals. We&apos;ll help you choose the right solution and build it with you.</p>
-            </div>
-            <div className="relative mt-6 lg:mt-0 lg:shrink-0"><ArrowLink href="/contact" tone="light">Start a project</ArrowLink></div>
-          </div>
-        </Reveal>
-      </Container>
-
-      {/* FAQ */}
-      <Container className="mt-24 max-w-4xl sm:mt-32">
-        <section aria-labelledby="about-faq">
-          <Reveal><span className="story-eyebrow">FAQ</span></Reveal>
-          <h2 id="about-faq" className="story-subheading mt-3 text-story-navy dark:text-foreground">A few common questions</h2>
-          <FaqAccordion items={faqs} className="mt-8" />
-          <p className="mt-6 text-sm text-muted">
-            Have another question? <Link href="/contact" className="font-semibold text-story-royal">Talk to our team</Link> · <a href={`mailto:${CONTACT_EMAIL}`} className="font-semibold text-story-royal">{CONTACT_EMAIL}</a>
-          </p>
-        </section>
-      </Container>
-    </Section>
+      <section className="mx-auto max-w-4xl px-5 py-14 sm:px-8"><h2 className="text-2xl font-bold">A few common questions</h2><FaqAccordion items={faqs} className="mt-6" /><p className="mt-5 text-sm text-muted">Have another question? <Link href="/contact" className="font-semibold text-brand-700">Talk to our team</Link> · <a href={`mailto:${CONTACT_EMAIL}`} className="font-semibold text-brand-700">{CONTACT_EMAIL}</a></p></section>
+    </main>
   );
 }

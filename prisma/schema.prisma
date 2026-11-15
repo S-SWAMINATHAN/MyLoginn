@@ -1859,3 +1859,65 @@ model CcRateLimit {
   windowStart DateTime
   count       Int
 }
+
+model TeamCategory {
+  id        String       @id @default(cuid())
+  name      String       @unique
+  sortOrder Int          @default(0)
+  active    Boolean      @default(true)
+  createdAt DateTime     @default(now())
+  updatedAt DateTime     @updatedAt
+  members   TeamMember[]
+
+  @@index([active, sortOrder])
+}
+
+model TeamMember {
+  id          String       @id @default(cuid())
+  firstName   String
+  lastName    String
+  designation String
+  biography   String       @db.Text
+  imageUrl    String?
+  profileUrl  String?
+  facebookUrl String?
+  xUrl        String?
+  youtubeUrl  String?
+  instagramUrl String?
+  sortOrder   Int          @default(0)
+  active      Boolean      @default(true)
+  categoryId  String
+  category    TeamCategory @relation(fields: [categoryId], references: [id], onDelete: Restrict)
+  createdAt   DateTime     @default(now())
+  updatedAt   DateTime     @updatedAt
+
+  @@index([active, categoryId, sortOrder])
+}
+
+model CustomerReview {
+  id          String   @id @default(cuid())
+  name        String
+  email       String
+  company     String?
+  rating      Int
+  content     String   @db.Text
+  status      String   @default("PENDING")
+  published   Boolean  @default(false)
+  featured    Boolean  @default(false)
+  sortOrder   Int      @default(0)
+  submittedAt DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  @@index([status, published, featured, sortOrder])
+  @@index([submittedAt])
+}
+
+model CompanyProfile {
+  id          String   @id @default("main")
+  introduction String  @default("") @db.Text
+  mission     String   @default("") @db.Text
+  vision      String   @default("") @db.Text
+  approach    String   @default("") @db.Text
+  expertise   String   @default("") @db.Text
+  updatedAt   DateTime @updatedAt
+}

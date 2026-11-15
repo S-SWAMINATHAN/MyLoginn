@@ -1,31 +1,33 @@
-import dynamic from "next/dynamic";
+import nextDynamic from "next/dynamic";
 import { createPageMetadata } from "@/lib/seo";
 import { localKeywords, regionalKeywords } from "@/lib/localSeo";
 import { StoryStage } from "@/components/experience/StoryStage";
 import { JsonLd } from "@/components/seo/JsonLd";
 import { coreServicesStructuredData, organizationStructuredData, websiteStructuredData } from "@/lib/structuredData";
 import { CORE_SERVICES } from "@/lib/coreServices";
+import { prisma } from "@/lib/prisma";
+import { ReviewSection } from "@/components/about/ReviewSection";
 
 import { Hero } from "@/components/sections/Hero";
-const ProblemsSolutions = dynamic(() => import("@/components/sections/home/ProblemsSolutions").then((mod) => mod.ProblemsSolutions), {
+const ProblemsSolutions = nextDynamic(() => import("@/components/sections/home/ProblemsSolutions").then((mod) => mod.ProblemsSolutions), {
   loading: () => <div className="min-h-[420px] w-full bg-slate-50" aria-busy="true" aria-live="polite" />,
 });
-const ServiceShowcase = dynamic(() => import("@/components/sections/home/ServiceShowcase").then((mod) => mod.ServiceShowcase), {
+const ServiceShowcase = nextDynamic(() => import("@/components/sections/home/ServiceShowcase").then((mod) => mod.ServiceShowcase), {
   loading: () => <div className="min-h-[420px] w-full bg-slate-50" aria-busy="true" aria-live="polite" />,
 });
-const ProcessFlow = dynamic(() => import("@/components/sections/home/ProcessFlow").then((mod) => mod.ProcessFlow), {
+const ProcessFlow = nextDynamic(() => import("@/components/sections/home/ProcessFlow").then((mod) => mod.ProcessFlow), {
   loading: () => <div className="min-h-[420px] w-full bg-slate-50" aria-busy="true" aria-live="polite" />,
 });
-const ProjectShowcase = dynamic(() => import("@/components/sections/ProjectShowcase").then((mod) => mod.ProjectShowcase), {
+const ProjectShowcase = nextDynamic(() => import("@/components/sections/ProjectShowcase").then((mod) => mod.ProjectShowcase), {
   loading: () => <div className="min-h-[420px] w-full bg-slate-50" aria-busy="true" aria-live="polite" />,
 });
-const AboutValues = dynamic(() => import("@/components/sections/home/AboutValues").then((mod) => mod.AboutValues), {
+const AboutValues = nextDynamic(() => import("@/components/sections/home/AboutValues").then((mod) => mod.AboutValues), {
   loading: () => <div className="min-h-[420px] w-full bg-slate-50" aria-busy="true" aria-live="polite" />,
 });
-const CareersCta = dynamic(() => import("@/components/sections/home/CareersLearnBand").then((mod) => mod.CareersCta), {
+const CareersCta = nextDynamic(() => import("@/components/sections/home/CareersLearnBand").then((mod) => mod.CareersCta), {
   loading: () => <div className="min-h-[160px] w-full bg-slate-50" aria-busy="true" aria-live="polite" />,
 });
-const FinalCta = dynamic(() => import("@/components/sections/FinalCta").then((mod) => mod.FinalCta), {
+const FinalCta = nextDynamic(() => import("@/components/sections/FinalCta").then((mod) => mod.FinalCta), {
   loading: () => <div className="min-h-[220px] w-full bg-slate-50" aria-busy="true" aria-live="polite" />,
 });
 export const metadata = createPageMetadata({
@@ -46,8 +48,13 @@ export const metadata = createPageMetadata({
     "SaaS development", "CRM development", "ERP development", "iOS app development", "Android app development", "business automation",
   ],
 });
+export const dynamic = "force-dynamic";
 
-export default function Home() {
+export default async function Home() {
+  const reviewFields = { id: true, name: true, company: true, rating: true, content: true, submittedAt: true } as const;
+  const reviewOrder = [{ sortOrder: "asc" as const }, { submittedAt: "desc" as const }];
+  const featuredReviews = await prisma.customerReview.findMany({ where: { status: "APPROVED", published: true, featured: true }, orderBy: reviewOrder, take: 6, select: reviewFields }).catch(() => []);
+  const reviews = featuredReviews.length ? featuredReviews : await prisma.customerReview.findMany({ where: { status: "APPROVED", published: true }, orderBy: reviewOrder, take: 6, select: reviewFields }).catch(() => []);
   return (
     <>
       <JsonLd data={{
@@ -61,6 +68,7 @@ export default function Home() {
         <ProcessFlow />
         <ProjectShowcase />
         <AboutValues />
+        {reviews.length > 0 && <div className="w-full bg-story-mist py-14 sm:py-18"><ReviewSection compact reviews={reviews.map((review) => ({ ...review, submittedAt: review.submittedAt.toISOString() }))} /></div>}
         <CareersCta />
         <FinalCta />
       </StoryStage>

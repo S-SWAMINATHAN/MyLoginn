@@ -19,7 +19,11 @@ export type CardArtKey =
   | "mobile"
   | "ecommerce"
   | "travel"
-  | "platform";
+  | "platform"
+  | "network"
+  | "jadhagam"
+  | "shop-leads"
+  | "crm";
 
 function toArtKey(key: CourseIconKey): CardArtKey {
   switch (key) {
@@ -743,6 +747,59 @@ function artPlatform(p: string) {
   );
 }
 
+/* Network lead-generation dashboard. */
+function artNetwork(p: string) {
+  return wrap(p, `${p}bg`, `${p}glow`, `<defs>
+    <linearGradient id="${p}bg" x1="0" y1="0" x2="1" y2="1"><stop stop-color="#071b36"/><stop offset=".55" stop-color="#075985"/><stop offset="1" stop-color="#0891b2"/></linearGradient>
+    <radialGradient id="${p}glow"><stop stop-color="#67e8f9" stop-opacity=".42"/><stop offset="1" stop-color="#67e8f9" stop-opacity="0"/></radialGradient>
+    <linearGradient id="${p}panel" x1="0" y1="0" x2="1" y2="1"><stop stop-color="#f0fdff"/><stop offset="1" stop-color="#dbeafe"/></linearGradient>
+    <filter id="${p}shadow" x="-50%" y="-50%" width="200%" height="200%"><feGaussianBlur stdDeviation="5"/></filter>
+  </defs>
+  ${sparkles(p, "#a5f3fc")}${shadow(p, 248, 140, 100, 10, "#071b36", .4)}
+  <path d="M78 52 142 76 198 45 266 72 326 44M78 52 104 116 174 104 198 45M174 104 238 124 266 72 326 112" fill="none" stroke="#a5f3fc" stroke-width="2" stroke-dasharray="4 5" opacity=".6"/>
+  ${floatPanel(p, 126, 35, 148, 92, -4, `<rect x="14" y="12" width="68" height="5" rx="2.5" fill="#0891b2"/><rect x="14" y="25" width="112" height="3" rx="1.5" fill="#cbd5e1"/><circle cx="30" cy="53" r="12" fill="#cffafe"/><circle cx="30" cy="53" r="5" fill="#0891b2"/><rect x="52" y="43" width="64" height="4" rx="2" fill="#bae6fd"/><rect x="52" y="53" width="46" height="4" rx="2" fill="#7dd3fc"/><rect x="14" y="74" width="112" height="7" rx="3.5" fill="#e0f2fe"/><rect x="14" y="74" width="82" height="7" rx="3.5" fill="#06b6d4"><animate attributeName="width" values="62;92;62" dur="3s" repeatCount="indefinite"/></rect>`) }
+  ${[ [78,52],[142,76],[198,45],[266,72],[326,44],[104,116],[174,104],[238,124],[326,112] ].map(([x,y], i) => `<circle cx="${x}" cy="${y}" r="${i === 2 ? 7 : 5}" fill="${i % 2 ? "#22d3ee" : "#e0f2fe"}" stroke="#0e7490" stroke-width="2"/>`).join("")}`);
+}
+
+/* Astrology-inspired identity and lead results for Jadhagam. */
+function artJadhagam(p: string) {
+  return wrap(p, `${p}bg`, `${p}glow`, `<defs>
+    <linearGradient id="${p}bg" x1="0" y1="0" x2="1" y2="1"><stop stop-color="#170b3d"/><stop offset=".55" stop-color="#5b21b6"/><stop offset="1" stop-color="#c026d3"/></linearGradient>
+    <radialGradient id="${p}glow"><stop stop-color="#f0abfc" stop-opacity=".45"/><stop offset="1" stop-color="#f0abfc" stop-opacity="0"/></radialGradient>
+    <linearGradient id="${p}panel" x1="0" y1="0" x2="1" y2="1"><stop stop-color="#fff"/><stop offset="1" stop-color="#fae8ff"/></linearGradient>
+    <filter id="${p}shadow" x="-50%" y="-50%" width="200%" height="200%"><feGaussianBlur stdDeviation="5"/></filter>
+  </defs>
+  ${sparkles(p, "#f5d0fe")}${shadow(p, 258, 140, 96, 10, "#170b3d", .4)}
+  <circle cx="325" cy="84" r="38" fill="none" stroke="#f5d0fe" stroke-width="1.5" opacity=".65"/><circle cx="325" cy="84" r="27" fill="none" stroke="#f5d0fe" stroke-width="1" opacity=".5"/><path d="M325 42v84M283 84h84M295 54l60 60M355 54l-60 60" stroke="#f5d0fe" stroke-width="1" opacity=".5"/>
+  <path d="m325 64 5 14 15 6-15 5-5 15-5-15-15-5 15-6z" fill="#fde68a"><animate attributeName="opacity" values=".65;1;.65" dur="2.8s" repeatCount="indefinite"/></path>
+  ${floatPanel(p, 82, 45, 164, 82, -5, `<circle cx="29" cy="29" r="15" fill="#f5d0fe"/><path d="M29 15v28M15 29h28M19 19l20 20M39 19 19 39" stroke="#a21caf" stroke-width="1.5"/><rect x="56" y="17" width="88" height="5" rx="2.5" fill="#a21caf"/><rect x="56" y="30" width="62" height="4" rx="2" fill="#e9d5ff"/><path d="M56 62 75 52 92 57 110 42 139 36" fill="none" stroke="#c026d3" stroke-width="3" stroke-linecap="round"/><circle cx="139" cy="36" r="3.5" fill="#c026d3"/>`)}`);
+}
+
+/* Local shop lead campaign: a storefront paired with conversion growth. */
+function artShopLeads(p: string) {
+  return wrap(p, `${p}bg`, `${p}glow`, `<defs>
+    <linearGradient id="${p}bg" x1="0" y1="0" x2="1" y2="1"><stop stop-color="#321306"/><stop offset=".55" stop-color="#c2410c"/><stop offset="1" stop-color="#f59e0b"/></linearGradient>
+    <radialGradient id="${p}glow"><stop stop-color="#fde68a" stop-opacity=".4"/><stop offset="1" stop-color="#fde68a" stop-opacity="0"/></radialGradient>
+    <linearGradient id="${p}panel" x1="0" y1="0" x2="1" y2="1"><stop stop-color="#fff"/><stop offset="1" stop-color="#fff7ed"/></linearGradient>
+    <filter id="${p}shadow" x="-50%" y="-50%" width="200%" height="200%"><feGaussianBlur stdDeviation="5"/></filter>
+  </defs>
+  ${sparkles(p, "#fed7aa")}${shadow(p, 258, 142, 100, 10, "#321306", .4)}
+  ${floatPanel(p, 93, 32, 188, 105, -3, `<rect x="14" y="15" width="160" height="6" rx="3" fill="#fed7aa"/><path d="M23 38h138l-9 19H32z" fill="#ea580c"/><path d="M32 57v49h120V57" fill="#fff7ed" stroke="#fdba74" stroke-width="2"/><path d="M32 57h120v15H32z" fill="#fb923c"/><path d="M56 57v15m24-15v15m24-15v15m24-15v15" stroke="#fff7ed" stroke-width="3"/><rect x="45" y="82" width="33" height="24" rx="3" fill="#ffedd5"/><rect x="91" y="79" width="45" height="27" rx="3" fill="#fed7aa"/><path d="M98 98h7l7-8 7 4 9-11" fill="none" stroke="#c2410c" stroke-width="2.5"/>`)}
+  <g transform="translate(325 65)"><circle r="25" fill="#fff7ed"/><path d="M-13 12V-4l8-7v23m3 0V-1l8-8v21m3 0V-13l8-7v32" fill="#f97316"/><path d="M-15 15h33" stroke="#9a3412" stroke-width="2"/></g>`);
+}
+
+/* Desktop CRM view with a customer list and activity chart. */
+function artCrm(p: string) {
+  return wrap(p, `${p}bg`, `${p}glow`, `<defs>
+    <linearGradient id="${p}bg" x1="0" y1="0" x2="1" y2="1"><stop stop-color="#071b2c"/><stop offset=".55" stop-color="#0f766e"/><stop offset="1" stop-color="#2563eb"/></linearGradient>
+    <radialGradient id="${p}glow"><stop stop-color="#99f6e4" stop-opacity=".4"/><stop offset="1" stop-color="#99f6e4" stop-opacity="0"/></radialGradient>
+    <linearGradient id="${p}panel" x1="0" y1="0" x2="1" y2="1"><stop stop-color="#fff"/><stop offset="1" stop-color="#ecfeff"/></linearGradient>
+    <filter id="${p}shadow" x="-50%" y="-50%" width="200%" height="200%"><feGaussianBlur stdDeviation="5"/></filter>
+  </defs>
+  ${sparkles(p, "#ccfbf1")}${shadow(p, 258, 142, 100, 10, "#071b2c", .4)}
+  ${floatPanel(p, 76, 32, 224, 108, -3, `<rect x="0" y="0" width="35" height="108" rx="10" fill="#0f766e"/><circle cx="17" cy="18" r="6" fill="#ccfbf1"/><rect x="9" y="38" width="16" height="3" rx="1.5" fill="#99f6e4"/><rect x="9" y="49" width="16" height="3" rx="1.5" fill="#99f6e4" opacity=".65"/><rect x="9" y="60" width="16" height="3" rx="1.5" fill="#99f6e4" opacity=".65"/><rect x="47" y="12" width="82" height="5" rx="2.5" fill="#0f766e"/><rect x="47" y="25" width="42" height="3" rx="1.5" fill="#cbd5e1"/><rect x="47" y="40" width="69" height="24" rx="5" fill="#ecfeff"/><rect x="124" y="40" width="83" height="24" rx="5" fill="#f0fdfa"/><circle cx="58" cy="52" r="5" fill="#14b8a6"/><rect x="68" y="49" width="37" height="3" rx="1.5" fill="#5eead4"/><rect x="135" y="49" width="52" height="3" rx="1.5" fill="#99f6e4"/><rect x="47" y="72" width="160" height="25" rx="5" fill="#f8fafc"/><path d="M57 89h17m8-6h17m8 7h17m8-12h17m8 5h17m8-10h17" stroke="#2563eb" stroke-width="4" stroke-linecap="round"/>`)}`);
+}
+
 const ART: Record<CardArtKey, (p: string) => string> = {
   ml: artML,
   cyber: artCyber,
@@ -754,6 +811,10 @@ const ART: Record<CardArtKey, (p: string) => string> = {
   ecommerce: artEcommerce,
   travel: artTravel,
   platform: artPlatform,
+  network: artNetwork,
+  jadhagam: artJadhagam,
+  "shop-leads": artShopLeads,
+  crm: artCrm,
 };
 
 /** Look up art by an explicit key (e.g. for data that already knows its own

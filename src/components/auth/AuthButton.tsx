@@ -29,7 +29,7 @@ export function AuthButton({ children, type = "button", onClick, disabled, varia
         disabled={disabled}
         whileHover={disabled ? undefined : { y: -2 }}
         whileTap={disabled ? undefined : { scale: 0.97 }}
-        className={cn("inline-flex h-12 items-center justify-center gap-2 whitespace-nowrap rounded-full border border-border-soft bg-surface px-6 text-sm font-semibold transition-colors hover:border-story-royal hover:text-story-royal disabled:opacity-50", className)}
+        className={cn("flex h-12 w-fit mx-auto md:mx-0 items-center justify-center gap-2 whitespace-nowrap rounded-full border border-border-soft bg-surface px-6 text-sm font-semibold transition-colors hover:border-story-royal hover:text-story-royal disabled:opacity-50", className)}
       >
         {back && <span aria-hidden>←</span>}
         {children}

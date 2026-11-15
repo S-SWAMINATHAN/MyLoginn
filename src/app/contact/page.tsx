@@ -10,7 +10,6 @@ import { IconBadge } from "@/components/ui/IconBadge";
 import { ContentIcon } from "@/components/ui/ContentIcon";
 import { ContactInfoCard } from "@/components/pages/ContactInfoCard";
 import { SplitHeadline } from "@/components/experience/SplitHeadline";
-import { ArrowLink } from "@/components/ui/ArrowLink";
 import { ContactHeroVisual } from "@/components/pages/PageHeroVisuals";
 import contactArtwork from "@/images/Contact us header.png";
 import { CONTACT_EMAIL, CONTACT_HOURS, CONTACT_PHONES, WHATSAPP_PHONE } from "@/lib/contactInfo";
@@ -54,12 +53,10 @@ export default function ContactPage() {
         <div aria-hidden="true" className="pointer-events-none absolute -right-40 top-10 -z-0 h-[36rem] w-[36rem] rounded-full bg-[radial-gradient(circle,rgba(91,157,255,.11),rgba(255,255,255,0)_70%)]" />
         <header className="relative z-10 grid items-center gap-10 py-4 sm:py-6 lg:grid-cols-2 lg:gap-14">
           <div className="min-w-0">
-            <SplitHeadline as="h1" text="Let's build something together" className="mt-0 max-w-xl text-4xl font-bold leading-[1.08] tracking-tight text-story-navy sm:text-5xl" />
+            <p className="mb-3 text-xs font-bold tracking-[.16em] text-brand-700">START A CONVERSATION</p>
+            <SplitHeadline as="h1" text="Tell us what you want to build." className="mt-0 max-w-xl text-4xl font-bold leading-[1.08] tracking-tight text-story-navy sm:text-5xl" />
             <Reveal direction="up" delay={0.15}>
-              <p className="mt-5 max-w-lg text-base leading-8 text-[#62708d] sm:text-lg">Tell us about your business and what you want to build. We&apos;ll come back to you with next steps.</p>
-            </Reveal>
-            <Reveal direction="up" delay={0.25} className="mt-7 flex justify-center lg:justify-start">
-              <ArrowLink href="#contact-form">Start a project</ArrowLink>
+              <p className="mt-5 max-w-lg text-base leading-8 text-[#62708d] sm:text-lg">Share your goals, requirements and questions. Our team will follow up with practical next steps.</p>
             </Reveal>
           </div>
           <Reveal direction="left" delay={0.15} className="min-w-0">
