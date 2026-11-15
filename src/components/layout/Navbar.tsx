@@ -14,7 +14,7 @@ import {
   Settings,
 } from "lucide-react";
 import { DuoIcon, type MenuIconKey } from "@/components/ui/icons/DuoIcon";
-import type { ProfileUser } from "./ProfileMenu";
+import { ProfileMenu, type ProfileUser } from "./ProfileMenu";
 import { Button } from "@/components/ui/Button";
 import { LogoLockup } from "@/components/ui/LogoBadge";
 import { cn } from "@/lib/cn";
