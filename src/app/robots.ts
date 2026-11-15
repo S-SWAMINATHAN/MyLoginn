@@ -9,7 +9,7 @@ export default function robots(): MetadataRoute.Robots {
       allow: "/",
       // Account pages (login, sign-up, profile, reports...) are NOT blocked here on purpose: they carry `noindex`,
       // and Google must be able to crawl a page to see that tag and drop it from results.
-      // Switched-off sections (astrology, tutoring) return 404 for the same reason.
+      // Switched-off sections (such as tutoring) return 404 for the same reason.
       disallow: [
         "/admin",
         "/api/",

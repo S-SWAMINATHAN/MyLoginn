@@ -11,7 +11,7 @@ type Route = { path: string; priority: number; changeFrequency: Freq };
 
 /**
  * Public pages, in order of importance: the company and its five services first, then the learning platform.
- * Account pages, sessions and switched-off sections (astrology, tutoring) are left out and blocked in robots.ts.
+ * Account pages, sessions and switched-off sections are left out and blocked in robots.ts.
  */
 const companyRoutes: Route[] = [
   { path: "", priority: 1, changeFrequency: "weekly" },
@@ -25,6 +25,7 @@ const companyRoutes: Route[] = [
   { path: "/contact", priority: 0.8, changeFrequency: "monthly" },
   { path: "/careers", priority: 0.7, changeFrequency: "weekly" },
   { path: "/internships", priority: 0.7, changeFrequency: "weekly" },
+  { path: "/studentnest", priority: 0.8, changeFrequency: "weekly" },
   { path: "/locations/tamil-nadu", priority: 0.6, changeFrequency: "monthly" },
   { path: "/privacy", priority: 0.2, changeFrequency: "yearly" },
   { path: "/terms", priority: 0.2, changeFrequency: "yearly" },

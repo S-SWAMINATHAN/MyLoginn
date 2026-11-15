@@ -8,10 +8,12 @@ import { siteUrl } from "@/lib/site";
 const LABELS: Record<string, string> = {
   faq: "FAQ", sql: "SQL", mysql: "MySQL", css: "CSS", html: "HTML", php: "PHP", cpp: "C++", ai: "AI", ui: "UI", ux: "UX",
   login: "Log in", signup: "Sign up", "reset-password": "Reset password", learn: "Learn", tutoring: "Tutoring",
+  studentnest: "StudentNest", logiquest: "LogiQuest",
   gd: "Group Discussion", speaking: "Speaking Lab", interview: "AI Interview", reports: "My Reports",
 };
 // Folders that only group other pages and have no page of their own, so they must not be links.
 const NOT_PAGES = new Set(["/dashboard/projects", "/locations"]);
+const STUDENTNEST_PREFIXES = ["/studentnest", "/courses", "/practice", "/logiquest", "/leaderboard", "/coding-competition", "/internships", "/dashboard"];
 
 /** Practice pages whose last segment is a record id: show what it is, not the id. */
 const ID_LABELS: Record<string, string> = { "/practice/interview": "Interview session", "/practice/speaking": "Practice session", "/practice/reports": "Report" };
@@ -35,6 +37,9 @@ export function Breadcrumbs() {
     const href = `/${segments.slice(0, index + 1).join("/")}`;
     return { href, label: labelFor(segment, `/${segments.slice(0, index).join("/")}`), linkable: !NOT_PAGES.has(href) };
   });
+  if (segments[0] !== "studentnest" && STUDENTNEST_PREFIXES.some((prefix) => pathname === prefix || pathname.startsWith(`${prefix}/`))) {
+    trail.unshift({ href: "/studentnest", label: "StudentNest", linkable: true });
+  }
 
   const jsonLd = {
     "@context": "https://schema.org",

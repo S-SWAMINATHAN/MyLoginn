@@ -31,19 +31,21 @@ const servicesPopupLinks: { href: string; label: string; desc: string; icon: Men
   { href: "/careers", label: "Careers", desc: "Join the MyLoginn team", icon: "careers" },
 ];
 
-const learnPopupLinks: { href: string; label: string; desc: string; icon: MenuIconKey }[] = [
+const studentNestPopupLinks: { href: string; label: string; desc: string; icon: MenuIconKey }[] = [
+  { href: "/studentnest", label: "StudentNest", desc: "Learning, practice and opportunities", icon: "courses" },
   { href: "/courses", label: "Courses", desc: "Learn job-ready skills", icon: "courses" },
+  { href: "/internships", label: "Internships", desc: "Explore current opportunities", icon: "internships" },
   { href: "/practice", label: "Practice", desc: "AI mock interviews, group discussion & speaking", icon: "practice" },
   { href: "/logiquest", label: "LogiQuest", desc: "Aptitude, reasoning, programming & interview Q&A", icon: "logiquest" },
   { href: "/logiquest/leaderboard", label: "Leaderboard", desc: "Top LogiQuest learners", icon: "leaderboard" },
 ];
 
-const isLearnPath = (p: string) => p.startsWith("/courses") || p.startsWith("/logiquest") || p.startsWith("/practice") || p === "/tutoring";
+const isStudentNestPath = (p: string) => p.startsWith("/studentnest") || p.startsWith("/courses") || p.startsWith("/internships") || p.startsWith("/logiquest") || p.startsWith("/practice") || p.startsWith("/coding-competition") || p.startsWith("/dashboard");
 const isServicesPath = (p: string) => p.startsWith("/services") || p.startsWith("/projects") || p.startsWith("/careers");
 
 export function MobileBottomNav({ user = null }: { user?: ProfileUser | null }) {
   const pathname = usePathname();
-  const [openMenu, setOpenMenu] = useState<"learn" | "services" | null>(null);
+  const [openMenu, setOpenMenu] = useState<"studentnest" | "services" | null>(null);
 
   useEffect(() => {
     setOpenMenu(null);
@@ -52,7 +54,7 @@ export function MobileBottomNav({ user = null }: { user?: ProfileUser | null }) 
   const tabs: TabItem[] = [
     { key: "home", label: "Home", icon: House, href: "/", isActive: (p) => p === "/" },
     { key: "services", label: "Services", icon: LayoutGrid, isActive: isServicesPath },
-    { key: "learn", label: "Learn", icon: GraduationCap, isActive: isLearnPath },
+    { key: "studentnest", label: "StudentNest", icon: GraduationCap, isActive: isStudentNestPath },
     { key: "contact", label: "Contact Us", icon: Mail, href: "/contact", isActive: (p) => p === "/contact" },
     user
       ? { key: "profile", label: "Profile", icon: User, href: "/profile", avatar: user, isActive: (p) => p.startsWith("/profile") || p.startsWith("/dashboard") }
@@ -85,9 +87,9 @@ export function MobileBottomNav({ user = null }: { user?: ProfileUser | null }) 
               style={{ bottom: "calc(5rem + env(safe-area-inset-bottom))" }}
             >
               <p className="px-3.5 pb-1 pt-2 text-[11px] font-bold uppercase tracking-[0.16em] text-story-royal">
-                {openMenu === "learn" ? "MyLoginn Learn" : "Services"}
+                {openMenu === "studentnest" ? "StudentNest" : "Services"}
               </p>
-              {(openMenu === "learn" ? learnPopupLinks : servicesPopupLinks).map((s, i) => {
+              {(openMenu === "studentnest" ? studentNestPopupLinks : servicesPopupLinks).map((s, i) => {
                 const active = pathname === s.href || pathname.startsWith(`${s.href}/`);
                 return (
                   <motion.div key={s.href} initial={{ opacity: 0, x: -12 }} animate={{ opacity: 1, x: 0 }} transition={{ delay: 0.05 + i * 0.045, duration: 0.3, ease: [0.16, 1, 0.3, 1] }}>
@@ -133,7 +135,7 @@ export function MobileBottomNav({ user = null }: { user?: ProfileUser | null }) 
                 tab={tab}
                 active={active}
                 expanded={openMenu === tab.key}
-                onClick={() => setOpenMenu((menu) => (menu === tab.key ? null : tab.key as "learn" | "services"))}
+                onClick={() => setOpenMenu((menu) => (menu === tab.key ? null : tab.key as "studentnest" | "services"))}
               />
             );
           })}

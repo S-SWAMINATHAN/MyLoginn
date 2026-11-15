@@ -2,8 +2,6 @@ import { NextResponse } from "next/server";
 import { otpVerifySchema } from "@/lib/validation";
 import { checkVerificationCode } from "@/lib/verification";
 import { prisma } from "@/lib/prisma";
-import { setSessionCookie } from "@/lib/auth";
-import { recordDailyActivity } from "@/lib/streak";
 
 export async function POST(req: Request) {
   const body = await req.json();
@@ -13,8 +11,8 @@ export async function POST(req: Request) {
   }
 
   const { identifier, purpose, channel, code } = parsed.data;
-  if (purpose === "login" && channel !== "email") {
-    return NextResponse.json({ error: "Sign-in codes are available by email." }, { status: 400 });
+  if (purpose === "login") {
+    return NextResponse.json({ error: "Sign in with your password." }, { status: 400 });
   }
   const result = await checkVerificationCode(identifier, purpose, channel, code);
   if (!result.ok) {
@@ -29,23 +27,6 @@ export async function POST(req: Request) {
       data: channel === "phone" ? { phoneVerified: true } : { emailVerified: true },
     });
     return NextResponse.json({ ok: true });
-  }
-
-  if (purpose === "login") {
-    const user = await prisma.user.findFirst({ where });
-    if (!user) {
-      return NextResponse.json({ error: "No account found for that contact." }, { status: 404 });
-    }
-    await setSessionCookie({ userId: user.id, role: user.role });
-    try {
-      await recordDailyActivity(user.id);
-    } catch (error) {
-      // Activity tracking is ancillary; a valid OTP must still complete sign-in.
-      console.error("Could not record OTP login activity:", error);
-    }
-    return NextResponse.json({
-      user: { id: user.id, name: user.name, email: user.email, role: user.role },
-    });
   }
 
   return NextResponse.json({ ok: true });

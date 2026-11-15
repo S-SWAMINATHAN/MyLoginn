@@ -34,12 +34,15 @@ const columns = [
     ],
   },
   {
-    title: "MyLoginn Learn",
+    title: "StudentNest",
     links: [
+      { href: "/studentnest", label: "StudentNest" },
       { href: "/courses", label: "Courses" },
+      { href: "/internships", label: "Internships" },
       { href: "/practice", label: "Practice" },
       { href: "/logiquest", label: "LogiQuest" },
       { href: "/logiquest/leaderboard", label: "Leaderboard" },
+      { href: "/coding-competition", label: "Coding Competition" },
     ],
   },
   {

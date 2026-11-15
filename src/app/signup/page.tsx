@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { Controller, useForm } from "react-hook-form";
+import { Controller, useForm, useWatch } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useRouter } from "next/navigation";
 import { AnimatePresence, motion } from "framer-motion";
@@ -48,6 +48,8 @@ export default function SignupPage() {
     defaultValues: { role: "STUDENT", phone: "" },
   });
 
+  const role = useWatch({ control, name: "role" });
+  const activeSteps = role === "STUDENT" ? steps.slice(0, 2) : steps;
   const identifier = channel === "phone" ? phone : email;
 
   useEffect(() => {
@@ -103,6 +105,14 @@ export default function SignupPage() {
       }
       setEmail(data.email);
       setPhone(data.phone);
+      if (data.role === "STUDENT") {
+        setSuccess(true);
+        setTimeout(() => {
+          router.push("/dashboard");
+          router.refresh();
+        }, 1300);
+        return;
+      }
       setChannel("phone");
       setOtp("");
       setStep(3);
@@ -153,11 +163,11 @@ export default function SignupPage() {
     <AuthShell mode="signup">
           {!success && <div className="mb-6">
             <div className="mb-3 flex items-center justify-between gap-3">
-              <span className="story-eyebrow">Step {step} of 3</span>
-              <p className="text-xs text-muted">{steps[step - 1].caption}</p>
+              <span className="story-eyebrow">Step {step} of {activeSteps.length}</span>
+              <p className="text-xs text-muted">{activeSteps[step - 1].caption}</p>
             </div>
-            <ol className="grid grid-cols-3 gap-2" aria-label={`Signup step ${step} of 3`}>
-              {steps.map((item, index) => {
+            <ol className="grid gap-2" style={{ gridTemplateColumns: `repeat(${activeSteps.length}, minmax(0, 1fr))` }} aria-label={`Signup step ${step} of ${activeSteps.length}`}>
+              {activeSteps.map((item, index) => {
                 const StepIcon = item.icon;
                 const active = index + 1 === step;
                 const complete = index + 1 < step;
@@ -197,7 +207,7 @@ export default function SignupPage() {
                   <Input label="Full name" placeholder="Enter full name" autoComplete="name" {...register("name")} error={errors.name?.message} />
                   <Input label="Email address" type="email" placeholder="you@example.com" autoComplete="email" {...register("email")} error={errors.email?.message} />
                   <Controller control={control} name="phone" render={({ field }) => (
-                    <PhoneInput label="Phone number" hint="We’ll send a one-time verification code by SMS." value={field.value} onChange={field.onChange} onBlur={field.onBlur} onCountryChange={(country) => setValue("country", country)} error={errors.phone?.message} />
+                    <PhoneInput label="Phone number" value={field.value} onChange={field.onChange} onBlur={field.onBlur} onCountryChange={(country) => setValue("country", country)} error={errors.phone?.message} />
                   )} />
                   <AuthButton onClick={goToAccountStep} className="mt-2">Continue</AuthButton>
                 </div> : <form onSubmit={handleSubmit(onDetailsSubmit)} className="space-y-3">

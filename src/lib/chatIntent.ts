@@ -5,7 +5,7 @@
  * routing so only the relevant knowledge is handed to the model.
  */
 
-export type ChatTopic = "courses" | "internships" | "tutoring" | "projects" | "services" | "astrology" | "platform" | "contact" | "greeting";
+export type ChatTopic = "courses" | "internships" | "tutoring" | "projects" | "services" | "platform" | "contact" | "greeting";
 
 const TOPIC_PATTERNS: Record<Exclude<ChatTopic, "greeting">, RegExp> = {
   courses: /\b(course|courses|class|classes|learn|learning|syllabus|curriculum|fee|fees|price|pricing|cost|enrol|enroll|enrolment|enrollment|certificate|digital marketing|seo|ai|ml|machine learning|python|java|testing|selenium|sql|programming|coding)\b/i,
@@ -13,8 +13,7 @@ const TOPIC_PATTERNS: Record<Exclude<ChatTopic, "greeting">, RegExp> = {
   tutoring: /\b(tutor|tutors|tutoring|tuition|cbse|state board|mentor session|1[: ]?1|one[- ]on[- ]one|live class|school)\b/i,
   projects: /\b(project|projects|portfolio|capstone)\b/i,
   services: /\b(service|services|website|web app|app development|mobile app|development|marketing for|agency|business|quote|proposal|software|automation|testing automation|ai development|chatbot)\b/i,
-  astrology: /(astrology|astrologer|horoscope|jathagam|jaathagam|kundali|kundli|rasi|nakshatra|star|porutham|matching|muhurtha|muhurtham|baby names?|name suggestion|kp|kalai|panchang|dosha|dasha|birth chart)/i,
-  platform: /(points|reward|rewards|leaderboard|streak|dashboard|certificate|sql|practice|challenge|challenges|free course|free courses|lms|progress|about|company|who are you|location|tamil nadu|chennai|coimbatore|office|founder|team)/i,
+  platform: /\b(points|reward|rewards|leaderboard|streak|dashboard|certificate|sql|practice|challenge|challenges|free course|free courses|lms|progress|about|company|who are you|location|tamil nadu|chennai|coimbatore|office|founder|team)\b/i,
   contact: /\b(contact|email|e-mail|phone|call|whatsapp|address|reach|support|hours|timing|timings|login|log in|sign ?up|register|payment|pay|razorpay|refund)\b/i,
 };
 

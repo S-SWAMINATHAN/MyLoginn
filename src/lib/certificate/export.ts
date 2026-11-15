@@ -6,8 +6,8 @@ import type { CertificateData, ExportFormat } from "@/types/certificate";
  *
  * Primary path is html-to-image (SVG foreignObject): the browser itself lays out and shapes the text,
  * so webfonts, kerning and script ligatures match the on-screen preview exactly. html2canvas
- * re-implements text layout and shifts glyphs (see src/lib/astrology/pdfExport.ts), so it is only a
- * fallback for browsers where the foreignObject capture throws.
+ * re-implements text layout and can shift glyphs, so it is only a fallback for browsers where the
+ * foreignObject capture throws.
  */
 async function capture(node: HTMLElement): Promise<HTMLCanvasElement> {
   await document.fonts?.ready;

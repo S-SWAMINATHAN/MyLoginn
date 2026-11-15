@@ -89,15 +89,6 @@ async function buildSystemPrompt(topics: Set<ChatTopic>) {
   if (wants("projects"))
     sections.push(`Projects:
 - /projects shows client websites and products MyLoginn has built and launched (each has its own page, e.g. /projects/<name>), plus any learner projects from MyLoginn Learn. Logged-in learners track their assigned projects, mentor feedback and progress in /dashboard.`);
-  if (wants("astrology"))
-    sections.push(`Astrology services (Tamil/English, no account needed to buy; pay securely via Razorpay):
-- Overview and Kanitha Jathagam (computed horoscope report): /services/astrology
-- Horoscope: /services/astrology/horoscope; KP report: /services/astrology/kp-report; Kalai report: /services/astrology/kalai-report
-- Horoscope matching: /services/astrology/porutham, /services/astrology/kalai-matching, /services/astrology/match-finder, /services/astrology/star-match
-- Auspicious timing: /services/astrology/muhurtha
-- Baby names by star: /services/astrology/baby-names and /services/astrology/kalai-baby-names; other tools: /services/astrology/kalai-utilities
-- Printable/downloadable report unlock prices (base): single-page horoscope Rs 20, full horoscope Rs 499, horoscope matching Rs 299. Final price is shown at checkout.
-- Do not give astrological predictions yourself; send the user to the right tool page.`);
   if (wants("platform"))
     sections.push(`Learning platform features:
 - Sign up at /signup, log in at /login; students get a personal /dashboard and /profile.

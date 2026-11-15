@@ -7,6 +7,7 @@ import { motion, AnimatePresence, type Variants } from "framer-motion";
 import {
   ChevronDown,
   ChevronRight,
+  CircleUserRound,
   LayoutDashboard,
   ShieldCheck,
   LogOut,
@@ -29,14 +30,6 @@ const serviceLinks = [
   { href: "/services/testing-automation", label: "Testing & Automation", desc: "QA, API and Playwright testing" },
 ];
 
-const learnLinks = [
-  { href: "/courses", label: "Courses", desc: "Learn job-ready skills" },
-  { href: "/practice", label: "Practice", desc: "AI mock interviews, group discussion & speaking" },
-  { href: "/logiquest", label: "LogiQuest", desc: "Aptitude, reasoning, programming & interview Q&A" },
-  { href: "/logiquest/leaderboard", label: "Leaderboard", desc: "Top LogiQuest learners" },
-  { href: "/coding-competition", label: "Coding Competition", desc: "Compete live, win certificates & a paid internship" },
-];
-
 type MobileLink = {
   href: string;
   label: string;
@@ -46,11 +39,13 @@ type MobileLink = {
 
 const mobileMainLinks: MobileLink[] = [
   { href: "/", label: "Home", desc: "Back to the start", icon: "home" },
+  { href: "/studentnest", label: "StudentNest", desc: "Learning, practice and opportunities", icon: "courses" },
   { href: "/courses", label: "Courses", desc: "Learn job-ready skills", icon: "courses" },
   { href: "/practice", label: "Practice", desc: "AI mock interviews, group discussion & speaking", icon: "practice" },
   { href: "/logiquest", label: "LogiQuest", desc: "Aptitude, reasoning, programming & interview Q&A", icon: "logiquest" },
   { href: "/logiquest/leaderboard", label: "Leaderboard", desc: "Top LogiQuest learners", icon: "leaderboard" },
   { href: "/coding-competition", label: "Coding Competition", desc: "Compete live, win certificates & a paid internship", icon: "logiquest" },
+  { href: "/internships", label: "Internships", desc: "Explore current opportunities", icon: "internships" },
 ];
 
 const mobileServiceLinks: MobileLink[] = [
@@ -84,9 +79,9 @@ const mobileContactLink: MobileLink = {
   icon: "contact",
 };
 
-type NavSection = "home" | "about" | "services" | "projects" | "careers" | "learn" | "contact";
+type NavSection = "home" | "about" | "services" | "projects" | "careers" | "studentnest" | "contact";
 
-const LEARN_PREFIXES = ["/courses", "/practice", "/logiquest", "/leaderboard", "/tutoring", "/coding-competition"];
+const STUDENTNEST_PREFIXES = ["/studentnest", "/courses", "/practice", "/logiquest", "/leaderboard", "/coding-competition", "/internships", "/dashboard"];
 
 /** Which top-level navigation item owns the current page, so the active indicator always sits under the right one. */
 function navSection(pathname: string): NavSection | null {
@@ -95,8 +90,8 @@ function navSection(pathname: string): NavSection | null {
   if (under("/about")) return "about";
   if (under("/services")) return "services";
   if (under("/projects")) return "projects";
-  if (under("/careers") || under("/internships")) return "careers";
-  if (LEARN_PREFIXES.some(under)) return "learn";
+  if (under("/careers")) return "careers";
+  if (STUDENTNEST_PREFIXES.some(under)) return "studentnest";
   if (under("/contact")) return "contact";
   return null;
 }
@@ -117,7 +112,6 @@ export function Navbar({ user }: { user: NavUser }) {
   const [scrolled, setScrolled] = useState(false);
   const [mobileOpen, setMobileOpen] = useState(false);
   const [servicesOpen, setServicesOpen] = useState(false);
-  const [learnOpen, setLearnOpen] = useState(false);
   const isHome = pathname === "/";
   const section = navSection(pathname);
 
@@ -203,42 +197,7 @@ export function Navbar({ user }: { user: NavUser }) {
 
           <NavHeaderLink href="/projects" active={section === "projects"}>Projects</NavHeaderLink>
           <NavHeaderLink href="/careers" active={section === "careers"}>Careers</NavHeaderLink>
-
-          <div
-            className="group relative"
-            onMouseEnter={() => setLearnOpen(true)}
-            onMouseLeave={() => setLearnOpen(false)}
-          >
-            <button
-              className={cn("relative flex items-center gap-1 rounded-full px-4 py-2 text-sm font-medium transition-colors duration-200 cursor-pointer", section === "learn" ? "text-story-royal" : "text-foreground/80 hover:text-story-royal")}
-              onClick={() => setLearnOpen((open) => !open)}
-              aria-expanded={learnOpen}
-            >
-              Learn
-              <ChevronDown className={cn("h-4 w-4 transition-transform duration-300", learnOpen && "rotate-180")} />
-              {section === "learn" ? <NavIndicator /> : <span className={cn("pointer-events-none absolute inset-x-3.5 -bottom-0.5 h-[3px] origin-center rounded-full bg-story-royal transition-transform duration-300 ease-out", learnOpen ? "scale-x-100" : "scale-x-0 group-hover:scale-x-100")} />}
-            </button>
-            <AnimatePresence>
-              {learnOpen && (
-                <motion.div
-                  initial={{ opacity: 0, y: 8, scale: 0.97 }}
-                  animate={{ opacity: 1, y: 0, scale: 1 }}
-                  exit={{ opacity: 0, y: 8, scale: 0.97 }}
-                  transition={{ duration: 0.18, ease: [0.16, 1, 0.3, 1] }}
-                  className="absolute left-0 top-full mt-2 w-72 rounded-2xl border border-border-soft bg-surface p-2 shadow-[var(--shadow-lift)]"
-                >
-                  {learnLinks.map((item) => {
-                    const active = pathname === item.href || pathname.startsWith(`${item.href}/`);
-                    return <Link key={item.href} href={item.href} className={cn("block rounded-xl px-3.5 py-3 transition-colors hover:bg-surface-2", active && "bg-brand-50 dark:bg-brand-900/20")}>
-                      <span className="block text-sm font-medium">{item.label}</span>
-                      <span className="block text-xs text-muted">{item.desc}</span>
-                    </Link>;
-                  })}
-                </motion.div>
-              )}
-            </AnimatePresence>
-          </div>
-
+          <NavHeaderLink href="/studentnest" active={section === "studentnest"}>StudentNest</NavHeaderLink>
           <NavHeaderLink href="/contact" active={section === "contact"}>Contact</NavHeaderLink>
         </div>
 
@@ -246,14 +205,14 @@ export function Navbar({ user }: { user: NavUser }) {
           {user ? (
             <ProfileMenu user={user} />
           ) : (
-            <>
-              <Button href="/login" variant="ghost" size="sm">
-                Log in
-              </Button>
-              <Button href="/signup" variant="primary" size="sm">
-                Get started
-              </Button>
-            </>
+            <Link
+              href="/login"
+              aria-label="Log in or create an account"
+              title="Account"
+              className="grid h-10 w-10 place-items-center rounded-full border border-border-soft bg-surface text-foreground transition-colors hover:border-brand-300 hover:bg-brand-50 hover:text-story-royal focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-300"
+            >
+              <CircleUserRound aria-hidden className="h-5 w-5" />
+            </Link>
           )}
         </div>
 
@@ -428,7 +387,7 @@ function MobileMenu({
 
               <motion.div variants={itemVariants} className="my-3 flex items-center gap-3 px-2">
                 <span className="h-px flex-1 bg-border-soft" />
-                <span className="text-[11px] font-bold uppercase tracking-[0.16em] text-story-royal">Learn</span>
+                <span className="text-[11px] font-bold uppercase tracking-[0.16em] text-story-royal">StudentNest</span>
                 <span className="h-px flex-1 bg-border-soft" />
               </motion.div>
 
@@ -439,7 +398,7 @@ function MobileMenu({
               </div>
 
               <div className="my-3 flex flex-col gap-1">
-                <MobileNavItem order={12} link={mobileContactLink} active={pathname === mobileContactLink.href || pathname.startsWith(`${mobileContactLink.href}/`)} />
+                <MobileNavItem order={15} link={mobileContactLink} active={pathname === mobileContactLink.href || pathname.startsWith(`${mobileContactLink.href}/`)} />
               </div>
 
               <motion.div variants={itemVariants} className="mt-4 flex flex-col gap-2 border-t border-border-soft pt-4">

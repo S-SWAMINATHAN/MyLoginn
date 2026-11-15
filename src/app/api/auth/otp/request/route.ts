@@ -15,6 +15,10 @@ export async function POST(req: Request) {
 
   const { identifier, purpose, channel } = parsed.data;
 
+  if (purpose === "login") {
+    return NextResponse.json({ error: "Sign in with your password." }, { status: 400 });
+  }
+
   // Password recovery uses a one-time email link.
   if (purpose === "reset") {
     if (channel !== "email") return NextResponse.json({ error: "Password reset is available by email." }, { status: 400 });
@@ -40,17 +44,6 @@ export async function POST(req: Request) {
       return NextResponse.json({ error: "Couldn't send the reset email. Please try again." }, { status: 502 });
     }
     return NextResponse.json({ ok: true, ...(process.env.NODE_ENV !== "production" && !process.env.BREVO_API_KEY && !process.env.RESEND_API_KEY ? { devLink: link } : {}) });
-  }
-
-  if (purpose === "login" && channel !== "email") {
-    return NextResponse.json({ error: "Sign-in codes are available by email." }, { status: 400 });
-  }
-
-  if (purpose === "login") {
-    const user = await prisma.user.findFirst({ where: { email: identifier.trim().toLowerCase() } });
-    if (!user) {
-      return NextResponse.json({ error: "No account found for that contact." }, { status: 404 });
-    }
   }
 
   try {
