@@ -242,7 +242,7 @@ export function AiAgentWidget() {
 
         if (!res.ok) {
           const data = (await res.json().catch(() => null)) as { error?: string } | null;
-          appendToReply(() => data?.error ?? "Something went wrong on our side. Please try again in a moment.");
+          appendToReply(() => data?.error ?? `The chat service returned an unexpected error (${res.status}). Please try again shortly.`);
           return;
         }
         if (!res.body) throw new Error("The chat service returned an empty response");

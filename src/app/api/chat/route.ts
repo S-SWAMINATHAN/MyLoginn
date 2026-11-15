@@ -30,6 +30,90 @@ function isChatTurn(value: unknown): value is ChatTurn {
   );
 }
 
+async function* openAITextDeltas(
+  apiKey: string,
+  instructions: string,
+  history: ChatTurn[],
+  signal: AbortSignal
+): AsyncGenerator<string> {
+  const client = new OpenAI({ apiKey });
+  const stream = await client.responses.create({
+    model: process.env.OPENAI_CHAT_MODEL || "gpt-6-luna",
+    instructions,
+    input: history.map(({ role, content }) => ({ role, content })),
+    max_output_tokens: 1024,
+    store: false,
+    stream: true,
+  }, { signal });
+
+  for await (const event of stream) {
+    if (event.type === "response.output_text.delta") yield event.delta;
+    if (event.type === "response.failed") throw new Error(event.response.error?.message || "OpenAI response failed");
+    if (event.type === "error") throw new Error(event.message || "OpenAI response failed");
+  }
+}
+
+async function* anthropicTextDeltas(
+  token: string,
+  instructions: string,
+  history: ChatTurn[],
+  signal: AbortSignal
+): AsyncGenerator<string> {
+  const baseUrl = (process.env.ANTHROPIC_BASE_URL || "https://api.anthropic.com").replace(/\/+$/, "");
+  const endpoint = baseUrl.endsWith("/v1") ? `${baseUrl}/messages` : `${baseUrl}/v1/messages`;
+  const response = await fetch(endpoint, {
+    method: "POST",
+    signal,
+    headers: {
+      "Content-Type": "application/json",
+      Accept: "text/event-stream",
+      "anthropic-version": "2023-06-01",
+      "x-api-key": token,
+      Authorization: `Bearer ${token}`,
+    },
+    body: JSON.stringify({
+      model: process.env.ANTHROPIC_CHAT_MODEL || "claude-haiku-4-5-20251001",
+      system: instructions,
+      messages: history.map(({ role, content }) => ({ role, content })),
+      max_tokens: 1024,
+      stream: true,
+    }),
+  });
+
+  if (!response.ok) {
+    const detail = (await response.text().catch(() => "")).slice(0, 300);
+    throw new Error(`Anthropic-compatible provider returned ${response.status}${detail ? `: ${detail}` : ""}`);
+  }
+  if (!response.body) throw new Error("Anthropic-compatible provider returned no stream");
+
+  const reader = response.body.getReader();
+  const decoder = new TextDecoder();
+  let buffer = "";
+  try {
+    while (true) {
+      const { done, value } = await reader.read();
+      buffer += decoder.decode(value, { stream: !done });
+      const events = buffer.split(/\r?\n\r?\n/);
+      buffer = done ? "" : events.pop() ?? "";
+      for (const event of events) {
+        const data = event.split(/\r?\n/).find((line) => line.startsWith("data:"))?.slice(5).trim();
+        if (!data || data === "[DONE]") continue;
+        try {
+          const item = JSON.parse(data) as { type?: string; delta?: { type?: string; text?: string }; error?: { message?: string } };
+          if (item.type === "content_block_delta" && item.delta?.type === "text_delta" && item.delta.text) yield item.delta.text;
+          if (item.type === "error") throw new Error(item.error?.message || "Anthropic-compatible stream failed");
+        } catch (error) {
+          if (error instanceof SyntaxError) continue;
+          throw error;
+        }
+      }
+      if (done) break;
+    }
+  } finally {
+    reader.releaseLock();
+  }
+}
+
 /** Company knowledge is pulled live from the DB so the agent never answers from stale hardcoded data. */
 async function buildSystemPrompt(topics: Set<ChatTopic>) {
   // Auto-route by request: an unrecognised request gets everything, a recognised one only what it needs.
@@ -146,54 +230,72 @@ export async function POST(req: Request) {
   const history = rawMessages.slice(-MAX_TURNS);
   const topics = detectTopics(history.filter((m) => m.role === "user").map((m) => m.content));
 
-  const apiKey = process.env.OPENAI_API_KEY;
-  if (!apiKey) {
-    return NextResponse.json({ error: "The chat assistant is not configured. Add OPENAI_API_KEY to the server environment." }, { status: 503 });
+  const system = await buildSystemPrompt(topics);
+  const openAiKey = process.env.OPENAI_API_KEY;
+  const anthropicToken = process.env.ANTHROPIC_AUTH_TOKEN;
+  if (!openAiKey && !anthropicToken) {
+    return NextResponse.json({ error: "Configure OPENAI_API_KEY or ANTHROPIC_AUTH_TOKEN in the server environment." }, { status: 503 });
   }
 
-  const system = await buildSystemPrompt(topics);
   const abortController = new AbortController();
   req.signal.addEventListener("abort", () => abortController.abort(), { once: true });
 
-  let openAIStream;
-  try {
-    const client = new OpenAI({ apiKey });
-    openAIStream = await client.responses.create({
-      model: process.env.OPENAI_CHAT_MODEL || "gpt-6-luna",
-      instructions: system,
-      input: history.map(({ role, content }) => ({ role, content })),
-      max_output_tokens: 1024,
-      store: false,
-      stream: true,
-    }, { signal: abortController.signal });
-  } catch (error) {
-    console.error("OpenAI chat request could not start", error);
-    const status = error instanceof OpenAI.APIError && error.status === 401 ? 503 : 502;
-    const message = error instanceof OpenAI.APIError && error.status === 401
-      ? "The OpenAI API key is invalid. Check OPENAI_API_KEY in the server environment."
-      : error instanceof OpenAI.APIError && error.status === 429
-        ? "The OpenAI service is busy or its usage limit has been reached. Please try again later."
-        : "The chat assistant could not connect. Please try again shortly.";
-    return NextResponse.json({ error: message }, { status });
+  const providers: { name: string; start: () => AsyncGenerator<string> }[] = [];
+  if (openAiKey) providers.push({ name: "OpenAI", start: () => openAITextDeltas(openAiKey, system, history, abortController.signal) });
+  if (anthropicToken) providers.push({ name: "Anthropic-compatible", start: () => anthropicTextDeltas(anthropicToken, system, history, abortController.signal) });
+
+  let selected: AsyncIterator<string> | undefined;
+  let firstDelta: IteratorResult<string> | undefined;
+  const failures: string[] = [];
+  for (const provider of providers) {
+    const iterator = provider.start()[Symbol.asyncIterator]();
+    try {
+      const first = await iterator.next();
+      if (first.done) throw new Error("Provider returned an empty reply");
+      selected = iterator;
+      firstDelta = first;
+      break;
+    } catch (error) {
+      if (abortController.signal.aborted) break;
+      const detail = error instanceof Error ? error.message : "Unknown provider error";
+      failures.push(`${provider.name}: ${detail}`);
+      console.error(`${provider.name} chat failed; trying the next configured provider.`, error);
+      await iterator.return?.(undefined);
+    }
+  }
+
+  if (!selected || !firstDelta || abortController.signal.aborted) {
+    const message = failures.some((failure) => /401|403|auth|api.?key|token/i.test(failure))
+      ? "The configured AI provider credentials were rejected. Replace the server-side key or token."
+      : failures.some((failure) => /429|quota|usage limit/i.test(failure))
+        ? "The configured AI providers are busy or have reached their usage limits. Please try again later."
+        : "The chat assistant could not connect. Check the server-side AI provider configuration and try again.";
+    return NextResponse.json({ error: message }, { status: 502 });
   }
 
   const encoder = new TextEncoder();
   const bodyStream = new ReadableStream<Uint8Array>({
-    async start(controller) {
+    start(controller) {
+      controller.enqueue(encoder.encode(firstDelta.value));
+      void pump();
+
+      async function pump() {
       try {
-        for await (const event of openAIStream) {
-          if (event.type === "response.output_text.delta") controller.enqueue(encoder.encode(event.delta));
-          if (event.type === "response.failed") throw new Error(event.response.error?.message || "OpenAI response failed");
-          if (event.type === "error") throw new Error(event.message || "OpenAI response failed");
+        while (true) {
+          const next = await selected!.next();
+          if (next.done) break;
+          controller.enqueue(encoder.encode(next.value));
         }
         controller.close();
       } catch (error) {
         if (!abortController.signal.aborted) console.error("OpenAI chat stream failed", error);
         controller.error(error);
       }
+      }
     },
-    cancel() {
+    async cancel() {
       abortController.abort();
+      await selected?.return?.();
     },
   });
 
