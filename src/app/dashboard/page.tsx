@@ -26,6 +26,15 @@ import { isStepByStepCourse } from "@/lib/freeCourseCurriculum";
 
 export const metadata = { title: "Dashboard", robots: { index: false, follow: false } };
 
+async function readDashboardData<T>(name: string, read: () => Promise<T>, fallback: T) {
+  try {
+    return { value: await read(), available: true };
+  } catch (error) {
+    console.error(`Dashboard: failed to load ${name}`, error);
+    return { value: fallback, available: false };
+  }
+}
+
 export default async function DashboardPage() {
   const user = await getCurrentUser();
   if (!user) redirect("/login");
@@ -40,14 +49,31 @@ export default async function DashboardPage() {
     console.error("Dashboard: unable to record daily activity", error);
   }
 
-  const streak = await getStreakSummary(user.id);
-  const [leaderboardWeek, leaderboardAll] = await Promise.all([getLeaderboard(user.id, 7), getLeaderboard(user.id)]);
-  const [enrollments, applications, projects, bookings] = await Promise.all([
-    prisma.enrollment.findMany({ where: { userId: user.id, status: { not: "cancelled" }, course: { status: "published", engine: "legacy" } }, include: { course: true }, orderBy: { enrolledAt: "desc" } }),
-    prisma.internshipApplication.findMany({ where: { userId: user.id, status: "accepted" }, include: { internship: true }, orderBy: { appliedAt: "desc" } }),
-    prisma.project.findMany({ where: { userId: user.id }, include: { mentor: true }, orderBy: { updatedAt: "desc" } }),
-    prisma.tutoringBooking.findMany({ where: { userId: user.id }, include: { tutor: true }, orderBy: { createdAt: "desc" } }),
+  const emptyStreak = {
+    points: 0,
+    currentStreak: 0,
+    longestStreak: 0,
+    activeDays: [] as string[],
+    transactions: [] as Awaited<ReturnType<typeof getStreakSummary>>["transactions"],
+  };
+  const emptyLeaderboard = { top: [], me: null, totalLearners: 0 } as Awaited<ReturnType<typeof getLeaderboard>>;
+  const [streakResult, weekResult, allResult, enrollmentsResult, applicationsResult, projectsResult, bookingsResult] = await Promise.all([
+    readDashboardData("streak and rewards", () => getStreakSummary(user.id), emptyStreak),
+    readDashboardData("weekly leaderboard", () => getLeaderboard(user.id, 7), emptyLeaderboard),
+    readDashboardData("all-time leaderboard", () => getLeaderboard(user.id), emptyLeaderboard),
+    readDashboardData("course enrollments", () => prisma.enrollment.findMany({ where: { userId: user.id, status: { not: "cancelled" }, course: { status: "published", engine: "legacy" } }, include: { course: true }, orderBy: { enrolledAt: "desc" } }), [] as never),
+    readDashboardData("internship applications", () => prisma.internshipApplication.findMany({ where: { userId: user.id, status: "accepted" }, include: { internship: true }, orderBy: { appliedAt: "desc" } }), [] as never),
+    readDashboardData("projects", () => prisma.project.findMany({ where: { userId: user.id }, include: { mentor: true }, orderBy: { updatedAt: "desc" } }), [] as never),
+    readDashboardData("tutoring bookings", () => prisma.tutoringBooking.findMany({ where: { userId: user.id }, include: { tutor: true }, orderBy: { createdAt: "desc" } }), [] as never),
   ]);
+  const streak = streakResult.value;
+  const leaderboardWeek = weekResult.value;
+  const leaderboardAll = allResult.value;
+  const enrollments = enrollmentsResult.value;
+  const applications = applicationsResult.value;
+  const projects = projectsResult.value;
+  const bookings = bookingsResult.value;
+  const dataPartiallyUnavailable = [streakResult, weekResult, allResult, enrollmentsResult, applicationsResult, projectsResult, bookingsResult].some((result) => !result.available);
 
   const today = new Date();
   today.setHours(0, 0, 0, 0);
@@ -102,6 +128,12 @@ export default async function DashboardPage() {
             {continueCourse && <ArrowLink href={`/courses/${continueCourse.course.slug}`}>Continue learning</ArrowLink>}
           </div>
         </FadeIn>
+
+        {dataPartiallyUnavailable && (
+          <div role="status" className="mt-6 rounded-2xl border border-amber-300/60 bg-amber-50 px-4 py-3 text-sm text-amber-900 dark:border-amber-700/50 dark:bg-amber-950/30 dark:text-amber-100">
+            Some dashboard information is temporarily unavailable. You can still use the rest of your dashboard; try refreshing in a moment.
+          </div>
+        )}
 
         {!user.emailVerified && <FadeIn delay={0.05}><EmailVerificationNotice email={user.email} /></FadeIn>}
 
