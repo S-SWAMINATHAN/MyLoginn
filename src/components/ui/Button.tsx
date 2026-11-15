@@ -24,7 +24,7 @@ const sizeClasses: Record<Size, string> = {
 };
 
 const base =
-  "group relative isolate inline-flex items-center justify-center overflow-hidden rounded-full font-medium transition-[color,background-color,border-color,box-shadow,filter] duration-300 ease-out active:scale-[0.97] disabled:opacity-50 disabled:pointer-events-none cursor-pointer select-none focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-300 focus-visible:ring-offset-2 focus-visible:ring-offset-background";
+  "group relative isolate inline-flex items-center justify-center overflow-hidden whitespace-nowrap rounded-full font-medium transition-[color,background-color,border-color,box-shadow,filter] duration-300 ease-out active:scale-[0.97] disabled:opacity-50 disabled:pointer-events-none cursor-pointer select-none focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-300 focus-visible:ring-offset-2 focus-visible:ring-offset-background";
 
 function ButtonIcon({ icon }: { icon: ReactNode }) {
   if (!icon) return null;

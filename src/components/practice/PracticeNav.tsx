@@ -168,7 +168,7 @@ export function PracticeNav() {
         </div>
       </aside>
 
-      <div className="sticky top-16 z-40 flex min-h-14 items-center border-b border-border-soft bg-[var(--glass-nav-bg)] px-4 backdrop-blur-md lg:hidden">
+      <div className="sticky top-16 z-40 flex min-h-14 w-full items-center border-b border-border-soft bg-[var(--glass-nav-bg)] px-4 backdrop-blur-md lg:hidden">
         <button
           ref={triggerRef}
           type="button"
