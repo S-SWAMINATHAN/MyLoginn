@@ -19,6 +19,7 @@ export async function PATCH(req: Request, { params }: { params: Promise<{ id: st
   const application = await prisma.internshipApplication.update({
     where: { id },
     data: { status: parsed.data.status },
+    select: { id: true, status: true },
   });
 
   return NextResponse.json({ application });

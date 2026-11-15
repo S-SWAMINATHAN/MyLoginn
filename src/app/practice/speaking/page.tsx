@@ -3,11 +3,15 @@ import { Container } from "@/components/ui/Section";
 import { PageTitle } from "@/components/logiquest/ui";
 import { SpeakingPicker } from "@/components/practice/SpeakingPicker";
 import { EXERCISES } from "@/lib/practice/speaking/content";
+import { createPageMetadata } from "@/lib/seo";
 
-export const metadata = {
+export const metadata = createPageMetadata({
   title: "Speaking Lab — Spoken English, Fluency, Pronunciation & Tongue Twisters",
+  absoluteTitle: true,
   description: "Improve spoken English for interviews: listen and repeat, image description, storytelling, listening comprehension, grammar speaking, timed fluency training, pronunciation with IPA and tongue-twister games — scored by AI.",
-};
+  path: "/practice/speaking",
+  keywords: ["spoken English practice", "pronunciation practice", "English fluency"],
+});
 
 type Props = { searchParams: Promise<{ kind?: string; group?: string }> };
 

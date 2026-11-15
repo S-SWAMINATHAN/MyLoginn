@@ -375,6 +375,8 @@ model InternshipApplication {
   status       String    @default("submitted")
   coverNote    String?
   resumeName   String?
+  resumeData   Bytes?
+  resumeStored Boolean   @default(false)
   appliedAt    DateTime  @default(now())
   // Reviewer fields, set from the admin Careers screen.
   rating       Int?
@@ -419,7 +421,7 @@ model JobOpening {
   @@index([status])
 }
 
-/// A candidate's application (or an open application when `jobId` is null). The CV file is stored privately, see resumeStorage.
+/// A candidate's application (or an open application when `jobId` is null). CVs are stored privately in the database.
 model JobApplication {
   id              String    @id @default(cuid())
   jobId           String?
@@ -431,6 +433,8 @@ model JobApplication {
   profileUrl      String?
   coverNote       String?
   resumeName      String?
+  resumeData      Bytes?
+  resumeStored    Boolean   @default(false)
   status          String    @default("new")
   rating          Int?
   notes           String?

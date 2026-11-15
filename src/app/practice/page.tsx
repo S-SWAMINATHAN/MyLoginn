@@ -8,11 +8,15 @@ import { TrendChart } from "@/components/practice/TrendChart";
 import { AREA_LABEL, getPracticeOverview, type Area } from "@/lib/practice/progress";
 import { MODULE_LABEL } from "@/lib/practice/report";
 import { bandColor } from "@/lib/practice/speech";
+import { createPageMetadata } from "@/lib/seo";
 
-export const metadata = {
+export const metadata = createPageMetadata({
   title: "Practice — AI Mock Interview, Group Discussion & Speaking Practice",
+  absoluteTitle: true,
   description: "Practise like a real placement drive: AI mock interviews that adapt to your answers, live group discussions judged by AI, spoken English, fluency and pronunciation training — with detailed PDF reports.",
-};
+  path: "/practice",
+  keywords: ["AI mock interview", "group discussion practice", "spoken English practice"],
+});
 
 const MODULES = [
   { href: "/practice/interview", title: "AI Mock Interview", desc: "Answer out loud. Get follow-up questions based on what you actually said.", detail: "A realistic interview, at your pace", Icon: Mic2, color: "#9EC5FF", surface: "bg-[#18345F]", action: "Start an interview", featured: true },

@@ -10,8 +10,15 @@ import { GROUP_BY_SLUG, SUBJECT_BY_SLUG } from "@/lib/logiquest/catalog";
 import { TEST_MINUTES, TEST_SIZE } from "@/lib/logiquest/constants";
 import { TEST_GROUPS, testableSubjects } from "@/lib/logiquest/tests";
 import { cn } from "@/lib/cn";
+import { createPageMetadata } from "@/lib/seo";
 
-export const metadata = { title: "Online Tests - Aptitude, Reasoning, Programming & Technical · LogiQuest", description: "Free timed online tests with instant score and explained answers." };
+export const metadata = createPageMetadata({
+  title: "Online Tests — Aptitude, Reasoning and Programming",
+  absoluteTitle: true,
+  description: "Take free timed online aptitude, reasoning and programming tests with instant scores and explained answers.",
+  path: "/logiquest/online-test",
+  keywords: ["online aptitude test", "reasoning test", "programming test"],
+});
 
 const testName = (test: string) => {
   const [s, t] = test.split("/");

@@ -4,7 +4,7 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useEffect, useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { ChevronRight, GraduationCap, House, LayoutGrid, LogIn, Mail, User, type LucideIcon } from "lucide-react";
+import { ChevronRight, GraduationCap, House, LayoutGrid, Mail, User, type LucideIcon } from "lucide-react";
 import { Avatar } from "@/components/ui/Avatar";
 import type { ProfileUser } from "@/components/layout/ProfileMenu";
 import { DuoIcon, type MenuIconKey } from "@/components/ui/icons/DuoIcon";
@@ -38,6 +38,7 @@ const studentNestPopupLinks: { href: string; label: string; desc: string; icon: 
   { href: "/practice", label: "Practice", desc: "AI mock interviews, group discussion & speaking", icon: "practice" },
   { href: "/logiquest", label: "LogiQuest", desc: "Aptitude, reasoning, programming & interview Q&A", icon: "logiquest" },
   { href: "/logiquest/leaderboard", label: "Leaderboard", desc: "Top LogiQuest learners", icon: "leaderboard" },
+  { href: "/coding-competition", label: "Coding Competition", desc: "Compete live and earn certificates", icon: "logiquest" },
 ];
 
 const isStudentNestPath = (p: string) => p.startsWith("/studentnest") || p.startsWith("/courses") || p.startsWith("/internships") || p.startsWith("/logiquest") || p.startsWith("/practice") || p.startsWith("/coding-competition") || p.startsWith("/dashboard");
@@ -56,9 +57,9 @@ export function MobileBottomNav({ user = null }: { user?: ProfileUser | null }) 
     { key: "services", label: "Services", icon: LayoutGrid, isActive: isServicesPath },
     { key: "studentnest", label: "StudentNest", icon: GraduationCap, isActive: isStudentNestPath },
     { key: "contact", label: "Contact Us", icon: Mail, href: "/contact", isActive: (p) => p === "/contact" },
-    user
-      ? { key: "profile", label: "Profile", icon: User, href: "/profile", avatar: user, isActive: (p) => p.startsWith("/profile") || p.startsWith("/dashboard") }
-      : { key: "login", label: "Log in", icon: LogIn, href: "/login", isActive: (p) => p === "/login" || p === "/signup" },
+    ...(user
+      ? [{ key: "profile", label: "Profile", icon: User, href: "/profile", avatar: user, isActive: (p) => p.startsWith("/profile") || p.startsWith("/dashboard") } satisfies TabItem]
+      : []),
   ];
 
   return (
@@ -124,7 +125,7 @@ export function MobileBottomNav({ user = null }: { user?: ProfileUser | null }) 
         className="glass-nav fixed inset-x-0 bottom-0 z-50 border-t border-border-soft shadow-[0_-8px_30px_rgba(15,15,35,0.08)] lg:hidden"
         style={{ paddingBottom: "env(safe-area-inset-bottom)" }}
       >
-        <div className="mx-auto grid h-[4.5rem] max-w-lg grid-cols-5 items-stretch px-1">
+        <div className={cn("mx-auto grid h-[4.5rem] max-w-lg items-stretch px-1", tabs.length === 5 ? "grid-cols-5" : "grid-cols-4")}>
           {tabs.map((tab) => {
             const active = openMenu === tab.key || tab.isActive(pathname);
             return tab.href ? (

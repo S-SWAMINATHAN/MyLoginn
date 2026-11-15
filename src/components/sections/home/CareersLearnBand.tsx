@@ -1,9 +1,8 @@
 "use client";
 
-import Link from "next/link";
 import { FancyLink } from "@/components/ui/FancyButton";
 import { motion } from "framer-motion";
-import { ArrowUpRight, Briefcase, GraduationCap } from "lucide-react";
+import { Briefcase } from "lucide-react";
 
 const EASE = [0.16, 1, 0.3, 1] as const;
 
@@ -28,23 +27,6 @@ export function CareersCta() {
         </div>
         <FancyLink href="/careers" variant="dark" className="relative shrink-0">View open positions</FancyLink>
       </motion.div>
-    </section>
-  );
-}
-
-/** 10 — Learn stays its own destination; the homepage only points to it. */
-export function LearnTeaser() {
-  return (
-    <section aria-label="MyLoginn Learn" className="px-5 pb-10 sm:px-8">
-      <div className="mx-auto flex max-w-6xl flex-col items-start gap-3 rounded-2xl bg-story-mist px-5 py-4 sm:flex-row sm:items-center sm:justify-between">
-        <p className="flex items-center gap-2 text-sm text-muted">
-          <GraduationCap className="h-4 w-4 text-story-royal" />
-          <span>Looking to learn? Courses, practice and LogiQuest live in <span className="font-semibold text-story-navy dark:text-foreground">MyLoginn Learn</span>.</span>
-        </p>
-        <Link href="/courses" className="inline-flex items-center gap-1 text-sm font-semibold text-story-royal hover:underline">
-          Go to Learn <ArrowUpRight className="h-4 w-4" />
-        </Link>
-      </div>
     </section>
   );
 }

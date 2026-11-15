@@ -1,7 +1,7 @@
 "use client";
 
 import Link from "next/link";
-import { usePathname } from "next/navigation";
+import { usePathname, useRouter } from "next/navigation";
 import { useEffect, useRef, useState, type ReactNode } from "react";
 import { motion, AnimatePresence, type Variants } from "framer-motion";
 import {
@@ -11,12 +11,10 @@ import {
   LayoutDashboard,
   ShieldCheck,
   LogOut,
-  LogIn,
-  Rocket,
   Settings,
 } from "lucide-react";
 import { DuoIcon, type MenuIconKey } from "@/components/ui/icons/DuoIcon";
-import { ProfileMenu, type ProfileUser } from "./ProfileMenu";
+import type { ProfileUser } from "./ProfileMenu";
 import { Button } from "@/components/ui/Button";
 import { LogoLockup } from "@/components/ui/LogoBadge";
 import { cn } from "@/lib/cn";
@@ -68,7 +66,6 @@ const mobileServiceLinks: MobileLink[] = [
 const mobileAboutLink: MobileLink = { href: "/about", label: "About", desc: "Who we are and what we value", icon: "about" };
 
 const mobileAfterServices: MobileLink[] = [
-  { href: "/projects", label: "Projects", desc: "Our live client work", icon: "projects" },
   { href: "/careers", label: "Careers", desc: "Open positions and internships", icon: "careers" },
 ];
 
@@ -142,13 +139,14 @@ export function Navbar({ user }: { user: NavUser }) {
       )}
     >
       <nav className="mx-auto flex h-16 max-w-7xl items-center justify-between px-5 sm:px-8">
-        <Link href="/" className="flex items-center transition-transform duration-300 ease-out hover:scale-[1.04] active:scale-[0.97]">
+        <Link href="/" className="flex w-fit items-center transition-transform duration-300 ease-out hover:scale-[1.04] active:scale-[0.97]">
           <LogoLockup />
         </Link>
 
         <div className="hidden lg:flex items-center gap-1">
           <NavHeaderLink href="/" active={section === "home"}>Home</NavHeaderLink>
           <NavHeaderLink href="/about" active={section === "about"}>About</NavHeaderLink>
+          <NavHeaderLink href="/projects" active={section === "projects"}>Projects</NavHeaderLink>
 
           <div
             className="group relative"
@@ -195,7 +193,6 @@ export function Navbar({ user }: { user: NavUser }) {
             </AnimatePresence>
           </div>
 
-          <NavHeaderLink href="/projects" active={section === "projects"}>Projects</NavHeaderLink>
           <NavHeaderLink href="/careers" active={section === "careers"}>Careers</NavHeaderLink>
           <NavHeaderLink href="/studentnest" active={section === "studentnest"}>StudentNest</NavHeaderLink>
           <NavHeaderLink href="/contact" active={section === "contact"}>Contact</NavHeaderLink>
@@ -365,6 +362,7 @@ function MobileMenu({
               <div className="flex flex-col gap-1">
                 <MobileNavItem link={mobileMainLinks[0]} active={pathname === "/"} order={0} />
                 <MobileNavItem link={mobileAboutLink} active={pathname === "/about"} order={1} />
+                <MobileNavItem link={mobileMainLinks[1]} active={pathname === "/projects" || pathname.startsWith("/projects/")} order={2} />
               </div>
 
               <motion.div variants={itemVariants} className="my-3 flex items-center gap-3 px-2">
@@ -375,13 +373,13 @@ function MobileMenu({
 
               <div className="flex flex-col gap-1">
                 {mobileServiceLinks.map((link, i) => (
-                  <MobileNavItem key={link.href} order={2 + i} link={link} active={pathname === link.href || pathname.startsWith(`${link.href}/`)} />
+                  <MobileNavItem key={link.href} order={3 + i} link={link} active={pathname === link.href || pathname.startsWith(`${link.href}/`)} />
                 ))}
               </div>
 
               <div className="my-3 flex flex-col gap-1">
                 {mobileAfterServices.map((link, i) => (
-                  <MobileNavItem key={link.href} order={6 + i} link={link} active={pathname === link.href || pathname.startsWith(`${link.href}/`) || (link.href === "/careers" && pathname.startsWith("/internships"))} />
+                  <MobileNavItem key={link.href} order={6 + i} link={link} active={pathname === link.href || pathname.startsWith(`${link.href}/`)} />
                 ))}
               </div>
 
@@ -405,14 +403,9 @@ function MobileMenu({
                 {user ? (
                   <MobileUserActions user={user} />
                 ) : (
-                  <>
-                    <Button href="/signup" variant="primary" icon={<Rocket className="h-4 w-4" />}>
-                      Get started — it&apos;s free
-                    </Button>
-                    <Button href="/login" variant="secondary" icon={<LogIn className="h-4 w-4" />}>
-                      Log in
-                    </Button>
-                  </>
+                  <Button href="/contact" variant="primary">
+                    Start a project
+                  </Button>
                 )}
               </motion.div>
             </motion.div>
@@ -473,9 +466,12 @@ function NavHeaderLink({ href, active, children }: { href: string; active: boole
 }
 
 function MobileUserActions({ user }: { user: ProfileUser }) {
+  const router = useRouter();
+
   async function handleLogout() {
     await fetch("/api/auth/logout", { method: "POST" });
-    window.location.href = "/";
+    router.push("/");
+    router.refresh();
   }
 
   return (

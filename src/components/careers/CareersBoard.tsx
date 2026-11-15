@@ -44,7 +44,17 @@ const TABS = [
 ] as const;
 
 /** Roles from the database grouped by status, with team filters, an apply dialog and the open internships. */
-export function CareersBoard({ jobs, internships, email }: { jobs: PublicJob[]; internships: PublicInternship[]; email: string }) {
+export function CareersBoard({
+  jobs,
+  internships,
+  email,
+  databaseAvailable = true,
+}: {
+  jobs: PublicJob[];
+  internships: PublicInternship[];
+  email: string;
+  databaseAvailable?: boolean;
+}) {
   const counts = { open: jobs.filter((j) => j.status === "open").length, upcoming: jobs.filter((j) => j.status === "upcoming").length, closed: jobs.filter((j) => j.status === "closed").length };
   const [tab, setTab] = useState<(typeof TABS)[number]["id"]>(counts.open ? "open" : counts.upcoming ? "upcoming" : "open");
   const [query, setQuery] = useState("");
@@ -69,7 +79,7 @@ export function CareersBoard({ jobs, internships, email }: { jobs: PublicJob[]; 
 
   return (
     <>
-      <section id="openings" aria-label="Job openings" className="scroll-mt-20 px-5 py-10 sm:px-8">
+      <section id="openings" aria-label="Job openings" className="scroll-mt-20 px-3 py-10 min-[360px]:px-5 sm:px-8">
         <div className="mx-auto max-w-6xl">
           <div className="flex flex-wrap items-end justify-between gap-4">
             <h2 className="text-2xl font-bold tracking-tight text-story-navy sm:text-3xl dark:text-foreground">Job openings</h2>
@@ -84,21 +94,27 @@ export function CareersBoard({ jobs, internships, email }: { jobs: PublicJob[]; 
             </div>
           </div>
 
-          <div className="mt-5 grid grid-cols-2 gap-3 rounded-3xl border border-border-soft bg-surface p-3 lg:grid-cols-[minmax(0,1.4fr)_repeat(3,minmax(0,1fr))_auto] lg:items-end">
-            <label className="relative col-span-2 block lg:col-span-1">
+          <div className="mt-5 grid grid-cols-1 gap-3 rounded-2xl border border-border-soft bg-surface p-3 sm:grid-cols-2 lg:grid-cols-[minmax(0,1.4fr)_repeat(3,minmax(0,1fr))_auto] lg:items-end lg:rounded-3xl">
+            <label className="relative block sm:col-span-2 lg:col-span-1">
               <span className="field-label">Job title or keyword</span>
               <Search className="pointer-events-none absolute bottom-3.5 left-3.5 h-4 w-4 text-muted" aria-hidden />
               <input value={query} onChange={(e) => setQuery(e.target.value)} placeholder="Search roles" className="field-control mt-1.5" style={{ paddingLeft: "2.5rem", paddingRight: "2.25rem" }} />
               {query && <button type="button" onClick={() => setQuery("")} aria-label="Clear search" className="absolute bottom-3 right-3 grid h-5 w-5 place-items-center rounded-full text-muted hover:text-story-royal"><X className="h-3.5 w-3.5" /></button>}
             </label>
-            <Select id="f-team" label="Category" value={team} onChange={(e) => setTeam(e.target.value)} placeholder="All categories" options={uniq("team")} />
-            <Select id="f-loc" label="Location" value={location} onChange={(e) => setLocation(e.target.value)} placeholder="All locations" options={uniq("location")} />
-            <Select id="f-type" label="Job type" value={type} onChange={(e) => setType(e.target.value)} placeholder="All types" options={uniq("type")} />
-            <button type="button" onClick={reset} disabled={!filtered && sort === "newest"} className="col-span-2 inline-flex h-[2.9rem] items-center justify-center gap-1.5 rounded-full border lg:col-span-1 border-border-soft px-4 text-sm font-semibold text-muted transition-colors hover:border-story-royal hover:text-story-royal disabled:opacity-40"><RotateCcw className="h-4 w-4" />Reset</button>
+            <div><Select id="f-team" label="Category" value={team} onChange={(e) => setTeam(e.target.value)} placeholder="All categories" options={uniq("team")} /></div>
+            <div><Select id="f-loc" label="Location" value={location} onChange={(e) => setLocation(e.target.value)} placeholder="All locations" options={uniq("location")} /></div>
+            <div className="sm:col-span-2 lg:col-span-1"><Select id="f-type" label="Job type" value={type} onChange={(e) => setType(e.target.value)} placeholder="All types" options={uniq("type")} /></div>
+            <button type="button" onClick={reset} disabled={!filtered && sort === "newest"} className="inline-flex h-[2.9rem] items-center justify-center gap-1.5 rounded-full border border-border-soft px-4 text-sm font-semibold text-muted transition-colors hover:border-story-royal hover:text-story-royal disabled:opacity-40 sm:col-span-2 lg:col-span-1"><RotateCcw className="h-4 w-4" />Reset</button>
           </div>
 
           <div className="mt-4 flex flex-wrap items-center justify-between gap-3 text-sm">
-            <p className="text-muted" aria-live="polite"><span className="font-bold text-story-navy dark:text-foreground">{shown.length}</span> {shown.length === 1 ? "role" : "roles"}{filtered ? " match your filters" : ""}</p>
+            <p className="text-muted" aria-live="polite">
+              {!databaseAvailable ? "Availability could not be loaded" : (
+                <>
+                  <span className="font-bold text-story-navy dark:text-foreground">{shown.length}</span> {shown.length === 1 ? "role" : "roles"}{filtered ? " match your filters" : ""}
+                </>
+              )}
+            </p>
             <div className="flex gap-1 rounded-full bg-story-mist p-1" role="radiogroup" aria-label="Sort roles">
               {[{ id: "newest", label: "Newest" }, { id: "closing", label: "Closing soon" }].map((o) => (
                 <button key={o.id} role="radio" aria-checked={sort === o.id} onClick={() => setSort(o.id)} className={cn("relative rounded-full px-3 py-1 text-xs font-semibold transition-colors", sort === o.id ? "text-white" : "text-muted hover:text-story-royal")}>
@@ -120,11 +136,25 @@ export function CareersBoard({ jobs, internships, email }: { jobs: PublicJob[]; 
           {!shown.length && (
             <div className="mt-5 rounded-3xl border border-dashed border-story-royal/30 bg-story-mist p-6 text-center sm:p-10">
               <p className="text-lg font-semibold text-story-navy dark:text-foreground">
-                {filtered ? "No roles match these filters." : tab === "open" ? "There are no open positions right now." : tab === "upcoming" ? "No roles are scheduled to open yet." : "No closed roles to show."}
+                {!databaseAvailable
+                  ? "Careers are temporarily unavailable."
+                  : filtered
+                    ? "No roles match these filters."
+                    : tab === "open"
+                      ? "There are no open positions right now."
+                      : tab === "upcoming"
+                        ? "No roles are scheduled to open yet."
+                        : "No closed roles to show."}
               </p>
-              <p className="mx-auto mt-1 max-w-md text-sm leading-6 text-muted">{filtered ? "Try a different keyword or clear a filter." : "We still like hearing from developers, designers and marketers. Send your CV and we will reach out when a matching role opens."}</p>
+              <p className="mx-auto mt-1 max-w-md text-sm leading-6 text-muted">
+                {!databaseAvailable
+                  ? `Please check back shortly or contact ${email} for current openings.`
+                  : filtered
+                    ? "Try a different keyword or clear a filter."
+                    : "We still like hearing from developers, designers and marketers. Send your CV and we will reach out when a matching role opens."}
+              </p>
               {filtered && <button onClick={reset} className="mr-2 mt-4 inline-flex items-center gap-1.5 rounded-full border border-border-soft px-5 py-2.5 text-sm font-semibold hover:border-story-royal hover:text-story-royal"><RotateCcw className="h-4 w-4" />Reset filters</button>}
-              <div className="mt-5 flex justify-center"><ArrowButton onClick={() => setApplying(openApplication)}>Send an open application</ArrowButton></div>
+              {databaseAvailable && <div className="mt-5 flex justify-center"><ArrowButton onClick={() => setApplying(openApplication)}>Send an open application</ArrowButton></div>}
             </div>
           )}
         </div>
@@ -136,7 +166,9 @@ export function CareersBoard({ jobs, internships, email }: { jobs: PublicJob[]; 
             <h2 className="text-2xl font-bold tracking-tight text-story-navy sm:text-3xl dark:text-foreground">Internship opportunities</h2>
             <Link href="/internships" className="inline-flex shrink-0 items-center gap-1 text-sm font-semibold text-story-royal">All internships <ArrowUpRight className="h-4 w-4" /></Link>
           </div>
-          {internships.length === 0 ? (
+          {!databaseAvailable ? (
+            <p className="mt-4 text-sm text-muted">Internship availability could not be loaded.</p>
+          ) : internships.length === 0 ? (
             <p className="mt-4 text-sm text-muted">No internships are open at the moment.</p>
           ) : (
             <ul className="mt-6 grid gap-3 sm:grid-cols-2">
@@ -161,7 +193,7 @@ export function CareersBoard({ jobs, internships, email }: { jobs: PublicJob[]; 
       </section>
 
       <div className="px-5 sm:px-8">
-        <div className="mx-auto flex max-w-4xl flex-wrap items-center justify-between gap-3 rounded-3xl bg-story-mist p-5 sm:p-6">
+        <div className="mx-auto flex max-w-4xl flex-col items-start justify-between gap-4 rounded-3xl bg-story-mist p-5 sm:flex-row sm:items-center sm:p-6">
           <p className="text-sm font-semibold text-story-navy dark:text-foreground">Prefer email? Write to <a href={`mailto:${email}`} className="text-story-royal">{email}</a></p>
           <ArrowButton onClick={() => setApplying(openApplication)}>Open application</ArrowButton>
         </div>

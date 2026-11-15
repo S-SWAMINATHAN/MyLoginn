@@ -4,18 +4,21 @@ import { CompetitionLanding, NoCompetition } from "@/components/competition/Land
 import { getCurrentCompetition, publicView } from "@/lib/competition/server/competitions";
 import { getRegistration } from "@/lib/competition/server/registration";
 import { prisma } from "@/lib/prisma";
+import { createPageMetadata } from "@/lib/seo";
 
 export const dynamic = "force-dynamic";
 
 export async function generateMetadata(): Promise<Metadata> {
   const c = await getCurrentCompetition();
-  return {
+  return createPageMetadata({
     title: c ? `${c.title} — Coding Competition` : "Coding Competition",
+    absoluteTitle: true,
     description: c
       ? `Register for ${c.title}: a live, monitored online coding competition by MyLoginn Learn with unique question sets, server-side judging, certificates and a paid internship for the winner.`
       : "Live online coding competitions by MyLoginn Learn with unique question sets, certificates and internship rewards.",
-    alternates: { canonical: "/coding-competition" },
-  };
+    path: "/coding-competition",
+    keywords: ["coding competition", "online programming contest", "MyLoginn Learn"],
+  });
 }
 
 export default async function CodingCompetitionPage() {

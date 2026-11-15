@@ -28,10 +28,6 @@ const CareersCta = dynamic(() => import("@/components/sections/home/CareersLearn
 const FinalCta = dynamic(() => import("@/components/sections/FinalCta").then((mod) => mod.FinalCta), {
   loading: () => <div className="min-h-[220px] w-full bg-slate-50" aria-busy="true" aria-live="polite" />,
 });
-const LearnTeaser = dynamic(() => import("@/components/sections/home/CareersLearnBand").then((mod) => mod.LearnTeaser), {
-  loading: () => <div className="min-h-[80px] w-full bg-slate-50" aria-busy="true" aria-live="polite" />,
-});
-
 export const metadata = createPageMetadata({
   title: "MyLoginn | Web, App & Digital Solutions for Businesses",
   absoluteTitle: true,
@@ -67,7 +63,6 @@ export default function Home() {
         <AboutValues />
         <CareersCta />
         <FinalCta />
-        <LearnTeaser />
       </StoryStage>
     </>
   );

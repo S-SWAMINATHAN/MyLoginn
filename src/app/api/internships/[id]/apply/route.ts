@@ -1,10 +1,9 @@
-import { mkdir, writeFile, unlink } from "fs/promises";
 import { NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
 import { getCurrentUser } from "@/lib/auth";
 import { awardPoints } from "@/lib/streak";
 import { internshipApplicationSchema } from "@/lib/validation";
-import { MAX_RESUME_BYTES, RESUME_DIR, cleanResumeName, matchesResumeSignature, resumeExtension, resumeFilePath } from "@/lib/resumeStorage";
+import { MAX_RESUME_BYTES, cleanResumeName, matchesResumeSignature, resumeExtension } from "@/lib/resumeStorage";
 
 export const runtime = "nodejs";
 
@@ -60,6 +59,7 @@ export async function POST(req: Request, { params }: { params: Promise<{ id: str
 
   const existing = await prisma.internshipApplication.findUnique({
     where: { userId_internshipId: { userId: user.id, internshipId: id } },
+    select: { id: true },
   });
   if (existing) {
     return NextResponse.json({ error: "You've already applied to this internship" }, { status: 409 });
@@ -71,20 +71,11 @@ export async function POST(req: Request, { params }: { params: Promise<{ id: str
       internshipId: id,
       coverNote: parsed.data.coverNote || null,
       resumeName: resumeFile ? cleanResumeName(resumeFile.name) : parsed.data.resumeName || null,
+      resumeData: resumeBuffer ? Uint8Array.from(resumeBuffer) : null,
+      resumeStored: Boolean(resumeBuffer),
     },
+    select: { id: true, status: true, appliedAt: true },
   });
-
-  if (resumeBuffer && resumeExt) {
-    try {
-      await mkdir(RESUME_DIR, { recursive: true });
-      await writeFile(resumeFilePath(application.id, resumeExt), resumeBuffer, { flag: "wx" });
-    } catch {
-      // Don't keep an application whose resume could not be stored.
-      await prisma.internshipApplication.delete({ where: { id: application.id } }).catch(() => {});
-      await unlink(resumeFilePath(application.id, resumeExt)).catch(() => {});
-      return NextResponse.json({ error: "We couldn't save your resume. Please try again." }, { status: 500 });
-    }
-  }
 
   await awardPoints(user.id, { amount: 25, reason: "internship_applied", label: "Internship application bonus" });
 

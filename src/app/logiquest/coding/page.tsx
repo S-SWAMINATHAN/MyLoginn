@@ -6,11 +6,15 @@ import { Breadcrumbs, PageTitle } from "@/components/logiquest/ui";
 import { ProblemTable } from "@/components/logiquest/coding/ProblemTable";
 import { problemRows } from "@/lib/logiquest/coding/listing";
 import { TRACKS } from "@/lib/logiquest/coding/tracks";
+import { createPageMetadata } from "@/lib/seo";
 
-export const metadata = {
+export const metadata = createPageMetadata({
   title: "Coding Practice - Problems with an Online IDE · LogiQuest",
+  absoluteTitle: true,
   description: "Practise coding problems in Python, JavaScript and SQL with the MyLoginn IDE: algorithms, data structures, mathematics, strings and SQL, judged instantly.",
-};
+  path: "/logiquest/coding",
+  keywords: ["coding practice", "online programming problems", "Python coding practice", "SQL coding practice"],
+});
 
 const ICONS: Record<string, typeof Binary> = { algorithm: Workflow, structure: Binary, math: Sigma, python: FileCode2, javascript: Braces, sql: Database, strings: Type, puzzle: Puzzle };
 

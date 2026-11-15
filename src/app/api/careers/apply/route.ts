@@ -1,9 +1,8 @@
-import { mkdir, unlink, writeFile } from "fs/promises";
 import { NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
 import { jobApplicationSchema, effectiveStatus } from "@/lib/jobs";
 import { emailDomainAcceptsMail } from "@/lib/emailDomain";
-import { MAX_RESUME_BYTES, RESUME_DIR, cleanResumeName, matchesResumeSignature, resumeExtension, resumeFilePath } from "@/lib/resumeStorage";
+import { MAX_RESUME_BYTES, cleanResumeName, matchesResumeSignature, resumeExtension } from "@/lib/resumeStorage";
 
 export const runtime = "nodejs";
 
@@ -74,23 +73,15 @@ export async function POST(req: Request) {
         profileUrl: data.profileUrl,
         coverNote: data.coverNote,
         resumeName: cleanResumeName(file.name),
+        resumeData: Uint8Array.from(buffer),
+        resumeStored: true,
       },
       select: { id: true },
     });
 
-    try {
-      await mkdir(RESUME_DIR, { recursive: true });
-      await writeFile(resumeFilePath(application.id, ext), buffer, { flag: "wx" });
-    } catch {
-      // Never keep an application whose CV could not be stored.
-      await prisma.jobApplication.delete({ where: { id: application.id } }).catch(() => {});
-      await unlink(resumeFilePath(application.id, ext)).catch(() => {});
-      return fail("We couldn't save your CV. Please try again.", 500);
-    }
-
     return NextResponse.json({ ok: true, reference: `ML-${application.id.slice(-6).toUpperCase()}`, role: jobTitle });
   } catch (error) {
-    console.error("Job application could not be saved:", error instanceof Error ? error.name : "unknown error");
+    console.error("Job application could not be saved:", error instanceof Error ? error.message : "unknown error");
     return fail("We couldn't send your application. Please try again in a moment.", 500);
   }
 }

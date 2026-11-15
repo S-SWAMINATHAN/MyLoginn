@@ -1,4 +1,5 @@
 import Link from "next/link";
+import type { Metadata } from "next";
 import { notFound, redirect } from "next/navigation";
 import { ArrowLeft } from "lucide-react";
 import { getCurrentUser } from "@/lib/auth";
@@ -7,6 +8,8 @@ import { Section, Container } from "@/components/ui/Section";
 import { Card } from "@/components/ui/Card";
 import { StatusBadge } from "@/components/dashboard/StatusBadge";
 import { ProgressBar } from "@/components/dashboard/DashboardShell";
+
+export const metadata: Metadata = { robots: { index: false, follow: false } };
 
 export default async function DashboardProjectPage({ params }: { params: Promise<{ id: string }> }) {
   const user = await getCurrentUser();

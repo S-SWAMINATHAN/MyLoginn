@@ -2,11 +2,15 @@ import { getCurrentUser } from "@/lib/auth";
 import { Container } from "@/components/ui/Section";
 import { PageTitle } from "@/components/logiquest/ui";
 import { GdStart } from "@/components/practice/GdStart";
+import { createPageMetadata } from "@/lib/seo";
 
-export const metadata = {
+export const metadata = createPageMetadata({
   title: "Group Discussion Practice — Live GD Rooms with AI Evaluation",
+  absoluteTitle: true,
   description: "Create a group discussion room, share the code with friends and discuss live by voice. An AI judge evaluates the complete discussion and gives every participant a detailed report.",
-};
+  path: "/practice/gd",
+  keywords: ["group discussion practice", "online GD rooms", "AI group discussion"],
+});
 
 export default async function GdPage() {
   const user = await getCurrentUser();
