@@ -1,5 +1,4 @@
 import { NextResponse } from "next/server";
-import OpenAI from "openai";
 import { prisma } from "@/lib/prisma";
 import { CONTACT_EMAIL, CONTACT_PHONES, CONTACT_HOURS, WHATSAPP_PHONE } from "@/lib/contactInfo";
 import { HIDE_TUTORING } from "@/lib/hiddenSections";
@@ -12,6 +11,22 @@ const MAX_TURNS = 20;
 const MAX_MESSAGE_CHARS = 2000;
 
 type ChatTurn = { role: "user" | "assistant"; content: string };
+
+function anthropicMessagesEndpoint(configuredBaseUrl: string): string {
+  let baseUrl = configuredBaseUrl.trim().replace(/^(["'])(.*)\1$/, "$2");
+  const markdownLink = baseUrl.match(/^\[[^\]]+\]\((https?:\/\/[^)]+)\)$/);
+  if (markdownLink) baseUrl = markdownLink[1];
+
+  const url = new URL(baseUrl);
+  if (url.protocol !== "https:" && url.protocol !== "http:") {
+    throw new Error("ANTHROPIC_BASE_URL must use HTTP or HTTPS");
+  }
+
+  const path = url.pathname.replace(/\/+$/, "");
+  if (path.endsWith("/v1/messages")) return url.toString();
+  url.pathname = path.endsWith("/v1") ? `${path}/messages` : `${path}/v1/messages`;
+  return url.toString();
+}
 
 function rowsOrEmpty<T>(result: PromiseSettledResult<T[]>, source: string): T[] {
   if (result.status === "fulfilled") return result.value;
@@ -30,37 +45,13 @@ function isChatTurn(value: unknown): value is ChatTurn {
   );
 }
 
-async function* openAITextDeltas(
-  apiKey: string,
-  instructions: string,
-  history: ChatTurn[],
-  signal: AbortSignal
-): AsyncGenerator<string> {
-  const client = new OpenAI({ apiKey });
-  const stream = await client.responses.create({
-    model: process.env.OPENAI_CHAT_MODEL || "gpt-6-luna",
-    instructions,
-    input: history.map(({ role, content }) => ({ role, content })),
-    max_output_tokens: 1024,
-    store: false,
-    stream: true,
-  }, { signal });
-
-  for await (const event of stream) {
-    if (event.type === "response.output_text.delta") yield event.delta;
-    if (event.type === "response.failed") throw new Error(event.response.error?.message || "OpenAI response failed");
-    if (event.type === "error") throw new Error(event.message || "OpenAI response failed");
-  }
-}
-
 async function* anthropicTextDeltas(
   token: string,
   instructions: string,
   history: ChatTurn[],
   signal: AbortSignal
 ): AsyncGenerator<string> {
-  const baseUrl = (process.env.ANTHROPIC_BASE_URL || "https://api.anthropic.com").replace(/\/+$/, "");
-  const endpoint = baseUrl.endsWith("/v1") ? `${baseUrl}/messages` : `${baseUrl}/v1/messages`;
+  const endpoint = anthropicMessagesEndpoint(process.env.ANTHROPIC_BASE_URL || "https://api.anthropic.com");
   const response = await fetch(endpoint, {
     method: "POST",
     signal,
@@ -72,7 +63,7 @@ async function* anthropicTextDeltas(
       Authorization: `Bearer ${token}`,
     },
     body: JSON.stringify({
-      model: process.env.ANTHROPIC_CHAT_MODEL || "claude-haiku-4-5-20251001",
+      model: "gpt-6-luna",
       system: instructions,
       messages: history.map(({ role, content }) => ({ role, content })),
       max_tokens: 1024,
@@ -231,18 +222,15 @@ export async function POST(req: Request) {
   const topics = detectTopics(history.filter((m) => m.role === "user").map((m) => m.content));
 
   const system = await buildSystemPrompt(topics);
-  const openAiKey = process.env.OPENAI_API_KEY;
   const anthropicToken = process.env.ANTHROPIC_AUTH_TOKEN;
-  if (!openAiKey && !anthropicToken) {
-    return NextResponse.json({ error: "Configure OPENAI_API_KEY or ANTHROPIC_AUTH_TOKEN in the server environment." }, { status: 503 });
+  if (!anthropicToken) {
+    return NextResponse.json({ error: "Configure ANTHROPIC_AUTH_TOKEN to enable the free-tier chatbot." }, { status: 503 });
   }
 
   const abortController = new AbortController();
   req.signal.addEventListener("abort", () => abortController.abort(), { once: true });
 
-  const providers: { name: string; start: () => AsyncGenerator<string> }[] = [];
-  if (openAiKey) providers.push({ name: "OpenAI", start: () => openAITextDeltas(openAiKey, system, history, abortController.signal) });
-  if (anthropicToken) providers.push({ name: "Anthropic-compatible", start: () => anthropicTextDeltas(anthropicToken, system, history, abortController.signal) });
+  const providers = [{ name: "Coarena", start: () => anthropicTextDeltas(anthropicToken, system, history, abortController.signal) }];
 
   let selected: AsyncIterator<string> | undefined;
   let firstDelta: IteratorResult<string> | undefined;
@@ -268,7 +256,7 @@ export async function POST(req: Request) {
     const message = failures.some((failure) => /401|403|auth|api.?key|token/i.test(failure))
       ? "The configured AI provider credentials were rejected. Replace the server-side key or token."
       : failures.some((failure) => /429|quota|usage limit/i.test(failure))
-        ? "The configured AI providers are busy or have reached their usage limits. Please try again later."
+        ? "The free AI service has reached its current usage limit. Please try again later."
         : "The chat assistant could not connect. Check the server-side AI provider configuration and try again.";
     return NextResponse.json({ error: message }, { status: 502 });
   }
@@ -288,7 +276,7 @@ export async function POST(req: Request) {
         }
         controller.close();
       } catch (error) {
-        if (!abortController.signal.aborted) console.error("OpenAI chat stream failed", error);
+        if (!abortController.signal.aborted) console.error("Coarena chat stream failed", error);
         controller.error(error);
       }
       }

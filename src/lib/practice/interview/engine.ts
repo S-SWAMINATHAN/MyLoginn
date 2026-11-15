@@ -208,8 +208,8 @@ export async function runInterviewTurn(config: InterviewConfig, state: Interview
     parts: [{ text: context }, { text: "Candidate's recorded answer:" }, { inlineData: { mimeType: "audio/wav", data: audio.base64 } }],
     schema: TURN_SCHEMA,
     parse: parseTurn,
-    timeoutMs: 45_000,
-    maxOutputTokens: 2000,
+    timeoutMs: 54_000,
+    maxOutputTokens: 1400,
   });
 
   const wordCount = data.transcript.split(/\s+/).filter(Boolean).length;

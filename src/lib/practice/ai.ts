@@ -201,7 +201,8 @@ async function onceGemini(opts: CallOptions<unknown>, signal: AbortSignal, model
         },
       }),
     });
-  } catch {
+  } catch (error) {
+    console.error("Practice Gemini network failure:", error instanceof Error ? error.name : "Unknown error");
     throw new AiError(signal.aborted ? "timeout" : "unavailable");
   }
   if (res.status === 401 || res.status === 403) {
@@ -209,7 +210,10 @@ async function onceGemini(opts: CallOptions<unknown>, signal: AbortSignal, model
     throw new AiError("auth");
   }
   if (res.status === 429) throw new AiError("rate_limited");
-  if (res.status >= 500) throw new AiError("unavailable");
+  if (res.status >= 500) {
+    console.error("Practice Gemini upstream error:", res.status, res.headers.get("x-goog-request-id"));
+    throw new AiError("unavailable");
+  }
   if (!res.ok) {
     console.error("Practice AI bad request:", res.status, (await res.text().catch(() => "")).slice(0, 300));
     throw new AiError("unavailable");
@@ -233,9 +237,26 @@ async function once(opts: CallOptions<unknown>, signal: AbortSignal, model: stri
     : onceGemini(opts, signal, model);
 }
 
+async function onceWithTimeout(opts: CallOptions<unknown>, parentSignal: AbortSignal, model: string, timeoutMs: number) {
+  const attemptController = new AbortController();
+  const abortFromParent = () => attemptController.abort();
+  if (parentSignal.aborted) attemptController.abort();
+  else parentSignal.addEventListener("abort", abortFromParent, { once: true });
+  const timer = setTimeout(() => attemptController.abort(), timeoutMs);
+  try {
+    return await once(opts, attemptController.signal, model);
+  } catch (error) {
+    if (attemptController.signal.aborted) throw new AiError("timeout");
+    throw error;
+  } finally {
+    clearTimeout(timer);
+    parentSignal.removeEventListener("abort", abortFromParent);
+  }
+}
+
 /**
- * Runs one structured call. A transient failure (rate limit, 5xx, malformed output) is retried once while time
- * remains; a timeout is not, so the learner is never kept waiting twice as long.
+ * Runs one structured call. Transient failures can move to the backup model while time remains; a timeout is not
+ * retried, so the learner is never kept waiting through a second full-length request.
  */
 export async function generateJson<T>(opts: CallOptions<T>): Promise<{ data: T; ms: number }> {
   if (!isAiConfigured()) throw new AiError("not_configured");
@@ -248,15 +269,35 @@ export async function generateJson<T>(opts: CallOptions<T>): Promise<{ data: T; 
     const chain = models();
     let modelIndex = 0;
     for (let attempt = 0; attempt < 2 + chain.length - 1; attempt++) {
+      const elapsedMs = performance.now() - started;
+      const remainingBeforeAttempt = budget - elapsedMs;
+      if (controller.signal.aborted || remainingBeforeAttempt <= 0) {
+        lastError = new AiError("timeout");
+        break;
+      }
+      const modelsLeft = chain.length - modelIndex;
+      const modelBudget = modelsLeft > 1
+        ? Math.floor(remainingBeforeAttempt / modelsLeft)
+        : remainingBeforeAttempt;
       try {
-        const data = (await once(opts as CallOptions<unknown>, controller.signal, chain[modelIndex])) as T;
+        const data = (await onceWithTimeout(opts as CallOptions<unknown>, controller.signal, chain[modelIndex], modelBudget)) as T;
         const ms = performance.now() - started;
         logAi(opts.kind, ms, true);
         return { data, ms };
       } catch (e) {
         lastError = e instanceof AiError ? e : new AiError("unavailable");
-        // Rate-limited: move straight to the next model, which has its own quota.
-        if (lastError.kind === "rate_limited" && modelIndex < chain.length - 1) { modelIndex++; continue; }
+        // A per-model timeout must not consume the full route budget; give the next model its reserved share.
+        const remainingMs = budget - (performance.now() - started);
+        if (
+          (lastError.kind === "timeout" || lastError.kind === "rate_limited" || lastError.kind === "unavailable" || lastError.kind === "invalid_output") &&
+          modelIndex < chain.length - 1 &&
+          !controller.signal.aborted &&
+          remainingMs > 12_000
+        ) {
+          console.warn(`Practice AI ${opts.kind} switching models after ${lastError.kind}.`);
+          modelIndex++;
+          continue;
+        }
         const retryable = lastError.kind === "unavailable" || lastError.kind === "invalid_output" || lastError.kind === "rate_limited";
         if (!retryable || controller.signal.aborted || performance.now() - started > budget * 0.5 || attempt >= 1 + modelIndex) break;
         // A rate limit needs a real pause before the retry; other transient errors a short one.

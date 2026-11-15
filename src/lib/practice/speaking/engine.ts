@@ -152,7 +152,7 @@ export async function runSpeakingTurn(config: SpeakingConfig, item: SpeakingItem
         better: asText(r.better, 700),
       };
     },
-    timeoutMs: 45_000,
+    timeoutMs: 54_000,
     // A normal evaluation is ~300 tokens; the cap stops a degenerate repetition loop within seconds.
     maxOutputTokens: 1500,
   });

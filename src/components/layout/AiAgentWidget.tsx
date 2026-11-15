@@ -264,7 +264,7 @@ export function AiAgentWidget() {
           appendToReply((prev) => prev + finalDelta);
         }
         if (controller.signal.aborted) throw new DOMException("Aborted", "AbortError");
-        if (!responseText) throw new Error("OpenAI returned an empty response");
+        if (!responseText) throw new Error("The chat service returned an empty response");
       } catch (err) {
         if (timedOut) {
           appendToReply((prev) => prev || "The response took too long. Please try again.");
@@ -272,7 +272,7 @@ export function AiAgentWidget() {
           appendToReply((prev) =>
             prev
               ? prev
-              : "OpenAI could not complete this request. Please try again later."
+              : "The assistant could not complete this request. Please try again later."
           );
         } else {
           appendToReply((prev) => prev || "Stopped.");
@@ -499,7 +499,7 @@ export function AiAgentWidget() {
                 )}
               </div>
               <p className="mt-1.5 flex items-center justify-between px-1 text-[10px] text-muted">
-                <span>Powered by OpenAI · Enter to send</span>
+                <span>Free-tier AI · Enter to send</span>
                 {input.length > MAX_CHARS * 0.8 && (
                   <span className={input.length >= MAX_CHARS ? "text-danger" : undefined}>
                     {input.length}/{MAX_CHARS}
