@@ -19,13 +19,18 @@ function companyWriteError(error: unknown, fallback: string) {
 
 export async function GET() {
   if (!(await requireAdmin())) return NextResponse.json({ error: "Forbidden" }, { status: 403 });
-  const [categories, members, reviews, profile] = await Promise.all([
-    prisma.teamCategory.findMany({ orderBy: [{ sortOrder: "asc" }, { name: "asc" }] }),
-    prisma.teamMember.findMany({ include: { category: true }, orderBy: [{ category: { sortOrder: "asc" } }, { sortOrder: "asc" }] }),
-    prisma.customerReview.findMany({ orderBy: [{ submittedAt: "desc" }] }),
-    prisma.companyProfile.findUnique({ where: { id: "main" } }),
-  ]);
-  return NextResponse.json({ categories, members, reviews, profile });
+  try {
+    // Keep the admin load within the small PostgreSQL connection allowance used by this app.
+    const categories = await prisma.teamCategory.findMany({ orderBy: [{ sortOrder: "asc" }, { name: "asc" }] });
+    const members = await prisma.teamMember.findMany({ include: { category: true }, orderBy: [{ category: { sortOrder: "asc" } }, { sortOrder: "asc" }] });
+    const reviews = await prisma.customerReview.findMany({ orderBy: [{ submittedAt: "desc" }] });
+    const profile = await prisma.companyProfile.findUnique({ where: { id: "main" } });
+    return NextResponse.json({ categories, members, reviews, profile });
+  } catch (error) {
+    console.error("[admin company] load", error);
+    const detail = process.env.NODE_ENV === "development" && error instanceof Error ? ` ${error.message}` : "";
+    return NextResponse.json({ error: `Unable to load company data.${detail}` }, { status: 503 });
+  }
 }
 
 export async function POST(request: Request) {

@@ -1,6 +1,6 @@
 import Image from "next/image";
 import Link from "next/link";
-import { ArrowRight, Code2, ExternalLink, Handshake, Lightbulb, ShieldCheck, Sparkles, Target, TrendingUp, Users, type LucideIcon } from "lucide-react";
+import { ArrowRight, Code2, Handshake, Lightbulb, ShieldCheck, Sparkles, Target, TrendingUp, Users, type LucideIcon } from "lucide-react";
 import { JsonLd } from "@/components/seo/JsonLd";
 import { FaqAccordion } from "@/components/ui/FaqAccordion";
 import { ContentIcon } from "@/components/ui/ContentIcon";
@@ -41,15 +41,15 @@ const faqs = [
 
 const teamSocials = [
   { key: "facebookUrl", label: "Facebook", platform: "facebook" },
-  { key: "xUrl", label: "X / Twitter", platform: "x" },
-  { key: "youtubeUrl", label: "YouTube", platform: "youtube" },
   { key: "instagramUrl", label: "Instagram", platform: "instagram" },
+  { key: "xUrl", label: "X", platform: "x" },
+  { key: "profileUrl", label: "LinkedIn", platform: "linkedin" },
 ] as const;
 
 function TeamSocialIcon({ platform }: { platform: (typeof teamSocials)[number]["platform"] }) {
   if (platform === "facebook") return <svg viewBox="0 0 24 24" aria-hidden="true" className="h-4 w-4 fill-current"><path d="M13.4 21v-8h2.7l.4-3h-3.1V8.1c0-.9.3-1.5 1.5-1.5h1.7V3.9c-.3 0-1.3-.1-2.5-.1-2.5 0-4.2 1.5-4.2 4.4V10H7v3h2.9v8h3.5Z" /></svg>;
+  if (platform === "linkedin") return <svg viewBox="0 0 24 24" aria-hidden="true" className="h-4 w-4"><rect x="3" y="3" width="18" height="18" rx="2.5" className="fill-current" /><path className="fill-white" d="M7.3 10h2.5v7H7.3v-7Zm1.25-1a1.45 1.45 0 1 1 0-2.9 1.45 1.45 0 0 1 0 2.9ZM11 10h2.4v1h.04c.34-.64 1.16-1.3 2.39-1.3 2.55 0 3.02 1.68 3.02 3.86V17h-2.5v-3.05c0-.73-.02-1.67-1.02-1.67-1.02 0-1.18.8-1.18 1.62V17H11v-7Z" /></svg>;
   if (platform === "x") return <svg viewBox="0 0 24 24" aria-hidden="true" className="h-3.5 w-3.5 fill-current"><path d="M18.9 3h2.9l-6.4 7.3L23 21h-5.8l-4.6-6.1L7.2 21H4.3l6.9-7.9L3.8 3h6l4.2 5.6L18.9 3Zm-1 16h1.6L9 4.9H7.3L17.9 19Z" /></svg>;
-  if (platform === "youtube") return <svg viewBox="0 0 24 24" aria-hidden="true" className="h-4 w-4 fill-current"><path d="M23.5 6.2a3 3 0 0 0-2.1-2.1C19.5 3.6 12 3.6 12 3.6s-7.5 0-9.4.5A3 3 0 0 0 .5 6.2 31 31 0 0 0 0 12a31 31 0 0 0 .5 5.8 3 3 0 0 0 2.1 2.1c1.9.5 9.4.5 9.4.5s7.5 0 9.4-.5a3 3 0 0 0 2.1-2.1A31 31 0 0 0 24 12a31 31 0 0 0-.5-5.8ZM9.6 15.6V8.4l6.2 3.6-6.2 3.6Z" /></svg>;
   return <svg viewBox="0 0 24 24" aria-hidden="true" className="h-4 w-4 fill-none stroke-current" strokeWidth="1.8"><rect x="3.2" y="3.2" width="17.6" height="17.6" rx="5.2" /><circle cx="12" cy="12" r="4.1" /><circle cx="17.7" cy="6.6" r="1" className="fill-current stroke-none" /></svg>;
 }
 
@@ -98,7 +98,18 @@ export default async function AboutPage() {
                 {member.imageUrl ? <Image src={member.imageUrl} alt={`${member.firstName} ${member.lastName}`} fill sizes="(max-width: 640px) 90vw, (max-width: 1024px) 44vw, 280px" className="rounded-[1.05rem] object-cover transition-transform duration-500 group-hover:scale-[1.025]" /> : <div className="grid h-full place-items-center rounded-[1.05rem] text-5xl font-bold text-brand-500">{member.firstName[0]}{member.lastName[0]}</div>}
                 <div className="absolute inset-x-2 bottom-0 translate-y-1/2 rounded-2xl bg-brand-600 px-3 py-3 text-center text-white shadow-[0_8px_18px_-10px_rgba(31,86,214,.8)]"><h4 className="truncate text-sm font-bold">{member.firstName} {member.lastName}</h4><p className="mt-0.5 truncate text-xs font-medium text-blue-100">{member.designation}</p></div>
               </div>
-              <div className="px-3 pb-2 pt-7">{member.biography.trim() && <p className="mb-2 line-clamp-3 text-center text-xs leading-5 text-muted">{member.biography}</p>}<div className="flex min-h-7 items-center justify-center gap-1.5">{teamSocials.map(({ key, label, platform }) => { const url = member[key]; const icon = <TeamSocialIcon platform={platform} />; return url ? <a key={key} href={url} target="_blank" rel="noreferrer" aria-label={`${member.firstName} ${member.lastName} on ${label}`} className="grid h-7 w-7 place-items-center rounded-full border border-border-soft bg-white text-brand-700 transition-colors hover:border-brand-300 hover:bg-brand-50 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand-600 dark:bg-surface">{icon}</a> : <span key={key} role="img" aria-label={`${label} profile not provided`} title={`${label} profile not provided`} className="grid h-7 w-7 place-items-center rounded-full border border-border-soft bg-white text-muted opacity-35 dark:bg-surface">{icon}</span>; })}{member.profileUrl && <a href={member.profileUrl} target="_blank" rel="noreferrer" aria-label={`${member.firstName} ${member.lastName} professional profile`} className="grid h-7 w-7 place-items-center rounded-full border border-border-soft bg-white text-brand-700 transition-colors hover:border-brand-300 hover:bg-brand-50 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand-600 dark:bg-surface"><ExternalLink className="h-3.5 w-3.5" /></a>}</div></div>
+              <div className="px-3 pb-4 pt-8">
+                {member.biography.trim() && <p className="mb-3 line-clamp-3 text-center text-xs leading-5 text-muted">{member.biography}</p>}
+                <div className="flex min-h-10 items-center justify-center gap-2">
+                  {teamSocials.map(({ key, label, platform }) => {
+                    const url = member[key];
+                    const icon = <TeamSocialIcon platform={platform} />;
+                    return url
+                      ? <a key={key} href={url} target="_blank" rel="noreferrer" aria-label={`${member.firstName} ${member.lastName} on ${label}`} className="grid h-9 w-9 shrink-0 place-items-center rounded-full border border-border-soft bg-white text-brand-700 transition-colors hover:border-brand-300 hover:bg-brand-50 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand-600 dark:bg-surface">{icon}</a>
+                      : <span key={key} aria-label={`${label} profile not provided`} title={`Add a ${label} URL in team member settings to enable this link`} className="grid h-9 w-9 shrink-0 place-items-center rounded-full border border-border-soft bg-white text-muted opacity-40 dark:bg-surface">{icon}</span>;
+                  })}
+                </div>
+              </div>
             </article>)}</div></div>)}</div> : <div className="mx-auto max-w-2xl rounded-2xl border border-dashed border-brand-200 bg-white/80 px-6 py-8 text-center dark:border-brand-800 dark:bg-surface"><p className="text-lg font-semibold">Our team profiles are coming soon.</p><p className="mt-2 text-sm leading-6 text-muted">We’ll introduce our people here as they are added. For now, tell us what you’re working on and we’ll connect you with the right team.</p><Link href="/contact" className="mt-5 inline-flex items-center gap-2 rounded-lg bg-brand-600 px-4 py-2.5 text-sm font-semibold text-white transition-colors hover:bg-brand-700">Talk to our team <ArrowRight className="h-4 w-4" /></Link></div>}
         </div>
       </section>
