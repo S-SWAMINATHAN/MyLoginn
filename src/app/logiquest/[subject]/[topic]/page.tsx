@@ -15,6 +15,7 @@ import { GROUP_COLOR } from "@/components/logiquest/subjectStyle";
 import { PAGE_SIZE } from "@/lib/logiquest/constants";
 import { practiceSeed, shuffleQuestions } from "@/lib/logiquest/shuffle";
 import { createPageMetadata } from "@/lib/seo";
+export const revalidate = 86400; // Cache for 24 hours (86400 seconds)
 
 type Props = { params: Promise<{ subject: string; topic: string }>; searchParams: Promise<{ ex?: string; page?: string; s?: string }> };
 

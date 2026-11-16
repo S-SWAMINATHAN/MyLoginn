@@ -11,6 +11,7 @@ import { GROUP_BY_SLUG, getTopicMeta } from "@/lib/logiquest/catalog";
 import { getQuestion } from "@/lib/logiquest/bank";
 import { PAGE_SIZE } from "@/lib/logiquest/constants";
 import { createPageMetadata } from "@/lib/seo";
+export const revalidate = 86400; // Cache for 24 hours (86400 seconds)
 
 type Props = { params: Promise<{ qid: string }> };
 
