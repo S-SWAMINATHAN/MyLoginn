@@ -7,6 +7,17 @@ const nextConfig: NextConfig = {
   outputFileTracingIncludes: {
     "/api/logiquest/coding/[slug]/sql": ["./node_modules/sql.js/dist/sql-wasm.js", "./node_modules/sql.js/dist/sql-wasm.wasm"],
   },
+  // Keep local development assets and large non-runtime directories out of serverless function traces.
+  outputFileTracingExcludes: {
+    "/*": [
+      "./.venv/**/*",
+      "./judge-worker/**/*",
+      "./exec-service/**/*",
+      "./private-uploads/**/*",
+      "./tests/**/*",
+      "./docs/**/*",
+    ],
+  },
   experimental: {
     // Turbopack's on-disk dev cache has been corrupting itself in this
     // environment (stale cached module-resolution paths surviving a moved/
