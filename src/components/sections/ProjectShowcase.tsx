@@ -33,7 +33,7 @@ export function ProjectShowcase() {
             Our projects
           </h2>
           <p className="mt-4 max-w-xl text-sm text-muted sm:text-base">
-            Client websites, campaign work and products delivered by MyLoginn. Open any project for a quick preview.
+            Live websites and products built by Myloginn. Open any project for a quick preview.
           </p>
         </div>
 

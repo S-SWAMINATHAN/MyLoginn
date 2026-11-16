@@ -14,10 +14,10 @@ import { FinalCta } from "@/components/sections/FinalCta";
 
 export const metadata = createPageMetadata({
   title: "Projects",
-  description: "Websites, apps, custom software and AI solutions MyLoginn has designed, built and launched for businesses.",
+  description: "Websites, apps, custom software and AI solutions Myloginn has designed, built and launched for businesses.",
   path: "/projects",
   keywords: [
-    "MyLoginn projects", "software projects", "website projects", "app projects",
+    "Myloginn projects", "software projects", "website projects", "app projects",
     "custom software projects", "technology project portfolio", "AI solutions portfolio",
     "client projects",
   ],
@@ -70,7 +70,7 @@ export default async function ProjectsPage() {
           <Reveal><span className="story-eyebrow">Real client work</span></Reveal>
           <h2 className="story-subheading mt-3 text-story-navy dark:text-foreground">Projects we&apos;ve shipped</h2>
           <p className="mt-3 max-w-xl text-sm leading-7 text-muted sm:text-base">
-            Client websites, marketing campaigns and business software delivered by MyLoginn.
+            Live websites and products Myloginn has built and continues to run for real businesses.
           </p>
 
           <div className="mt-8 grid grid-cols-1 gap-6 sm:grid-cols-2 sm:gap-7 lg:grid-cols-4">
@@ -80,13 +80,13 @@ export default async function ProjectsPage() {
           </div>
         </div>
 
-        {/* Learner work belongs to MyLoginn Learn: it is labelled as such, and only shown once there is some */}
+        {/* Learner work belongs to Myloginn Learn: it is labelled as such, and only shown once there is some */}
         {showcaseProjects.length > 0 && (
           <div className="mt-20 sm:mt-24">
-            <Reveal><span className="story-eyebrow">From MyLoginn Learn</span></Reveal>
+            <Reveal><span className="story-eyebrow">From Myloginn Learn</span></Reveal>
             <h2 className="story-subheading mt-3 text-story-navy dark:text-foreground">Learner projects</h2>
             <p className="mt-3 max-w-xl text-sm leading-7 text-muted sm:text-base">
-              Projects built by learners on MyLoginn Learn, our separate learning platform, with guidance from mentors.
+              Projects built by learners on Myloginn Learn, our separate learning platform, with guidance from mentors.
             </p>
 
             <div className="mt-8">

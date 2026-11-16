@@ -94,7 +94,7 @@ function ClientProjectDetail({ project }: { project: ClientProject }) {
   const facts = [
     { label: "Category", value: project.category },
     { label: "Status", value: isLive ? "Live in production" : "In development" },
-    { label: "Delivered by", value: "MyLoginn" },
+    { label: "Delivered by", value: "Myloginn" },
     platformFact,
   ];
   const gradient = accent.from;
@@ -189,7 +189,7 @@ function ClientProjectDetail({ project }: { project: ClientProject }) {
           )}
         </div>
         <div className="rounded-3xl p-6 text-white shadow-lg sm:p-8" style={{ backgroundColor: gradient }}>
-          <p className="text-sm font-semibold uppercase tracking-wider text-white/75">What MyLoginn delivered</p>
+          <p className="text-sm font-semibold uppercase tracking-wider text-white/75">What Myloginn delivered</p>
           <ul className="mt-5 space-y-3.5">
             {(project.deliverables ?? ["Design and build", "Launch support"]).map((item) => (
               <li key={item} className="flex items-start gap-3 text-base font-medium leading-snug">
@@ -221,7 +221,7 @@ function ClientProjectDetail({ project }: { project: ClientProject }) {
 
       {/* Process */}
       <section className="mx-auto mt-16 max-w-[1480px] px-4 sm:px-6 lg:px-10">
-        <p className="text-sm font-semibold uppercase tracking-wider text-brand-600">How MyLoginn builds</p>
+        <p className="text-sm font-semibold uppercase tracking-wider text-brand-600">How Myloginn builds</p>
         <h2 className="mt-2 text-3xl font-semibold tracking-tight sm:text-4xl">From idea to a live product</h2>
         <ol className="mt-8 grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
           {[
@@ -243,7 +243,7 @@ function ClientProjectDetail({ project }: { project: ClientProject }) {
       <section className="mx-auto mt-16 max-w-[1480px] px-4 sm:px-6 lg:px-10">
         <div className="flex items-end justify-between gap-4">
           <div>
-            <p className="text-sm font-semibold uppercase tracking-wider text-brand-600">More from MyLoginn</p>
+            <p className="text-sm font-semibold uppercase tracking-wider text-brand-600">More from Myloginn</p>
             <h2 className="mt-2 text-3xl font-semibold tracking-tight sm:text-4xl">Other projects we have shipped</h2>
           </div>
           <Link href="/projects" className="hidden items-center gap-1.5 text-sm font-semibold text-brand-600 hover:underline sm:inline-flex">View all <ArrowUpRight className="h-4 w-4" /></Link>
