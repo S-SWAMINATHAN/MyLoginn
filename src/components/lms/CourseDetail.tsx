@@ -55,7 +55,7 @@ export async function LmsCourseDetail({ slug, justEnrolled }: { slug: string; ju
     <Section className="pt-8 sm:pt-12">
       <JsonLd data={{
         "@context": "https://schema.org", "@type": "Course", name: course.title, description: course.description, url: `${siteUrl}/courses/${course.slug}`,
-        provider: { "@type": "Organization", name: "MyLoginn Tech", sameAs: siteUrl },
+        provider: { "@type": "Organization", "@id": `${siteUrl}/#organization`, name: "Myloginn", sameAs: siteUrl },
         offers: { "@type": "Offer", price: course.price, priceCurrency: "INR", category: free ? "Free" : "Paid" },
       }} />
       <Container className="max-w-6xl">
