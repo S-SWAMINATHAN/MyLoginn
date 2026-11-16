@@ -1,4 +1,4 @@
-﻿import type { Metadata, Viewport } from "next";
+import type { Metadata, Viewport } from "next";
 import { Inter, JetBrains_Mono, Plus_Jakarta_Sans } from "next/font/google";
 import { MotionConfig } from "framer-motion";
 import "./globals.css";
@@ -42,12 +42,12 @@ export const viewport: Viewport = {
 export const metadata: Metadata = {
   metadataBase: new URL(siteUrl),
   title: {
-    default: "MyLoginn | Web, App & Digital Solutions for Businesses",
-    template: "%s | MyLoginn",
+    default: "Myloginn | Web, App & Digital Solutions for Businesses",
+    template: "%s | Myloginn",
   },
   description:
     "Your technology partner to build, automate and grow. MyLoginn creates websites, mobile apps, desktop software and AI agents, and grows them with digital marketing.",
-  applicationName: "MyLoginn",
+  applicationName: "Myloginn",
   authors: [{ name: "MyLoginn Tech" }],
   creator: "MyLoginn Tech",
   publisher: "MyLoginn Tech",
@@ -58,14 +58,14 @@ export const metadata: Metadata = {
   openGraph: {
     type: "website",
     locale: "en_IN",
-    siteName: "MyLoginn",
-    title: "MyLoginn | Web, App & Digital Solutions for Businesses",
+    siteName: "Myloginn",
+    title: "Myloginn | Web, App & Digital Solutions for Businesses",
     description:
       "India-based IT company building websites, mobile apps, desktop software, AI agents and digital marketing for businesses worldwide.",
   },
   twitter: {
     card: "summary_large_image",
-    title: "MyLoginn | Web, App & Digital Solutions for Businesses",
+    title: "Myloginn | Web, App & Digital Solutions for Businesses",
     description:
       "India-based IT company building websites, mobile apps, desktop software, AI agents and digital marketing for businesses worldwide.",
   },

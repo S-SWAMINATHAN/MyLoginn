@@ -34,6 +34,7 @@ const companyRoutes: Route[] = [
 
 const learnRoutes: Route[] = [
   { path: "/courses", priority: 0.7, changeFrequency: "weekly" },
+  { path: "/coding-competition", priority: 0.7, changeFrequency: "weekly" },
   { path: "/logiquest", priority: 0.7, changeFrequency: "weekly" },
   { path: "/logiquest/online-test", priority: 0.6, changeFrequency: "monthly" },
   { path: "/logiquest/coding", priority: 0.6, changeFrequency: "monthly" },
