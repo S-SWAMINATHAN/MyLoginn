@@ -11,11 +11,11 @@ import { prisma } from "@/lib/prisma";
 import { createPageMetadata } from "@/lib/seo";
 
 export const metadata = createPageMetadata({
-  title: "About MyLoginn",
+  title: "About Myloginn",
   absoluteTitle: true,
-  description: "Meet MyLoginn Tech: a technology partner building websites, apps, custom software, AI solutions and digital growth experiences.",
+  description: "Myloginn is an India-based technology company building websites, mobile apps, desktop software, AI solutions and digital marketing experiences for businesses.",
   path: "/about",
-  keywords: ["about MyLoginn", "MyLoginn Tech company", "MyLoginn technology company", "MyLoginn IT company"],
+  keywords: ["about Myloginn", "Myloginn company", "Myloginn technology company", "Myloginn IT company"],
 });
 export const dynamic = "force-dynamic";
 
@@ -35,9 +35,9 @@ const pillars: { title: string; description: string; Icon: LucideIcon }[] = [
 ];
 
 const faqs = [
-  { question: "What is MyLoginn Tech?", answer: "MyLoginn Tech is an India-based technology company building digital products and growth solutions for businesses." },
-  { question: "What does MyLoginn do?", answer: "MyLoginn builds websites, mobile apps, desktop applications and AI solutions, and provides custom software development and digital marketing." },
-  { question: "How can I start a project with MyLoginn?", answer: "Use the Contact page to tell the team about your business, your goals and what you want to build. We will reply with next steps and a proposed scope." },
+  { question: "What is Myloginn?", answer: "Myloginn is an India-based technology company building digital products and growth solutions for businesses." },
+  { question: "What does Myloginn do?", answer: "Myloginn builds websites, mobile apps, desktop applications and AI solutions, and provides custom software development and digital marketing." },
+  { question: "How can I start a project with Myloginn?", answer: "Use the Contact page to tell the team about your business, your goals and what you want to build. We will reply with next steps and a proposed scope." },
 ];
 
 const teamSocials = [
@@ -79,11 +79,11 @@ export default async function AboutPage() {
       <section className="relative isolate border-b border-border-soft bg-[linear-gradient(115deg,#fff_0%,#fff_64%,#f1f6ff_100%)] dark:bg-background">
         <div className="mx-auto flex w-full max-w-7xl items-center px-4 py-10 sm:px-6 sm:py-14 lg:px-8 lg:py-20">
           <div className="w-full max-w-5xl">
-            <p className="text-sm font-bold text-brand-700 dark:text-brand-300">About MyLoginn Tech</p>
+            <p className="text-sm font-bold text-brand-700 dark:text-brand-300">About Myloginn</p>
             <h1 className="mt-4 max-w-[22ch] text-4xl font-bold leading-[1.08] tracking-[-.04em] text-story-navy sm:text-5xl lg:text-[4.5rem] dark:text-foreground">We build digital solutions that move business forward.</h1>
             <p className="mt-5 max-w-3xl text-base leading-7 text-muted sm:text-lg sm:leading-8">{profile?.introduction || "We bring strategy, engineering and growth together to help businesses solve real problems with dependable technology."}</p>
             <div className="mt-6 flex flex-wrap gap-3">
-              <Link href="/contact" className="inline-flex items-center gap-2 rounded-lg bg-brand-600 px-5 py-3 text-sm font-semibold text-white shadow-[0_10px_24px_-12px_rgba(31,86,214,.7)] transition-colors hover:bg-brand-700 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand-600">Let’s work together <ArrowRight className="h-4 w-4" /></Link>
+              <Link href="/contact" className="inline-flex items-center gap-2 rounded-lg bg-brand-600 px-5 py-3 text-sm font-semibold text-white shadow-[0_10px_24px_-12px_rgba(31,86,214,.7)] transition-colors hover:bg-brand-700 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand-600">LetÔÇÖs work together <ArrowRight className="h-4 w-4" /></Link>
             </div>
             <div className="mt-7 flex flex-wrap items-center gap-x-5 gap-y-2 border-t border-border-soft pt-4 text-sm text-muted"><span className="inline-flex items-center gap-2"><Code2 className="h-4 w-4 text-brand-600" /> Thoughtful engineering</span><span className="hidden h-4 w-px bg-border-soft sm:block" /><span className="inline-flex items-center gap-2"><Handshake className="h-4 w-4 text-brand-600" /> Close collaboration</span></div>
           </div>
@@ -114,14 +114,14 @@ export default async function AboutPage() {
                   })}
                 </div>
               </div>
-            </article>)}</div></section>})}</div></div>)}</div></div></> : <div className="mx-auto max-w-2xl rounded-2xl border border-dashed border-brand-200 bg-white/80 px-6 py-8 text-center dark:border-brand-800 dark:bg-surface"><p className="text-lg font-semibold">Our team profiles are coming soon.</p><p className="mt-2 text-sm leading-6 text-muted">We’ll introduce our people here as they are added. For now, tell us what you’re working on and we’ll connect you with the right team.</p><Link href="/contact" className="mt-5 inline-flex items-center gap-2 rounded-lg bg-brand-600 px-4 py-2.5 text-sm font-semibold text-white transition-colors hover:bg-brand-700">Talk to our team <ArrowRight className="h-4 w-4" /></Link></div>}
+            </article>)}</div></section>})}</div></div>)}</div></div></> : <div className="mx-auto max-w-2xl rounded-2xl border border-dashed border-brand-200 bg-white/80 px-6 py-8 text-center dark:border-brand-800 dark:bg-surface"><p className="text-lg font-semibold">Our team profiles are coming soon.</p><p className="mt-2 text-sm leading-6 text-muted">WeÔÇÖll introduce our people here as they are added. For now, tell us what youÔÇÖre working on and weÔÇÖll connect you with the right team.</p><Link href="/contact" className="mt-5 inline-flex items-center gap-2 rounded-lg bg-brand-600 px-4 py-2.5 text-sm font-semibold text-white transition-colors hover:bg-brand-700">Talk to our team <ArrowRight className="h-4 w-4" /></Link></div>}
         </div>
       </section>
 
       {/* Brand story */}
       <section className="border-y border-border-soft bg-[#f5f8ff] dark:bg-surface-2">
         <div className="mx-auto grid w-full max-w-7xl items-center gap-9 px-5 py-16 sm:px-8 sm:py-20 lg:grid-cols-[.82fr_1.18fr] lg:gap-16">
-          <div className="max-w-xl"><p className="text-xs font-bold tracking-[.16em] text-brand-700">OUR JOURNEY</p><h2 className="mt-3 text-3xl font-bold tracking-tight sm:text-4xl">A technology partner, from first idea to what’s next.</h2><p className="mt-5 leading-7 text-muted">{profile?.approach || "MyLoginn brings product development and digital growth under one roof. We work alongside clients to understand the problem, make the important decisions clear, and deliver useful solutions in focused stages."}</p><p className="mt-4 leading-7 text-muted">The work is collaborative by design: listen carefully, share progress early, and keep building toward outcomes people can use.</p><Link href="/contact" className="mt-6 inline-flex items-center gap-2 text-sm font-bold text-brand-700 hover:gap-3 dark:text-brand-300">Talk with our team <ArrowRight className="h-4 w-4" /></Link></div>
+          <div className="max-w-xl"><p className="text-xs font-bold tracking-[.16em] text-brand-700">OUR JOURNEY</p><h2 className="mt-3 text-3xl font-bold tracking-tight sm:text-4xl">A technology partner, from first idea to whatÔÇÖs next.</h2><p className="mt-5 leading-7 text-muted">{profile?.approach || "Myloginn brings product development and digital growth under one roof. We work alongside clients to understand the problem, make the important decisions clear, and deliver useful solutions in focused stages."}</p><p className="mt-4 leading-7 text-muted">The work is collaborative by design: listen carefully, share progress early, and keep building toward outcomes people can use.</p><Link href="/contact" className="mt-6 inline-flex items-center gap-2 text-sm font-bold text-brand-700 hover:gap-3 dark:text-brand-300">Talk with our team <ArrowRight className="h-4 w-4" /></Link></div>
           <div className="relative min-h-[280px] overflow-hidden rounded-[1.75rem] bg-brand-100 sm:min-h-[390px]"><Image src="/about/team-collaboration.jpg" alt="A team collaborating around software and product work" fill sizes="(max-width: 1024px) 90vw, 620px" className="object-cover object-center" /><div className="absolute inset-0 bg-gradient-to-t from-story-navy/35 via-transparent to-transparent" /><div className="absolute bottom-5 left-5 rounded-lg border border-white/50 bg-white/90 px-4 py-3 backdrop-blur"><p className="text-sm font-semibold text-story-navy">Ideas become useful when we build them together.</p></div></div>
         </div>
       </section>
@@ -130,7 +130,7 @@ export default async function AboutPage() {
       <section id="our-vision" className="mx-auto w-full max-w-7xl scroll-mt-24 px-5 py-16 sm:px-8 sm:py-24">
         <div className="mx-auto max-w-3xl text-center"><p className="text-xs font-bold tracking-[.16em] text-brand-700">OUR VISION</p><h2 className="mt-3 text-3xl font-bold tracking-tight sm:text-4xl">Build a better digital future.</h2><p className="mx-auto mt-4 max-w-2xl leading-7 text-muted">{profile?.vision || "We see a future where good technology helps more businesses create meaningful connections, solve real problems and grow with confidence."}</p></div>
         <div className="mt-10 grid divide-y divide-border-soft border-y border-border-soft sm:grid-cols-3 sm:divide-x sm:divide-y-0">{pillars.map(({ title, description, Icon }) => <article key={title} className="px-5 py-7 text-center sm:px-8 sm:py-9"><Icon className="mx-auto h-7 w-7 text-brand-600" strokeWidth={1.7} /><h3 className="mt-4 font-bold">{title}</h3><p className="mx-auto mt-2 max-w-xs text-sm leading-6 text-muted">{description}</p></article>)}</div>
-        <div className="mt-10 grid gap-4 lg:grid-cols-[.72fr_1.28fr] lg:items-start"><div><p className="text-xs font-bold tracking-[.16em] text-brand-700">OUR MISSION</p><h3 className="mt-3 text-2xl font-bold">Make technology useful.</h3><p className="mt-3 max-w-md leading-7 text-muted">{profile?.mission || "We help businesses move forward through thoughtful software, clear collaboration and technology that serves a real purpose."}</p></div><div className="grid gap-3 sm:grid-cols-2">{[[Lightbulb, "Curiosity", "Ask better questions before choosing a solution."], [ShieldCheck, "Integrity", "Be clear about decisions, progress and trade-offs."], [Users, "Partnership", "Work as a close extension of each client’s team."], [TrendingUp, "Impact", "Keep attention on the difference the work makes."]].map(([Icon, title, text]) => { const ValueIcon = Icon as LucideIcon; return <div key={title as string} className="flex gap-3 rounded-xl bg-[#f5f8ff] p-4 dark:bg-surface-2"><ValueIcon className="mt-0.5 h-5 w-5 shrink-0 text-brand-600" /><div><h4 className="text-sm font-bold">{title as string}</h4><p className="mt-1 text-xs leading-5 text-muted">{text as string}</p></div></div>; })}</div></div>
+        <div className="mt-10 grid gap-4 lg:grid-cols-[.72fr_1.28fr] lg:items-start"><div><p className="text-xs font-bold tracking-[.16em] text-brand-700">OUR MISSION</p><h3 className="mt-3 text-2xl font-bold">Make technology useful.</h3><p className="mt-3 max-w-md leading-7 text-muted">{profile?.mission || "We help businesses move forward through thoughtful software, clear collaboration and technology that serves a real purpose."}</p></div><div className="grid gap-3 sm:grid-cols-2">{[[Lightbulb, "Curiosity", "Ask better questions before choosing a solution."], [ShieldCheck, "Integrity", "Be clear about decisions, progress and trade-offs."], [Users, "Partnership", "Work as a close extension of each clientÔÇÖs team."], [TrendingUp, "Impact", "Keep attention on the difference the work makes."]].map(([Icon, title, text]) => { const ValueIcon = Icon as LucideIcon; return <div key={title as string} className="flex gap-3 rounded-xl bg-[#f5f8ff] p-4 dark:bg-surface-2"><ValueIcon className="mt-0.5 h-5 w-5 shrink-0 text-brand-600" /><div><h4 className="text-sm font-bold">{title as string}</h4><p className="mt-1 text-xs leading-5 text-muted">{text as string}</p></div></div>; })}</div></div>
       </section>
 
       {/* Services and USP */}
@@ -148,9 +148,9 @@ export default async function AboutPage() {
       <section className="py-16 sm:py-24"><ReviewSection reviews={reviews.map((review) => ({ ...review, submittedAt: review.submittedAt.toISOString() }))} /></section>
 
       {/* Closing CTA */}
-      <section className="relative overflow-hidden bg-[#1452b8] text-white"><span aria-hidden className="absolute -right-20 -top-32 h-[30rem] w-[30rem] rounded-full border-[70px] border-white/[.045]" /><span aria-hidden className="absolute -bottom-40 left-[15%] h-[24rem] w-[24rem] rounded-full border-[55px] border-white/[.04]" /><div className="relative mx-auto max-w-5xl px-5 py-16 text-center sm:px-8 sm:py-20"><Sparkles className="mx-auto h-7 w-7 text-cyan-200" /><p className="mt-4 text-xs font-bold tracking-[.16em] text-blue-100">LET’S BUILD SOMETHING USEFUL</p><h2 className="mx-auto mt-3 max-w-2xl text-3xl font-bold tracking-tight sm:text-4xl">Ready to create impact together?</h2><p className="mx-auto mt-4 max-w-xl leading-7 text-blue-100">Tell us what you want to make possible. We’ll help shape a clear next step.</p><Link href="/contact" className="mt-7 inline-flex items-center gap-2 rounded-lg bg-white px-5 py-3 text-sm font-bold text-brand-800 transition-colors hover:bg-blue-50">Start a project <ArrowRight className="h-4 w-4" /></Link></div></section>
+      <section className="relative overflow-hidden bg-[#1452b8] text-white"><span aria-hidden className="absolute -right-20 -top-32 h-[30rem] w-[30rem] rounded-full border-[70px] border-white/[.045]" /><span aria-hidden className="absolute -bottom-40 left-[15%] h-[24rem] w-[24rem] rounded-full border-[55px] border-white/[.04]" /><div className="relative mx-auto max-w-5xl px-5 py-16 text-center sm:px-8 sm:py-20"><Sparkles className="mx-auto h-7 w-7 text-cyan-200" /><p className="mt-4 text-xs font-bold tracking-[.16em] text-blue-100">LETÔÇÖS BUILD SOMETHING USEFUL</p><h2 className="mx-auto mt-3 max-w-2xl text-3xl font-bold tracking-tight sm:text-4xl">Ready to create impact together?</h2><p className="mx-auto mt-4 max-w-xl leading-7 text-blue-100">Tell us what you want to make possible. WeÔÇÖll help shape a clear next step.</p><Link href="/contact" className="mt-7 inline-flex items-center gap-2 rounded-lg bg-white px-5 py-3 text-sm font-bold text-brand-800 transition-colors hover:bg-blue-50">Start a project <ArrowRight className="h-4 w-4" /></Link></div></section>
 
-      <section className="mx-auto max-w-4xl px-5 py-14 sm:px-8"><h2 className="text-2xl font-bold">A few common questions</h2><FaqAccordion items={faqs} className="mt-6" /><p className="mt-5 text-sm text-muted">Have another question? <Link href="/contact" className="font-semibold text-brand-700">Talk to our team</Link> · <a href={`mailto:${CONTACT_EMAIL}`} className="font-semibold text-brand-700">{CONTACT_EMAIL}</a></p></section>
+      <section className="mx-auto max-w-4xl px-5 py-14 sm:px-8"><h2 className="text-2xl font-bold">A few common questions</h2><FaqAccordion items={faqs} className="mt-6" /><p className="mt-5 text-sm text-muted">Have another question? <Link href="/contact" className="font-semibold text-brand-700">Talk to our team</Link> ┬À <a href={`mailto:${CONTACT_EMAIL}`} className="font-semibold text-brand-700">{CONTACT_EMAIL}</a></p></section>
     </main>
   );
 }
