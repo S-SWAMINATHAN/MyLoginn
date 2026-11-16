@@ -1,4 +1,4 @@
-# MyLoginn
+# Myloginn
 
 > MyLoginn Tech (brand: MyLoginn, website: myloginn.com) is an India-based technology company that builds web, mobile and custom software, AI and AI agent solutions, test automation and digital marketing for businesses worldwide, and teaches practical technology skills through courses and internships.
 

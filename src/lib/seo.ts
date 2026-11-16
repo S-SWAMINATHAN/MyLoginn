@@ -50,7 +50,7 @@ export function createPageMetadata({
     openGraph: {
       type: "website",
       locale: "en_IN",
-      siteName: "MyLoginn",
+      siteName: "Myloginn",
       title: socialTitle,
       description,
       url,

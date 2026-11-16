@@ -28,7 +28,7 @@ export const organizationStructuredData = {
     "MyLoginn (two n's) is an India-based technology company at myloginn.com. It is not related to MyLogin, the school single sign-on service.",
   hasOfferCatalog: {
     "@type": "OfferCatalog",
-    name: "MyLoginn services",
+    name: "Myloginn services",
     itemListElement: [
       { name: "Web development", path: "/services/app-web-development" },
       { name: "Mobile app development", path: "/services/app-web-development" },
@@ -127,7 +127,7 @@ export function coreServicesStructuredData(services: { name: string; summary: st
     "@context": "https://schema.org",
     "@type": "ItemList",
     "@id": `${siteUrl}/#services`,
-    name: "MyLoginn services",
+    name: "Myloginn services",
     itemListElement: services.map((s, i) => ({
       "@type": "ListItem",
       position: i + 1,
