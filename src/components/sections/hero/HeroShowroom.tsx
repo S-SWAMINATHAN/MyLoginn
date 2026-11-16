@@ -283,7 +283,7 @@ export function HeroShowroom({ scenario, focus, exploring, onExplore, onLeave, i
 
   const layout = width < 700 ? COMPACT : WIDE;
   const wide = layout === WIDE;
-  const scale = Math.min(wide ? 1.15 : 1.25, width / layout.w);
+  const scale = Math.min(wide ? 1.7 : 1.25, width / layout.w);
 
   const px = useMotionValue(0);
   const py = useMotionValue(0);

@@ -308,7 +308,7 @@ export function AiAgentWidget() {
             className={cn(
               "fixed z-[70] flex origin-bottom-right flex-col overflow-hidden rounded-3xl border border-border-soft bg-surface shadow-[var(--shadow-lift)]",
               // Phones / tablets: a sheet docked just above the bottom tab bar (the launcher hides while it is open).
-              "inset-x-2 bottom-[calc(4.75rem+env(safe-area-inset-bottom))] h-[min(40rem,calc(100dvh-6.5rem-env(safe-area-inset-bottom)))]",
+              "inset-x-2 bottom-[calc(4.75rem+env(safe-area-inset-bottom))] h-[min(40rem,calc(100dvh-6.5rem-env(safe-area-inset-bottom)))] max-w-[calc(100vw-1rem)]",
               "sm:inset-x-auto sm:right-4 sm:w-[26rem]",
               // Desktop: floats above the launcher, bottom-right.
               "lg:right-6 lg:bottom-[5.75rem] lg:h-[min(40rem,calc(100dvh-8rem))] xl:w-[28rem]"
@@ -499,7 +499,7 @@ export function AiAgentWidget() {
                 )}
               </div>
               <p className="mt-1.5 flex items-center justify-between px-1 text-[10px] text-muted">
-                <span>Free-tier AI · Enter to send</span>
+                <span>AI assistant · Enter to send</span>
                 {input.length > MAX_CHARS * 0.8 && (
                   <span className={input.length >= MAX_CHARS ? "text-danger" : undefined}>
                     {input.length}/{MAX_CHARS}

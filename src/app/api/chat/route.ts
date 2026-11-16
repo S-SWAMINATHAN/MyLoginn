@@ -224,7 +224,7 @@ export async function POST(req: Request) {
   const system = await buildSystemPrompt(topics);
   const anthropicToken = process.env.ANTHROPIC_AUTH_TOKEN;
   if (!anthropicToken) {
-    return NextResponse.json({ error: "Configure ANTHROPIC_AUTH_TOKEN to enable the free-tier chatbot." }, { status: 503 });
+    return NextResponse.json({ error: "Configure ANTHROPIC_AUTH_TOKEN to enable the chatbot." }, { status: 503 });
   }
 
   const abortController = new AbortController();

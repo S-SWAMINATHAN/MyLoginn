@@ -79,10 +79,10 @@ export function Footer() {
 
   return (
     <footer className="relative border-t border-border-soft bg-white">
-      <div className="mx-auto max-w-6xl px-5 sm:px-8">
-        <div className="grid gap-10 py-12 sm:grid-cols-2 sm:gap-y-12 sm:py-14 lg:grid-cols-[minmax(0,1.25fr)_repeat(4,minmax(0,1fr))] lg:gap-8 lg:py-18">
+      <div className="mx-auto w-full max-w-[1600px] px-4 sm:px-8 lg:px-12 2xl:px-16">
+        <div className="grid min-w-0 gap-8 py-10 sm:grid-cols-2 sm:gap-x-8 sm:gap-y-10 sm:py-12 lg:grid-cols-[minmax(0,1.25fr)_repeat(4,minmax(0,1fr))] lg:gap-8 lg:py-16">
           {/* brand + contact */}
-          <motion.div initial={{ opacity: 0, y: 14 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true, margin: "-40px" }} transition={{ duration: 0.6, ease: EASE }}>
+          <motion.div className="min-w-0" initial={{ opacity: 0, y: 14 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true, margin: "-40px" }} transition={{ duration: 0.6, ease: EASE }}>
             <Link href="/" className="inline-flex items-center gap-3">
               <LogoBadge className="h-10 w-auto" />
               <span>
@@ -90,7 +90,7 @@ export function Footer() {
                 <span className="block text-[10px] font-bold uppercase tracking-[0.16em] text-story-royal">Build · Automate · Grow</span>
               </span>
             </Link>
-            <p className="mt-5 max-w-md text-sm leading-7 text-muted">
+            <p className="mt-5 max-w-md text-left text-sm leading-7 text-muted">
               We design, build and grow digital products for ambitious businesses — from custom software and AI to marketing that moves your business forward.
             </p>
 
@@ -103,7 +103,7 @@ export function Footer() {
                     className="group inline-flex min-h-6 items-center gap-3 text-sm font-medium text-muted transition-colors duration-200 hover:text-story-royal focus-visible:rounded-sm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-story-royal/50"
                   >
                     <c.Icon className="h-5 w-5 shrink-0 transition-transform duration-300 group-hover:scale-125 group-hover:-rotate-6" />
-                    <span>{c.label}</span>
+                    <span className="min-w-0 break-words">{c.label}</span>
                   </a>
                 </li>
               ))}
@@ -127,14 +127,14 @@ export function Footer() {
           </motion.div>
 
           {/* link columns */}
-          <div className="grid grid-cols-2 gap-x-6 gap-y-10 sm:col-span-2 sm:grid-cols-3 lg:col-span-3 lg:contents">
+          <div className="grid min-w-0 grid-cols-2 gap-x-5 gap-y-8 sm:col-span-2 sm:grid-cols-3 sm:gap-x-8 sm:gap-y-10 lg:col-span-3 lg:contents">
             {columns.map((col, ci) => (
-              <motion.div key={col.title} initial={{ opacity: 0, y: 14 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true, margin: "-40px" }} transition={{ duration: 0.5, delay: ci * 0.08, ease: EASE }}>
+              <motion.div key={col.title} className="min-w-0" initial={{ opacity: 0, y: 14 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true, margin: "-40px" }} transition={{ duration: 0.5, delay: ci * 0.08, ease: EASE }}>
                 <p className="text-[11px] font-bold uppercase tracking-[0.17em] text-story-royal">{col.title}</p>
                 <ul className="mt-4 flex flex-col gap-3">
                   {col.links.map((link) => (
                     <li key={`${link.href}-${link.label}`}>
-                      <Link href={link.href} className="group relative inline-block rounded text-sm leading-5 text-muted outline-none transition-colors duration-200 hover:text-story-royal focus-visible:text-story-royal focus-visible:ring-2 focus-visible:ring-story-royal/40">
+                      <Link href={link.href} className="group relative inline-block max-w-full rounded text-sm leading-5 text-muted outline-none transition-colors duration-200 hover:text-story-royal focus-visible:text-story-royal focus-visible:ring-2 focus-visible:ring-story-royal/40">
                         <ArrowRight aria-hidden className="pointer-events-none absolute left-0 top-1/2 h-3.5 w-3.5 -translate-x-3 -translate-y-1/2 text-story-royal opacity-0 transition-all duration-300 ease-out group-hover:translate-x-0 group-hover:opacity-100 group-focus-visible:translate-x-0 group-focus-visible:opacity-100" />
                         <span className="inline-block transition-transform duration-300 ease-out group-hover:translate-x-5 group-focus-visible:translate-x-5">{link.label}</span>
                       </Link>

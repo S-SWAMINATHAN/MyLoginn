@@ -134,7 +134,7 @@ export function Hero() {
           }}
         />
 
-        <div className="relative mx-auto max-w-6xl px-4 pb-10 pt-2 sm:px-8 sm:pt-3 lg:pb-14">
+        <div className="relative mx-auto w-full px-4 pb-8 pt-2 sm:px-6 sm:pt-3 lg:px-10 lg:pb-10">
           {/* headline and the service on show */}
           <motion.div
             className="relative mx-auto max-w-3xl px-2 pb-6 pt-2 text-center sm:pb-8 sm:pt-3"
