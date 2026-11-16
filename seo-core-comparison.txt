@@ -1,0 +1,242 @@
+﻿diff --git a/public/llms.txt b/public/llms.txt
+index 3ff05aa..1c778bc 100644
+--- a/public/llms.txt
++++ b/public/llms.txt
+@@ -1,8 +1,8 @@
+-# MyLoginn
++# Myloginn
+ 
+-> MyLoginn Tech (brand: MyLoginn, website: myloginn.com) is an India-based technology company that builds web, mobile and custom software, AI and AI agent solutions, test automation and digital marketing for businesses worldwide, and teaches practical technology skills through courses and internships.
++> Myloginn is an India-based technology company that builds web, mobile and custom software, AI and AI agent solutions, test automation and digital marketing for businesses in India and worldwide, and teaches practical technology skills through courses and internships.
+ 
+-MyLoginn is not affiliated with other products named "MyLogin" (for example school single sign-on services). The correct spelling has two n's: MyLoginn.
++Myloginn is not affiliated with MyLogin school single sign-on products. The correct spelling has two final n's: Myloginn.
+ 
+ Based in India. Works with clients across India and with international clients remotely.
+ 
+diff --git a/src/app/layout.tsx b/src/app/layout.tsx
+index b94db5e..88edc8f 100644
+--- a/src/app/layout.tsx
++++ b/src/app/layout.tsx
+@@ -42,30 +42,28 @@ export const viewport: Viewport = {
+ export const metadata: Metadata = {
+   metadataBase: new URL(siteUrl),
+   title: {
+-    default: "MyLoginn | Web, App & Digital Solutions for Businesses",
+-    template: "%s | MyLoginn",
++    default: "Myloginn | Web, App & Digital Solutions for Businesses",
++    template: "%s | Myloginn",
+   },
+   description:
+-    "Your technology partner to build, automate and grow. MyLoginn creates websites, mobile apps, desktop software and AI agents, and grows them with digital marketing.",
+-  applicationName: "MyLoginn",
+-  authors: [{ name: "MyLoginn Tech" }],
+-  creator: "MyLoginn Tech",
+-  publisher: "MyLoginn Tech",
++    "Your technology partner to build, automate and grow. Myloginn creates websites, mobile apps, desktop software and AI agents, and grows them with digital marketing.",
++  applicationName: "Myloginn",
++  authors: [{ name: "Myloginn" }],
++  creator: "Myloginn",
++  publisher: "Myloginn",
+   category: "Technology",
+-  keywords: [
+-    "MyLoginn", "MyLoginn Tech",
+-  ],
++  keywords: ["Myloginn"],
+   openGraph: {
+     type: "website",
+     locale: "en_IN",
+-    siteName: "MyLoginn",
+-    title: "MyLoginn | Web, App & Digital Solutions for Businesses",
++    siteName: "Myloginn",
++    title: "Myloginn | Web, App & Digital Solutions for Businesses",
+     description:
+       "India-based IT company building websites, mobile apps, desktop software, AI agents and digital marketing for businesses worldwide.",
+   },
+   twitter: {
+     card: "summary_large_image",
+-    title: "MyLoginn | Web, App & Digital Solutions for Businesses",
++    title: "Myloginn | Web, App & Digital Solutions for Businesses",
+     description:
+       "India-based IT company building websites, mobile apps, desktop software, AI agents and digital marketing for businesses worldwide.",
+   },
+@@ -114,7 +112,9 @@ export default async function RootLayout({
+             <HideOnAdmin>
+               <Footer />
+               <MobileBottomNav user={navUser} />
+-              <AiAgentWidget />
++              <div hidden>
++                <AiAgentWidget />
++              </div>
+               <ProjectRequestModal />
+             </HideOnAdmin>
+           </ThemeProvider>
+diff --git a/src/app/manifest.ts b/src/app/manifest.ts
+index 3b02bd7..e273d4a 100644
+--- a/src/app/manifest.ts
++++ b/src/app/manifest.ts
+@@ -3,8 +3,8 @@ import type { MetadataRoute } from "next";
+ /** Web app manifest: the name, colours and icon used when the site is added to a home screen. */
+ export default function manifest(): MetadataRoute.Manifest {
+   return {
+-    name: "MyLoginn",
+-    short_name: "MyLoginn",
++    name: "Myloginn",
++    short_name: "Myloginn",
+     description: "India-based IT company building websites, mobile apps, desktop software, AI agents and digital marketing.",
+     start_url: "/",
+     display: "standalone",
+diff --git a/src/app/opengraph-image.tsx b/src/app/opengraph-image.tsx
+index cd48ab8..7543524 100644
+--- a/src/app/opengraph-image.tsx
++++ b/src/app/opengraph-image.tsx
+@@ -2,11 +2,11 @@ import { readFile } from "node:fs/promises";
+ import { join } from "node:path";
+ import { ImageResponse } from "next/og";
+ 
+-export const alt = "MyLoginn | Web, App & Digital Solutions for Businesses";
++export const alt = "Myloginn | Web, App & Digital Solutions for Businesses";
+ export const size = { width: 1200, height: 630 };
+ export const contentType = "image/png";
+ 
+-/** The card shown when a MyLoginn link is shared (WhatsApp, LinkedIn, X, Slack...). */
++/** The card shown when a Myloginn link is shared (WhatsApp, LinkedIn, X, Slack...). */
+ export default async function OpenGraphImage() {
+   const asDataUrl = async (file: string) => `data:image/png;base64,${(await readFile(join(process.cwd(), "src/images", file))).toString("base64")}`;
+   const [icon, wordmark] = await Promise.all([asDataUrl("MyLoginn Logo Icon.png"), asDataUrl("MyLoginn Logo Text.png")]);
+diff --git a/src/app/sitemap.ts b/src/app/sitemap.ts
+index 52f4d38..b46de44 100644
+--- a/src/app/sitemap.ts
++++ b/src/app/sitemap.ts
+@@ -11,7 +11,7 @@ type Route = { path: string; priority: number; changeFrequency: Freq };
+ 
+ /**
+  * Public pages, in order of importance: the company and its five services first, then the learning platform.
+- * Account pages, sessions and switched-off sections are left out and blocked in robots.ts.
++ * Account pages, sessions and switched-off sections (astrology, tutoring) are left out and blocked in robots.ts.
+  */
+ const companyRoutes: Route[] = [
+   { path: "", priority: 1, changeFrequency: "weekly" },
+@@ -26,7 +26,6 @@ const companyRoutes: Route[] = [
+   { path: "/careers", priority: 0.7, changeFrequency: "weekly" },
+   { path: "/careers/students", priority: 0.7, changeFrequency: "monthly" },
+   { path: "/internships", priority: 0.7, changeFrequency: "weekly" },
+-  { path: "/studentnest", priority: 0.8, changeFrequency: "weekly" },
+   { path: "/locations/tamil-nadu", priority: 0.6, changeFrequency: "monthly" },
+   { path: "/privacy", priority: 0.2, changeFrequency: "yearly" },
+   { path: "/terms", priority: 0.2, changeFrequency: "yearly" },
+@@ -34,6 +33,7 @@ const companyRoutes: Route[] = [
+ 
+ const learnRoutes: Route[] = [
+   { path: "/courses", priority: 0.7, changeFrequency: "weekly" },
++  { path: "/coding-competition", priority: 0.7, changeFrequency: "weekly" },
+   { path: "/logiquest", priority: 0.7, changeFrequency: "weekly" },
+   { path: "/logiquest/online-test", priority: 0.6, changeFrequency: "monthly" },
+   { path: "/logiquest/coding", priority: 0.6, changeFrequency: "monthly" },
+@@ -59,7 +59,7 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
+   const showcase = showcaseResult.status === "fulfilled" ? showcaseResult.value.filter((p) => !clientSlugs.has(p.slug)) : [];
+ 
+   const entry = (path: string, priority: number, changeFrequency: Freq, lastModified?: Date) => ({
+-    url: `${siteUrl}${path}`,
++    url: new URL(path || "/", siteUrl).toString(),
+     changeFrequency,
+     priority,
+     ...(lastModified ? { lastModified } : {}),
+diff --git a/src/lib/seo.ts b/src/lib/seo.ts
+index 83dc960..3d96097 100644
+--- a/src/lib/seo.ts
++++ b/src/lib/seo.ts
+@@ -2,8 +2,7 @@ import type { Metadata } from "next";
+ import { siteUrl } from "@/lib/site";
+ 
+ const brandKeywords = [
+-  "MyLoginn",
+-  "MyLoginn Tech",
++  "Myloginn",
+ ];
+ 
+ /**
+@@ -29,7 +28,7 @@ export function createPageMetadata({
+   description: string;
+   path: string;
+   keywords?: string[];
+-  /** Use the title exactly as written, without the "| MyLoginn" suffix from the root layout template. */
++  /** Use the title exactly as written, without the "| Myloginn" suffix from the root layout template. */
+   absoluteTitle?: boolean;
+   /** Keep the page out of search results (links on it are still followed). */
+   noIndex?: boolean;
+@@ -37,7 +36,7 @@ export function createPageMetadata({
+   const url = new URL(path, siteUrl).toString();
+   description = clampDescription(description);
+   // shared cards show the full, branded title even where the page title relies on the layout template
+-  const socialTitle = absoluteTitle || title.includes("MyLoginn") ? title : `${title} | MyLoginn`;
++  const socialTitle = absoluteTitle || title.includes("Myloginn") ? title : `${title} | Myloginn`;
+ 
+   return {
+     title: absoluteTitle ? { absolute: title } : title,
+@@ -50,7 +49,7 @@ export function createPageMetadata({
+     openGraph: {
+       type: "website",
+       locale: "en_IN",
+-      siteName: "MyLoginn",
++      siteName: "Myloginn",
+       title: socialTitle,
+       description,
+       url,
+diff --git a/src/lib/structuredData.ts b/src/lib/structuredData.ts
+index b63a389..82fb58e 100644
+--- a/src/lib/structuredData.ts
++++ b/src/lib/structuredData.ts
+@@ -5,14 +5,12 @@ export const organizationStructuredData = {
+   "@context": "https://schema.org",
+   "@type": "Organization",
+   "@id": `${siteUrl}/#organization`,
+-  name: "MyLoginn Tech",
+-  alternateName: ["MyLoginn", "My Loginn"],
+-  legalName: "MyLoginn Tech",
++  name: "Myloginn",
+   url: siteUrl,
+   logo: `${siteUrl}/myloginn-logo.png`,
+   image: `${siteUrl}/myloginn-logo.png`,
+   description:
+-    "MyLoginn Tech is an India-based IT company building websites, web apps, mobile apps, custom desktop software, AI agents and digital marketing for businesses in India and worldwide.",
++    "Myloginn is an India-based technology company building websites, web apps, mobile apps, custom desktop software and AI solutions, and providing software testing and digital marketing for businesses in India and worldwide.",
+   email: CONTACT_EMAIL,
+   telephone: CONTACT_PHONES[0].tel,
+   sameAs: SOCIAL_LINKS.filter((s) => !("pending" in s)).map((s) => s.href),
+@@ -25,10 +23,10 @@ export const organizationStructuredData = {
+   })),
+   slogan: "Intelligence | Innovation | Integrity | Impact",
+   disambiguatingDescription:
+-    "MyLoginn (two n's) is an India-based technology company at myloginn.com. It is not related to MyLogin, the school single sign-on service.",
++    "Myloginn, spelled with two final n's, is the technology company at myloginn.com. It is not affiliated with MyLogin school single sign-on products.",
+   hasOfferCatalog: {
+     "@type": "OfferCatalog",
+-    name: "MyLoginn services",
++    name: "Myloginn services",
+     itemListElement: [
+       { name: "Web development", path: "/services/app-web-development" },
+       { name: "Mobile app development", path: "/services/app-web-development" },
+@@ -73,12 +71,7 @@ export const websiteStructuredData = {
+   "@context": "https://schema.org",
+   "@type": "WebSite",
+   "@id": `${siteUrl}/#website`,
+-  name: "MyLoginn",
+-  alternateName: [
+-    "My Loginn",
+-    "MyLoginn Tech",
+-    "myloginn.com",
+-  ],
++  name: "Myloginn",
+   url: `${siteUrl}/`,
+   publisher: { "@id": `${siteUrl}/#organization` },
+   inLanguage: "en-IN",
+@@ -127,7 +120,7 @@ export function coreServicesStructuredData(services: { name: string; summary: st
+     "@context": "https://schema.org",
+     "@type": "ItemList",
+     "@id": `${siteUrl}/#services`,
+-    name: "MyLoginn services",
++    name: "Myloginn services",
+     itemListElement: services.map((s, i) => ({
+       "@type": "ListItem",
+       position: i + 1,

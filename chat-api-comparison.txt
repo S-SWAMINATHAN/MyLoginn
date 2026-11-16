@@ -1,0 +1,232 @@
+﻿diff --git a/src/app/api/chat/route.ts b/src/app/api/chat/route.ts
+index f91c879..cc324ad 100644
+--- a/src/app/api/chat/route.ts
++++ b/src/app/api/chat/route.ts
+@@ -12,22 +12,6 @@ const MAX_MESSAGE_CHARS = 2000;
+ 
+ type ChatTurn = { role: "user" | "assistant"; content: string };
+ 
+-function anthropicMessagesEndpoint(configuredBaseUrl: string): string {
+-  let baseUrl = configuredBaseUrl.trim().replace(/^(["'])(.*)\1$/, "$2");
+-  const markdownLink = baseUrl.match(/^\[[^\]]+\]\((https?:\/\/[^)]+)\)$/);
+-  if (markdownLink) baseUrl = markdownLink[1];
+-
+-  const url = new URL(baseUrl);
+-  if (url.protocol !== "https:" && url.protocol !== "http:") {
+-    throw new Error("ANTHROPIC_BASE_URL must use HTTP or HTTPS");
+-  }
+-
+-  const path = url.pathname.replace(/\/+$/, "");
+-  if (path.endsWith("/v1/messages")) return url.toString();
+-  url.pathname = path.endsWith("/v1") ? `${path}/messages` : `${path}/v1/messages`;
+-  return url.toString();
+-}
+-
+ function rowsOrEmpty<T>(result: PromiseSettledResult<T[]>, source: string): T[] {
+   if (result.status === "fulfilled") return result.value;
+   console.error(`Chat live ${source} lookup failed; continuing without live ${source} data.`);
+@@ -45,66 +29,6 @@ function isChatTurn(value: unknown): value is ChatTurn {
+   );
+ }
+ 
+-async function* anthropicTextDeltas(
+-  token: string,
+-  instructions: string,
+-  history: ChatTurn[],
+-  signal: AbortSignal
+-): AsyncGenerator<string> {
+-  const endpoint = anthropicMessagesEndpoint(process.env.ANTHROPIC_BASE_URL || "https://api.anthropic.com");
+-  const response = await fetch(endpoint, {
+-    method: "POST",
+-    signal,
+-    headers: {
+-      "Content-Type": "application/json",
+-      Accept: "text/event-stream",
+-      "anthropic-version": "2023-06-01",
+-      "x-api-key": token,
+-      Authorization: `Bearer ${token}`,
+-    },
+-    body: JSON.stringify({
+-      model: "gpt-6-luna",
+-      system: instructions,
+-      messages: history.map(({ role, content }) => ({ role, content })),
+-      max_tokens: 1024,
+-      stream: true,
+-    }),
+-  });
+-
+-  if (!response.ok) {
+-    const detail = (await response.text().catch(() => "")).slice(0, 300);
+-    throw new Error(`Anthropic-compatible provider returned ${response.status}${detail ? `: ${detail}` : ""}`);
+-  }
+-  if (!response.body) throw new Error("Anthropic-compatible provider returned no stream");
+-
+-  const reader = response.body.getReader();
+-  const decoder = new TextDecoder();
+-  let buffer = "";
+-  try {
+-    while (true) {
+-      const { done, value } = await reader.read();
+-      buffer += decoder.decode(value, { stream: !done });
+-      const events = buffer.split(/\r?\n\r?\n/);
+-      buffer = done ? "" : events.pop() ?? "";
+-      for (const event of events) {
+-        const data = event.split(/\r?\n/).find((line) => line.startsWith("data:"))?.slice(5).trim();
+-        if (!data || data === "[DONE]") continue;
+-        try {
+-          const item = JSON.parse(data) as { type?: string; delta?: { type?: string; text?: string }; error?: { message?: string } };
+-          if (item.type === "content_block_delta" && item.delta?.type === "text_delta" && item.delta.text) yield item.delta.text;
+-          if (item.type === "error") throw new Error(item.error?.message || "Anthropic-compatible stream failed");
+-        } catch (error) {
+-          if (error instanceof SyntaxError) continue;
+-          throw error;
+-        }
+-      }
+-      if (done) break;
+-    }
+-  } finally {
+-    reader.releaseLock();
+-  }
+-}
+-
+ /** Company knowledge is pulled live from the DB so the agent never answers from stale hardcoded data. */
+ async function buildSystemPrompt(topics: Set<ChatTopic>) {
+   // Auto-route by request: an unrecognised request gets everything, a recognised one only what it needs.
+@@ -156,15 +80,24 @@ async function buildSystemPrompt(topics: Set<ChatTopic>) {
+   if (wants("tutoring"))
+     sections.push(`Tutors:\n${tutorList || "- (tutor list is being updated ÔÇö direct the user to /tutoring)"}`);
+   // Core focus: business services are always in the prompt, whatever the topic.
+-  sections.push(`Business services (MyLoginn's main offering; India-based team serving businesses across India, Coimbatore, Tamil Nadu and internationally, working remotely):
++  sections.push(`Business services (Myloginn's main offering; India-based team serving businesses across India, Coimbatore, Tamil Nadu and internationally, working remotely):
+ 1. Software, web & app development (/services/app-web-development): business websites and landing pages; web applications, dashboards and internal tools; Android, iOS and cross-platform apps; desktop applications and custom business software (billing, inventory, management systems); UI/UX implementation; backend, APIs and integrations; database design and authentication; cloud deployment; testing, maintenance and performance. Can also work on an existing product. Technology stack is chosen per project; scope and deliverables are agreed before work begins.
+ 2. Digital marketing & SEO (/services/digital-marketing): search and content strategy (SEO), social media on Instagram, Facebook, YouTube and LinkedIn, paid campaign planning and setup for Google Ads and Meta Ads (ad spend and account access agreed separately), lead-generation paths, analytics and performance review. Never guarantee leads, rankings or return on ad spend.
+ 3. AI development (/services/ai-development): generative AI features, chatbots and support assistants that answer from your own documents (RAG), AI agents and workflow automation, integration into existing software/CRM/ERP. NDA available before discussing an idea; ownership is set out in the project agreement.
+-4. Software testing & automation (/services/testing-automation): manual functional and regression testing, API testing, Playwright browser automation, CI/CD integration; can test applications MyLoginn did not build.
++4. Software testing & automation (/services/testing-automation): manual functional and regression testing, API testing, Playwright browser automation, CI/CD integration; can test applications Myloginn did not build.
+ - Pricing is quoted per project after understanding requirements; never state a price or timeline for these services. To get a quote or proposal, use the enquiry form on the relevant service page or contact the team (/contact). Tamil Nadu businesses: /locations/tamil-nadu`);
+   if (wants("projects"))
+     sections.push(`Projects:
+-- /projects shows client websites and products MyLoginn has built and launched (each has its own page, e.g. /projects/<name>), plus any learner projects from MyLoginn Learn. Logged-in learners track their assigned projects, mentor feedback and progress in /dashboard.`);
++- /projects shows client websites and products Myloginn has built and launched (each has its own page, e.g. /projects/<name>), plus any learner projects from Myloginn Learn. Logged-in learners track their assigned projects, mentor feedback and progress in /dashboard.`);
++  if (wants("astrology"))
++    sections.push(`Astrology services (Tamil/English, no account needed to buy; pay securely via Razorpay):
++- Overview and Kanitha Jathagam (computed horoscope report): /services/astrology
++- Horoscope: /services/astrology/horoscope; KP report: /services/astrology/kp-report; Kalai report: /services/astrology/kalai-report
++- Horoscope matching: /services/astrology/porutham, /services/astrology/kalai-matching, /services/astrology/match-finder, /services/astrology/star-match
++- Auspicious timing: /services/astrology/muhurtha
++- Baby names by star: /services/astrology/baby-names and /services/astrology/kalai-baby-names; other tools: /services/astrology/kalai-utilities
++- Printable/downloadable report unlock prices (base): single-page horoscope Rs 20, full horoscope Rs 499, horoscope matching Rs 299. Final price is shown at checkout.
++- Do not give astrological predictions yourself; send the user to the right tool page.`);
+   if (wants("platform"))
+     sections.push(`Learning platform features:
+ - Sign up at /signup, log in at /login; students get a personal /dashboard and /profile.
+@@ -181,22 +114,22 @@ async function buildSystemPrompt(topics: Set<ChatTopic>) {
+ 
+   return `${currentDateTimeContext()}
+ 
+-You are the official AI assistant for MyLoginn (MyLoginn Tech), a technology company from India that builds digital products, software, AI solutions and digital growth systems for businesses.
++You are the official AI assistant for Myloginn, an India-based technology company that builds digital products, software, AI solutions and digital growth systems for businesses.
+ 
+-What MyLoginn offers:
++What Myloginn offers:
+ 1. Five core services for businesses (overview: /services) ÔÇö Web Development and App Development (/services/app-web-development), Desktop Applications and custom business software (/services/app-web-development), AI Agents and automation (/services/ai-development), and Digital Marketing (/services/digital-marketing). To start a project, point people to /contact.
+-2. Client work ÔÇö websites and products MyLoginn has built (page: /projects)
+-3. MyLoginn Learn ÔÇö a separate learning platform with technology courses (/courses) and internships (/internships)
++2. Client work ÔÇö websites and products Myloginn has built (page: /projects)
++3. Myloginn Learn ÔÇö a separate learning platform with technology courses (/courses) and internships (/internships)
+ 
+ Lead with the business services unless the user asks about learning.
+ 
+ ${sections.join("\n\n")}
+ 
+ How to behave:
+-- Answer only questions related to MyLoginn ÔÇö its services, projects, pricing, contact details, and MyLoginn Learn (courses, internships, enrollment). For unrelated topics, politely steer the conversation back to MyLoginn.
++- Answer only questions related to Myloginn ÔÇö its services, projects, pricing, contact details, and Myloginn Learn (courses, internships, enrollment). For unrelated topics, politely steer the conversation back to Myloginn.
+ - Be warm, concise, and helpful. Keep answers short (2-5 sentences) unless the user asks for detail. Plain text only ÔÇö no markdown headings or tables; simple hyphen lists are fine.
+ - When a page is relevant, mention its path (e.g. "see /courses") so the user can navigate there.
+-- MyLoginn does not offer tutoring or school-subject classes; say so if asked and point to /courses.
++- Myloginn does not offer tutoring or school-subject classes; say so if asked and point to /courses.
+ - Never invent prices, dates, or offerings that are not listed above. If you don't know, say so and share the contact details.
+ 
+ ${REQUEST_SCOPED_STYLE}`;
+@@ -222,76 +155,8 @@ export async function POST(req: Request) {
+   const topics = detectTopics(history.filter((m) => m.role === "user").map((m) => m.content));
+ 
+   const system = await buildSystemPrompt(topics);
+-  const anthropicToken = process.env.ANTHROPIC_AUTH_TOKEN;
+-  if (!anthropicToken) {
+-    return NextResponse.json({ error: "Configure ANTHROPIC_AUTH_TOKEN to enable the free-tier chatbot." }, { status: 503 });
+-  }
+-
+-  const abortController = new AbortController();
+-  req.signal.addEventListener("abort", () => abortController.abort(), { once: true });
+-
+-  const providers = [{ name: "Coarena", start: () => anthropicTextDeltas(anthropicToken, system, history, abortController.signal) }];
+-
+-  let selected: AsyncIterator<string> | undefined;
+-  let firstDelta: IteratorResult<string> | undefined;
+-  const failures: string[] = [];
+-  for (const provider of providers) {
+-    const iterator = provider.start()[Symbol.asyncIterator]();
+-    try {
+-      const first = await iterator.next();
+-      if (first.done) throw new Error("Provider returned an empty reply");
+-      selected = iterator;
+-      firstDelta = first;
+-      break;
+-    } catch (error) {
+-      if (abortController.signal.aborted) break;
+-      const detail = error instanceof Error ? error.message : "Unknown provider error";
+-      failures.push(`${provider.name}: ${detail}`);
+-      console.error(`${provider.name} chat failed; trying the next configured provider.`, error);
+-      await iterator.return?.(undefined);
+-    }
+-  }
+-
+-  if (!selected || !firstDelta || abortController.signal.aborted) {
+-    const message = failures.some((failure) => /401|403|auth|api.?key|token/i.test(failure))
+-      ? "The configured AI provider credentials were rejected. Replace the server-side key or token."
+-      : failures.some((failure) => /429|quota|usage limit/i.test(failure))
+-        ? "The free AI service has reached its current usage limit. Please try again later."
+-        : "The chat assistant could not connect. Check the server-side AI provider configuration and try again.";
+-    return NextResponse.json({ error: message }, { status: 502 });
+-  }
+-
+-  const encoder = new TextEncoder();
+-  const bodyStream = new ReadableStream<Uint8Array>({
+-    start(controller) {
+-      controller.enqueue(encoder.encode(firstDelta.value));
+-      void pump();
+-
+-      async function pump() {
+-      try {
+-        while (true) {
+-          const next = await selected!.next();
+-          if (next.done) break;
+-          controller.enqueue(encoder.encode(next.value));
+-        }
+-        controller.close();
+-      } catch (error) {
+-        if (!abortController.signal.aborted) console.error("Coarena chat stream failed", error);
+-        controller.error(error);
+-      }
+-      }
+-    },
+-    async cancel() {
+-      abortController.abort();
+-      await selected?.return?.();
+-    },
+-  });
+-
+-  return new Response(bodyStream, {
+-    headers: {
+-      "Cache-Control": "no-store, no-transform",
+-      "Content-Type": "text/plain; charset=utf-8",
+-      "X-Accel-Buffering": "no",
+-    },
+-  });
++  return NextResponse.json(
++    { systemPrompt: system },
++    { headers: { "Cache-Control": "no-store" } }
++  );
+ }

@@ -1,0 +1,1401 @@
+﻿diff --git a/src/app/careers/page.tsx b/src/app/careers/page.tsx
+index 64e1922..114140d 100644
+--- a/src/app/careers/page.tsx
++++ b/src/app/careers/page.tsx
+@@ -13,11 +13,11 @@ import { CareersBoard, type PublicInternship, type PublicJob } from "@/component
+ 
+ export const metadata = createPageMetadata({
+   title: "Careers",
+-  description: "Careers at MyLoginn: current job openings, upcoming roles, internship opportunities and how to apply to join our web, app, AI and digital marketing team.",
++  description: "Careers at Myloginn: current job openings, upcoming roles, internship opportunities and how to apply to join our web, app, AI and digital marketing team.",
+   path: "/careers",
+   keywords: [
+     ...localKeywords(["IT jobs", "software developer jobs", "digital marketing jobs"]),
+-    "MyLoginn careers", "MyLoginn jobs", "MyLoginn hiring", "web developer jobs", "AI developer jobs", "internships",
++    "Myloginn careers", "Myloginn jobs", "Myloginn hiring", "web developer jobs", "AI developer jobs", "internships",
+   ],
+ });
+ 
+@@ -75,7 +75,7 @@ export default async function CareersPage() {
+       ].join("\n\n").replace(/\*\*/g, ""),
+       datePosted: j.createdAt.toISOString().slice(0, 10),
+       employmentType: j.type.split("/").map((t) => EMPLOYMENT_TYPE[t.trim()] ?? "OTHER"),
+-      hiringOrganization: { "@type": "Organization", name: j.company || "MyLoginn", sameAs: siteUrl },
++      hiringOrganization: { "@type": "Organization", name: j.company || "Myloginn", sameAs: siteUrl },
+       ...(j.workMode === "Remote" ? { jobLocationType: "TELECOMMUTE", applicantLocationRequirements: { "@type": "Country", name: "India" } } : {}),
+       jobLocation: { "@type": "Place", address: { "@type": "PostalAddress", ...(j.location ? { addressLocality: j.location } : {}), addressCountry: "IN" } },
+       directApply: true,
+@@ -89,7 +89,7 @@ export default async function CareersPage() {
+           <SplitHeadline as="h1" text="Build what businesses run on." className="mt-4 text-[2rem] font-bold leading-[1.08] tracking-tight text-story-navy min-[360px]:text-4xl sm:text-6xl dark:text-foreground" />
+           <Reveal direction="up" delay={0.12}>
+             <p className="mx-auto mt-5 max-w-xl text-base leading-7 text-muted sm:text-lg">
+-              Join the MyLoginn team building web applications, mobile apps, AI agents and digital marketing for real businesses.
++              Join the Myloginn team building web applications, mobile apps, AI agents and digital marketing for real businesses.
+             </p>
+           </Reveal>
+           <Reveal direction="up" delay={0.2} className="mt-7 flex justify-center">
+diff --git a/src/app/careers/students/page.tsx b/src/app/careers/students/page.tsx
+index 4e24751..c2d4fd9 100644
+--- a/src/app/careers/students/page.tsx
++++ b/src/app/careers/students/page.tsx
+@@ -5,7 +5,7 @@ import { Reveal } from "@/components/ui/Reveal";
+ 
+ export const metadata = createPageMetadata({
+   title: "Students",
+-  description: "Courses, practice, LogiQuest, leaderboards, student login, signup, and dashboard at MyLoginn.",
++  description: "Courses, practice, LogiQuest, leaderboards, student login, signup, and dashboard at Myloginn.",
+   path: "/careers/students",
+ });
+ 
+@@ -21,12 +21,12 @@ export default function StudentsPortalPage() {
+     <div className="relative overflow-x-clip px-3 py-10 min-[360px]:px-5 sm:px-8 sm:py-16">
+       <div className="mx-auto max-w-5xl">
+         <Reveal>
+-          <span className="story-eyebrow">MyLoginn Students</span>
++          <span className="story-eyebrow">Myloginn Students</span>
+           <h1 className="mt-4 max-w-3xl text-[2rem] font-bold leading-[1.08] tracking-tight text-story-navy min-[360px]:text-4xl sm:text-6xl dark:text-foreground">
+             Build skills for your next opportunity.
+           </h1>
+           <p className="mt-5 max-w-2xl text-base leading-7 text-muted sm:text-lg">
+-            One Student Portal for learning, practice, LogiQuest, and your MyLoginn account.
++            One Student Portal for learning, practice, LogiQuest, and your Myloginn account.
+           </p>
+         </Reveal>
+ 
+diff --git a/src/app/coding-competition/page.tsx b/src/app/coding-competition/page.tsx
+index a30ce1c..80998fb 100644
+--- a/src/app/coding-competition/page.tsx
++++ b/src/app/coding-competition/page.tsx
+@@ -14,10 +14,10 @@ export async function generateMetadata(): Promise<Metadata> {
+     title: c ? `${c.title} ÔÇö Coding Competition` : "Coding Competition",
+     absoluteTitle: true,
+     description: c
+-      ? `Register for ${c.title}: a live, monitored online coding competition by MyLoginn Learn with unique question sets, server-side judging, certificates and a paid internship for the winner.`
+-      : "Live online coding competitions by MyLoginn Learn with unique question sets, certificates and internship rewards.",
++      ? `Register for ${c.title}: a live, monitored online coding competition by Myloginn Learn with unique question sets, server-side judging, certificates and a paid internship for the winner.`
++      : "Live online coding competitions by Myloginn Learn with unique question sets, certificates and internship rewards.",
+     path: "/coding-competition",
+-    keywords: ["coding competition", "online programming contest", "MyLoginn Learn"],
++    keywords: ["coding competition", "online programming contest", "Myloginn Learn"],
+   });
+ }
+ 
+diff --git a/src/app/coding-competition/register/page.tsx b/src/app/coding-competition/register/page.tsx
+index e4db554..6a433fe 100644
+--- a/src/app/coding-competition/register/page.tsx
++++ b/src/app/coding-competition/register/page.tsx
+@@ -6,7 +6,7 @@ import { getCurrentCompetition, publicView } from "@/lib/competition/server/comp
+ import { getRegistration } from "@/lib/competition/server/registration";
+ 
+ export const dynamic = "force-dynamic";
+-export const metadata = { title: "Register ÔÇö Coding Competition", description: "Register for the MyLoginn coding competition in a minute. No OTP needed." };
++export const metadata = { title: "Register ÔÇö Coding Competition", description: "Register for the Myloginn coding competition in a minute. No OTP needed." };
+ 
+ export default async function RegisterPage() {
+   const [c, user] = await Promise.all([getCurrentCompetition(), getCurrentUser()]);
+diff --git a/src/app/contact/page.tsx b/src/app/contact/page.tsx
+index 978ab44..f133593 100644
+--- a/src/app/contact/page.tsx
++++ b/src/app/contact/page.tsx
+@@ -16,18 +16,18 @@ import contactArtwork from "@/images/Contact us header.png";
+ import { CONTACT_EMAIL, CONTACT_HOURS, CONTACT_PHONES, WHATSAPP_PHONE } from "@/lib/contactInfo";
+ 
+ export const metadata = createPageMetadata({
+-  title: "Contact MyLoginn",
++  title: "Contact Myloginn",
+   absoluteTitle: true,
+-  description: "Start a project with MyLoginn Tech: web development, app development, desktop applications, AI agents and digital marketing.",
++  description: "Start a project with Myloginn: web development, app development, desktop applications, AI agents and digital marketing.",
+   path: "/contact",
+-  keywords: ["contact MyLoginn", "MyLoginn contact", "software development enquiry", "digital marketing enquiry"],
++  keywords: ["contact Myloginn", "Myloginn contact", "software development enquiry", "digital marketing enquiry"],
+ });
+ 
+ const contactFaqs = [
+   { question: "What should I include in a project enquiry?", answer: "Share your goal, expected users, key requirements, relevant links and any timing constraints you know." },
+   { question: "What happens after I send an enquiry?", answer: "Our team reviews it and contacts you with next steps, usually starting with a short discovery conversation." },
+   { question: "Can you work with an existing website or system?", answer: "Yes. We can improve, extend, integrate with or migrate what you already have, as well as build new." },
+-  { question: "Where can I ask about MyLoginn Learn?", answer: "Use the Learn tab in the form on this page for course, fee and payment questions." },
++  { question: "Where can I ask about Myloginn Learn?", answer: "Use the Learn tab in the form on this page for course, fee and payment questions." },
+ ];
+ 
+ const phoneLink = (phone: string) => `tel:${phone.replace(/[^+\d]/g, "")}`;
+@@ -42,7 +42,7 @@ const quickLinks = [
+   { title: "Explore solutions", description: "Web, app, desktop, AI and marketing services.", href: "/services", icon: "webdev", color: "#2563eb", cta: "View solutions" },
+   { title: "See our work", description: "Websites and products we have built and launched.", href: "/projects", icon: "business", color: "#7c3aed", cta: "View projects" },
+   { title: "Join our team", description: "Open roles across development, AI and marketing.", href: "/careers", icon: "career", color: "#059669", cta: "View careers" },
+-  { title: "MyLoginn Learn", description: "Our separate platform for technology courses.", href: "/courses", icon: "student", color: "#d97706", cta: "Go to Learn" },
++  { title: "Myloginn Learn", description: "Our separate platform for technology courses.", href: "/courses", icon: "student", color: "#d97706", cta: "Go to Learn" },
+ ];
+ 
+ export default function ContactPage() {
+@@ -66,7 +66,7 @@ export default function ContactPage() {
+             <ContactHeroVisual
+               email={CONTACT_EMAIL}
+               phones={CONTACT_PHONES.map((p) => ({ display: p.display, tel: phoneLink(p.tel) .replace("tel:", "") }))}
+-              whatsappHref={toWhatsAppLink(WHATSAPP_PHONE, "Hi MyLoginn team! I have a question.") ?? "#contact-form"}
++              whatsappHref={toWhatsAppLink(WHATSAPP_PHONE, "Hi Myloginn team! I have a question.") ?? "#contact-form"}
+               hours={CONTACT_HOURS}
+               accent={contactArtwork}
+             />
+@@ -97,7 +97,7 @@ export default function ContactPage() {
+             <ContactInfoCard
+               email={CONTACT_EMAIL}
+               phones={CONTACT_PHONES.map((p) => ({ display: p.display, tel: phoneLink(p.tel).replace("tel:", "") }))}
+-              whatsappHref={toWhatsAppLink(WHATSAPP_PHONE, "Hi MyLoginn team! I have a question.") ?? "#contact-form"}
++              whatsappHref={toWhatsAppLink(WHATSAPP_PHONE, "Hi Myloginn team! I have a question.") ?? "#contact-form"}
+               hours={CONTACT_HOURS}
+             />
+ 
+@@ -112,7 +112,7 @@ export default function ContactPage() {
+         <section aria-labelledby="quick-access" className="relative z-10 mt-20 sm:mt-24">
+           <Reveal><span className="story-eyebrow">Quick access</span></Reveal>
+           <h2 id="quick-access" className="story-subheading mt-3 text-story-navy">Choose your next step</h2>
+-          <p className="mt-3 max-w-xl text-sm leading-7 text-muted sm:text-base">Go straight to the MyLoginn area that matches what you&apos;re looking for.</p>
++          <p className="mt-3 max-w-xl text-sm leading-7 text-muted sm:text-base">Go straight to the Myloginn area that matches what you&apos;re looking for.</p>
+           <RevealGroup className="mt-8 grid gap-4 sm:grid-cols-2 lg:grid-cols-4" stagger={0.08}>
+             {quickLinks.map(({ title, description, href, icon, color, cta }, i) => (
+               <RevealItem key={title} className="h-full">
+diff --git a/src/app/courses/[slug]/learn/[topic]/page.tsx b/src/app/courses/[slug]/learn/[topic]/page.tsx
+index fdd7e97..90a405a 100644
+--- a/src/app/courses/[slug]/learn/[topic]/page.tsx
++++ b/src/app/courses/[slug]/learn/[topic]/page.tsx
+@@ -32,5 +32,5 @@ export default async function CourseTopicPage({ params }: { params: Promise<{ sl
+   if (index > unlockedIndex) redirect(`/courses/${slug}/learn/${toTopicSlug(syllabus[unlockedIndex])}`);
+   const progress = syllabus.length ? Math.round((completedTopicSlugs.length / syllabus.length) * 100) : 0;
+ 
+-  return <CourseTutorial courseTitle={getCourseDisplayTitle(course.slug, course.title)} courseSlug={course.slug} learnerName={user.name.trim() || "MyLoginn"} topics={syllabus} index={index} completedTopicSlugs={completedTopicSlugs} courseProgress={progress} />;
++  return <CourseTutorial courseTitle={getCourseDisplayTitle(course.slug, course.title)} courseSlug={course.slug} learnerName={user.name.trim() || "Myloginn"} topics={syllabus} index={index} completedTopicSlugs={completedTopicSlugs} courseProgress={progress} />;
+ }
+diff --git a/src/app/courses/[slug]/page.tsx b/src/app/courses/[slug]/page.tsx
+index df2d4de..f43c4ae 100644
+--- a/src/app/courses/[slug]/page.tsx
++++ b/src/app/courses/[slug]/page.tsx
+@@ -92,7 +92,7 @@ export default async function CourseDetailPage({ params }: { params: Promise<{ s
+         name: displayTitle,
+         description: course.description,
+         url: `${siteUrl}/courses/${course.slug}`,
+-        provider: { "@type": "Organization", "@id": `${siteUrl}/#organization`, name: "MyLoginn Tech", sameAs: siteUrl },
++        provider: { "@type": "Organization", "@id": `${siteUrl}/#organization`, name: "Myloginn", sameAs: siteUrl },
+         inLanguage: "en",
+         hasCourseInstance: { "@type": "CourseInstance", courseMode: "online" },
+         offers: { "@type": "Offer", price: course.price, priceCurrency: "INR", category: course.price === 0 ? "Free" : "Paid", url: `${siteUrl}/courses/${course.slug}` },
+diff --git a/src/app/courses/page.tsx b/src/app/courses/page.tsx
+index ad682ba..cd5fe3b 100644
+--- a/src/app/courses/page.tsx
++++ b/src/app/courses/page.tsx
+@@ -23,11 +23,11 @@ const courseFaqs = [
+ 
+ export const metadata = createPageMetadata({
+   title: "Courses",
+-  description: "Practical AI, data, full-stack development, testing and digital marketing courses from MyLoginn, with hands-on projects for learners across India.",
++  description: "Practical AI, data, full-stack development, testing and digital marketing courses from Myloginn, with hands-on projects for learners across India.",
+   path: "/courses",
+   keywords: [
+     ...localKeywords(["AI course", "technology courses", "full stack course", "Python course"]),
+-    "MyLoginn courses", "AI courses", "Generative AI courses", "Agentic AI courses",
++    "Myloginn courses", "AI courses", "Generative AI courses", "Agentic AI courses",
+     "Data Analytics courses", "Full-Stack Development courses", "Testing with AI",
+     "Automation Testing courses", "Python courses", "Cloud Engineering courses",
+     "Data Science courses", "Prompt Engineering courses", "digital marketing courses",
+@@ -81,7 +81,7 @@ export default async function CoursesPage() {
+             <SplitHeadline as="h1" text="Master skills for your future" className="mt-0 max-w-xl text-4xl font-bold leading-[1.08] tracking-tight text-story-navy sm:text-5xl dark:text-foreground" />
+             <Reveal direction="up" delay={0.15}>
+               <p className="mt-5 max-w-lg text-base leading-8 text-muted sm:text-lg">Explore current course topics, levels, duration, fees, and enrolment details in the listings below.</p>
+-              <p className="mt-3 max-w-lg text-sm leading-6 text-muted">MyLoginn offers practical AI and technology learning for learners everywhere. Browse current courses and contact us if you have any questions.</p>
++              <p className="mt-3 max-w-lg text-sm leading-6 text-muted">Myloginn offers practical AI and technology learning for learners everywhere. Browse current courses and contact us if you have any questions.</p>
+             </Reveal>
+             <Reveal direction="up" delay={0.25} className="mt-7 flex flex-wrap items-center justify-center gap-3 lg:justify-start">
+               <ArrowLink href="#courses-list">Browse courses</ArrowLink>
+diff --git a/src/app/internships/page.tsx b/src/app/internships/page.tsx
+index 2fa5376..1e07419 100644
+--- a/src/app/internships/page.tsx
++++ b/src/app/internships/page.tsx
+@@ -39,11 +39,11 @@ const internshipFaqs = [
+ 
+ export const metadata = createPageMetadata({
+   title: "Internships",
+-  description: "Practical MyLoginn internships in web, app, AI and digital marketing, working on real projects. Open to students across India.",
++  description: "Practical Myloginn internships in web, app, AI and digital marketing, working on real projects. Open to students across India.",
+   path: "/internships",
+   keywords: [
+     ...localKeywords(["technology internship", "software internship", "AI internship"]),
+-    "MyLoginn internships", "AI internships", "software development internships",
++    "Myloginn internships", "AI internships", "software development internships",
+     "technology internships", "internship programs",
+   ],
+ });
+diff --git a/src/app/leaderboard/page.tsx b/src/app/leaderboard/page.tsx
+index 2d1c8e6..dc90e1f 100644
+--- a/src/app/leaderboard/page.tsx
++++ b/src/app/leaderboard/page.tsx
+@@ -18,8 +18,8 @@ export default async function LeaderboardPage() {
+   });
+ 
+   return <Section className="py-10 sm:py-14"><Container className="max-w-3xl">
+-    <div className="mb-7 flex items-center gap-3"><span className="grid h-12 w-12 place-items-center text-brand-600"><Trophy className="h-6 w-6" /></span><div><p className="text-xs font-bold uppercase tracking-wider text-brand-600">MyLoginn Learning</p><h1 className="text-2xl font-bold sm:text-3xl">Global leaderboard</h1></div></div>
+-    <p className="mb-6 text-sm leading-6 text-muted">Ranked by points earned from completed lessons and other MyLoginn learning activities.</p>
++    <div className="mb-7 flex items-center gap-3"><span className="grid h-12 w-12 place-items-center text-brand-600"><Trophy className="h-6 w-6" /></span><div><p className="text-xs font-bold uppercase tracking-wider text-brand-600">Myloginn Learning</p><h1 className="text-2xl font-bold sm:text-3xl">Global leaderboard</h1></div></div>
++    <p className="mb-6 text-sm leading-6 text-muted">Ranked by points earned from completed lessons and other Myloginn learning activities.</p>
+     {leaders[0]?.id === currentUser.id && <section role="status" className="mb-6 flex items-center gap-4 overflow-hidden rounded-2xl border border-amber-300 bg-gradient-to-r from-amber-50 via-yellow-50 to-orange-50 p-5 dark:border-amber-700 dark:from-amber-950/50 dark:via-yellow-950/30 dark:to-orange-950/40">
+       <svg viewBox="0 0 100 110" role="img" aria-label="Animated first place winner badge" className="h-20 w-20 shrink-0 animate-bounce motion-reduce:animate-none">
+         <path d="M28 58 22 99l28-13 28 13-6-41" fill="#f59e0b" stroke="#92400e" strokeWidth="4" strokeLinejoin="round" />
+@@ -34,7 +34,7 @@ export default async function LeaderboardPage() {
+         <span className={`grid h-9 w-9 shrink-0 place-items-center rounded-full text-sm font-bold ${index < 3 ? "bg-amber-100 text-amber-800" : "bg-surface-2 text-muted"}`}>{index < 3 ? <Award className="h-4 w-4" aria-label={`Rank ${index + 1}`} /> : index + 1}</span>
+         <span className="min-w-0 flex-1 truncate font-semibold">{leader.name}{leader.id === currentUser.id ? <span className="ml-2 text-xs font-medium text-brand-600">You</span> : null}</span>
+         <span className="whitespace-nowrap text-sm font-bold text-brand-700 dark:text-brand-200">{leader.points.toLocaleString("en-IN")} pts</span>
+-      </div>) : <div className="px-6 py-12 text-center"><p className="font-semibold">No ranked learners yet</p><p className="mt-1 text-sm text-muted">Earn points through MyLoginn learning activities to appear here.</p></div>}
++      </div>) : <div className="px-6 py-12 text-center"><p className="font-semibold">No ranked learners yet</p><p className="mt-1 text-sm text-muted">Earn points through Myloginn learning activities to appear here.</p></div>}
+     </Card>
+   </Container></Section>;
+ }
+diff --git a/src/app/locations/tamil-nadu/page.tsx b/src/app/locations/tamil-nadu/page.tsx
+index 974d4e5..4716a96 100644
+--- a/src/app/locations/tamil-nadu/page.tsx
++++ b/src/app/locations/tamil-nadu/page.tsx
+@@ -9,7 +9,7 @@ import { CONTACT_EMAIL, CONTACT_PHONES } from "@/lib/contactInfo";
+ export const metadata = createPageMetadata({
+   title: "Services in Tamil Nadu",
+   description:
+-    "MyLoginn builds websites, mobile apps, desktop software, AI agents and digital marketing for businesses across Tamil Nadu.",
++    "Myloginn builds websites, mobile apps, desktop software, AI agents and digital marketing for businesses across Tamil Nadu.",
+   path: "/locations/tamil-nadu",
+   keywords: [
+     "software company Tamil Nadu", "web development company Tamil Nadu", "app development Tamil Nadu",
+@@ -28,7 +28,7 @@ const services = [
+ const faqs = [
+   { question: "Which parts of Tamil Nadu do you work with?", answer: "We work with businesses across Tamil Nadu, including Coimbatore, Pollachi, Udumalpet and Erode, and also serve clients elsewhere in India and abroad remotely." },
+   { question: "Can you work with a business outside the big cities?", answer: "Yes. Most project work, from discovery calls to delivery, can run online, so location does not limit what we can build." },
+-  { question: "Do you offer courses and internships for students in Tamil Nadu?", answer: "Yes, through MyLoginn Learn, our separate learning platform, which runs online technology courses and internships. See the courses and internships pages for what is currently open." },
++  { question: "Do you offer courses and internships for students in Tamil Nadu?", answer: "Yes, through Myloginn Learn, our separate learning platform, which runs online technology courses and internships. See the courses and internships pages for what is currently open." },
+   { question: "How do I start a project?", answer: `Send an enquiry through the contact page or email ${CONTACT_EMAIL}, and the team will follow up to understand your goals before agreeing scope.` },
+ ];
+ 
+@@ -38,7 +38,7 @@ export default function TamilNaduPage() {
+       <JsonLd data={faqStructuredData(faqs)} />
+       <Container className="max-w-4xl">
+         <h1 className="mt-0 text-4xl font-bold leading-[1.1] tracking-tight sm:text-5xl">Software, AI and digital services for Tamil Nadu businesses</h1>
+-        <p className="mt-4 text-lg leading-8 text-muted">MyLoginn Tech is an India-based technology company. We help businesses across Tamil Nadu, including Coimbatore, Pollachi, Udumalpet and Erode, build and grow with web, mobile, AI and marketing solutions, and we help students learn practical technology skills.</p>
++        <p className="mt-4 text-lg leading-8 text-muted">Myloginn is an India-based technology company. We help businesses across Tamil Nadu, including Coimbatore, Pollachi, Udumalpet and Erode, build and grow with web, mobile, AI and marketing solutions, and we help students learn practical technology skills.</p>
+ 
+         <section aria-labelledby="tn-services" className="mt-12">
+           <h2 id="tn-services" className="text-2xl font-semibold tracking-tight">What we can do for your business</h2>
+@@ -49,11 +49,11 @@ export default function TamilNaduPage() {
+ 
+         <section aria-labelledby="tn-work" className="mt-12">
+           <h2 id="tn-work" className="text-2xl font-semibold tracking-tight">Work for a Tamil Nadu client</h2>
+-          <p className="mt-3 leading-7 text-muted">We built the website for Ooty Nigel Travels, a Tamil Nadu travel agency offering chauffeur-driven taxis and Nilgiris holiday packages. <Link href="/projects/ooty-nigel-travels" className="font-semibold text-brand-600 hover:underline">Read the Ooty Nigel Travels project</Link> or see <Link href="/projects" className="font-semibold text-brand-600 hover:underline">all MyLoginn projects</Link>.</p>
++          <p className="mt-3 leading-7 text-muted">We built the website for Ooty Nigel Travels, a Tamil Nadu travel agency offering chauffeur-driven taxis and Nilgiris holiday packages. <Link href="/projects/ooty-nigel-travels" className="font-semibold text-brand-600 hover:underline">Read the Ooty Nigel Travels project</Link> or see <Link href="/projects" className="font-semibold text-brand-600 hover:underline">all Myloginn projects</Link>.</p>
+         </section>
+ 
+         <section aria-labelledby="tn-learn" className="mt-12">
+-          <h2 id="tn-learn" className="text-2xl font-semibold tracking-tight">Learn with MyLoginn</h2>
++          <h2 id="tn-learn" className="text-2xl font-semibold tracking-tight">Learn with Myloginn</h2>
+           <p className="mt-3 leading-7 text-muted">Students and professionals can explore <Link href="/courses" className="font-semibold text-brand-600 hover:underline">technology courses</Link> and <Link href="/internships" className="font-semibold text-brand-600 hover:underline">internships</Link>.</p>
+         </section>
+ 
+diff --git a/src/app/logiquest/coding/page.tsx b/src/app/logiquest/coding/page.tsx
+index 4999370..62d6de3 100644
+--- a/src/app/logiquest/coding/page.tsx
++++ b/src/app/logiquest/coding/page.tsx
+@@ -11,7 +11,7 @@ import { createPageMetadata } from "@/lib/seo";
+ export const metadata = createPageMetadata({
+   title: "Coding Practice - Problems with an Online IDE ┬À LogiQuest",
+   absoluteTitle: true,
+-  description: "Practise coding problems in Python, JavaScript and SQL with the MyLoginn IDE: algorithms, data structures, mathematics, strings and SQL, judged instantly.",
++  description: "Practise coding problems in Python, JavaScript and SQL with the Myloginn IDE: algorithms, data structures, mathematics, strings and SQL, judged instantly.",
+   path: "/logiquest/coding",
+   keywords: ["coding practice", "online programming problems", "Python coding practice", "SQL coding practice"],
+ });
+@@ -27,7 +27,7 @@ export default async function CodingHome() {
+   return (
+     <Container className="max-w-6xl py-6 sm:py-8">
+       <Breadcrumbs items={[{ label: "Coding" }]} />
+-      <PageTitle title="Coding Practice" sub="Solve problems in the MyLoginn IDE ÔÇö Python, JavaScript and SQL ÔÇö with instant results on sample and hidden test cases. Earn XP for every first solve." />
++      <PageTitle title="Coding Practice" sub="Solve problems in the Myloginn IDE ÔÇö Python, JavaScript and SQL ÔÇö with instant results on sample and hidden test cases. Earn XP for every first solve." />
+ 
+       <div className="mt-6 grid gap-3 sm:grid-cols-4">
+         <div className="rounded-2xl border border-border-soft bg-surface p-4">
+diff --git a/src/app/not-found.tsx b/src/app/not-found.tsx
+index f2b2213..e390998 100644
+--- a/src/app/not-found.tsx
++++ b/src/app/not-found.tsx
+@@ -23,7 +23,7 @@ export default function NotFound() {
+           Opportunity detoured!
+         </h1>
+         <p className="mx-auto mt-3 max-w-2xl text-sm leading-6 text-slate-700 sm:mt-4 sm:text-base sm:leading-7">
+-          We couldn&apos;t find the page you requested. It may have moved or may no longer be available. There are plenty of ways to keep exploring MyLoginn.
++          We couldn&apos;t find the page you requested. It may have moved or may no longer be available. There are plenty of ways to keep exploring Myloginn.
+         </p>
+         <nav aria-label="Helpful pages" className="mx-auto mt-6 grid w-full max-w-3xl grid-cols-1 gap-3 sm:mt-7 sm:grid-cols-3 sm:gap-4">
+           <Link className={`${primaryAction} brand-gradient-bg text-white shadow-[var(--shadow-lift)]`} href="/">Return to Home</Link>
+diff --git a/src/app/page.tsx b/src/app/page.tsx
+index d040acd..b4f86cf 100644
+--- a/src/app/page.tsx
++++ b/src/app/page.tsx
+@@ -29,16 +29,16 @@ const FinalCta = dynamic(() => import("@/components/sections/FinalCta").then((mo
+   loading: () => <div className="min-h-[220px] w-full bg-slate-50" aria-busy="true" aria-live="polite" />,
+ });
+ export const metadata = createPageMetadata({
+-  title: "MyLoginn | Web, App & Digital Solutions for Businesses",
++  title: "Myloginn | Web, App & Digital Solutions for Businesses",
+   absoluteTitle: true,
+   description:
+-    "Your technology partner to build, automate and grow. MyLoginn creates websites, mobile apps, desktop software and AI agents, and grows them with digital marketing.",
++    "Your technology partner to build, automate and grow. Myloginn creates websites, mobile apps, desktop software and AI agents, and grows them with digital marketing.",
+   path: "/",
+   keywords: [
+     ...regionalKeywords(["web development company", "software development company", "AI development company"]),
+     ...localKeywords(["web development company", "software development company", "app development company", "AI solutions", "digital marketing company", "technology company"]),
+-    "MyLoginn company", "MyLoginn IT company", "MyLoginn software company",
+-    "MyLoginn technology company", "MyLoginn official website", "myloginn.com",
++    "Myloginn company", "Myloginn IT company", "Myloginn software company",
++    "Myloginn technology company", "Myloginn official website", "myloginn.com",
+     "AI-driven IT company", "technology solutions", "website development",
+     "web development", "app development", "mobile app development",
+     "digital marketing", "custom software solutions", "UI/UX design", "AI solutions",
+diff --git a/src/app/privacy/page.tsx b/src/app/privacy/page.tsx
+index d1d4dd3..ee61040 100644
+--- a/src/app/privacy/page.tsx
++++ b/src/app/privacy/page.tsx
+@@ -4,14 +4,14 @@ import { CONTACT_EMAIL } from "@/lib/contactInfo";
+ 
+ export const metadata = createPageMetadata({
+   title: "Privacy Policy",
+-  description: "How MyLoginn Tech collects, uses and protects personal information on myloginn.com.",
++  description: "How Myloginn collects, uses and protects personal information on myloginn.com.",
+   path: "/privacy",
+ });
+ 
+ // DRAFT: have a qualified lawyer review this before relying on it, and keep it in sync with the
+ // providers actually configured (see .env.example).
+ const sections = [
+-  { h: "Who we are", p: `This website is operated by MyLoginn Tech, an India-based technology company. Contact: ${CONTACT_EMAIL}.` },
++  { h: "Who we are", p: `This website is operated by Myloginn, an India-based technology company. Contact: ${CONTACT_EMAIL}.` },
+   { h: "Information we collect", p: "Account details (name, email, phone), enquiry and project-request details you submit, course progress and enrolment records, payment status, and technical data such as browser type needed to run and secure the site." },
+   { h: "How we use it", p: "To provide accounts, courses and internships; respond to enquiries; verify your email or phone with one-time codes; process payments; secure the site and prevent abuse; and improve our services." },
+   { h: "Service providers", p: "We use third-party providers to deliver the service, for example for payments, email, SMS or phone verification, hosting, and AI-assisted chat. They receive only the data needed for their function. We do not sell personal information." },
+diff --git a/src/app/reset-password/page.tsx b/src/app/reset-password/page.tsx
+index db92da2..8cd8e8a 100644
+--- a/src/app/reset-password/page.tsx
++++ b/src/app/reset-password/page.tsx
+@@ -60,7 +60,7 @@ function ResetPasswordForm() {
+     <AuthShell mode="login">
+       <div className="mb-5">
+         <span className="mb-3 flex h-10 w-10 items-center justify-center text-brand-600"><KeyRound className="h-5 w-5" /></span>
+-        <p className="text-xs font-semibold uppercase tracking-[.16em] text-brand-600">MyLoginn account</p>
++        <p className="text-xs font-semibold uppercase tracking-[.16em] text-brand-600">Myloginn account</p>
+         <h1 className="mt-1 text-2xl font-bold tracking-tight sm:text-3xl">Reset your password</h1>
+         <p className="mt-1.5 text-sm leading-5 text-muted">{token && !resetComplete ? "Choose a new password for your account." : "WeÔÇÖll email you a secure link to choose a new password."}</p>
+       </div>
+diff --git a/src/app/services/ai-development/page.tsx b/src/app/services/ai-development/page.tsx
+index 488c07a..0821361 100644
+--- a/src/app/services/ai-development/page.tsx
++++ b/src/app/services/ai-development/page.tsx
+@@ -6,7 +6,7 @@ import { PlanCta, AgentRunMonitor, DocQaMonitor, WorkflowMonitor, SupportChatPho
+ export const metadata = createPageMetadata({
+   title: "AI Agent Development & Business Automation",
+   description:
+-    "Custom AI agents, assistants and workflow automation that work with your data and tools, with human approval where it matters. Built by MyLoginn in India.",
++    "Custom AI agents, assistants and workflow automation that work with your data and tools, with human approval where it matters. Built by Myloginn in India.",
+   path: "/services/ai-development",
+   keywords: [
+     ...regionalKeywords(["AI development company", "AI agent development"]),
+@@ -23,7 +23,7 @@ const faqs = [
+   { question: "How do you handle data privacy?", answer: "We design around the minimum data needed, keep API keys and secrets server-side, and agree what data is sent to any third-party model provider before building. Specific compliance needs are discussed during discovery." },
+   { question: "How much does AI development cost?", answer: "It depends on scope: a focused assistant or automation costs far less than a multi-system agent platform. We provide an estimate after understanding your workflow, data and integrations, and we do not quote fixed prices without that." },
+   { question: "Do you sign NDAs and who owns the code?", answer: "We are happy to sign an NDA before discussing your idea. Ownership of the delivered work and any data is set out in the project agreement before work starts." },
+-  { question: "Do you work with clients outside India?", answer: "Yes. MyLoginn is based in India and works with international clients remotely." },
++  { question: "Do you work with clients outside India?", answer: "Yes. Myloginn is based in India and works with international clients remotely." },
+ ];
+ 
+ const areas = [
+@@ -52,11 +52,11 @@ export default function AiDevelopmentPage() {
+     <StoryLanding
+       eyebrow="AI development"
+       h1="AI development and AI agent development for real business workflows"
+-      intro="MyLoginn designs and builds generative AI features, AI agents and automation that fit into the software and processes your team already uses."
++      intro="Myloginn designs and builds generative AI features, AI agents and automation that fit into the software and processes your team already uses."
+       cta={<PlanCta label="Plan an AI project" service="software" />}
+       secondaryLabel="Get an estimate"
+       heroVisual={<AgentRunMonitor />}
+-      service={{ name: "AI Development and AI Agent Development", description: "MyLoginn designs and builds generative AI features, AI agents and automation that fit into the software and processes your team already uses.", path: "/services/ai-development", serviceType: "AI software development" }}
++      service={{ name: "AI Development and AI Agent Development", description: "Myloginn designs and builds generative AI features, AI agents and automation that fit into the software and processes your team already uses.", path: "/services/ai-development", serviceType: "AI software development" }}
+       steps={[
+         { title: "Understand", text: "Understand the workflow and success criteria." },
+         { title: "Check", text: "Check data, integrations and risks." },
+@@ -79,7 +79,7 @@ export default function AiDevelopmentPage() {
+         { href: "/services/app-web-development", label: "Web, mobile and software development" },
+         { href: "/services/testing-automation", label: "Software testing and automation" },
+         { href: "/services/digital-marketing", label: "Digital marketing" },
+-        { href: "/contact", label: "Contact MyLoginn" },
++        { href: "/contact", label: "Contact Myloginn" },
+       ]}
+       form={{ service: "AI Development", needs, needsQuestion: "What do you want to build?", goalsPrefix: "AI needs", submitLabel: "Request an estimate", messagePlaceholder: "Describe the workflow, data and tools involvedÔÇª", heading: "Tell us about your AI project" }}
+     />
+diff --git a/src/app/services/app-web-development/page.tsx b/src/app/services/app-web-development/page.tsx
+index f2aff7b..504bacc 100644
+--- a/src/app/services/app-web-development/page.tsx
++++ b/src/app/services/app-web-development/page.tsx
+@@ -16,7 +16,7 @@ const developmentAreas = [
+ ];
+ 
+ const developmentFaqs = [
+-  { question: "What can MyLoginn build?", answer: "The team can discuss websites, web applications, mobile apps, custom software, APIs and related product work. Scope is agreed for each project." },
++  { question: "What can Myloginn build?", answer: "The team can discuss websites, web applications, mobile apps, custom software, APIs and related product work. Scope is agreed for each project." },
+   { question: "Can you work on an existing website or application?", answer: "Yes. Share the current product, goals and technical context through the project enquiry form so the team can assess a suitable scope." },
+   { question: "Which technology will my project use?", answer: "The technology stack is selected around the product requirements, integrations, hosting and maintenance needs. The stack shown on this page is an overview of technologies used by the team." },
+   { question: "Do you provide testing and maintenance?", answer: "Testing and ongoing maintenance can be included in the project plan. The deliverables and support period are agreed before work begins." },
+@@ -27,12 +27,12 @@ const stack = ["Next.js", "React Native", "Node.js", "PostgreSQL", "Prisma", "Th
+ 
+ export const metadata = createPageMetadata({
+   title: "Web, App & Desktop Software Development",
+-  description: "Websites, web apps and SaaS platforms, iOS and Android apps, and custom desktop software such as CRMs and ERPs, built by MyLoginn's India-based team.",
++  description: "Websites, web apps and SaaS platforms, iOS and Android apps, and custom desktop software such as CRMs and ERPs, built by Myloginn's India-based team.",
+   path: "/services/app-web-development",
+   keywords: [
+     ...regionalKeywords(["web development company", "mobile app development"]),
+     ...localKeywords(["web development company", "website development", "mobile app development", "custom software development"]),
+-    "MyLoginn website development", "web development company",
++    "Myloginn website development", "web development company",
+     "website development services", "web application development",
+     "mobile app development company", "app development company",
+     "custom software development", "full-stack development",
+diff --git a/src/app/services/digital-marketing/page.tsx b/src/app/services/digital-marketing/page.tsx
+index ea6ad32..af5e2b9 100644
+--- a/src/app/services/digital-marketing/page.tsx
++++ b/src/app/services/digital-marketing/page.tsx
+@@ -12,21 +12,21 @@ const marketingAreas = [
+ ];
+ 
+ const marketingFaqs = [
+-  { question: "What does MyLoginn include in digital marketing?", answer: "Scope can include search and content strategy, social media, paid campaign planning, lead generation paths, and performance review. The exact work is agreed for each enquiry." },
++  { question: "What does Myloginn include in digital marketing?", answer: "Scope can include search and content strategy, social media, paid campaign planning, lead generation paths, and performance review. The exact work is agreed for each enquiry." },
+   { question: "Which social platforms can you support?", answer: "The service can cover Instagram, Facebook, YouTube, and LinkedIn, depending on the audience, goals, and agreed scope." },
+   { question: "Do you manage Google Ads and Meta Ads?", answer: "Campaign planning and setup for Google Ads and Meta Ads can be discussed as part of a marketing engagement. Ad spend and access requirements are agreed separately." },
+-  { question: "Can you guarantee leads or a specific return on ad spend?", answer: "No. Results depend on the offer, audience, budget, platform, and other factors. MyLoginn can agree on measurement and review campaign performance, but cannot guarantee a particular outcome." },
++  { question: "Can you guarantee leads or a specific return on ad spend?", answer: "No. Results depend on the offer, audience, budget, platform, and other factors. Myloginn can agree on measurement and review campaign performance, but cannot guarantee a particular outcome." },
+   { question: "How can I request a marketing proposal?", answer: "Use the marketing enquiry form on this page to share your goals, audience, channels, and any relevant website or campaign details." },
+ ];
+ 
+ export const metadata = createPageMetadata({
+   title: "Digital Marketing: Meta Ads, Google Ads & SEO",
+-  description: "Meta Ads, Google Ads, SEO, branding and performance marketing focused on bringing customers, from MyLoginn's India-based digital marketing team.",
++  description: "Meta Ads, Google Ads, SEO, branding and performance marketing focused on bringing customers, from Myloginn's India-based digital marketing team.",
+   path: "/services/digital-marketing",
+   keywords: [
+     ...regionalKeywords(["digital marketing agency", "SEO company"]),
+     ...localKeywords(["digital marketing company", "SEO services", "social media marketing", "Google Ads agency"]),
+-    "MyLoginn digital marketing", "digital marketing company",
++    "Myloginn digital marketing", "digital marketing company",
+     "digital marketing services", "AI digital marketing solutions",
+     "SEO services", "social media marketing", "Google Ads management",
+     "Meta Ads management", "paid advertising", "content marketing",
+diff --git a/src/app/services/page.tsx b/src/app/services/page.tsx
+index e2474da..eecd50b 100644
+--- a/src/app/services/page.tsx
++++ b/src/app/services/page.tsx
+@@ -11,10 +11,10 @@ import { ServicesExplorer, type ServiceItem } from "@/components/pages/ServicesE
+ 
+ export const metadata = createPageMetadata({
+   title: "IT Services: Web, App, AI Agents & Digital Marketing",
+-  description: "Web development, mobile apps, custom desktop software, AI agents, software testing and digital marketing from MyLoginn, an India-based IT company.",
++  description: "Web development, mobile apps, custom desktop software, AI agents, software testing and digital marketing from Myloginn, an India-based technology company.",
+   path: "/services",
+   keywords: [
+-    "MyLoginn IT services", "IT services", "technology services",
++    "Myloginn IT services", "IT services", "technology services",
+     "software solutions", "software development services", "digital solutions",
+     "AI technology solutions", "business technology solutions",
+   ],
+@@ -35,7 +35,7 @@ export default function ServicesPage() {
+         <div className="min-w-0">
+           <SplitHeadline as="h1" text="IT and technology services" className="mt-0 max-w-xl text-4xl font-bold leading-[1.08] tracking-tight text-story-navy sm:text-5xl dark:text-foreground" />
+           <Reveal direction="up" delay={0.15}>
+-            <p className="mt-5 max-w-lg text-base leading-8 text-muted sm:text-lg">MyLoginn provides website and app development, custom software, AI-driven technology solutions, UI/UX, and digital marketing. Explore our service areas and contact the team to discuss a project.</p>
++            <p className="mt-5 max-w-lg text-base leading-8 text-muted sm:text-lg">Myloginn provides website and app development, custom software, AI-driven technology solutions, UI/UX, and digital marketing. Explore our service areas and contact the team to discuss a project.</p>
+           </Reveal>
+           <Reveal direction="up" delay={0.25} className="mt-7 flex flex-wrap items-center justify-center gap-3 lg:justify-start">
+             <ArrowLink href="/contact">Discuss a project</ArrowLink>
+@@ -75,15 +75,15 @@ export default function ServicesPage() {
+         </RevealGroup>
+       </Container>
+ 
+-      {/* More from MyLoginn */}
++      {/* More from Myloginn */}
+       <Container className="max-w-6xl">
+         <RelatedLinks
+           wide
+           related={[
+             { href: "/projects", label: "Projects" },
+-            { href: "/about", label: "About MyLoginn" },
++            { href: "/about", label: "About Myloginn" },
+             { href: "/careers", label: "Careers" },
+-            { href: "/contact", label: "Contact MyLoginn" },
++            { href: "/contact", label: "Contact Myloginn" },
+           ]}
+         />
+       </Container>
+diff --git a/src/app/services/testing-automation/page.tsx b/src/app/services/testing-automation/page.tsx
+index 27c977c..6deacec 100644
+--- a/src/app/services/testing-automation/page.tsx
++++ b/src/app/services/testing-automation/page.tsx
+@@ -5,7 +5,7 @@ import { TestingLanding } from "@/components/services/testing/TestingLanding";
+ export const metadata = createPageMetadata({
+   title: "Software Testing & Test Automation Services",
+   description:
+-    "Manual and automated QA for web applications, including API testing and Playwright test automation, from the India-based MyLoginn team.",
++    "Manual and automated QA for web applications, including API testing and Playwright test automation, from the India-based Myloginn team.",
+   path: "/services/testing-automation",
+   keywords: [
+     ...regionalKeywords(["software testing company"]),
+@@ -19,7 +19,7 @@ const faqs = [
+   { question: "Which automation tools do you use?", answer: "We commonly use Playwright for browser automation and Postman or code-based suites for API testing. The tool is chosen to fit your stack and team." },
+   { question: "Can automated tests run in CI/CD?", answer: "Yes. Tests can be wired into your pipeline so they run on every change and report failures clearly." },
+   { question: "Can you test an application you did not build?", answer: "Yes. Share the application, access and key user flows, and we will propose a test scope." },
+-  { question: "Do you also offer testing training?", answer: "Training is offered separately through MyLoginn Learn, our learning platform. See the Learn section for what is currently available." },
++  { question: "Do you also offer testing training?", answer: "Training is offered separately through Myloginn Learn, our learning platform. See the Learn section for what is currently available." },
+ ];
+ 
+ export default function TestingAutomationPage() {
+@@ -28,7 +28,7 @@ export default function TestingAutomationPage() {
+       path="/services/testing-automation"
+       eyebrow="Testing and QA"
+       h1="Software testing and test automation services"
+-      intro="MyLoginn helps teams release with confidence through manual QA, API testing and automated regression suites for web applications."
++      intro="Myloginn helps teams release with confidence through manual QA, API testing and automated regression suites for web applications."
+       schemaName="Software Testing and Test Automation"
+       serviceType="Software quality assurance"
+       leadService="Software Testing & Automation"
+@@ -47,7 +47,7 @@ export default function TestingAutomationPage() {
+         { href: "/services/app-web-development", label: "Web, mobile and software development" },
+         { href: "/services/ai-development", label: "AI development and agents" },
+         { href: "/projects", label: "Projects" },
+-        { href: "/contact", label: "Contact MyLoginn" },
++        { href: "/contact", label: "Contact Myloginn" },
+       ]}
+     />
+   );
+diff --git a/src/app/signup/page.tsx b/src/app/signup/page.tsx
+index 89a516a..c65c3c5 100644
+--- a/src/app/signup/page.tsx
++++ b/src/app/signup/page.tsx
+@@ -190,7 +190,7 @@ export default function SignupPage() {
+               <motion.div key={`step-${step}`} initial={{ opacity: 0, x: 12 }} animate={{ opacity: 1, x: 0 }} exit={{ opacity: 0, x: -12 }} transition={{ duration: 0.22 }}>
+                 <div className="mb-4">
+                   <h1 className="text-3xl font-bold tracking-tight text-story-navy dark:text-foreground">{step === 1 ? "Create your account" : "Secure your account"}</h1>
+-                  <p className="mt-2 text-sm leading-6 text-muted">{step === 1 ? "Start with your name and the contact details youÔÇÖll use to sign in." : "Choose a strong password and tell us how youÔÇÖll use MyLoginn."}</p>
++                  <p className="mt-2 text-sm leading-6 text-muted">{step === 1 ? "Start with your name and the contact details youÔÇÖll use to sign in." : "Choose a strong password and tell us how youÔÇÖll use Myloginn."}</p>
+                 </div>
+ 
+                 {step === 1 ? <div className="space-y-3">
+diff --git a/src/app/terms/page.tsx b/src/app/terms/page.tsx
+index 7f24775..a6ffb90 100644
+--- a/src/app/terms/page.tsx
++++ b/src/app/terms/page.tsx
+@@ -4,7 +4,7 @@ import { CONTACT_EMAIL } from "@/lib/contactInfo";
+ 
+ export const metadata = createPageMetadata({
+   title: "Terms of Use",
+-  description: "The terms for using myloginn.com and MyLoginn services, courses, internships and learning tools, including accounts, payments and acceptable use.",
++  description: "The terms for using myloginn.com and Myloginn services, courses, internships and learning tools, including accounts, payments and acceptable use.",
+   path: "/terms",
+ });
+ 
+@@ -12,10 +12,10 @@ export const metadata = createPageMetadata({
+ const sections = [
+   { h: "Using the site", p: "Use myloginn.com lawfully. Do not attempt to disrupt the service, access other users' data, or upload malicious files." },
+   { h: "Accounts", p: "Keep your login details confidential. You are responsible for activity on your account." },
+-  { h: "Courses and internships", p: "Content is provided for learning. Course certificates confirm completion of a MyLoginn course and are not a government or third-party accreditation. Prices and availability are shown at checkout." },
++  { h: "Courses and internships", p: "Content is provided for learning. Course certificates confirm completion of a Myloginn course and are not a government or third-party accreditation. Prices and availability are shown at checkout." },
+   { h: "Project and service work", p: "Scope, timelines, fees and deliverables for development, marketing and other services are agreed in writing for each engagement. We do not guarantee specific business results." },
+-  { h: "Intellectual property", p: "Site content belongs to MyLoginn Tech or its licensors. Work product for client projects is governed by the agreement for that project." },
+-  { h: "Liability", p: "To the extent permitted by law, the site is provided as is and MyLoginn is not liable for indirect losses arising from its use." },
++  { h: "Intellectual property", p: "Site content belongs to Myloginn or its licensors. Work product for client projects is governed by the agreement for that project." },
++  { h: "Liability", p: "To the extent permitted by law, the site is provided as is and Myloginn is not liable for indirect losses arising from its use." },
+   { h: "Contact", p: `Questions about these terms: ${CONTACT_EMAIL}. These terms are governed by the laws of India.` },
+ ];
+ 
+diff --git a/src/app/tutoring/page.tsx b/src/app/tutoring/page.tsx
+index d7687f0..e1e3cc1 100644
+--- a/src/app/tutoring/page.tsx
++++ b/src/app/tutoring/page.tsx
+@@ -20,12 +20,12 @@ const tutoringFaqs = [
+ export const metadata = createPageMetadata({
+   // tutoring is switched off (HIDE_TUTORING): the page returns 404 and stays out of search
+   title: "Tutoring",
+-  description: "Tutoring is not currently offered by MyLoginn.",
++  description: "Tutoring is not currently offered by Myloginn.",
+   path: "/tutoring",
+   noIndex: true,
+   keywords: [
+     ...localKeywords(["online tutor", "programming coaching", "maths tutor"]),
+-    "MyLoginn tutoring", "online tutoring", "programming tutor",
++    "Myloginn tutoring", "online tutoring", "programming tutor",
+     "data science tutor",
+   ],
+ });
+diff --git a/src/components/about/AboutVisuals.tsx b/src/components/about/AboutVisuals.tsx
+index ee70a09..6d839a5 100644
+--- a/src/components/about/AboutVisuals.tsx
++++ b/src/components/about/AboutVisuals.tsx
+@@ -115,7 +115,7 @@ export function JourneyMonitor() {
+   const { index, pick, reduced } = useAutoIndex(JOURNEY.length, 3600);
+   const cur = JOURNEY[index];
+   return (
+-    <MonitorFrame interactive title="myloginn ┬À project delivery" label={`Stage ${index + 1} of ${JOURNEY.length}`} pill="Discover, Build, Grow" ariaLabel="How MyLoginn delivers a project, from discovery to design and build, launch and growth. Select a stage to read about it.">
++    <MonitorFrame interactive title="myloginn ┬À project delivery" label={`Stage ${index + 1} of ${JOURNEY.length}`} pill="Discover, Build, Grow" ariaLabel="How Myloginn delivers a project, from discovery to design and build, launch and growth. Select a stage to read about it.">
+       <div className="flex h-full flex-col justify-between gap-2">
+         <div className="relative w-full" style={{ aspectRatio: "300 / 108" }}>
+           <svg aria-hidden viewBox="0 0 300 108" className="absolute inset-0 h-full w-full" fill="none">
+diff --git a/src/components/admin/careers/PostingEditor.tsx b/src/components/admin/careers/PostingEditor.tsx
+index 3551afb..e2bd7eb 100644
+--- a/src/components/admin/careers/PostingEditor.tsx
++++ b/src/components/admin/careers/PostingEditor.tsx
+@@ -321,7 +321,7 @@ export function PostingEditor({ kind, job = null, internship = null, onClose, on
+                 <div className="px-4 py-4 sm:px-6">
+                   <p className="text-sm font-semibold">Paste a full posting</p>
+                   <p className="mt-0.5 text-xs text-muted">Headings like ÔÇ£About the RoleÔÇØ, ÔÇ£Key ResponsibilitiesÔÇØ, ÔÇ£RequirementsÔÇØ, ÔÇ£Good to HaveÔÇØ, ÔÇ£What You&apos;ll GainÔÇØ and lines like ÔÇ£Company:ÔÇØ or ÔÇ£Work Mode:ÔÇØ are read into the form. Placeholders in [brackets] are skipped.</p>
+-                  <textarea value={pasteText} onChange={(e) => setPasteText(e.target.value)} rows={6} autoFocus placeholder={"# App Development Intern\n\n**Company:** MyLoginn Tech\n**Work Mode:** Hybrid\n\n### About the Role\nÔÇª"} className="field-control mt-3 font-mono text-xs" />
++                  <textarea value={pasteText} onChange={(e) => setPasteText(e.target.value)} rows={6} autoFocus placeholder={"# App Development Intern\n\n**Company:** Myloginn\n**Work Mode:** Hybrid\n\n### About the Role\nÔÇª"} className="field-control mt-3 font-mono text-xs" />
+                   <div className="mt-3 flex justify-end gap-2">
+                     <button type="button" onClick={() => setTool(null)} className="rounded-full px-4 py-2 text-sm font-semibold text-muted hover:text-story-royal">Cancel</button>
+                     <button type="button" disabled={!pasteText.trim()} onClick={importPaste} className="inline-flex items-center gap-2 rounded-full bg-story-royal px-5 py-2 text-sm font-semibold text-white disabled:opacity-50"><ClipboardPaste className="h-4 w-4" />Fill the form</button>
+diff --git a/src/components/competition/Landing.tsx b/src/components/competition/Landing.tsx
+index 0731711..4209db8 100644
+--- a/src/components/competition/Landing.tsx
++++ b/src/components/competition/Landing.tsx
+@@ -88,7 +88,7 @@ export function CompetitionLanding({ c, me, serverNow }: { c: PublicCompetition;
+     { icon: Trophy, title: "Results & rewards", body: "Scores are published after evaluation and review. Certificates for participants, awards for the Top 3, a paid internship for first place." },
+   ];
+   const faqs = [
+-    { question: "Do I need an OTP or email verification to register?", answer: "No. Registration creates your MyLoginn student account immediately. Keep your password safe; if you forget it, use ÔÇ£Forgot passwordÔÇØ on the login page." },
++    { question: "Do I need an OTP or email verification to register?", answer: "No. Registration creates your Myloginn student account immediately. Keep your password safe; if you forget it, use ÔÇ£Forgot passwordÔÇØ on the login page." },
+     { question: "Will everyone get the same questions?", answer: `No. Each candidate gets a different set built from a calibrated question bank: the same number of questions per difficulty, the same marks per slot (${c.maxScore} in total), and comparable expected solving time. Your set is fixed before the competition and does not change if you refresh or log in again.` },
+     { question: "Which languages can I use?", answer: `${c.languages.map((l) => l.label).join(", ")}. You can switch language per question. Code runs on isolated judge servers, never in your browser.` },
+     { question: "What happens if my internet drops or my browser closes?", answer: `Your code autosaves continuously. Reopen the arena to resume ÔÇö the timer keeps running on the server and never resets. When time is up your latest saved answers are submitted automatically${c.autosaveCountsAsSubmission ? ", including autosaved code you did not explicitly submit" : ""}.` },
+@@ -110,7 +110,7 @@ export function CompetitionLanding({ c, me, serverNow }: { c: PublicCompetition;
+                 {c.status === "LIVE" || c.registrationOpen ? <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-emerald-400 opacity-60 motion-reduce:hidden" /> : null}
+                 <span className={cn("relative inline-flex h-2 w-2 rounded-full", c.status === "LIVE" || c.registrationOpen ? "bg-emerald-500" : "bg-brand-400")} />
+               </span>
+-              MyLoginn Learn ┬À {c.registrationOpen ? "Registration open" : c.status === "REGISTRATION_OPEN" && new Date(serverNow) < new Date(c.registrationOpensAt) ? "Registration opens soon" : STATUS_LABEL[c.status]}
++              Myloginn Learn ┬À {c.registrationOpen ? "Registration open" : c.status === "REGISTRATION_OPEN" && new Date(serverNow) < new Date(c.registrationOpensAt) ? "Registration opens soon" : STATUS_LABEL[c.status]}
+             </span>
+             <h1 className="mt-4 text-[2rem] font-bold leading-[1.12] tracking-tight sm:text-5xl">
+               {c.title}
+@@ -214,7 +214,7 @@ export function CompetitionLanding({ c, me, serverNow }: { c: PublicCompetition;
+                     <p className="mt-4 text-sm leading-6"><b>Eligibility:</b> {c.reward.eligibility}</p>
+                     {c.reward.requiredDocuments && <p className="mt-1 text-sm leading-6"><b>Documents:</b> {c.reward.requiredDocuments}</p>}
+                     <p className="mt-4 rounded-2xl bg-white/70 p-3 text-xs leading-5 text-muted ring-1 ring-amber-100 dark:bg-white/5 dark:ring-amber-900/40">
+-                      An internship with a stipend, not a permanent job. The offer is made after final results and integrity review, subject to verifying the eligibility criteria above, and is approved by MyLoginn Tech before it is sent.
++                      An internship with a stipend, not a permanent job. The offer is made after final results and integrity review, subject to verifying the eligibility criteria above, and is approved by Myloginn before it is sent.
+                     </p>
+                   </>
+                 ) : (
+@@ -344,13 +344,13 @@ export function NoCompetition({ signedIn = false }: { signedIn?: boolean }) {
+           <div className="relative grid items-center gap-10 lg:grid-cols-[1.05fr_1fr] lg:gap-14">
+             <div className="[&_p]:text-left [&_p]:hyphens-manual">
+               <div className="flex flex-wrap items-center gap-2">
+-                <span className="inline-flex items-center gap-1.5 rounded-full bg-white/15 px-3 py-1 text-xs font-semibold"><Trophy className="h-3.5 w-3.5" /> MyLoginn Learn</span>
++                <span className="inline-flex items-center gap-1.5 rounded-full bg-white/15 px-3 py-1 text-xs font-semibold"><Trophy className="h-3.5 w-3.5" /> Myloginn Learn</span>
+                 <span className="inline-flex items-center gap-1.5 rounded-full bg-amber-300/20 px-3 py-1 text-xs font-semibold text-amber-100 ring-1 ring-amber-200/30">
+                   <span className="relative flex h-2 w-2"><span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-amber-300 opacity-70 motion-reduce:hidden" /><span className="relative inline-flex h-2 w-2 rounded-full bg-amber-300" /></span>
+                   Registration opens soon
+                 </span>
+               </div>
+-              <h1 className="mt-5 text-[2rem] font-bold leading-[1.1] tracking-tight sm:text-5xl">MyLoginn Coding Competition</h1>
++              <h1 className="mt-5 text-[2rem] font-bold leading-[1.1] tracking-tight sm:text-5xl">Myloginn Coding Competition</h1>
+               <p className="mt-4 max-w-xl text-base leading-7 text-white/80">Solve real problems live, ranked fairly on hidden tests. Earn verifiable certificates ÔÇö and a paid internship for the winner.</p>
+ 
+               <div className="mt-6 grid gap-2.5 min-[460px]:grid-cols-2">
+diff --git a/src/components/competition/LoginForm.tsx b/src/components/competition/LoginForm.tsx
+index 7845811..ef810da 100644
+--- a/src/components/competition/LoginForm.tsx
++++ b/src/components/competition/LoginForm.tsx
+@@ -39,7 +39,7 @@ export function LoginForm({ next, title }: { next: string | null; title: string
+       <motion.div initial={{ opacity: 0, y: 12 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.45, ease: [0.16, 1, 0.3, 1] }} className="rounded-[1.75rem] border border-border-soft bg-surface p-6 shadow-[var(--shadow-soft)] sm:p-8">
+         <span className="grid h-12 w-12 place-items-center rounded-2xl bg-story-royal text-white"><Trophy className="h-6 w-6" /></span>
+         <h1 className="mt-5 text-2xl font-bold">Student login</h1>
+-        <p className="mt-1.5 text-sm text-muted">{title ? `Sign in to your ${title} dashboard.` : "Sign in with your MyLoginn account."}</p>
++        <p className="mt-1.5 text-sm text-muted">{title ? `Sign in to your ${title} dashboard.` : "Sign in with your Myloginn account."}</p>
+         <form onSubmit={submit} noValidate className="mt-6 space-y-4">
+           <Input id="cc-login-email" label="Email address" type="email" autoComplete="email" inputMode="email" icon={<Mail className="h-4 w-4" />} value={email} onChange={(e) => setEmail(e.target.value)} />
+           <PasswordInput id="cc-login-password" label="Password" autoComplete="current-password" value={password} onChange={(e) => setPassword(e.target.value)} />
+diff --git a/src/components/competition/RegisterFlow.tsx b/src/components/competition/RegisterFlow.tsx
+index 1175c12..df9b92a 100644
+--- a/src/components/competition/RegisterFlow.tsx
++++ b/src/components/competition/RegisterFlow.tsx
+@@ -75,7 +75,7 @@ function icsFile(c: RegisterCompetition) {
+   return [
+     "BEGIN:VCALENDAR",
+     "VERSION:2.0",
+-    "PRODID:-//MyLoginn Tech//Coding Competition//EN",
++    "PRODID:-//Myloginn//Coding Competition//EN",
+     "BEGIN:VEVENT",
+     `UID:${z(c.startsAt)}-coding-competition@myloginn.com`,
+     `DTSTAMP:${z(new Date().toISOString())}`,
+@@ -280,7 +280,7 @@ export function RegisterFlow({ c, signedIn, serverNow }: { c: RegisterCompetitio
+         <div aria-hidden="true" className="pointer-events-none absolute -inset-px opacity-[0.10] [background-image:linear-gradient(rgba(255,255,255,.6)_1px,transparent_1px),linear-gradient(90deg,rgba(255,255,255,.6)_1px,transparent_1px)] [background-size:28px_28px] [mask-image:radial-gradient(ellipse_at_top_right,black,transparent_75%)]" />
+         <div className="relative">
+           <div className="flex items-center justify-between gap-3">
+-            <span className="inline-flex items-center gap-1.5 rounded-full bg-white/15 px-3 py-1 text-xs font-semibold"><Trophy className="h-3.5 w-3.5" /> MyLoginn Learn</span>
++            <span className="inline-flex items-center gap-1.5 rounded-full bg-white/15 px-3 py-1 text-xs font-semibold"><Trophy className="h-3.5 w-3.5" /> Myloginn Learn</span>
+             {c.registrationOpen && (
+               <span className="inline-flex items-center gap-1.5 text-xs font-semibold text-emerald-200">
+                 <span className="relative flex h-2 w-2"><span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-emerald-300 opacity-70 motion-reduce:hidden" /><span className="relative inline-flex h-2 w-2 rounded-full bg-emerald-300" /></span>
+@@ -375,7 +375,7 @@ export function RegisterFlow({ c, signedIn, serverNow }: { c: RegisterCompetitio
+                             <AnimatePresence>
+                               {accountExists && (
+                                 <motion.p initial={{ opacity: 0, height: 0 }} animate={{ opacity: 1, height: "auto" }} exit={{ opacity: 0, height: 0 }} className="-mt-2 text-sm">
+-                                  <Link href="/coding-competition/login?next=%2Fcoding-competition%2Fregister" className="font-semibold text-story-royal hover:underline">Log in with this email</Link> to register using your existing MyLoginn account.
++                                  <Link href="/coding-competition/login?next=%2Fcoding-competition%2Fregister" className="font-semibold text-story-royal hover:underline">Log in with this email</Link> to register using your existing Myloginn account.
+                                 </motion.p>
+                               )}
+                             </AnimatePresence>
+@@ -399,7 +399,7 @@ export function RegisterFlow({ c, signedIn, serverNow }: { c: RegisterCompetitio
+                             )}
+                           </AnimatePresence>
+                         </div>
+-                        <p className="flex gap-2 rounded-2xl bg-surface-2 p-3.5 text-xs leading-5 text-muted"><Lock className="mt-0.5 h-3.5 w-3.5 shrink-0" />This creates a MyLoginn student account. Your password is stored only as a secure hash. No OTP or email verification is needed.</p>
++                        <p className="flex gap-2 rounded-2xl bg-surface-2 p-3.5 text-xs leading-5 text-muted"><Lock className="mt-0.5 h-3.5 w-3.5 shrink-0" />This creates a Myloginn student account. Your password is stored only as a secure hash. No OTP or email verification is needed.</p>
+                       </>
+                     )}
+ 
+diff --git a/src/components/layout/AiAgentWidget.tsx b/src/components/layout/AiAgentWidget.tsx
+index 60c7099..876e5fa 100644
+--- a/src/components/layout/AiAgentWidget.tsx
++++ b/src/components/layout/AiAgentWidget.tsx
+@@ -57,13 +57,13 @@ const SUGGESTIONS: { text: string; icon: LucideIcon }[] = [
+   { text: "Do you offer software testing and automation?", icon: ShieldCheck },
+   { text: "Can you improve my existing website or app?", icon: Briefcase },
+   { text: "Can you build a desktop application for us?", icon: MessageCircle },
+-  { text: "What is MyLoginn Learn?", icon: BookOpen },
++  { text: "What is Myloginn Learn?", icon: BookOpen },
+ ];
+ 
+ const INITIAL_COUNT = 4;
+ 
+ const GREETING =
+-  "Hi! I'm the MyLoginn AI agent. Ask me about our web, app, desktop, AI and marketing solutions, starting a project, or MyLoginn Learn ÔÇö I'm happy to help!";
++  "Hi! I'm the Myloginn AI agent. Ask me about our web, app, desktop, AI and marketing solutions, starting a project, or Myloginn Learn ÔÇö I'm happy to help!";
+ 
+ const MAX_CHARS = 2000;
+ 
+@@ -334,7 +334,7 @@ export function AiAgentWidget() {
+             exit={{ opacity: 0, y: 20, scale: 0.96, transition: { duration: 0.18 } }}
+             transition={{ type: "spring", stiffness: 380, damping: 32 }}
+             role="dialog"
+-            aria-label="MyLoginn AI agent chat"
++            aria-label="Myloginn AI agent chat"
+             className={cn(
+               "fixed z-[70] flex origin-bottom-right flex-col overflow-hidden rounded-3xl border border-border-soft bg-surface shadow-[var(--shadow-lift)]",
+               // Phones / tablets: a sheet docked just above the bottom tab bar (the launcher hides while it is open).
+@@ -353,13 +353,13 @@ export function AiAgentWidget() {
+                 <AnimatedAgent className="h-8 w-8" />
+               </span>
+               <div className="min-w-0 flex-1">
+-                <p className="text-sm font-semibold leading-tight">MyLoginn AI Agent</p>
++                <p className="text-sm font-semibold leading-tight">Myloginn AI Agent</p>
+                 <p className="flex items-center gap-1.5 text-[11px] text-muted">
+                   <span className="relative flex h-1.5 w-1.5">
+                     <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-emerald-400 opacity-75" />
+                     <span className="relative inline-flex h-1.5 w-1.5 rounded-full bg-emerald-500" />
+                   </span>
+-                  Online ÔÇö ask anything about MyLoginn
++                  Online ÔÇö ask anything about Myloginn
+                 </p>
+               </div>
+               <button
+diff --git a/src/components/layout/Footer.tsx b/src/components/layout/Footer.tsx
+index fe7aab5..6bfb456 100644
+--- a/src/components/layout/Footer.tsx
++++ b/src/components/layout/Footer.tsx
+@@ -52,7 +52,7 @@ const SOCIAL_ICONS: Record<string, string> = {
+ const contactLinks = [
+   { label: CONTACT_EMAIL, href: `mailto:${CONTACT_EMAIL}`, Icon: AnimatedMail },
+   ...CONTACT_PHONES.map((p) => ({ label: `+91 ${p.display}`, href: `tel:${p.tel}`, Icon: AnimatedPhone })),
+-  { label: "WhatsApp us", href: toWhatsAppLink(WHATSAPP_PHONE, "Hi MyLoginn team!") ?? "/contact", Icon: AnimatedChat, external: true },
++  { label: "WhatsApp us", href: toWhatsAppLink(WHATSAPP_PHONE, "Hi Myloginn team!") ?? "/contact", Icon: AnimatedChat, external: true },
+ ];
+ 
+ /* ÔöÇÔöÇ Footer ÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇ */
+@@ -71,7 +71,7 @@ export function Footer() {
+             <Link href="/" className="inline-flex items-center gap-3">
+               <LogoBadge className="h-10 w-auto" />
+               <span>
+-                <span className="block text-base font-semibold text-story-navy">MyLoginn Tech</span>
++                <span className="block text-base font-semibold text-story-navy">Myloginn</span>
+                 <span className="block text-[10px] font-bold uppercase tracking-[0.16em] text-story-royal">Build ┬À Automate ┬À Grow</span>
+               </span>
+             </Link>
+@@ -94,7 +94,7 @@ export function Footer() {
+               ))}
+             </ul>
+ 
+-            <ul className="mt-6 flex items-center gap-2.5" aria-label="MyLoginn on social media">
++            <ul className="mt-6 flex items-center gap-2.5" aria-label="Myloginn on social media">
+               {SOCIAL_LINKS.map((s) => (
+                 <li key={s.id}>
+                   <a
+@@ -133,7 +133,7 @@ export function Footer() {
+ 
+         {/* bottom bar */}
+         <div className="flex flex-col items-center gap-4 border-t border-border-soft py-6 text-xs text-muted sm:flex-row sm:justify-between sm:gap-3">
+-          <p>&copy; {new Date().getFullYear()} MyLoginn Tech</p>
++          <p>&copy; {new Date().getFullYear()} Myloginn</p>
+           <p className="inline-flex flex-wrap items-center justify-center gap-x-5 gap-y-2">
+             <Link href="/privacy" className="rounded outline-none transition-colors duration-200 hover:text-story-royal focus-visible:ring-2 focus-visible:ring-story-royal/40">Privacy</Link>
+             <Link href="/terms" className="rounded outline-none transition-colors duration-200 hover:text-story-royal focus-visible:ring-2 focus-visible:ring-story-royal/40">Terms</Link>
+diff --git a/src/components/layout/MobileBottomNav.tsx b/src/components/layout/MobileBottomNav.tsx
+index 59c137b..f8a0ae9 100644
+--- a/src/components/layout/MobileBottomNav.tsx
++++ b/src/components/layout/MobileBottomNav.tsx
+@@ -28,7 +28,7 @@ const servicesPopupLinks: { href: string; label: string; desc: string; icon: Men
+   { href: "/services/digital-marketing", label: "Digital Marketing", desc: "AI-driven growth campaigns", icon: "marketing" },
+   { href: "/services/testing-automation", label: "Testing & Automation", desc: "QA, API and Playwright testing", icon: "testing" },
+   { href: "/projects", label: "Projects", desc: "Our live client work", icon: "projects" },
+-  { href: "/careers", label: "Careers", desc: "Join the MyLoginn team", icon: "careers" },
++  { href: "/careers", label: "Careers", desc: "Join the Myloginn team", icon: "careers" },
+ ];
+ 
+ const isServicesPath = (p: string) => p.startsWith("/services") || p.startsWith("/projects") || p.startsWith("/careers");
+diff --git a/src/components/lms/CourseDetail.tsx b/src/components/lms/CourseDetail.tsx
+index 6cb40e9..e6c6ae5 100644
+--- a/src/components/lms/CourseDetail.tsx
++++ b/src/components/lms/CourseDetail.tsx
+@@ -55,7 +55,7 @@ export async function LmsCourseDetail({ slug, justEnrolled }: { slug: string; ju
+     <Section className="pt-8 sm:pt-12">
+       <JsonLd data={{
+         "@context": "https://schema.org", "@type": "Course", name: course.title, description: course.description, url: `${siteUrl}/courses/${course.slug}`,
+-        provider: { "@type": "Organization", name: "MyLoginn Tech", sameAs: siteUrl },
++        provider: { "@type": "Organization", "@id": `${siteUrl}/#organization`, name: "Myloginn", sameAs: siteUrl },
+         offers: { "@type": "Offer", price: course.price, priceCurrency: "INR", category: free ? "Free" : "Paid" },
+       }} />
+       <Container className="max-w-6xl">
+diff --git a/src/components/projects/ProjectsCtaBanner.tsx b/src/components/projects/ProjectsCtaBanner.tsx
+index eca4cc7..9d6006e 100644
+--- a/src/components/projects/ProjectsCtaBanner.tsx
++++ b/src/components/projects/ProjectsCtaBanner.tsx
+@@ -24,7 +24,7 @@ export function ProjectsCtaBanner() {
+             </motion.span>
+             <div>
+               <p className="text-lg font-semibold sm:text-xl">Have an idea? Let&apos;s build it together.</p>
+-              <p className="mt-1 text-sm text-white/80">Discuss a software or product requirement with the MyLoginn team.</p>
++              <p className="mt-1 text-sm text-white/80">Discuss a software or product requirement with the Myloginn team.</p>
+             </div>
+           </div>
+ 
+diff --git a/src/components/projects/ProjectsHero.tsx b/src/components/projects/ProjectsHero.tsx
+index 8ad5f58..5b12a41 100644
+--- a/src/components/projects/ProjectsHero.tsx
++++ b/src/components/projects/ProjectsHero.tsx
+@@ -52,7 +52,7 @@ export function ProjectsHero({
+           >
+             <Eyebrow className="gap-2">
+               <AnimatedRocket className="h-4.5 w-4.5" />
+-              Designed, built and launched by MyLoginn.
++              Designed, built and launched by Myloginn.
+             </Eyebrow>
+           </motion.div>
+ 
+diff --git a/src/components/sections/FinalCta.tsx b/src/components/sections/FinalCta.tsx
+index 7936a0b..90b3c80 100644
+--- a/src/components/sections/FinalCta.tsx
++++ b/src/components/sections/FinalCta.tsx
+@@ -91,7 +91,7 @@ function OptionSteps({ option }: { option: Option }) {
+ export function FinalCta() {
+   const [picked, setPicked] = useState(0);
+   const opt = OPTIONS[picked];
+-  const whatsapp = toWhatsAppLink(WHATSAPP_PHONE, `Hi MyLoginn team! I'd like to talk about a ${opt.noun}.`) ?? "/contact";
++  const whatsapp = toWhatsAppLink(WHATSAPP_PHONE, `Hi Myloginn team! I'd like to talk about a ${opt.noun}.`) ?? "/contact";
+ 
+   return (
+     <Chapter formation="crystal" variant="final" title="What will you build next?">
+diff --git a/src/components/sections/Hero.tsx b/src/components/sections/Hero.tsx
+index c7da93b..f92a743 100644
+--- a/src/components/sections/Hero.tsx
++++ b/src/components/sections/Hero.tsx
+@@ -55,7 +55,7 @@ function ModuleDisc({ id, on, timed, reduced }: { id: ScenarioId; on: boolean; t
+ }
+ 
+ /**
+- * Home hero as a white technology showroom: "Build. Automate. Grow." and one line on what MyLoginn delivers sit above
++ * Home hero as a white technology showroom: "Build. Automate. Grow." and one line on what Myloginn delivers sit above
+  * it; a tablet, a monitor and a phone cycle through the five core services, with the service on show named on the
+  * stage beneath them. The module rail and the actions sit underneath. Pointing at a device or a module pauses the tour
+  * and brings that service forward; on phones a sideways swipe across the devices moves between services.
+@@ -117,7 +117,7 @@ export function Hero() {
+   const at = (s: number) => (reduced ? 0 : s);
+ 
+   return (
+-    <Chapter formation="stream" variant="hero" title="MyLoginn ÔÇö web development, app development, AI agents, digital marketing and custom software" className="!min-h-0 !py-0">
++    <Chapter formation="stream" variant="hero" title="Myloginn ÔÇö web development, app development, AI agents, digital marketing and custom software" className="!min-h-0 !py-0">
+       <div className="relative overflow-hidden bg-white">
+         {/* soft studio light from above and a faint floor grid */}
+         <div aria-hidden className="pointer-events-none absolute inset-0" style={{ background: "radial-gradient(70% 55% at 50% 0%, rgba(47,111,237,0.10), transparent 70%), radial-gradient(60% 40% at 50% 100%, rgba(34,211,238,0.10), transparent 70%)" }} />
+@@ -144,28 +144,32 @@ export function Hero() {
+           >
+             <div className="relative">
+               <div className="mb-2 flex justify-center"><HeroWordmark delay={at(0.05)} /></div>
+-              <h1 className="text-[1.9rem] font-bold leading-tight tracking-[-0.03em] text-story-navy min-[400px]:text-[2.2rem] sm:text-5xl dark:text-foreground" onMouseLeave={() => { setHoverWord(null); if (exploring) leave(); }}>
+-                {WORDS.map(({ w, ids }, i) => {
+-                  const lit = i === litWord;
+-                  return (
+-                    <span key={w}>
+-                      <span className="relative inline-block overflow-hidden pb-[0.08em] align-bottom" onMouseEnter={() => { setHoverWord(i); exploreService(ids.includes(scenario.id) ? index : SCENARIOS.findIndex((s) => s.id === ids[0])); }}>
+-                        <motion.span
+-                          className="relative inline-grid"
+-                          initial={false}
+-                          animate={{ y: "0%" }}
+-                          transition={{ duration: 0.8, ease: EASE, delay: at(T_HEADLINE + i * 0.22) }}
+-                        >
+-                          <motion.span className="col-start-1 row-start-1" animate={{ opacity: lit ? 0 : 1 }} transition={{ duration: 0.5 }}>{w}</motion.span>
+-                          <motion.span aria-hidden className="col-start-1 row-start-1 bg-clip-text text-transparent" style={{ backgroundImage: GRADIENT }} animate={{ opacity: lit ? 1 : 0 }} transition={{ duration: 0.5 }}>{w}</motion.span>
+-                        </motion.span>
++              <div onMouseLeave={() => { setHoverWord(null); if (exploring) leave(); }}>
++                <h1 className="text-[1.9rem] font-bold leading-tight tracking-[-0.03em] text-story-navy min-[400px]:text-[2.2rem] sm:text-5xl dark:text-foreground">
++                  Websites, apps, software and AI solutions by Myloginn
++                </h1>
++                <p className="mt-1 text-[1.9rem] font-bold leading-tight tracking-[-0.03em] text-story-navy min-[400px]:text-[2.2rem] sm:text-5xl dark:text-foreground">
++                  {WORDS.map(({ w, ids }, i) => {
++                    const lit = i === litWord;
++                    return (
++                      <span key={w}>
++                        <span className="relative inline-block overflow-hidden pb-[0.08em] align-bottom" onMouseEnter={() => { setHoverWord(i); exploreService(ids.includes(scenario.id) ? index : SCENARIOS.findIndex((s) => s.id === ids[0])); }}>
++                          <motion.span
++                            className="relative inline-grid"
++                            initial={false}
++                            animate={{ y: "0%" }}
++                            transition={{ duration: 0.8, ease: EASE, delay: at(T_HEADLINE + i * 0.22) }}
++                          >
++                            <motion.span className="col-start-1 row-start-1" animate={{ opacity: lit ? 0 : 1 }} transition={{ duration: 0.5 }}>{w}</motion.span>
++                            <motion.span aria-hidden className="col-start-1 row-start-1 bg-clip-text text-transparent" style={{ backgroundImage: GRADIENT }} animate={{ opacity: lit ? 1 : 0 }} transition={{ duration: 0.5 }}>{w}</motion.span>
++                          </motion.span>
++                        </span>
++                        {i < WORDS.length - 1 && " "}
+                       </span>
+-                      {i < WORDS.length - 1 && " "}
+-                    </span>
+-                  );
+-                })}
+-                <span className="sr-only"> MyLoginn is a technology company that builds websites, mobile apps, desktop applications, AI agents and digital marketing for businesses.</span>
+-              </h1>
++                    );
++                  })}
++                </p>
++              </div>
+ 
+               <p className="mx-auto mt-3 max-w-xl text-sm leading-6 text-muted sm:text-base sm:leading-7">
+                 Web platforms, mobile and desktop apps, AI agents and digital marketing, built around how your business works.
+diff --git a/src/components/sections/WhyMyLoginn.tsx b/src/components/sections/WhyMyLoginn.tsx
+index 86f2cfa..0e35580 100644
+--- a/src/components/sections/WhyMyLoginn.tsx
++++ b/src/components/sections/WhyMyLoginn.tsx
+@@ -14,12 +14,12 @@ const PILLARS = [
+ 
+ export function WhyMyLoginn() {
+   return (
+-    <Chapter formation="crystal" variant="why" id="about" title="Why MyLoginn">
++    <Chapter formation="crystal" variant="why" id="about" title="Why Myloginn">
+       <div className="relative mx-auto w-full max-w-4xl px-5 text-center sm:px-8">
+         <CrystalScrim />
+ 
+         <Reveal>
+-          <span className="story-eyebrow justify-center">Why MyLoginn</span>
++          <span className="story-eyebrow justify-center">Why Myloginn</span>
+         </Reveal>
+ 
+         <SplitHeadline
+diff --git a/src/components/sections/home/AboutValues.tsx b/src/components/sections/home/AboutValues.tsx
+index 89aa6ae..8f426cd 100644
+--- a/src/components/sections/home/AboutValues.tsx
++++ b/src/components/sections/home/AboutValues.tsx
+@@ -26,7 +26,7 @@ export function AboutValues() {
+   const [active, setActive] = useState(0);
+ 
+   return (
+-    <Chapter formation="grid" variant="about" id="about" title="About MyLoginn">
++    <Chapter formation="grid" variant="about" id="about" title="About Myloginn">
+       <div className="mx-auto w-full max-w-6xl px-5 sm:px-8">
+         <div className="grid gap-8 lg:grid-cols-[1fr_1.4fr] lg:gap-14">
+           <div>
+@@ -34,10 +34,10 @@ export function AboutValues() {
+             <SplitHeadline as="h2" text="A technology company built to deliver." className="story-subheading mt-4 text-story-navy" />
+             <Reveal direction="up" delay={0.1}>
+               <p className="mt-5 max-w-md text-base leading-7 text-muted">
+-                MyLoginn Tech is an India-based IT company. One team designs, builds, markets and launches digital products for businesses across India and worldwide.
++                Myloginn is an India-based technology company. One team designs, builds, markets and launches digital products for businesses across India and worldwide.
+               </p>
+             </Reveal>
+-            <Reveal direction="up" delay={0.18} className="mt-6"><FancyLink href="/about" variant="primary" arrow="right">About MyLoginn</FancyLink></Reveal>
++            <Reveal direction="up" delay={0.18} className="mt-6"><FancyLink href="/about" variant="primary" arrow="right">About Myloginn</FancyLink></Reveal>
+           </div>
+ 
+           <div className="flex flex-col gap-2 lg:h-[340px] lg:flex-row">
+diff --git a/src/components/sections/home/CareersLearnBand.tsx b/src/components/sections/home/CareersLearnBand.tsx
+index 467144e..8de5265 100644
+--- a/src/components/sections/home/CareersLearnBand.tsx
++++ b/src/components/sections/home/CareersLearnBand.tsx
+@@ -6,10 +6,10 @@ import { Briefcase } from "lucide-react";
+ 
+ const EASE = [0.16, 1, 0.3, 1] as const;
+ 
+-/** 08 ÔÇö A small careers invitation. MyLoginn hires; it is not presented as a placement organisation. */
++/** 08 ÔÇö A small careers invitation. Myloginn hires; it is not presented as a placement organisation. */
+ export function CareersCta() {
+   return (
+-    <section aria-label="Careers at MyLoginn" className="px-5 py-10 sm:px-8 sm:py-14">
++    <section aria-label="Careers at Myloginn" className="px-5 py-10 sm:px-8 sm:py-14">
+       <motion.div
+         initial={{ opacity: 0, y: 24 }}
+         whileInView={{ opacity: 1, y: 0 }}
+@@ -21,7 +21,7 @@ export function CareersCta() {
+         <div className="relative flex items-center gap-4">
+           <span className="grid h-12 w-12 shrink-0 place-items-center text-story-royal"><Briefcase className="h-5 w-5" /></span>
+           <div>
+-            <h2 className="text-xl font-bold tracking-tight text-story-navy dark:text-foreground">Careers at MyLoginn</h2>
++            <h2 className="text-xl font-bold tracking-tight text-story-navy dark:text-foreground">Careers at Myloginn</h2>
+             <p className="mt-0.5 text-sm text-muted">Build web, app, AI and marketing work for real businesses with our team.</p>
+           </div>
+         </div>
+diff --git a/src/components/sections/home/CoreTechnologies.tsx b/src/components/sections/home/CoreTechnologies.tsx
+index 22a0c20..dd5b5a7 100644
+--- a/src/components/sections/home/CoreTechnologies.tsx
++++ b/src/components/sections/home/CoreTechnologies.tsx
+@@ -15,7 +15,7 @@ import { cn } from "@/lib/cn";
+ 
+ const EASE = [0.16, 1, 0.3, 1] as const;
+ 
+-/** Node positions on a 100 ├ù 100 map: the five services sit on a ring around the MyLoginn core. */
++/** Node positions on a 100 ├ù 100 map: the five services sit on a ring around the Myloginn core. */
+ const RING = 37;
+ const NODES = CORE_SERVICES.map((s, i) => {
+   const angle = (-90 + i * 72) * (Math.PI / 180);
+@@ -45,7 +45,7 @@ function ServiceScreen({ id }: { id: CoreServiceId }) {
+ const AUTO_MS = 4500;
+ 
+ /**
+- * 02 ÔÇö Core technologies, drawn as an interactive technology map: MyLoginn at the centre, the five services around
++ * 02 ÔÇö Core technologies, drawn as an interactive technology map: Myloginn at the centre, the five services around
+  * it. The map walks through the services on its own (a segmented timer shows where it is) and holds while the pointer
+  * is on it. Pointing at, tapping or focusing a service lights its connection, enlarges the node and opens what that
+  * service delivers beside a live product screen.
+@@ -69,7 +69,7 @@ export function CoreTechnologies() {
+   }, [auto, index]);
+ 
+   return (
+-    <Chapter formation="network" variant="core-technologies" id="core-technologies" title="MyLoginn core technologies">
++    <Chapter formation="network" variant="core-technologies" id="core-technologies" title="Myloginn core technologies">
+       <div className="mx-auto w-full max-w-6xl px-5 sm:px-8">
+         <div className="max-w-2xl">
+           <Reveal><span className="story-eyebrow">Core technologies</span></Reveal>
+@@ -108,7 +108,7 @@ export function CoreTechnologies() {
+               })}
+             </svg>
+ 
+-            {/* the MyLoginn core: a flat disc that sends out a ripple whenever the connection moves */}
++            {/* the Myloginn core: a flat disc that sends out a ripple whenever the connection moves */}
+             <div className="absolute left-1/2 top-1/2 grid h-[25%] w-[25%] -translate-x-1/2 -translate-y-1/2 place-items-center">
+               {!reduced && <motion.span key={active} aria-hidden className="absolute inset-0 rounded-full border-2 border-story-royal" initial={{ scale: 1, opacity: 0.6 }} animate={{ scale: 1.9, opacity: 0 }} transition={{ duration: 1.1, ease: "easeOut" }} />}
+               <span className="relative grid h-full w-full place-items-center rounded-full bg-story-royal text-center shadow-[0_18px_40px_-18px_rgba(31,86,214,0.8)]">
+diff --git a/src/components/sections/home/ProblemsSolutions.tsx b/src/components/sections/home/ProblemsSolutions.tsx
+index 777e0f0..98eadb5 100644
+--- a/src/components/sections/home/ProblemsSolutions.tsx
++++ b/src/components/sections/home/ProblemsSolutions.tsx
+@@ -181,7 +181,7 @@ const PAIRS: Pair[] = [
+   },
+ ];
+ 
+-/** The board for one problem: a Before / With MyLoginn switch, a picture that flips, and the matching words. */
++/** The board for one problem: a Before / With Myloginn switch, a picture that flips, and the matching words. */
+ function Stage({ pair, after, onSwitch }: { pair: Pair; after: boolean; onSwitch: (after: boolean) => void }) {
+   const Icon = pair.icon;
+   const Visual = pair.Visual;
+@@ -190,7 +190,7 @@ function Stage({ pair, after, onSwitch }: { pair: Pair; after: boolean; onSwitch
+     <div className="overflow-hidden rounded-3xl border border-border-soft bg-surface shadow-[var(--shadow-lift)]">
+       <div className="p-3.5 sm:p-4">
+         <div role="tablist" aria-label="Before and after" className="relative flex w-full gap-1 rounded-full bg-story-mist p-1 sm:w-fit">
+-          {[{ v: false, label: "The problem" }, { v: true, label: "With MyLoginn" }].map((o) => {
++          {[{ v: false, label: "The problem" }, { v: true, label: "With Myloginn" }].map((o) => {
+             const on = after === o.v;
+             return (
+               <button key={o.label} role="tab" aria-selected={on} onClick={() => onSwitch(o.v)} className={cn("relative flex-1 whitespace-nowrap rounded-full px-3 py-1 text-[11px] font-bold transition-colors duration-300 sm:flex-none", on ? "text-white" : "text-muted hover:text-story-navy")}>
+@@ -242,7 +242,7 @@ function Stage({ pair, after, onSwitch }: { pair: Pair; after: boolean; onSwitch
+ }
+ 
+ /**
+- * 03 ÔÇö Real customer problems on one side, the MyLoginn answer on the other. The board walks through the problems on
++ * 03 ÔÇö Real customer problems on one side, the Myloginn answer on the other. The board walks through the problems on
+  * its own, showing each one and then flipping it to its fix. Choose a problem or flip the switch yourself and it carries
+  * on from there. On small screens the board opens directly beneath the problem.
+  */
+@@ -304,7 +304,7 @@ export function ProblemsSolutions() {
+                         <motion.span className="block overflow-hidden" initial={{ height: 0, opacity: 0 }} animate={{ height: "auto", opacity: 1 }} exit={{ height: 0, opacity: 0 }} transition={{ duration: 0.35, ease: EASE }}>
+                           <span className="mt-2 flex items-center gap-2 pl-[2.4rem] text-xs font-semibold">
+                             <motion.span className="h-1.5 w-1.5 rounded-full" animate={{ backgroundColor: after ? GREEN : ROSE }} />
+-                            <span className={after ? "text-emerald-600" : "text-rose-500"}>{after ? "Solved with MyLoginn" : "The problem"}</span>
++                            <span className={after ? "text-emerald-600" : "text-rose-500"}>{after ? "Solved with Myloginn" : "The problem"}</span>
+                           </span>
+                         </motion.span>
+                       )}
+diff --git a/src/components/services/ContactEnquiryTabs.tsx b/src/components/services/ContactEnquiryTabs.tsx
+index 5d78fda..8ec9813 100644
+--- a/src/components/services/ContactEnquiryTabs.tsx
++++ b/src/components/services/ContactEnquiryTabs.tsx
+@@ -99,7 +99,7 @@ export function ContactEnquiryTabs() {
+             {activeTab === "payment" && (
+               <TestingEnquiryForm
+                 service="Course Payment Options"
+-                heading="Questions about MyLoginn Learn"
++                heading="Questions about Myloginn Learn"
+                 needsQuestion="What would you like to know?"
+                 goalsPrefix="Payment question"
+                 submitLabel="Ask about payment options"
+@@ -120,12 +120,12 @@ export function ContactEnquiryTabs() {
+                 needsQuestion="What is your feedback about?"
+                 goalsPrefix="Feedback on"
+                 submitLabel="Send feedback"
+-                messagePlaceholder="Tell us about your experience with MyLoginnÔÇª"
++                messagePlaceholder="Tell us about your experience with MyloginnÔÇª"
+                 needs={[
+                   { label: "A project we delivered", color: "#2563eb" },
+                   { label: "Support", color: "#d97706" },
+                   { label: "Website", color: "#059669" },
+-                  { label: "MyLoginn Learn", color: "#7c3aed" },
++                  { label: "Myloginn Learn", color: "#7c3aed" },
+                   { label: "Other", color: "#e11d48" },
+                 ]}
+               />
+diff --git a/src/components/services/LeadForm.tsx b/src/components/services/LeadForm.tsx
+index f64da48..87047c4 100644
+--- a/src/components/services/LeadForm.tsx
++++ b/src/components/services/LeadForm.tsx
+@@ -102,7 +102,7 @@ export function LeadForm({
+       ? "Ask about course payment options"
+       : "Send Us a Message";
+   const contactDescription = contactMode === "feedback"
+-    ? "Tell us about your experience with MyLoginn."
++    ? "Tell us about your experience with Myloginn."
+     : contactMode === "payment"
+       ? "Share the course you are interested in and ask us about available payment options."
+       : "Fill in the form and our team will get back to you shortly.";
+@@ -169,7 +169,7 @@ export function LeadForm({
+           <AnimatedSuccess once className="h-14.5 w-14.5" />
+           <p className="text-lg font-semibold">Thanks ÔÇö we&apos;ll be in touch!</p>
+           <p className="max-w-xs text-sm text-muted">
+-            The MyLoginn team will review your enquiry and follow up using the contact details provided.
++            The Myloginn team will review your enquiry and follow up using the contact details provided.
+           </p>
+           {whatsappLink && (
+             <Button href={whatsappLink} target="_blank" rel="noopener noreferrer" variant="secondary" icon={<AnimatedChat className="h-5.5 w-5.5" />}>
+diff --git a/src/components/services/ServiceLanding.tsx b/src/components/services/ServiceLanding.tsx
+index d2cac52..de15b06 100644
+--- a/src/components/services/ServiceLanding.tsx
++++ b/src/components/services/ServiceLanding.tsx
+@@ -56,13 +56,13 @@ export function ServiceLanding(p: ServiceLandingProps) {
+             </section>
+             <section aria-labelledby="svc-who" className="mt-12">
+               <h2 id="svc-who" className="text-2xl font-semibold tracking-tight">Who we work with</h2>
+-              <p className="mt-3 leading-7 text-muted">MyLoginn Tech is an India-based technology company. We work with startups, small and mid-sized businesses and organisations across India, and serve clients in other countries remotely. Scope, timelines and deliverables are agreed in writing before work begins.</p>
++              <p className="mt-3 leading-7 text-muted">Myloginn is an India-based technology company. We work with startups, small and mid-sized businesses and organisations across India, and serve clients in other countries remotely. Scope, timelines and deliverables are agreed in writing before work begins.</p>
+             </section>
+             <section aria-labelledby="svc-faq" className="mt-12">
+               <h2 id="svc-faq" className="text-2xl font-semibold tracking-tight">Frequently asked questions</h2>
+               <FaqAccordion items={p.faqs} className="mt-5" />
+             </section>
+-            <nav aria-label="Related MyLoginn services" className="mt-12">
++            <nav aria-label="Related Myloginn services" className="mt-12">
+               <h2 className="text-lg font-semibold">Related services</h2>
+               <ul className="mt-3 flex flex-wrap gap-x-6 gap-y-2 text-sm font-medium">
+                 {p.related.map((r) => <li key={r.href}><Link className="text-brand-600 hover:underline" href={r.href}>{r.label}</Link></li>)}
+diff --git a/src/components/services/marketing/MarketingLanding.tsx b/src/components/services/marketing/MarketingLanding.tsx
+index 81dd1ad..a96ee4b 100644
+--- a/src/components/services/marketing/MarketingLanding.tsx
++++ b/src/components/services/marketing/MarketingLanding.tsx
+@@ -96,7 +96,7 @@ export function MarketingLanding({ areas, faqs }: { areas: Area[]; faqs: Faq[] }
+         <section aria-labelledby="marketing-services">
+           <Reveal><span className="story-eyebrow">What we deliver</span></Reveal>
+           <h2 id="marketing-services" className="story-subheading mt-3 text-story-navy dark:text-foreground">Digital marketing services</h2>
+-          <p className="mt-3 max-w-2xl leading-7 text-muted">Choose a focused set of activities based on your audience, goals and budget. MyLoginn supports businesses in India and worldwide. The team agrees on deliverables and measurement before campaign work begins.</p>
++          <p className="mt-3 max-w-2xl leading-7 text-muted">Choose a focused set of activities based on your audience, goals and budget. Myloginn supports businesses in India and worldwide. The team agrees on deliverables and measurement before campaign work begins.</p>
+           <AreaGrid areas={areas.map((a, i) => ({ title: a.title, text: a.description, icon: MARKETING_ICONS[i % MARKETING_ICONS.length] }))} />
+         </section>
+       </Container>
+diff --git a/src/components/services/story/RelatedLinks.tsx b/src/components/services/story/RelatedLinks.tsx
+index 51177d7..a4436f7 100644
+--- a/src/components/services/story/RelatedLinks.tsx
++++ b/src/components/services/story/RelatedLinks.tsx
+@@ -30,7 +30,7 @@ function metaFor(href: string, i: number): Meta {
+ /** Colour-coded link cards to related pages: animated topic icon, short description and a sliding arrow. */
+ export function RelatedLinks({ related, wide }: { related: { href: string; label: string }[]; wide?: boolean }) {
+   return (
+-    <nav aria-label="Related MyLoginn services" className="mt-14">
++    <nav aria-label="Related Myloginn services" className="mt-14">
+       <Reveal><span className="story-eyebrow">Explore more</span></Reveal>
+       <h2 className="story-subheading mt-3 text-story-navy dark:text-foreground">Related services</h2>
+       <RevealGroup className={`mt-6 grid gap-3 sm:grid-cols-2 ${wide ? "lg:grid-cols-4" : ""}`} stagger={0.06}>
+diff --git a/src/components/services/testing/TestingEnquiryForm.tsx b/src/components/services/testing/TestingEnquiryForm.tsx
+index 0d6498c..127d8cd 100644
+--- a/src/components/services/testing/TestingEnquiryForm.tsx
++++ b/src/components/services/testing/TestingEnquiryForm.tsx
+@@ -250,7 +250,7 @@ export function TestingEnquiryForm({
+           <Confetti />
+           <motion.div initial={{ scale: 0 }} animate={{ scale: 1 }} transition={{ type: "spring", stiffness: 260, damping: 16 }} className="mx-auto grid h-16 w-16 place-items-center rounded-full text-3xl text-white" style={{ background: GREEN }}>Ô£ô</motion.div>
+           <h3 className="mt-5 text-xl font-semibold">Thanks, we&apos;ll be in touch!</h3>
+-          <p className="mx-auto mt-2 max-w-xs text-sm text-slate-600">The MyLoginn team will review your enquiry and follow up using the contact details provided.</p>
++          <p className="mx-auto mt-2 max-w-xs text-sm text-slate-600">The Myloginn team will review your enquiry and follow up using the contact details provided.</p>
+           <div className="mt-5 flex flex-wrap justify-center gap-2">
+             {needs.map((n) => <span key={n} className="rounded-full px-3 py-1 text-xs font-semibold" style={{ background: "color-mix(in srgb, #2563eb 12%, white)", color: BLUE }}>{n}</span>)}
+           </div>
+diff --git a/src/components/services/testing/TestingLanding.tsx b/src/components/services/testing/TestingLanding.tsx
+index ac88265..35c9745 100644
+--- a/src/components/services/testing/TestingLanding.tsx
++++ b/src/components/services/testing/TestingLanding.tsx
+@@ -143,7 +143,7 @@ export function TestingLanding(p: ServiceLandingProps) {
+               })}
+             </RevealGroup>
+             <p className="mt-8 leading-7 text-muted">
+-              MyLoginn Tech is an India-based technology company. We work with startups, small and mid-sized businesses and organisations across India, and serve clients in other countries remotely. Scope, timelines and deliverables are agreed in writing before work begins.
++              Myloginn is an India-based technology company. We work with startups, small and mid-sized businesses and organisations across India, and serve clients in other countries remotely. Scope, timelines and deliverables are agreed in writing before work begins.
+             </p>
+           </section>
+         </div>
+diff --git a/src/components/ui/LogoBadge.tsx b/src/components/ui/LogoBadge.tsx
+index 3afa300..7d5145c 100644
+--- a/src/components/ui/LogoBadge.tsx
++++ b/src/components/ui/LogoBadge.tsx
+@@ -4,14 +4,14 @@ import logoText from "@/images/MyLoginn Logo Wordmark.png";
+ import { cn } from "@/lib/cn";
+ 
+ /**
+- * The MyLoginn crystal mark, used on its own (nav rail, footer brand strip)
++ * The Myloginn crystal mark, used on its own (nav rail, footer brand strip)
+  * ÔÇö the source PNG rendered as-is, never re-cropped or recolored.
+  */
+ export function LogoBadge({ className, imgClassName }: { className?: string; imgClassName?: string }) {
+   return (
+     <Image
+       src={logoIcon}
+-      alt="MyLoginn"
++      alt="Myloginn"
+       preload
+       unoptimized
+       className={cn("h-full w-auto select-none object-contain", className, imgClassName)}
+@@ -42,7 +42,7 @@ export function LogoWordmark({ className, imgClassName }: { className?: string;
+  */
+ export function LogoLockup({ className }: { className?: string }) {
+   return (
+-    <span className={cn("flex items-center gap-1 sm:gap-1.5", className)} aria-label="MyLoginn">
++    <span className={cn("flex items-center gap-1 sm:gap-1.5", className)} aria-label="Myloginn">
+       <LogoBadge className="h-5 w-auto sm:h-7" />
+       <LogoWordmark className="h-3 w-auto sm:h-[14px]" />
+     </span>
+diff --git a/src/lib/certificate/config.ts b/src/lib/certificate/config.ts
+index c84f784..3ab235d 100644
+--- a/src/lib/certificate/config.ts
++++ b/src/lib/certificate/config.ts
+@@ -13,7 +13,7 @@ export const SIGNATORIES: readonly [Signatory, Signatory] = [
+   { name: "Swaminathan S" },
+ ];
+ 
+-export const ISSUER = "MyLoginn Learning";
++export const ISSUER = "Myloginn Learning";
+ 
+ /** "October 15, 2026". UTC, so the date matches the server-rendered PDF certificates. */
+ export function formatCertificateDate(iso: string) {
+diff --git a/src/lib/certificate/export.ts b/src/lib/certificate/export.ts
+index 4f1effb..555fb83 100644
+--- a/src/lib/certificate/export.ts
++++ b/src/lib/certificate/export.ts
+@@ -29,7 +29,7 @@ async function capture(node: HTMLElement): Promise<HTMLCanvasElement> {
+ const safe = (value: string) => value.normalize("NFKD").replace(/[^\w\s-]/g, "").trim().replace(/\s+/g, "_").slice(0, 60) || "Certificate";
+ 
+ export function certificateFilename(data: CertificateData, format: ExportFormat) {
+-  return `MyLoginn_Certificate_${safe(data.courseTitle)}_${safe(data.candidateName)}.${format}`;
++  return `Myloginn_Certificate_${safe(data.courseTitle)}_${safe(data.candidateName)}.${format}`;
+ }
+ 
+ function save(blob: Blob, filename: string) {
+diff --git a/src/lib/competition/server/certificatePdf.ts b/src/lib/competition/server/certificatePdf.ts
+index 82f7cb6..01a40f8 100644
+--- a/src/lib/competition/server/certificatePdf.ts
++++ b/src/lib/competition/server/certificatePdf.ts
+@@ -68,7 +68,7 @@ export async function competitionCertificatePdf(input: CompetitionCertificateInp
+   pdf.setFont("helvetica", "normal");
+   pdf.setFontSize(9);
+   pdf.setTextColor(...MUTED);
+-  pdf.text("MYLOGINN TECH  ┬À  CODING COMPETITION", W / 2, 41, { align: "center", charSpace: 0.6 });
++  pdf.text("MYLOGINN  ┬À  CODING COMPETITION", W / 2, 41, { align: "center", charSpace: 0.6 });
+ 
+   pdf.setFont("times", "bold");
+   pdf.setFontSize(26);
+@@ -105,7 +105,7 @@ export async function competitionCertificatePdf(input: CompetitionCertificateInp
+   pdf.setFont("helvetica", "normal");
+   pdf.setFontSize(10.5);
+   pdf.setTextColor(...MUTED);
+-  pdf.text(`held online on ${held}, organised by MyLoginn Tech.`, W / 2, 133, { align: "center" });
++  pdf.text(`held online on ${held}, organised by Myloginn.`, W / 2, 133, { align: "center" });
+ 
+   // Award badge for the Top 3
+   if (input.kind !== "PARTICIPATION" && input.rank) {
+@@ -139,7 +139,7 @@ export async function competitionCertificatePdf(input: CompetitionCertificateInp
+     pdf.setFont("helvetica", "normal");
+     pdf.setFontSize(8);
+     pdf.setTextColor(...MUTED);
+-    pdf.text("Authorized Signatory, MyLoginn Tech", x, sigY + 10, { align: "center" });
++    pdf.text("Authorized Signatory, Myloginn", x, sigY + 10, { align: "center" });
+   });
+ 
+   // Verification
+diff --git a/src/lib/competition/server/rewards.ts b/src/lib/competition/server/rewards.ts
+index 11dc15f..4bb53b8 100644
+--- a/src/lib/competition/server/rewards.ts
++++ b/src/lib/competition/server/rewards.ts
+@@ -82,7 +82,7 @@ export async function offerAction(offerId: string, action: keyof typeof TRANSITI
+     await audit(tx, { competitionId: offer.competitionId, actorId, action: `offer.${action}`, entity: "CcInternshipOffer", entityId: offerId, meta: { notes: notes.trim() || null } });
+   });
+   if (action === "send")
+-    await notifyUsers([offer.registration.userId], "Internship offer from MyLoginn Tech", `Congratulations! Your internship offer for ${offer.competition.title} is on your competition dashboard. Please respond within ${validDays} days.`);
++    await notifyUsers([offer.registration.userId], "Internship offer from Myloginn", `Congratulations! Your internship offer for ${offer.competition.title} is on your competition dashboard. Please respond within ${validDays} days.`);
+ }
+ 
+ /** Candidate response, only to their own sent, unexpired offer. */
+diff --git a/src/lib/contactInfo.ts b/src/lib/contactInfo.ts
+index d881e53..a48a33b 100644
+--- a/src/lib/contactInfo.ts
++++ b/src/lib/contactInfo.ts
+@@ -1,4 +1,4 @@
+-/** Single source of truth for MyLoginn contact details (used by the contact page and footer). */
++/** Single source of truth for Myloginn contact details (used by the contact page and footer). */
+ 
+ export const CONTACT_EMAIL = "contact@myloginn.com";
+ 
+@@ -14,10 +14,10 @@ export const CONTACT_HOURS = "MonÔÇôSat, 9amÔÇô7pm IST";
+ 
+ /** Official social profiles. Add a profile here only once it exists; the footer and Organization schema both read this list. */
+ export const SOCIAL_LINKS = [
+-  { id: "instagram", label: "MyLoginn on Instagram", href: "https://www.instagram.com/myloginntech/" },
+-  { id: "facebook", label: "MyLoginn on Facebook", href: "https://www.facebook.com/p/MyLoginn-Tech-61592248317142/" },
+-  // TODO: replace these two placeholder links with MyLoginn's real profile URLs, then remove `pending`.
++  { id: "instagram", label: "Myloginn on Instagram", href: "https://www.instagram.com/myloginntech/" },
++  { id: "facebook", label: "Myloginn on Facebook", href: "https://www.facebook.com/p/MyLoginn-Tech-61592248317142/" },
++  // TODO: replace these two placeholder links with Myloginn's real profile URLs, then remove `pending`.
+   // While `pending` is set they appear in the footer but are left out of the Organization structured data.
+-  { id: "linkedin", label: "MyLoginn on LinkedIn", href: "https://www.linkedin.com/", pending: true },
+-  { id: "youtube", label: "MyLoginn on YouTube", href: "https://www.youtube.com/", pending: true },
++  { id: "linkedin", label: "Myloginn on LinkedIn", href: "https://www.linkedin.com/", pending: true },
++  { id: "youtube", label: "Myloginn on YouTube", href: "https://www.youtube.com/", pending: true },
+ ] as const;
+diff --git a/src/lib/postings.ts b/src/lib/postings.ts
+index e44c4a2..4e634da 100644
+--- a/src/lib/postings.ts
++++ b/src/lib/postings.ts
+@@ -6,7 +6,7 @@
+  * Client-safe: used by the admin editor (live preview, paste import, copy as text) and the public pages.
+  */
+ 
+-export const DEFAULT_COMPANY = "MyLoginn Tech";
++export const DEFAULT_COMPANY = "Myloginn";
+ export const WORK_MODES = ["On-site", "Hybrid", "Remote"] as const;
+ export type WorkMode = (typeof WORK_MODES)[number];
+ 
