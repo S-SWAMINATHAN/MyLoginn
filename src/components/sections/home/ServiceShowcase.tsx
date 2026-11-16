@@ -35,8 +35,8 @@ function ServiceRow({ service, index }: { service: CoreService; index: number })
           <span className="text-muted">· 0{index + 1} / 0{CORE_SERVICES.length}</span>
         </p>
         <h3 className="mt-3 text-3xl font-bold leading-tight tracking-tight text-story-navy sm:text-4xl lg:text-[2.75rem] dark:text-foreground">{service.headline}</h3>
-        <p className="mt-4 max-w-md text-base leading-7 text-muted">{service.summary}</p>
-        <ul className="mt-5 space-y-2.5">
+        <p className="mt-4 max-w-xl text-left text-base leading-7 text-muted">{service.summary}</p>
+        <ul className="mt-5 space-y-2.5 text-left">
           {service.points.map((p, i) => (
             <motion.li key={p} initial={{ opacity: 0, x: -10 }} whileInView={{ opacity: 1, x: 0 }} viewport={{ once: true }} transition={{ delay: 0.2 + i * 0.08, duration: 0.4 }} className="flex items-start gap-2.5 text-sm font-medium text-story-navy dark:text-foreground">
               <Check className="mt-0.5 h-4 w-4 shrink-0 text-story-royal" strokeWidth={3} />
@@ -71,12 +71,12 @@ function ServiceRow({ service, index }: { service: CoreService; index: number })
 export function ServiceShowcase() {
   return (
     <Chapter formation="grid" variant="services" id="services" title="What we build">
-      <div className="mx-auto w-full max-w-6xl px-5 sm:px-8">
+      <div className="mx-auto w-full max-w-[1600px] px-4 sm:px-8 lg:px-12 2xl:px-16">
         <div className="max-w-2xl">
           <Reveal><span className="story-eyebrow">What we build</span></Reveal>
           <SplitHeadline as="h2" text="Technology built around the way your business works." className="story-subheading mt-4 text-story-navy" />
           <Reveal direction="up" delay={0.1}>
-            <p className="mt-5 max-w-xl text-base leading-7 text-muted">
+            <p className="mt-5 max-w-2xl text-left text-base leading-7 text-muted">
               We don&apos;t just ship digital products. We start from your operations, customers and goals, then design, develop, automate and market the technology that serves them, across five core capabilities.
             </p>
           </Reveal>

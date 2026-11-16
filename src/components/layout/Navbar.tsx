@@ -137,12 +137,12 @@ export function Navbar({ user }: { user: NavUser }) {
         scrolled || mobileOpen ? "glass-nav border-b border-border-soft shadow-[var(--shadow-soft)]" : "bg-transparent"
       )}
     >
-      <nav className="mx-auto flex h-16 max-w-7xl items-center justify-between px-5 sm:px-8">
+      <nav className="mx-auto grid h-16 w-full grid-cols-[1fr_auto_1fr] items-center px-4 sm:px-6 lg:px-8 xl:px-10">
         <Link href="/" className="flex w-fit items-center transition-transform duration-300 ease-out hover:scale-[1.04] active:scale-[0.97]">
           <LogoLockup />
         </Link>
 
-        <div className="hidden lg:flex items-center gap-1">
+        <div className="hidden items-center gap-1 lg:flex">
           <NavHeaderLink href="/" active={section === "home"}>Home</NavHeaderLink>
           <NavHeaderLink href="/about" active={section === "about"}>About</NavHeaderLink>
 
@@ -196,7 +196,7 @@ export function Navbar({ user }: { user: NavUser }) {
           <NavHeaderLink href="/contact" active={section === "contact"}>Contact</NavHeaderLink>
         </div>
 
-        <div className="hidden lg:flex items-center gap-3">
+        <div className="hidden items-center justify-self-end gap-3 lg:flex">
           {user ? (
             <ProfileMenu user={user} />
           ) : (
@@ -212,7 +212,7 @@ export function Navbar({ user }: { user: NavUser }) {
         </div>
 
         {/* on small screens the profile and log-in live inside the menu, so the header shows only the menu button */}
-        <div className="flex items-center gap-2.5 lg:hidden">
+        <div className="col-start-3 flex items-center justify-self-end gap-2.5 lg:hidden">
           <HamburgerButton open={mobileOpen} onToggle={() => setMobileOpen((o) => !o)} />
         </div>
       </nav>

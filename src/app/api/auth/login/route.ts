@@ -35,6 +35,13 @@ export async function POST(req: Request) {
       user: { id: user.id, name: user.name, email: user.email, role: user.role },
     });
   } catch (error) {
+    if (error instanceof Error && (/P1001/.test(error.message) || /Can't reach database server/i.test(error.message))) {
+      console.warn("Login unavailable because the database cannot be reached.");
+      return NextResponse.json(
+        { error: "Sign in is temporarily unavailable because the database connection is offline." },
+        { status: 503 }
+      );
+    }
     console.error("Login request failed:", error);
     return NextResponse.json({ error: "We couldn't log you in right now. Please try again." }, { status: 500 });
   }

@@ -63,7 +63,7 @@ export const getCurrentUser = cache(async function getCurrentUser() {
     return user ?? null;
   } catch (error) {
     // A database outage must not crash every page that reads the session.
-    console.error("getCurrentUser: database unreachable", error);
+    console.warn("getCurrentUser: database unreachable; continuing as signed out.", error);
     return null;
   }
 });
