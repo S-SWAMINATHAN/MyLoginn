@@ -11,6 +11,8 @@ import { runSql } from "@/lib/logiquest/coding/sqlJudge";
 import { TRACK_BY_SLUG } from "@/lib/logiquest/coding/tracks";
 import type { CodeLang } from "@/lib/logiquest/coding/types";
 import { createPageMetadata } from "@/lib/seo";
+export const revalidate = 86400;
+
 
 type Props = { params: Promise<{ slug: string }> };
 
