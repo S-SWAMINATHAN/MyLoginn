@@ -6,6 +6,7 @@ import { JsonLd } from "@/components/seo/JsonLd";
 import { coreServicesStructuredData, organizationStructuredData, websiteStructuredData } from "@/lib/structuredData";
 import { CORE_SERVICES } from "@/lib/coreServices";
 import { prisma } from "@/lib/prisma";
+import { getClientProjects } from "@/lib/clientProjectsData";
 import { ReviewSection } from "@/components/about/ReviewSection";
 
 import { Hero } from "@/components/sections/Hero";
@@ -55,6 +56,7 @@ export default async function Home() {
   const reviewOrder = [{ sortOrder: "asc" as const }, { submittedAt: "desc" as const }];
   const featuredReviews = await prisma.customerReview.findMany({ where: { status: "APPROVED", published: true, featured: true }, orderBy: reviewOrder, take: 6, select: reviewFields }).catch(() => []);
   const reviews = featuredReviews.length ? featuredReviews : await prisma.customerReview.findMany({ where: { status: "APPROVED", published: true }, orderBy: reviewOrder, take: 6, select: reviewFields }).catch(() => []);
+  const clientProjects = await getClientProjects();
   return (
     <>
       <JsonLd data={{
@@ -66,7 +68,7 @@ export default async function Home() {
         <ServiceShowcase />
         <ProblemsSolutions />
         <ProcessFlow />
-        <ProjectShowcase />
+        <ProjectShowcase projects={clientProjects} />
         <AboutValues />
         {reviews.length > 0 && <div className="w-full bg-story-mist py-14 sm:py-18"><ReviewSection compact reviews={reviews.map((review) => ({ ...review, submittedAt: review.submittedAt.toISOString() }))} /></div>}
         <CareersCta />

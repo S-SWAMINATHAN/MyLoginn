@@ -126,6 +126,36 @@ model ShowcaseProject {
   sortOrder   Int    @default(0)
 }
 
+model ClientPortfolioProject {
+  id              String   @id @default(cuid())
+  slug            String   @unique
+  name            String
+  url             String   @default("")
+  category        String
+  artKey          String
+  cardMetric      String?
+  description     String
+  longDescription String   @db.Text
+  highlights      Json
+  audience        String?  @db.Text
+  features        Json?
+  deliverables    Json?
+  platform        String?
+  status          String   @default("live")
+  fallbackPreview Boolean  @default(false)
+  sortOrder       Int      @default(0)
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
+
+  @@index([status, sortOrder])
+}
+
+model ClientPortfolioSettings {
+  id          String    @id @default("main")
+  initialized Boolean   @default(false)
+  updatedAt   DateTime  @updatedAt
+}
+
 model OtpCode {
   id         String   @id @default(cuid())
   identifier String

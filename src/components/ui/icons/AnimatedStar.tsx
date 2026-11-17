@@ -5,7 +5,7 @@ import { motion } from "framer-motion";
 import type { CSSProperties } from "react";
 import { cn } from "@/lib/cn";
 
-export function AnimatedStar({ className, style }: { className?: string; style?: CSSProperties }) {
+export function AnimatedStar({ className, style, delay = 0 }: { className?: string; style?: CSSProperties; delay?: number }) {
   const id = "st" + useId().replace(/[^a-zA-Z0-9]/g, "");
   return (
     <span className={cn("relative inline-flex shrink-0 items-center justify-center", className)} style={style}>
@@ -13,7 +13,7 @@ export function AnimatedStar({ className, style }: { className?: string; style?:
         className="inline-flex h-full w-full"
         style={{ transformOrigin: "50% 50%" }}
         animate={{ scale: [1, 1.14, 1], rotate: [0, 5, 0] }}
-        transition={{ duration: 2.4, repeat: Infinity, ease: "easeInOut" }}
+        transition={{ duration: 2.4, repeat: Infinity, ease: "easeInOut", delay }}
       >
         <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" className="h-full w-full">
           <defs>
@@ -41,7 +41,7 @@ export function AnimatedStar({ className, style }: { className?: string; style?:
       <motion.span
         className="absolute -right-0.5 -top-0.5 h-[28%] w-[28%] rounded-full bg-amber-200"
         animate={{ opacity: [0, 1, 0], scale: [0.4, 1, 0.4] }}
-        transition={{ duration: 2.4, repeat: Infinity, ease: "easeInOut", delay: 0.6 }}
+        transition={{ duration: 2.4, repeat: Infinity, ease: "easeInOut", delay: delay + 0.6 }}
       />
     </span>
   );

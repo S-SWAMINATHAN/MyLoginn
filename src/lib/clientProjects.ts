@@ -181,6 +181,6 @@ export const clientProjects: ClientProject[] = [
   },
 ];
 
-export function getClientProject(slug: string): ClientProject | undefined {
-  return clientProjects.find((p) => p.slug === slug);
+export function getClientProject(slug: string, projects: ClientProject[] = clientProjects): ClientProject | undefined {
+  return projects.find((p) => p.slug === slug);
 }

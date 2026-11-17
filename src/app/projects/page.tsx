@@ -2,7 +2,7 @@ import { createPageMetadata } from "@/lib/seo";
 import { Section, Container } from "@/components/ui/Section";
 import { prisma } from "@/lib/prisma";
 import type { ShowcaseProject } from "@/lib/showcaseProjects";
-import { clientProjects } from "@/lib/clientProjects";
+import { getClientProjects } from "@/lib/clientProjectsData";
 import { Reveal } from "@/components/ui/Reveal";
 import { SplitHeadline } from "@/components/experience/SplitHeadline";
 import { ArrowLink } from "@/components/ui/ArrowLink";
@@ -28,8 +28,9 @@ export const dynamic = "force-dynamic";
 export default async function ProjectsPage() {
   // Keep the public Projects route useful when the database is temporarily
   // unavailable; the explorer and enquiry CTA still render without records.
-  const result = await Promise.allSettled([
-    prisma.showcaseProject.findMany({ orderBy: { sortOrder: "asc" } }),
+  const [result, clientProjects] = await Promise.all([
+    Promise.allSettled([prisma.showcaseProject.findMany({ orderBy: { sortOrder: "asc" } })]),
+    getClientProjects(),
   ]);
   const rows = result[0].status === "fulfilled" ? result[0].value : [];
   const showcaseProjects: ShowcaseProject[] = rows.map((p) => ({

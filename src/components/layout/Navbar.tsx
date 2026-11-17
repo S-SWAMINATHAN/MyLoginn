@@ -64,6 +64,7 @@ const mobileServiceLinks: MobileLink[] = [
 ];
 
 const mobileAboutLink: MobileLink = { href: "/about", label: "About", desc: "Who we are and what we value", icon: "about" };
+const mobileProjectsLink: MobileLink = { href: "/projects", label: "Projects", desc: "Our live client work", icon: "projects" };
 
 const mobileAfterServices: MobileLink[] = [
   { href: "/careers", label: "Careers", desc: "Open positions and internships", icon: "careers" },
@@ -75,6 +76,7 @@ const mobileContactLink: MobileLink = {
   desc: "We reply fast",
   icon: "contact",
 };
+const mobileStudentNestLink = mobileMainLinks[1];
 
 type NavSection = "home" | "about" | "services" | "careers" | "studentnest" | "contact";
 
@@ -304,16 +306,15 @@ function HamburgerButton({ open, onToggle }: { open: boolean; onToggle: () => vo
 
 const listVariants: Variants = {
   closed: {},
-  open: { transition: { staggerChildren: 0.045, delayChildren: 0.1 } },
+  open: { transition: { staggerChildren: 0.015 } },
 };
 
 const itemVariants: Variants = {
-  closed: { opacity: 0, x: 32, filter: "blur(4px)" },
+  closed: { opacity: 0, x: 12 },
   open: {
     opacity: 1,
     x: 0,
-    filter: "blur(0px)",
-    transition: { duration: 0.4, ease: [0.16, 1, 0.3, 1] },
+    transition: { duration: 0.16, ease: [0.16, 1, 0.3, 1] },
   },
 };
 
@@ -360,7 +361,7 @@ function MobileMenu({
               <div className="flex flex-col gap-1">
                 <MobileNavItem link={mobileMainLinks[0]} active={pathname === "/"} order={0} />
                 <MobileNavItem link={mobileAboutLink} active={pathname === "/about"} order={1} />
-                <MobileNavItem link={mobileMainLinks[1]} active={pathname === "/projects" || pathname.startsWith("/projects/")} order={2} />
+                <MobileNavItem link={mobileProjectsLink} active={pathname === "/projects" || pathname.startsWith("/projects/")} order={2} />
               </div>
 
               <motion.div variants={itemVariants} className="my-3 flex items-center gap-3 px-2">
@@ -381,20 +382,10 @@ function MobileMenu({
                 ))}
               </div>
 
-              <motion.div variants={itemVariants} className="my-3 flex items-center gap-3 px-2">
-                <span className="h-px flex-1 bg-border-soft" />
-                <span className="text-[11px] font-bold uppercase tracking-[0.16em] text-story-royal">StudentNest</span>
-                <span className="h-px flex-1 bg-border-soft" />
-              </motion.div>
-
-              <div className="flex flex-col gap-1">
-                {mobileMainLinks.slice(1).map((link, i) => (
-                  <MobileNavItem key={link.href} order={8 + i} link={link} active={pathname === link.href || pathname.startsWith(`${link.href}/`)} />
-                ))}
-              </div>
+              <MobileNavItem link={mobileStudentNestLink} active={pathname.startsWith("/studentnest")} order={7} />
 
               <div className="my-3 flex flex-col gap-1">
-                <MobileNavItem order={15} link={mobileContactLink} active={pathname === mobileContactLink.href || pathname.startsWith(`${mobileContactLink.href}/`)} />
+                <MobileNavItem order={8} link={mobileContactLink} active={pathname === mobileContactLink.href || pathname.startsWith(`${mobileContactLink.href}/`)} />
               </div>
 
               <motion.div variants={itemVariants} className="mt-4 flex flex-col gap-2 border-t border-border-soft pt-4">

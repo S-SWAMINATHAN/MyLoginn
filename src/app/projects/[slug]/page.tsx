@@ -4,8 +4,8 @@ import Link from "next/link";
 import { ArrowUpRight, Check, Construction, ExternalLink, Smartphone } from "lucide-react";
 import { createPageMetadata } from "@/lib/seo";
 import { prisma } from "@/lib/prisma";
-import { clientProjects, getClientProject } from "@/lib/clientProjects";
-import type { ClientProject } from "@/lib/clientProjects";
+import { getClientProject, type ClientProject } from "@/lib/clientProjects";
+import { getClientProjects } from "@/lib/clientProjectsData";
 import { getCourseIconInfo } from "@/lib/courseIcons";
 import { FinalCta } from "@/components/sections/FinalCta";
 import { getProjectCardArt } from "@/lib/projectCardArt";
@@ -20,7 +20,7 @@ import { AnimatedTrending } from "@/components/ui/icons/AnimatedTrending";
 export async function generateMetadata({ params }: { params: Promise<{ slug: string }> }): Promise<Metadata> {
   const { slug } = await params;
 
-  const client = getClientProject(slug);
+  const client = getClientProject(slug, await getClientProjects());
   if (client) {
     return createPageMetadata({
       title: client.name,
@@ -44,8 +44,9 @@ export async function generateMetadata({ params }: { params: Promise<{ slug: str
 export default async function ProjectDetailPage({ params }: { params: Promise<{ slug: string }> }) {
   const { slug } = await params;
 
-  const client = getClientProject(slug);
-  if (client) return <ClientProjectDetail project={client} />;
+  const projects = await getClientProjects();
+  const client = getClientProject(slug, projects);
+  if (client) return <ClientProjectDetail project={client} projects={projects} />;
 
   const sp = await prisma.showcaseProject.findUnique({ where: { slug } });
   if (!sp) notFound();
@@ -73,10 +74,10 @@ const accents: Record<string, { from: string; to: string; glow: string }> = {
   webdev: { from: "#0f766e", to: "#0369a1", glow: "rgba(20,184,166,.35)" },
 };
 
-function ClientProjectDetail({ project }: { project: ClientProject }) {
+function ClientProjectDetail({ project, projects }: { project: ClientProject; projects: ClientProject[] }) {
   const isLive = project.status === "live";
   const accent = accents[project.artKey] ?? accents.platform;
-  const others = clientProjects.filter((p) => p.slug !== project.slug);
+  const others = projects.filter((p) => p.slug !== project.slug);
   const isMobile = project.platform === "mobile";
   const isDesktop = project.platform === "desktop";
   const host = project.url

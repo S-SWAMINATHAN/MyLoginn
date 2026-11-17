@@ -4,15 +4,15 @@ import { useEffect, useId, useState } from "react";
 import { createPortal } from "react-dom";
 import Link from "next/link";
 import { ArrowUpRight, Construction, ExternalLink, Info, X } from "lucide-react";
-import { clientProjects, type ClientProject } from "@/lib/clientProjects";
+import type { ClientProject } from "@/lib/clientProjects";
 import { useReducedMotion } from "@/lib/useReducedMotion";
 import { CardArtAnimation } from "@/components/projects/CardArtAnimation";
 import { getCardArtByKey } from "@/lib/projectCardArt";
+import { StatCounter } from "@/components/ui/StatCounter";
 
-const websites = clientProjects.filter((p) => p.status === "live");
-const comingSoon = clientProjects.filter((p) => p.status === "in-development");
-
-export function ProjectShowcase() {
+export function ProjectShowcase({ projects }: { projects: ClientProject[] }) {
+  const websites = projects.filter((p) => p.status === "live");
+  const comingSoon = projects.filter((p) => p.status === "in-development");
   const [selectedProject, setSelectedProject] = useState<ClientProject | null>(null);
   const [paused, setPaused] = useState(false);
   const reducedMotion = useReducedMotion();
@@ -27,10 +27,11 @@ export function ProjectShowcase() {
   return (
     <section className="relative overflow-hidden border-y border-border-soft bg-surface-2/45 py-20 sm:py-24" aria-labelledby="showcase-title">
       <div className="mx-auto w-full max-w-7xl px-5 sm:px-8">
-        <div className="max-w-2xl">
+        <div>
           <p className="story-eyebrow">Selected work</p>
-          <h2 id="showcase-title" className="story-heading mt-4 text-story-navy">
-            Our projects
+          <h2 id="showcase-title" className="story-heading mt-4 flex w-full items-baseline justify-between gap-3 text-story-navy">
+            <span className="min-w-0">Our projects</span>
+            <span aria-hidden="true" className="shrink-0 text-right tabular-nums"><StatCounter to={projects.length} duration={1.4} minimumDigits={2} suffix="+" /></span><span className="sr-only">, {projects.length} projects</span>
           </h2>
           <p className="mt-4 max-w-xl text-sm text-muted sm:text-base">
             Live websites and products built by Myloginn. Open any project for a quick preview.
@@ -128,7 +129,7 @@ export function ProjectThumbnail({ project }: { project: ClientProject }) {
   );
 }
 
-function ProjectPreviewModal({ project, onClose }: { project: (typeof websites)[number]; onClose: () => void }) {
+function ProjectPreviewModal({ project, onClose }: { project: ClientProject; onClose: () => void }) {
   useEffect(() => {
     const previousBodyOverflow = document.body.style.overflow;
     const previousHtmlOverflow = document.documentElement.style.overflow;

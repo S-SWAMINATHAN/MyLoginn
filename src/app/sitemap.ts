@@ -4,7 +4,7 @@ import { siteUrl } from "@/lib/site";
 import { SUBJECTS } from "@/lib/logiquest/catalog";
 import { TRACKS } from "@/lib/logiquest/coding/tracks";
 import { ALL_PROBLEMS } from "@/lib/logiquest/coding/problems";
-import { clientProjects } from "@/lib/clientProjects";
+import { getClientProjects } from "@/lib/clientProjectsData";
 
 type Freq = NonNullable<MetadataRoute.Sitemap[number]["changeFrequency"]>;
 type Route = { path: string; priority: number; changeFrequency: Freq };
@@ -48,14 +48,16 @@ const learnRoutes: Route[] = [
 export const dynamic = "force-dynamic";
 
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
-  const [courseResult, internshipResult, showcaseResult] = await Promise.allSettled([
+  const [courseResult, internshipResult, showcaseResult, clientProjectResult] = await Promise.allSettled([
     prisma.course.findMany({ where: { status: "published" }, select: { slug: true, updatedAt: true } }),
     prisma.internship.findMany({ where: { status: "open" }, select: { slug: true } }),
     prisma.showcaseProject.findMany({ select: { slug: true } }),
+    getClientProjects(),
   ]);
   // Keep the main sitemap available even when the content database is offline.
   const courses = courseResult.status === "fulfilled" ? courseResult.value : [];
   const internships = internshipResult.status === "fulfilled" ? internshipResult.value : [];
+  const clientProjects = clientProjectResult.status === "fulfilled" ? clientProjectResult.value : [];
   const clientSlugs = new Set(clientProjects.map((p) => p.slug));
   const showcase = showcaseResult.status === "fulfilled" ? showcaseResult.value.filter((p) => !clientSlugs.has(p.slug)) : [];
 
